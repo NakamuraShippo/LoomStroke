@@ -1,0 +1,11 @@
+Applies to the unmodified profiles:
+APTEC_Offset_Coated_LinearCTV_2025.icc
+APTEC_Offset_Uncoated_LinearCTV_2025.icc
+
+Original copyright tag (identical in both ICC files):
+
+This profile is made available by Advanced Printing Technology Centre Limited, with permission of Eastman Kodak Company. PRINERGY® and PRINERGY COLORFLOW® are registered trademarks of the Eastman Kodak Company. It may be copied, distributed, embedded, made, used, and sold without restriction. Altered versions of this profile shall have the original identification and copyright information removed and shall not be misrepresented as the original profile.
+
+Official profile registry entries (checked 2026-10-10):
+https://registry.color.org/profile-registry/APTEC_Offset_Coated_LinearCTV_2025
+https://registry.color.org/profile-registry/APTEC_Offset_Uncoated_LinearCTV_2025

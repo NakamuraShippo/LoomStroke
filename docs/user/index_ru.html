@@ -1,0 +1,1346 @@
+<!DOCTYPE html>
+
+<html lang="ru">
+<head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>LoomStroke — Руководство пользователя</title>
+<style>
+:root {
+  --bg: #1a1a2e;
+  --bg-panel: #16213e;
+  --bg-card: #1e2a4a;
+  --bg-card-hover: #253456;
+  --accent: #4fc3f7;
+  --accent-dim: #2980b9;
+  --text: #e0e6ed;
+  --text-dim: #8899aa;
+  --text-heading: #ffffff;
+  --border: #2a3a5c;
+  --sidebar-w: 280px;
+  --tag-tool: #4fc3f7;
+  --tag-panel: #ab47bc;
+  --tag-param: #66bb6a;
+  --tag-effect: #ff7043;
+  --tag-ai: #ffd54f;
+}
+* { margin:0; padding:0; box-sizing:border-box; }
+body {
+  font-family: 'Segoe UI', 'Noto Sans JP', 'Hiragino Kaku Gothic ProN', sans-serif;
+  background: var(--bg);
+  color: var(--text);
+  line-height: 1.7;
+  display: flex;
+  min-height: 100vh;
+}
+
+/* ── Sidebar ── */
+#sidebar {
+  width: var(--sidebar-w);
+  min-width: var(--sidebar-w);
+  background: var(--bg-panel);
+  border-right: 1px solid var(--border);
+  overflow-y: auto;
+  position: fixed;
+  top: 0; left: 0; bottom: 0;
+  z-index: 100;
+  transition: transform .25s ease;
+  scrollbar-width: thin;
+  scrollbar-color: var(--border) transparent;
+}
+#sidebar.collapsed { transform: translateX(calc(-1 * var(--sidebar-w))); }
+#sidebar-header {
+  padding: 20px 16px 12px;
+  border-bottom: 1px solid var(--border);
+  position: sticky; top: 0;
+  background: var(--bg-panel);
+  z-index: 1;
+}
+#sidebar-header h1 {
+  font-size: 16px; color: var(--accent);
+  font-weight: 700; letter-spacing: .5px;
+}
+#sidebar-header p { font-size: 11px; color: var(--text-dim); margin-top: 2px; }
+#sidebar-search {
+  width: 100%; margin-top: 10px; padding: 6px 10px;
+  background: var(--bg-card); border: 1px solid var(--border);
+  border-radius: 4px; color: var(--text); font-size: 13px; outline: none;
+}
+#sidebar-search:focus { border-color: var(--accent); }
+#sidebar-search::placeholder { color: var(--text-dim); }
+.language-picker {
+  margin-top: 10px;
+}
+.language-picker label {
+  display: block; margin-bottom: 4px;
+  color: var(--text-dim); font-size: 11px;
+}
+#language-select {
+  width: 100%; padding: 6px 10px;
+  background: var(--bg-card); border: 1px solid var(--border);
+  border-radius: 4px; color: var(--text); font-size: 13px; outline: none;
+}
+#language-select:focus { border-color: var(--accent); }
+#sidebar nav { padding: 8px 0 24px; }
+.nav-section { margin-bottom: 2px; }
+.nav-section-title {
+  display: flex; align-items: center; gap: 6px;
+  padding: 8px 16px; font-size: 12px; font-weight: 700;
+  color: var(--text-dim); text-transform: uppercase; letter-spacing: .8px;
+  cursor: pointer; user-select: none; transition: color .15s;
+}
+.nav-section-title:hover { color: var(--text); }
+.nav-section-title::before {
+  content: '▸'; display: inline-block; font-size: 10px;
+  transition: transform .2s; width: 12px; text-align: center;
+}
+.nav-section.open > .nav-section-title::before { transform: rotate(90deg); }
+.nav-section-items { display: none; }
+.nav-section.open > .nav-section-items { display: block; }
+.nav-link {
+  display: block; padding: 5px 16px 5px 34px;
+  font-size: 13px; color: var(--text-dim);
+  text-decoration: none; border-left: 3px solid transparent;
+  transition: all .15s;
+}
+.nav-link:hover { color: var(--text); background: rgba(79,195,247,.06); }
+.nav-link.active { color: var(--accent); border-left-color: var(--accent); background: rgba(79,195,247,.08); }
+
+/* ── Toggle button ── */
+#sidebar-toggle {
+  position: fixed; top: 12px; left: 12px; z-index: 200;
+  width: 36px; height: 36px; border: none; border-radius: 6px;
+  background: var(--accent-dim); color: #fff; font-size: 18px;
+  cursor: pointer; display: none; align-items: center; justify-content: center;
+  transition: background .15s;
+}
+#sidebar-toggle:hover { background: var(--accent); }
+
+/* ── Main content ── */
+#main {
+  flex: 1; margin-left: var(--sidebar-w);
+  padding: 32px 40px 80px;
+  max-width: 960px;
+  transition: margin-left .25s ease;
+}
+#main.expanded { margin-left: 0; }
+
+h2 {
+  font-size: 26px; color: var(--text-heading);
+  margin: 48px 0 16px; padding-bottom: 8px;
+  border-bottom: 2px solid var(--accent-dim);
+}
+h2:first-of-type { margin-top: 0; }
+h3 {
+  font-size: 19px; color: var(--accent);
+  margin: 32px 0 10px;
+}
+h4 {
+  font-size: 15px; color: var(--text-heading);
+  margin: 20px 0 8px;
+}
+p, li { font-size: 14px; }
+p { margin-bottom: 10px; }
+ul, ol { padding-left: 20px; margin-bottom: 12px; }
+li { margin-bottom: 4px; }
+
+.tag {
+  display: inline-block; font-size: 10px; font-weight: 700;
+  padding: 1px 7px; border-radius: 3px; margin-right: 4px;
+  vertical-align: middle; letter-spacing: .3px;
+}
+.tag-tool    { background: rgba(79,195,247,.18); color: var(--tag-tool); }
+.tag-panel   { background: rgba(171,71,188,.18); color: var(--tag-panel); }
+.tag-param   { background: rgba(102,187,106,.18); color: var(--tag-param); }
+.tag-effect  { background: rgba(255,112,67,.18);  color: var(--tag-effect); }
+.tag-ai      { background: rgba(255,213,79,.18);  color: var(--tag-ai); }
+
+.card {
+  background: var(--bg-card); border: 1px solid var(--border);
+  border-radius: 8px; padding: 18px 20px; margin-bottom: 16px;
+  transition: border-color .15s;
+}
+.card:hover { border-color: var(--accent-dim); }
+.card h4 { margin-top: 0; }
+
+table {
+  width: 100%; border-collapse: collapse; margin-bottom: 16px;
+  font-size: 13px;
+}
+th, td {
+  padding: 8px 12px; text-align: left;
+  border-bottom: 1px solid var(--border);
+}
+th { color: var(--accent); font-weight: 600; font-size: 12px; text-transform: uppercase; letter-spacing: .5px; }
+tr:hover td { background: rgba(79,195,247,.04); }
+
+kbd {
+  display: inline-block; background: var(--bg-card); border: 1px solid var(--border);
+  border-radius: 4px; padding: 1px 6px; font-size: 12px;
+  font-family: 'Consolas', 'Courier New', monospace; color: var(--accent);
+}
+
+.shortcut-table td:first-child { white-space: nowrap; }
+
+code {
+  background: var(--bg-card); padding: 2px 6px; border-radius: 3px;
+  font-size: 13px; font-family: 'Consolas', 'Courier New', monospace;
+  color: var(--accent);
+}
+
+.grid-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
+@media (max-width: 700px) { .grid-2 { grid-template-columns: 1fr; } }
+
+.hero {
+  background: linear-gradient(135deg, var(--bg-panel), var(--bg-card));
+  border: 1px solid var(--border); border-radius: 12px;
+  padding: 32px; margin-bottom: 32px; text-align: center;
+}
+.hero h2 { border: none; margin: 0 0 8px; font-size: 32px; }
+.hero p { color: var(--text-dim); font-size: 15px; margin: 0; }
+
+/* ── Page mode ── */
+.doc-page {
+  display: none;
+  animation: pageFade .16s ease;
+}
+.doc-page.active { display: block; }
+@keyframes pageFade {
+  from { opacity: 0; transform: translateY(6px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+.page-controls {
+  display: flex; align-items: center; justify-content: space-between;
+  gap: 12px; margin: 0 0 24px; padding: 10px 0;
+  border-bottom: 1px solid var(--border);
+}
+.page-controls-bottom {
+  margin: 24px 0 0; border-top: 1px solid var(--border);
+  border-bottom: none;
+}
+.page-button {
+  min-width: 92px; padding: 7px 12px;
+  border: 1px solid var(--border); border-radius: 6px;
+  background: var(--bg-card); color: var(--text);
+  cursor: pointer; font-size: 13px;
+}
+.page-button:hover:not(:disabled) {
+  border-color: var(--accent); color: var(--accent);
+}
+.page-button:disabled {
+  opacity: .4; cursor: default;
+}
+.page-status {
+  color: var(--text-dim); font-size: 13px; text-align: center;
+}
+
+/* 画像は docs/user/assets/user-guide/ に置き、下部 script の pageMedia に登録します。 */
+.media-slot {
+  margin: 14px 0 18px;
+  border: 1px solid var(--border); border-radius: 8px;
+  background: rgba(255,255,255,.025); overflow: hidden;
+}
+.media-slot img {
+  display: block; width: 100%; height: auto;
+}
+.media-caption {
+  padding: 8px 12px; color: var(--text-dim); font-size: 12px;
+  border-top: 1px solid var(--border);
+}
+.media-slot-empty:not(.media-slot-visible) { display: none; }
+.media-placeholder {
+  min-height: 180px; display: flex; flex-direction: column;
+  align-items: center; justify-content: center; gap: 6px;
+  color: var(--text-dim); border: 1px dashed var(--border);
+}
+.media-placeholder strong { color: var(--accent); font-size: 13px; }
+.media-placeholder span { font-size: 12px; }
+
+/* ── Responsive ── */
+@media (max-width: 900px) {
+  #sidebar { transform: translateX(calc(-1 * var(--sidebar-w))); }
+  #sidebar.show { transform: translateX(0); }
+  #sidebar-toggle { display: flex; }
+  #main { margin-left: 0; padding: 32px 20px 60px; }
+  .page-controls { position: sticky; top: 0; z-index: 20; background: var(--bg); }
+}
+
+@media print {
+  body { display: block; background: #fff; color: #000; }
+  #sidebar, #sidebar-toggle, .page-controls { display: none !important; }
+  #main { margin: 0; max-width: none; padding: 0; }
+  .doc-page { display: block !important; page-break-after: always; }
+  .media-slot-empty { display: none !important; }
+}
+</style>
+</head>
+<body>
+<button aria-label="Переключить меню" id="sidebar-toggle">☰</button>
+<!-- ===== SIDEBAR ===== -->
+<aside id="sidebar">
+<div id="sidebar-header">
+<h1>LoomStroke</h1>
+<p>Руководство пользователя</p>
+<input autocomplete="off" id="sidebar-search" placeholder="Поиск..." type="search"/>
+<div class="language-picker">
+<label for="language-select">Язык интерфейса</label>
+<select autocomplete="off" id="language-select">
+<option value="ja">японский</option>
+<option value="en">английский</option>
+<option value="zh_CN">китайский упрощенный</option>
+<option value="zh_Hant">китайский традиционный</option>
+<option value="zh_TW">тайваньский мандарин</option>
+<option value="ko">корейский</option>
+<option value="es">испанский</option>
+<option value="ar">арабский</option>
+<option value="hi">хинди</option>
+<option value="pt_BR">португальский (Бразилия)</option>
+<option value="bn">бенгальский</option>
+<option selected="selected" value="ru">русский</option>
+</select>
+</div>
+</div>
+<nav>
+<!-- Overview -->
+<div class="nav-section open">
+<div class="nav-section-title">Обзор</div>
+<div class="nav-section-items">
+<a class="nav-link" href="#overview">Обзор приложения</a>
+<a class="nav-link" href="#layout">Макет экрана</a>
+</div>
+</div>
+<!-- Drawing Tools -->
+<div class="nav-section open">
+<div class="nav-section-title">Инструменты рисования</div>
+<div class="nav-section-items">
+<a class="nav-link" href="#pen">Перо</a>
+<a class="nav-link" href="#eraser">Ластик</a>
+<a class="nav-link" href="#fill-bucket">инструмент заливки</a>
+<a class="nav-link" href="#gradient">градиент инструмент</a>
+<a class="nav-link" href="#pattern-fill">узор заливка инструмент</a>
+</div>
+</div>
+<!-- Selection Tools -->
+<div class="nav-section">
+<div class="nav-section-title">Инструменты выделения</div>
+<div class="nav-section-items">
+<a class="nav-link" href="#selection-rect">прямоугольник выделение инструмент</a>
+<a class="nav-link" href="#magic-wand">Инструмент «Волшебная палочка»</a>
+</div>
+</div>
+<!-- Transform / Move -->
+<div class="nav-section">
+<div class="nav-section-title">трансформация / переместить</div>
+<div class="nav-section-items">
+<a class="nav-link" href="#move">Перемещение</a>
+<a class="nav-link" href="#transform-panel">трансформация панель</a>
+</div>
+</div>
+<!-- Vector Tools -->
+<div class="nav-section">
+<div class="nav-section-title">Векторные инструменты</div>
+<div class="nav-section-items">
+<a class="nav-link" href="#vector-path">векторный контур инструмент</a>
+<a class="nav-link" href="#vector-precise">точное векторный перо</a>
+<a class="nav-link" href="#vector-edit">векторный редактировать инструмент</a>
+</div>
+</div>
+<!-- Text Tools -->
+<div class="nav-section">
+<div class="nav-section-title">Инструмент текста</div>
+<div class="nav-section-items">
+<a class="nav-link" href="#text-tool">Инструмент текста</a>
+<a class="nav-link" href="#text-vertical">вертикальный Инструмент текста</a>
+<a class="nav-link" href="#font-panel">Панель шрифтов</a>
+</div>
+</div>
+<!-- Utility Tools -->
+<div class="nav-section">
+<div class="nav-section-title">Утилиты</div>
+<div class="nav-section-items">
+<a class="nav-link" href="#eyedropper">инструмент «Пипетка»</a>
+</div>
+</div>
+<!-- Panels -->
+<div class="nav-section open">
+<div class="nav-section-title">панели</div>
+<div class="nav-section-items">
+<a class="nav-link" href="#panel-toolbar">Панель инструментов</a>
+<a class="nav-link" href="#panel-tool-props">Свойства инструмента</a>
+<a class="nav-link" href="#panel-layers">Панель слоев</a>
+<a class="nav-link" href="#panel-color">Панель цвета</a>
+<a class="nav-link" href="#panel-brush-manager">Менеджер кистей</a>
+<a class="nav-link" href="#panel-shape-manager">Менеджер фигур</a>
+<a class="nav-link" href="#panel-effect">Панель эффектов</a>
+<a class="nav-link" href="#panel-pages">Панель страниц</a>
+<a class="nav-link" href="#panel-preview">Панель предпросмотра</a>
+<a class="nav-link" href="#panel-context-toolbar">Контекстная панель</a>
+</div>
+</div>
+<!-- Effects -->
+<div class="nav-section">
+<div class="nav-section-title">эффект слои</div>
+<div class="nav-section-items">
+<a class="nav-link" href="#fx-gaussian-blur">Гауссово размытие</a>
+<a class="nav-link" href="#fx-levels">Уровни</a>
+<a class="nav-link" href="#fx-hue-saturation">Оттенок / Насыщенность</a>
+<a class="nav-link" href="#fx-invert">инвертировать</a>
+<a class="nav-link" href="#fx-brightness-contrast">Яркость / Контраст</a>
+<a class="nav-link" href="#fx-sharpen">Резкость</a>
+<a class="nav-link" href="#fx-noise-reduction">Шумоподавление</a>
+</div>
+</div>
+<!-- AI -->
+<div class="nav-section">
+<div class="nav-section-title">AI интеграция</div>
+<div class="nav-section-items">
+<a class="nav-link" href="#ai-comfyui">ComfyUI панель</a>
+<a class="nav-link" href="#ai-nanobanana">Панель NanoBanana</a>
+<a class="nav-link" href="#ai-prompt-editor">редактор промптов</a>
+</div>
+</div>
+<!-- AI Effect Layer -->
+<div class="nav-section">
+<div class="nav-section-title">AI эффект</div>
+<div class="nav-section-items">
+<a class="nav-link" href="#ai-effect-overview">AI эффект слой</a>
+<a class="nav-link" href="#ai-effect-manager">Менеджер AI-эффектов</a>
+<a class="nav-link" href="#ai-effect-editor">эффект редактор</a>
+<a class="nav-link" href="#ai-effect-runtime">генерация и состояние</a>
+</div>
+</div>
+<!-- Canvas -->
+<div class="nav-section">
+<div class="nav-section-title">Управление холстом</div>
+<div class="nav-section-items">
+<a class="nav-link" href="#canvas-viewport">Масштаб / панорама / поворот</a>
+<a class="nav-link" href="#canvas-rulers">линейки и направляющие</a>
+<a class="nav-link" href="#canvas-grid">Сетка</a>
+</div>
+</div>
+<!-- File I/O -->
+<div class="nav-section">
+<div class="nav-section-title">Ввод/вывод файлов</div>
+<div class="nav-section-items">
+<a class="nav-link" href="#file-formats">Поддерживаемые форматы</a>
+<a class="nav-link" href="#file-lstroke">.lstroke родной формат</a>
+</div>
+</div>
+<!-- Settings -->
+<div class="nav-section">
+<div class="nav-section-title">Настройки</div>
+<div class="nav-section-items">
+<a class="nav-link" href="#settings-preferences">Параметры</a>
+<a class="nav-link" href="#settings-shortcuts">Список сочетаний клавиш</a>
+</div>
+</div>
+</nav>
+</aside>
+<!-- ===== MAIN CONTENT ===== -->
+<main id="main">
+<!-- Hero -->
+<div class="hero">
+<h2 style="border:none;">LoomStroke</h2>
+<p>Интегрированное приложение для цифровой живописи, манги и иллюстраций</p>
+</div>
+<!-- ────────────────── 概要 ────────────────── -->
+<section id="overview">
+<h2>Обзор приложения</h2>
+<p>LoomStroke — приложение для цифровой живописи, объединяющее растровое рисование, векторные контуры, редактирование текста, многостраничность, внешние плагины и интеграцию AI в единой рабочей среде. Рабочие файлы можно сохранять в<code>.lstroke</code>формате.</p>
+<div class="grid-2">
+<div class="card">
+<h4>Ключевые функции</h4>
+<ul>
+<li>Движок кистей с поддержкой нажима и наклона</li>
+<li>Управление непрозрачностью слоя и режимом наложения</li>
+<li>Векторные контуры и параметрические фигуры</li>
+<li>горизонтальный и вертикальный текст</li>
+<li>неразрушающий эффект слои</li>
+<li>Многостраничные документы</li>
+</ul>
+</div>
+<div class="card">
+<h4>AI интеграция</h4>
+<ul>
+<li>ComfyUI рабочий процесс интеграция</li>
+<li>Генерация изображений NanoBanana (Gemini)</li>
+<li>Редактор промптов и управление фрагментами</li>
+<li>LLM Gateway (OpenAI / Anthropic / Gemini)</li>
+</ul>
+</div>
+</div>
+</section>
+<!-- ────────────────── Layout ────────────────── -->
+<section id="layout">
+<h2>Макет экрана</h2>
+<p>Главное окно состоит из перечисленных ниже областей. Панели можно свободно размещать перетаскиванием, а также объединять во вкладки.</p>
+<div class="card">
+<table>
+<tr><th>область</th><th>Содержимое</th></tr>
+<tr><td>Верх</td><td>Строка меню + панель свойств инструмента, показывающая настройки активного инструмента в одну строку</td></tr>
+<tr><td>лево док</td><td>Панель инструментов, панель цвета, панель шрифтов и панель страниц</td></tr>
+<tr><td>По центру</td><td>Холст, по умолчанию SimpleCanvasService на основе QImage, плюс линейки</td></tr>
+<tr><td>право док</td><td>Панель слоёв, менеджер фигур, трансформация, эффекты и предпросмотр</td></tr>
+<tr><td>Плавающее</td><td>Контекстная панель инструментов, автоматически появляется после штрихов</td></tr>
+</table>
+</div>
+<p><kbd>Window</kbd> Каждую панель можно показать или скрыть через меню.<kbd>F11</kbd> переключает в полноэкранный режим.</p>
+</section>
+<!-- ══════════════════ 描画ツール ══════════════════ -->
+<h2 id="pen">Перо <span class="tag tag-tool">инструмент</span></h2>
+<p>Растровая кисть с поддержкой нажима и наклона. Также поддерживает импорт кистей ABR (Photoshop).</p>
+<div class="card">
+<p><strong>сочетание клавиш:</strong> <kbd>B</kbd> / <kbd>Shift+B</kbd></p>
+<table>
+<tr><th>Параметры</th><th>диапазон</th><th>Описание</th></tr>
+<tr><td>Размер</td><td>1 ～ 128</td><td>кисть диаметр (px)</td></tr>
+<tr><td>Непрозрачность</td><td>0 ～ 1.0</td><td>непрозрачность для всё штрих</td></tr>
+<tr><td>Жёсткость</td><td>0 ～ 1.0</td><td>Жёсткость края (0 = мягкий, 1 = жёсткий)</td></tr>
+<tr><td>Интервал</td><td>0.01 ～ 1.0</td><td>Интервал отпечатков как доля диаметра кисти</td></tr>
+<tr><td>Поток</td><td>0 ～ 1.0</td><td>величина потока чернил</td></tr>
+<tr><td>Плотность штампа</td><td>0 ～ 1.0</td><td>Плотность отпечатков, выраженная как обратная величина интервала</td></tr>
+<tr><td>Чувствительность к нажиму</td><td>на / OFF</td><td>включить нажим чувствительность</td></tr>
+<tr><td>Сглаживание</td><td>0 ～ 1.0</td><td>штрих элемент</td></tr>
+<tr><td>Тональный диапазон</td><td>0 ～ 1.0</td><td>Диапазон тона для отрисовки в стиле скринтона</td></tr>
+<tr><td>Тоновая гамма</td><td>0.1 ～ 2.0</td><td>Значение гамма-коррекции тона</td></tr>
+<tr><td>наклон угол</td><td>на / OFF</td><td>Затенение по наклону планшета</td></tr>
+</table>
+<p><strong>Пресет:</strong> элемент, элемент и пользовательские кисти, импортированные из ABR</p>
+</div>
+<h2 id="eraser">Ластик <span class="tag tag-tool">инструмент</span></h2>
+<p>Растровый ластик с чувствительностью к нажиму.</p>
+<div class="card">
+<p><strong>сочетание клавиш:</strong> <kbd>E</kbd> / <kbd>Shift+E</kbd>   <strong>размер изменить:</strong> <kbd>[</kbd> <kbd>]</kbd></p>
+<table>
+<tr><th>Параметры</th><th>диапазон</th><th>Описание</th></tr>
+<tr><td>Размер</td><td>1 ～ 200</td><td>ластик диаметр (px)</td></tr>
+<tr><td>Непрозрачность</td><td>0 ～ 1.0</td><td>ластик сила</td></tr>
+<tr><td>Жёсткость</td><td>0 ～ 1.0</td><td>край жёсткость</td></tr>
+<tr><td>Интервал</td><td>0.01 ～ 1.0</td><td>отпечаток интервал</td></tr>
+<tr><td>элемент элемент</td><td>на / OFF</td><td>Сглаживание</td></tr>
+</table>
+<p><strong>Пресет:</strong> мягкий элемент, край элемент</p>
+</div>
+<h2 id="fill-bucket">инструмент заливки <span class="tag tag-tool">инструмент</span></h2>
+<p>Заполняет смежные области похожего цвета заливкой.</p>
+<div class="card">
+<table>
+<tr><th>Параметры</th><th>диапазон</th><th>Описание</th></tr>
+<tr><td>Допуск цвета</td><td>0 ～ 255</td><td>цвет элемент используется для заливка обнаружение</td></tr>
+<tr><td>Закрытие зазоров (px)</td><td>0 ～ 10</td><td>число из пиксели используется к автоматически закрыть разрывы в линии</td></tr>
+<tr><td>Цель заливки</td><td>активный слой / Новый слой</td><td>цель слой для заливка</td></tr>
+</table>
+</div>
+<h2 id="gradient">градиент инструмент <span class="tag tag-tool">инструмент</span></h2>
+<p>Рисует линейные или радиальные градиенты перетаскиванием. Промежуточные точки можно редактировать, перетаскивая их маркеры.</p>
+<div class="card">
+<table>
+<tr><th>Параметры</th><th>диапазон</th><th>Описание</th></tr>
+<tr><td>градиент тип</td><td>линейный / радиальный</td><td>градиент фигура</td></tr>
+<tr><td>цвет</td><td>цвет</td><td>Начальный цвет</td></tr>
+<tr><td>цвет B</td><td>цвет</td><td>Конечный цвет</td></tr>
+<tr><td>середина точки</td><td>0 ～ 3</td><td>число из промежуточные цвет точки</td></tr>
+<tr><td>позиция точки N</td><td>0 ～ 1.0</td><td>положение из каждая точка (0=начало край, 1=конец край)</td></tr>
+<tr><td>точка N цвет</td><td>цвет</td><td>цвет из каждая точка</td></tr>
+<tr><td>дизеринг</td><td>на / OFF</td><td>элемент к уменьшить полосы</td></tr>
+</table>
+<p><strong>Поддерживаемые режимы наложения:</strong> обычный, Darken, Multiply, цвет затемнение, Lighten, экран, цвет осветление, линейный осветление, наложение, мягкий свет, жёсткий свет, разница, исключение</p>
+</div>
+<h2 id="pattern-fill">узор заливка инструмент <span class="tag tag-tool">инструмент</span></h2>
+<p>Заполняет область повторяющимся плиточным узором.</p>
+<div class="card">
+<table>
+<tr><th>Параметры</th><th>диапазон</th><th>Описание</th></tr>
+<tr><td>узор</td><td>шахматная сетка / горизонтальный полосы / вертикальный полосы / диагональные полосы / точки / перекрёстная штриховка</td><td>Built-в узор к использовать</td></tr>
+<tr><td>узор масштаб</td><td>0.1 ～ 10.0</td><td>узор масштаб коэффициент</td></tr>
+<tr><td>Допуск цвета</td><td>0 ～ 255</td><td>цвет элемент используется для заливка обнаружение</td></tr>
+<tr><td>Закрытие зазоров (px)</td><td>0 ～ 10</td><td>число из пиксели используется к автоматически закрыть разрывы в линии</td></tr>
+</table>
+<p><strong>Операция:</strong> начиная из щелкнутый точка, заполняет связанная область с выбранный плиточный узор.</p>
+</div>
+<!-- ══════════════════ 選択ツール ══════════════════ -->
+<h2 id="selection-rect">прямоугольник выделение инструмент <span class="tag tag-tool">инструмент</span></h2>
+<p>Создает выделение перетаскиванием прямоугольника. Также поддерживает выделение диапазона векторных объектов.</p>
+<div class="card">
+<table>
+<tr><th>Параметры</th><th>диапазон</th><th>Описание</th></tr>
+<tr><td>выделение режим</td><td>прямоугольник / векторный</td><td>растровый прямоугольник выделение / векторный диапазон выделение</td></tr>
+<tr><td>Операция</td><td>заменить / добавить / вычесть / пересечь</td><td>как выделение является объединены</td></tr>
+<tr><td>Попиксельно</td><td>на / OFF</td><td>выровнять к пиксели</td></tr>
+<tr><td>растушёвка включено</td><td>на / OFF</td><td>растушёвка выделение</td></tr>
+<tr><td>Радиус растушёвки</td><td>0 ～ 128</td><td>растушёвка радиус (px)</td></tr>
+<tr><td>Радиус маски</td><td>0 ～ 128</td><td>радиус используется для элемент или элемент выделение маска</td></tr>
+<tr><td>трансформация X / Y</td><td>-10000 ～ 10000</td><td>элемент величина во время трансформация</td></tr>
+<tr><td>трансформация масштаб X / Y</td><td>0.01 ～ 100</td><td>масштаб коэффициент во время трансформация</td></tr>
+<tr><td>Поворот при трансформации</td><td>-180° ～ 180°</td><td>Угол поворота при трансформации</td></tr>
+</table>
+<p><strong>Клавиши-модификаторы:</strong> <kbd>Shift</kbd>=добавить, <kbd>Alt</kbd>=вычесть, <kbd>Shift+Alt</kbd>=пересечь</p>
+<p><strong>трансформация режим (<kbd>Ctrl+T</kbd>):</strong> переместить / масштаб / повернуть / отразить / сбросить / применить / отмена</p>
+</div>
+<h2 id="magic-wand">Инструмент «Волшебная палочка» <span class="tag tag-tool">инструмент</span></h2>
+<p>Автоматически выделяет смежную область похожего цвета от точки щелчка.</p>
+<div class="card">
+<table>
+<tr><th>Параметры</th><th>диапазон</th><th>Описание</th></tr>
+<tr><td>Допуск</td><td>0 ～ 255</td><td>цвет элемент (по умолчанию: 32)</td></tr>
+<tr><td>Смежные</td><td>на / OFF</td><td>на=смежный пиксели только, OFF=похожий цвета по всему всё изображение</td></tr>
+<tr><td>Операция</td><td>заменить / добавить / вычесть / пересечь</td><td>как выделение является объединены</td></tr>
+</table>
+<p>когда параметры изменить, инструмент автоматически элемент из элемент щелкнутый точка.</p>
+</div>
+<!-- ══════════════════ 変形・移動 ══════════════════ -->
+<h2 id="move">Перемещение <span class="tag tag-tool">инструмент</span></h2>
+<p>Перемещает и трансформирует слои или векторные объекты. Двойной щелчок по текстовому объекту переключает в режим редактирования.</p>
+<div class="card">
+<p><strong>сочетание клавиш:</strong> <kbd>V</kbd></p>
+<table>
+<tr><th>Параметры</th><th>диапазон</th><th>Описание</th></tr>
+<tr><td>Попиксельно</td><td>на / OFF</td><td>элемент выравнивание (по умолчанию: на)</td></tr>
+<tr><td>Сетка привязка</td><td>на / OFF</td><td>Сетка привязка</td></tr>
+<tr><td>Сетка размер</td><td>1 ～ 1024</td><td>Сетка размер (px)</td></tr>
+</table>
+<p><strong>элемент режим:</strong></p>
+<ul>
+<li><strong>с выделение:</strong> Вырезать, переместить, и трансформация выбранный область</li>
+<li><strong>векторный / текст:</strong> переместить объекты. Double-щелчок к переключить к контур редактировать или Инструмент текста</li>
+<li><strong>растровый слой:</strong> переместить элемент слой</li>
+</ul>
+</div>
+<h2 id="transform-panel">трансформация панель <span class="tag tag-panel">панель</span></h2>
+<p>Управляет положением, размером и углом выбранного объекта с помощью числового ввода.</p>
+<div class="card">
+<table>
+<tr><th>элемент</th><th>диапазон</th><th>Описание</th></tr>
+<tr><td>X</td><td>-99999 ～ 99999</td><td>X положение (верх-левый из границы поле)</td></tr>
+<tr><td>Y</td><td>-99999 ～ 99999</td><td>Y положение (верх-левый из границы поле)</td></tr>
+<tr><td>W</td><td>0.1 ～ 99999</td><td>ширина (векторный только)</td></tr>
+<tr><td>H</td><td>0.1 ～ 99999</td><td>высота (векторный только)</td></tr>
+<tr><td>угол</td><td>-360° ～ 360°</td><td>Угол поворота</td></tr>
+</table>
+<p>когда растровый слой является выбранный, только X/Y может быть редактируется.</p>
+</div>
+<!-- ══════════════════ ベクターツール ══════════════════ -->
+<h2 id="vector-path">векторный контур инструмент <span class="tag tag-tool">инструмент</span></h2>
+<p>Щелкните, чтобы разместить опорные точки и создать кривые Безье. Перетаскивайте, чтобы задать направляющие ручки.</p>
+<div class="card">
+<table>
+<tr><th>Параметры</th><th>диапазон</th><th>Описание</th></tr>
+<tr><td>Режим Shift</td><td>ограничение / отключить_привязка</td><td><kbd>Shift</kbd> переключает поведение к угол ограничение или привязка отключение</td></tr>
+<tr><td>Допуск автозамыкания (px)</td><td>0 ～ 64</td><td>расстояние для автоматическое закрытие когда щелчок рядом начало точка</td></tr>
+<tr><td>Ширина обводки</td><td>0.1 ～ 64</td><td>Ширина обводки</td></tr>
+<tr><td>Цвет обводки</td><td>цвет</td><td>штрих цвет</td></tr>
+<tr><td>Включить заливку</td><td>на / OFF</td><td>заливка включено</td></tr>
+<tr><td>Цвет заливки</td><td>цвет</td><td>заливка цвет</td></tr>
+</table>
+<p><kbd>Enter</kbd> к элемент,<kbd>Esc</kbd> к отменить. возврат рядом начало точка закрывает контур автоматически.</p>
+</div>
+<h2 id="vector-precise">точное векторный перо <span class="tag tag-tool">инструмент</span></h2>
+<p>Автоматически преобразует свободные штрихи в плавные кривые Безье.</p>
+<div class="card">
+<p><strong>сочетание клавиш:</strong> <kbd>P</kbd></p>
+<table>
+<tr><th>Параметры</th><th>диапазон</th><th>Описание</th></tr>
+<tr><td>Режим редактирования</td><td>опорная точка / фигура</td><td>выберите следует ли инструмент предпочитает опорная точка редактирование или фигура редактирование</td></tr>
+<tr><td>Автозамыкание</td><td>на / OFF</td><td>автоматическое контур закрытие</td></tr>
+<tr><td>Ширина обводки</td><td>0.1 ～ 64</td><td>Ширина обводки</td></tr>
+<tr><td>Цвет обводки</td><td>цвет</td><td>штрих цвет</td></tr>
+<tr><td>Включить заливку</td><td>на / OFF</td><td>заливка включено</td></tr>
+<tr><td>Цвет заливки</td><td>цвет</td><td>заливка цвет</td></tr>
+<tr><td>Плотность опорных точек</td><td>0.1 ～ 1.0</td><td>плотность из сгенерировано опорные точки</td></tr>
+<tr><td>Плавность направляющих</td><td>0 ～ 5.0</td><td>Сила сглаживания кривой</td></tr>
+</table>
+</div>
+<h2 id="vector-edit">векторный редактировать инструмент <span class="tag tag-tool">инструмент</span></h2>
+<p>Редактирует опорные точки и ручки существующих векторных контуров.</p>
+<div class="card">
+<table>
+<tr><th>Параметры</th><th>диапазон</th><th>Описание</th></tr>
+<tr><td>Цвет обводки</td><td>цвет</td><td>штрих цвет из выбранный векторный</td></tr>
+<tr><td>Ширина обводки</td><td>0.1 ～ 128</td><td>штрих ширина из выбранный векторный</td></tr>
+<tr><td>Включить заливку</td><td>на / OFF</td><td>заливка включено</td></tr>
+<tr><td>Цвет заливки</td><td>цвет</td><td>заливка цвет из выбранный векторный</td></tr>
+</table>
+<ul>
+<li>щелчок и перетащить опорные точки к переместить их</li>
+<li>Перетаскивайте маркеры, чтобы изменить кривизну</li>
+<li><kbd>Alt</kbd>+перетащить к дублировать пока перемещение,<kbd>Ctrl</kbd> элемент элемент привязка</li>
+<li>непреобразованные базовые фигуры являются редактируется параметрически с фигура ручки вместо из опорные точки</li>
+<li>масштаб и повернуть с границы поле</li>
+</ul>
+</div>
+<!-- ══════════════════ テキストツール ══════════════════ -->
+<h2 id="text-tool">Инструмент текста <span class="tag tag-tool">инструмент</span></h2>
+<p>Создает и редактирует горизонтальный текст. Щелкните для точечного текста или перетащите для текстовой области.</p>
+<div class="card">
+<p><strong>сочетание клавиш:</strong> <kbd>T</kbd></p>
+<table>
+<tr><th>Параметры</th><th>диапазон</th><th>Описание</th></tr>
+<tr><td>перенос слов</td><td>на / OFF</td><td>элемент перенос для область текст</td></tr>
+<tr><td>Размер шрифта (pt)</td><td>1 ～ 512</td><td>шрифт размер</td></tr>
+<tr><td>Межстрочный интервал</td><td>0.5 ～ 4.0</td><td>линия-высота элемент</td></tr>
+<tr><td>Трекинг</td><td>-64 ～ 128</td><td>элемент интервал (трекинг)</td></tr>
+<tr><td>поля</td><td>0 к 256, отдельно для верх, низ, лево, и право</td><td>элемент поля из текст поле</td></tr>
+</table>
+<p><strong>Notes:</strong> поддерживает IME ввод, перемещение/поворот/масштабирование пока редактирование встроенно, и обтекание формы область текст через выделение к область. шрифт семейство, стиль, выравнивание, цвет, и непрозрачность являются управляется в шрифт панель.</p>
+</div>
+<h2 id="text-vertical">вертикальный Инструмент текста <span class="tag tag-tool">инструмент</span></h2>
+<p>Используется для создания и редактирования вертикального текста. Основные параметры общие с инструментом текста.</p>
+<div class="card">
+<table>
+<tr><th>элемент параметры</th><th>Варианты</th><th>Описание</th></tr>
+<tr><td>вертикальный поток</td><td>лево / право</td><td>элемент поток направление</td></tr>
+<tr><td>повернуть элемент/элемент</td><td>на / OFF</td><td>повернуть полуширинные буквенно-цифровые символы для вертикальный письмо</td></tr>
+</table>
+<p>Поддерживает автоматическое позиционирование японской пунктуации и автоматический поворот знака долгого гласного.</p>
+</div>
+<h2 id="font-panel">Панель шрифтов <span class="tag tag-panel">панель</span></h2>
+<p>Панель управления типографскими параметрами, используемыми текстовыми инструментами.</p>
+<div class="card">
+<h4>виджет список</h4>
+<table>
+<tr><th>виджет</th><th>тип</th><th>Описание</th></tr>
+<tr><td>перенос слов</td><td>флажок</td><td>элемент перенос на/OFF</td></tr>
+<tr><td>Семейство шрифтов</td><td>комбинированный поле</td><td>выберите из системный шрифт список</td></tr>
+<tr><td>Стиль шрифта</td><td>комбинированный поле</td><td>стиль из выбранный шрифт</td></tr>
+<tr><td>Размер шрифта (pt)</td><td>числовой поле</td><td>1.0 к 512.0, шаг 1.0</td></tr>
+<tr><td>Вертикальное письмо</td><td>флажок</td><td>вертикальный письмо режим переключатель</td></tr>
+<tr><td>Направление абзаца</td><td>комбинированный поле</td><td>элемент / элемент (вертикальный письмо только)</td></tr>
+<tr><td>Выравнивание</td><td>комбинированный поле</td><td>лево / Центр / право / элемент</td></tr>
+<tr><td>Межстрочный интервал</td><td>числовой поле</td><td>0.5 к 4.0, шаг 0.1</td></tr>
+<tr><td>Трекинг</td><td>числовой поле</td><td>-64.0 к 128.0, шаг 0.5</td></tr>
+<tr><td>поля (верх/низ/право/лево)</td><td>четыре числовой поля</td><td>0.0 к 256.0 для каждая элемент</td></tr>
+<tr><td>Цветность</td><td>цвет кнопка</td><td>Щёлкните, чтобы открыть диалог выбора цвета</td></tr>
+<tr><td>Непрозрачность</td><td>ползунок</td><td>0 ～ 100%</td></tr>
+<tr><td>Папки пользовательских шрифтов</td><td>список + кнопки</td><td>Добавление, удаление и повторное сканирование каталогов шрифтов</td></tr>
+</table>
+<p>Поддерживаемые форматы шрифтов: TTF / OTF / TTC / OTC</p>
+</div>
+<!-- ══════════════════ ユーティリティ ══════════════════ -->
+<h2 id="eyedropper">инструмент «Пипетка» <span class="tag tag-tool">инструмент</span></h2>
+<p>Берет цвет с холста и задает его как цвет переднего плана.</p>
+<div class="card">
+<p><strong>сочетание клавиш:</strong> <kbd>I</kbd> / <kbd>Shift+I</kbd></p>
+</div>
+<!-- ══════════════════ パネル ══════════════════ -->
+<h2 id="panel-toolbar">Панель инструментов <span class="tag tag-panel">панель</span></h2>
+<p>Вертикальный список кнопок инструментов у левого края. Каждая кнопка представляет группу инструментов; удержание 350 ms открывает меню выбора вариантов.</p>
+<div class="card">
+<p>макет переключает автоматически между вертикальный и горизонтальный как панель ширина изменения. значок размер является 48x48 px.</p>
+</div>
+<h2 id="panel-tool-props">Свойства инструмента панель <span class="tag tag-panel">панель</span></h2>
+<p>Панель настроек активного инструмента. Есть два режима: строка под меню и панель внутри дока.</p>
+<div class="card">
+<h4>компоненты</h4>
+<ul>
+<li><strong>пресет строка:</strong> пресет выделение комбинированный поле + сохранить/удалить кнопки</li>
+<li><strong>элемент элемент группа:</strong> размер, непрозрачность, жёсткость, интервал, поток, и элемент элемент инструмент настройки</li>
+<li><strong>Свойства инструмента группа:</strong> инструмент-конкретный параметры</li>
+<li><strong>Действия элемент:</strong> инструмент-конкретный действие кнопки и элемент</li>
+</ul>
+<p><strong>автоматическое виджет генерация:</strong> элемент/int -&gt; ползунок, элемент -&gt; флажок, элемент -&gt; комбинированный поле, цвет -&gt; цвет кнопка</p>
+</div>
+<h2 id="panel-layers">Панель слоев <span class="tag tag-panel">панель</span></h2>
+<p>Отображает и управляет стеком слоёв как иерархическим деревом. Обычные слои, группы, эффекты, маски и слои AI-эффектов находятся в одном дереве.</p>
+<div class="card">
+<h4>верх управляет</h4>
+<table>
+<tr><th>Элемент</th><th>Описание</th></tr>
+<tr><td>Режим наложения</td><td>изменения смешивание режим из выбранный слой. группы может также использовать Сквозное смешивание.</td></tr>
+<tr><td>Непрозрачность</td><td>изменения выбранный слой непрозрачность с 0 к 100% ползунок и числовой отображать.</td></tr>
+</table>
+<h4>слой дерево</h4>
+<table>
+<tr><th>Отображение / операция</th><th>Описание</th></tr>
+<tr><td>миниатюра</td><td>Миниатюра слоя, обычно 32×32 px. Щёлкните, чтобы редактировать содержимое слоя.</td></tr>
+<tr><td>маска миниатюра</td><td>показано только когда слой маска существует. щелчок это к переключить к маска редактировать режим.</td></tr>
+<tr><td>тип элемент</td><td><code>V</code> векторный、<code>S</code> фигура、<code>T</code> текст、<code>FX</code> эффект、<code>G</code> группа、<code>M</code> маска、<code>AI</code> элемент AI эффект.</td></tr>
+<tr><td>видимость</td><td>глаз значок переключает видимость. скрытый строки являются показано приглушены.</td></tr>
+<tr><td>элемент</td><td>элемент слой редактирование.</td></tr>
+<tr><td>элемент элемент</td><td>элемент прозрачный пиксели. использовать специальный переключатель в строка.</td></tr>
+<tr><td>перетащить и отпустить</td><td>использовать это к переупорядочить слои или переместить их в группы. перетаскивание слой на AI эффект Slot строка назначает это как что Slot's ввод.</td></tr>
+<tr><td>Double-щелчок</td><td>элемент слой.</td></tr>
+</table>
+<h4>низ кнопки</h4>
+<table>
+<tr><th>кнопка</th><th>Описание</th></tr>
+<tr><td>Добавить</td><td>добавляет новый растровый слой.</td></tr>
+<tr><td>Удалить</td><td>Удаляет выбранный слой.</td></tr>
+<tr><td>дублировать</td><td>элемент выбранный слой. отключено когда элемент является no выделение.</td></tr>
+<tr><td>маска</td><td>Добавляет маску слоя к выбранному слою. Если она уже есть, удаляет маску.</td></tr>
+<tr><td>добавить эффект слой</td><td>Добавляет обычный слой эффекта. В средах, где включён AI-эффект, <strong>AI эффект</strong> вы может также выберите .lsfx пресеты из подменю.</td></tr>
+<tr><td>G</td><td>группы два или больше выбранный слои.</td></tr>
+<tr><td>V</td><td>добавляет новый векторный слой.</td></tr>
+</table>
+<h4>AI эффект строка</h4>
+<table>
+<tr><th>Отображение / операция</th><th>Описание</th></tr>
+<tr><td>элемент элемент</td><td>элемент AI эффект слой самого.</td></tr>
+<tr><td>генерировать кнопка</td><td>Показывается только в строке слоя AI-эффекта. Запускает генерацию для этого слоя и отключается во время выполнения.</td></tr>
+<tr><td>элемент дочерний строка</td><td>виртуальная строка создана из ввод_слоты в AI эффект манифест. обязательные слоты что являются не задать являются показано с предупреждение.</td></tr>
+<tr><td>исключение кнопка</td><td>Показывается, когда входной слой назначен Slot. Переключает вход в режим без смешивания / только для AI-ввода.</td></tr>
+<tr><td>xN элемент</td><td>показывает ссылка количество на обычный слои ссылочные посредством элемент AI эффект слоты.</td></tr>
+<tr><td>зеленый элемент</td><td>элемент вывод слой сгенерировано посредством AI эффект.</td></tr>
+</table>
+<h4>правый-щелчок меню</h4>
+<table>
+<tr><th>Элемент</th><th>Описание</th></tr>
+<tr><td>добавить слой / Дублировать слой / Удалить слой</td><td>базовые добавить, дублировать, и удалить элемент.</td></tr>
+<tr><td>элемент</td><td>Открывает диалог переименования.</td></tr>
+<tr><td>Объединить с нижним</td><td>элемент в слой ниже. включено только когда возможно.</td></tr>
+<tr><td>элемент видимый</td><td>элемент видимый слои в один слой. скрытый слои являются сохранено.</td></tr>
+<tr><td>Растеризовать</td><td>преобразует векторы и похожий элемент к растровый. включено только когда возможно.</td></tr>
+<tr><td>элемент к векторный</td><td>преобразует непреобразованные базовые фигуры в обычный векторный объекты.</td></tr>
+<tr><td>группа слои / элемент</td><td>группы несколько выбранный слои, или элемент когда используется на группа строка.</td></tr>
+<tr><td>создать / элемент элемент маска</td><td>переключает элемент маска состояние.</td></tr>
+<tr><td>Добавить / редактировать / завершить / удалить маску слоя</td><td>добавляет слой маска, переключает маска редактировать режим, или элемент маска.</td></tr>
+<tr><td>добавить эффект</td><td>добавляет дочерний эффект к выбранный слой. отключено для группы.</td></tr>
+<tr><td>загрузить как выделение / инвертировать элемент</td><td>Показывается только при щелчке правой кнопкой по слою маски. Загружает маску как выделение или инвертирует прозрачные пиксели.</td></tr>
+</table>
+<h4>Режимы наложения</h4>
+<p>Смешивание слоёв определяет, как выбранный слой компонуется со слоями ниже. Непрозрачность применяется после этого ко всему результату. Так как меняется только отображаемая композиция без правки пикселей, режим полезен для цветокоррекции, добавления света или тени и наложения текстур.</p>
+<table>
+<tr><th>Группа</th><th>Режим</th><th>Описание</th></tr>
+<tr><td>группа только</td><td>Пропустить</td><td>для группы. элемент дочерний слои в элемент из слои ниже, вместо из элемент их внутри группа.</td></tr>
+<tr><td>Нормальный</td><td>Нормальный</td><td>стандартный композиция. верхний слой является размещён как-является, с непрозрачность элемент его сила.</td></tr>
+<tr><td>Нормальный</td><td>Dissolve</td><td>Показывает полупрозрачные области случайными точками. Подходит для грубых краёв и зернистого вида.</td></tr>
+<tr><td>Затемнение</td><td>Затемнение</td><td>Отдаёт приоритет более тёмным компонентам верхнего и нижнего слоёв. Полезно для добавления теней и тёмных областей с подавлением светлых частей.</td></tr>
+<tr><td>Затемнение</td><td>Умножение</td><td>Умножает цвета и затемняет результат. Это самый удобный режим затемнения для лайн-арта, теней, бумажной фактуры и грязевых оверлеев.</td></tr>
+<tr><td>Затемнение</td><td>Затемнение основы</td><td>Сильно затемняет основу, словно «прожигая» её, повышая насыщенность и контраст. Подходит для глубоких теней и выраженных текстур.</td></tr>
+<tr><td>Затемнение</td><td>Линейный затемнитель</td><td>Затемняет линейным снижением яркости. Даёт более сильные и «математические» тёмные области, чем Color Burn.</td></tr>
+<tr><td>Затемнение</td><td>Темнее</td><td>Выбирает более тёмный цвет из верхнего и нижнего слоёв вместо смешивания. Результат похож на замену цвета с приоритетом тёмных тонов.</td></tr>
+<tr><td>Замена светлым</td><td>Замена светлым</td><td>Отдаёт приоритет более светлым компонентам верхнего и нижнего слоёв. Используйте для добавления света или бликов с удалением тёмных частей.</td></tr>
+<tr><td>Замена светлым</td><td>Экран</td><td>Работает в противоположном направлении от Multiply и естественно осветляет. Подходит для свечения, бликов, дыма и световых материалов.</td></tr>
+<tr><td>Замена светлым</td><td>Осветление основы</td><td>элемент основа сильно и создает элемент свет. это может элемент к элемент элемент, so настроить с непрозрачность.</td></tr>
+<tr><td>Замена светлым</td><td>Линейный осветлитель (добавить)</td><td>добавляет цвета к элемент сильно. полезно для свет элемент, элемент эффекты, и элемент элемент.</td></tr>
+<tr><td>Замена светлым</td><td>Светлее</td><td>Выбирает более светлый цвет из верхнего и нижнего слоёв. Используйте при наложении материалов с приоритетом светлых цветов.</td></tr>
+<tr><td>контраст</td><td>Перекрытие</td><td>переключает между Multiply и экран основанный на яркость из основа. стандартный выбор для добавление текстура и усиление затенение.</td></tr>
+<tr><td>контраст</td><td>Мягкий свет</td><td>добавляет контраст больше элемент чем наложение. подходит для элемент, элемент, и элемент затенение элемент.</td></tr>
+<tr><td>контраст</td><td>Жёсткий свет</td><td>Добавляет сильные светотеневые эффекты на основе верхнего слоя. Создаёт чёткие блики и тени.</td></tr>
+<tr><td>контраст</td><td>Яркий свет</td><td>создает сильный, элемент контраст похожий к элемент из цвет затемнение и цвет осветление.</td></tr>
+<tr><td>контраст</td><td>Линейный свет</td><td>Сильно и линейно меняет яркость, как сочетание Linear Burn и Linear Dodge.</td></tr>
+<tr><td>контраст</td><td>Точечный свет</td><td>Компонует так, словно заменяет тёмные и светлые области. Подходит для специальных жёстких текстур и эффектов.</td></tr>
+<tr><td>контраст</td><td>Жёсткое смешение</td><td>элемент цвета элемент сильно элемент результат. полезно для элемент-элемент, элемент, или элемент эффекты.</td></tr>
+<tr><td>инверсия</td><td>Разница</td><td>показывает разница между верхний и нижний слои. полезно для выравнивание элемент, инвертировано-элемент эффекты, и элемент цвет элемент.</td></tr>
+<tr><td>инверсия</td><td>Исключение</td><td>элемент разница смешивание чем разница. подходит для элемент эффекты с элемент инвертировано элемент.</td></tr>
+<tr><td>инверсия</td><td>Вычесть</td><td>Вычитает верхний цвет из основы, затемняя её. Полезно для эффектов удаления цвета и тёмных спецэффектов.</td></tr>
+<tr><td>инверсия</td><td>Разделение</td><td>элемент как если элемент основа посредством верхний цвет. полезно для коррекции, элемент, и элемент сильный элемент изменения.</td></tr>
+<tr><td>компонент</td><td>Цветовой тон</td><td>применяет только верхний оттенок к основа пока элемент основа яркость и насыщенность. использовать это когда вы только элемент к изменить оттенок.</td></tr>
+<tr><td>компонент</td><td>Насыщенность</td><td>применяет только верхний насыщенность к основа. использовать это к добавить элемент или уменьшить насыщенность.</td></tr>
+<tr><td>компонент</td><td>Цветность</td><td>применяет верхний оттенок и насыщенность к основа пока элемент основа яркость. подходит для элемент элемент затенение.</td></tr>
+<tr><td>компонент</td><td>Свечение</td><td>применяет только верхний яркость к основа пока элемент основа оттенок и насыщенность. элемент только затенение или яркость.</td></tr>
+</table>
+<p>смешивание режимы элемент отображено результат из слои, эффект слои, группа композиция, и PSD экспорт. элемент режим элемент холст но элемент не элемент слой пиксели элемент.</p>
+</div>
+<h2 id="panel-color">Панель цвета <span class="tag tag-panel">панель</span></h2>
+<p>цвет селектор объединяющий HSV цвет колесо и треугольник, числовой ввод, и палитра управление.</p>
+<div class="card">
+<h4>виджет список</h4>
+<table>
+<tr><th>виджет</th><th>Описание</th></tr>
+<tr><td>цвет колесо</td><td>выберите оттенок на внешнем кольце (0 к 360 градусов)</td></tr>
+<tr><td>тон треугольник</td><td>выберите насыщенность и значение внутри треугольник</td></tr>
+<tr><td>HSV числовой поля (H/S/V)</td><td>H: 0～359°, S: 0～100%, V: 0～100%</td></tr>
+<tr><td>RGB числовой поля (R/G/B)</td><td>0 к 255 каждая</td></tr>
+<tr><td>Hex текст ввод</td><td>#элемент формат</td></tr>
+<tr><td>добавить к палитра кнопка</td><td>добавить текущий цвет к палитра</td></tr>
+<tr><td>палитра сетка</td><td>Сетка отображать из элемент элемент (32x32 px). удалить кнопка появляется на элемент.</td></tr>
+<tr><td>цвет история</td><td>показывает 10 элемент элемент цвета в строка (24x24 px)</td></tr>
+</table>
+<p>палитра по умолчанию: чёрный, белый, красный, зелёный, синий</p>
+</div>
+<h2 id="panel-brush-manager">Менеджер кистей <span class="tag tag-panel">панель</span></h2>
+<p>Панель управления пользовательскими наконечниками кистей. Можно создавать, импортировать и удалять кисти.</p>
+<div class="card">
+<h4>виджет список</h4>
+<table>
+<tr><th>виджет</th><th>Описание</th></tr>
+<tr><td>кисть наконечник сетка</td><td>показывает кисть наконечник элемент в значок режим. элемент-щелчок к элемент.</td></tr>
+<tr><td>создать наконечник кнопка</td><td>создать кисть наконечник из холст выделение</td></tr>
+<tr><td>кнопка сохранения параметров</td><td>сохранить текущий перо настройки к кисть</td></tr>
+<tr><td>Кнопка повторного сканирования ABR</td><td>Повторно сканировать папку библиотеки ABR</td></tr>
+<tr><td>импортировать ABR кнопка</td><td>импортировать Photoshop .abr кисть файл</td></tr>
+<tr><td>импортировать PNG кнопка</td><td>импортировать PNG изображение как кисть наконечник</td></tr>
+<tr><td>удалить кнопка</td><td>удалить выбранный кисть</td></tr>
+</table>
+</div>
+<h2 id="panel-shape-manager">Менеджер фигур <span class="tag tag-panel">панель</span></h2>
+<p>элемент векторный фигура библиотека управление и выравнивание инструменты. это также включает элемент фигуры элемент как манга элемент элемент и элемент линии.</p>
+<div class="card">
+<h4>вкладка 1 - Менеджер фигур (библиотека)</h4>
+<table>
+<tr><th>виджет</th><th>Описание</th></tr>
+<tr><td>категория фильтр</td><td>фильтр фигуры посредством категория</td></tr>
+<tr><td>тег фильтр</td><td>фильтр фигуры посредством тег</td></tr>
+<tr><td>фигура сетка</td><td>показать миниатюры в значок режим</td></tr>
+<tr><td>отпечаток / добавить к холст</td><td>добавить фигура как отпечаток или на холст</td></tr>
+<tr><td>импортировать SVG / Экспорт SVG</td><td>импортировать/экспорт SVG файлы</td></tr>
+<tr><td>новый категория / элемент / удалить</td><td>элемент элемент и фигуры</td></tr>
+</table>
+<h4>вкладка 2 - базовые фигуры (built-в фигуры)</h4>
+<table>
+<tr><th>Категория</th><th>фигура список</th></tr>
+<tr><td>базовые</td><td>элемент, элемент прямоугольник, элемент, элемент</td></tr>
+<tr><td>эффект</td><td>элемент линии (элемент), элемент линии (элемент)</td></tr>
+<tr><td>элемент</td><td>элемент элемент (элемент / элемент / элемент), элемент элемент</td></tr>
+<tr><td>элемент</td><td>треугольник, элемент, элемент, элемент, элемент, элемент, элемент, элемент</td></tr>
+</table>
+<h4>выравнивание и элемент инструменты</h4>
+<table>
+<tr><th>виджет</th><th>Описание</th></tr>
+<tr><td>выровнять ссылка</td><td>элемент: выделение / холст / первый объект / элемент объект</td></tr>
+<tr><td>Вписать (с сохранением) / Вписать (растянуть) / Центр</td><td>Вписывание и элемент</td></tr>
+<tr><td>выровнять лево / Центр (H) / право</td><td>горизонтальный выравнивание</td></tr>
+<tr><td>выровнять верх / середина (V) / низ</td><td>вертикальный выравнивание</td></tr>
+<tr><td>элемент элемент / элемент</td><td>элемент элемент</td></tr>
+</table>
+</div>
+<h2 id="panel-effect">Панель эффектов <span class="tag tag-panel">панель</span></h2>
+<p>редактирует параметры для выбранный эффект слой. параметр UI является сгенерировано элемент элемент к эффект тип.</p>
+<div class="card">
+<p>когда эффект слой является выбранный в слой панель, его эффект имя появляется в группа поле заголовок и числовой поля являются сгенерировано для каждая параметр. изменения являются элемент в предпросмотр элемент и поддержка Отменить.</p>
+</div>
+<h2 id="panel-pages">Панель страниц <span class="tag tag-panel">панель</span></h2>
+<p>Панель управления многостраничными документами.</p>
+<div class="card">
+<h4>виджет список</h4>
+<table>
+<tr><th>виджет</th><th>Описание</th></tr>
+<tr><td>+ (добавить страница) кнопка</td><td>добавить страница (базовые / пользовательский элемент + элемент сохранить меню)</td></tr>
+<tr><td>кнопка дублирования</td><td>дублировать текущий страница</td></tr>
+<tr><td>кнопка удаления</td><td>удалить страница</td></tr>
+<tr><td>Up / элемент кнопки</td><td>изменить страница элемент</td></tr>
+<tr><td>страница список</td><td>Номер страницы + имя страницы + индикатор изменений (*). Миниатюры сейчас отображаются как заполнители.</td></tr>
+</table>
+<p>Double-щелчок или <kbd>F2</kbd> к элемент страница. панель переключает между список режим и значок режим элемент на его элемент соотношение.</p>
+</div>
+<h2 id="panel-preview">Панель предпросмотра <span class="tag tag-panel">панель</span></h2>
+<p>Показывает уменьшенный предпросмотр всего холста в реальном времени.</p>
+<div class="card">
+<p>Перетаскивайте мышью для панорамирования и используйте масштабирование для настройки области предпросмотра. Панель автоматически перерисовывается при обновлении композиции холста.</p>
+</div>
+<h2 id="panel-context-toolbar">Контекстная панель <span class="tag tag-panel">панель</span></h2>
+<p>элемент панель инструментов что появляется автоматически на холст после штрих или действие. это показывает элемент настройки для активный инструмент.</p>
+<div class="card">
+<table>
+<tr><th>Инструменты</th><th>отображать элемент</th><th>отображено элемент</th></tr>
+<tr><td>перо / ластик</td><td>после штрих завершает</td><td>размер, непрозрачность, жёсткость</td></tr>
+<tr><td>Волшебная палочка</td><td>после создание выделение</td><td>элемент, смежная, элемент</td></tr>
+<tr><td>градиент</td><td>когда предпросмотр запускает</td><td>тип, цвет /B, точки, дизеринг</td></tr>
+<tr><td>векторный контур / точное</td><td>после штрих завершает</td><td>штрих ширина/цвет, заливка</td></tr>
+</table>
+</div>
+<!-- ══════════════════ エフェクトレイヤー ══════════════════ -->
+<h2 id="fx-gaussian-blur">Гауссово размытие <span class="tag tag-effect">эффект</span></h2>
+<p>Неразрушающий эффект, применяющий к слою гауссово размытие.</p>
+<div class="card">
+<table>
+<tr><th>Параметры</th><th>диапазон</th><th>Описание</th></tr>
+<tr><td>радиус</td><td>0 ～ 250 px</td><td>Радиус растушёвки</td></tr>
+</table>
+</div>
+<h2 id="fx-levels">Уровни <span class="tag tag-effect">эффект</span></h2>
+<p>Управляет контрастом путем настройки входных/выходных уровней и гаммы.</p>
+<div class="card">
+<table>
+<tr><th>Параметры</th><th>диапазон</th><th>Описание</th></tr>
+<tr><td>в чёрный</td><td>0 ～ 255</td><td>тёмный точка из ввод уровни</td></tr>
+<tr><td>в белый</td><td>0 ～ 255</td><td>свет точка из ввод уровни</td></tr>
+<tr><td>гамма</td><td>0.01 ～ 9.99</td><td>гамма коррекции значение</td></tr>
+<tr><td>выходной чёрный</td><td>0 ～ 255</td><td>тёмный точка из вывод уровни</td></tr>
+<tr><td>выходной чёрный</td><td>0 ～ 255</td><td>свет точка из вывод уровни</td></tr>
+</table>
+</div>
+<h2 id="fx-hue-saturation">Оттенок / Насыщенность <span class="tag tag-effect">эффект</span></h2>
+<p>Эффект цветокоррекции для настройки оттенка, насыщенности и светлоты.</p>
+<div class="card">
+<table>
+<tr><th>Параметры</th><th>диапазон</th><th>Описание</th></tr>
+<tr><td>Цветовой тон</td><td>-180 ～ 180°</td><td>оттенок элемент</td></tr>
+<tr><td>Насыщенность</td><td>-100 ～ 100</td><td>насыщенность коррекция</td></tr>
+<tr><td>светлота</td><td>-100 ～ 100</td><td>светлота коррекция</td></tr>
+</table>
+</div>
+<h2 id="fx-invert">инвертировать <span class="tag tag-effect">эффект</span></h2>
+<p>Инвертирует тональный диапазон, то есть яркость цвета слоя.</p>
+<div class="card">
+<table>
+<tr><th>Параметры</th><th>диапазон</th><th>Описание</th></tr>
+<tr><td>Сила</td><td>0 ～ 100%</td><td>инверсия сила</td></tr>
+</table>
+</div>
+<h2 id="fx-brightness-contrast">Яркость / Контраст <span class="tag tag-effect">эффект</span></h2>
+<p>элемент слой яркость и контраст. это является встроенный-в элемент-элемент эффект с элемент CPU и GPU контуры.</p>
+<div class="card">
+<table>
+<tr><th>Параметры</th><th>диапазон</th><th>Описание</th></tr>
+<tr><td>яркость</td><td>-100 ～ 100</td><td>яркость коррекция</td></tr>
+<tr><td>контраст</td><td>-100 ～ 100</td><td>контраст коррекция</td></tr>
+</table>
+</div>
+<h2 id="fx-sharpen">Резкость <span class="tag tag-effect">эффект</span></h2>
+<p>Повышает резкость краев методом нерезкой маски.</p>
+<div class="card">
+<table>
+<tr><th>Параметры</th><th>диапазон</th><th>Описание</th></tr>
+<tr><td>величина</td><td>0 ～ 500</td><td>Резкость сила</td></tr>
+<tr><td>радиус</td><td>0.1 ～ 50</td><td>Резкость радиус</td></tr>
+<tr><td>порог</td><td>0 ～ 255</td><td>шум элемент порог</td></tr>
+</table>
+</div>
+<h2 id="fx-noise-reduction">Шумоподавление <span class="tag tag-effect">эффект</span></h2>
+<p>Эффект шумоподавления на основе метода нелокальных средних (NLM).</p>
+<div class="card">
+<table>
+<tr><th>Параметры</th><th>диапазон</th><th>Описание</th></tr>
+<tr><td>Сила</td><td>1 ～ 40</td><td>яркость шум подавление сила</td></tr>
+<tr><td>цвет сила</td><td>1 ～ 40</td><td>цвет шум подавление сила</td></tr>
+</table>
+</div>
+<!-- ══════════════════ AI Effect Layer ══════════════════ -->
+<h2 id="ai-effect-overview">AI эффект слой <span class="tag tag-ai">AI эффект</span></h2>
+<p>AI эффект слой является элемент что элемент<code>.lsfx</code> пресеты на холст как слои, затем отправляет ввод слои и параметры к ComfyUI Gateway или NanoBanana Gateway к генерировать изображения. это элемент с Панель слоев, Панель эффектов, и AI эффекты менеджер отдельно из обычный ComfyUI и NanoBanana панели.</p>
+<div class="card">
+<h4>базовые поток</h4>
+<ol>
+<li>из AI меню, выберите <strong>AI эффект пресеты...</strong> к открыть AI эффекты менеджер</li>
+<li>правый-щелчок пресет и выберите <strong>Добавить слой AI эффект</strong> </li>
+<li>в Панель слоев, элемент ввод слои к элемент строки под AI эффект слой</li>
+<li>использовать Панель эффектов к управление параметры, вывод назначение, и генерировать</li>
+<li>применить сгенерировано результат к AI эффект слой самого или к новый вывод слой непосредственно выше это</li>
+</ol>
+<table>
+<tr><th>Элемент</th><th>Содержимое</th></tr>
+<tr><td>слой тип</td><td><code>layer_type="ai_effect"</code></td></tr>
+<tr><td>пресет формат</td><td><code>.lsfx</code>. ZIP содержит манифест, Gateway настройки, значки, и связанные данные</td></tr>
+<tr><td>элемент пресеты</td><td>элемент, элемент элемент, элемент элемент, HDR эффекты, элемент XL</td></tr>
+<tr><td>поддерживаемые Gateway</td><td>ComfyUI Gateway / NanoBanana Gateway</td></tr>
+<tr><td>Сохранить</td><td><code>.lstroke</code> v1.2 <code>ai_effect</code> элемент элемент состояние</td></tr>
+</table>
+<p>элемент что требуют внешний сервис доступ может запускаться только когда внешний сервисы являются разрешено в Параметры и обязательные API ключ или подключение настройки являются настроено.</p>
+</div>
+<h2 id="ai-effect-manager">Менеджер AI-эффектов <span class="tag tag-ai">AI эффект</span></h2>
+<p>элемент <code>.lsfx</code> управление экран для элемент, добавление, редактирование, элемент, и импорт пресеты.</p>
+<div class="card">
+<table>
+<tr><th>Действия</th><th>Описание</th></tr>
+<tr><td>Добавить слой AI эффект</td><td>добавляет выбранный пресет к текущий холст как AI эффект слой.</td></tr>
+<tr><td>редактировать</td><td>Открытьs пресет в эффект элемент и элемент существующий настройки для редактирование.</td></tr>
+<tr><td>Импорт</td><td>Импортs внешний <code>.lsfx</code> в <code>user_data/ai_effect/presets/</code> .</td></tr>
+<tr><td>Удалить</td><td>элемент пользователь пресеты. элемент пресеты являются элемент с снимок so пользователь изменения являются элемент.</td></tr>
+</table>
+<p>The default build ships no bundled <code>.lsfx</code> presets. Use Import or Register to add presets to <code>user_data/ai_effect/presets/</code>.</p>
+</div>
+<h2 id="ai-effect-editor">эффект редактор <span class="tag tag-ai">AI эффект</span></h2>
+<p>экран для создание и редактирование <code>.lsfx</code> пресеты из ComfyUI рабочие процессы или NanoBanana параметр элемент.</p>
+<div class="card">
+<table>
+<tr><th>область</th><th>элемент</th></tr>
+<tr><td>метаданные</td><td>элемент пресет имя, категория, описание, теги, значок, и связанные метаданные.</td></tr>
+<tr><td>элемент / элемент</td><td>элемент кандидат параметры и ввод слоты полученные из Gateway и показывает их как пользователь-элемент UI.</td></tr>
+<tr><td>Импортировать пресет</td><td>существующий <code>.lsfx</code> может быть элемент к возобновить редактирование в эффект элемент.</td></tr>
+<tr><td>Экспорт</td><td>элемент проверенный манифест и Gateway файлы атомарно как <code>.lsfx</code> .</td></tr>
+</table>
+<p>элемент <code>.lsfx</code> может быть зарегистрировано непосредственно в AI эффекты менеджер. если элемент элемент не содержит <code>.lsfx</code> , это является элемент когда сохранение.</p>
+</div>
+<h2 id="ai-effect-runtime">генерация и состояние <span class="tag tag-ai">AI эффект</span></h2>
+<p>когда AI эффект слой является выбранный, Панель эффектов показывает динамический параметры из пресет. генерация является зарегистрировано в история как элемент и поддерживает Отменить / Повторить.</p>
+<div class="card">
+<h4>Панель слоев / Панель эффектов</h4>
+<table>
+<tr><th>Элемент</th><th>Описание</th></tr>
+<tr><td>Slot строка</td><td>ввод строка показано под AI эффект слой. элемент элемент слой как ссылка.</td></tr>
+<tr><td>исключение кнопка</td><td>Переключает входной Slot так, чтобы он исключался из смешивания и использовался только как AI-ввод.</td></tr>
+<tr><td>Сгенерировать</td><td>запускает генерация из выбранный слой или из AI эффект строка в Панель слоев.</td></tr>
+<tr><td>вывод к это слой</td><td>когда включено, вывод является элемент элемент к AI эффект слой самого. когда отключено, новый вывод слой является создана непосредственно выше это.</td></tr>
+<tr><td>Progress / отмена</td><td>Во время выполнения отображается прогресс, а внешняя отмена обрабатывается через<code>cancel_layer(layer_id)</code> .</td></tr>
+</table>
+<h4>элемент и сохранение</h4>
+<table>
+<tr><th>Элемент</th><th>Описание</th></tr>
+<tr><td>ввод разрешение</td><td>разрешает ссылочные растровый / группа / маска / AI эффект слои как PNG файлы для Gateway.</td></tr>
+<tr><td>кэш</td><td>для элемент элемент и параметры, <code>param_hash</code> является используется к элемент элемент / кэш элемент.</td></tr>
+<tr><td>UI состояние</td><td>числовой ввод, элемент ввод, и элемент состояние являются сохранено как <code>AIEffectState.param_ui_state</code> .</td></tr>
+<tr><td>элемент</td><td>только когда отладка включена, <code>user_data/logs/ai_effect.log</code> является элемент как JSON линии.</td></tr>
+<tr><td>Настройки</td><td>повторные попытки, кэш, API элемент, и связанные настройки являются управляется в Параметры -&gt; AI эффект. настройки файл является <code>user_data/ai_effect/preferences.json</code> .</td></tr>
+</table>
+<p>когда ComfyUI является не выполняется или пресеты являются не элемент, подсказки элемент, элемент элемент, или элемент являются показано. к элемент элемент подключение элемент, автоматическое подключение когда элемент AI эффект слой имеет элемент.</p>
+</div>
+<!-- ══════════════════ AI 連携 ══════════════════ -->
+<h2 id="ai-comfyui">ComfyUI панель <span class="tag tag-ai">AI</span></h2>
+<p>Подключается к серверу ComfyUI и запускает рабочие процессы генерации изображений AI. Доступно только при разрешённом доступе к внешним сервисам.</p>
+<div class="card">
+<h4>подключение панель</h4>
+<table>
+<tr><th>виджет</th><th>Описание</th></tr>
+<tr><td>элемент ввод</td><td>сервер элемент (по умолчанию: 127.0.0.1:8188)</td></tr>
+<tr><td>SSL флажок</td><td>использовать HTTPS/WSS</td></tr>
+<tr><td>элемент / элемент кнопка</td><td>начало или элемент подключение</td></tr>
+<tr><td>элемент кнопка</td><td>элемент узел элемент</td></tr>
+</table>
+<h4>рабочий процесс</h4>
+<table>
+<tr><th>виджет</th><th>Описание</th></tr>
+<tr><td>рабочий процесс комбинированный поле</td><td>список из сохранено рабочие процессы</td></tr>
+<tr><td>загрузить кнопка</td><td>загрузить .json рабочий процесс файл</td></tr>
+</table>
+<p>рабочие процессы являются сохранено в <code>user_data/plugins/comfyui/workflows</code> и вывод слои использовать <code>user_data/cache/LoomStroke/layers</code> .</p>
+<h4>вкладка 1 — рабочий процесс элемент</h4>
+<p>каждая узел в элемент рабочий процесс является показано как динамический вкладка где параметры может быть редактируется. элемент параметры может быть редактируется с промпт компоновщик.</p>
+<h4>вкладка 2 — Queue</h4>
+<table>
+<tr><th>виджет</th><th>Описание</th></tr>
+<tr><td>задание элемент</td><td>шесть столбцов: ID, статус, элемент, рабочий процесс, элемент, элемент</td></tr>
+<tr><td>отмена кнопка</td><td>отмена выбранный задание</td></tr>
+<tr><td>предпросмотр кнопка</td><td>предпросмотр задание результаты</td></tr>
+<tr><td>Clear Finished кнопка</td><td>элемент элемент задания</td></tr>
+</table>
+<h4>элемент управляет</h4>
+<table>
+<tr><th>виджет</th><th>Описание</th></tr>
+<tr><td>Queue кнопка</td><td>элемент задание (зеленый)</td></tr>
+<tr><td>отмена кнопка</td><td>отмена выполняется задание</td></tr>
+<tr><td>элемент числовой поле</td><td>0=элемент, -1=элемент, N=элемент N элемент</td></tr>
+<tr><td>элемент флажок</td><td>элемент элемент</td></tr>
+</table>
+</div>
+<h2 id="ai-nanobanana">Панель NanoBanana <span class="tag tag-ai">AI</span></h2>
+<p>AI изображение генерация панель используя Google Gemini API. API ключ сохраняется в OS keyring и это может быть используется только когда внешний сервис доступ является разрешено.</p>
+<div class="card">
+<h4>виджет список</h4>
+<table>
+<tr><th>виджет</th><th>элемент / диапазон</th><th>Описание</th></tr>
+<tr><td>Промпт</td><td>текст / чип компоновщик</td><td>генерация промпт ввод</td></tr>
+<tr><td>ввод слои</td><td>слой комбинированный x N</td><td>слои используется как ввод (несколько выделение поддерживаемые)</td></tr>
+<tr><td>Модель</td><td>комбинированный поле</td><td>Режимl к использовать, элемент как элемент-2.5-элемент</td></tr>
+<tr><td>Мышление</td><td>элемент / элемент</td><td>элемент уровень</td></tr>
+<tr><td>Режим</td><td>текст+изображение / изображение</td><td>вывод элемент</td></tr>
+<tr><td>Размер</td><td>элемент / 512 / 1K / 2K / 4K</td><td>вывод изображение размер</td></tr>
+<tr><td>элемент соотношение</td><td>1:1, 4:3, 3:4, 16:9, 9:16, и т. д.</td><td>элемент соотношение с элемент элемент</td></tr>
+<tr><td>цель слой</td><td>&lt;Новый слой&gt; / существующий слой</td><td>вывод назначение для сгенерировано изображения</td></tr>
+<tr><td>элемент флажок</td><td>на / OFF</td><td>элемент элемент элемент</td></tr>
+<tr><td>Search флажок</td><td>на / OFF</td><td>использовать Google Search</td></tr>
+<tr><td>генерировать кнопка</td><td>—</td><td>запустить изображение генерация (зеленый)</td></tr>
+<tr><td>Status текст</td><td>—</td><td>отображение журнала состояния</td></tr>
+</table>
+</div>
+<h2 id="ai-prompt-editor">редактор промптов <span class="tag tag-ai">AI</span></h2>
+<p>панель что элемент элемент промпт элемент, фрагмент управление, и LLM элемент. фрагменты являются сохранено в <code>user_data/text_editor/text_snippets.sqlite3</code> .</p>
+<div class="card">
+<h4>вкладка 1 — элемент</h4>
+<table>
+<tr><th>виджет</th><th>Описание</th></tr>
+<tr><td>компоненты палитра</td><td>перетащить и отпустить четыре компонент элемент: элемент / список / текст / промпт</td></tr>
+<tr><td>элемент промпт чип поток</td><td>переупорядочить элемент к элемент промпт</td></tr>
+<tr><td>элемент ввод</td><td>элемент между компоненты</td></tr>
+<tr><td>элемент кнопка</td><td>элемент промпт</td></tr>
+<tr><td>Копировать кнопка</td><td>Копировать результат к элемент</td></tr>
+<tr><td>сохранить область</td><td>промпт имя + категория + сохранить/загрузить/новый кнопки</td></tr>
+</table>
+<h4>вкладка 2 — библиотека</h4>
+<table>
+<tr><th>виджет</th><th>Описание</th></tr>
+<tr><td>Search панель</td><td>текст поиск + тип фильтр + тег фильтр</td></tr>
+<tr><td>фрагмент список</td><td>список из сохранено фрагменты</td></tr>
+<tr><td>элемент элемент</td><td>редактировать заголовок / теги / тип / элемент</td></tr>
+<tr><td>дублировать / удалить / Экспорт</td><td>фрагмент действие кнопки</td></tr>
+</table>
+<h4>вкладка 3 — LLM</h4>
+<table>
+<tr><th>виджет</th><th>элемент / диапазон</th><th>Описание</th></tr>
+<tr><td>элемент флажок</td><td>на / OFF</td><td>Текущий Gateway работает в нестриминговом режиме</td></tr>
+<tr><td>элемент</td><td>комбинированный поле</td><td>AI элемент выделение</td></tr>
+<tr><td>Модель</td><td>комбинированный поле</td><td>Режимl выделение</td></tr>
+<tr><td>элемент</td><td>0.0 ～ 2.0</td><td>генерация элемент (по умолчанию: 0.7)</td></tr>
+<tr><td>максимум</td><td>0 ～ 32000</td><td>максимум токен количество (по умолчанию: 512)</td></tr>
+<tr><td>системный промпт</td><td>текст область</td><td>системный промпт</td></tr>
+<tr><td>пользователь промпт</td><td>текст область</td><td>пользователь промпт</td></tr>
+<tr><td>вывод</td><td>текст область</td><td>отображать LLM элемент</td></tr>
+<tr><td>элемент / отмена / элемент</td><td>—</td><td>элемент управление кнопки</td></tr>
+</table>
+</div>
+<!-- ══════════════════ キャンバス操作 ══════════════════ -->
+<h2 id="canvas-viewport">Масштаб / панорама / поворот<span class="tag tag-param">холст</span></h2>
+<div class="card">
+<table>
+<tr><th>Действия</th><th>ввод</th><th>Notes</th></tr>
+<tr><td>Увеличить</td><td><kbd>Ctrl+=</kbd>/ колесо мыши вверх</td><td>максимум 3200%</td></tr>
+<tr><td>Уменьшить</td><td><kbd>Ctrl+-</kbd>/ колесо мыши вниз</td><td>элемент 1%</td></tr>
+<tr><td>Сброс масштаба</td><td><kbd>Ctrl+0</kbd></td><td>элемент к 100%</td></tr>
+<tr><td>панорама (элемент)</td><td>правый-щелчок перетащить</td><td>элемент в настройки</td></tr>
+<tr><td>Поворот холста</td><td>изображение меню</td><td>90° по часовой / 90° против часовой / 180°. преобразует все слои как история группа.</td></tr>
+</table>
+<p><strong>элемент элемент:</strong> по умолчанию холст является QImage-основанный <code>SimpleCanvasService</code> . слои может быть растровый, векторный, или маска слои; во время растровый элемент, off-холст области являются также сохранено посредством <code>offset_x/y</code> .</p>
+</div>
+<h2 id="canvas-rulers">линейки и направляющие <span class="tag tag-param">холст</span></h2>
+<div class="card">
+<ul>
+<li><strong>линейки:</strong> показано на верх и лево края из холст. элемент может быть px / mm / элемент.</li>
+<li><strong>создать направляющие:</strong> перетащить из элемент на холст</li>
+<li><strong>переместить направляющие:</strong>Щёлкните и перетащите направляющую</li>
+<li><strong>удалить направляющие:</strong> перетащить за пределы холста</li>
+<li><strong>переключатель отображать:</strong> <kbd>R</kbd>Клавиша переключает видимость направляющих</li>
+<li><strong>привязка:</strong> автоматическое привязка к направляющие, сетка, опорные точки, и края</li>
+<li><strong>Цвет направляющих:</strong> элемент в настройки (по умолчанию: <code>#00B7FF</code>)</li>
+</ul>
+</div>
+<h2 id="canvas-grid">Сетка <span class="tag tag-param">холст</span></h2>
+<div class="card">
+<ul>
+<li><strong>переключатель отображать:</strong> <kbd>G</kbd> ключ</li>
+<li><strong>Сетка размер:</strong> по умолчанию 32 px, элемент из 1 к 5000 px в Параметры</li>
+<li><strong>Сетка привязка:</strong> может быть включено в переместить инструмент и похожий инструменты</li>
+</ul>
+</div>
+<!-- ══════════════════ ファイル入出力 ══════════════════ -->
+<h2 id="file-formats">Поддерживаемые форматы <span class="tag tag-param">файл</span></h2>
+<div class="card">
+<table>
+<tr><th>формат</th><th>импортировать</th><th>Экспорт</th><th>Notes</th></tr>
+<tr><td>.lstroke (родной)</td><td>v1.0.0 / v1.1.0 / v1.2.0</td><td>v1.2.0</td><td>элемент несколько страницы, слои, векторы, и UI макет</td></tr>
+<tr><td>PNG</td><td>○</td><td>○</td><td>элемент уровень может быть настроено</td></tr>
+<tr><td>JPEG</td><td>○</td><td>○</td><td>элемент и элемент настройки может быть настроено</td></tr>
+<tr><td>TIFF</td><td>○</td><td>○</td><td>LZW элемент и 16-bit поддержка</td></tr>
+<tr><td>BMP</td><td>○</td><td>○</td><td></td></tr>
+<tr><td>WebP</td><td>○</td><td>○</td><td>элемент и элемент настройки может быть настроено</td></tr>
+<tr><td>PSD</td><td>○</td><td>○</td><td>Импортирует структуру слоёв и экспортирует PSD со слоями</td></tr>
+<tr><td>ABR</td><td>○</td><td>—</td><td>импортировать Photoshop кисти</td></tr>
+<tr><td>SVG</td><td>○</td><td>○</td><td>Through Менеджер фигур</td></tr>
+</table>
+<p>PNG / JPEG / WebP / BMP / TIFF файлы может быть элемент из OS на холст и элемент как новый растровый слои.</p>
+</div>
+<h2 id="file-lstroke">.lstroke родной формат <span class="tag tag-param">файл</span></h2>
+<div class="card">
+<p>.lstroke является ZIP-основанный родной формат. на сохранить, это элемент к <code>*.lstroke.tmp</code> и элемент элемент цель файл. элемент элемент является сохранено:</p>
+<ul>
+<li>JSON манифест (элемент и документ метаданные)</li>
+<li>PNG изображение данные для каждая слой</li>
+<li>векторный объект данные</li>
+<li>страница элемент (v1.1 элемент-страница)</li>
+<li>UI макет снимок</li>
+<li>ICC цвет элемент</li>
+</ul>
+</div>
+<!-- ══════════════════ 設定 ══════════════════ -->
+<h2 id="settings-preferences">Параметры <span class="tag tag-param">настройки</span></h2>
+<p><kbd>Ctrl+,</kbd>открывает диалог параметров. Сейчас он состоит из пяти вкладок: элемент / элемент / элемент I/O / элемент / AI элемент.</p>
+<div class="card">
+<h4>элемент вкладка</h4>
+<table>
+<tr><th>элемент</th><th>диапазон</th><th>Описание</th></tr>
+<tr><td>включить Numba элемент</td><td>на / OFF</td><td>элемент Numba JIT элемент для числовой элемент.</td></tr>
+<tr><td>кэш размер</td><td>10 ～ 10000 элемент</td><td>максимум число из в-app кэш записи.</td></tr>
+<tr><td>Отменить элемент</td><td>10 ～ 1000</td><td>максимум число из Отменить история элемент</td></tr>
+<tr><td>элемент порог</td><td>1 ～ 1000 MB</td><td>порог для начиная к использовать элемент для большой изображение данные.</td></tr>
+<tr><td>элемент FPS лимит</td><td>10 ～ 120 fps</td><td>элемент FPS лимит используется к уменьшить CPU загрузить на большой элемент.</td></tr>
+<tr><td>Включить чёткий векторный оверлей (масштабирование)</td><td>на / OFF</td><td>показывает элемент векторный слой элемент at экран разрешение пока элемент.</td></tr>
+<tr><td>векторный наложение максимальный размер</td><td>2048 / 4096 / 8192</td><td>максимум растровый элемент для резкий векторный наложение. элемент элемент являются больше элемент но использовать больше VRAM.</td></tr>
+</table>
+<h4>элемент вкладка</h4>
+<table>
+<tr><th>элемент</th><th>Варианты</th><th>Описание</th></tr>
+<tr><td>элемент</td><td>системный по умолчанию / элемент / элемент / элемент (элемент / элемент / элемент элемент) / элемент / элемент / элемент / элемент / элемент (элемент) / элемент / элемент</td><td>Язык UI. Изменения применяются к основным областям интерфейса без перезапуска.</td></tr>
+<tr><td>цвет элемент</td><td>тёмный / свет / системный</td><td>цвет элемент</td></tr>
+<tr><td>показать панель инструментов</td><td>на / OFF</td><td>показать панель инструментов</td></tr>
+<tr><td>показать статус панель</td><td>на / OFF</td><td>показать статус панель</td></tr>
+<tr><td>Сетка элемент</td><td>1 ～ 5000 px</td><td>Сетка элемент</td></tr>
+<tr><td>элемент внешний AI сервисы</td><td>на / OFF</td><td>когда OFF, элемент доступ к ComfyUI / LLM Gateway / NanoBanana является элемент.</td></tr>
+<tr><td>элемент</td><td>Вид / слой / фильтр / инструменты / плагины, и т. д.</td><td>элемент переключает видимость для цель элемент.</td></tr>
+<tr><td>маска наложение цвет</td><td>цвет (по умолчанию: #00FFFF)</td><td>выделение маска наложение цвет</td></tr>
+<tr><td>маска наложение непрозрачность</td><td>0 ～ 255</td><td>выделение маска наложение непрозрачность</td></tr>
+</table>
+<h4>Ввод/вывод файлов вкладка</h4>
+<table>
+<tr><th>элемент</th><th>диапазон</th><th>Описание</th></tr>
+<tr><td>включить автосохранение</td><td>на / OFF</td><td>элемент автосохранение. изменения элемент эффект после перезапуск.</td></tr>
+<tr><td>автосохранение элемент</td><td>30–3600 секунд</td><td>автосохранение элемент. изменения элемент эффект после перезапуск.</td></tr>
+<tr><td>элемент элемент</td><td>1 ～ 100</td><td>элемент элемент используется когда сохранение или элемент.</td></tr>
+<tr><td>макет элемент</td><td>папка контур</td><td>Указывает, где сохраняются макеты UI. Выберите через Browse…</td></tr>
+</table>
+<h4>сочетания клавиш вкладка</h4>
+<p>Показывает и переназначает сочетания клавиш для всех действий. Включает дерево категорий / владельцев, поиск, показ конфликтов и сброс сочетаний клавиш. Назначения мыши для жеста панорамирования и контекстного меню также можно изменить.</p>
+<h4>AI эффект вкладка</h4>
+<table>
+<tr><th>элемент</th><th>диапазон / элемент</th><th>Описание</th></tr>
+<tr><td>по умолчанию триггер</td><td>Manual / на изменить / Debounced</td><td>по умолчанию триггер для AI эффект слой генерация.</td></tr>
+<tr><td>элемент элемент</td><td>0 ～ 60000 ms</td><td>элемент для элемент триггер.</td></tr>
+<tr><td>генерация элемент</td><td>10 ～ 86400 секунд</td><td>элемент для генерация задания.</td></tr>
+<tr><td>кэш записи кэша на слой</td><td>1 ～ 500 записи</td><td>кэш лимит на AI эффект слой.</td></tr>
+<tr><td>отключить кэш для ручной элемент</td><td>на / OFF</td><td>элемент кэш использовать во время ручной элемент.</td></tr>
+<tr><td>Auto-retries на 'на изменить' триггер</td><td>0 ～ 10</td><td>число из автоматическое повторные попытки для на изменить генерация.</td></tr>
+<tr><td>элемент элемент</td><td>0 ～ 60000 ms</td><td>элемент элемент до элемент.</td></tr>
+<tr><td>показать первый-элемент баннер</td><td>на / OFF</td><td>показывает подсказки баннер после первый генерация завершает.</td></tr>
+<tr><td>элемент на-изменить / элемент элемент в элемент</td><td>на / OFF</td><td>переключает следует ли автоматически сгенерировано результаты являются зарегистрировано в элемент.</td></tr>
+<tr><td>ComfyUI элемент</td><td>Local URL / внешний URL</td><td>элемент ComfyUI сервер элемент URL для AI эффект. элемент по умолчанию является <code>http://127.0.0.1:8188</code> .</td></tr>
+<tr><td>API элемент</td><td>NanoBanana / ОткрытьAI / Anthropic / Google Gemini</td><td>Регистрируйте или удаляйте ключи API через элемент… / элемент. Значения обрабатываются через<code>SecretProvider</code> .</td></tr>
+</table>
+<p>AI эффект вкладка элемент, кэш, повторные попытки, и связанные настройки являются сохранено в <code>user_data/ai_effect/preferences.json</code>. URL ComfyUI сохраняется в обычных настройках и применяется при следующем запуске.</p>
+</div>
+<h2 id="settings-shortcuts">Список сочетаний клавиш <span class="tag tag-param">настройки</span></h2>
+<div class="card">
+<h4>Операции с файлами</h4>
+<table class="shortcut-table">
+<tr><td><kbd>Ctrl+N</kbd></td><td>Создать</td></tr>
+<tr><td><kbd>Ctrl+O</kbd></td><td>Открыть</td></tr>
+<tr><td><kbd>Ctrl+S</kbd></td><td>Сохранить</td></tr>
+<tr><td><kbd>Ctrl+Shift+S</kbd></td><td>Сохранить как</td></tr>
+<tr><td><kbd>Ctrl+Shift+I</kbd></td><td>Импорт</td></tr>
+<tr><td><kbd>Ctrl+E</kbd></td><td>Экспорт</td></tr>
+<tr><td><kbd>Ctrl+W</kbd></td><td>Закрыть</td></tr>
+<tr><td><kbd>Ctrl+Q</kbd></td><td>Выход</td></tr>
+</table>
+<h4>Операции редактирования</h4>
+<table class="shortcut-table">
+<tr><td><kbd>Ctrl+Z</kbd></td><td>Отменить</td></tr>
+<tr><td><kbd>Ctrl+Y</kbd></td><td>Повторить</td></tr>
+<tr><td><kbd>Ctrl+X</kbd></td><td>Вырезать</td></tr>
+<tr><td><kbd>Ctrl+C</kbd></td><td>Копировать</td></tr>
+<tr><td><kbd>Ctrl+V</kbd></td><td>Вставить</td></tr>
+<tr><td><kbd>Ctrl+A</kbd></td><td>Выбрать все</td></tr>
+<tr><td><kbd>Ctrl+L</kbd></td><td>Выбрать все векторы</td></tr>
+<tr><td><kbd>Ctrl+D</kbd></td><td>Снять выделение</td></tr>
+</table>
+<h4>Инструменты</h4>
+<table class="shortcut-table">
+<tr><td><kbd>B</kbd></td><td>Перо</td></tr>
+<tr><td><kbd>E</kbd></td><td>Ластик</td></tr>
+<tr><td><kbd>V</kbd></td><td>Перемещение</td></tr>
+<tr><td><kbd>P</kbd></td><td>точное векторный перо</td></tr>
+<tr><td><kbd>T</kbd></td><td>Инструмент текста</td></tr>
+<tr><td><kbd>I</kbd></td><td>инструмент «Пипетка»</td></tr>
+<tr><td><kbd>[</kbd> / <kbd>]</kbd></td><td>изменить кисть размер</td></tr>
+</table>
+<h4>Вид</h4>
+<table class="shortcut-table">
+<tr><td><kbd>Ctrl+=</kbd></td><td>Увеличить</td></tr>
+<tr><td><kbd>Ctrl+-</kbd></td><td>Уменьшить</td></tr>
+<tr><td><kbd>Ctrl+0</kbd></td><td>Сброс масштаба</td></tr>
+<tr><td><kbd>G</kbd></td><td>переключатель Сетка</td></tr>
+<tr><td><kbd>R</kbd></td><td>переключатель направляющие</td></tr>
+<tr><td><kbd>F11</kbd></td><td>полный экран</td></tr>
+</table>
+<h4>Слои</h4>
+<table class="shortcut-table">
+<tr><td><kbd>Ctrl+Shift+N</kbd></td><td>Новый слой</td></tr>
+<tr><td><kbd>Ctrl+J</kbd></td><td>Дублировать слой</td></tr>
+<tr><td><kbd>Del</kbd></td><td>Удалить слой</td></tr>
+<tr><td><kbd>Ctrl+E</kbd></td><td>Объединить с нижним</td></tr>
+<tr><td><kbd>Shift+R</kbd></td><td>Растрировать</td></tr>
+</table>
+<h4>Фильтр</h4>
+<table class="shortcut-table">
+<tr><td><kbd>Ctrl+Alt+F</kbd></td><td>элемент элемент фильтр</td></tr>
+</table>
+<h4>Настройки</h4>
+<table class="shortcut-table">
+<tr><td><kbd>Ctrl+,</kbd></td><td>Параметры</td></tr>
+</table>
+</div>
+</main>
+<!-- ===== SCRIPTS ===== -->
+<script>
+const sidebar=document.getElementById('sidebar');const toggle=document.getElementById('sidebar-toggle');if(toggle)toggle.addEventListener('click',()=>sidebar.classList.toggle('show'));
+document.querySelectorAll('.nav-section-title').forEach(t=>t.addEventListener('click',()=>t.parentElement.classList.toggle('open')));
+const s=document.getElementById('sidebar-search');if(s)s.addEventListener('input',()=>{const q=s.value.toLowerCase();document.querySelectorAll('.nav-section').forEach(sec=>{let any=false;sec.querySelectorAll('.nav-link').forEach(a=>{const m=a.textContent.toLowerCase().includes(q);a.style.display=m?'':'none';if(m)any=true;});sec.style.display=any||!q?'':'none';if(q&&any)sec.classList.add('open');});});
+const sel=document.getElementById('language-select');if(sel)sel.addEventListener('change',()=>{location.href='index_'+sel.value+'.html'});
+</script></body>
+</html>

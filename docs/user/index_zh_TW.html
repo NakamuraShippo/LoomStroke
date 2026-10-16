@@ -1,0 +1,1346 @@
+<!DOCTYPE html>
+
+<html lang="zh-TW">
+<head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>LoomStroke — 用戶指南</title>
+<style>
+:root {
+  --bg: #1a1a2e;
+  --bg-panel: #16213e;
+  --bg-card: #1e2a4a;
+  --bg-card-hover: #253456;
+  --accent: #4fc3f7;
+  --accent-dim: #2980b9;
+  --text: #e0e6ed;
+  --text-dim: #8899aa;
+  --text-heading: #ffffff;
+  --border: #2a3a5c;
+  --sidebar-w: 280px;
+  --tag-tool: #4fc3f7;
+  --tag-panel: #ab47bc;
+  --tag-param: #66bb6a;
+  --tag-effect: #ff7043;
+  --tag-ai: #ffd54f;
+}
+* { margin:0; padding:0; box-sizing:border-box; }
+body {
+  font-family: 'Segoe UI', 'Noto Sans JP', 'Hiragino Kaku Gothic ProN', sans-serif;
+  background: var(--bg);
+  color: var(--text);
+  line-height: 1.7;
+  display: flex;
+  min-height: 100vh;
+}
+
+/* ── Sidebar ── */
+#sidebar {
+  width: var(--sidebar-w);
+  min-width: var(--sidebar-w);
+  background: var(--bg-panel);
+  border-right: 1px solid var(--border);
+  overflow-y: auto;
+  position: fixed;
+  top: 0; left: 0; bottom: 0;
+  z-index: 100;
+  transition: transform .25s ease;
+  scrollbar-width: thin;
+  scrollbar-color: var(--border) transparent;
+}
+#sidebar.collapsed { transform: translateX(calc(-1 * var(--sidebar-w))); }
+#sidebar-header {
+  padding: 20px 16px 12px;
+  border-bottom: 1px solid var(--border);
+  position: sticky; top: 0;
+  background: var(--bg-panel);
+  z-index: 1;
+}
+#sidebar-header h1 {
+  font-size: 16px; color: var(--accent);
+  font-weight: 700; letter-spacing: .5px;
+}
+#sidebar-header p { font-size: 11px; color: var(--text-dim); margin-top: 2px; }
+#sidebar-search {
+  width: 100%; margin-top: 10px; padding: 6px 10px;
+  background: var(--bg-card); border: 1px solid var(--border);
+  border-radius: 4px; color: var(--text); font-size: 13px; outline: none;
+}
+#sidebar-search:focus { border-color: var(--accent); }
+#sidebar-search::placeholder { color: var(--text-dim); }
+.language-picker {
+  margin-top: 10px;
+}
+.language-picker label {
+  display: block; margin-bottom: 4px;
+  color: var(--text-dim); font-size: 11px;
+}
+#language-select {
+  width: 100%; padding: 6px 10px;
+  background: var(--bg-card); border: 1px solid var(--border);
+  border-radius: 4px; color: var(--text); font-size: 13px; outline: none;
+}
+#language-select:focus { border-color: var(--accent); }
+#sidebar nav { padding: 8px 0 24px; }
+.nav-section { margin-bottom: 2px; }
+.nav-section-title {
+  display: flex; align-items: center; gap: 6px;
+  padding: 8px 16px; font-size: 12px; font-weight: 700;
+  color: var(--text-dim); text-transform: uppercase; letter-spacing: .8px;
+  cursor: pointer; user-select: none; transition: color .15s;
+}
+.nav-section-title:hover { color: var(--text); }
+.nav-section-title::before {
+  content: '▸'; display: inline-block; font-size: 10px;
+  transition: transform .2s; width: 12px; text-align: center;
+}
+.nav-section.open > .nav-section-title::before { transform: rotate(90deg); }
+.nav-section-items { display: none; }
+.nav-section.open > .nav-section-items { display: block; }
+.nav-link {
+  display: block; padding: 5px 16px 5px 34px;
+  font-size: 13px; color: var(--text-dim);
+  text-decoration: none; border-left: 3px solid transparent;
+  transition: all .15s;
+}
+.nav-link:hover { color: var(--text); background: rgba(79,195,247,.06); }
+.nav-link.active { color: var(--accent); border-left-color: var(--accent); background: rgba(79,195,247,.08); }
+
+/* ── Toggle button ── */
+#sidebar-toggle {
+  position: fixed; top: 12px; left: 12px; z-index: 200;
+  width: 36px; height: 36px; border: none; border-radius: 6px;
+  background: var(--accent-dim); color: #fff; font-size: 18px;
+  cursor: pointer; display: none; align-items: center; justify-content: center;
+  transition: background .15s;
+}
+#sidebar-toggle:hover { background: var(--accent); }
+
+/* ── Main content ── */
+#main {
+  flex: 1; margin-left: var(--sidebar-w);
+  padding: 32px 40px 80px;
+  max-width: 960px;
+  transition: margin-left .25s ease;
+}
+#main.expanded { margin-left: 0; }
+
+h2 {
+  font-size: 26px; color: var(--text-heading);
+  margin: 48px 0 16px; padding-bottom: 8px;
+  border-bottom: 2px solid var(--accent-dim);
+}
+h2:first-of-type { margin-top: 0; }
+h3 {
+  font-size: 19px; color: var(--accent);
+  margin: 32px 0 10px;
+}
+h4 {
+  font-size: 15px; color: var(--text-heading);
+  margin: 20px 0 8px;
+}
+p, li { font-size: 14px; }
+p { margin-bottom: 10px; }
+ul, ol { padding-left: 20px; margin-bottom: 12px; }
+li { margin-bottom: 4px; }
+
+.tag {
+  display: inline-block; font-size: 10px; font-weight: 700;
+  padding: 1px 7px; border-radius: 3px; margin-right: 4px;
+  vertical-align: middle; letter-spacing: .3px;
+}
+.tag-tool    { background: rgba(79,195,247,.18); color: var(--tag-tool); }
+.tag-panel   { background: rgba(171,71,188,.18); color: var(--tag-panel); }
+.tag-param   { background: rgba(102,187,106,.18); color: var(--tag-param); }
+.tag-effect  { background: rgba(255,112,67,.18);  color: var(--tag-effect); }
+.tag-ai      { background: rgba(255,213,79,.18);  color: var(--tag-ai); }
+
+.card {
+  background: var(--bg-card); border: 1px solid var(--border);
+  border-radius: 8px; padding: 18px 20px; margin-bottom: 16px;
+  transition: border-color .15s;
+}
+.card:hover { border-color: var(--accent-dim); }
+.card h4 { margin-top: 0; }
+
+table {
+  width: 100%; border-collapse: collapse; margin-bottom: 16px;
+  font-size: 13px;
+}
+th, td {
+  padding: 8px 12px; text-align: left;
+  border-bottom: 1px solid var(--border);
+}
+th { color: var(--accent); font-weight: 600; font-size: 12px; text-transform: uppercase; letter-spacing: .5px; }
+tr:hover td { background: rgba(79,195,247,.04); }
+
+kbd {
+  display: inline-block; background: var(--bg-card); border: 1px solid var(--border);
+  border-radius: 4px; padding: 1px 6px; font-size: 12px;
+  font-family: 'Consolas', 'Courier New', monospace; color: var(--accent);
+}
+
+.shortcut-table td:first-child { white-space: nowrap; }
+
+code {
+  background: var(--bg-card); padding: 2px 6px; border-radius: 3px;
+  font-size: 13px; font-family: 'Consolas', 'Courier New', monospace;
+  color: var(--accent);
+}
+
+.grid-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
+@media (max-width: 700px) { .grid-2 { grid-template-columns: 1fr; } }
+
+.hero {
+  background: linear-gradient(135deg, var(--bg-panel), var(--bg-card));
+  border: 1px solid var(--border); border-radius: 12px;
+  padding: 32px; margin-bottom: 32px; text-align: center;
+}
+.hero h2 { border: none; margin: 0 0 8px; font-size: 32px; }
+.hero p { color: var(--text-dim); font-size: 15px; margin: 0; }
+
+/* ── Page mode ── */
+.doc-page {
+  display: none;
+  animation: pageFade .16s ease;
+}
+.doc-page.active { display: block; }
+@keyframes pageFade {
+  from { opacity: 0; transform: translateY(6px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+.page-controls {
+  display: flex; align-items: center; justify-content: space-between;
+  gap: 12px; margin: 0 0 24px; padding: 10px 0;
+  border-bottom: 1px solid var(--border);
+}
+.page-controls-bottom {
+  margin: 24px 0 0; border-top: 1px solid var(--border);
+  border-bottom: none;
+}
+.page-button {
+  min-width: 92px; padding: 7px 12px;
+  border: 1px solid var(--border); border-radius: 6px;
+  background: var(--bg-card); color: var(--text);
+  cursor: pointer; font-size: 13px;
+}
+.page-button:hover:not(:disabled) {
+  border-color: var(--accent); color: var(--accent);
+}
+.page-button:disabled {
+  opacity: .4; cursor: default;
+}
+.page-status {
+  color: var(--text-dim); font-size: 13px; text-align: center;
+}
+
+/* 画像は docs/user/assets/user-guide/ に置き、下部 script の pageMedia に登録します。 */
+.media-slot {
+  margin: 14px 0 18px;
+  border: 1px solid var(--border); border-radius: 8px;
+  background: rgba(255,255,255,.025); overflow: hidden;
+}
+.media-slot img {
+  display: block; width: 100%; height: auto;
+}
+.media-caption {
+  padding: 8px 12px; color: var(--text-dim); font-size: 12px;
+  border-top: 1px solid var(--border);
+}
+.media-slot-empty:not(.media-slot-visible) { display: none; }
+.media-placeholder {
+  min-height: 180px; display: flex; flex-direction: column;
+  align-items: center; justify-content: center; gap: 6px;
+  color: var(--text-dim); border: 1px dashed var(--border);
+}
+.media-placeholder strong { color: var(--accent); font-size: 13px; }
+.media-placeholder span { font-size: 12px; }
+
+/* ── Responsive ── */
+@media (max-width: 900px) {
+  #sidebar { transform: translateX(calc(-1 * var(--sidebar-w))); }
+  #sidebar.show { transform: translateX(0); }
+  #sidebar-toggle { display: flex; }
+  #main { margin-left: 0; padding: 32px 20px 60px; }
+  .page-controls { position: sticky; top: 0; z-index: 20; background: var(--bg); }
+}
+
+@media print {
+  body { display: block; background: #fff; color: #000; }
+  #sidebar, #sidebar-toggle, .page-controls { display: none !important; }
+  #main { margin: 0; max-width: none; padding: 0; }
+  .doc-page { display: block !important; page-break-after: always; }
+  .media-slot-empty { display: none !important; }
+}
+</style>
+</head>
+<body>
+<button aria-label="切換菜單" id="sidebar-toggle">☰</button>
+<!-- ===== SIDEBAR ===== -->
+<aside id="sidebar">
+<div id="sidebar-header">
+<h1>LoomStroke</h1>
+<p>使用者指南</p>
+<input autocomplete="off" id="sidebar-search" placeholder="搜尋..." type="search"/>
+<div class="language-picker">
+<label for="language-select">顯示語言</label>
+<select autocomplete="off" id="language-select">
+<option value="ja">日語</option>
+<option value="en">英語</option>
+<option value="zh_CN">簡體中文</option>
+<option value="zh_Hant">繁體中文</option>
+<option selected="selected" value="zh_TW">台灣華語</option>
+<option value="ko">韓語</option>
+<option value="es">西班牙語</option>
+<option value="ar">阿拉伯語</option>
+<option value="hi">印地語</option>
+<option value="pt_BR">巴西葡萄牙語</option>
+<option value="bn">孟加拉語</option>
+<option value="ru">俄語</option>
+</select>
+</div>
+</div>
+<nav>
+<!-- Overview -->
+<div class="nav-section open">
+<div class="nav-section-title">概覽</div>
+<div class="nav-section-items">
+<a class="nav-link" href="#overview">應用概覽</a>
+<a class="nav-link" href="#layout">界面佈局</a>
+</div>
+</div>
+<!-- Drawing Tools -->
+<div class="nav-section open">
+<div class="nav-section-title">繪圖工具</div>
+<div class="nav-section-items">
+<a class="nav-link" href="#pen">畫筆工具</a>
+<a class="nav-link" href="#eraser">橡皮擦工具</a>
+<a class="nav-link" href="#fill-bucket">填充工具</a>
+<a class="nav-link" href="#gradient">漸變工具</a>
+<a class="nav-link" href="#pattern-fill">圖案填充工具</a>
+</div>
+</div>
+<!-- Selection Tools -->
+<div class="nav-section">
+<div class="nav-section-title">選擇工具</div>
+<div class="nav-section-items">
+<a class="nav-link" href="#selection-rect">矩形選區工具</a>
+<a class="nav-link" href="#magic-wand">魔棒工具</a>
+</div>
+</div>
+<!-- Transform / Move -->
+<div class="nav-section">
+<div class="nav-section-title">變換 / 移動</div>
+<div class="nav-section-items">
+<a class="nav-link" href="#move">移動工具</a>
+<a class="nav-link" href="#transform-panel">變換面板</a>
+</div>
+</div>
+<!-- Vector Tools -->
+<div class="nav-section">
+<div class="nav-section-title">矢量工具</div>
+<div class="nav-section-items">
+<a class="nav-link" href="#vector-path">矢量路徑工具</a>
+<a class="nav-link" href="#vector-precise">精密 矢量 笔</a>
+<a class="nav-link" href="#vector-edit">矢量編輯工具</a>
+</div>
+</div>
+<!-- Text Tools -->
+<div class="nav-section">
+<div class="nav-section-title">文字工具</div>
+<div class="nav-section-items">
+<a class="nav-link" href="#text-tool">文字工具</a>
+<a class="nav-link" href="#text-vertical">縱向文本工具</a>
+<a class="nav-link" href="#font-panel">字體面板</a>
+</div>
+</div>
+<!-- Utility Tools -->
+<div class="nav-section">
+<div class="nav-section-title">工具</div>
+<div class="nav-section-items">
+<a class="nav-link" href="#eyedropper">吸管工具</a>
+</div>
+</div>
+<!-- Panels -->
+<div class="nav-section open">
+<div class="nav-section-title">面板</div>
+<div class="nav-section-items">
+<a class="nav-link" href="#panel-toolbar">工具列</a>
+<a class="nav-link" href="#panel-tool-props">工具屬性</a>
+<a class="nav-link" href="#panel-layers">圖層面板</a>
+<a class="nav-link" href="#panel-color">顏色面板</a>
+<a class="nav-link" href="#panel-brush-manager">筆刷管理器</a>
+<a class="nav-link" href="#panel-shape-manager">形狀管理器</a>
+<a class="nav-link" href="#panel-effect">效果面板</a>
+<a class="nav-link" href="#panel-pages">頁面面板</a>
+<a class="nav-link" href="#panel-preview">預覽面板</a>
+<a class="nav-link" href="#panel-context-toolbar">上下文工具欄</a>
+</div>
+</div>
+<!-- Effects -->
+<div class="nav-section">
+<div class="nav-section-title">效果圖層</div>
+<div class="nav-section-items">
+<a class="nav-link" href="#fx-gaussian-blur">高斯模糊</a>
+<a class="nav-link" href="#fx-levels">色階</a>
+<a class="nav-link" href="#fx-hue-saturation">色相 / 飽和度</a>
+<a class="nav-link" href="#fx-invert">反轉</a>
+<a class="nav-link" href="#fx-brightness-contrast">亮度 / 對比度</a>
+<a class="nav-link" href="#fx-sharpen">銳化</a>
+<a class="nav-link" href="#fx-noise-reduction">降噪</a>
+</div>
+</div>
+<!-- AI -->
+<div class="nav-section">
+<div class="nav-section-title">AI 集成</div>
+<div class="nav-section-items">
+<a class="nav-link" href="#ai-comfyui">ComfyUI 面板</a>
+<a class="nav-link" href="#ai-nanobanana">NanoBanana 面板</a>
+<a class="nav-link" href="#ai-prompt-editor">提示詞編輯器</a>
+</div>
+</div>
+<!-- AI Effect Layer -->
+<div class="nav-section">
+<div class="nav-section-title">AI 效果</div>
+<div class="nav-section-items">
+<a class="nav-link" href="#ai-effect-overview">AI 效果圖層</a>
+<a class="nav-link" href="#ai-effect-manager">AI 效果管理器</a>
+<a class="nav-link" href="#ai-effect-editor">效果 編輯器</a>
+<a class="nav-link" href="#ai-effect-runtime">生成和 状態</a>
+</div>
+</div>
+<!-- Canvas -->
+<div class="nav-section">
+<div class="nav-section-title">畫布控制</div>
+<div class="nav-section-items">
+<a class="nav-link" href="#canvas-viewport">縮放 / 平移 / 旋轉</a>
+<a class="nav-link" href="#canvas-rulers">標尺s 和 參考線</a>
+<a class="nav-link" href="#canvas-grid">网格</a>
+</div>
+</div>
+<!-- File I/O -->
+<div class="nav-section">
+<div class="nav-section-title">文件輸入/輸出</div>
+<div class="nav-section-items">
+<a class="nav-link" href="#file-formats">支持的格式</a>
+<a class="nav-link" href="#file-lstroke">.lstroke 原生 格式</a>
+</div>
+</div>
+<!-- Settings -->
+<div class="nav-section">
+<div class="nav-section-title">設定</div>
+<div class="nav-section-items">
+<a class="nav-link" href="#settings-preferences">偏好設定</a>
+<a class="nav-link" href="#settings-shortcuts">快捷鍵列表</a>
+</div>
+</div>
+</nav>
+</aside>
+<!-- ===== MAIN CONTENT ===== -->
+<main id="main">
+<!-- Hero -->
+<div class="hero">
+<h2 style="border:none;">LoomStroke</h2>
+<p>用於漫畫和插畫製作的一體化數字繪畫應用程序</p>
+</div>
+<!-- ────────────────── 概要 ────────────────── -->
+<section id="overview">
+<h2>應用概覽</h2>
+<p>LoomStroke 是一款數字繪畫應用，可在同一個创作工作区中整合栅格繪畫、矢量路径、文本编辑、多頁面、外部插件和 AI 聯動。工作文件可以保存為<code>.lstroke</code>格式。</p>
+<div class="grid-2">
+<div class="card">
+<h4>主要功能</h4>
+<ul>
+<li>支持壓感和倾斜的笔刷引擎</li>
+<li>圖層不透明度和混合模式管理</li>
+<li>矢量路徑和 參數化 形状</li>
+<li>橫向和縱向文本</li>
+<li>非破壞性效果圖層</li>
+<li>多頁面文档</li>
+</ul>
+</div>
+<div class="card">
+<h4>AI 集成</h4>
+<ul>
+<li>ComfyUI 工作流集成</li>
+<li>NanoBanana (Gemini) 图像生成</li>
+<li>提示词编辑器和片段管理</li>
+<li>LLM Gateway (打開AI / Anthropic / Gemini)</li>
+</ul>
+</div>
+</div>
+</section>
+<!-- ────────────────── Layout ────────────────── -->
+<section id="layout">
+<h2>界面佈局</h2>
+<p>主窗口由以下区域組成。各面板可通过拖放自由排列，也可以合并為標籤頁。</p>
+<div class="card">
+<table>
+<tr><th>區域</th><th>内容</th></tr>
+<tr><td>上部</td><td>菜單栏 + 工具属性栏，用一行顯示当前工具設置</td></tr>
+<tr><td>左 停靠區</td><td>工具栏、颜色面板、字体面板和頁面面板</td></tr>
+<tr><td>置中</td><td>畫布（默认使用基于 QImage 的 SimpleCanvasService）+ 標尺</td></tr>
+<tr><td>右 停靠區</td><td>圖層面板、形状管理器、變換、效果和预覽</td></tr>
+<tr><td>浮動</td><td>上下文工具栏，在描邊后自動顯示</td></tr>
+</table>
+</div>
+<p><kbd>Window</kbd> 可從菜單顯示或隱藏各個面板。<kbd>F11</kbd> 會切換到全屏模式。</p>
+</section>
+<!-- ══════════════════ 描画ツール ══════════════════ -->
+<h2 id="pen">畫筆工具 <span class="tag tag-tool">工具</span></h2>
+<p>支持壓感和倾斜的栅格繪畫笔刷。也支持導入 ABR (Photoshop) 笔刷。</p>
+<div class="card">
+<p><strong>快捷鍵:</strong> <kbd>B</kbd> / <kbd>Shift+B</kbd></p>
+<table>
+<tr><th>參數</th><th>範圍</th><th>描述</th></tr>
+<tr><td>大小</td><td>1 ～ 128</td><td>畫筆直径 (px)</td></tr>
+<tr><td>不透明度</td><td>0 ～ 1。0</td><td>不透明度用於整个 笔畫</td></tr>
+<tr><td>硬度</td><td>0 ～ 1。0</td><td>边缘硬度 (0=柔和， 1=硬)</td></tr>
+<tr><td>間距</td><td>0。01 ～ 1。0</td><td>印章间距作為比例的畫筆直径</td></tr>
+<tr><td>流量</td><td>0 ～ 1。0</td><td>墨水 流量数量</td></tr>
+<tr><td>蓋印密度</td><td>0 ～ 1。0</td><td>印章密度， 表示作為倒数的间距</td></tr>
+<tr><td>壓力感應</td><td>在 / OFF</td><td>啟用壓力 灵敏度</td></tr>
+<tr><td>平滑</td><td>0 ～ 1。0</td><td>筆畫稳定</td></tr>
+<tr><td>色調範圍</td><td>0 ～ 1。0</td><td>色调範圍用於网点风格渲染</td></tr>
+<tr><td>色調伽瑪</td><td>0。1 ～ 2。0</td><td>色调伽馬 校正 值</td></tr>
+<tr><td>傾斜角度</td><td>在 / OFF</td><td>根據數位板倾斜进行明暗表現</td></tr>
+</table>
+<p><strong>預設:</strong> 項目， 項目， 和自定義畫筆 已導入 從 ABR</p>
+</div>
+<h2 id="eraser">橡皮擦工具 <span class="tag tag-tool">工具</span></h2>
+<p>支持壓力感應的柵格橡皮擦。</p>
+<div class="card">
+<p><strong>快捷鍵:</strong> <kbd>E</kbd> / <kbd>Shift+E</kbd>   <strong>大小 更改:</strong> <kbd>[</kbd> <kbd>]</kbd></p>
+<table>
+<tr><th>參數</th><th>範圍</th><th>描述</th></tr>
+<tr><td>大小</td><td>1 ～ 200</td><td>橡皮擦直径 (px)</td></tr>
+<tr><td>不透明度</td><td>0 ～ 1。0</td><td>橡皮擦强度</td></tr>
+<tr><td>硬度</td><td>0 ～ 1。0</td><td>边缘硬度</td></tr>
+<tr><td>間距</td><td>0。01 ～ 1。0</td><td>印章间距</td></tr>
+<tr><td>項目 項目</td><td>在 / OFF</td><td>反鋸齒</td></tr>
+</table>
+<p><strong>預設:</strong> 柔和 項目， 边缘 項目</p>
+</div>
+<h2 id="fill-bucket">填充工具 <span class="tag tag-tool">工具</span></h2>
+<p>使用泛洪填充填充相鄰的相近顏色區域。</p>
+<div class="card">
+<table>
+<tr><th>參數</th><th>範圍</th><th>描述</th></tr>
+<tr><td>顏色容差</td><td>0 ～ 255</td><td>顏色 項目 使用用於填充 检测</td></tr>
+<tr><td>閉合縫隙 (px)</td><td>0 ～ 10</td><td>数量的像素使用到自動闭合缺口在线条</td></tr>
+<tr><td>填滿目標</td><td>当前圖層 / 新建圖層</td><td>目标 圖層用於填充</td></tr>
+</table>
+</div>
+<h2 id="gradient">漸變工具 <span class="tag tag-tool">工具</span></h2>
+<p>通過拖動繪製線性或徑向漸變。可拖動控制點編輯中間色標。</p>
+<div class="card">
+<table>
+<tr><th>參數</th><th>範圍</th><th>描述</th></tr>
+<tr><td>漸變 类型</td><td>線性 / 徑向</td><td>漸變 形状</td></tr>
+<tr><td>颜色</td><td>颜色</td><td>起始色</td></tr>
+<tr><td>颜色 B</td><td>颜色</td><td>結束色</td></tr>
+<tr><td>中間 色標</td><td>0 ～ 3</td><td>数量的中間颜色色標</td></tr>
+<tr><td>色标 N 位置</td><td>0 ～ 1。0</td><td>位置的每个色标 (0=开始边缘， 1=结束边缘)</td></tr>
+<tr><td>色标 N 颜色</td><td>颜色</td><td>颜色的每个色标</td></tr>
+<tr><td>抖動</td><td>在 / OFF</td><td>抖動 到 减少 色带</td></tr>
+</table>
+<p><strong>支持 混合 模式:</strong> 普通， 變暗， Multiply， 颜色加深， Lighten， 滤色， 颜色减淡， 線性减淡， 叠加， 柔和 光， 硬 光， 差值， 排除</p>
+</div>
+<h2 id="pattern-fill">圖案填充工具 <span class="tag tag-tool">工具</span></h2>
+<p>使用平鋪圖案重複填充區域。</p>
+<div class="card">
+<table>
+<tr><th>參數</th><th>範圍</th><th>描述</th></tr>
+<tr><td>圖案</td><td>棋盘格 / 橫向条纹 / 縱向条纹 / 对角条纹 / 圆点 / 交叉线</td><td>Built-在 圖案到使用</td></tr>
+<tr><td>圖案缩放</td><td>0。1 ～ 10。0</td><td>圖案缩放 倍率</td></tr>
+<tr><td>顏色容差</td><td>0 ～ 255</td><td>顏色 項目 使用用於填充 检测</td></tr>
+<tr><td>閉合縫隙 (px)</td><td>0 ～ 10</td><td>数量的像素使用到自動闭合缺口在线条</td></tr>
+</table>
+<p><strong>操作:</strong> 从 從點擊點， 填充 连通 區域帶有所選平鋪圖案。</p>
+</div>
+<!-- ══════════════════ 選択ツール ══════════════════ -->
+<h2 id="selection-rect">矩形選區工具 <span class="tag tag-tool">工具</span></h2>
+<p>通過拖動矩形創建選區。也支持矢量對象的範圍選擇。</p>
+<div class="card">
+<table>
+<tr><th>參數</th><th>範圍</th><th>描述</th></tr>
+<tr><td>選區模式</td><td>矩形 / 矢量</td><td>柵格矩形選區 / 矢量範圍選區</td></tr>
+<tr><td>操作</td><td>替换 / 添加 / 减去 / 交集</td><td>如何 選區是合併</td></tr>
+<tr><td>像素精準</td><td>在 / OFF</td><td>對齐 到像素</td></tr>
+<tr><td>羽化 已啟用</td><td>在 / OFF</td><td>羽化 選區</td></tr>
+<tr><td>羽化半徑</td><td>0 ～ 128</td><td>羽化 半径 (px)</td></tr>
+<tr><td>蒙版半徑</td><td>0 ～ 128</td><td>半径使用用於 項目 或 項目 選區蒙版</td></tr>
+<tr><td>變換 X / Y</td><td>-10000 ～ 10000</td><td>項目 数量 期間 變換</td></tr>
+<tr><td>變換缩放 X / Y</td><td>0。01 ～ 100</td><td>缩放 倍率 期間 變換</td></tr>
+<tr><td>變換 旋轉</td><td>-180° ～ 180°</td><td>旋轉 角度 期間 變換</td></tr>
+</table>
+<p><strong>修饰鍵:</strong> <kbd>Shift</kbd>=添加， <kbd>Alt</kbd>=减去， <kbd>Shift+Alt</kbd>=交集</p>
+<p><strong>變換模式 (<kbd>Ctrl+T</kbd>):</strong> 移動 / 缩放 / 旋转 / 翻转 / 重置 / 应用 / 取消</p>
+</div>
+<h2 id="magic-wand">魔棒工具 <span class="tag tag-tool">工具</span></h2>
+<p>從點擊位置自動選擇相近顏色的連續區域。</p>
+<div class="card">
+<table>
+<tr><th>參數</th><th>範圍</th><th>描述</th></tr>
+<tr><td>容差</td><td>0 ～ 255</td><td>顏色 項目 (預設: 32)</td></tr>
+<tr><td>相鄰</td><td>在 / OFF</td><td>在=相鄰像素僅， OFF=相似顏色整个整个图像</td></tr>
+<tr><td>操作</td><td>替换 / 添加 / 减去 / 交集</td><td>如何 選區是合併</td></tr>
+</table>
+<p>當參數 更改， 工具自動 項目 從 項目 點擊點。</p>
+</div>
+<!-- ══════════════════ 変形・移動 ══════════════════ -->
+<h2 id="move">移動工具 <span class="tag tag-tool">工具</span></h2>
+<p>移動並變換圖層或矢量對象。雙擊文本對象會切換到編輯模式。</p>
+<div class="card">
+<p><strong>快捷鍵:</strong> <kbd>V</kbd></p>
+<table>
+<tr><th>參數</th><th>範圍</th><th>描述</th></tr>
+<tr><td>像素精準</td><td>在 / OFF</td><td>項目 对齐 (預設: 在)</td></tr>
+<tr><td>网格 吸附</td><td>在 / OFF</td><td>网格 吸附</td></tr>
+<tr><td>网格 大小</td><td>1 ～ 1024</td><td>网格 大小 (px)</td></tr>
+</table>
+<p><strong>操作 模式:</strong></p>
+<ul>
+<li><strong>帶有選區:</strong> 剪切， 移動， 和變換所選區域</li>
+<li><strong>矢量 / 文本:</strong> 移動對象。 双擊 到 切換 到路徑編輯或文本工具</li>
+<li><strong>柵格圖層:</strong> 移動 項目 圖層</li>
+</ul>
+</div>
+<h2 id="transform-panel">變換面板 <span class="tag tag-panel">面板</span></h2>
+<p>通過數值輸入控制所選對象的位置、大小和角度。</p>
+<div class="card">
+<table>
+<tr><th>項目</th><th>範圍</th><th>描述</th></tr>
+<tr><td>X</td><td>-99999 ～ 99999</td><td>X 位置 (上-左 的 邊界 框)</td></tr>
+<tr><td>Y</td><td>-99999 ～ 99999</td><td>Y 位置 (上-左 的 邊界 框)</td></tr>
+<tr><td>W</td><td>0。1 ～ 99999</td><td>宽度 (矢量僅)</td></tr>
+<tr><td>H</td><td>0。1 ～ 99999</td><td>高度 (矢量僅)</td></tr>
+<tr><td>角度</td><td>-360° ～ 360°</td><td>旋轉 角度</td></tr>
+</table>
+<p>當柵格圖層是所選， 僅 X/Y 可以是编辑。</p>
+</div>
+<!-- ══════════════════ ベクターツール ══════════════════ -->
+<h2 id="vector-path">矢量路徑工具 <span class="tag tag-tool">工具</span></h2>
+<p>點擊放置錨點並創建貝塞爾路徑。拖動可設置方向手柄。</p>
+<div class="card">
+<table>
+<tr><th>參數</th><th>範圍</th><th>描述</th></tr>
+<tr><td>Shift 模式</td><td>约束 / 禁用_吸附</td><td><kbd>Shift</kbd> 切換行为到角度约束或吸附禁用</td></tr>
+<tr><td>自動閉合容差 (px)</td><td>0 ～ 64</td><td>距离用於自动闭合當点击附近开始點</td></tr>
+<tr><td>描邊寬度</td><td>0。1 ～ 64</td><td>描邊寬度</td></tr>
+<tr><td>描邊顏色</td><td>颜色</td><td>笔畫 颜色</td></tr>
+<tr><td>啟用填滿</td><td>在 / OFF</td><td>填充已啟用</td></tr>
+<tr><td>填滿顏色</td><td>颜色</td><td>填充颜色</td></tr>
+</table>
+<p><kbd>Enter</kbd> 到 項目，<kbd>Esc</kbd> 到放弃。 返回附近开始點闭合路徑自動。</p>
+</div>
+<h2 id="vector-precise">精密 矢量 笔 <span class="tag tag-tool">工具</span></h2>
+<p>自動將徒手筆畫轉換為平滑的貝塞爾曲線。</p>
+<div class="card">
+<p><strong>快捷鍵:</strong> <kbd>P</kbd></p>
+<table>
+<tr><th>參數</th><th>範圍</th><th>描述</th></tr>
+<tr><td>編輯模式</td><td>錨點 / 形状</td><td>选择是否工具偏向錨點編輯或 形状 編輯</td></tr>
+<tr><td>自動閉合</td><td>在 / OFF</td><td>自动路徑闭合</td></tr>
+<tr><td>描邊寬度</td><td>0。1 ～ 64</td><td>描邊寬度</td></tr>
+<tr><td>描邊顏色</td><td>颜色</td><td>笔畫 颜色</td></tr>
+<tr><td>啟用填滿</td><td>在 / OFF</td><td>填充已啟用</td></tr>
+<tr><td>填滿顏色</td><td>颜色</td><td>填充颜色</td></tr>
+<tr><td>錨點密度</td><td>0。1 ～ 1。0</td><td>密度的 已生合 錨點</td></tr>
+<tr><td>控制柄平滑度</td><td>0 ～ 5。0</td><td>曲線平滑強度</td></tr>
+</table>
+</div>
+<h2 id="vector-edit">矢量編輯工具 <span class="tag tag-tool">工具</span></h2>
+<p>編輯現有矢量路徑的錨點和手柄。</p>
+<div class="card">
+<table>
+<tr><th>參數</th><th>範圍</th><th>描述</th></tr>
+<tr><td>描邊顏色</td><td>颜色</td><td>笔畫 颜色的所選矢量</td></tr>
+<tr><td>描邊寬度</td><td>0。1 ～ 128</td><td>笔畫 宽度 的所選矢量</td></tr>
+<tr><td>啟用填滿</td><td>在 / OFF</td><td>填充已啟用</td></tr>
+<tr><td>填滿顏色</td><td>颜色</td><td>填充颜色的所選矢量</td></tr>
+</table>
+<ul>
+<li>点击和拖動錨點到移動 它们</li>
+<li>拖動手柄調整曲線曲率</li>
+<li><kbd>Alt</kbd>+拖動到 复制 期間移动，<kbd>Ctrl</kbd> 項目 項目 吸附</li>
+<li>未转换基本 形状 是编辑参数化帶有 形状 手柄而不是的錨點</li>
+<li>缩放和旋转帶有 邊界 框</li>
+</ul>
+</div>
+<!-- ══════════════════ テキストツール ══════════════════ -->
+<h2 id="text-tool">文字工具 <span class="tag tag-tool">工具</span></h2>
+<p>創建和編輯橫排文本。點擊創建點文本，拖動創建區域文本。</p>
+<div class="card">
+<p><strong>快捷鍵:</strong> <kbd>T</kbd></p>
+<table>
+<tr><th>參數</th><th>範圍</th><th>描述</th></tr>
+<tr><td>自動换行</td><td>在 / OFF</td><td>項目 换行 用於區域文本</td></tr>
+<tr><td>字型大小 (pt)</td><td>1 ～ 512</td><td>字體 大小</td></tr>
+<tr><td>行高</td><td>0。5 ～ 4。0</td><td>线-高度 項目</td></tr>
+<tr><td>字距</td><td>-64 ～ 128</td><td>項目 间距 (字距)</td></tr>
+<tr><td>内边距</td><td>0 到 256， 分别用於上， 下， 左， 和右</td><td>項目 内边距 的文本框</td></tr>
+</table>
+<p><strong>补充:</strong> 支持 IME 輸入， 移动/旋转/缩放期間編輯内联， 和形状环绕區域文本通过選區到區域。 字體 系列， 样式， 对齐， 颜色， 和不透明度是管理在 字體 面板。</p>
+</div>
+<h2 id="text-vertical">縱向文本工具 <span class="tag tag-tool">工具</span></h2>
+<p>用於創建和編輯豎排文本。基本參數與文本工具共用。</p>
+<div class="card">
+<table>
+<tr><th>添加itional 參數</th><th>選項</th><th>描述</th></tr>
+<tr><td>縱向流量</td><td>左 / 右</td><td>項目 流量方向</td></tr>
+<tr><td>旋转 項目/項目</td><td>在 / OFF</td><td>旋转半角字母数字字符用於縱向书写</td></tr>
+</table>
+<p>支持日文標点的自動位置校正和长音符的自動旋轉。</p>
+</div>
+<h2 id="font-panel">字體面板 <span class="tag tag-panel">面板</span></h2>
+<p>用於集中管理文本工具所用排版設置的面板。</p>
+<div class="card">
+<h4>控件列表</h4>
+<table>
+<tr><th>控件</th><th>类型</th><th>描述</th></tr>
+<tr><td>自動换行</td><td>複選框</td><td>項目 换行 在/OFF</td></tr>
+<tr><td>字型家族</td><td>組合框</td><td>选择從 系统 字體 列表</td></tr>
+<tr><td>字型樣式</td><td>組合框</td><td>样式的所選 字體</td></tr>
+<tr><td>字型大小 (pt)</td><td>微調框</td><td>1。0 到 512。0， 步长 1。0</td></tr>
+<tr><td>直排</td><td>複選框</td><td>縱向书写模式 开關</td></tr>
+<tr><td>段落流向</td><td>組合框</td><td>項目 / 項目 (縱向书写僅)</td></tr>
+<tr><td>對齊</td><td>組合框</td><td>左 / 中央 / 右 / 項目</td></tr>
+<tr><td>行高</td><td>微調框</td><td>0。5 到 4。0， 步长 0。1</td></tr>
+<tr><td>字距</td><td>微調框</td><td>-64。0 到 128。0， 步长 0。5</td></tr>
+<tr><td>内边距 (上/下/右/左)</td><td>四個 微調 框</td><td>0。0 到 256。0 用於每个 項目</td></tr>
+<tr><td>顏色</td><td>颜色按鈕</td><td>点擊打开顏色對话框</td></tr>
+<tr><td>不透明度</td><td>滑塊</td><td>0 ～ 100%</td></tr>
+<tr><td>自訂字型資料夾</td><td>列表 + 按鈕</td><td>新增、移除並重新掃描字型目錄</td></tr>
+</table>
+<p>支持 字體 格式s: TTF / OTF / TTC / OTC</p>
+</div>
+<!-- ══════════════════ ユーティリティ ══════════════════ -->
+<h2 id="eyedropper">吸管工具 <span class="tag tag-tool">工具</span></h2>
+<p>從畫布拾取顏色並設置為前景色。</p>
+<div class="card">
+<p><strong>快捷鍵:</strong> <kbd>I</kbd> / <kbd>Shift+I</kbd></p>
+</div>
+<!-- ══════════════════ パネル ══════════════════ -->
+<h2 id="panel-toolbar">工具列 <span class="tag tag-panel">面板</span></h2>
+<p>位于左侧邊缘的纵向工具按鈕列表。每個按鈕代表一個工具組，长按 350 ms 會打开用于選擇變體工具的彈出菜單。</p>
+<div class="card">
+<p>布局 切換自動 之間 縱向和橫向作為面板 宽度 更改。 圖標 大小是 48x48 px。</p>
+</div>
+<h2 id="panel-tool-props">工具屬性面板 <span class="tag tag-panel">面板</span></h2>
+<p>顯示當前工具設置的面板。它有两種布局：菜單栏正下方的横条模式，以及停靠區內的面板模式。</p>
+<div class="card">
+<h4>分量s</h4>
+<ul>
+<li><strong>預設 行:</strong> 預設 選區組合框 + 保存/刪除按鈕</li>
+<li><strong>項目 項目 組:</strong> 大小， 不透明度， 硬度， 间距， 流量， 和 項目 項目 工具設置</li>
+<li><strong>工具屬性組:</strong> 工具-特定 參數</li>
+<li><strong>操作 項目:</strong> 工具-特定 操作 按鈕和 項目</li>
+</ul>
+<p><strong>自动控件生成:</strong> 項目/int -&gt; 滑塊， 項目 -&gt; 複選框， 項目 -&gt; 組合框， 顏色 -&gt; 顏色按鈕</p>
+</div>
+<h2 id="panel-layers">圖層面板 <span class="tag tag-panel">面板</span></h2>
+<p>以層級樹顯示和管理文档的圖層堆栈。普通圖層、組、效果、蒙版和 AI 效果圖層都在同一棵樹中處理。</p>
+<div class="card">
+<h4>上控制</h4>
+<table>
+<tr><th>项目</th><th>描述</th></tr>
+<tr><td>混合模式</td><td>更改混合模式的所選圖層。 組可以也使用 Pass Through。</td></tr>
+<tr><td>不透明度</td><td>更改所選圖層不透明度帶有 0 到 100% 滑塊和數值 顯示。</td></tr>
+</table>
+<h4>圖層 树</h4>
+<table>
+<tr><th>顯示 / 操作</th><th>描述</th></tr>
+<tr><td>縮略圖</td><td>圖層縮略圖，通常為 32×32 px。点擊它可编輯圖層內容。</td></tr>
+<tr><td>蒙版縮略圖</td><td>顯示僅當圖層蒙版 存在。 点击它到 切換 到蒙版編輯模式。</td></tr>
+<tr><td>类型徽章</td><td><code>V</code> 矢量、<code>S</code> 形状、<code>T</code> 文本、<code>FX</code> 效果、<code>G</code> 組、<code>M</code> 蒙版、<code>AI</code> 項目 AI 效果。</td></tr>
+<tr><td>可見性</td><td>眼睛 圖標 切換 可見性。 隱藏行是顯示 淡化。</td></tr>
+<tr><td>锁定</td><td>锁定s 圖層編輯。</td></tr>
+<tr><td>項目 锁定</td><td>保护透明像素。使用行內專用开關切換。</td></tr>
+<tr><td>拖動和放下</td><td>使用此到 重新排序 圖層或移動 它们 到組。 拖放 圖層 到 AI 效果 Slot 行 分配 它作為該 Slot's 輸入。</td></tr>
+<tr><td>双擊</td><td>項目 圖層。</td></tr>
+</table>
+<h4>下按鈕</h4>
+<table>
+<tr><th>按鈕</th><th>描述</th></tr>
+<tr><td>新增</td><td>新增 新建柵格圖層。</td></tr>
+<tr><td>刪除</td><td>刪除s 所選圖層。</td></tr>
+<tr><td>複製</td><td>複製s 所選圖層。 已禁用當 項目 是 no 選區。</td></tr>
+<tr><td>蒙版</td><td>新增 圖層蒙版到所選圖層。 如果 已經 存在， 它 移除 蒙版。</td></tr>
+<tr><td>添加效果圖層</td><td>新增普通效果圖層。在啟用 AI 效果的環境中， <strong>AI 效果</strong> 你 可以也选择。lsfx 預設 從 子菜單。</td></tr>
+<tr><td>G</td><td>組 两個 或 更多 所選圖層。</td></tr>
+<tr><td>V</td><td>新增 新建矢量圖層。</td></tr>
+</table>
+<h4>AI 效果行</h4>
+<table>
+<tr><th>顯示 / 操作</th><th>描述</th></tr>
+<tr><td>紫色强调</td><td>項目 AI 效果圖層 自身。</td></tr>
+<tr><td>生成按鈕</td><td>顯示僅在 AI 效果圖層行。 開始 生成用於該圖層和是已禁用期間生成是 运行中。</td></tr>
+<tr><td>項目 子 行</td><td>虚拟 行 已创建 從輸入_槽位 在 AI 效果 清單。 必需 槽位 該是不设置是顯示帶有 警告。</td></tr>
+<tr><td>排除按鈕</td><td>當 Slot 已分配輸入圖層時顯示。用于將輸入切換為不參與混合 / 仅作為 AI 輸入。</td></tr>
+<tr><td>xN 徽章</td><td>顯示 引用 數量 在 普通 圖層 引用的 通過 項目 AI 效果 槽位。</td></tr>
+<tr><td>绿色强调</td><td>項目 輸出圖層 已生合 通過 AI 效果。</td></tr>
+</table>
+<h4>右-點擊 菜單</h4>
+<table>
+<tr><th>项目</th><th>描述</th></tr>
+<tr><td>添加圖層 / 複製圖層 / 刪除圖層</td><td>基本添加， 复制， 和刪除 項目。</td></tr>
+<tr><td>重新命名</td><td>打开重命名對话框。</td></tr>
+<tr><td>向下合併</td><td>項目 到圖層下方。 已啟用僅當 可能。</td></tr>
+<tr><td>項目 可見</td><td>項目 可見圖層到 一個圖層。 隱藏圖層是 保留。</td></tr>
+<tr><td>栅格化</td><td>转换矢量和相似 項目 到柵格。 已啟用僅當 可能。</td></tr>
+<tr><td>項目 到矢量</td><td>转换未转换基本 形状 到 普通 矢量對象。</td></tr>
+<tr><td>組圖層 / 項目</td><td>組多所選圖層， 或 項目 當使用在組行。</td></tr>
+<tr><td>創建 / 項目 項目 蒙版</td><td>切換 項目 蒙版 状態。</td></tr>
+<tr><td>新增 / 編輯 / 完成 / 移除圖層遮罩</td><td>新增 圖層蒙版， 切換蒙版編輯模式， 或 刪除 蒙版。</td></tr>
+<tr><td>添加效果</td><td>新增 子 效果到所選圖層。 已禁用用於組。</td></tr>
+<tr><td>读取 作為選區 / 反轉 項目</td><td>仅在右鍵点擊蒙版圖層時顯示。可將蒙版讀取為選區，或反轉透明像素。</td></tr>
+</table>
+<h4>混合模式s</h4>
+<p>圖層混合控制所選圖層如何與下方圖層合成。不透明度會作用于整個混合結果。它只改變顯示合成而不编輯像素，因此适合用于顏色調整、添加光影和叠加纹理。</p>
+<table>
+<tr><th>群組</th><th>模式</th><th>描述</th></tr>
+<tr><td>組僅</td><td>穿透</td><td>用於組。 項目 子 圖層在 項目 的圖層下方， 而不是的 項目 它们 內部 組。</td></tr>
+<tr><td>正常</td><td>正常</td><td>標准 合合。 上方 圖層是 放置 作為-是， 帶有不透明度 控製 其 强度。</td></tr>
+<tr><td>正常</td><td>Dissolve</td><td>將半透明區域顯示為随机点状。适合粗糙邊缘和颗粒感表現。</td></tr>
+<tr><td>變暗</td><td>變暗</td><td>優先采用上下圖層中較暗的成分。适合在抑制亮部的同時添加阴影和暗部。</td></tr>
+<tr><td>變暗</td><td>色彩增值</td><td>通過顏色相乘使結果變暗。這是處理線稿、阴影、纸张纹理和污渍叠加時最容易使用的暗化模式。</td></tr>
+<tr><td>變暗</td><td>加深顏色</td><td>像強烈加深底圖一樣使其變暗，同時提高饱和度和對比度。适合深阴影和強烈質感。</td></tr>
+<tr><td>變暗</td><td>線性加深</td><td>通過線性降低亮度来變暗。相比 Color Burn，會产生更強、更偏计算感的暗部。</td></tr>
+<tr><td>變暗</td><td>較暗顏色</td><td>不进行混合，而是从上下圖層中選擇較暗的顏色。結果接近優先暗色的顏色替換。</td></tr>
+<tr><td>變亮</td><td>變亮</td><td>優先采用上下圖層中較亮的成分。适合在去除暗部的同時添加光和高光。</td></tr>
+<tr><td>變亮</td><td>濾色</td><td>以 Multiply 的相反方式工作，自然提亮。适合發光、高光、烟雾和光效素材。</td></tr>
+<tr><td>變亮</td><td>加亮顏色</td><td>變亮 底圖 強烈 和創建 鲜明 光。 它可以 裁切 到 白色 容易， so 调整 帶有不透明度。</td></tr>
+<tr><td>變亮</td><td>線性加亮(增加)</td><td>新增 顏色到 項目 強烈。 适合 用於 光 項目， 魔法 效果， 和 强烈 发光。</td></tr>
+<tr><td>變亮</td><td>較亮顏色</td><td>从上下圖層中選擇較亮的顏色。适合以亮色優先叠加素材。</td></tr>
+<tr><td>對比度</td><td>覆蓋</td><td>切換 之間 Multiply 和滤色基於在亮度的 底圖。 標准 選擇 用於 添加 纹理 和 增强 阴影。</td></tr>
+<tr><td>對比度</td><td>柔光</td><td>新增 對比度 更多 柔和 比 叠加。 适合 用於 皮肤， 布料， 和 细微 阴影 項目。</td></tr>
+<tr><td>對比度</td><td>實光</td><td>以上方圖層為基准添加強烈明暗效果，形成清晰的高光和阴影。</td></tr>
+<tr><td>對比度</td><td>鮮豔光源</td><td>創建 强， 鲜明 對比度相似到 組合 的颜色加深和颜色减淡。</td></tr>
+<tr><td>對比度</td><td>線性光源</td><td>像組合 Linear Burn 和 Linear Dodge 一樣，強烈且線性地改變明度。</td></tr>
+<tr><td>對比度</td><td>小光源</td><td>像替換暗部和亮部一樣进行合成。适合特殊的硬質纹理和效果。</td></tr>
+<tr><td>對比度</td><td>實色疊印混合</td><td>推向 顏色 朝向 強烈 海报化 结果。 适合 用於 poster-like， 噪声， 或 實验性 效果。</td></tr>
+<tr><td>反相</td><td>差異化</td><td>顯示差值 之間 上方 和 下方 圖層。 适合 用於对齐 检查， inverted-looking 效果， 和 异常 颜色 偏移。</td></tr>
+<tr><td>反相</td><td>排除</td><td>更柔和 差值混合 比 差值。 适合 用於 特殊 效果帶有 項目 反转 感觉。</td></tr>
+<tr><td>反相</td><td>減去</td><td>从底圖中減去上方顏色以使其變暗。适合去色类效果和暗色特殊效果。</td></tr>
+<tr><td>反相</td><td>除</td><td>變亮 作為如果 項目 底圖 通過 上方 顏色。 适合 用於 校正， 提取， 和 項目 强 項目 更改。</td></tr>
+<tr><td>分量</td><td>色相</td><td>應用 僅 上方 色相到 底圖 期間 保留 底圖 亮度 和飽和度。 使用它當 你 僅 想要 到 更改 色相。</td></tr>
+<tr><td>分量</td><td>飽和度</td><td>應用 僅 上方 飽和度到 底圖。 使用它到添加 項目 或 减少 飽和度。</td></tr>
+<tr><td>分量</td><td>顏色</td><td>應用 上方 色相和飽和度到 底圖 期間 保留 底圖 亮度。 适合 用於 項目 項目 阴影。</td></tr>
+<tr><td>分量</td><td>明度</td><td>應用 僅 上方 亮度 到 底圖 期間 保留 底圖 色相和飽和度。 項目 僅 阴影 或亮度。</td></tr>
+</table>
+<p>混合 模式 項目 顯示 结果 的圖層， 效果圖層， 組 合合， 和 PSD 導出。 項目 模式 項目 畫布，但項目 不 項目 圖層像素 項目。</p>
+</div>
+<h2 id="panel-color">顏色面板 <span class="tag tag-panel">面板</span></h2>
+<p>颜色 選擇器 結合 HSV 颜色 色轮 和 三角形， 數值輸入， 和 調色板 管理。</p>
+<div class="card">
+<h4>控件列表</h4>
+<table>
+<tr><th>控件</th><th>描述</th></tr>
+<tr><td>颜色 色轮</td><td>選取 色相在 外圈 (0 到 360 度)</td></tr>
+<tr><td>色调 三角形</td><td>選取 飽和度和 值 內部 三角形</td></tr>
+<tr><td>HSV 微調 框 (H/S/V)</td><td>H: 0～359°， S: 0～100%， V: 0～100%</td></tr>
+<tr><td>RGB 微調 框 (R/G/B)</td><td>0 到 255 每个</td></tr>
+<tr><td>Hex 文本輸入</td><td>#項目 格式</td></tr>
+<tr><td>添加到 調色板 按鈕</td><td>添加當前颜色到 調色板</td></tr>
+<tr><td>调色板网格</td><td>网格 顯示 的 項目 項目 (32x32 px)。 刪除按鈕 顯示 在 項目。</td></tr>
+<tr><td>颜色 歷史</td><td>顯示 10 項目 項目 顏色在行 (24x24 px)</td></tr>
+</table>
+<p>預設調色板：黑色、白色、紅色、綠色、藍色</p>
+</div>
+<h2 id="panel-brush-manager">筆刷管理器 <span class="tag tag-panel">面板</span></h2>
+<p>用於管理自定義畫筆筆尖的面板。可以創建、導入和刪除畫筆。</p>
+<div class="card">
+<h4>控件列表</h4>
+<table>
+<tr><th>控件</th><th>描述</th></tr>
+<tr><td>畫筆 笔尖 网格</td><td>顯示畫筆 笔尖 項目 在 圖標 模式。 双擊 到 重新命名。</td></tr>
+<tr><td>創建 笔尖 按鈕</td><td>創建畫筆 笔尖 從畫布選區</td></tr>
+<tr><td>儲存參數按鈕</td><td>保存當前 笔 設置到畫筆</td></tr>
+<tr><td>重新扫描 ABR 按鈕</td><td>重新扫描 ABR 庫文件夾</td></tr>
+<tr><td>導入 ABR 按鈕</td><td>導入 Photoshop。abr 畫筆文件</td></tr>
+<tr><td>導入 PNG 按鈕</td><td>導入 PNG 图像作為畫筆 笔尖</td></tr>
+<tr><td>刪除按鈕</td><td>刪除所選畫筆</td></tr>
+</table>
+</div>
+<h2 id="panel-shape-manager">形狀管理器 <span class="tag tag-panel">面板</span></h2>
+<p>項目 矢量 形状 庫管理和对齐工具。 它也 包含 特殊 形状 項目 作為漫畫 項目 項目 和 項目 线条。</p>
+<div class="card">
+<h4>標籤頁 1 - 形狀管理器 (庫)</h4>
+<table>
+<tr><th>控件</th><th>描述</th></tr>
+<tr><td>類別 筛選器</td><td>筛選器 形状 通過類別</td></tr>
+<tr><td>標籤 筛選器</td><td>筛選器 形状 通過標籤</td></tr>
+<tr><td>形狀网格</td><td>顯示縮略圖在 圖標 模式</td></tr>
+<tr><td>印章 / 添加到畫布</td><td>添加 形状 作為印章或 到 畫布</td></tr>
+<tr><td>導入 SVG / 導出 SVG</td><td>導入/導出 SVG 文件</td></tr>
+<tr><td>新建類別 / 重新命名 / 刪除</td><td>項目 項目 和 形状</td></tr>
+</table>
+<h4>標籤頁 2 - 基本 形状 (built-在 形状)</h4>
+<table>
+<tr><th>分類</th><th>形状 列表</th></tr>
+<tr><td>基本</td><td>項目， 項目 矩形， 項目， 項目</td></tr>
+<tr><td>效果</td><td>項目 线条 (項目)， 項目 线条 (項目)</td></tr>
+<tr><td>气泡</td><td>項目 气泡 (項目 / 項目 / 項目)， 項目 气泡</td></tr>
+<tr><td>多边形</td><td>三角形， 項目， 項目， 項目， 項目， 項目， 項目， 項目</td></tr>
+</table>
+<h4>对齐和 項目 工具</h4>
+<table>
+<tr><th>控件</th><th>描述</th></tr>
+<tr><td>對齐 引用</td><td>項目: 選區 / 畫布 / 首次 對象 / 項目 對象</td></tr>
+<tr><td>適配（包含）/ 適配（拉伸）/ 置中</td><td>適配與項目</td></tr>
+<tr><td>對齐 左 / 中央 (H) / 右</td><td>橫向对齐</td></tr>
+<tr><td>對齐 上 / 中間 (V) / 下</td><td>縱向对齐</td></tr>
+<tr><td>項目 項目 / 項目</td><td>項目 項目</td></tr>
+</table>
+</div>
+<h2 id="panel-effect">效果面板 <span class="tag tag-panel">面板</span></h2>
+<p>編輯參數用於所選效果圖層。 參數 UI 是 已生合 項目 項目 到效果 类型。</p>
+<div class="card">
+<p>當效果圖層是所選在圖層面板， 其 效果 名称 顯示 在組框 标题 和微調 框 是 已生合 用於每个參數。 更改是 項目 在預覽 項目 和支持 撤销。</p>
+</div>
+<h2 id="panel-pages">頁面面板 <span class="tag tag-panel">面板</span></h2>
+<p>用於管理多頁面文檔的面板。</p>
+<div class="card">
+<h4>控件列表</h4>
+<table>
+<tr><th>控件</th><th>描述</th></tr>
+<tr><td>+ (添加頁面) 按鈕</td><td>添加頁面 (基本 / 自定義 項目 + 項目 保存菜單)</td></tr>
+<tr><td>複製按鈕</td><td>複製 當前頁面</td></tr>
+<tr><td>刪除按鈕</td><td>刪除頁面</td></tr>
+<tr><td>Up / 項目 按鈕</td><td>更改 頁面 項目</td></tr>
+<tr><td>頁面列表</td><td>頁面编号 + 頁面名稱 + 未保存指示符 (*)。縮略圖目前顯示為占位符。</td></tr>
+</table>
+<p>双擊 或 <kbd>F2</kbd> 到 重新命名 頁面。 面板切換 之間 列表模式和 圖標 模式 項目 在 其 項目 比例。</p>
+</div>
+<h2 id="panel-preview">預覽面板 <span class="tag tag-panel">面板</span></h2>
+<p>實時顯示整個畫布的縮小預覽。</p>
+<div class="card">
+<p>用鼠標拖動可平移，使用縮放操作可調整預覽视口。每當畫布合成結果更新時，它會自動重繪。</p>
+</div>
+<h2 id="panel-context-toolbar">上下文工具欄 <span class="tag tag-panel">面板</span></h2>
+<p>項目 工具栏 該 顯示 自動在畫布之後 笔畫 或 操作。 它顯示 項目 設置用於当前工具。</p>
+<div class="card">
+<table>
+<tr><th>工具</th><th>顯示時机</th><th>顯示项目</th></tr>
+<tr><td>笔 / 橡皮擦</td><td>之後 笔畫 完成</td><td>大小， 不透明度， 硬度</td></tr>
+<tr><td>魔術棒</td><td>之後 建立 選區</td><td>項目， 連續， 操作</td></tr>
+<tr><td>漸變</td><td>當預覽 開始</td><td>类型， 颜色 /B， 色標， 抖動</td></tr>
+<tr><td>矢量路徑 / 精密</td><td>之後 笔畫 完成</td><td>描边宽度/颜色， 填充</td></tr>
+</table>
+</div>
+<!-- ══════════════════ エフェクトレイヤー ══════════════════ -->
+<h2 id="fx-gaussian-blur">高斯模糊 <span class="tag tag-effect">效果</span></h2>
+<p>對圖層應用高斯模糊的非破壞性效果。</p>
+<div class="card">
+<table>
+<tr><th>參數</th><th>範圍</th><th>描述</th></tr>
+<tr><td>半径</td><td>0 ～ 250 px</td><td>羽化半徑</td></tr>
+</table>
+</div>
+<h2 id="fx-levels">色階 <span class="tag tag-effect">效果</span></h2>
+<p>通過調整輸入/輸出色階和伽馬來控制對比度。</p>
+<div class="card">
+<table>
+<tr><th>參數</th><th>範圍</th><th>描述</th></tr>
+<tr><td>在 黑色</td><td>0 ～ 255</td><td>暗 點的輸入色階</td></tr>
+<tr><td>在 白色</td><td>0 ～ 255</td><td>光 點的輸入色階</td></tr>
+<tr><td>伽馬</td><td>0。01 ～ 9。99</td><td>伽馬 校正 值</td></tr>
+<tr><td>輸出黑场</td><td>0 ～ 255</td><td>暗 點的輸出色階</td></tr>
+<tr><td>輸出白场</td><td>0 ～ 255</td><td>光 點的輸出色階</td></tr>
+</table>
+</div>
+<h2 id="fx-hue-saturation">色相 / 飽和度 <span class="tag tag-effect">效果</span></h2>
+<p>用於調整色相、飽和度和明度的色彩校正效果。</p>
+<div class="card">
+<table>
+<tr><th>參數</th><th>範圍</th><th>描述</th></tr>
+<tr><td>色相</td><td>-180 ～ 180°</td><td>色相 項目</td></tr>
+<tr><td>飽和度</td><td>-100 ～ 100</td><td>飽和度 调整</td></tr>
+<tr><td>明度</td><td>-100 ～ 100</td><td>明度 调整</td></tr>
+</table>
+</div>
+<h2 id="fx-invert">反轉 <span class="tag tag-effect">效果</span></h2>
+<p>反轉圖層的色調範圍，即顏色明暗。</p>
+<div class="card">
+<table>
+<tr><th>參數</th><th>範圍</th><th>描述</th></tr>
+<tr><td>強度</td><td>0 ～ 100%</td><td>反相 强度</td></tr>
+</table>
+</div>
+<h2 id="fx-brightness-contrast">亮度 / 對比度 <span class="tag tag-effect">效果</span></h2>
+<p>項目 圖層亮度和對比度。 此是 内置-在 項目-項目 效果帶有 項目 CPU 和 GPU 路徑。</p>
+<div class="card">
+<table>
+<tr><th>參數</th><th>範圍</th><th>描述</th></tr>
+<tr><td>亮度</td><td>-100 ～ 100</td><td>亮度 调整</td></tr>
+<tr><td>對比度</td><td>-100 ～ 100</td><td>對比度 调整</td></tr>
+</table>
+</div>
+<h2 id="fx-sharpen">銳化 <span class="tag tag-effect">效果</span></h2>
+<p>使用反銳化蒙版方式增強邊緣。</p>
+<div class="card">
+<table>
+<tr><th>參數</th><th>範圍</th><th>描述</th></tr>
+<tr><td>数量</td><td>0 ～ 500</td><td>锐化 强度</td></tr>
+<tr><td>半径</td><td>0。1 ～ 50</td><td>锐化 半径</td></tr>
+<tr><td>阈值</td><td>0 ～ 255</td><td>噪聲 項目 阈值</td></tr>
+</table>
+</div>
+<h2 id="fx-noise-reduction">降噪 <span class="tag tag-effect">效果</span></h2>
+<p>基於非局部均值（NLM）方法的降噪效果。</p>
+<div class="card">
+<table>
+<tr><th>參數</th><th>範圍</th><th>描述</th></tr>
+<tr><td>強度</td><td>1 ～ 40</td><td>亮度 噪聲降低强度</td></tr>
+<tr><td>颜色强度</td><td>1 ～ 40</td><td>颜色噪聲降低强度</td></tr>
+</table>
+</div>
+<!-- ══════════════════ AI Effect Layer ══════════════════ -->
+<h2 id="ai-effect-overview">AI 效果圖層 <span class="tag tag-ai">AI 效果</span></h2>
+<p>AI 效果圖層是 項目 該 項目<code>.lsfx</code> 預設 在畫布作為圖層， 然后傳送 輸入圖層和參數到 ComfyUI Gateway 或 NanoBanana Gateway 到生成 圖像。 它 作用 帶有圖層面板， 效果面板， 和 AI 效果管理器分别從 普通 ComfyUI 和 NanoBanana 面板。</p>
+<div class="card">
+<h4>基本流量</h4>
+<ol>
+<li>從 AI 菜單， 选择 <strong>AI 效果 預設。。。</strong> 到 打開 AI 效果管理器</li>
+<li>右-點擊 預設 和选择 <strong>新增 AI 效果 圖層</strong> </li>
+<li>在圖層面板， 項目 輸入圖層到 項目 行 下方 AI 效果圖層</li>
+<li>使用效果面板到控制參數， 輸出 目标， 和生成</li>
+<li>应用 已生合 结果 到 AI 效果圖層 自身 或到新建輸出圖層 直接 上方 它</li>
+</ol>
+<table>
+<tr><th>项目</th><th>内容</th></tr>
+<tr><td>圖層 类型</td><td><code>layer_type="ai_effect"</code></td></tr>
+<tr><td>預設 格式</td><td><code>.lsfx</code>. ZIP 包含 清單， Gateway 設置， 圖標， 和 相關 數據</td></tr>
+<tr><td>内置預設</td><td>項目， 項目 項目， 項目 項目， HDR 效果， 項目 XL</td></tr>
+<tr><td>支持的 Gateway</td><td>ComfyUI Gateway / NanoBanana Gateway</td></tr>
+<tr><td>儲存</td><td><code>.lstroke</code> v1。2 <code>ai_effect</code> 項目 項目 状態</td></tr>
+</table>
+<p>項目 該 需要 外部 服務 访問 可以 运行 僅當外部 服務 是 允许 在首選項和 必需 API 密钥 或 连接 設置是 已配置。</p>
+</div>
+<h2 id="ai-effect-manager">AI 效果管理器 <span class="tag tag-ai">AI 效果</span></h2>
+<p>已安装 <code>.lsfx</code> 管理滤色用於 項目， 添加， 編輯， 項目， 和導入 預設。</p>
+<div class="card">
+<table>
+<tr><th>操作</th><th>描述</th></tr>
+<tr><td>新增 AI 效果 圖層</td><td>新增 所選 預設 到當前畫布作為 AI 效果圖層。</td></tr>
+<tr><td>編輯</td><td>打開s 預設 在效果 項目 和 項目 現有設置用於編輯。</td></tr>
+<tr><td>匯入</td><td>匯入 外部 <code>.lsfx</code> 到 <code>user_data/ai_effect/presets/</code>。</td></tr>
+<tr><td>刪除</td><td>刪除s 用户 預設。 内置預設 是 項目 帶有 快照 so 用户 更改是 項目。</td></tr>
+</table>
+<p>The default build ships no bundled <code>.lsfx</code> presets. Use Import or Register to add presets to <code>user_data/ai_effect/presets/</code>.</p>
+</div>
+<h2 id="ai-effect-editor">效果 編輯器 <span class="tag tag-ai">AI 效果</span></h2>
+<p>滤色用於 建立 和編輯 <code>.lsfx</code> 預設 從 ComfyUI 工作流或 NanoBanana 參數 項目。</p>
+<div class="card">
+<table>
+<tr><th>區域</th><th>項目</th></tr>
+<tr><td>元数据</td><td>項目 預設 名称， 類別， 說明， 標籤， 圖標， 和 相關 元数据。</td></tr>
+<tr><td>候選项 / 检查器</td><td>選擇 候选 參數和輸入 槽位 获取的 從 Gateway 和 公开 它们 作為 用户-項目 UI。</td></tr>
+<tr><td>匯入預設</td><td>現有 <code>.lsfx</code> 可以是 已载入 到 继续 編輯在效果 項目。</td></tr>
+<tr><td>導出</td><td>写出s 已驗證的 清單 和 Gateway 文件 原子方式 作為 <code>.lsfx</code>。</td></tr>
+</table>
+<p>項目 <code>.lsfx</code> 可以是 注册 直接 在 AI 效果管理器。 如果 項目 項目 不 包含 <code>.lsfx</code>， 它是 已添加 當 保存。</p>
+</div>
+<h2 id="ai-effect-runtime">生成和 状態 <span class="tag tag-ai">AI 效果</span></h2>
+<p>當 AI 效果圖層是所選， 效果面板顯示 动态 參數從 預設。 生成是 注册 在 歷史 作為 項目 和支持 撤销 / 重做。</p>
+<div class="card">
+<h4>圖層面板 / 效果面板</h4>
+<table>
+<tr><th>项目</th><th>描述</th></tr>
+<tr><td>Slot 行</td><td>輸入行顯示 下方 AI 效果圖層。 項目 項目 圖層作為 引用。</td></tr>
+<tr><td>排除按鈕</td><td>將輸入 Slot 切換為不參與混合、仅作為 AI 輸入使用。</td></tr>
+<tr><td>生成</td><td>開始 生成從所選圖層或從 AI 效果行在圖層面板。</td></tr>
+<tr><td>輸出到此圖層</td><td>當已啟用， 輸出是 項目 項目 到 AI 效果圖層 自身。 當已禁用， 新建輸出圖層是 已创建 直接 上方 它。</td></tr>
+<tr><td>Progress / 取消</td><td>运行中會顯示进度，外部取消通過以下接口處理：<code>cancel_layer(layer_id)</code>。</td></tr>
+</table>
+<h4>項目 和 保存</h4>
+<table>
+<tr><th>项目</th><th>描述</th></tr>
+<tr><td>輸入 解析</td><td>解析 引用的 柵格 / 組 / 蒙版 / AI 效果圖層作為 PNG 文件用於 Gateway。</td></tr>
+<tr><td>緩存</td><td>用於 項目 項目 和參數， <code>param_hash</code> 是使用到 項目 項目 / 緩存 項目。</td></tr>
+<tr><td>UI 状態</td><td>數值輸入， 項目 輸入， 和 即時提示詞 状態 是保存作為 <code>AIEffectState.param_ui_state</code>。</td></tr>
+<tr><td>遥测</td><td>僅當 除錯 是已啟用， <code>user_data/logs/ai_effect.log</code> 是 項目 作為 JSON 线条。</td></tr>
+<tr><td>設定</td><td>重试， 緩存， API 密钥， 和 相關 設置是管理在首選項 -&gt; AI 效果。 設置文件是 <code>user_data/ai_effect/preferences.json</code>。</td></tr>
+</table>
+<p>當 ComfyUI 是不 运行中 或 預設 是不 項目， 引导 項目， 項目 項目， 或 項目 是顯示。 到 項目 項目 连接 項目， 自动 连接 當 項目 AI 效果圖層有 項目。</p>
+</div>
+<!-- ══════════════════ AI 連携 ══════════════════ -->
+<h2 id="ai-comfyui">ComfyUI 面板 <span class="tag tag-ai">AI</span></h2>
+<p>连接到 ComfyUI 服務器并运行 AI 圖像生成工作流。仅在允许外部服務访問時可用。</p>
+<div class="card">
+<h4>连接 栏</h4>
+<table>
+<tr><th>控件</th><th>描述</th></tr>
+<tr><td>添加ress 輸入</td><td>服务器 項目 (預設: 127。0。0。1:8188)</td></tr>
+<tr><td>SSL 複選框</td><td>使用 HTTPS/WSS</td></tr>
+<tr><td>項目 / 項目 按鈕</td><td>开始或 項目 连接</td></tr>
+<tr><td>項目 按鈕</td><td>項目 节点 in格式ion</td></tr>
+</table>
+<h4>工作流</h4>
+<table>
+<tr><th>控件</th><th>描述</th></tr>
+<tr><td>工作流組合框</td><td>列表的保存工作流</td></tr>
+<tr><td>读取 按鈕</td><td>读取。json 工作流文件</td></tr>
+</table>
+<p>工作流是保存在 <code>user_data/plugins/comfyui/workflows</code> 和輸出圖層使用 <code>user_data/cache/LoomStroke/layers</code>。</p>
+<h4>標籤頁 1 — 工作流 項目</h4>
+<p>每个 节点 在 已载入 工作流是顯示作為 动态 標籤頁 其中 參數可以是编辑。 項目 參數可以是编辑帶有提示詞 组合器。</p>
+<h4>標籤頁 2 — Queue</h4>
+<table>
+<tr><th>控件</th><th>描述</th></tr>
+<tr><td>作业表</td><td>六欄： ID， 状态， 項目， 工作流， 已開始， 补充</td></tr>
+<tr><td>取消按鈕</td><td>取消所選 作业</td></tr>
+<tr><td>預覽按鈕</td><td>預覽 作业 结果</td></tr>
+<tr><td>清晰 Finished 按鈕</td><td>清晰 項目 作业</td></tr>
+</table>
+<h4>項目 控制</h4>
+<table>
+<tr><th>控件</th><th>描述</th></tr>
+<tr><td>Queue 按鈕</td><td>項目 作业 (绿色)</td></tr>
+<tr><td>取消按鈕</td><td>取消 运行中 作业</td></tr>
+<tr><td>項目 微調框</td><td>0=項目， -1=項目， N=項目 N 項目</td></tr>
+<tr><td>項目 複選框</td><td>項目 項目</td></tr>
+</table>
+</div>
+<h2 id="ai-nanobanana">NanoBanana 面板 <span class="tag tag-ai">AI</span></h2>
+<p>AI 图像生成面板使用 Google Gemini API。 API 密钥 是保存在 OS keyring 和它可以是使用僅當外部 服務 访問 是 允许。</p>
+<div class="card">
+<h4>控件列表</h4>
+<table>
+<tr><th>控件</th><th>項目 / 範圍</th><th>描述</th></tr>
+<tr><td>提示詞</td><td>文本 / 芯片 组合器</td><td>生成提示詞輸入</td></tr>
+<tr><td>輸入圖層</td><td>圖層組合 x N</td><td>圖層使用作為輸入 (多選區 支持)</td></tr>
+<tr><td>模型</td><td>組合框</td><td>模型 到使用， 項目 作為 項目-2。5-項目</td></tr>
+<tr><td>思考</td><td>項目 / 項目</td><td>項目 级别</td></tr>
+<tr><td>模式</td><td>文本+图像 / 图像</td><td>輸出 項目</td></tr>
+<tr><td>大小</td><td>項目 / 512 / 1K / 2K / 4K</td><td>輸出图像大小</td></tr>
+<tr><td>項目 比例</td><td>1:1， 4:3， 3:4， 16:9， 9:16， 等。</td><td>項目 比例帶有 項目 項目</td></tr>
+<tr><td>目标 圖層</td><td>&lt;新建圖層&gt; / 現有圖層</td><td>輸出 目标 用於 已生合 圖像</td></tr>
+<tr><td>項目 複選框</td><td>在 / OFF</td><td>項目 項目 項目</td></tr>
+<tr><td>搜尋 複選框</td><td>在 / OFF</td><td>使用 Google 搜尋</td></tr>
+<tr><td>生成按鈕</td><td>—</td><td>运行 图像生成 (绿色)</td></tr>
+<tr><td>Status 文本</td><td>—</td><td>状态 日誌 顯示</td></tr>
+</table>
+</div>
+<h2 id="ai-prompt-editor">提示詞編輯器 <span class="tag tag-ai">AI</span></h2>
+<p>面板該 項目 項目 提示詞 項目， 片段 管理， 和 LLM 項目。 片段是保存在 <code>user_data/text_editor/text_snippets.sqlite3</code>。</p>
+<div class="card">
+<h4>標籤頁 1 — 項目</h4>
+<table>
+<tr><th>控件</th><th>描述</th></tr>
+<tr><td>組件面板</td><td>拖動和放下 四個 分量 类型: 項目 / 列表 / 文本 / 提示詞</td></tr>
+<tr><td>項目 提示詞 芯片 流量</td><td>重新排序 項目 到 項目 提示詞</td></tr>
+<tr><td>項目 輸入</td><td>項目 之間 合分</td></tr>
+<tr><td>項目 按鈕</td><td>項目 提示詞</td></tr>
+<tr><td>複製 按鈕</td><td>複製 结果 到 項目</td></tr>
+<tr><td>保存區域</td><td>提示詞 名称 + 類別 + 保存/载入/新建按鈕</td></tr>
+</table>
+<h4>標籤頁 2 — 庫</h4>
+<table>
+<tr><th>控件</th><th>描述</th></tr>
+<tr><td>搜尋 栏</td><td>文本 搜尋 + 类型 筛選器 + 標籤 筛選器</td></tr>
+<tr><td>片段 列表</td><td>列表的保存片段</td></tr>
+<tr><td>详细编辑器</td><td>編輯 标题 / 標籤 / 类型 / 項目</td></tr>
+<tr><td>複製 / 刪除 / 導出</td><td>片段 操作 按鈕</td></tr>
+</table>
+<h4>標籤頁 3 — LLM</h4>
+<table>
+<tr><th>控件</th><th>項目 / 範圍</th><th>描述</th></tr>
+<tr><td>項目 複選框</td><td>在 / OFF</td><td>當前 Gateway 以非流式模式运行</td></tr>
+<tr><td>提供商</td><td>組合框</td><td>AI 項目 選區</td></tr>
+<tr><td>模型</td><td>組合框</td><td>模型 選區</td></tr>
+<tr><td>温度</td><td>0。0 ～ 2。0</td><td>生成 項目 (預設: 0。7)</td></tr>
+<tr><td>最大令牌数</td><td>0 ～ 32000</td><td>最大 令牌 數量 (默認: 512)</td></tr>
+<tr><td>系统 提示詞</td><td>文本區域</td><td>系统 提示詞</td></tr>
+<tr><td>用户 提示詞</td><td>文本區域</td><td>用户 提示詞</td></tr>
+<tr><td>輸出</td><td>文本區域</td><td>顯示 LLM 項目</td></tr>
+<tr><td>項目 / 取消 / 清晰</td><td>—</td><td>項目 控制按鈕</td></tr>
+</table>
+</div>
+<!-- ══════════════════ キャンバス操作 ══════════════════ -->
+<h2 id="canvas-viewport">縮放 / 平移 / 旋轉<span class="tag tag-param">畫布</span></h2>
+<div class="card">
+<table>
+<tr><th>操作</th><th>輸入</th><th>补充</th></tr>
+<tr><td>放大</td><td><kbd>Ctrl+=</kbd>/ 鼠標滚轮向上</td><td>最大 3200%</td></tr>
+<tr><td>縮小</td><td><kbd>Ctrl+-</kbd>/ 鼠標滚轮向下</td><td>項目 1%</td></tr>
+<tr><td>重置縮放</td><td><kbd>Ctrl+0</kbd></td><td>項目 到 100%</td></tr>
+<tr><td>平移 (項目)</td><td>右-點擊 拖動</td><td>項目 在設置</td></tr>
+<tr><td>畫布 旋轉</td><td>图像菜單</td><td>順時針 90° / 逆時針 90° / 180°。 转换 所有圖層作為 歷史 組。</td></tr>
+</table>
+<p><strong>項目 項目:</strong> 默認畫布是 QImage-基於 <code>SimpleCanvasService</code>。 圖層可以是柵格， 矢量， 或蒙版圖層; 期間 柵格 項目， off-畫布 區域是也 保留 通過 <code>offset_x/y</code>。</p>
+</div>
+<h2 id="canvas-rulers">標尺s 和 參考線 <span class="tag tag-param">畫布</span></h2>
+<div class="card">
+<ul>
+<li><strong>標尺s:</strong> 顯示在上和左邊緣的畫布。 項目 可以是 px / mm / 項目。</li>
+<li><strong>創建 參考線:</strong> 拖動從 項目 到 畫布</li>
+<li><strong>移動 參考線:</strong>点擊并拖動參考線</li>
+<li><strong>刪除 參考線:</strong> 拖出畫布</li>
+<li><strong>开關 顯示:</strong> <kbd>R</kbd>鍵可切換參考線顯示</li>
+<li><strong>吸附:</strong> 自动 吸附 到 參考線， 网格， 錨點， 和邊緣</li>
+<li><strong>參考線顏色：</strong> 項目 在設置 (預設: <code>#00B7FF</code>)</li>
+</ul>
+</div>
+<h2 id="canvas-grid">网格 <span class="tag tag-param">畫布</span></h2>
+<div class="card">
+<ul>
+<li><strong>开關 顯示:</strong> <kbd>G</kbd> 密钥</li>
+<li><strong>网格 大小:</strong> 預設 32 px， 項目 從 1 到 5000 px 在首選項</li>
+<li><strong>网格 吸附:</strong> 可以是已啟用在移動工具和相似工具</li>
+</ul>
+</div>
+<!-- ══════════════════ ファイル入出力 ══════════════════ -->
+<h2 id="file-formats">支持的格式 <span class="tag tag-param">文件</span></h2>
+<div class="card">
+<table>
+<tr><th>格式</th><th>導入</th><th>導出</th><th>补充</th></tr>
+<tr><td>.lstroke (原生)</td><td>v1。0。0 / v1。1。0</td><td>v1。1。0</td><td>項目 多頁面， 圖層， 矢量， 和 UI 布局</td></tr>
+<tr><td>PNG</td><td>○</td><td>○</td><td>項目 级别 可以是 已配置</td></tr>
+<tr><td>JPEG</td><td>○</td><td>○</td><td>項目 和 項目 設置可以是 已配置</td></tr>
+<tr><td>TIFF</td><td>○</td><td>○</td><td>LZW 項目 和 16-bit 支持</td></tr>
+<tr><td>BMP</td><td>○</td><td>○</td><td></td></tr>
+<tr><td>WebP</td><td>○</td><td>○</td><td>項目 和 項目 設置可以是 已配置</td></tr>
+<tr><td>PSD</td><td>○</td><td>○</td><td>導入圖層結構，并導出带圖層的 PSD</td></tr>
+<tr><td>ABR</td><td>○</td><td>—</td><td>導入 Photoshop 畫筆</td></tr>
+<tr><td>SVG</td><td>○</td><td>○</td><td>Through 形狀管理器</td></tr>
+</table>
+<p>PNG / JPEG / WebP / BMP / TIFF 文件可以是 項目 從 OS 到 畫布和 已添加 作為新建柵格圖層。</p>
+</div>
+<h2 id="file-lstroke">.lstroke 原生 格式 <span class="tag tag-param">文件</span></h2>
+<div class="card">
+<p>.lstroke 是 ZIP-基於 原生 格式。 在保存， 它 項目 到 <code>*.lstroke.tmp</code> 和 項目 項目 目标 文件。 項目 in格式ion 是保存:</p>
+<ul>
+<li>JSON 清單 (項目 和 文档 元数据)</li>
+<li>PNG 图像 數據 用於每个圖層</li>
+<li>矢量對象 數據</li>
+<li>頁面 in格式ion (v1。1 multi-頁面)</li>
+<li>UI 布局 快照</li>
+<li>ICC 顏色 項目</li>
+</ul>
+</div>
+<!-- ══════════════════ 設定 ══════════════════ -->
+<h2 id="settings-preferences">偏好設定 <span class="tag tag-param">設置</span></h2>
+<p><kbd>Ctrl+,</kbd>會打开首選項對话框。目前由五個標籤頁組成：項目 / 項目 / 文件輸入/輸出 / 快捷鍵 / AI 項目。</p>
+<div class="card">
+<h4>項目 標籤頁</h4>
+<table>
+<tr><th>設置</th><th>範圍</th><th>描述</th></tr>
+<tr><td>啟用 Numba 項目</td><td>在 / OFF</td><td>項目 Numba JIT 項目 用於數值 項目。</td></tr>
+<tr><td>緩存大小</td><td>10 ～ 10000 項目</td><td>最大 数量的 應用程式內快取 条目。</td></tr>
+<tr><td>撤销 項目</td><td>10 ～ 1000</td><td>最大 数量的 撤销 歷史 項目</td></tr>
+<tr><td>項目 阈值</td><td>1 ～ 1000 MB</td><td>阈值用於 从 到使用 項目 用於 大型 图像 數據。</td></tr>
+<tr><td>項目 FPS 限制</td><td>10 ～ 120 fps</td><td>項目 FPS 限制 使用到 减少 CPU 载入 在 大型 項目。</td></tr>
+<tr><td>啟用清晰矢量叠加（縮放時）</td><td>在 / OFF</td><td>顯示 項目 矢量圖層 項目 在 滤色 解析 期間 項目。</td></tr>
+<tr><td>矢量叠加 最大尺寸</td><td>2048 / 4096 / 8192</td><td>最大 柵格 項目 用於 清晰 矢量叠加。 項目 值 是 更多 項目，但使用 更多 VRAM。</td></tr>
+</table>
+<h4>項目 標籤頁</h4>
+<table>
+<tr><th>設置</th><th>選項</th><th>描述</th></tr>
+<tr><td>語言</td><td>系统 預設 / 項目 / 項目 / 項目 (項目 / 項目 / 項目 項目) / 項目 / 項目 / 項目 / 項目 / 項目 (項目) / 項目 / 項目</td><td>UI 語言。更改會在无需重啟的情况下應用到主要 UI 區域。</td></tr>
+<tr><td>顏色 項目</td><td>暗 / 光 / 系统</td><td>顏色 項目</td></tr>
+<tr><td>顯示 工具栏</td><td>在 / OFF</td><td>顯示 工具栏</td></tr>
+<tr><td>顯示 状态 栏</td><td>在 / OFF</td><td>顯示 状态 栏</td></tr>
+<tr><td>网格間隔</td><td>1 ～ 5000 px</td><td>网格間隔</td></tr>
+<tr><td>項目 外部 AI 服務</td><td>在 / OFF</td><td>當 OFF， 項目 访問 到 ComfyUI / LLM Gateway / NanoBanana 是 項目。</td></tr>
+<tr><td>菜单</td><td>视圖 / 圖層 / 筛選器 / 工具 / 插件， 等。</td><td>項目 切換 可見性用於 目标 項目。</td></tr>
+<tr><td>蒙版叠加颜色</td><td>颜色 (默認: #00FFFF)</td><td>選區蒙版叠加颜色</td></tr>
+<tr><td>蒙版叠加不透明度</td><td>0 ～ 255</td><td>選區蒙版叠加不透明度</td></tr>
+</table>
+<h4>文件輸入/輸出 標籤頁</h4>
+<table>
+<tr><th>設置</th><th>範圍</th><th>描述</th></tr>
+<tr><td>啟用 自動儲存</td><td>在 / OFF</td><td>項目 自動儲存。 更改 項目 效果之後 重新啟動。</td></tr>
+<tr><td>自動保存間隔</td><td>30 ～ 3600 秒</td><td>自動保存間隔。 更改 項目 效果之後 重新啟動。</td></tr>
+<tr><td>壓缩质量</td><td>1 ～ 100</td><td>壓缩质量 使用當 保存 或 項目。</td></tr>
+<tr><td>布局目录</td><td>文件夹 路徑</td><td>指定 UI 布局的保存位置。可通過 Browse… 選擇。</td></tr>
+</table>
+<h4>快捷鍵 標籤頁</h4>
+<p>列出并重新分配所有操作的鍵盘快捷鍵。包含类别 / 所有者樹、搜索、冲突顯示和 項目 項目。也可以更改鼠標的平移手势和上下文菜單分配。</p>
+<h4>AI 效果 標籤頁</h4>
+<table>
+<tr><th>設置</th><th>範圍 / 選项</th><th>描述</th></tr>
+<tr><td>默認 触發器</td><td>Manual / 在 更改 / Debounced</td><td>默認 触發器 用於 AI 效果圖層生成。</td></tr>
+<tr><td>防抖延迟</td><td>0 ～ 60000 ms</td><td>項目 用於 項目 触發器。</td></tr>
+<tr><td>生成 項目</td><td>10 ～ 86400 秒</td><td>項目 用於生成 作业。</td></tr>
+<tr><td>緩存 条目 每 圖層</td><td>1 ～ 500 条目</td><td>緩存 限制 每 AI 效果圖層。</td></tr>
+<tr><td>禁用緩存用於 手动 項目</td><td>在 / OFF</td><td>項目 緩存使用 期間 手动 項目。</td></tr>
+<tr><td>Auto-retries 在 '在 更改' 触發器</td><td>0 ～ 10</td><td>数量的自动 重试 用於在 更改 生成。</td></tr>
+<tr><td>重試延迟</td><td>0 ～ 60000 ms</td><td>項目 項目 之前 項目。</td></tr>
+<tr><td>顯示 首次-生合 横幅</td><td>在 / OFF</td><td>顯示 引导 横幅 之後 首次 生成 完成。</td></tr>
+<tr><td>項目 在-更改 / 項目 項目 在 項目</td><td>在 / OFF</td><td>切換 是否自動 已生合 结果 是 注册 在 項目。</td></tr>
+<tr><td>ComfyUI 項目</td><td>Local URL / 外部 URL</td><td>項目 ComfyUI 服务器 項目 URL 用於 AI 效果。 項目 預設是 <code>http://127.0.0.1:8188</code>。</td></tr>
+<tr><td>API 密钥</td><td>NanoBanana / 打開AI / Anthropic / Google Gemini</td><td>通過 項目… / 項目 注册或刪除 API 密钥。值通過以下机制處理：<code>SecretProvider</code>。</td></tr>
+</table>
+<p>AI 效果 標籤頁 項目， 緩存， 重试， 和 相關 設置是保存在 <code>user_data/ai_effect/preferences.json</code>。ComfyUI URL 會保存到常规設置，并在下次啟動時生效。</p>
+</div>
+<h2 id="settings-shortcuts">快捷鍵列表 <span class="tag tag-param">設置</span></h2>
+<div class="card">
+<h4>文件操作</h4>
+<table class="shortcut-table">
+<tr><td><kbd>Ctrl+N</kbd></td><td>新建</td></tr>
+<tr><td><kbd>Ctrl+O</kbd></td><td>打開</td></tr>
+<tr><td><kbd>Ctrl+S</kbd></td><td>儲存</td></tr>
+<tr><td><kbd>Ctrl+Shift+S</kbd></td><td>另存為</td></tr>
+<tr><td><kbd>Ctrl+Shift+I</kbd></td><td>匯入</td></tr>
+<tr><td><kbd>Ctrl+E</kbd></td><td>導出</td></tr>
+<tr><td><kbd>Ctrl+W</kbd></td><td>關閉</td></tr>
+<tr><td><kbd>Ctrl+Q</kbd></td><td>退出</td></tr>
+</table>
+<h4>編輯操作</h4>
+<table class="shortcut-table">
+<tr><td><kbd>Ctrl+Z</kbd></td><td>撤销</td></tr>
+<tr><td><kbd>Ctrl+Y</kbd></td><td>重做</td></tr>
+<tr><td><kbd>Ctrl+X</kbd></td><td>剪下</td></tr>
+<tr><td><kbd>Ctrl+C</kbd></td><td>複製</td></tr>
+<tr><td><kbd>Ctrl+V</kbd></td><td>貼上</td></tr>
+<tr><td><kbd>Ctrl+A</kbd></td><td>全選</td></tr>
+<tr><td><kbd>Ctrl+L</kbd></td><td>全選矢量</td></tr>
+<tr><td><kbd>Ctrl+D</kbd></td><td>取消選擇</td></tr>
+</table>
+<h4>工具</h4>
+<table class="shortcut-table">
+<tr><td><kbd>B</kbd></td><td>畫筆工具</td></tr>
+<tr><td><kbd>E</kbd></td><td>橡皮擦工具</td></tr>
+<tr><td><kbd>V</kbd></td><td>移動工具</td></tr>
+<tr><td><kbd>P</kbd></td><td>精密 矢量 笔</td></tr>
+<tr><td><kbd>T</kbd></td><td>文字工具</td></tr>
+<tr><td><kbd>I</kbd></td><td>吸管工具</td></tr>
+<tr><td><kbd>[</kbd> / <kbd>]</kbd></td><td>更改 畫筆大小</td></tr>
+</table>
+<h4>檢視</h4>
+<table class="shortcut-table">
+<tr><td><kbd>Ctrl+=</kbd></td><td>放大</td></tr>
+<tr><td><kbd>Ctrl+-</kbd></td><td>縮小</td></tr>
+<tr><td><kbd>Ctrl+0</kbd></td><td>重置縮放</td></tr>
+<tr><td><kbd>G</kbd></td><td>切换网格</td></tr>
+<tr><td><kbd>R</kbd></td><td>切换参考線</td></tr>
+<tr><td><kbd>F11</kbd></td><td>全屏</td></tr>
+</table>
+<h4>圖層</h4>
+<table class="shortcut-table">
+<tr><td><kbd>Ctrl+Shift+N</kbd></td><td>新增圖層</td></tr>
+<tr><td><kbd>Ctrl+J</kbd></td><td>複製圖層</td></tr>
+<tr><td><kbd>Del</kbd></td><td>刪除圖層</td></tr>
+<tr><td><kbd>Ctrl+E</kbd></td><td>向下合併</td></tr>
+<tr><td><kbd>Shift+R</kbd></td><td>點陣化</td></tr>
+</table>
+<h4>濾鏡</h4>
+<table class="shortcut-table">
+<tr><td><kbd>Ctrl+Alt+F</kbd></td><td>重新應用上一个濾鏡</td></tr>
+</table>
+<h4>設定</h4>
+<table class="shortcut-table">
+<tr><td><kbd>Ctrl+,</kbd></td><td>偏好設定</td></tr>
+</table>
+</div>
+</main>
+<!-- ===== SCRIPTS ===== -->
+<script>
+const sidebar=document.getElementById('sidebar');const toggle=document.getElementById('sidebar-toggle');if(toggle)toggle.addEventListener('click',()=>sidebar.classList.toggle('show'));
+document.querySelectorAll('.nav-section-title').forEach(t=>t.addEventListener('click',()=>t.parentElement.classList.toggle('open')));
+const s=document.getElementById('sidebar-search');if(s)s.addEventListener('input',()=>{const q=s.value.toLowerCase();document.querySelectorAll('.nav-section').forEach(sec=>{let any=false;sec.querySelectorAll('.nav-link').forEach(a=>{const m=a.textContent.toLowerCase().includes(q);a.style.display=m?'':'none';if(m)any=true;});sec.style.display=any||!q?'':'none';if(q&&any)sec.classList.add('open');});});
+const sel=document.getElementById('language-select');if(sel)sel.addEventListener('change',()=>{location.href='index_'+sel.value+'.html'});
+</script></body>
+</html>

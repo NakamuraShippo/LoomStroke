@@ -1,0 +1,129 @@
+THIRD-PARTY SOFTWARE LICENSES
+==============================
+
+LoomStroke uses the following third-party libraries.
+Each library retains its own copyright and license terms as listed below.
+
+wgpu-py 0.31.0 (required GPU runtime)
+   Copyright (c) 2019-2023, Almar Klein, Korijn van Golen.
+   License: BSD-2-Clause
+   https://github.com/pygfx/wgpu-py
+   Full license text: LICENSES/BSD-2-Clause-wgpu-rendercanvas.txt
+
+rendercanvas 2.6.3 (dependency of wgpu-py)
+   Copyright (c) 2019-2026, rendercanvas developers.
+   License: BSD-2-Clause
+   https://github.com/pygfx/rendercanvas
+   Full license text: LICENSES/BSD-2-Clause-wgpu-rendercanvas.txt
+
+
+1. PySide6 / shiboken6
+   Copyright (C) The Qt Company Ltd.
+   License: LGPL-3.0-only (selected)
+   Full license text: LICENSES/LGPL-3.0.txt
+   Note: Qt libraries are dynamically linked. Users may replace the
+   PySide6 installation via `pip install --upgrade PySide6`.
+   Qt source code is available at https://code.qt.io/
+
+2. NumPy
+   Copyright (c) 2005-2025, NumPy Developers.
+   License: BSD-3-Clause
+   https://numpy.org/doc/stable/license.html
+
+3. Pillow
+   Copyright (c) 1995-2011 Fredrik Lundh and contributors
+   Copyright (c) 2010-2025 Jeffrey A. Clark and contributors
+   License: MIT-CMU (Historical Permission Notice and Disclaimer)
+   https://github.com/python-pillow/Pillow/blob/main/LICENSE
+
+4. OpenCV (opencv-python-headless)
+   Copyright (C) 2000-2025, Intel Corporation, all rights reserved.
+   Copyright (C) 2009-2011, Willow Garage Inc., all rights reserved.
+   Copyright (C) 2009-2016, NVIDIA Corporation, all rights reserved.
+   Copyright (C) 2010-2013, Advanced Micro Devices, Inc., all rights reserved.
+   Copyright (C) 2015-2025, OpenCV Foundation, all rights reserved.
+   License: Apache-2.0
+   https://github.com/opencv/opencv/blob/master/LICENSE
+
+5. aiohttp
+   Copyright (c) aio-libs contributors
+   License: Apache-2.0 AND MIT
+   https://github.com/aio-libs/aiohttp/blob/master/LICENSE.txt
+
+6. aiofiles
+   Copyright (c) Tin Tvrtkovic
+   License: Apache-2.0
+   https://github.com/Tinche/aiofiles/blob/master/LICENSE
+
+7. qasync
+   Copyright (c) 2018, Gerard Marull-Paretas
+   Copyright (c) 2014-2018, Mark Harviston, Arve Knudsen
+   License: BSD-2-Clause
+   https://github.com/CabbageDevelopment/qasync/blob/master/LICENSE
+
+8. Numba
+   Copyright (c) 2012, Anaconda, Inc.
+   License: BSD-2-Clause
+   https://github.com/numba/numba/blob/main/LICENSE
+
+9. jsonschema
+   Copyright (c) 2013 Julian Berman
+   License: MIT
+   https://github.com/python-jsonschema/jsonschema/blob/main/COPYING
+
+10. packaging
+    Copyright (c) Donald Stufft and individual contributors
+    License: Apache-2.0 OR BSD-2-Clause
+    https://github.com/pypa/packaging/blob/main/LICENSE
+
+11. cryptography
+    Copyright (c) Individual contributors
+    License: Apache-2.0 OR BSD-3-Clause
+    https://github.com/pyca/cryptography/blob/main/LICENSE
+
+12. defusedxml
+    Copyright (c) 2013-2022 Christian Heimes
+    License: PSF-2.0
+    https://github.com/tiran/defusedxml/blob/main/LICENSE
+
+13. psd-tools
+    Copyright (c) 2012-2025 Mikhail Korobov and contributors
+    License: MIT
+    https://github.com/psd-tools/psd-tools/blob/main/LICENSE
+
+14. llvmlite (transitive dependency of Numba)
+    Copyright (c) 2014, Anaconda, Inc.
+    License: BSD-2-Clause
+    https://github.com/numba/llvmlite/blob/main/LICENSE
+
+15. Bundled CMYK ICC profiles (unmodified third-party data)
+    basICColor printing profiles: Copyright (c) 2007-2010, basICColor GmbH.
+    License: zlib/libpng, including commercial use and redistribution.
+    Original ICC copyright tags also identify basICColor / Color Solutions.
+    Source package and license:
+    https://sources.debian.org/src/icc-profiles-free/2.4/icc-profiles-basiccolor-printing2009/
+    Full notice: loomstroke/io/resources/icc/LICENSE-ZLIB-bICC.txt
+
+    APTEC Offset Coated / Uncoated LinearCTV 2025:
+    Advanced Printing Technology Centre Limited, with Eastman Kodak permission.
+    The original ICC copyright tags explicitly allow copying, distribution,
+    embedding, use, and sale without restriction. Original bytes are preserved.
+    https://registry.color.org/profile-registry/APTEC_Offset_Coated_LinearCTV_2025
+    https://registry.color.org/profile-registry/APTEC_Offset_Uncoated_LinearCTV_2025
+    Full notice: loomstroke/io/resources/icc/LICENSE-APTEC.txt
+
+    File names, conditions, source URLs, and hashes:
+    loomstroke/io/resources/icc/catalog.json
+    These third-party resources retain their own terms; the LoomStroke
+    proprietary license does not replace or restrict the above grants.
+
+16. Mapbox earcut (Python port included in LoomStroke)
+    Copyright (c) 2016, Mapbox.
+    License: ISC
+    Upstream version: v2.2.4
+    Source: https://github.com/mapbox/earcut/tree/v2.2.4
+    Original license: https://github.com/mapbox/earcut/blob/v2.2.4/LICENSE
+    Full license text: LICENSES/ISC-earcut.txt
+    Applies to: src/loomstroke/ui/canvas/wgpu_backend/vector/earcut.py
+    The Python port retains the upstream algorithm structure and is
+    governed by ISC, rather than the LoomStroke proprietary restrictions.

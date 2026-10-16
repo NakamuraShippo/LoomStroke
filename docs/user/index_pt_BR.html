@@ -1,0 +1,1345 @@
+<!DOCTYPE html>
+
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>LoomStroke - Guia do usuário</title>
+<style>
+:root {
+  --bg: #1a1a2e;
+  --bg-panel: #16213e;
+  --bg-card: #1e2a4a;
+  --bg-card-hover: #253456;
+  --accent: #4fc3f7;
+  --accent-dim: #2980b9;
+  --text: #e0e6ed;
+  --text-dim: #8899aa;
+  --text-heading: #ffffff;
+  --border: #2a3a5c;
+  --sidebar-w: 280px;
+  --tag-tool: #4fc3f7;
+  --tag-panel: #ab47bc;
+  --tag-param: #66bb6a;
+  --tag-effect: #ff7043;
+  --tag-ai: #ffd54f;
+}
+* { margin:0; padding:0; box-sizing:border-box; }
+body {
+  font-family: 'Segoe UI', 'Noto Sans JP', 'Hiragino Kaku Gothic ProN', sans-serif;
+  background: var(--bg);
+  color: var(--text);
+  line-height: 1.7;
+  display: flex;
+  min-height: 100vh;
+}
+
+/* ── Sidebar ── */
+#sidebar {
+  width: var(--sidebar-w);
+  min-width: var(--sidebar-w);
+  background: var(--bg-panel);
+  border-right: 1px solid var(--border);
+  overflow-y: auto;
+  position: fixed;
+  top: 0; left: 0; bottom: 0;
+  z-index: 100;
+  transition: transform .25s ease;
+  scrollbar-width: thin;
+  scrollbar-color: var(--border) transparent;
+}
+#sidebar.collapsed { transform: translateX(calc(-1 * var(--sidebar-w))); }
+#sidebar-header {
+  padding: 20px 16px 12px;
+  border-bottom: 1px solid var(--border);
+  position: sticky; top: 0;
+  background: var(--bg-panel);
+  z-index: 1;
+}
+#sidebar-header h1 {
+  font-size: 16px; color: var(--accent);
+  font-weight: 700; letter-spacing: .5px;
+}
+#sidebar-header p { font-size: 11px; color: var(--text-dim); margin-top: 2px; }
+#sidebar-search {
+  width: 100%; margin-top: 10px; padding: 6px 10px;
+  background: var(--bg-card); border: 1px solid var(--border);
+  border-radius: 4px; color: var(--text); font-size: 13px; outline: none;
+}
+#sidebar-search:focus { border-color: var(--accent); }
+#sidebar-search::placeholder { color: var(--text-dim); }
+.language-picker {
+  margin-top: 10px;
+}
+.language-picker label {
+  display: block; margin-bottom: 4px;
+  color: var(--text-dim); font-size: 11px;
+}
+#language-select {
+  width: 100%; padding: 6px 10px;
+  background: var(--bg-card); border: 1px solid var(--border);
+  border-radius: 4px; color: var(--text); font-size: 13px; outline: none;
+}
+#language-select:focus { border-color: var(--accent); }
+#sidebar nav { padding: 8px 0 24px; }
+.nav-section { margin-bottom: 2px; }
+.nav-section-title {
+  display: flex; align-items: center; gap: 6px;
+  padding: 8px 16px; font-size: 12px; font-weight: 700;
+  color: var(--text-dim); text-transform: uppercase; letter-spacing: .8px;
+  cursor: pointer; user-select: none; transition: color .15s;
+}
+.nav-section-title:hover { color: var(--text); }
+.nav-section-title::before {
+  content: '▸'; display: inline-block; font-size: 10px;
+  transition: transform .2s; width: 12px; text-align: center;
+}
+.nav-section.open > .nav-section-title::before { transform: rotate(90deg); }
+.nav-section-items { display: none; }
+.nav-section.open > .nav-section-items { display: block; }
+.nav-link {
+  display: block; padding: 5px 16px 5px 34px;
+  font-size: 13px; color: var(--text-dim);
+  text-decoration: none; border-left: 3px solid transparent;
+  transition: all .15s;
+}
+.nav-link:hover { color: var(--text); background: rgba(79,195,247,.06); }
+.nav-link.active { color: var(--accent); border-left-color: var(--accent); background: rgba(79,195,247,.08); }
+
+/* ── Toggle button ── */
+#sidebar-toggle {
+  position: fixed; top: 12px; left: 12px; z-index: 200;
+  width: 36px; height: 36px; border: none; border-radius: 6px;
+  background: var(--accent-dim); color: #fff; font-size: 18px;
+  cursor: pointer; display: none; align-items: center; justify-content: center;
+  transition: background .15s;
+}
+#sidebar-toggle:hover { background: var(--accent); }
+
+/* ── Main content ── */
+#main {
+  flex: 1; margin-left: var(--sidebar-w);
+  padding: 32px 40px 80px;
+  max-width: 960px;
+  transition: margin-left .25s ease;
+}
+#main.expanded { margin-left: 0; }
+
+h2 {
+  font-size: 26px; color: var(--text-heading);
+  margin: 48px 0 16px; padding-bottom: 8px;
+  border-bottom: 2px solid var(--accent-dim);
+}
+h2:first-of-type { margin-top: 0; }
+h3 {
+  font-size: 19px; color: var(--accent);
+  margin: 32px 0 10px;
+}
+h4 {
+  font-size: 15px; color: var(--text-heading);
+  margin: 20px 0 8px;
+}
+p, li { font-size: 14px; }
+p { margin-bottom: 10px; }
+ul, ol { padding-left: 20px; margin-bottom: 12px; }
+li { margin-bottom: 4px; }
+
+.tag {
+  display: inline-block; font-size: 10px; font-weight: 700;
+  padding: 1px 7px; border-radius: 3px; margin-right: 4px;
+  vertical-align: middle; letter-spacing: .3px;
+}
+.tag-tool    { background: rgba(79,195,247,.18); color: var(--tag-tool); }
+.tag-panel   { background: rgba(171,71,188,.18); color: var(--tag-panel); }
+.tag-param   { background: rgba(102,187,106,.18); color: var(--tag-param); }
+.tag-effect  { background: rgba(255,112,67,.18);  color: var(--tag-effect); }
+.tag-ai      { background: rgba(255,213,79,.18);  color: var(--tag-ai); }
+
+.card {
+  background: var(--bg-card); border: 1px solid var(--border);
+  border-radius: 8px; padding: 18px 20px; margin-bottom: 16px;
+  transition: border-color .15s;
+}
+.card:hover { border-color: var(--accent-dim); }
+.card h4 { margin-top: 0; }
+
+table {
+  width: 100%; border-collapse: collapse; margin-bottom: 16px;
+  font-size: 13px;
+}
+th, td {
+  padding: 8px 12px; text-align: left;
+  border-bottom: 1px solid var(--border);
+}
+th { color: var(--accent); font-weight: 600; font-size: 12px; text-transform: uppercase; letter-spacing: .5px; }
+tr:hover td { background: rgba(79,195,247,.04); }
+
+kbd {
+  display: inline-block; background: var(--bg-card); border: 1px solid var(--border);
+  border-radius: 4px; padding: 1px 6px; font-size: 12px;
+  font-family: 'Consolas', 'Courier New', monospace; color: var(--accent);
+}
+
+.shortcut-table td:first-child { white-space: nowrap; }
+
+code {
+  background: var(--bg-card); padding: 2px 6px; border-radius: 3px;
+  font-size: 13px; font-family: 'Consolas', 'Courier New', monospace;
+  color: var(--accent);
+}
+
+.grid-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
+@media (max-width: 700px) { .grid-2 { grid-template-columns: 1fr; } }
+
+.hero {
+  background: linear-gradient(135deg, var(--bg-panel), var(--bg-card));
+  border: 1px solid var(--border); border-radius: 12px;
+  padding: 32px; margin-bottom: 32px; text-align: center;
+}
+.hero h2 { border: none; margin: 0 0 8px; font-size: 32px; }
+.hero p { color: var(--text-dim); font-size: 15px; margin: 0; }
+
+/* ── Page mode ── */
+.doc-page {
+  display: none;
+  animation: pageFade .16s ease;
+}
+.doc-page.active { display: block; }
+@keyframes pageFade {
+  from { opacity: 0; transform: translateY(6px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+.page-controls {
+  display: flex; align-items: center; justify-content: space-between;
+  gap: 12px; margin: 0 0 24px; padding: 10px 0;
+  border-bottom: 1px solid var(--border);
+}
+.page-controls-bottom {
+  margin: 24px 0 0; border-top: 1px solid var(--border);
+  border-bottom: none;
+}
+.page-button {
+  min-width: 92px; padding: 7px 12px;
+  border: 1px solid var(--border); border-radius: 6px;
+  background: var(--bg-card); color: var(--text);
+  cursor: pointer; font-size: 13px;
+}
+.page-button:hover:not(:disabled) {
+  border-color: var(--accent); color: var(--accent);
+}
+.page-button:disabled {
+  opacity: .4; cursor: default;
+}
+.page-status {
+  color: var(--text-dim); font-size: 13px; text-align: center;
+}
+
+/* 画像は docs/user/assets/user-guide/ に置き、下部 script の pageMedia に登録します。 */
+.media-slot {
+  margin: 14px 0 18px;
+  border: 1px solid var(--border); border-radius: 8px;
+  background: rgba(255,255,255,.025); overflow: hidden;
+}
+.media-slot img {
+  display: block; width: 100%; height: auto;
+}
+.media-caption {
+  padding: 8px 12px; color: var(--text-dim); font-size: 12px;
+  border-top: 1px solid var(--border);
+}
+.media-slot-empty:not(.media-slot-visible) { display: none; }
+.media-placeholder {
+  min-height: 180px; display: flex; flex-direction: column;
+  align-items: center; justify-content: center; gap: 6px;
+  color: var(--text-dim); border: 1px dashed var(--border);
+}
+.media-placeholder strong { color: var(--accent); font-size: 13px; }
+.media-placeholder span { font-size: 12px; }
+
+/* ── Responsive ── */
+@media (max-width: 900px) {
+  #sidebar { transform: translateX(calc(-1 * var(--sidebar-w))); }
+  #sidebar.show { transform: translateX(0); }
+  #sidebar-toggle { display: flex; }
+  #main { margin-left: 0; padding: 32px 20px 60px; }
+  .page-controls { position: sticky; top: 0; z-index: 20; background: var(--bg); }
+}
+
+@media print {
+  body { display: block; background: #fff; color: #000; }
+  #sidebar, #sidebar-toggle, .page-controls { display: none !important; }
+  #main { margin: 0; max-width: none; padding: 0; }
+  .doc-page { display: block !important; page-break-after: always; }
+  .media-slot-empty { display: none !important; }
+}
+</style>
+</head>
+<body>
+<button aria-label="Alternar menu" id="sidebar-toggle">☰</button>
+<!-- ===== SIDEBAR ===== -->
+<aside id="sidebar">
+<div id="sidebar-header">
+<h1>LoomStroke</h1>
+<p>Guia do usuário</p>
+<input autocomplete="off" id="sidebar-search" placeholder="Pesquisar..." type="search"/>
+<div class="language-picker">
+<label for="language-select">Idioma de exibição</label>
+<select autocomplete="off" id="language-select">
+<option value="ja">Japonês</option>
+<option value="en">Inglês</option>
+<option value="zh_CN">Chinês simplificado</option>
+<option value="zh_Hant">Chinês tradicional</option>
+<option value="zh_TW">Mandarim de Taiwan</option>
+<option value="ko">Coreano</option>
+<option value="es">Espanhol</option>
+<option value="ar">Árabe</option>
+<option value="hi">Hindi</option>
+<option selected="selected" value="pt_BR">Português (Brasil)</option>
+<option value="bn">Bengalês</option>
+<option value="ru">Russo</option>
+</select>
+</div>
+</div>
+<nav>
+<!-- Overview -->
+<div class="nav-section open">
+<div class="nav-section-title">Visão geral</div>
+<div class="nav-section-items">
+<a class="nav-link" href="#overview">Visão geral do aplicativo</a>
+<a class="nav-link" href="#layout">Layout da tela</a>
+</div>
+</div>
+<!-- Drawing Tools -->
+<div class="nav-section open">
+<div class="nav-section-title">Ferramentas de desenho</div>
+<div class="nav-section-items">
+<a class="nav-link" href="#pen">Ferramenta Caneta</a>
+<a class="nav-link" href="#eraser">Ferramenta Borracha</a>
+<a class="nav-link" href="#fill-bucket">preenchimento balde ferramenta</a>
+<a class="nav-link" href="#gradient">gradiente ferramenta</a>
+<a class="nav-link" href="#pattern-fill">padrão preenchimento ferramenta</a>
+</div>
+</div>
+<!-- Selection Tools -->
+<div class="nav-section">
+<div class="nav-section-title">Ferramentas de seleção</div>
+<div class="nav-section-items">
+<a class="nav-link" href="#selection-rect">retângulo seleção ferramenta</a>
+<a class="nav-link" href="#magic-wand">magia Wand ferramenta</a>
+</div>
+</div>
+<!-- Transform / Move -->
+<div class="nav-section">
+<div class="nav-section-title">transformar / mover</div>
+<div class="nav-section-items">
+<a class="nav-link" href="#move">Ferramenta Mover</a>
+<a class="nav-link" href="#transform-panel">transformar painel</a>
+</div>
+</div>
+<!-- Vector Tools -->
+<div class="nav-section">
+<div class="nav-section-title">Ferramentas vetoriais</div>
+<div class="nav-section-items">
+<a class="nav-link" href="#vector-path">vetorial caminho ferramenta</a>
+<a class="nav-link" href="#vector-precise">Caneta vetorial precisa</a>
+<a class="nav-link" href="#vector-edit">vetorial editar ferramenta</a>
+</div>
+</div>
+<!-- Text Tools -->
+<div class="nav-section">
+<div class="nav-section-title">Ferramenta Texto</div>
+<div class="nav-section-items">
+<a class="nav-link" href="#text-tool">Ferramenta Texto</a>
+<a class="nav-link" href="#text-vertical">Ferramenta de texto vertical</a>
+<a class="nav-link" href="#font-panel">Painel de fontes</a>
+</div>
+</div>
+<!-- Utility Tools -->
+<div class="nav-section">
+<div class="nav-section-title">Utilitário</div>
+<div class="nav-section-items">
+<a class="nav-link" href="#eyedropper">Eyedropper ferramenta</a>
+</div>
+</div>
+<!-- Panels -->
+<div class="nav-section open">
+<div class="nav-section-title">painéis</div>
+<div class="nav-section-items">
+<a class="nav-link" href="#panel-toolbar">Barra de ferramentas</a>
+<a class="nav-link" href="#panel-tool-props">Propriedades da ferramenta</a>
+<a class="nav-link" href="#panel-layers">Painel de camadas</a>
+<a class="nav-link" href="#panel-color">Painel de cores</a>
+<a class="nav-link" href="#panel-brush-manager">Gerenciador de pincéis</a>
+<a class="nav-link" href="#panel-shape-manager">Gerenciador de formas</a>
+<a class="nav-link" href="#panel-effect">Painel de efeitos</a>
+<a class="nav-link" href="#panel-pages">Painel de páginas</a>
+<a class="nav-link" href="#panel-preview">Painel de visualização</a>
+<a class="nav-link" href="#panel-context-toolbar">Barra contextual</a>
+</div>
+</div>
+<!-- Effects -->
+<div class="nav-section">
+<div class="nav-section-title">efeito camadas</div>
+<div class="nav-section-items">
+<a class="nav-link" href="#fx-gaussian-blur">Desfoque gaussiano</a>
+<a class="nav-link" href="#fx-levels">níveis</a>
+<a class="nav-link" href="#fx-hue-saturation">Matiz / Saturação</a>
+<a class="nav-link" href="#fx-invert">inverter</a>
+<a class="nav-link" href="#fx-brightness-contrast">Brilho / Contraste</a>
+<a class="nav-link" href="#fx-sharpen">Nitidez</a>
+<a class="nav-link" href="#fx-noise-reduction">Redução de ruído</a>
+</div>
+</div>
+<!-- AI -->
+<div class="nav-section">
+<div class="nav-section-title">AI integração</div>
+<div class="nav-section-items">
+<a class="nav-link" href="#ai-comfyui">ComfyUI painel</a>
+<a class="nav-link" href="#ai-nanobanana">Painel NanoBanana</a>
+<a class="nav-link" href="#ai-prompt-editor">editor de prompts</a>
+</div>
+</div>
+<!-- AI Effect Layer -->
+<div class="nav-section">
+<div class="nav-section-title">AI efeito</div>
+<div class="nav-section-items">
+<a class="nav-link" href="#ai-effect-overview">AI efeito camada</a>
+<a class="nav-link" href="#ai-effect-manager">Gerenciador de efeitos de IA</a>
+<a class="nav-link" href="#ai-effect-editor">efeito editor</a>
+<a class="nav-link" href="#ai-effect-runtime">Geração e estado</a>
+</div>
+</div>
+<!-- Canvas -->
+<div class="nav-section">
+<div class="nav-section-title">Controles da tela</div>
+<div class="nav-section-items">
+<a class="nav-link" href="#canvas-viewport">Zoom / Panorâmica / Girar</a>
+<a class="nav-link" href="#canvas-rulers">Réguas e guias</a>
+<a class="nav-link" href="#canvas-grid">Grade</a>
+</div>
+</div>
+<!-- File I/O -->
+<div class="nav-section">
+<div class="nav-section-title">Entrada/saída de arquivos</div>
+<div class="nav-section-items">
+<a class="nav-link" href="#file-formats">Formatos compatíveis</a>
+<a class="nav-link" href="#file-lstroke">Formato nativo .lstroke</a>
+</div>
+</div>
+<!-- Settings -->
+<div class="nav-section">
+<div class="nav-section-title">Configurações</div>
+<div class="nav-section-items">
+<a class="nav-link" href="#settings-preferences">Preferências</a>
+<a class="nav-link" href="#settings-shortcuts">Lista de atalhos</a>
+</div>
+</div>
+</nav>
+</aside>
+<!-- ===== MAIN CONTENT ===== -->
+<main id="main">
+<!-- Hero -->
+<div class="hero">
+<h2 style="border:none;">LoomStroke</h2>
+<p>Um aplicativo integrado de pintura digital para produção de mangá e ilustração</p>
+</div>
+<!-- ────────────────── 概要 ────────────────── -->
+<section id="overview">
+<h2>Visão geral do aplicativo</h2>
+<p>O LoomStroke é um aplicativo de pintura digital que reúne pintura raster, caminhos vetoriais, edição de texto, múltiplas páginas, plugins externos e integração de IA em um único espaço de produção. Os arquivos de trabalho podem ser salvos em<code>.lstroke</code>formato.</p>
+<div class="grid-2">
+<div class="card">
+<h4>Principais recursos</h4>
+<ul>
+<li>Motor de pincel com suporte a pressão e inclinação</li>
+<li>Gerenciamento de opacidade da camada e modo de mesclagem</li>
+<li>Caminhos vetoriais e formas paramétricas</li>
+<li>Texto horizontal e vertical</li>
+<li>não destrutivo efeito camadas</li>
+<li>Documentos multipágina</li>
+</ul>
+</div>
+<div class="card">
+<h4>AI integração</h4>
+<ul>
+<li>Integração de fluxos de trabalho do ComfyUI</li>
+<li>NanoBanana (Gemini) imagem geração</li>
+<li>Editor de prompts e gerenciamento de snippets</li>
+<li>LLM Gateway (OpenAI / Anthropic / Gemini)</li>
+</ul>
+</div>
+</div>
+</section>
+<!-- ────────────────── Layout ────────────────── -->
+<section id="layout">
+<h2>Layout da tela</h2>
+<p>A janela principal é composta pelas áreas abaixo. Os painéis podem ser organizados livremente por arrastar e soltar, e também podem ser combinados como abas.</p>
+<div class="card">
+<table>
+<tr><th>área</th><th>Conteúdo</th></tr>
+<tr><td>Superior</td><td>Barra de menus + barra de propriedades da ferramenta, mostrando as configurações da ferramenta ativa em uma única linha</td></tr>
+<tr><td>dock esquerdo</td><td>Barra de ferramentas, painel de cores, painel de fontes e painel de páginas</td></tr>
+<tr><td>Centralizar</td><td>Tela, usando o SimpleCanvasService baseado em QImage por padrão, mais réguas</td></tr>
+<tr><td>dock direito</td><td>Painel de camadas, Gerenciador de formas, Transformar, Efeitos e Visualização</td></tr>
+<tr><td>Flutuante</td><td>Barra de ferramentas contextual, mostrada automaticamente após os traços</td></tr>
+</table>
+</div>
+<p><kbd>Window</kbd> Cada painel pode ser mostrado ou ocultado pelo menú.<kbd>F11</kbd> alterna para o modo de tela cheia.</p>
+</section>
+<!-- ══════════════════ 描画ツール ══════════════════ -->
+<h2 id="pen">Ferramenta Caneta <span class="tag tag-tool">ferramenta</span></h2>
+<p>Pincel de pintura raster com suporte a pressão e inclinação. Também permite importar pincéis ABR (Photoshop).</p>
+<div class="card">
+<p><strong>atalho:</strong> <kbd>B</kbd> / <kbd>Shift+B</kbd></p>
+<table>
+<tr><th>Parâmetros</th><th>intervalo</th><th>Descrição</th></tr>
+<tr><td>Tamanho</td><td>1 ～ 128</td><td>pincel diâmetro (px)</td></tr>
+<tr><td>Opacidade</td><td>0 ～ 1.0</td><td>Opacidade do traço inteiro</td></tr>
+<tr><td>Dureza</td><td>0 ～ 1.0</td><td>Edge hardness (0=soft, 1=duro)</td></tr>
+<tr><td>Espaçamento</td><td>0.01 ～ 1.0</td><td>Espaçamento de carimbo como proporção do diâmetro do pincel</td></tr>
+<tr><td>Fluxo</td><td>0 ～ 1.0</td><td>Ink flow amount</td></tr>
+<tr><td>Densidade de carimbo</td><td>0 ～ 1.0</td><td>Densidade de carimbo, expressa como o inverso do espaçamento</td></tr>
+<tr><td>Sensível à pressão</td><td>en / OFF</td><td>ativar pressão sensitivity</td></tr>
+<tr><td>Smoothing</td><td>0 ～ 1.0</td><td>Estabilização do traço</td></tr>
+<tr><td>Faixa tonal</td><td>0 ～ 1.0</td><td>Intervalo de tons para renderização em estilo screentone</td></tr>
+<tr><td>Gama tonal</td><td>0.1 ～ 2.0</td><td>Valor de correção gama do tom</td></tr>
+<tr><td>inclinação ângulo</td><td>en / OFF</td><td>Sombreamento controlado pela inclinação da mesa digitalizadora</td></tr>
+</table>
+<p><strong>Predefinição:</strong>Sketch, Inking e pincéis personalizados importados de ABR</p>
+</div>
+<h2 id="eraser">Ferramenta Borracha <span class="tag tag-tool">ferramenta</span></h2>
+<p>Uma borracha ráster sensível à pressão.</p>
+<div class="card">
+<p><strong>atalho:</strong> <kbd>E</kbd> / <kbd>Shift+E</kbd>   <strong>tamanho alterar:</strong> <kbd>[</kbd> <kbd>]</kbd></p>
+<table>
+<tr><th>Parâmetros</th><th>intervalo</th><th>Descrição</th></tr>
+<tr><td>Tamanho</td><td>1 ～ 200</td><td>borracha diâmetro (px)</td></tr>
+<tr><td>Opacidade</td><td>0 ～ 1.0</td><td>intensidade da borracha</td></tr>
+<tr><td>Dureza</td><td>0 ～ 1.0</td><td>Edge hardness</td></tr>
+<tr><td>Espaçamento</td><td>0.01 ～ 1.0</td><td>carimbo spacing</td></tr>
+<tr><td>Anti Alias</td><td>en / OFF</td><td>Suavização</td></tr>
+</table>
+<p><strong>Predefinição:</strong> Soft Erase, Edge Cleanup</p>
+</div>
+<h2 id="fill-bucket">preenchimento balde ferramenta <span class="tag tag-tool">ferramenta</span></h2>
+<p>Preenche áreas adjacentes de cor semelhante com preenchimento por inundação.</p>
+<div class="card">
+<table>
+<tr><th>Parâmetros</th><th>intervalo</th><th>Descrição</th></tr>
+<tr><td>Tolerância de cor</td><td>0 ～ 255</td><td>cor tolerância usado para preenchimento detecção</td></tr>
+<tr><td>Fechar gaps (px)</td><td>0 ～ 10</td><td>número de píxeles usado para automaticamente cerrar gaps em lines</td></tr>
+<tr><td>Alvo de preenchimento</td><td>ativa camada / Nova camada</td><td>Camada de destino para o preenchimento</td></tr>
+</table>
+</div>
+<h2 id="gradient">gradiente ferramenta <span class="tag tag-tool">ferramenta</span></h2>
+<p>Desenha gradientes lineares ou radiais ao arrastar. Paradas intermediárias podem ser editadas arrastando seus pinos.</p>
+<div class="card">
+<table>
+<tr><th>Parâmetros</th><th>intervalo</th><th>Descrição</th></tr>
+<tr><td>gradiente tipo</td><td>linear / radial</td><td>gradiente forma</td></tr>
+<tr><td>cor um</td><td>cor</td><td>iniciar cor</td></tr>
+<tr><td>cor B</td><td>cor</td><td>End cor</td></tr>
+<tr><td>medio paradas</td><td>0 ～ 3</td><td>número de intermediárias cor paradas</td></tr>
+<tr><td>Stop N Pos</td><td>0 ～ 1.0</td><td>posição de each stop (0=iniciar edge, 1=end edge)</td></tr>
+<tr><td>Stop N cor</td><td>cor</td><td>cor de each stop</td></tr>
+<tr><td>Dither</td><td>en / OFF</td><td>Tramado para reduzir faixas</td></tr>
+</table>
+<p><strong>compatible mesclagem modos:</strong> normal, oscurecer, Multiply, cor Burn, Lighten, Screen, cor Dodge, linear Dodge, Overlay, Soft Light, duro Light, diferença, Exclusion</p>
+</div>
+<h2 id="pattern-fill">padrão preenchimento ferramenta <span class="tag tag-tool">ferramenta</span></h2>
+<p>Preenche uma área repetidamente com um padrão em mosaico.</p>
+<div class="card">
+<table>
+<tr><th>Parâmetros</th><th>intervalo</th><th>Descrição</th></tr>
+<tr><td>padrão</td><td>Checkerboard / horizontal Stripes / vertical Stripes / Diagonal Stripes / puntos / Crosshatch</td><td>Padrão integrado a ser usado</td></tr>
+<tr><td>padrão Scale</td><td>0.1 ～ 10.0</td><td>padrão scale factor</td></tr>
+<tr><td>Tolerância de cor</td><td>0 ～ 255</td><td>cor tolerância usado para preenchimento detecção</td></tr>
+<tr><td>Fechar gaps (px)</td><td>0 ～ 10</td><td>número de píxeles usado para automaticamente cerrar gaps em lines</td></tr>
+</table>
+<p><strong>Operação:</strong> A partir do ponto cliqueado, preenche a área conectada com o padrão em mosaico selecionado.</p>
+</div>
+<!-- ══════════════════ 選択ツール ══════════════════ -->
+<h2 id="selection-rect">retângulo seleção ferramenta <span class="tag tag-tool">ferramenta</span></h2>
+<p>Cria uma seleção arrastando um retângulo. Também oferece seleção por intervalo de objetos vetoriais.</p>
+<div class="card">
+<table>
+<tr><th>Parâmetros</th><th>intervalo</th><th>Descrição</th></tr>
+<tr><td>seleção modo</td><td>retângulo / vetorial</td><td>ráster retângulo seleção / vetorial intervalo seleção</td></tr>
+<tr><td>Operação</td><td>Replace / añadir / Subtract / Intersect</td><td>cómo o seleção é combinados</td></tr>
+<tr><td>Pixel perfeito</td><td>en / OFF</td><td>Align para píxeles</td></tr>
+<tr><td>suavização ativado</td><td>en / OFF</td><td>suavização seleção</td></tr>
+<tr><td>Raio de suavização</td><td>0 ～ 128</td><td>suavização radio (px)</td></tr>
+<tr><td>Raio da máscara</td><td>0 ～ 128</td><td>radio usado para expanding ou shrinking o seleção máscara</td></tr>
+<tr><td>transformar X / Y</td><td>-10000 ～ 10000</td><td>Translation amount during transformar</td></tr>
+<tr><td>transformar Scale X / Y</td><td>0.01 ～ 100</td><td>Scale factor during transformar</td></tr>
+<tr><td>transformar Rotation</td><td>-180° ～ 180°</td><td>Rotation ângulo during transformar</td></tr>
+</table>
+<p><strong>Teclas modificadoras:</strong> <kbd>Shift</kbd>=añadir, <kbd>Alt</kbd>=subtract, <kbd>Shift+Alt</kbd>=intersect</p>
+<p><strong>transformar modo (<kbd>Ctrl+T</kbd>):</strong> mover / Scale / Rotate / Flip / Reset / Apply / cancelar</p>
+</div>
+<h2 id="magic-wand">magia Wand ferramenta <span class="tag tag-tool">ferramenta</span></h2>
+<p>Seleciona automaticamente uma área contígua de cor semelhante a partir do ponto cliqueado.</p>
+<div class="card">
+<table>
+<tr><th>Parâmetros</th><th>intervalo</th><th>Descrição</th></tr>
+<tr><td>tolerância</td><td>0 ～ 255</td><td>cor tolerância (padrão: 32)</td></tr>
+<tr><td>contígua</td><td>en / OFF</td><td>ON = apenas pixels adjacentes; OFF = cores semelhantes em toda a imagem</td></tr>
+<tr><td>Operação</td><td>Replace / añadir / Subtract / Intersect</td><td>cómo o seleção é combinados</td></tr>
+</table>
+<p>Quando os parâmetros mudam, a ferramenta seleciona novamente automaticamente a partir do último ponto cliqueado.</p>
+</div>
+<!-- ══════════════════ 変形・移動 ══════════════════ -->
+<h2 id="move">Ferramenta Mover <span class="tag tag-tool">ferramenta</span></h2>
+<p>mover e transforma camadas ou objetos vetoriais. Um duplo clique em um objeto de texto muda para o modo de edição.</p>
+<div class="card">
+<p><strong>atalho:</strong> <kbd>V</kbd></p>
+<table>
+<tr><th>Parâmetros</th><th>intervalo</th><th>Descrição</th></tr>
+<tr><td>Pixel perfeito</td><td>en / OFF</td><td>Pixel alineación (padrão: en)</td></tr>
+<tr><td>Grade Snap</td><td>en / OFF</td><td>Grade snap</td></tr>
+<tr><td>Grade tamanho</td><td>1 ～ 1024</td><td>Grade tamanho (px)</td></tr>
+</table>
+<p><strong>Operation modo:</strong></p>
+<ul>
+<li><strong>com um seleção:</strong> Recortar, mover, e transformar o selecionado área</li>
+<li><strong>vetorial / texto:</strong> mover objetos. doble-clique para alternar para caminho editar ou Ferramenta de texto</li>
+<li><strong>ráster camada:</strong> mover o entire camada</li>
+</ul>
+</div>
+<h2 id="transform-panel">transformar painel <span class="tag tag-panel">painel</span></h2>
+<p>Controla a posição, o tamanho e o ângulo do objeto selecionado por entrada numérica.</p>
+<div class="card">
+<table>
+<tr><th>Field</th><th>intervalo</th><th>Descrição</th></tr>
+<tr><td>X</td><td>-99999 ～ 99999</td><td>X posição (superior-esquerda de delimitadora caixa)</td></tr>
+<tr><td>Y</td><td>-99999 ～ 99999</td><td>Y posição (superior-esquerda de delimitadora caixa)</td></tr>
+<tr><td>W</td><td>0.1 ～ 99999</td><td>largura (vetorial somente)</td></tr>
+<tr><td>H</td><td>0.1 ～ 99999</td><td>altura (vetorial somente)</td></tr>
+<tr><td>ângulo</td><td>-360° ～ 360°</td><td>Rotation ângulo</td></tr>
+</table>
+<p>quando um ráster camada é selecionado, somente X/Y pode ser editado.</p>
+</div>
+<!-- ══════════════════ ベクターツール ══════════════════ -->
+<h2 id="vector-path">vetorial caminho ferramenta <span class="tag tag-tool">ferramenta</span></h2>
+<p>Clique para posicionar pontos de âncora e criar caminhos Bézier. Arraste para definir alças de direção.</p>
+<div class="card">
+<table>
+<tr><th>Parâmetros</th><th>intervalo</th><th>Descrição</th></tr>
+<tr><td>Modo Shift</td><td>constraint / desativar_snap</td><td><kbd>Shift</kbd> alterna behavior para ângulo constraint ou snap suppression</td></tr>
+<tr><td>Tolerância de fechamento automático (px)</td><td>0 ～ 64</td><td>Distance para automático closing quando clique near o iniciar ponto</td></tr>
+<tr><td>Largura do traço</td><td>0.1 ～ 64</td><td>Largura do traço</td></tr>
+<tr><td>Cor do traço</td><td>cor</td><td>Stroke cor</td></tr>
+<tr><td>Preenchimento ativado</td><td>en / OFF</td><td>preenchimento ativado</td></tr>
+<tr><td>Cor de preenchimento</td><td>cor</td><td>preenchimento cor</td></tr>
+</table>
+<p><kbd>Enter</kbd> para confirm,<kbd>Esc</kbd> para discard. Returning near o iniciar ponto closes o caminho automaticamente.</p>
+</div>
+<h2 id="vector-precise">Caneta vetorial precisa <span class="tag tag-tool">ferramenta</span></h2>
+<p>Converte automaticamente traços à mão livre em curvas Bézier suaves.</p>
+<div class="card">
+<p><strong>atalho:</strong> <kbd>P</kbd></p>
+<table>
+<tr><th>Parâmetros</th><th>intervalo</th><th>Descrição</th></tr>
+<tr><td>Modo de edição</td><td>âncora / forma</td><td>elegir whether o ferramenta favors âncora edição ou forma edição</td></tr>
+<tr><td>Fechamento automático</td><td>en / OFF</td><td>automático caminho closing</td></tr>
+<tr><td>Largura do traço</td><td>0.1 ～ 64</td><td>Largura do traço</td></tr>
+<tr><td>Cor do traço</td><td>cor</td><td>Stroke cor</td></tr>
+<tr><td>Preenchimento ativado</td><td>en / OFF</td><td>preenchimento ativado</td></tr>
+<tr><td>Cor de preenchimento</td><td>cor</td><td>preenchimento cor</td></tr>
+<tr><td>Densidade de âncoras</td><td>0.1 ～ 1.0</td><td>densidade de gerado âncoras</td></tr>
+<tr><td>Suavidade das alças</td><td>0 ～ 5.0</td><td>Intensidade de suavização da curva</td></tr>
+</table>
+</div>
+<h2 id="vector-edit">vetorial editar ferramenta <span class="tag tag-tool">ferramenta</span></h2>
+<p>Edita pontos de âncora e alças em caminhos vetoriais existentes.</p>
+<div class="card">
+<table>
+<tr><th>Parâmetros</th><th>intervalo</th><th>Descrição</th></tr>
+<tr><td>Cor do traço</td><td>cor</td><td>Stroke cor de o selecionado vetorial</td></tr>
+<tr><td>Largura do traço</td><td>0.1 ～ 128</td><td>Stroke largura de o selecionado vetorial</td></tr>
+<tr><td>Preenchimento ativado</td><td>en / OFF</td><td>preenchimento ativado</td></tr>
+<tr><td>Cor de preenchimento</td><td>cor</td><td>preenchimento cor de o selecionado vetorial</td></tr>
+</table>
+<ul>
+<li>clique e arrastar âncoras para mover elas</li>
+<li>Arraste as alças para ajustar a curvatura</li>
+<li><kbd>Alt</kbd>+arrastar para duplicar durante o movimento,<kbd>Ctrl</kbd> temporarily disables snapping</li>
+<li>não convertidas básicas formas são editado parametricamente com forma alças em vez de âncoras</li>
+<li>Scale e rotate com o delimitadora caixa</li>
+</ul>
+</div>
+<!-- ══════════════════ テキストツール ══════════════════ -->
+<h2 id="text-tool">Ferramenta Texto <span class="tag tag-tool">ferramenta</span></h2>
+<p>Cria e edita texto horizontal. Clique para criar texto de ponto ou arraste para criar texto de área.</p>
+<div class="card">
+<p><strong>atalho:</strong> <kbd>T</kbd></p>
+<table>
+<tr><th>Parâmetros</th><th>intervalo</th><th>Descrição</th></tr>
+<tr><td>Word Wrap</td><td>en / OFF</td><td>Quebra automática de linha para área texto</td></tr>
+<tr><td>Tamanho da fonte (pt)</td><td>1 ～ 512</td><td>fonte tamanho</td></tr>
+<tr><td>Altura da linha</td><td>0.5 ～ 4.0</td><td>Line-altura multiplier</td></tr>
+<tr><td>Espaçamento entre letras</td><td>-64 ～ 128</td><td>Letter spacing (tracking)</td></tr>
+<tr><td>Padding</td><td>0 para 256, separately para superior, baixo, esquerda, e direita</td><td>Inner padding de o texto caixa</td></tr>
+</table>
+<p><strong>Notes:</strong> Oferece suporte a entrada IME, mover/rotacionar/escalar durante a edição inline e texto de área com contorno de forma via Seleção para área. Família de fontes, estilo, alinhamento, cor e opacidade são gerenciados no painel de fontes.</p>
+</div>
+<h2 id="text-vertical">Ferramenta de texto vertical <span class="tag tag-tool">ferramenta</span></h2>
+<p>Usado para criar e editar texto vertical. Os parâmetros básicos são compartilhados com a ferramenta Texto.</p>
+<div class="card">
+<table>
+<tr><th>Additional parâmetros</th><th>Opções</th><th>Descrição</th></tr>
+<tr><td>vertical Flow</td><td>esquerda / direita</td><td>Paragraph flow dirección</td></tr>
+<tr><td>Rotate Latin/Digits</td><td>en / OFF</td><td>Rotate half-largura alphanumeric characters para vertical writing</td></tr>
+</table>
+<p>Oferece posicionamento automático da pontuação japonesa e rotação automática da marca de vogal longa.</p>
+</div>
+<h2 id="font-panel">Painel de fontes <span class="tag tag-panel">painel</span></h2>
+<p>Um painel para gerenciar como configurações tipográficas usadas pelas ferramentas de texto.</p>
+<div class="card">
+<h4>controle lista</h4>
+<table>
+<tr><th>controle</th><th>tipo</th><th>Descrição</th></tr>
+<tr><td>Word Wrap</td><td>caixa de seleção</td><td>Quebra automática de linha ON/OFF</td></tr>
+<tr><td>Família da fonte</td><td>combo caixa</td><td>elegir de o system fonte lista</td></tr>
+<tr><td>Estilo da fonte</td><td>combo caixa</td><td>Style de o selecionado fonte</td></tr>
+<tr><td>Tamanho da fonte (pt)</td><td>seletor caixa</td><td>1.0 para 512.0, passo 1.0</td></tr>
+<tr><td>Escrita vertical</td><td>caixa de seleção</td><td>vertical writing modo toggle</td></tr>
+<tr><td>Fluxo do parágrafo</td><td>combo caixa</td><td>Leftward / Rightward (vertical writing somente)</td></tr>
+<tr><td>Alinhamento</td><td>combo caixa</td><td>esquerda / Centro / direita / Justify</td></tr>
+<tr><td>Altura da linha</td><td>seletor caixa</td><td>0.5 para 4.0, passo 0.1</td></tr>
+<tr><td>Espaçamento entre letras</td><td>seletor caixa</td><td>-64.0 para 128.0, passo 0.5</td></tr>
+<tr><td>Padding (Superior/baixo/direita/esquerda)</td><td>Four seletor boxes</td><td>0.0 para 256.0 para each side</td></tr>
+<tr><td>Cor</td><td>cor botão</td><td>Clique para abrir a caixa de diálogo de cor</td></tr>
+<tr><td>Opacidade</td><td>controle deslizante</td><td>0 ～ 100%</td></tr>
+<tr><td>Pastas de fontes personalizadas</td><td>lista + botões</td><td>añadir, quitar, e rescan fonte directories</td></tr>
+</table>
+<p>compatible fonte formats: TTF / OTF / TTC / OTC</p>
+</div>
+<!-- ══════════════════ ユーティリティ ══════════════════ -->
+<h2 id="eyedropper">Eyedropper ferramenta <span class="tag tag-tool">ferramenta</span></h2>
+<p>Coleta uma cor da tela e a define como cor de primeiro plano.</p>
+<div class="card">
+<p><strong>atalho:</strong> <kbd>I</kbd> / <kbd>Shift+I</kbd></p>
+</div>
+<!-- ══════════════════ パネル ══════════════════ -->
+<h2 id="panel-toolbar">Barra de ferramentas <span class="tag tag-panel">painel</span></h2>
+<p>Lista vertical de botões de ferramentas posicionada na borda esquerda. Cada botão representa um grupo de ferramentas; pressionar por 350 ms abre um menu para escolher variantes.</p>
+<div class="card">
+<p>o layout alterna automaticamente entre vertical e horizontal como o painel largura alterações. O tamanho do ícone é 48x48 px.</p>
+</div>
+<h2 id="panel-tool-props">Propriedades da ferramenta painel <span class="tag tag-panel">painel</span></h2>
+<p>Painel que mostra as configurações da ferramenta ativa. Ele tem duas disposições: modo barra logo abaixo da barra de menus e modo painel dentro de um dock.</p>
+<div class="card">
+<h4>Componentes</h4>
+<ul>
+<li><strong>Preset linha:</strong> Preset seleção combo caixa + salvar/excluir botões</li>
+<li><strong>Common Properties grupo:</strong> tamanho, opacidade, Hardness, Spacing, Flow, e other common ferramenta configurações</li>
+<li><strong>Propriedades da ferramenta grupo:</strong> ferramenta-specific parâmetros</li>
+<li><strong>Ações container:</strong> específicos da ferramenta botões de ação e caixas de seleção</li>
+</ul>
+<p><strong>automático controle geração:</strong> float/int -&gt; controle deslizante, bool -&gt; caixa de seleção, enum -&gt; combo caixa, cor -&gt; cor botão</p>
+</div>
+<h2 id="panel-layers">Painel de camadas <span class="tag tag-panel">painel</span></h2>
+<p>Exibe e gerencia a pilha de camadas do documento como uma árvore hierárquica. Camadas normais, grupos, efeitos, máscaras e camadas de efeito de IA são tratados na mesma árvore.</p>
+<div class="card">
+<h4>Superior controla</h4>
+<table>
+<tr><th>Item</th><th>Descrição</th></tr>
+<tr><td>Modo de mesclagem</td><td>alterações o mesclagem modo de o selecionado camada. grupos pode também usar Passagem direta.</td></tr>
+<tr><td>Opacidade</td><td>alterações o selecionado camada opacidade com um 0 para 100% controle deslizante e numérico mostrar.</td></tr>
+</table>
+<h4>camada árbol</h4>
+<table>
+<tr><th>Exibição / operação</th><th>Descrição</th></tr>
+<tr><td>miniatura</td><td>Miniatura da camada, normalmente 32×32 px. Clique para editar o conteúdo da camada.</td></tr>
+<tr><td>máscara miniatura</td><td>mostrado somente quando um camada máscara existe. clique isto para alternar para máscara editar modo.</td></tr>
+<tr><td>Selo de tipo</td><td><code>V</code> vetorial、<code>S</code> forma、<code>T</code> texto、<code>FX</code> efeito、<code>G</code> grupo、<code>M</code> máscara、<code>AI</code> Indicates um AI efeito.</td></tr>
+<tr><td>visibilidade</td><td>o o ícone de olho alterna visibilidade. oculto linhas são mostrado atenuadas.</td></tr>
+<tr><td>Lock</td><td>Locks camada edição.</td></tr>
+<tr><td>Alpha lock</td><td>Protects transparent píxeles. usar o dedicated toggle em o linha.</td></tr>
+<tr><td>arrastar e soltar</td><td>usar isto para reordenar camadas ou mover elas em grupos. soltar um camada sobre um AI efeito Slot linha atribui isto como que Slot's entrada.</td></tr>
+<tr><td>doble-clique</td><td>Renomears o camada.</td></tr>
+</table>
+<h4>baixo botões</h4>
+<table>
+<tr><th>botão</th><th>Descrição</th></tr>
+<tr><td>Adicionar</td><td>adiciona um novo ráster camada.</td></tr>
+<tr><td>Excluir</td><td>elimina o selecionado camada.</td></tr>
+<tr><td>Duplicar</td><td>Duplicates o selecionado camada. desativado quando there é no seleção.</td></tr>
+<tr><td>máscara</td><td>adiciona um camada máscara para o selecionado camada. se já existe uma, isto remove o máscara.</td></tr>
+<tr><td>añadir efeito camada</td><td>adiciona um normal efeito camada. em environments where AI efeito é ativado, <strong>AI efeito</strong> you pode também elegir .lsfx presets de o submenu.</td></tr>
+<tr><td>G</td><td>grupos two ou more selecionado camadas.</td></tr>
+<tr><td>V</td><td>adiciona um novo vetorial camada.</td></tr>
+</table>
+<h4>AI efeito linha</h4>
+<table>
+<tr><th>Exibição / operação</th><th>Descrição</th></tr>
+<tr><td>Destaque roxo</td><td>Indica a própria camada de efeito AI.</td></tr>
+<tr><td>gerar botão</td><td>mostrado somente em AI efeito camada linhas. inicia geração para que camada e é desativado enquanto geração é ejecutando.</td></tr>
+<tr><td>Slot child linha</td><td>uma linha virtual criada a partir de input_slots no manifestoo do AI Effect. Os slots obrigatórios não configurados são mostrados com um aviso.</td></tr>
+<tr><td>Exclusion botão</td><td>Mostrado quando uma camada de entrada é atribuída ao Slot. Alterna a entrada para modo sem mesclagem / somente entrada de IA.</td></tr>
+<tr><td>Selo xN</td><td>mostra um contagem de referências em camadas normais referenciado por outros AI efeito Slots.</td></tr>
+<tr><td>Destaque verde</td><td>Indicates um saída camada gerado por AI efeito.</td></tr>
+</table>
+<h4>menú de contexto</h4>
+<table>
+<tr><th>Item</th><th>Descrição</th></tr>
+<tr><td>añadir camada / Duplicar camada / Excluir camada</td><td>Operações básicas de adicionar, duplicar e excluir.</td></tr>
+<tr><td>Renomear</td><td>Abre a caixa de diálogo de renomeação.</td></tr>
+<tr><td>Mesclar abaixo</td><td>Merges em o camada abaixo. ativado somente quando possible.</td></tr>
+<tr><td>Merge visível</td><td>Mescla visível camadas em uma camada. oculto camadas são preservadas.</td></tr>
+<tr><td>Rasterizar</td><td>Converts vetores e semelhante content para ráster. ativado somente quando possible.</td></tr>
+<tr><td>Convert para vetorial</td><td>Converts não convertidas básicas formas em normal vetorial objetos.</td></tr>
+<tr><td>grupo camadas / Ungroup</td><td>grupos múltiplas selecionado camadas, ou ungroups quando usado em um grupo linha.</td></tr>
+<tr><td>criar / Release Clipping máscara</td><td>Alterna o estado da máscara de recorte.</td></tr>
+<tr><td>añadir / editar / Finish / quitar camada máscara</td><td>adiciona um camada máscara, alterna máscara editar modo, ou elimina o máscara.</td></tr>
+<tr><td>añadir efeito</td><td>adiciona um child efeito para o selecionado camada. desativado para grupos.</td></tr>
+<tr><td>cargar como seleção / inverter Transparency</td><td>Mostrado apenas ao cliquear com o botão direito em uma camada de máscara. Carrega a máscara como seleção ou inverte os pixels transparentes.</td></tr>
+</table>
+<h4>Modo de mesclagems</h4>
+<p>A mesclagem de camadas controla como a camada selecionada é composta com as camadas abaixo. A opacidade é aplicada depois ao resultado mesclado inteiro. Como altera apenas a composição exibida sem editar pixels, é útil para ajustar cor, adicionar luz ou sombra e sobrepor texturas.</p>
+<table>
+<tr><th>Grupo</th><th>Modo</th><th>Descrição</th></tr>
+<tr><td>grupo somente</td><td>Passagem direta</td><td>para grupos. Composites child camadas em o context de o camadas abaixo, em vez de isolating elas dentro o grupo.</td></tr>
+<tr><td>normal</td><td>normal</td><td>estándar composição. o superior camada é colocada como-é, com opacidade controlando su intensidade.</td></tr>
+<tr><td>normal</td><td>Dissolve</td><td>Mostra áreas translúcidas como pontos aleatórios. Útil para bordas ásperas e aparência granulada.</td></tr>
+<tr><td>oscurecer</td><td>oscurecer</td><td>Prioriza os componentes mais escuros das camadas superior e inferior. Útil para adicionar sombras e áreas escuras reduzindo partes claras.</td></tr>
+<tr><td>oscurecer</td><td>Multiply</td><td>Multiplica as cores para escurecê-las. É o modo de escurecimento mais fácil para line art, sombras, textura de papel e sobreposição de sujeira.</td></tr>
+<tr><td>oscurecer</td><td>cor Burn</td><td>Escurece fortemente a base como se a queimasse, aumentando saturação e contraste. Bom para sombras profundas e texturas fortes.</td></tr>
+<tr><td>oscurecer</td><td>linear Burn</td><td>Escurece reduzindo a luminância linearmente. Produz áreas escuras fortes e mais matemáticas que Color Burn.</td></tr>
+<tr><td>oscurecer</td><td>mais escuro cor</td><td>Escolhe a cor mais escura entre as camadas superior e inferior em vez de mesclá-las. O resultado se aproxima de uma substituição com prioridade para cores escuras.</td></tr>
+<tr><td>Lighten</td><td>Lighten</td><td>Prioriza os componentes mais claros das camadas superior e inferior. Use para adicionar luz ou realces removendo partes escuras.</td></tr>
+<tr><td>Lighten</td><td>Screen</td><td>Funciona no sentido oposto ao Multiply e clareia naturalmente. Bom para brilho, realces, fumaça e recursos de luz.</td></tr>
+<tr><td>Lighten</td><td>cor Dodge</td><td>clareia o base fortemente e cria vívida light. isto pode clip para blanco easily, so ajustar com opacidade.</td></tr>
+<tr><td>Lighten</td><td>linear Dodge (añadir)</td><td>adiciona cores para brighten fortemente. útil para light sources, magia efeitos, e intenso resplandor.</td></tr>
+<tr><td>Lighten</td><td>Lighter cor</td><td>Escolhe a cor mais clara entre as camadas superior e inferior. Use ao sobrepor recursos com prioridade para cores claras.</td></tr>
+<tr><td>contraste</td><td>Overlay</td><td>alterna entre Multiply e Screen baseado em o brilho de o base. um estándar opción para añadiendo textura e reforzar shading.</td></tr>
+<tr><td>contraste</td><td>Soft Light</td><td>adiciona contraste more suavemente que Overlay. adequado para piel, tela, e sutil shading adjustments.</td></tr>
+<tr><td>contraste</td><td>duro Light</td><td>Adiciona efeitos fortes de luz e sombra com base na camada superior. Cria realces e sombras definidos.</td></tr>
+<tr><td>contraste</td><td>vívida Light</td><td>cria forte, vívida contraste semelhante para um combinación de cor Burn e cor Dodge.</td></tr>
+<tr><td>contraste</td><td>linear Light</td><td>Altera a luminância de forma forte e linear, como uma combinação de Linear Burn e Linear Dodge.</td></tr>
+<tr><td>contraste</td><td>Pin Light</td><td>Compõe como se substituísse regiões claras e escuras. Indicado para texturas duras especiais e efeitos.</td></tr>
+<tr><td>contraste</td><td>duro Mix</td><td>empuja cores hacia um fortemente posterizado resultado. útil para poster-like, ruidoso, ou experimental efeitos.</td></tr>
+<tr><td>Inversão</td><td>diferença</td><td>mostra o diferença entre o superior e inferior camadas. útil para alineación comprobaciones, inverted-looking efeitos, e inusual cor cambios.</td></tr>
+<tr><td>Inversão</td><td>Exclusion</td><td>um más suave diferença mesclagem que diferença. adequado para especial efeitos com um less inverted sensación.</td></tr>
+<tr><td>Inversão</td><td>Subtrair</td><td>Subtrai a cor superior da base para escurecê-la. Útil para efeitos de remoção de cor e efeitos escuros especiais.</td></tr>
+<tr><td>Inversão</td><td>Divide</td><td>clareia como se dividing o base por o superior cor. útil para corrección, extracción, e checking forte highlight alterações.</td></tr>
+<tr><td>Componente</td><td>Matiz</td><td>aplica somente o superior matiz para o base enquanto conservando base luminance e saturação. usar isto quando you somente quieres para alterar matiz.</td></tr>
+<tr><td>Componente</td><td>saturação</td><td>Aplica somente a saturação superior à base. Use para adicionar vivacidade ou reduzir a saturação.</td></tr>
+<tr><td>Componente</td><td>Cor</td><td>aplica o superior matiz e saturação para o base enquanto conservando base luminance. adequado para coloring grayscale shading.</td></tr>
+<tr><td>Componente</td><td>Luminosidade</td><td>aplica somente o superior luminance para o base enquanto conservando base matiz e saturação. Replaces somente shading ou brilho.</td></tr>
+</table>
+<p>mesclagem modos affect o exibido resultado de camadas, efeito camadas, grupo composição, e PSD exportar. Changing um modo recomposites o tela but does não rewrite o camada píxeles elasselves.</p>
+</div>
+<h2 id="panel-color">Painel de cores <span class="tag tag-panel">painel</span></h2>
+<p>um cor selector combining um HSV cor wheel e triangle, numérico entrada, e palette gerenciamento.</p>
+<div class="card">
+<h4>controle lista</h4>
+<table>
+<tr><th>controle</th><th>Descrição</th></tr>
+<tr><td>cor wheel</td><td>Select matiz em o outer ring (0 para 360 degrees)</td></tr>
+<tr><td>tom triangle</td><td>Select saturação e value dentro o triangle</td></tr>
+<tr><td>HSV seletor boxes (H/S/V)</td><td>H: 0～359°, S: 0～100%, V: 0～100%</td></tr>
+<tr><td>RGB seletor boxes (R/G/B)</td><td>0 para 255 each</td></tr>
+<tr><td>Hex texto entrada</td><td>#RRGGBB formato</td></tr>
+<tr><td>añadir para Palette botão</td><td>añadir o atual cor para o palette</td></tr>
+<tr><td>Palette grid</td><td>Exibição em grade de amostras (32x32 px). um excluir botão aparece ao passar o cursor.</td></tr>
+<tr><td>cor history</td><td>mostra o 10 most recent cores em um linha (24x24 px)</td></tr>
+</table>
+<p>padrão palette: Black, blanco, Red, Green, Blue</p>
+</div>
+<h2 id="panel-brush-manager">Gerenciador de pincéis <span class="tag tag-panel">painel</span></h2>
+<p>Um painel para gerenciar pontas de pincel personalizadas. Você pode criar, importar e excluir pincéis.</p>
+<div class="card">
+<h4>controle lista</h4>
+<table>
+<tr><th>controle</th><th>Descrição</th></tr>
+<tr><td>pincel tip grid</td><td>mostra pincel tip previews em modo de ícones. doble-clique para renomear.</td></tr>
+<tr><td>criar Tip botão</td><td>criar um pincel tip de o tela seleção</td></tr>
+<tr><td>salvar Params botão</td><td>salvar o atual caneta configurações para um pincel</td></tr>
+<tr><td>Botão Reexaminar ABR</td><td>Reexaminar a pasta da biblioteca ABR</td></tr>
+<tr><td>importar ABR botão</td><td>importar um Photoshop .abr pincel arquivo</td></tr>
+<tr><td>importar PNG botão</td><td>importar um PNG imagem como um pincel tip</td></tr>
+<tr><td>excluir botão</td><td>excluir o selecionado pincel</td></tr>
+</table>
+</div>
+<h2 id="panel-shape-manager">Gerenciador de formas <span class="tag tag-panel">painel</span></h2>
+<p>Provides vetorial forma biblioteca gerenciamento e alineación ferramentas. isto também includes especial formas such como mangá speech balloons e focus lines.</p>
+<div class="card">
+<h4>aba 1 - Gerenciador de formas (biblioteca)</h4>
+<table>
+<tr><th>controle</th><th>Descrição</th></tr>
+<tr><td>categoria filter</td><td>Filter formas por categoria</td></tr>
+<tr><td>tag filter</td><td>Filter formas por tag</td></tr>
+<tr><td>forma grid</td><td>mostrar miniaturas em modo de ícones</td></tr>
+<tr><td>carimbo / añadir para tela</td><td>añadir o forma como um carimbo ou sobre o tela</td></tr>
+<tr><td>importar SVG / Exportar SVG</td><td>importar/exportar SVG arquivos</td></tr>
+<tr><td>novo categoria / Renomear / excluir</td><td>Manage categories e formas</td></tr>
+</table>
+<h4>aba 2 - básicas formas (built-en formas)</h4>
+<table>
+<tr><th>Categoria</th><th>forma lista</th></tr>
+<tr><td>básicas</td><td>Ellipse, Rounded retângulo, Parallelogram, Trapezoid</td></tr>
+<tr><td>efeito</td><td>Focus Lines (Circle), Focus Lines (Rect)</td></tr>
+<tr><td>Balloon</td><td>Speech Balloon (Round / Rect / Cloud), Spiky Balloon</td></tr>
+<tr><td>Polygon</td><td>Triangle, Quadrilateral, Pentagon, Hexagon, Heptagon, Octagon, Nonagon, Decagon</td></tr>
+</table>
+<h4>alineación e arrangement ferramentas</h4>
+<table>
+<tr><th>controle</th><th>Descrição</th></tr>
+<tr><td>Referência de alinhamento</td><td>base: seleção / tela / primeiro objeto / último objeto</td></tr>
+<tr><td>Ajustar (conter) / Ajustar (esticar) / Centro</td><td>Fit e centering</td></tr>
+<tr><td>Align esquerda / Centro (H) / direita</td><td>horizontal alineación</td></tr>
+<tr><td>Align Superior / medio (V) / baixo</td><td>vertical alineación</td></tr>
+<tr><td>Distribute Horizontally / Vertically</td><td>Distribute evenly</td></tr>
+</table>
+</div>
+<h2 id="panel-effect">Painel de efeitos <span class="tag tag-panel">painel</span></h2>
+<p>edita parâmetros para o selecionado efeito camada. o parâmetro UI é gerado dynamically according para o efeito tipo.</p>
+<div class="card">
+<p>quando um efeito camada é selecionado em o camada painel, su efeito nombre appears em o grupo caixa title e seletor boxes são gerado para each parâmetro. alterações são reflected em o visualização immediately e suporte Desfazer.</p>
+</div>
+<h2 id="panel-pages">Painel de páginas <span class="tag tag-panel">painel</span></h2>
+<p>Um painel para gerenciar documentos multipágina.</p>
+<div class="card">
+<h4>controle lista</h4>
+<table>
+<tr><th>controle</th><th>Descrição</th></tr>
+<tr><td>+ (añadir página) botão</td><td>añadir um página (básicas / personalizado templates + template salvar menú)</td></tr>
+<tr><td>Dup botão</td><td>Duplicar o atual página</td></tr>
+<tr><td>Del botão</td><td>excluir página</td></tr>
+<tr><td>Up / Down botões</td><td>alterar página order</td></tr>
+<tr><td>página lista</td><td>Número da página + nome da página + indicador de alterações (*). As miniaturas são exibidas atualmente como placeholders.</td></tr>
+</table>
+<p>doble-clique ou <kbd>F2</kbd> para renomear o página. o painel alterna entre lista modo e modo de ícones dependendo da proporção.</p>
+</div>
+<h2 id="panel-preview">Painel de visualização <span class="tag tag-panel">painel</span></h2>
+<p>Mostra uma visualização reduzida em tempo real de toda a tela.</p>
+<div class="card">
+<p>Arraste com o mouse para deslocar e use os controles de zoom para ajustar a área de visualização. Ele redesenha automaticamente sempre que a composição da tela é atualizada.</p>
+</div>
+<h2 id="panel-context-toolbar">Barra contextual <span class="tag tag-panel">painel</span></h2>
+<p>Uma barra de ferramentas flutuante que aparece automaticamente na tela após um traço ou uma ação. Ela mostra configurações rápidas da ferramenta ativa.</p>
+<div class="card">
+<table>
+<tr><th>Ferramentas</th><th>Momento de exibição</th><th>Itens exibidos</th></tr>
+<tr><td>caneta / borracha</td><td>após um stroke completes</td><td>tamanho, opacidade, Hardness</td></tr>
+<tr><td>magia Wand</td><td>após creating um seleção</td><td>tolerância, contígua, Operation</td></tr>
+<tr><td>gradiente</td><td>quando visualização inicia</td><td>tipo, cor um/B, paradas, Dither</td></tr>
+<tr><td>vetorial caminho / precisa</td><td>após um stroke completes</td><td>Stroke largura/cor, preenchimento</td></tr>
+</table>
+</div>
+<!-- ══════════════════ エフェクトレイヤー ══════════════════ -->
+<h2 id="fx-gaussian-blur">Desfoque gaussiano <span class="tag tag-effect">efeito</span></h2>
+<p>Um efeito não destrutivo que aplica desfoque gaussiano a uma camada.</p>
+<div class="card">
+<table>
+<tr><th>Parâmetros</th><th>intervalo</th><th>Descrição</th></tr>
+<tr><td>radio</td><td>0 ～ 250 px</td><td>Raio de suavização</td></tr>
+</table>
+</div>
+<h2 id="fx-levels">níveis <span class="tag tag-effect">efeito</span></h2>
+<p>Controla o contraste ajustando níveis de entrada/saída e gama.</p>
+<div class="card">
+<table>
+<tr><th>Parâmetros</th><th>intervalo</th><th>Descrição</th></tr>
+<tr><td>em Black</td><td>0 ～ 255</td><td>Dark ponto de entrada níveis</td></tr>
+<tr><td>em blanco</td><td>0 ～ 255</td><td>Light ponto de entrada níveis</td></tr>
+<tr><td>gama</td><td>0.01 ～ 9.99</td><td>gama corrección value</td></tr>
+<tr><td>Out Black</td><td>0 ～ 255</td><td>Dark ponto de saída níveis</td></tr>
+<tr><td>Out blanco</td><td>0 ～ 255</td><td>Light ponto de saída níveis</td></tr>
+</table>
+</div>
+<h2 id="fx-hue-saturation">Matiz / Saturação <span class="tag tag-effect">efeito</span></h2>
+<p>Um efeito de correção de cor para ajustar matiz, saturação e luminosidade.</p>
+<div class="card">
+<table>
+<tr><th>Parâmetros</th><th>intervalo</th><th>Descrição</th></tr>
+<tr><td>Matiz</td><td>-180 ～ 180°</td><td>matiz shift</td></tr>
+<tr><td>saturação</td><td>-100 ～ 100</td><td>saturação ajuste</td></tr>
+<tr><td>luminosidade</td><td>-100 ～ 100</td><td>luminosidade ajuste</td></tr>
+</table>
+</div>
+<h2 id="fx-invert">inverter <span class="tag tag-effect">efeito</span></h2>
+<p>Invertere a faixa tonal, ou brilho da cor, da camada.</p>
+<div class="card">
+<table>
+<tr><th>Parâmetros</th><th>intervalo</th><th>Descrição</th></tr>
+<tr><td>Intensidade</td><td>0 ～ 100%</td><td>Intensidade de inversão</td></tr>
+</table>
+</div>
+<h2 id="fx-brightness-contrast">Brilho / Contraste <span class="tag tag-effect">efeito</span></h2>
+<p>Adjusts camada brilho e contraste. isto é um built-en live-filter efeito com both CPU e GPU caminhos.</p>
+<div class="card">
+<table>
+<tr><th>Parâmetros</th><th>intervalo</th><th>Descrição</th></tr>
+<tr><td>brilho</td><td>-100 ～ 100</td><td>brilho ajuste</td></tr>
+<tr><td>contraste</td><td>-100 ～ 100</td><td>contraste ajuste</td></tr>
+</table>
+</div>
+<h2 id="fx-sharpen">Nitidez <span class="tag tag-effect">efeito</span></h2>
+<p>Realça como bordas usando o método de máscara de nitidez.</p>
+<div class="card">
+<table>
+<tr><th>Parâmetros</th><th>intervalo</th><th>Descrição</th></tr>
+<tr><td>Amount</td><td>0 ～ 500</td><td>Nitidez intensidade</td></tr>
+<tr><td>radio</td><td>0.1 ～ 50</td><td>Nitidez radio</td></tr>
+<tr><td>Threshold</td><td>0 ～ 255</td><td>ruído ignore threshold</td></tr>
+</table>
+</div>
+<h2 id="fx-noise-reduction">Redução de ruído <span class="tag tag-effect">efeito</span></h2>
+<p>Um efeito de redução de ruído baseado em médias não locais (NLM).</p>
+<div class="card">
+<table>
+<tr><th>Parâmetros</th><th>intervalo</th><th>Descrição</th></tr>
+<tr><td>Intensidade</td><td>1 ～ 40</td><td>Luminance ruído redução intensidade</td></tr>
+<tr><td>Intensidade de cor</td><td>1 ～ 40</td><td>cor ruído redução intensidade</td></tr>
+</table>
+</div>
+<!-- ══════════════════ AI Effect Layer ══════════════════ -->
+<h2 id="ai-effect-overview">AI efeito camada <span class="tag tag-ai">AI efeito</span></h2>
+<p>AI efeito camada é um feature que places<code>.lsfx</code> presets em o tela como camadas, then sends entrada camadas e parâmetros para um ComfyUI Gateway ou NanoBanana Gateway para gerar imagens. isto funciona com o Painel de camadas, Painel de efeitos, e AI efeitos gerenciador separately de o normal ComfyUI e NanoBanana painéis.</p>
+<div class="card">
+<h4>básicas flow</h4>
+<ol>
+<li>de o AI menú, elegir <strong>AI efeito Presets...</strong> para abrir AI efeitos gerenciador</li>
+<li>direita-clique um preset e elegir <strong>Adicionar camada AI efeito</strong> </li>
+<li>em o Painel de camadas, assign entrada camadas para Slot linhas abaixo o AI efeito camada</li>
+<li>usar o Painel de efeitos para controle parâmetros, saída destination, e gerar</li>
+<li>Aplicar o resultado gerado para o AI efeito própria camada ou para um novo saída camada diretamente acima dela</li>
+</ol>
+<table>
+<tr><th>Item</th><th>Conteúdo</th></tr>
+<tr><td>camada tipo</td><td><code>layer_type="ai_effect"</code></td></tr>
+<tr><td>Preset formato</td><td><code>.lsfx</code>. o ZIP contém o manifestoo, Gateway configurações, ícones, e dados relacionados</td></tr>
+<tr><td>compatible Gateway</td><td>ComfyUI Gateway / NanoBanana Gateway</td></tr>
+<tr><td>Salvar</td><td><code>.lstroke</code> v1.2 <code>ai_effect</code> payload stores estado</td></tr>
+</table>
+<p>Gateways que require externo service access pode ejecutar somente quando externo services são allowed em Preferências e o required API key ou connection configurações são configured.</p>
+</div>
+<h2 id="ai-effect-manager">Gerenciador de efeitos de IA <span class="tag tag-ai">AI efeito</span></h2>
+<p>Installed <code>.lsfx</code> um gerenciamento screen para listing, añadiendo, edição, deleting, e importação presets.</p>
+<div class="card">
+<table>
+<tr><th>Ações</th><th>Descrição</th></tr>
+<tr><td>Adicionar camada AI efeito</td><td>adiciona o selecionado preset para o atual tela como um AI efeito camada.</td></tr>
+<tr><td>editar</td><td>Abrirs o preset em efeito editor e reloads existente configurações para edição.</td></tr>
+<tr><td>Importarar</td><td>Importars um externo <code>.lsfx</code> em <code>user_data/ai_effect/presets/</code> .</td></tr>
+<tr><td>Excluir</td><td>elimina usuário predefinições. predefinições incluídas são comparadas com o snapshot, portanto usuário alterações são respeitadas.</td></tr>
+</table>
+<p>The default build ships no bundled <code>.lsfx</code> presets. Use Import or Register to add presets to <code>user_data/ai_effect/presets/</code>.</p>
+</div>
+<h2 id="ai-effect-editor">efeito editor <span class="tag tag-ai">AI efeito</span></h2>
+<p>um screen para creating e edição <code>.lsfx</code> presets de ComfyUI fluxos de trabalho ou NanoBanana parâmetro mappings.</p>
+<div class="card">
+<table>
+<tr><th>área</th><th>Role</th></tr>
+<tr><td>Metadata</td><td>Define o nome do preset, categoria, descrição, tags, ícone, e metadados relacionados.</td></tr>
+<tr><td>Candidates / Inspector</td><td>escolhe candidate parâmetros e entrada slots obtained de o Gateway e exposes elas como usuário-facing UI.</td></tr>
+<tr><td>Importarar predefinição</td><td>existente <code>.lsfx</code> pode ser loaded para resume edição em efeito editor.</td></tr>
+<tr><td>Exportar</td><td>Grava de forma atômica o manifestoo validado e os arquivos do Gateway como <code>.lsfx</code> .</td></tr>
+</table>
+<p>o exported <code>.lsfx</code> Pode ser registrado diretamente no gerenciador de efeitos AI. Se o nome do arquivo não contiver <code>.lsfx</code> , isso é adicionado ao salvar.</p>
+</div>
+<h2 id="ai-effect-runtime">Geração e estado <span class="tag tag-ai">AI efeito</span></h2>
+<p>Quando uma camada de efeito AI é selecionada, o Painel de efeitos mostra parâmetros dinâmicos da predefinição. A geração é registrada no histórico como um comando e oferece suporte a Desfazer/Refazer.</p>
+<div class="card">
+<h4>Painel de camadas / Painel de efeitos</h4>
+<table>
+<tr><th>Item</th><th>Descrição</th></tr>
+<tr><td>Slot linha</td><td>Uma linha de entrada mostrada abaixo de uma camada de efeito AI. Atribua outra camada como referência.</td></tr>
+<tr><td>Exclusion botão</td><td>Alterna um Slot de entrada para ser excluído da mesclagem e usado apenas como entrada de IA.</td></tr>
+<tr><td>Gerar</td><td>inicia geração de o selecionado camada ou de o AI efeito linha em o Painel de camadas.</td></tr>
+<tr><td>saída para isto camada</td><td>quando ativado, saída é gravada de volta para o AI efeito própria camada. quando desativado, um novo saída camada é criada diretamente acima dela.</td></tr>
+<tr><td>Progress / cancelar</td><td>O progresso é mostrado durante a execução, e o cancelamento externo é tratado por<code>cancel_layer(layer_id)</code> .</td></tr>
+</table>
+<h4>Execução e salvamento</h4>
+<table>
+<tr><th>Item</th><th>Descrição</th></tr>
+<tr><td>entrada resolution</td><td>Resolve camadas referenciadas de raster / grupo / máscara / efeito AI como arquivos PNG para o Gateway.</td></tr>
+<tr><td>cache</td><td>para identical inputs e parâmetros, <code>param_hash</code> é usado para determine Gallery / cache hits.</td></tr>
+<tr><td>UI estado</td><td>numérico entrada, seed entrada, e LivePrompt estado são salvo como <code>AIEffectState.param_ui_state</code> .</td></tr>
+<tr><td>Telemetry</td><td>somente quando debug é ativado, <code>user_data/logs/ai_effect.log</code> é recorded como JSON lines.</td></tr>
+<tr><td>Configurações</td><td>Tentativas, cache, chaves API e configurações relacionadas são gerenciadas em Preferências -&gt; Efeito AI. O arquivo de configurações é <code>user_data/ai_effect/preferences.json</code> .</td></tr>
+</table>
+<p>quando ComfyUI é não ejecutando ou presets são não installed, guidance dialogs, toast messages, ou banners são mostrado. para avoid repeated connection attempts, automático connection quando placing um AI efeito camada tem um cooldown.</p>
+</div>
+<!-- ══════════════════ AI 連携 ══════════════════ -->
+<h2 id="ai-comfyui">ComfyUI painel <span class="tag tag-ai">AI</span></h2>
+<p>Conecta-se a um servidor ComfyUI e executa fluxos de geração de imagens por IA. Só fica disponível quando o acesso a serviços externos é permitido.</p>
+<div class="card">
+<h4>Connection barra</h4>
+<table>
+<tr><th>controle</th><th>Descrição</th></tr>
+<tr><td>Address entrada</td><td>servidor address (padrão: 127.0.0.1:8188)</td></tr>
+<tr><td>SSL caixa de seleção</td><td>usar HTTPS/WSS</td></tr>
+<tr><td>Connect / Disconnect botão</td><td>iniciar ou disconnect o connection</td></tr>
+<tr><td>Refresh botão</td><td>Recarregar informações dos nós</td></tr>
+</table>
+<h4>fluxo de trabalho</h4>
+<table>
+<tr><th>controle</th><th>Descrição</th></tr>
+<tr><td>fluxo de trabalho combo caixa</td><td>lista de salvo fluxos de trabalho</td></tr>
+<tr><td>cargar botão</td><td>cargar um .json fluxo de trabalho arquivo</td></tr>
+</table>
+<p>fluxos de trabalho são salvo em <code>user_data/plugins/comfyui/workflows</code> e saída camadas usar <code>user_data/cache/LoomStroke/layers</code> .</p>
+<h4>aba 1 — fluxo de trabalho Nodes</h4>
+<p>Cada nó no fluxo de trabalho carregado é mostrado como uma aba dinâmica, onde os parâmetros podem ser editados. Parâmetros STRING podem ser editados com o compositor de prompts.</p>
+<h4>aba 2 — Queue</h4>
+<table>
+<tr><th>controle</th><th>Descrição</th></tr>
+<tr><td>Job table</td><td>Six columns: ID, Status, Progress, fluxo de trabalho, Started, Notes</td></tr>
+<tr><td>cancelar botão</td><td>cancelar o selecionado job</td></tr>
+<tr><td>visualização botão</td><td>visualização job results</td></tr>
+<tr><td>claras Finished botão</td><td>Limpar trabalhos finalizados</td></tr>
+</table>
+<h4>Execution controla</h4>
+<table>
+<tr><th>controle</th><th>Descrição</th></tr>
+<tr><td>Queue botão</td><td>Queue um job (green)</td></tr>
+<tr><td>cancelar botão</td><td>cancelar um ejecutando job</td></tr>
+<tr><td>Repeat seletor caixa</td><td>0=once, -1=infinite, N=repeat N times</td></tr>
+<tr><td>Infinity caixa de seleção</td><td>Repeat infinitely</td></tr>
+</table>
+</div>
+<h2 id="ai-nanobanana">Painel NanoBanana <span class="tag tag-ai">AI</span></h2>
+<p>um AI imagem geração painel usando o Google Gemini API. o API key é salvo no OS keyring e isto pode ser usado somente quando externo service access é allowed.</p>
+<div class="card">
+<h4>controle lista</h4>
+<table>
+<tr><th>controle</th><th>Choices / intervalo</th><th>Descrição</th></tr>
+<tr><td>prompt</td><td>texto / chip composer</td><td>geração prompt entrada</td></tr>
+<tr><td>entrada camadas</td><td>camada combo x N</td><td>camadas usado como entrada (múltiplas seleção compatible)</td></tr>
+<tr><td>Modolo</td><td>combo caixa</td><td>Modol para usar, such como gemini-2.5-flash</td></tr>
+<tr><td>Pensamento</td><td>Minimal / High</td><td>Thinking level</td></tr>
+<tr><td>Modalidade</td><td>texto+imagem / imagem</td><td>saída modality</td></tr>
+<tr><td>Tamanho</td><td>Auto / 512 / 1K / 2K / 4K</td><td>saída imagem tamanho</td></tr>
+<tr><td>Aspect proporção</td><td>1:1, 4:3, 3:4, 16:9, 9:16, etc.</td><td>Aspect proporção com pixel dimensions</td></tr>
+<tr><td>Camada de destino</td><td>&lt;Nova camada&gt; / existente camada</td><td>saída destination para gerado imagens</td></tr>
+<tr><td>Thoughts caixa de seleção</td><td>en / OFF</td><td>Include o thinking process</td></tr>
+<tr><td>Search caixa de seleção</td><td>en / OFF</td><td>usar Google Search</td></tr>
+<tr><td>gerar botão</td><td>—</td><td>ejecutar imagem geração (green)</td></tr>
+<tr><td>Status texto</td><td>—</td><td>Status log mostrar</td></tr>
+</table>
+</div>
+<h2 id="ai-prompt-editor">editor de prompts <span class="tag tag-ai">AI</span></h2>
+<p>um painel que combines structured prompt creation, snippets gerenciamento, e LLM execution. trechos são salvo em <code>user_data/text_editor/text_snippets.sqlite3</code> .</p>
+<div class="card">
+<h4>aba 1 — Compose</h4>
+<table>
+<tr><th>controle</th><th>Descrição</th></tr>
+<tr><td>Componentes palette</td><td>arrastar e soltar four component tipos: String / lista / texto / prompt</td></tr>
+<tr><td>Live prompt chip flow</td><td>reordenar chips para compose um prompt</td></tr>
+<tr><td>Separator entrada</td><td>Separator entre componentes</td></tr>
+<tr><td>Compose botão</td><td>Build o prompt</td></tr>
+<tr><td>Copiar botão</td><td>Copiar o resultado para o clipboard</td></tr>
+<tr><td>salvar área</td><td>prompt nombre + categoria + salvar/cargar/novo botões</td></tr>
+</table>
+<h4>aba 2 — biblioteca</h4>
+<table>
+<tr><th>controle</th><th>Descrição</th></tr>
+<tr><td>Search barra</td><td>texto search + tipo filter + tag filter</td></tr>
+<tr><td>snippets lista</td><td>lista de salvo trechos</td></tr>
+<tr><td>Detail editor</td><td>editar title / tags / tipo / body</td></tr>
+<tr><td>Duplicar / excluir / Exportar</td><td>snippets ação botões</td></tr>
+</table>
+<h4>aba 3 — LLM</h4>
+<table>
+<tr><th>controle</th><th>Choices / intervalo</th><th>Descrição</th></tr>
+<tr><td>Stream caixa de seleção</td><td>en / OFF</td><td>O Gateway atual opera em modo sem streaming</td></tr>
+<tr><td>Provider</td><td>combo caixa</td><td>AI provider seleção</td></tr>
+<tr><td>Modolo</td><td>combo caixa</td><td>Modol seleção</td></tr>
+<tr><td>Temperature</td><td>0.0 ～ 2.0</td><td>geração randomness (padrão: 0.7)</td></tr>
+<tr><td>Max Tokens</td><td>0 ～ 32000</td><td>Maximum token count (padrão: 512)</td></tr>
+<tr><td>System prompt</td><td>texto área</td><td>System prompt</td></tr>
+<tr><td>usuário prompt</td><td>texto área</td><td>usuário prompt</td></tr>
+<tr><td>saída</td><td>texto área</td><td>mostrar o LLM response</td></tr>
+<tr><td>Submit / cancelar / claras</td><td>—</td><td>Execution controle botões</td></tr>
+</table>
+</div>
+<!-- ══════════════════ キャンバス操作 ══════════════════ -->
+<h2 id="canvas-viewport">Zoom / Panorâmica / Girar<span class="tag tag-param">tela</span></h2>
+<div class="card">
+<table>
+<tr><th>Ações</th><th>entrada</th><th>Notes</th></tr>
+<tr><td>Ampliar</td><td><kbd>Ctrl+=</kbd>/ roda do mouse para cima</td><td>Maximum 3200%</td></tr>
+<tr><td>Reduzir</td><td><kbd>Ctrl+-</kbd>/ roda do mouse para baixo</td><td>Minimum 1%</td></tr>
+<tr><td>Redefinir zoom</td><td><kbd>Ctrl+0</kbd></td><td>Return para 100%</td></tr>
+<tr><td>Pan (scroll)</td><td>direita-clique arrastar</td><td>Configurable em configurações</td></tr>
+<tr><td>tela rotation</td><td>imagem menú</td><td>90 deg CW / 90 deg CCW / 180 deg. Converts all camadas como um history grupo.</td></tr>
+</table>
+<p><strong>Implementation note:</strong> o padrão tela é o QImage-baseado <code>SimpleCanvasService</code> . camadas pode ser ráster, vetorial, ou máscara camadas; during ráster movement, off-tela áreas são também preserved por <code>offset_x/y</code> .</p>
+</div>
+<h2 id="canvas-rulers">Réguas e guias <span class="tag tag-param">tela</span></h2>
+<div class="card">
+<ul>
+<li><strong>réguas:</strong> mostrado em o superior e esquerda bordas de o tela. Units pode ser px / mm / inch.</li>
+<li><strong>criar guias:</strong> arrastar de um ruler sobre o tela</li>
+<li><strong>mover guias:</strong>Clique e arraste uma guia</li>
+<li><strong>excluir guias:</strong> arrastar out de o tela</li>
+<li><strong>Toggle mostrar:</strong> <kbd>R</kbd>A tecla alterna a visibilidade das guias</li>
+<li><strong>Snap:</strong> automático snapping para guias, grid, âncoras, e bordas</li>
+<li><strong>Cor da guia:</strong> Configurable em configurações (padrão: <code>#00B7FF</code>)</li>
+</ul>
+</div>
+<h2 id="canvas-grid">Grade <span class="tag tag-param">tela</span></h2>
+<div class="card">
+<ul>
+<li><strong>Toggle mostrar:</strong> <kbd>G</kbd> Key</li>
+<li><strong>Grade tamanho:</strong> padrão 32 px, configurable de 1 para 5000 px em Preferências</li>
+<li><strong>Grade snap:</strong> pode ser ativado em o mover ferramenta e semelhante ferramentas</li>
+</ul>
+</div>
+<!-- ══════════════════ ファイル入出力 ══════════════════ -->
+<h2 id="file-formats">Formatos compatíveis <span class="tag tag-param">arquivo</span></h2>
+<div class="card">
+<table>
+<tr><th>formato</th><th>importar</th><th>Exportar</th><th>Notes</th></tr>
+<tr><td>.lstroke (nativo)</td><td>v1.0.0 / v1.1.0 / v1.2.0</td><td>v1.2.0</td><td>Preserves múltiplas páginas, camadas, vetores, e UI layout</td></tr>
+<tr><td>PNG</td><td>○</td><td>○</td><td>Compression level pode ser configured</td></tr>
+<tr><td>JPEG</td><td>○</td><td>○</td><td>Quality e progressive configurações pode ser configured</td></tr>
+<tr><td>TIFF</td><td>○</td><td>○</td><td>LZW compression e 16-bit suporte</td></tr>
+<tr><td>BMP</td><td>○</td><td>○</td><td></td></tr>
+<tr><td>WebP</td><td>○</td><td>○</td><td>Quality e lossless configurações pode ser configured</td></tr>
+<tr><td>PSD</td><td>○</td><td>○</td><td>Importa estruturas de camadas e exporta PSD com camadas</td></tr>
+<tr><td>ABR</td><td>○</td><td>—</td><td>importar Photoshop pincéis</td></tr>
+<tr><td>SVG</td><td>○</td><td>○</td><td>Through Gerenciador de formas</td></tr>
+</table>
+<p>Arquivos PNG / JPEG / WebP / BMP / TIFF podem ser arrastados do sistema operacional para a tela e adicionados como novas camadas raster.</p>
+</div>
+<h2 id="file-lstroke">Formato nativo .lstroke <span class="tag tag-param">arquivo</span></h2>
+<div class="card">
+<p>.lstroke é um ZIP-baseado nativo formato. em salvar, isto writes para <code>*.lstroke.tmp</code> e então substitui o arquivo de destino. As seguintes informações são salvas:</p>
+<ul>
+<li>manifestoo JSON (versão e metadados do documento)</li>
+<li>PNG imagem data para each camada</li>
+<li>vetorial objeto data</li>
+<li>página information (v1.1 multipágina)</li>
+<li>Instantâneo do layout da UI</li>
+<li>ICC cor profile</li>
+</ul>
+</div>
+<!-- ══════════════════ 設定 ══════════════════ -->
+<h2 id="settings-preferences">Preferências <span class="tag tag-param">configurações</span></h2>
+<p><kbd>Ctrl+,</kbd>abre a caixa de diálogo Preferências. Atualmente ela tem cinco abas: Performance / Interface / File I/O / Shortcuts / AI Effect.</p>
+<div class="card">
+<h4>Performance aba</h4>
+<table>
+<tr><th>ajuste</th><th>intervalo</th><th>Descrição</th></tr>
+<tr><td>ativar Numba optimizations</td><td>en / OFF</td><td>Enables Numba JIT optimization para numérico processing.</td></tr>
+<tr><td>cache tamanho</td><td>10 ～ 10000 items</td><td>Número máximo de entradas de cache no aplicativo.</td></tr>
+<tr><td>Desfazer Steps</td><td>10 ～ 1000</td><td>Maximum número de Desfazer history steps</td></tr>
+<tr><td>Memmap Threshold</td><td>1 ～ 1000 MB</td><td>Threshold para começando para usar memmap para large imagem data.</td></tr>
+<tr><td>Recompose FPS Limit</td><td>10 ～ 120 fps</td><td>Limite de FPS de recomposição usado para reduzir a carga da CPU em telas grandes.</td></tr>
+<tr><td>Ativar sobreposição vetorial nítida (zoom)</td><td>en / OFF</td><td>mostra o topmost vetorial camada sharply en screen resolution enquanto zooming.</td></tr>
+<tr><td>vetorial Overlay Max Dim</td><td>2048 / 4096 / 8192</td><td>Maximum ráster dimension para o sharp vetorial overlay. Larger values são more detailed but usar more VRAM.</td></tr>
+</table>
+<h4>Interface aba</h4>
+<table>
+<tr><th>ajuste</th><th>Opções</th><th>Descrição</th></tr>
+<tr><td>Language</td><td>System padrão / English / Japanese / Chinese (Simplified / Traditional / Taiwan Mandarin) / Korean / Spanish / Arabic / Hindi / Portuguese (Brazil) / Bengali / Russian</td><td>Idioma da UI. As alterações são aplicadas às áreas principais sem reiniciar.</td></tr>
+<tr><td>cor Theme</td><td>Dark / Light / System</td><td>cor Theme</td></tr>
+<tr><td>mostrar toolbar</td><td>en / OFF</td><td>mostrar o toolbar</td></tr>
+<tr><td>mostrar status barra</td><td>en / OFF</td><td>mostrar o status barra</td></tr>
+<tr><td>Grade interval</td><td>1 ～ 5000 px</td><td>Grade interval</td></tr>
+<tr><td>Allow externo AI services</td><td>en / OFF</td><td>quando OFF, network access para ComfyUI / LLM Gateway / NanoBanana é blocked.</td></tr>
+<tr><td>Menus</td><td>Exibir / camada / Filter / ferramentas / plugins, etc.</td><td>Alterna individualmente a visibilidade dos menus de destino.</td></tr>
+<tr><td>máscara overlay cor</td><td>cor (padrão: #00FFFF)</td><td>seleção máscara overlay cor</td></tr>
+<tr><td>máscara Overlay opacidade</td><td>0 ～ 255</td><td>seleção máscara overlay opacidade</td></tr>
+</table>
+<h4>Entrada/saída de arquivos aba</h4>
+<table>
+<tr><th>ajuste</th><th>intervalo</th><th>Descrição</th></tr>
+<tr><td>ativar autosave</td><td>en / OFF</td><td>Enables autosave. alterações take efeito após restart.</td></tr>
+<tr><td>Autosave interval</td><td>30 ～ 3600 sec</td><td>Autosave interval. alterações take efeito após restart.</td></tr>
+<tr><td>Compression quality</td><td>1 ～ 100</td><td>Qualidade de compressão usada ao salvar ou exportar.</td></tr>
+<tr><td>layout directory</td><td>pasta caminho</td><td>Especifica onde as disposições da UI são salvas. Escolha com Browse…</td></tr>
+</table>
+<h4>atalhos aba</h4>
+<p>Lista e reatribui atalhos de teclado para todas as ações. Inclui árvore de categorias / proprietários, pesquisa, exibição de conflitos e Reset Shortcuts. As atribuições do mouse para Pan gesture e Context menu também podem ser alteradas.</p>
+<h4>AI efeito aba</h4>
+<table>
+<tr><th>ajuste</th><th>intervalo / Options</th><th>Descrição</th></tr>
+<tr><td>padrão trigger</td><td>Manual / em alterar / Debounced</td><td>padrão trigger para AI efeito camada geração.</td></tr>
+<tr><td>Debounce delay</td><td>0 ～ 60000 ms</td><td>Delay para o debounced trigger.</td></tr>
+<tr><td>geração timeout</td><td>10 ～ 86400 sec</td><td>Timeout para geração jobs.</td></tr>
+<tr><td>entradas de cache por camada</td><td>1 ～ 500 entries</td><td>cache limit per AI efeito camada.</td></tr>
+<tr><td>desativar cache para manual regenerate</td><td>en / OFF</td><td>Prevents cache usar during manual regeneration.</td></tr>
+<tr><td>Auto-retries em 'em alterar' trigger</td><td>0 ～ 10</td><td>número de tentativas automáticas para geração ao alterar.</td></tr>
+<tr><td>Retry delay</td><td>0 ～ 60000 ms</td><td>Wait time antes retrying.</td></tr>
+<tr><td>mostrar first-generación banner</td><td>en / OFF</td><td>mostra o banner de orientação após a conclusão da primeira geração.</td></tr>
+<tr><td>Register en-alterar / debounced generations em Gallery</td><td>en / OFF</td><td>Alterna se os resultados gerados automaticamente são registrados na Gallery.</td></tr>
+<tr><td>ComfyUI Servers</td><td>Local URL / externo URL</td><td>Define a URL do registro de servidores ComfyUI para AI efeito. o Local padrão é <code>http://127.0.0.1:8188</code> .</td></tr>
+<tr><td>API Keys</td><td>NanoBanana / AbrirAI / Anthropic / Google Gemini</td><td>Registre ou exclua chaves de API em Change… / Clear. Os valores são tratados por<code>SecretProvider</code> .</td></tr>
+</table>
+<p>Os padrões, cache, tentativas e configurações relacionadas da aba Efeito AI são salvos em <code>user_data/ai_effect/preferences.json</code>. A URL do ComfyUI é salva nas configurações normais e aplicada na próxima inicialização.</p>
+</div>
+<h2 id="settings-shortcuts">Lista de atalhos <span class="tag tag-param">configurações</span></h2>
+<div class="card">
+<h4>Operações de arquivo</h4>
+<table class="shortcut-table">
+<tr><td><kbd>Ctrl+N</kbd></td><td>Novo</td></tr>
+<tr><td><kbd>Ctrl+O</kbd></td><td>Abrir</td></tr>
+<tr><td><kbd>Ctrl+S</kbd></td><td>Salvar</td></tr>
+<tr><td><kbd>Ctrl+Shift+S</kbd></td><td>Salvar como</td></tr>
+<tr><td><kbd>Ctrl+Shift+I</kbd></td><td>Importarar</td></tr>
+<tr><td><kbd>Ctrl+E</kbd></td><td>Exportar</td></tr>
+<tr><td><kbd>Ctrl+W</kbd></td><td>Fechar</td></tr>
+<tr><td><kbd>Ctrl+Q</kbd></td><td>Sair</td></tr>
+</table>
+<h4>Operações de edição</h4>
+<table class="shortcut-table">
+<tr><td><kbd>Ctrl+Z</kbd></td><td>Desfazer</td></tr>
+<tr><td><kbd>Ctrl+Y</kbd></td><td>Refazer</td></tr>
+<tr><td><kbd>Ctrl+X</kbd></td><td>Cortar</td></tr>
+<tr><td><kbd>Ctrl+C</kbd></td><td>Copiar</td></tr>
+<tr><td><kbd>Ctrl+V</kbd></td><td>Colar</td></tr>
+<tr><td><kbd>Ctrl+A</kbd></td><td>Selecionar tudo</td></tr>
+<tr><td><kbd>Ctrl+L</kbd></td><td>Selecionar tudo vetores</td></tr>
+<tr><td><kbd>Ctrl+D</kbd></td><td>Desmarcar</td></tr>
+</table>
+<h4>Ferramentas</h4>
+<table class="shortcut-table">
+<tr><td><kbd>B</kbd></td><td>Ferramenta Caneta</td></tr>
+<tr><td><kbd>E</kbd></td><td>Ferramenta Borracha</td></tr>
+<tr><td><kbd>V</kbd></td><td>Ferramenta Mover</td></tr>
+<tr><td><kbd>P</kbd></td><td>Caneta vetorial precisa</td></tr>
+<tr><td><kbd>T</kbd></td><td>Ferramenta Texto</td></tr>
+<tr><td><kbd>I</kbd></td><td>Eyedropper ferramenta</td></tr>
+<tr><td><kbd>[</kbd> / <kbd>]</kbd></td><td>alterar pincel tamanho</td></tr>
+</table>
+<h4>Exibir</h4>
+<table class="shortcut-table">
+<tr><td><kbd>Ctrl+=</kbd></td><td>Ampliar</td></tr>
+<tr><td><kbd>Ctrl+-</kbd></td><td>Reduzir</td></tr>
+<tr><td><kbd>Ctrl+0</kbd></td><td>Redefinir zoom</td></tr>
+<tr><td><kbd>G</kbd></td><td>Alternar grade</td></tr>
+<tr><td><kbd>R</kbd></td><td>Alternar guias</td></tr>
+<tr><td><kbd>F11</kbd></td><td>tela cheia</td></tr>
+</table>
+<h4>Camadas</h4>
+<table class="shortcut-table">
+<tr><td><kbd>Ctrl+Shift+N</kbd></td><td>Nova camada</td></tr>
+<tr><td><kbd>Ctrl+J</kbd></td><td>Duplicar camada</td></tr>
+<tr><td><kbd>Del</kbd></td><td>Excluir camada</td></tr>
+<tr><td><kbd>Ctrl+E</kbd></td><td>Mesclar para baixo</td></tr>
+<tr><td><kbd>Shift+R</kbd></td><td>Rasterizar</td></tr>
+</table>
+<h4>Filtro</h4>
+<table class="shortcut-table">
+<tr><td><kbd>Ctrl+Alt+F</kbd></td><td>Reaplicar último filtro</td></tr>
+</table>
+<h4>Configurações</h4>
+<table class="shortcut-table">
+<tr><td><kbd>Ctrl+,</kbd></td><td>Preferências</td></tr>
+</table>
+</div>
+</main>
+<!-- ===== SCRIPTS ===== -->
+<script>
+const sidebar=document.getElementById('sidebar');const toggle=document.getElementById('sidebar-toggle');if(toggle)toggle.addEventListener('click',()=>sidebar.classList.toggle('show'));
+document.querySelectorAll('.nav-section-title').forEach(t=>t.addEventListener('click',()=>t.parentElement.classList.toggle('open')));
+const s=document.getElementById('sidebar-search');if(s)s.addEventListener('input',()=>{const q=s.value.toLowerCase();document.querySelectorAll('.nav-section').forEach(sec=>{let any=false;sec.querySelectorAll('.nav-link').forEach(a=>{const m=a.textContent.toLowerCase().includes(q);a.style.display=m?'':'none';if(m)any=true;});sec.style.display=any||!q?'':'none';if(q&&any)sec.classList.add('open');});});
+const sel=document.getElementById('language-select');if(sel)sel.addEventListener('change',()=>{location.href='index_'+sel.value+'.html'});
+</script></body>
+</html>

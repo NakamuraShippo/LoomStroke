@@ -1,0 +1,1346 @@
+<!DOCTYPE html>
+
+<html lang="hi">
+<head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>LoomStroke — उपयोगकर्ता मार्गदर्शिका</title>
+<style>
+:root {
+  --bg: #1a1a2e;
+  --bg-panel: #16213e;
+  --bg-card: #1e2a4a;
+  --bg-card-hover: #253456;
+  --accent: #4fc3f7;
+  --accent-dim: #2980b9;
+  --text: #e0e6ed;
+  --text-dim: #8899aa;
+  --text-heading: #ffffff;
+  --border: #2a3a5c;
+  --sidebar-w: 280px;
+  --tag-tool: #4fc3f7;
+  --tag-panel: #ab47bc;
+  --tag-param: #66bb6a;
+  --tag-effect: #ff7043;
+  --tag-ai: #ffd54f;
+}
+* { margin:0; padding:0; box-sizing:border-box; }
+body {
+  font-family: 'Segoe UI', 'Noto Sans JP', 'Hiragino Kaku Gothic ProN', sans-serif;
+  background: var(--bg);
+  color: var(--text);
+  line-height: 1.7;
+  display: flex;
+  min-height: 100vh;
+}
+
+/* ── Sidebar ── */
+#sidebar {
+  width: var(--sidebar-w);
+  min-width: var(--sidebar-w);
+  background: var(--bg-panel);
+  border-right: 1px solid var(--border);
+  overflow-y: auto;
+  position: fixed;
+  top: 0; left: 0; bottom: 0;
+  z-index: 100;
+  transition: transform .25s ease;
+  scrollbar-width: thin;
+  scrollbar-color: var(--border) transparent;
+}
+#sidebar.collapsed { transform: translateX(calc(-1 * var(--sidebar-w))); }
+#sidebar-header {
+  padding: 20px 16px 12px;
+  border-bottom: 1px solid var(--border);
+  position: sticky; top: 0;
+  background: var(--bg-panel);
+  z-index: 1;
+}
+#sidebar-header h1 {
+  font-size: 16px; color: var(--accent);
+  font-weight: 700; letter-spacing: .5px;
+}
+#sidebar-header p { font-size: 11px; color: var(--text-dim); margin-top: 2px; }
+#sidebar-search {
+  width: 100%; margin-top: 10px; padding: 6px 10px;
+  background: var(--bg-card); border: 1px solid var(--border);
+  border-radius: 4px; color: var(--text); font-size: 13px; outline: none;
+}
+#sidebar-search:focus { border-color: var(--accent); }
+#sidebar-search::placeholder { color: var(--text-dim); }
+.language-picker {
+  margin-top: 10px;
+}
+.language-picker label {
+  display: block; margin-bottom: 4px;
+  color: var(--text-dim); font-size: 11px;
+}
+#language-select {
+  width: 100%; padding: 6px 10px;
+  background: var(--bg-card); border: 1px solid var(--border);
+  border-radius: 4px; color: var(--text); font-size: 13px; outline: none;
+}
+#language-select:focus { border-color: var(--accent); }
+#sidebar nav { padding: 8px 0 24px; }
+.nav-section { margin-bottom: 2px; }
+.nav-section-title {
+  display: flex; align-items: center; gap: 6px;
+  padding: 8px 16px; font-size: 12px; font-weight: 700;
+  color: var(--text-dim); text-transform: uppercase; letter-spacing: .8px;
+  cursor: pointer; user-select: none; transition: color .15s;
+}
+.nav-section-title:hover { color: var(--text); }
+.nav-section-title::before {
+  content: '▸'; display: inline-block; font-size: 10px;
+  transition: transform .2s; width: 12px; text-align: center;
+}
+.nav-section.open > .nav-section-title::before { transform: rotate(90deg); }
+.nav-section-items { display: none; }
+.nav-section.open > .nav-section-items { display: block; }
+.nav-link {
+  display: block; padding: 5px 16px 5px 34px;
+  font-size: 13px; color: var(--text-dim);
+  text-decoration: none; border-left: 3px solid transparent;
+  transition: all .15s;
+}
+.nav-link:hover { color: var(--text); background: rgba(79,195,247,.06); }
+.nav-link.active { color: var(--accent); border-left-color: var(--accent); background: rgba(79,195,247,.08); }
+
+/* ── Toggle button ── */
+#sidebar-toggle {
+  position: fixed; top: 12px; left: 12px; z-index: 200;
+  width: 36px; height: 36px; border: none; border-radius: 6px;
+  background: var(--accent-dim); color: #fff; font-size: 18px;
+  cursor: pointer; display: none; align-items: center; justify-content: center;
+  transition: background .15s;
+}
+#sidebar-toggle:hover { background: var(--accent); }
+
+/* ── Main content ── */
+#main {
+  flex: 1; margin-left: var(--sidebar-w);
+  padding: 32px 40px 80px;
+  max-width: 960px;
+  transition: margin-left .25s ease;
+}
+#main.expanded { margin-left: 0; }
+
+h2 {
+  font-size: 26px; color: var(--text-heading);
+  margin: 48px 0 16px; padding-bottom: 8px;
+  border-bottom: 2px solid var(--accent-dim);
+}
+h2:first-of-type { margin-top: 0; }
+h3 {
+  font-size: 19px; color: var(--accent);
+  margin: 32px 0 10px;
+}
+h4 {
+  font-size: 15px; color: var(--text-heading);
+  margin: 20px 0 8px;
+}
+p, li { font-size: 14px; }
+p { margin-bottom: 10px; }
+ul, ol { padding-left: 20px; margin-bottom: 12px; }
+li { margin-bottom: 4px; }
+
+.tag {
+  display: inline-block; font-size: 10px; font-weight: 700;
+  padding: 1px 7px; border-radius: 3px; margin-right: 4px;
+  vertical-align: middle; letter-spacing: .3px;
+}
+.tag-tool    { background: rgba(79,195,247,.18); color: var(--tag-tool); }
+.tag-panel   { background: rgba(171,71,188,.18); color: var(--tag-panel); }
+.tag-param   { background: rgba(102,187,106,.18); color: var(--tag-param); }
+.tag-effect  { background: rgba(255,112,67,.18);  color: var(--tag-effect); }
+.tag-ai      { background: rgba(255,213,79,.18);  color: var(--tag-ai); }
+
+.card {
+  background: var(--bg-card); border: 1px solid var(--border);
+  border-radius: 8px; padding: 18px 20px; margin-bottom: 16px;
+  transition: border-color .15s;
+}
+.card:hover { border-color: var(--accent-dim); }
+.card h4 { margin-top: 0; }
+
+table {
+  width: 100%; border-collapse: collapse; margin-bottom: 16px;
+  font-size: 13px;
+}
+th, td {
+  padding: 8px 12px; text-align: left;
+  border-bottom: 1px solid var(--border);
+}
+th { color: var(--accent); font-weight: 600; font-size: 12px; text-transform: uppercase; letter-spacing: .5px; }
+tr:hover td { background: rgba(79,195,247,.04); }
+
+kbd {
+  display: inline-block; background: var(--bg-card); border: 1px solid var(--border);
+  border-radius: 4px; padding: 1px 6px; font-size: 12px;
+  font-family: 'Consolas', 'Courier New', monospace; color: var(--accent);
+}
+
+.shortcut-table td:first-child { white-space: nowrap; }
+
+code {
+  background: var(--bg-card); padding: 2px 6px; border-radius: 3px;
+  font-size: 13px; font-family: 'Consolas', 'Courier New', monospace;
+  color: var(--accent);
+}
+
+.grid-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
+@media (max-width: 700px) { .grid-2 { grid-template-columns: 1fr; } }
+
+.hero {
+  background: linear-gradient(135deg, var(--bg-panel), var(--bg-card));
+  border: 1px solid var(--border); border-radius: 12px;
+  padding: 32px; margin-bottom: 32px; text-align: center;
+}
+.hero h2 { border: none; margin: 0 0 8px; font-size: 32px; }
+.hero p { color: var(--text-dim); font-size: 15px; margin: 0; }
+
+/* ── Page mode ── */
+.doc-page {
+  display: none;
+  animation: pageFade .16s ease;
+}
+.doc-page.active { display: block; }
+@keyframes pageFade {
+  from { opacity: 0; transform: translateY(6px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+.page-controls {
+  display: flex; align-items: center; justify-content: space-between;
+  gap: 12px; margin: 0 0 24px; padding: 10px 0;
+  border-bottom: 1px solid var(--border);
+}
+.page-controls-bottom {
+  margin: 24px 0 0; border-top: 1px solid var(--border);
+  border-bottom: none;
+}
+.page-button {
+  min-width: 92px; padding: 7px 12px;
+  border: 1px solid var(--border); border-radius: 6px;
+  background: var(--bg-card); color: var(--text);
+  cursor: pointer; font-size: 13px;
+}
+.page-button:hover:not(:disabled) {
+  border-color: var(--accent); color: var(--accent);
+}
+.page-button:disabled {
+  opacity: .4; cursor: default;
+}
+.page-status {
+  color: var(--text-dim); font-size: 13px; text-align: center;
+}
+
+/* 画像は docs/user/assets/user-guide/ に置き、下部 script の pageMedia に登録します。 */
+.media-slot {
+  margin: 14px 0 18px;
+  border: 1px solid var(--border); border-radius: 8px;
+  background: rgba(255,255,255,.025); overflow: hidden;
+}
+.media-slot img {
+  display: block; width: 100%; height: auto;
+}
+.media-caption {
+  padding: 8px 12px; color: var(--text-dim); font-size: 12px;
+  border-top: 1px solid var(--border);
+}
+.media-slot-empty:not(.media-slot-visible) { display: none; }
+.media-placeholder {
+  min-height: 180px; display: flex; flex-direction: column;
+  align-items: center; justify-content: center; gap: 6px;
+  color: var(--text-dim); border: 1px dashed var(--border);
+}
+.media-placeholder strong { color: var(--accent); font-size: 13px; }
+.media-placeholder span { font-size: 12px; }
+
+/* ── Responsive ── */
+@media (max-width: 900px) {
+  #sidebar { transform: translateX(calc(-1 * var(--sidebar-w))); }
+  #sidebar.show { transform: translateX(0); }
+  #sidebar-toggle { display: flex; }
+  #main { margin-left: 0; padding: 32px 20px 60px; }
+  .page-controls { position: sticky; top: 0; z-index: 20; background: var(--bg); }
+}
+
+@media print {
+  body { display: block; background: #fff; color: #000; }
+  #sidebar, #sidebar-toggle, .page-controls { display: none !important; }
+  #main { margin: 0; max-width: none; padding: 0; }
+  .doc-page { display: block !important; page-break-after: always; }
+  .media-slot-empty { display: none !important; }
+}
+</style>
+</head>
+<body>
+<button aria-label="मेनू टॉगल करें" id="sidebar-toggle">☰</button>
+<!-- ===== SIDEBAR ===== -->
+<aside id="sidebar">
+<div id="sidebar-header">
+<h1>LoomStroke</h1>
+<p>उपयोगकर्ता मार्गदर्शिका</p>
+<input autocomplete="off" id="sidebar-search" placeholder="खोजें..." type="search"/>
+<div class="language-picker">
+<label for="language-select">प्रदर्शन भाषा</label>
+<select autocomplete="off" id="language-select">
+<option value="ja">जापानी</option>
+<option value="en">अंग्रेज़ी</option>
+<option value="zh_CN">सरलीकृत चीनी</option>
+<option value="zh_Hant">पारंपरिक चीनी</option>
+<option value="zh_TW">ताइवान मंदारिन</option>
+<option value="ko">कोरियाई</option>
+<option value="es">स्पेनिश</option>
+<option value="ar">अरबी</option>
+<option selected="selected" value="hi">हिन्दी</option>
+<option value="pt_BR">पुर्तगाली (ब्राज़ील)</option>
+<option value="bn">बंगाली</option>
+<option value="ru">रूसी</option>
+</select>
+</div>
+</div>
+<nav>
+<!-- Overview -->
+<div class="nav-section open">
+<div class="nav-section-title">अवलोकन</div>
+<div class="nav-section-items">
+<a class="nav-link" href="#overview">ऐप्लिकेशन अवलोकन</a>
+<a class="nav-link" href="#layout">स्क्रीन लेआउट</a>
+</div>
+</div>
+<!-- Drawing Tools -->
+<div class="nav-section open">
+<div class="nav-section-title">ड्रॉइंग टूल</div>
+<div class="nav-section-items">
+<a class="nav-link" href="#pen">पेन टूल</a>
+<a class="nav-link" href="#eraser">इरेज़र टूल</a>
+<a class="nav-link" href="#fill-bucket">भराव टूल</a>
+<a class="nav-link" href="#gradient">ग्रेडिएंट उपकरण</a>
+<a class="nav-link" href="#pattern-fill">पैटर्न भरना उपकरण</a>
+</div>
+</div>
+<!-- Selection Tools -->
+<div class="nav-section">
+<div class="nav-section-title">चयन टूल</div>
+<div class="nav-section-items">
+<a class="nav-link" href="#selection-rect">आयत चयन उपकरण</a>
+<a class="nav-link" href="#magic-wand">मैजिक वांड टूल</a>
+</div>
+</div>
+<!-- Transform / Move -->
+<div class="nav-section">
+<div class="nav-section-title">रूपांतरण / स्थानांतरण</div>
+<div class="nav-section-items">
+<a class="nav-link" href="#move">मूव टूल</a>
+<a class="nav-link" href="#transform-panel">रूपांतरण पैनल</a>
+</div>
+</div>
+<!-- Vector Tools -->
+<div class="nav-section">
+<div class="nav-section-title">वेक्टर टूल</div>
+<div class="nav-section-items">
+<a class="nav-link" href="#vector-path">वेक्टर पथ उपकरण</a>
+<a class="nav-link" href="#vector-precise">सटीक वेक्टर पेन</a>
+<a class="nav-link" href="#vector-edit">वेक्टर संपादित उपकरण</a>
+</div>
+</div>
+<!-- Text Tools -->
+<div class="nav-section">
+<div class="nav-section-title">टेक्स्ट टूल</div>
+<div class="nav-section-items">
+<a class="nav-link" href="#text-tool">टेक्स्ट टूल</a>
+<a class="nav-link" href="#text-vertical">ऊर्ध्वाधर टेक्स्ट टूल</a>
+<a class="nav-link" href="#font-panel">फ़ॉन्ट पैनल</a>
+</div>
+</div>
+<!-- Utility Tools -->
+<div class="nav-section">
+<div class="nav-section-title">उपयोगिता</div>
+<div class="nav-section-items">
+<a class="nav-link" href="#eyedropper">आईड्रॉपर टूल</a>
+</div>
+</div>
+<!-- Panels -->
+<div class="nav-section open">
+<div class="nav-section-title">पैनल</div>
+<div class="nav-section-items">
+<a class="nav-link" href="#panel-toolbar">टूलबार</a>
+<a class="nav-link" href="#panel-tool-props">टूल गुण</a>
+<a class="nav-link" href="#panel-layers">लेयर पैनल</a>
+<a class="nav-link" href="#panel-color">रंग पैनल</a>
+<a class="nav-link" href="#panel-brush-manager">ब्रश प्रबंधक</a>
+<a class="nav-link" href="#panel-shape-manager">आकार प्रबंधक</a>
+<a class="nav-link" href="#panel-effect">प्रभाव पैनल</a>
+<a class="nav-link" href="#panel-pages">पृष्ठ पैनल</a>
+<a class="nav-link" href="#panel-preview">पूर्वावलोकन पैनल</a>
+<a class="nav-link" href="#panel-context-toolbar">संदर्भ टूलबार</a>
+</div>
+</div>
+<!-- Effects -->
+<div class="nav-section">
+<div class="nav-section-title">प्रभाव लेयर</div>
+<div class="nav-section-items">
+<a class="nav-link" href="#fx-gaussian-blur">गॉसियन ब्लर</a>
+<a class="nav-link" href="#fx-levels">लेवल</a>
+<a class="nav-link" href="#fx-hue-saturation">ह्यू / सैचुरेशन</a>
+<a class="nav-link" href="#fx-invert">उलटें</a>
+<a class="nav-link" href="#fx-brightness-contrast">ब्राइटनेस / कॉन्ट्रास्ट</a>
+<a class="nav-link" href="#fx-sharpen">शार्प करें</a>
+<a class="nav-link" href="#fx-noise-reduction">नॉइज़ रिडक्शन</a>
+</div>
+</div>
+<!-- AI -->
+<div class="nav-section">
+<div class="nav-section-title">AI एकीकरण</div>
+<div class="nav-section-items">
+<a class="nav-link" href="#ai-comfyui">ComfyUI पैनल</a>
+<a class="nav-link" href="#ai-nanobanana">NanoBanana पैनल</a>
+<a class="nav-link" href="#ai-prompt-editor">प्रॉम्प्ट संपादक</a>
+</div>
+</div>
+<!-- AI Effect Layer -->
+<div class="nav-section">
+<div class="nav-section-title">AI प्रभाव</div>
+<div class="nav-section-items">
+<a class="nav-link" href="#ai-effect-overview">AI प्रभाव लेयर</a>
+<a class="nav-link" href="#ai-effect-manager">AI प्रभाव प्रबंधक</a>
+<a class="nav-link" href="#ai-effect-editor">प्रभाव संपादक</a>
+<a class="nav-link" href="#ai-effect-runtime">जनरेशन और स्थिति</a>
+</div>
+</div>
+<!-- Canvas -->
+<div class="nav-section">
+<div class="nav-section-title">कैनवास नियंत्रण</div>
+<div class="nav-section-items">
+<a class="nav-link" href="#canvas-viewport">ज़ूम / पैन / घुमाएँ</a>
+<a class="nav-link" href="#canvas-rulers">रूलर और गाइड</a>
+<a class="nav-link" href="#canvas-grid">ग्रिड</a>
+</div>
+</div>
+<!-- File I/O -->
+<div class="nav-section">
+<div class="nav-section-title">फ़ाइल इनपुट/आउटपुट</div>
+<div class="nav-section-items">
+<a class="nav-link" href="#file-formats">समर्थित प्रारूप</a>
+<a class="nav-link" href="#file-lstroke">.lstroke मूल प्रारूप</a>
+</div>
+</div>
+<!-- Settings -->
+<div class="nav-section">
+<div class="nav-section-title">सेटिंग्स</div>
+<div class="nav-section-items">
+<a class="nav-link" href="#settings-preferences">प्राथमिकताएँ</a>
+<a class="nav-link" href="#settings-shortcuts">शॉर्टकट सूची</a>
+</div>
+</div>
+</nav>
+</aside>
+<!-- ===== MAIN CONTENT ===== -->
+<main id="main">
+<!-- Hero -->
+<div class="hero">
+<h2 style="border:none;">LoomStroke</h2>
+<p>मंगा और चित्रण निर्माण के लिए एकीकृत डिजिटल पेंटिंग अनुप्रयोग</p>
+</div>
+<!-- ────────────────── 概要 ────────────────── -->
+<section id="overview">
+<h2>ऐप्लिकेशन अवलोकन</h2>
+<p>LoomStroke एक डिजिटल पेंटिंग ऐप है जो रास्टर पेंटिंग, वेक्टर पाथ, टेक्स्ट संपादन, अनेक पृष्ठ, बाहरी प्लगइन और AI एकीकरण को एक ही निर्माण कार्यक्षेत्र में जोड़ता है। कार्य फ़ाइलें इस रूप में सहेजी जा सकती हैं<code>.lstroke</code>प्रारूप में।</p>
+<div class="grid-2">
+<div class="card">
+<h4>मुख्य सुविधाएँ</h4>
+<ul>
+<li>दबाव और झुकाव समर्थित ब्रश इंजन</li>
+<li>लेयर अपारदर्शिता और मिश्रण मोड प्रबंधन</li>
+<li>वेक्टर पथ और पैरामीट्रिक आकृतियाँ</li>
+<li>क्षैतिज और ऊर्ध्वाधर पाठ</li>
+<li>गैर-विनाशकारी प्रभाव लेयर</li>
+<li>बहु-पृष्ठ दस्तावेज़</li>
+</ul>
+</div>
+<div class="card">
+<h4>AI एकीकरण</h4>
+<ul>
+<li>ComfyUI वर्कफ़्लो एकीकरण</li>
+<li>NanoBanana (Gemini) छवि जनरेशन</li>
+<li>प्रॉम्प्ट संपादक और स्निपेट प्रबंधन</li>
+<li>LLM Gateway (OpenAI / Anthropic / Gemini)</li>
+</ul>
+</div>
+</div>
+</section>
+<!-- ────────────────── Layout ────────────────── -->
+<section id="layout">
+<h2>स्क्रीन लेआउट</h2>
+<p>मुख्य विंडो नीचे दिए गए क्षेत्रों से बनी है। पैनलों को ड्रैग और ड्रॉप से स्वतंत्र रूप से व्यवस्थित किया जा सकता है और टैब के रूप में जोड़ा भी जा सकता है।</p>
+<div class="card">
+<table>
+<tr><th>क्षेत्र</th><th>सामग्री</th></tr>
+<tr><td>ऊपर</td><td>मेनू बार + टूल गुण बार, सक्रिय टूल सेटिंग्स को एक पंक्ति में दिखाता है</td></tr>
+<tr><td>बाएँ डॉक</td><td>टूलबार, रंग पैनल, फ़ॉन्ट पैनल और पेज पैनल</td></tr>
+<tr><td>केंद्र</td><td>कैनवास, डिफ़ॉल्ट रूप से QImage-आधारित SimpleCanvasService, साथ में रूलर</td></tr>
+<tr><td>दाएँ डॉक</td><td>लेयर पैनल, आकार प्रबंधक, रूपांतरण, प्रभाव और पूर्वावलोकन</td></tr>
+<tr><td>फ़्लोटिंग</td><td>संदर्भ टूलबार, स्ट्रोक के बाद स्वतः दिखता है</td></tr>
+</table>
+</div>
+<p><kbd>Window</kbd> प्रत्येक पैनल कर सकता है होना दिखाया गया या छिपा से मेनू.<kbd>F11</kbd> बदलता है को पूर्ण स्क्रीन मोड.</p>
+</section>
+<!-- ══════════════════ 描画ツール ══════════════════ -->
+<h2 id="pen">पेन टूल <span class="tag tag-tool">उपकरण</span></h2>
+<p>दबाव और झुकाव समर्थित रास्टर पेंटिंग ब्रश। यह ABR (Photoshop) ब्रश आयात भी कर सकता है।</p>
+<div class="card">
+<p><strong>शॉर्टकट:</strong> <kbd>B</kbd> / <kbd>Shift+B</kbd></p>
+<table>
+<tr><th>पैरामीटर</th><th>सीमा</th><th>विवरण</th></tr>
+<tr><td>आकार</td><td>1 ～ 128</td><td>ब्रश व्यास (px)</td></tr>
+<tr><td>अपारदर्शिता</td><td>0 ～ 1.0</td><td>अपारदर्शिता के लिए पूरा स्ट्रोक</td></tr>
+<tr><td>कठोरता</td><td>0 ～ 1.0</td><td>किनारा कठोरता (0=मुलायम, 1=कठोर)</td></tr>
+<tr><td>अंतर</td><td>0.01 ～ 1.0</td><td>स्टैम्प अंतराल के रूप में अनुपात का ब्रश व्यास</td></tr>
+<tr><td>प्रवाह</td><td>0 ～ 1.0</td><td>स्याही प्रवाह मात्रा</td></tr>
+<tr><td>स्टैम्प घनत्व</td><td>0 ～ 1.0</td><td>स्टैम्प घनत्व, व्यक्त के रूप में व्युत्क्रम का अंतराल</td></tr>
+<tr><td>दबाव संवेदनशील</td><td>पर / OFF</td><td>सक्षम दबाव संवेदनशीलता</td></tr>
+<tr><td>स्मूथिंग</td><td>0 ～ 1.0</td><td>स्ट्रोक आइटम</td></tr>
+<tr><td>टोन रेंज</td><td>0 ～ 1.0</td><td>टोन सीमा के लिए स्क्रीनटोन शैली रेंडरिंग</td></tr>
+<tr><td>टोन गामा</td><td>0.1 ～ 2.0</td><td>टोन गामा सुधार मान</td></tr>
+<tr><td>झुकाव कोण</td><td>पर / OFF</td><td>टैबलेट के झुकाव से नियंत्रित शेडिंग</td></tr>
+</table>
+<p><strong>प्रीसेट:</strong> आइटम, आइटम, और कस्टम ब्रश आयातित से ABR</p>
+</div>
+<h2 id="eraser">इरेज़र टूल <span class="tag tag-tool">उपकरण</span></h2>
+<p>pressure-sensitive रास्टर इरेज़र.</p>
+<div class="card">
+<p><strong>शॉर्टकट:</strong> <kbd>E</kbd> / <kbd>Shift+E</kbd>   <strong>आकार बदलें:</strong> <kbd>[</kbd> <kbd>]</kbd></p>
+<table>
+<tr><th>पैरामीटर</th><th>सीमा</th><th>विवरण</th></tr>
+<tr><td>आकार</td><td>1 ～ 200</td><td>इरेज़र व्यास (px)</td></tr>
+<tr><td>अपारदर्शिता</td><td>0 ～ 1.0</td><td>इरेज़र तीव्रता</td></tr>
+<tr><td>कठोरता</td><td>0 ～ 1.0</td><td>किनारा कठोरता</td></tr>
+<tr><td>अंतर</td><td>0.01 ～ 1.0</td><td>स्टैम्प अंतराल</td></tr>
+<tr><td>आइटम आइटम</td><td>पर / OFF</td><td>एंटी-अलियास</td></tr>
+</table>
+<p><strong>प्रीसेट:</strong> मुलायम आइटम, किनारा आइटम</p>
+</div>
+<h2 id="fill-bucket">भराव टूल <span class="tag tag-tool">उपकरण</span></h2>
+<p>भरता है सन्निकट क्षेत्र का समान रंग साथ फ्लड भरना.</p>
+<div class="card">
+<table>
+<tr><th>पैरामीटर</th><th>सीमा</th><th>विवरण</th></tr>
+<tr><td>रंग सहनशीलता</td><td>0 ～ 255</td><td>रंग आइटम उपयोग किया गया के लिए भरना पहचान</td></tr>
+<tr><td>गैप बंद करें (px)</td><td>0 ～ 10</td><td>संख्या का पिक्सेल उपयोग किया गया को स्वचालित रूप से बंद रिक्तियाँ में रेखाएँ</td></tr>
+<tr><td>भराव लक्ष्य</td><td>सक्रिय लेयर / नई लेयर</td><td>लक्ष्य लेयर के लिए भरना</td></tr>
+</table>
+</div>
+<h2 id="gradient">ग्रेडिएंट उपकरण <span class="tag tag-tool">उपकरण</span></h2>
+<p>बनाता रेखीय या रेडियल ग्रेडिएंट द्वारा खींचना. मध्य स्टॉप कर सकता है होना संपादित द्वारा खींचना उनके पिन.</p>
+<div class="card">
+<table>
+<tr><th>पैरामीटर</th><th>सीमा</th><th>विवरण</th></tr>
+<tr><td>ग्रेडिएंट प्रकार</td><td>रेखीय / रेडियल</td><td>ग्रेडिएंट आकृति</td></tr>
+<tr><td>रंग</td><td>रंग</td><td>आरंभ रंग</td></tr>
+<tr><td>रंग B</td><td>रंग</td><td>अंत रंग</td></tr>
+<tr><td>मध्य स्टॉप</td><td>0 ～ 3</td><td>संख्या का मध्य रंग स्टॉप</td></tr>
+<tr><td>स्टॉप N स्थिति</td><td>0 ～ 1.0</td><td>स्थिति का प्रत्येक स्टॉप (0=आरंभ किनारा, 1=अंत किनारा)</td></tr>
+<tr><td>स्टॉप N रंग</td><td>रंग</td><td>रंग का प्रत्येक स्टॉप</td></tr>
+<tr><td>डिथर</td><td>पर / OFF</td><td>आइटम को कम करें बैंडिंग</td></tr>
+</table>
+<p><strong>समर्थित मिश्रण मोड:</strong> सामान्य, गहरा करें, Multiply, रंग बर्न, Lighten, स्क्रीन, रंग डॉज, रेखीय डॉज, ओवरले, मुलायम लाइट, कठोर लाइट, अंतर, बहिष्करण</p>
+</div>
+<h2 id="pattern-fill">पैटर्न भरना उपकरण <span class="tag tag-tool">उपकरण</span></h2>
+<p>भरता है क्षेत्र आइटम साथ टाइल पैटर्न.</p>
+<div class="card">
+<table>
+<tr><th>पैरामीटर</th><th>सीमा</th><th>विवरण</th></tr>
+<tr><td>पैटर्न</td><td>चेकरबोर्ड / क्षैतिज पट्टियाँ / ऊर्ध्वाधर पट्टियाँ / तिरछा पट्टियाँ / बिंदु / क्रॉसहैच</td><td>Built-में पैटर्न को उपयोग</td></tr>
+<tr><td>पैटर्न स्केल</td><td>0.1 ～ 10.0</td><td>पैटर्न स्केल गुणक</td></tr>
+<tr><td>रंग सहनशीलता</td><td>0 ～ 255</td><td>रंग आइटम उपयोग किया गया के लिए भरना पहचान</td></tr>
+<tr><td>गैप बंद करें (px)</td><td>0 ～ 10</td><td>संख्या का पिक्सेल उपयोग किया गया को स्वचालित रूप से बंद रिक्तियाँ में रेखाएँ</td></tr>
+</table>
+<p><strong>ऑपरेशन:</strong> शुरू से क्लिक किया गया बिंदु, भरता है जुड़ा क्षेत्र साथ चयनित टाइल पैटर्न.</p>
+</div>
+<!-- ══════════════════ 選択ツール ══════════════════ -->
+<h2 id="selection-rect">आयत चयन उपकरण <span class="tag tag-tool">उपकरण</span></h2>
+<p>बनाता है चयन द्वारा खींचना आयत. यह भी समर्थन करता है सीमा चयन का वेक्टर ऑब्जेक्ट.</p>
+<div class="card">
+<table>
+<tr><th>पैरामीटर</th><th>सीमा</th><th>विवरण</th></tr>
+<tr><td>चयन मोड</td><td>आयत / वेक्टर</td><td>रास्टर आयत चयन / वेक्टर सीमा चयन</td></tr>
+<tr><td>क्रिया</td><td>बदलें / जोड़ें / घटाएँ / प्रतिच्छेद</td><td>कैसे चयन है संयोजित</td></tr>
+<tr><td>पिक्सेल परफेक्ट</td><td>पर / OFF</td><td>संरेखित को पिक्सेल</td></tr>
+<tr><td>फेदर सक्षम</td><td>पर / OFF</td><td>फेदर चयन</td></tr>
+<tr><td>फेदर त्रिज्या</td><td>0 ～ 128</td><td>फेदर त्रिज्या (px)</td></tr>
+<tr><td>मास्क त्रिज्या</td><td>0 ～ 128</td><td>त्रिज्या उपयोग किया गया के लिए आइटम या आइटम चयन मास्क</td></tr>
+<tr><td>रूपांतरण X / Y</td><td>-10000 ～ 10000</td><td>आइटम मात्रा के दौरान रूपांतरण</td></tr>
+<tr><td>रूपांतरण स्केल X / Y</td><td>0.01 ～ 100</td><td>स्केल गुणक के दौरान रूपांतरण</td></tr>
+<tr><td>रूपांतरण घुमाव</td><td>-180° ～ 180°</td><td>रूपांतरण के दौरान घुमाव कोण</td></tr>
+</table>
+<p><strong>संशोधक कुंजियाँ:</strong> <kbd>Shift</kbd>=जोड़ें, <kbd>Alt</kbd>=घटाएँ, <kbd>Shift+Alt</kbd>=प्रतिच्छेद</p>
+<p><strong>रूपांतरण मोड (<kbd>Ctrl+T</kbd>):</strong> स्थानांतरण / स्केल / घुमाएँ / पलटें / रीसेट / लागू / रद्द</p>
+</div>
+<h2 id="magic-wand">मैजिक वांड टूल <span class="tag tag-tool">उपकरण</span></h2>
+<p>स्वचालित रूप से आइटम सन्निहित क्षेत्र का समान रंग से क्लिक किया गया बिंदु.</p>
+<div class="card">
+<table>
+<tr><th>पैरामीटर</th><th>सीमा</th><th>विवरण</th></tr>
+<tr><td>आइटम</td><td>0 ～ 255</td><td>रंग आइटम (डिफ़ॉल्ट: 32)</td></tr>
+<tr><td>सन्निहित</td><td>पर / OFF</td><td>पर=सन्निकट पिक्सेल केवल, OFF=समान रंग पूरे पूरा छवि</td></tr>
+<tr><td>क्रिया</td><td>बदलें / जोड़ें / घटाएँ / प्रतिच्छेद</td><td>कैसे चयन है संयोजित</td></tr>
+</table>
+<p>जब पैरामीटर बदलें, उपकरण स्वचालित रूप से आइटम से आइटम क्लिक किया गया बिंदु.</p>
+</div>
+<!-- ══════════════════ 変形・移動 ══════════════════ -->
+<h2 id="move">मूव टूल <span class="tag tag-tool">उपकरण</span></h2>
+<p>स्थानांतरित करता है और रूपांतरित करता है लेयर या वेक्टर ऑब्जेक्ट. डबल-क्लिक पाठ ऑब्जेक्ट बदलता है को संपादित मोड.</p>
+<div class="card">
+<p><strong>शॉर्टकट:</strong> <kbd>V</kbd></p>
+<table>
+<tr><th>पैरामीटर</th><th>सीमा</th><th>विवरण</th></tr>
+<tr><td>पिक्सेल परफेक्ट</td><td>पर / OFF</td><td>आइटम संरेखण (डिफ़ॉल्ट: पर)</td></tr>
+<tr><td>ग्रिड स्नैप</td><td>पर / OFF</td><td>ग्रिड स्नैप</td></tr>
+<tr><td>ग्रिड आकार</td><td>1 ～ 1024</td><td>ग्रिड आकार (px)</td></tr>
+</table>
+<p><strong>आइटम मोड:</strong></p>
+<ul>
+<li><strong>साथ चयन:</strong> कट, स्थानांतरण, और रूपांतरण चयनित क्षेत्र</li>
+<li><strong>वेक्टर / पाठ:</strong> स्थानांतरण ऑब्जेक्ट. डबल-क्लिक-क्लिक को स्विच को पथ संपादित या टेक्स्ट टूल</li>
+<li><strong>रास्टर लेयर:</strong> स्थानांतरण आइटम लेयर</li>
+</ul>
+</div>
+<h2 id="transform-panel">रूपांतरण पैनल <span class="tag tag-panel">पैनल</span></h2>
+<p>नियंत्रित करता है चयनित ऑब्जेक्ट's स्थिति, आकार, और कोण साथ संख्यात्मक इनपुट.</p>
+<div class="card">
+<table>
+<tr><th>आइटम</th><th>सीमा</th><th>विवरण</th></tr>
+<tr><td>X</td><td>-99999 ～ 99999</td><td>X स्थिति (ऊपर-बायाँ का सीमा बॉक्स)</td></tr>
+<tr><td>Y</td><td>-99999 ～ 99999</td><td>Y स्थिति (ऊपर-बायाँ का सीमा बॉक्स)</td></tr>
+<tr><td>W</td><td>0.1 ～ 99999</td><td>चौड़ाई (वेक्टर केवल)</td></tr>
+<tr><td>H</td><td>0.1 ～ 99999</td><td>ऊँचाई (वेक्टर केवल)</td></tr>
+<tr><td>कोण</td><td>-360° ～ 360°</td><td>घुमाव कोण</td></tr>
+</table>
+<p>जब रास्टर लेयर है चयनित, केवल X/Y कर सकता है होना संपादित.</p>
+</div>
+<!-- ══════════════════ ベクターツール ══════════════════ -->
+<h2 id="vector-path">वेक्टर पथ उपकरण <span class="tag tag-tool">उपकरण</span></h2>
+<p>क्लिक को रखें एंकर बिंदु और बनाएँ आइटम पथ. खींचें को सेट दिशा हैंडल.</p>
+<div class="card">
+<table>
+<tr><th>पैरामीटर</th><th>सीमा</th><th>विवरण</th></tr>
+<tr><td>Shift मोड</td><td>बाधा / अक्षम_स्नैप</td><td><kbd>Shift</kbd> बदलता है व्यवहार को कोण बाधा या स्नैप दमन</td></tr>
+<tr><td>स्वचालित बंद सहनशीलता (px)</td><td>0 ～ 64</td><td>दूरी के लिए स्वचालित बंद करना जब क्लिक करना पास आरंभ बिंदु</td></tr>
+<tr><td>स्ट्रोक चौड़ाई</td><td>0.1 ～ 64</td><td>स्ट्रोक चौड़ाई</td></tr>
+<tr><td>स्ट्रोक रंग</td><td>रंग</td><td>स्ट्रोक रंग</td></tr>
+<tr><td>भराव सक्षम</td><td>पर / OFF</td><td>भरना सक्षम</td></tr>
+<tr><td>भराव रंग</td><td>रंग</td><td>भरना रंग</td></tr>
+</table>
+<p><kbd>Enter</kbd> को आइटम,<kbd>Esc</kbd> को त्यागें. लौटना पास आरंभ बिंदु बंद करता पथ स्वचालित रूप से.</p>
+</div>
+<h2 id="vector-precise">सटीक वेक्टर पेन <span class="tag tag-tool">उपकरण</span></h2>
+<p>स्वचालित रूप से बदलता फ्रीहैंड स्ट्रोक में मसृण आइटम वक्र.</p>
+<div class="card">
+<p><strong>शॉर्टकट:</strong> <kbd>P</kbd></p>
+<table>
+<tr><th>पैरामीटर</th><th>सीमा</th><th>विवरण</th></tr>
+<tr><td>संपादन मोड</td><td>एंकर / आकृति</td><td>चुनें क्या उपकरण प्राथमिकता देता एंकर संपादन या आकृति संपादन</td></tr>
+<tr><td>स्वचालित बंद</td><td>पर / OFF</td><td>स्वचालित पथ बंद करना</td></tr>
+<tr><td>स्ट्रोक चौड़ाई</td><td>0.1 ～ 64</td><td>स्ट्रोक चौड़ाई</td></tr>
+<tr><td>स्ट्रोक रंग</td><td>रंग</td><td>स्ट्रोक रंग</td></tr>
+<tr><td>भराव सक्षम</td><td>पर / OFF</td><td>भरना सक्षम</td></tr>
+<tr><td>भराव रंग</td><td>रंग</td><td>भरना रंग</td></tr>
+<tr><td>एंकर घनत्व</td><td>0.1 ～ 1.0</td><td>घनत्व का जनरेट किया गया एंकर</td></tr>
+<tr><td>हैंडल चिकनाई</td><td>0 ～ 5.0</td><td>वक्र स्मूदिंग की तीव्रता</td></tr>
+</table>
+</div>
+<h2 id="vector-edit">वेक्टर संपादित उपकरण <span class="tag tag-tool">उपकरण</span></h2>
+<p>संपादित करता है एंकर बिंदु और हैंडल पर मौजूदा वेक्टर पथ.</p>
+<div class="card">
+<table>
+<tr><th>पैरामीटर</th><th>सीमा</th><th>विवरण</th></tr>
+<tr><td>स्ट्रोक रंग</td><td>रंग</td><td>स्ट्रोक रंग का चयनित वेक्टर</td></tr>
+<tr><td>स्ट्रोक चौड़ाई</td><td>0.1 ～ 128</td><td>स्ट्रोक चौड़ाई का चयनित वेक्टर</td></tr>
+<tr><td>भराव सक्षम</td><td>पर / OFF</td><td>भरना सक्षम</td></tr>
+<tr><td>भराव रंग</td><td>रंग</td><td>भरना रंग का चयनित वेक्टर</td></tr>
+</table>
+<ul>
+<li>क्लिक और खींचें एंकर को स्थानांतरण उन्हें</li>
+<li>वक्र की वक्रता समायोजित करने के लिए हैंडल खींचें</li>
+<li><kbd>Alt</kbd>+खींचें को डुप्लिकेट जबकि स्थानांतरण,<kbd>Ctrl</kbd> आइटम आइटम स्नैपिंग</li>
+<li>अपरिवर्तित मूल आकृतियाँ हैं संपादित पैरामीट्रिक रूप से साथ आकृति हैंडल बजाय का एंकर</li>
+<li>स्केल और घुमाएँ साथ सीमा बॉक्स</li>
+</ul>
+</div>
+<!-- ══════════════════ テキストツール ══════════════════ -->
+<h2 id="text-tool">टेक्स्ट टूल <span class="tag tag-tool">उपकरण</span></h2>
+<p>बनाता है और संपादित करता है क्षैतिज पाठ. क्लिक को बनाएँ बिंदु पाठ, या खींचें को बनाएँ क्षेत्र पाठ.</p>
+<div class="card">
+<p><strong>शॉर्टकट:</strong> <kbd>T</kbd></p>
+<table>
+<tr><th>पैरामीटर</th><th>सीमा</th><th>विवरण</th></tr>
+<tr><td>वर्ड रैप</td><td>पर / OFF</td><td>आइटम रैप के लिए क्षेत्र पाठ</td></tr>
+<tr><td>फ़ॉन्ट आकार (pt)</td><td>1 ～ 512</td><td>फ़ॉन्ट आकार</td></tr>
+<tr><td>पंक्ति ऊँचाई</td><td>0.5 ～ 4.0</td><td>रेखा-ऊँचाई आइटम</td></tr>
+<tr><td>अक्षर-अंतर</td><td>-64 ～ 128</td><td>आइटम अंतराल (ट्रैकिंग)</td></tr>
+<tr><td>पैडिंग</td><td>0 को 256, अलग-अलग के लिए ऊपर, नीचे, बाएँ, और दाएँ</td><td>आइटम पैडिंग का पाठ बॉक्स</td></tr>
+</table>
+<p><strong>Notes:</strong> समर्थन करता है IME इनपुट, स्थानांतरण/घुमाना/स्केलिंग जबकि संपादन इनलाइन, और आकृति-लपेट क्षेत्र पाठ के माध्यम से चयन को क्षेत्र. फ़ॉन्ट परिवार, शैली, संरेखण, रंग, और अपारदर्शिता हैं प्रबंधित में फ़ॉन्ट पैनल.</p>
+</div>
+<h2 id="text-vertical">ऊर्ध्वाधर टेक्स्ट टूल <span class="tag tag-tool">उपकरण</span></h2>
+<p>उपयोग किया गया को बनाएँ और संपादित ऊर्ध्वाधर पाठ. मूल पैरामीटर हैं साझा साथ पाठ उपकरण.</p>
+<div class="card">
+<table>
+<tr><th>आइटम पैरामीटर</th><th>चयन</th><th>विवरण</th></tr>
+<tr><td>ऊर्ध्वाधर प्रवाह</td><td>बाएँ / दाएँ</td><td>आइटम प्रवाह दिशा</td></tr>
+<tr><td>घुमाएँ आइटम/आइटम</td><td>पर / OFF</td><td>घुमाएँ आधा-चौड़ाई अक्षरांकीय वर्ण के लिए ऊर्ध्वाधर लेखन</td></tr>
+</table>
+<p>जापानी विराम-चिह्नों की स्वचालित स्थिति और दीर्घ स्वर चिह्न के स्वचालित घुमाव का समर्थन करता है।</p>
+</div>
+<h2 id="font-panel">फ़ॉन्ट पैनल <span class="tag tag-panel">पैनल</span></h2>
+<p>पैनल के लिए प्रबंधन टाइपोग्राफी सेटिंग्स उपयोग किया गया द्वारा पाठ उपकरण.</p>
+<div class="card">
+<h4>विजेट सूची</h4>
+<table>
+<tr><th>विजेट</th><th>प्रकार</th><th>विवरण</th></tr>
+<tr><td>वर्ड रैप</td><td>चेकबॉक्स</td><td>आइटम रैप पर/OFF</td></tr>
+<tr><td>फ़ॉन्ट परिवार</td><td>कॉम्बो बॉक्स</td><td>चुनें से सिस्टम फ़ॉन्ट सूची</td></tr>
+<tr><td>फ़ॉन्ट शैली</td><td>कॉम्बो बॉक्स</td><td>शैली का चयनित फ़ॉन्ट</td></tr>
+<tr><td>फ़ॉन्ट आकार (pt)</td><td>स्पिन बॉक्स</td><td>1.0 को 512.0, चरण 1.0</td></tr>
+<tr><td>ऊर्ध्वाधर लेखन</td><td>चेकबॉक्स</td><td>ऊर्ध्वाधर लेखन मोड टॉगल</td></tr>
+<tr><td>अनुच्छेद प्रवाह</td><td>कॉम्बो बॉक्स</td><td>आइटम / आइटम (ऊर्ध्वाधर लेखन केवल)</td></tr>
+<tr><td>संरेखण</td><td>कॉम्बो बॉक्स</td><td>बाएँ / केंद्र / दाएँ / आइटम</td></tr>
+<tr><td>पंक्ति ऊँचाई</td><td>स्पिन बॉक्स</td><td>0.5 को 4.0, चरण 0.1</td></tr>
+<tr><td>अक्षर-अंतर</td><td>स्पिन बॉक्स</td><td>-64.0 को 128.0, चरण 0.5</td></tr>
+<tr><td>पैडिंग (ऊपर/नीचे/दाएँ/बाएँ)</td><td>चार स्पिन बॉक्स</td><td>0.0 को 256.0 के लिए प्रत्येक आइटम</td></tr>
+<tr><td>रंग</td><td>रंग बटन</td><td>रंग संवाद खोलने के लिए क्लिक करें</td></tr>
+<tr><td>अपारदर्शिता</td><td>स्लाइडर</td><td>0 ～ 100%</td></tr>
+<tr><td>कस्टम फ़ॉन्ट फ़ोल्डर</td><td>सूची + बटन</td><td>फ़ॉन्ट निर्देशिकाएँ जोड़ें, हटाएँ और पुनः स्कैन करें</td></tr>
+</table>
+<p>समर्थित फ़ॉन्ट प्रारूप: TTF / OTF / TTC / OTC</p>
+</div>
+<!-- ══════════════════ ユーティリティ ══════════════════ -->
+<h2 id="eyedropper">आईड्रॉपर टूल <span class="tag tag-tool">उपकरण</span></h2>
+<p>आइटम रंग से कैनवास और आइटम यह के रूप में अग्रभूमि रंग.</p>
+<div class="card">
+<p><strong>शॉर्टकट:</strong> <kbd>I</kbd> / <kbd>Shift+I</kbd></p>
+</div>
+<!-- ══════════════════ パネル ══════════════════ -->
+<h2 id="panel-toolbar">टूलबार <span class="tag tag-panel">पैनल</span></h2>
+<p>बाएँ किनारे पर रखी गई टूल बटनों की लंबवत सूची। हर बटन एक टूल समूह दर्शाता है; 350 ms तक दबाए रखने पर वैरिएंट टूल चुनने के लिए फ़्लाईआउट खुलता है।</p>
+<div class="card">
+<p>लेआउट बदलता है स्वचालित रूप से के बीच ऊर्ध्वाधर और क्षैतिज के रूप में पैनल चौड़ाई परिवर्तन. आइकन आकार है 48x48 px.</p>
+</div>
+<h2 id="panel-tool-props">उपकरण गुण पैनल <span class="tag tag-panel">पैनल</span></h2>
+<p>सक्रिय टूल की सेटिंग दिखाने वाला पैनल। इसमें दो लेआउट हैं: मेनू बार के ठीक नीचे बार मोड और डॉक के भीतर पैनल मोड।</p>
+<div class="card">
+<h4>घटक</h4>
+<ul>
+<li><strong>प्रीसेट पंक्ति:</strong> प्रीसेट चयन कॉम्बो बॉक्स + सहेजें/हटाएँ बटन</li>
+<li><strong>आइटम आइटम समूह:</strong> आकार, अपारदर्शिता, कठोरता, अंतराल, प्रवाह, और आइटम आइटम उपकरण सेटिंग्स</li>
+<li><strong>उपकरण गुण समूह:</strong> टूल-विशिष्ट पैरामीटर</li>
+<li><strong>क्रियाएँ आइटम:</strong> टूल-विशिष्ट क्रिया बटन और आइटम</li>
+</ul>
+<p><strong>स्वचालित विजेट जनरेशन:</strong> आइटम/int -&gt; स्लाइडर, आइटम -&gt; चेकबॉक्स, आइटम -&gt; कॉम्बो बॉक्स, रंग -&gt; रंग बटन</p>
+</div>
+<h2 id="panel-layers">लेयर पैनल <span class="tag tag-panel">पैनल</span></h2>
+<p>दस्तावेज़ के लेयर स्टैक को पदानुक्रमित ट्री के रूप में दिखाता और प्रबंधित करता है। सामान्य लेयर, समूह, इफ़ेक्ट, मास्क और AI इफ़ेक्ट लेयर इसी ट्री में संभाले जाते हैं।</p>
+<div class="card">
+<h4>ऊपर नियंत्रित करता है</h4>
+<table>
+<tr><th>आइटम</th><th>विवरण</th></tr>
+<tr><td>ब्लेंड मोड</td><td>परिवर्तन मिश्रण मोड का चयनित लेयर. समूह कर सकता है भी उपयोग Pass Through.</td></tr>
+<tr><td>अपारदर्शिता</td><td>परिवर्तन चयनित लेयर अपारदर्शिता साथ 0 को 100% स्लाइडर और संख्यात्मक प्रदर्शन.</td></tr>
+</table>
+<h4>लेयर ट्री</h4>
+<table>
+<tr><th>प्रदर्शन / ऑपरेशन</th><th>विवरण</th></tr>
+<tr><td>थंबनेल</td><td>लेयर थंबनेल, सामान्यतः 32×32 px। लेयर सामग्री संपादित करने के लिए इसे क्लिक करें।</td></tr>
+<tr><td>मास्क थंबनेल</td><td>दिखाया गया केवल जब लेयर मास्क मौजूद. क्लिक यह को स्विच को मास्क संपादित मोड.</td></tr>
+<tr><td>प्रकार आइटम</td><td><code>V</code> वेक्टर、<code>S</code> आकृति、<code>T</code> पाठ、<code>FX</code> प्रभाव、<code>G</code> समूह、<code>M</code> मास्क、<code>AI</code> आइटम AI प्रभाव.</td></tr>
+<tr><td>दृश्यता</td><td>आँख आइकन टॉगल दृश्यता. छिपा पंक्तियाँ हैं दिखाया गया मंद.</td></tr>
+<tr><td>आइटम</td><td>आइटम लेयर संपादन.</td></tr>
+<tr><td>आइटम आइटम</td><td>आइटम पारदर्शी पिक्सेल. उपयोग समर्पित टॉगल में पंक्ति.</td></tr>
+<tr><td>खींचें और छोड़ें</td><td>उपयोग यह को पुनः क्रमित लेयर या स्थानांतरण उन्हें में समूह. ड्रॉप लेयर पर AI प्रभाव Slot पंक्ति असाइन यह के रूप में वह Slot's इनपुट.</td></tr>
+<tr><td>डबल-क्लिक-क्लिक</td><td>आइटम लेयर.</td></tr>
+</table>
+<h4>नीचे बटन</h4>
+<table>
+<tr><th>बटन</th><th>विवरण</th></tr>
+<tr><td>जोड़ें</td><td>जोड़ता है नया रास्टर लेयर.</td></tr>
+<tr><td>हटाएँ</td><td>हटाएँ चयनित लेयर.</td></tr>
+<tr><td>डुप्लिकेट</td><td>आइटम चयनित लेयर. अक्षम जब आइटम है no चयन.</td></tr>
+<tr><td>मास्क</td><td>चयनित लेयर में लेयर मास्क जोड़ता है। यदि वह पहले से मौजूद है, तो मास्क हटाया जाता है।</td></tr>
+<tr><td>जोड़ें प्रभाव लेयर</td><td>सामान्य प्रभाव लेयर जोड़ता है। जिन वातावरणों में AI प्रभाव सक्षम है, वहाँ <strong>AI प्रभाव</strong> आप कर सकता है भी चुनें .lsfx प्रीसेट से उप-मेनू.</td></tr>
+<tr><td>G</td><td>समूह दो या अधिक चयनित लेयर.</td></tr>
+<tr><td>V</td><td>जोड़ता है नया वेक्टर लेयर.</td></tr>
+</table>
+<h4>AI प्रभाव पंक्ति</h4>
+<table>
+<tr><th>प्रदर्शन / ऑपरेशन</th><th>विवरण</th></tr>
+<tr><td>आइटम आइटम</td><td>आइटम AI प्रभाव लेयर स्वयं.</td></tr>
+<tr><td>जनरेट बटन</td><td>दिखाया गया केवल पर AI प्रभाव लेयर पंक्तियाँ. शुरू जनरेशन के लिए वह लेयर और है अक्षम जबकि जनरेशन है चल रहा.</td></tr>
+<tr><td>आइटम चाइल्ड पंक्ति</td><td>वर्चुअल पंक्ति बनाया गया से इनपुट_स्लॉट में AI प्रभाव मैनिफेस्ट. आवश्यक स्लॉट वह हैं नहीं सेट हैं दिखाया गया साथ चेतावनी.</td></tr>
+<tr><td>बहिष्करण बटन</td><td>Slot में इनपुट लेयर असाइन होने पर दिखता है। यह इनपुट को ब्लेंड से बाहर / केवल AI इनपुट मोड में बदलता है।</td></tr>
+<tr><td>xN आइटम</td><td>दिखाता है संदर्भ गिनती पर सामान्य लेयर संदर्भित द्वारा आइटम AI प्रभाव स्लॉट.</td></tr>
+<tr><td>हरा आइटम</td><td>आइटम आउटपुट लेयर जनरेट किया गया द्वारा AI प्रभाव.</td></tr>
+</table>
+<h4>दायाँ-क्लिक मेनू</h4>
+<table>
+<tr><th>आइटम</th><th>विवरण</th></tr>
+<tr><td>जोड़ें लेयर / लेयर डुप्लिकेट / लेयर हटाएँ</td><td>मूल जोड़ें, डुप्लिकेट, और हटाएँ आइटम.</td></tr>
+<tr><td>आइटम</td><td>नाम बदलने का संवाद खोलता है।</td></tr>
+<tr><td>नीचे मिलाएँ</td><td>आइटम में लेयर नीचे. सक्षम केवल जब संभव.</td></tr>
+<tr><td>आइटम दृश्यमान</td><td>आइटम दृश्यमान लेयर में एक लेयर. छिपा लेयर हैं सुरक्षित.</td></tr>
+<tr><td>रास्टराइज़</td><td>बदलता वेक्टर और समान आइटम को रास्टर. सक्षम केवल जब संभव.</td></tr>
+<tr><td>आइटम को वेक्टर</td><td>बदलता अपरिवर्तित मूल आकृतियाँ में सामान्य वेक्टर ऑब्जेक्ट.</td></tr>
+<tr><td>समूह लेयर / आइटम</td><td>समूह एकाधिक चयनित लेयर, या आइटम जब उपयोग किया गया पर समूह पंक्ति.</td></tr>
+<tr><td>बनाएँ / आइटम आइटम मास्क</td><td>टॉगल आइटम मास्क स्थिति.</td></tr>
+<tr><td>लेयर मास्क जोड़ें / संपादित करें / समाप्त करें / हटाएँ</td><td>जोड़ता है लेयर मास्क, बदलता है मास्क संपादित मोड, या हटाएँ मास्क.</td></tr>
+<tr><td>जोड़ें प्रभाव</td><td>जोड़ता है चाइल्ड प्रभाव को चयनित लेयर. अक्षम के लिए समूह.</td></tr>
+<tr><td>लोड के रूप में चयन / उलटें आइटम</td><td>मास्क लेयर पर दायाँ-क्लिक करने पर ही दिखता है। मास्क को चयन के रूप में लोड करता है या पारदर्शी पिक्सेल उलटता है।</td></tr>
+</table>
+<h4>ब्लेंड मोडs</h4>
+<p>लेयर ब्लेंडिंग यह नियंत्रित करता है कि चयनित लेयर नीचे की लेयरों के साथ कैसे संयोजित होती है। अपारदर्शिता बाद में पूरे ब्लेंड परिणाम पर लागू होती है। यह पिक्सेल बदले बिना केवल दृश्य संयोजन बदलता है, इसलिए रंग समायोजन, प्रकाश/छाया जोड़ने और टेक्सचर ओवरले के लिए उपयोगी है।</p>
+<table>
+<tr><th>समूह</th><th>मोड</th><th>विवरण</th></tr>
+<tr><td>समूह केवल</td><td>Pass Through</td><td>मानक कंपोज़िट; तीव्रता अपारदर्शिता से नियंत्रित होती है।</td></tr>
+<tr><td>सामान्य</td><td>सामान्य</td><td>मानक कंपोज़िट. ऊपरी लेयर है रखा के रूप में-है, साथ अपारदर्शिता नियंत्रण उसका तीव्रता.</td></tr>
+<tr><td>सामान्य</td><td>Dissolve</td><td>अर्ध-पारदर्शी क्षेत्रों को यादृच्छिक बिंदुओं की तरह दिखाता है। खुरदरे किनारों और दानेदार रूप के लिए उपयोगी।</td></tr>
+<tr><td>गहरा करें</td><td>गहरा करें</td><td>ऊपरी और निचली लेयर के गहरे घटकों को प्राथमिकता देता है। चमकदार भागों को दबाते हुए छाया और गहरे क्षेत्र जोड़ने के लिए उपयोगी।</td></tr>
+<tr><td>गहरा करें</td><td>Multiply</td><td>रंगों को गुणा करके गहरा करता है। लाइन आर्ट, छाया, कागज़ी टेक्सचर और धूल/मैल ओवरले के लिए यह सबसे आसान डार्कनिंग मोड है।</td></tr>
+<tr><td>गहरा करें</td><td>रंग बर्न</td><td>आधार को बर्न करने जैसा गहरा करता है और सैचुरेशन व कॉन्ट्रास्ट बढ़ाता है। गहरी छाया और मजबूत टेक्सचर के लिए उपयुक्त।</td></tr>
+<tr><td>गहरा करें</td><td>रेखीय बर्न</td><td>ल्यूमिनेंस को रैखिक रूप से घटाकर गहरा करता है। Color Burn की तुलना में अधिक गणनात्मक और मजबूत गहरे क्षेत्र बनाता है।</td></tr>
+<tr><td>गहरा करें</td><td>अधिकगहरा रंग</td><td>ऊपरी और निचली लेयर को मिलाने के बजाय उनमें से गहरा रंग चुनता है। परिणाम गहरे रंग को प्राथमिकता देने वाले रंग प्रतिस्थापन जैसा होता है।</td></tr>
+<tr><td>Lighten</td><td>Lighten</td><td>ऊपरी और निचली लेयर के अधिक उजले घटकों को प्राथमिकता देता है। गहरे हिस्से हटाते हुए प्रकाश या हाइलाइट जोड़ने के लिए उपयोग करें।</td></tr>
+<tr><td>Lighten</td><td>स्क्रीन</td><td>Multiply के विपरीत दिशा में काम करता है और स्वाभाविक रूप से उजला करता है। ग्लो, हाइलाइट, धुआँ और प्रकाश सामग्री के लिए अच्छा।</td></tr>
+<tr><td>Lighten</td><td>रंग डॉज</td><td>हल्का करें आधार मजबूती से और बनाता है जीवंत लाइट. यह कर सकता है क्लिप को सफेद आसानी से, so समायोजन साथ अपारदर्शिता.</td></tr>
+<tr><td>Lighten</td><td>रेखीय डॉज (जोड़ें)</td><td>जोड़ता है रंग को आइटम मजबूती से. उपयोगी के लिए लाइट आइटम, मैजिक प्रभाव, और मजबूततीव्र चमकलाइट.</td></tr>
+<tr><td>Lighten</td><td>Lighter रंग</td><td>ऊपरी और निचली लेयर में से अधिक उजला रंग चुनता है। हल्के रंग को प्राथमिकता देकर सामग्री ओवरले करने पर उपयोग करें।</td></tr>
+<tr><td>कॉन्ट्रास्ट</td><td>ओवरले</td><td>बदलता है के बीच Multiply और स्क्रीन आधारित पर ब्राइटनेस का आधार. मानक चयन के लिए जोड़ें बनावट और बढ़ानामजबूत शेडिंग.</td></tr>
+<tr><td>कॉन्ट्रास्ट</td><td>मुलायम लाइट</td><td>जोड़ता है कॉन्ट्रास्ट अधिक मुलायम से ओवरले. उपयुक्त के लिए त्वचा, कपड़ा, और सूक्ष्म शेडिंग आइटम.</td></tr>
+<tr><td>कॉन्ट्रास्ट</td><td>कठोर लाइट</td><td>ऊपरी लेयर के आधार पर तीव्र उजाले और अँधेरे के प्रभाव जोड़ता है। स्पष्ट हाइलाइट और छाया बनाता है।</td></tr>
+<tr><td>कॉन्ट्रास्ट</td><td>जीवंत लाइट</td><td>बनाता है मजबूत, जीवंत कॉन्ट्रास्ट समान को संयोजन का रंग बर्न और रंग डॉज.</td></tr>
+<tr><td>कॉन्ट्रास्ट</td><td>रेखीय लाइट</td><td>Linear Burn और Linear Dodge के संयोजन जैसा, ल्यूमिनेंस को तीव्र और रैखिक रूप से बदलता है।</td></tr>
+<tr><td>कॉन्ट्रास्ट</td><td>Pin लाइट</td><td>गहरे और उजले क्षेत्रों को बदलने जैसा संयोजन करता है। विशेष कठोर टेक्सचर और इफ़ेक्ट के लिए उपयुक्त।</td></tr>
+<tr><td>कॉन्ट्रास्ट</td><td>कठोर Mix</td><td>की ओर धकेलता रंग की ओर मजबूती से पोस्टराइज़्ड परिणाम. उपयोगी के लिए poster-like, शोर, या प्रयोगात्मक प्रभाव.</td></tr>
+<tr><td>उलटाव</td><td>अंतर</td><td>दिखाता है अंतर के बीच ऊपरी और निचला लेयर. उपयोगी के लिए संरेखण जाँच, inverted-looking प्रभाव, और असामान्य रंग शिफ्ट.</td></tr>
+<tr><td>उलटाव</td><td>बहिष्करण</td><td>Difference की तुलना में नरम अंतर-आधारित ब्लेंड। कम उलटे हुए एहसास वाले विशेष प्रभावों के लिए अच्छा।</td></tr>
+<tr><td>उलटाव</td><td>घटाएँ</td><td>आधार से ऊपरी रंग घटाकर उसे गहरा करता है। रंग हटाने वाले प्रभावों और गहरे विशेष प्रभावों के लिए उपयोगी।</td></tr>
+<tr><td>उलटाव</td><td>Divide</td><td>भाग देकर उज्ज्वल करता है।</td></tr>
+<tr><td>घटक</td><td>ह्यू</td><td>लागू केवल ऊपरी ह्यू को आधार जबकि बनाए रखें आधार ल्यूमिनेंस और सैचुरेशन. उपयोग यह जब आप केवल चाहें को बदलें ह्यू.</td></tr>
+<tr><td>घटक</td><td>सैचुरेशन</td><td>लागू केवल ऊपरी सैचुरेशन को आधार. उपयोग यह को जोड़ें आइटम या कम करें सैचुरेशन.</td></tr>
+<tr><td>घटक</td><td>रंग</td><td>लागू ऊपरी ह्यू और सैचुरेशन को आधार जबकि बनाए रखें आधार ल्यूमिनेंस. उपयुक्त के लिए आइटम आइटम शेडिंग.</td></tr>
+<tr><td>घटक</td><td>Luminosity</td><td>केवल ल्यूमिनेंस लागू करता है।</td></tr>
+</table>
+<p>मिश्रण मोड आइटम प्रदर्शन परिणाम का लेयर, प्रभाव लेयर, समूह कंपोज़िट, और PSD निर्यात. आइटम मोड आइटम कैनवास लेकिन आइटम नहीं आइटम लेयर पिक्सेल आइटम.</p>
+</div>
+<h2 id="panel-color">रंग पैनल <span class="tag tag-panel">पैनल</span></h2>
+<p>रंग चयनकर्ता मिलाकर HSV रंग व्हील और त्रिभुज, संख्यात्मक इनपुट, और पैलेट प्रबंधन.</p>
+<div class="card">
+<h4>विजेट सूची</h4>
+<table>
+<tr><th>विजेट</th><th>विवरण</th></tr>
+<tr><td>रंग व्हील</td><td>चुनें ह्यू पर बाहरी रिंग (0 को 360 डिग्री)</td></tr>
+<tr><td>टोन त्रिभुज</td><td>चुनें सैचुरेशन और मान अंदर त्रिभुज</td></tr>
+<tr><td>HSV स्पिन बॉक्स (H/S/V)</td><td>H: 0～359°, S: 0～100%, V: 0～100%</td></tr>
+<tr><td>RGB स्पिन बॉक्स (R/G/B)</td><td>0 को 255 प्रत्येक</td></tr>
+<tr><td>Hex पाठ इनपुट</td><td>#आइटम प्रारूप</td></tr>
+<tr><td>जोड़ें को पैलेट बटन</td><td>जोड़ें वर्तमान रंग को पैलेट</td></tr>
+<tr><td>पैलेट ग्रिड</td><td>ग्रिड प्रदर्शन का आइटम आइटम (32x32 px). हटाएँ बटन दिखता है पर आइटम.</td></tr>
+<tr><td>रंग इतिहास</td><td>दिखाता है 10 आइटम आइटम रंग में पंक्ति (24x24 px)</td></tr>
+</table>
+<p>डिफ़ॉल्ट पैलेट: काला, सफेद, लाल, हरा, नीला</p>
+</div>
+<h2 id="panel-brush-manager">ब्रश प्रबंधक <span class="tag tag-panel">पैनल</span></h2>
+<p>पैनल के लिए प्रबंधन कस्टम ब्रश टिप. आप कर सकता है बनाएँ, आयात, और हटाएँ ब्रश.</p>
+<div class="card">
+<h4>विजेट सूची</h4>
+<table>
+<tr><th>विजेट</th><th>विवरण</th></tr>
+<tr><td>ब्रश टिप ग्रिड</td><td>दिखाता है ब्रश टिप आइटम में आइकन मोड. डबल-क्लिक-क्लिक को आइटम.</td></tr>
+<tr><td>बनाएँ टिप बटन</td><td>बनाएँ ब्रश टिप से कैनवास चयन</td></tr>
+<tr><td>पैरामीटर सहेजें बटन</td><td>सहेजें वर्तमान पेन सेटिंग्स को ब्रश</td></tr>
+<tr><td>ABR पुनः स्कैन बटन</td><td>ABR लाइब्रेरी फ़ोल्डर को पुनः स्कैन करें</td></tr>
+<tr><td>आयात ABR बटन</td><td>आयात Photoshop .abr ब्रश फ़ाइल</td></tr>
+<tr><td>आयात PNG बटन</td><td>आयात PNG छवि के रूप में ब्रश टिप</td></tr>
+<tr><td>हटाएँ बटन</td><td>हटाएँ चयनित ब्रश</td></tr>
+</table>
+</div>
+<h2 id="panel-shape-manager">आकार प्रबंधक <span class="tag tag-panel">पैनल</span></h2>
+<p>आइटम वेक्टर आकृति लाइब्रेरी प्रबंधन और संरेखण उपकरण. यह भी शामिल है विशेष आकृतियाँ आइटम के रूप में मंगा आइटम आइटम और आइटम रेखाएँ.</p>
+<div class="card">
+<h4>टैब 1 - आकार प्रबंधक (लाइब्रेरी)</h4>
+<table>
+<tr><th>विजेट</th><th>विवरण</th></tr>
+<tr><td>श्रेणी फ़िल्टर</td><td>फ़िल्टर आकृतियाँ द्वारा श्रेणी</td></tr>
+<tr><td>टैग फ़िल्टर</td><td>फ़िल्टर आकृतियाँ द्वारा टैग</td></tr>
+<tr><td>आकृति ग्रिड</td><td>दिखाएँ थंबनेल में आइकन मोड</td></tr>
+<tr><td>स्टैम्प / जोड़ें को कैनवास</td><td>जोड़ें आकृति के रूप में स्टैम्प या पर कैनवास</td></tr>
+<tr><td>आयात SVG / निर्यात SVG</td><td>आयात/निर्यात SVG फ़ाइलें</td></tr>
+<tr><td>नया श्रेणी / आइटम / हटाएँ</td><td>आइटम आइटम और आकृतियाँ</td></tr>
+</table>
+<h4>टैब 2 - मूल आकृतियाँ (built-में आकृतियाँ)</h4>
+<table>
+<tr><th>श्रेणी</th><th>आकृति सूची</th></tr>
+<tr><td>मूल</td><td>आइटम, आइटम आयत, आइटम, आइटम</td></tr>
+<tr><td>प्रभाव</td><td>आइटम रेखाएँ (आइटम), आइटम रेखाएँ (आइटम)</td></tr>
+<tr><td>आइटम</td><td>आइटम आइटम (आइटम / आइटम / आइटम), आइटम आइटम</td></tr>
+<tr><td>आइटम</td><td>त्रिभुज, आइटम, आइटम, आइटम, आइटम, आइटम, आइटम, आइटम</td></tr>
+</table>
+<h4>संरेखण और आइटम उपकरण</h4>
+<table>
+<tr><th>विजेट</th><th>विवरण</th></tr>
+<tr><td>संरेखित संदर्भ</td><td>आइटम: चयन / कैनवास / पहला ऑब्जेक्ट / आइटम ऑब्जेक्ट</td></tr>
+<tr><td>फिट (समाहित) / फिट (खींचें) / केंद्र</td><td>फिट और आइटम</td></tr>
+<tr><td>संरेखित बाएँ / केंद्र (H) / दाएँ</td><td>क्षैतिज संरेखण</td></tr>
+<tr><td>संरेखित ऊपर / मध्य (V) / नीचे</td><td>ऊर्ध्वाधर संरेखण</td></tr>
+<tr><td>आइटम आइटम / आइटम</td><td>आइटम आइटम</td></tr>
+</table>
+</div>
+<h2 id="panel-effect">प्रभाव पैनल <span class="tag tag-panel">पैनल</span></h2>
+<p>संपादित करता है पैरामीटर के लिए चयनित प्रभाव लेयर. पैरामीटर UI है जनरेट किया गया आइटम आइटम को प्रभाव प्रकार.</p>
+<div class="card">
+<p>जब प्रभाव लेयर है चयनित में लेयर पैनल, उसका प्रभाव नाम दिखता है में समूह बॉक्स शीर्षक और स्पिन बॉक्स हैं जनरेट किया गया के लिए प्रत्येक पैरामीटर. परिवर्तन हैं आइटम में पूर्वावलोकन आइटम और समर्थन पूर्ववत.</p>
+</div>
+<h2 id="panel-pages">पृष्ठ पैनल <span class="tag tag-panel">पैनल</span></h2>
+<p>पैनल के लिए प्रबंधन आइटम-पेज दस्तावेज़.</p>
+<div class="card">
+<h4>विजेट सूची</h4>
+<table>
+<tr><th>विजेट</th><th>विवरण</th></tr>
+<tr><td>+ (जोड़ें पृष्ठ) बटन</td><td>जोड़ें पृष्ठ (मूल / कस्टम आइटम + आइटम सहेजें मेनू)</td></tr>
+<tr><td>डुप्लिकेट बटन</td><td>डुप्लिकेट वर्तमान पृष्ठ</td></tr>
+<tr><td>हटाएँ बटन</td><td>हटाएँ पृष्ठ</td></tr>
+<tr><td>Up / आइटम बटन</td><td>बदलें पृष्ठ आइटम</td></tr>
+<tr><td>पृष्ठ सूची</td><td>पेज नंबर + पेज नाम + बदले हुए 상태 का संकेतक (*)। थंबनेल अभी प्लेसहोल्डर के रूप में दिखते हैं।</td></tr>
+</table>
+<p>डबल-क्लिक-क्लिक या <kbd>F2</kbd> को आइटम पृष्ठ. पैनल बदलता है के बीच सूची मोड और आइकन मोड आइटम पर उसका आइटम अनुपात.</p>
+</div>
+<h2 id="panel-preview">पूर्वावलोकन पैनल <span class="tag tag-panel">पैनल</span></h2>
+<p>दिखाता है आइटम-आइटम आइटम पूर्वावलोकन का आइटम कैनवास.</p>
+<div class="card">
+<p>पैन करने के लिए माउस से खींचें और पूर्वावलोकन व्यूपोर्ट समायोजित करने के लिए ज़ूम नियंत्रणों का उपयोग करें। कैनवास संयोजन अपडेट होने पर यह स्वतः फिर से बनता है।</p>
+</div>
+<h2 id="panel-context-toolbar">संदर्भ टूलबार <span class="tag tag-panel">पैनल</span></h2>
+<p>आइटम टूलबार वह दिखता है स्वचालित रूप से पर कैनवास बाद स्ट्रोक या क्रिया. यह दिखाता है आइटम सेटिंग्स के लिए सक्रिय उपकरण.</p>
+<div class="card">
+<table>
+<tr><th>उपकरण</th><th>प्रदर्शन आइटम</th><th>प्रदर्शन आइटम</th></tr>
+<tr><td>पेन / इरेज़र</td><td>बाद स्ट्रोक पूरा होता है</td><td>आकार, अपारदर्शिता, कठोरता</td></tr>
+<tr><td>मैजिक वांड</td><td>बाद बनाना चयन</td><td>आइटम, सन्निहित, आइटम</td></tr>
+<tr><td>ग्रेडिएंट</td><td>जब पूर्वावलोकन शुरू</td><td>प्रकार, रंग /B, स्टॉप, डिथर</td></tr>
+<tr><td>वेक्टर पथ / सटीक</td><td>बाद स्ट्रोक पूरा होता है</td><td>स्ट्रोक चौड़ाई/रंग, भरना</td></tr>
+</table>
+</div>
+<!-- ══════════════════ エフェクトレイヤー ══════════════════ -->
+<h2 id="fx-gaussian-blur">गॉसियन ब्लर <span class="tag tag-effect">प्रभाव</span></h2>
+<p>गैर-विनाशकारी प्रभाव वह लागू गॉसियन धुंधला को लेयर.</p>
+<div class="card">
+<table>
+<tr><th>पैरामीटर</th><th>सीमा</th><th>विवरण</th></tr>
+<tr><td>त्रिज्या</td><td>0 ～ 250 px</td><td>फेदर त्रिज्या</td></tr>
+</table>
+</div>
+<h2 id="fx-levels">लेवल <span class="tag tag-effect">प्रभाव</span></h2>
+<p>नियंत्रित करता है कॉन्ट्रास्ट द्वारा आइटम इनपुट/आउटपुट लेवल और गामा.</p>
+<div class="card">
+<table>
+<tr><th>पैरामीटर</th><th>सीमा</th><th>विवरण</th></tr>
+<tr><td>में काला</td><td>0 ～ 255</td><td>गहरा बिंदु का इनपुट लेवल</td></tr>
+<tr><td>में सफेद</td><td>0 ～ 255</td><td>लाइट बिंदु का इनपुट लेवल</td></tr>
+<tr><td>गामा</td><td>0.01 ～ 9.99</td><td>गामा सुधार मान</td></tr>
+<tr><td>आउटपुट ब्लैक</td><td>0 ～ 255</td><td>गहरा बिंदु का आउटपुट लेवल</td></tr>
+<tr><td>आउटपुट व्हाइट</td><td>0 ～ 255</td><td>लाइट बिंदु का आउटपुट लेवल</td></tr>
+</table>
+</div>
+<h2 id="fx-hue-saturation">ह्यू / सैचुरेशन <span class="tag tag-effect">प्रभाव</span></h2>
+<p>रंग सुधार प्रभाव के लिए आइटम ह्यू, सैचुरेशन, और लाइटनेस.</p>
+<div class="card">
+<table>
+<tr><th>पैरामीटर</th><th>सीमा</th><th>विवरण</th></tr>
+<tr><td>ह्यू</td><td>-180 ～ 180°</td><td>ह्यू आइटम</td></tr>
+<tr><td>सैचुरेशन</td><td>-100 ～ 100</td><td>सैचुरेशन समायोजन</td></tr>
+<tr><td>लाइटनेस</td><td>-100 ～ 100</td><td>लाइटनेस समायोजन</td></tr>
+</table>
+</div>
+<h2 id="fx-invert">उलटें <span class="tag tag-effect">प्रभाव</span></h2>
+<p>उलटेंs टोनल सीमा, या रंग ब्राइटनेस, का लेयर.</p>
+<div class="card">
+<table>
+<tr><th>पैरामीटर</th><th>सीमा</th><th>विवरण</th></tr>
+<tr><td>ताकत</td><td>0 ～ 100%</td><td>उलटाव तीव्रता</td></tr>
+</table>
+</div>
+<h2 id="fx-brightness-contrast">ब्राइटनेस / कॉन्ट्रास्ट <span class="tag tag-effect">प्रभाव</span></h2>
+<p>आइटम लेयर ब्राइटनेस और कॉन्ट्रास्ट. यह है अंतर्निहित-में आइटम-आइटम प्रभाव साथ आइटम CPU और GPU पथ.</p>
+<div class="card">
+<table>
+<tr><th>पैरामीटर</th><th>सीमा</th><th>विवरण</th></tr>
+<tr><td>ब्राइटनेस</td><td>-100 ～ 100</td><td>ब्राइटनेस समायोजन</td></tr>
+<tr><td>कॉन्ट्रास्ट</td><td>-100 ～ 100</td><td>कॉन्ट्रास्ट समायोजन</td></tr>
+</table>
+</div>
+<h2 id="fx-sharpen">शार्प करें <span class="tag tag-effect">प्रभाव</span></h2>
+<p>तीक्ष्ण करता है किनारे उपयोग करते हुए आइटम मास्क विधि.</p>
+<div class="card">
+<table>
+<tr><th>पैरामीटर</th><th>सीमा</th><th>विवरण</th></tr>
+<tr><td>मात्रा</td><td>0 ～ 500</td><td>शार्प करें तीव्रता</td></tr>
+<tr><td>त्रिज्या</td><td>0.1 ～ 50</td><td>शार्प करें त्रिज्या</td></tr>
+<tr><td>सीमा</td><td>0 ～ 255</td><td>शोर आइटम सीमा</td></tr>
+</table>
+</div>
+<h2 id="fx-noise-reduction">नॉइज़ रिडक्शन <span class="tag tag-effect">प्रभाव</span></h2>
+<p>शोर कमी प्रभाव आधारित पर non-आइटम आइटम (NLM).</p>
+<div class="card">
+<table>
+<tr><th>पैरामीटर</th><th>सीमा</th><th>विवरण</th></tr>
+<tr><td>ताकत</td><td>1 ～ 40</td><td>ल्यूमिनेंस शोर कमी तीव्रता</td></tr>
+<tr><td>रंग तीव्रता</td><td>1 ～ 40</td><td>रंग शोर कमी तीव्रता</td></tr>
+</table>
+</div>
+<!-- ══════════════════ AI Effect Layer ══════════════════ -->
+<h2 id="ai-effect-overview">AI प्रभाव लेयर <span class="tag tag-ai">AI प्रभाव</span></h2>
+<p>AI प्रभाव लेयर है आइटम वह आइटम<code>.lsfx</code> प्रीसेट पर कैनवास के रूप में लेयर, फिर भेजता है इनपुट लेयर और पैरामीटर को ComfyUI Gateway या NanoBanana Gateway को जनरेट छवि. यह कार्य साथ लेयर पैनल, प्रभाव पैनल, और AI प्रभाव प्रबंधक अलग-अलग से सामान्य ComfyUI और NanoBanana पैनल.</p>
+<div class="card">
+<h4>मूल प्रवाह</h4>
+<ol>
+<li>से AI मेनू, चुनें <strong>AI प्रभाव प्रीसेट...</strong> को खोलें AI प्रभाव प्रबंधक</li>
+<li>दायाँ-क्लिक प्रीसेट और चुनें <strong>AI प्रभाव लेयर जोड़ें</strong> </li>
+<li>में लेयर पैनल, आइटम इनपुट लेयर को आइटम पंक्तियाँ नीचे AI प्रभाव लेयर</li>
+<li>उपयोग प्रभाव पैनल को नियंत्रण पैरामीटर, आउटपुट गंतव्य, और जनरेट</li>
+<li>लागू जनरेट किया गया परिणाम को AI प्रभाव लेयर स्वयं या को नया आउटपुट लेयर सीधे ऊपर यह</li>
+</ol>
+<table>
+<tr><th>आइटम</th><th>सामग्री</th></tr>
+<tr><td>लेयर प्रकार</td><td><code>layer_type="ai_effect"</code></td></tr>
+<tr><td>प्रीसेट प्रारूप</td><td><code>.lsfx</code>. ZIP शामिल है मैनिफेस्ट, Gateway सेटिंग्स, आइकन, और संबंधित डेटा</td></tr>
+<tr><td>आइटम प्रीसेट</td><td>आइटम, आइटम आइटम, आइटम आइटम, HDR प्रभाव, आइटम XL</td></tr>
+<tr><td>समर्थित Gateway</td><td>ComfyUI Gateway / NanoBanana Gateway</td></tr>
+<tr><td>सहेजें</td><td><code>.lstroke</code> v1.2 <code>ai_effect</code> आइटम आइटम स्थिति</td></tr>
+</table>
+<p>आइटम वह आवश्यक बाहरी सेवा पहुँच कर सकता है चलाएँ केवल जब बाहरी सेवाएँ हैं अनुमत में प्राथमिकताएँ और आवश्यक API कुंजी या कनेक्शन सेटिंग्स हैं कॉन्फ़िगर.</p>
+</div>
+<h2 id="ai-effect-manager">AI प्रभाव प्रबंधक <span class="tag tag-ai">AI प्रभाव</span></h2>
+<p>आइटम <code>.lsfx</code> प्रबंधन स्क्रीन के लिए आइटम, जोड़ें, संपादन, आइटम, और आयात प्रीसेट.</p>
+<div class="card">
+<table>
+<tr><th>क्रियाएँ</th><th>विवरण</th></tr>
+<tr><td>AI प्रभाव लेयर जोड़ें</td><td>जोड़ता है चयनित प्रीसेट को वर्तमान कैनवास के रूप में AI प्रभाव लेयर.</td></tr>
+<tr><td>संपादित</td><td>खोलेंs प्रीसेट में प्रभाव आइटम और आइटम मौजूदा सेटिंग्स के लिए संपादन.</td></tr>
+<tr><td>इम्पोर्ट</td><td>आयातs बाहरी <code>.lsfx</code> में <code>user_data/ai_effect/presets/</code> .</td></tr>
+<tr><td>हटाएँ</td><td>हटाएँ उपयोगकर्ता प्रीसेट. आइटम प्रीसेट हैं आइटम साथ स्नैपशॉट so उपयोगकर्ता परिवर्तन हैं आइटम.</td></tr>
+</table>
+<p>The default build ships no bundled <code>.lsfx</code> presets. Use Import or Register to add presets to <code>user_data/ai_effect/presets/</code>.</p>
+</div>
+<h2 id="ai-effect-editor">प्रभाव संपादक <span class="tag tag-ai">AI प्रभाव</span></h2>
+<p>स्क्रीन के लिए बनाना और संपादन <code>.lsfx</code> प्रीसेट से ComfyUI वर्कफ़्लो या NanoBanana पैरामीटर आइटम.</p>
+<div class="card">
+<table>
+<tr><th>क्षेत्र</th><th>आइटम</th></tr>
+<tr><td>मेटाडेटा</td><td>आइटम प्रीसेट नाम, श्रेणी, विवरण, टैग, आइकन, और संबंधित मेटाडेटा.</td></tr>
+<tr><td>आइटम / आइटम</td><td>चयन उम्मीदवार पैरामीटर और इनपुट स्लॉट प्राप्त से Gateway और दिखाता है उन्हें के रूप में उपयोगकर्ता-आइटम UI.</td></tr>
+<tr><td>प्रीसेट इम्पोर्ट करें</td><td>मौजूदा <code>.lsfx</code> कर सकता है होना पहले सेलोड को फिर शुरू करें संपादन में प्रभाव आइटम.</td></tr>
+<tr><td>निर्यात</td><td>आइटम सत्यापित मैनिफेस्ट और Gateway फ़ाइलें एटॉमिक रूप से के रूप में <code>.lsfx</code> .</td></tr>
+</table>
+<p>आइटम <code>.lsfx</code> कर सकता है होना पंजीकृत सीधे में AI प्रभाव प्रबंधक. यदि आइटम आइटम नहीं शामिल <code>.lsfx</code> , यह है पहले सेजोड़ें जब सहेजना.</p>
+</div>
+<h2 id="ai-effect-runtime">जनरेशन और स्थिति <span class="tag tag-ai">AI प्रभाव</span></h2>
+<p>जब AI प्रभाव लेयर है चयनित, प्रभाव पैनल दिखाता है गतिशील पैरामीटर से प्रीसेट. जनरेशन है पंजीकृत में इतिहास के रूप में आइटम और समर्थन करता है पूर्ववत / फिर करें.</p>
+<div class="card">
+<h4>लेयर पैनल / प्रभाव पैनल</h4>
+<table>
+<tr><th>आइटम</th><th>विवरण</th></tr>
+<tr><td>Slot पंक्ति</td><td>इनपुट पंक्ति दिखाया गया नीचे AI प्रभाव लेयर. आइटम आइटम लेयर के रूप में संदर्भ.</td></tr>
+<tr><td>बहिष्करण बटन</td><td>इनपुट Slot को ब्लेंडिंग से बाहर कर केवल AI इनपुट के रूप में उपयोग करने हेतु बदलता है।</td></tr>
+<tr><td>जनरेट करें</td><td>शुरू जनरेशन से चयनित लेयर या से AI प्रभाव पंक्ति में लेयर पैनल.</td></tr>
+<tr><td>आउटपुट को यह लेयर</td><td>जब सक्षम, आउटपुट है आइटम आइटम को AI प्रभाव लेयर स्वयं. जब अक्षम, नया आउटपुट लेयर है बनाया गया सीधे ऊपर यह.</td></tr>
+<tr><td>Progress / रद्द</td><td>चलते समय प्रगति दिखाई जाती है और बाहरी रद्दीकरण इस मार्ग से संभाला जाता है:<code>cancel_layer(layer_id)</code> .</td></tr>
+</table>
+<h4>आइटम और सहेजना</h4>
+<table>
+<tr><th>आइटम</th><th>विवरण</th></tr>
+<tr><td>इनपुट रिज़ॉल्यूशन</td><td>हल करता है संदर्भित रास्टर / समूह / मास्क / AI प्रभाव लेयर के रूप में PNG फ़ाइलें के लिए Gateway.</td></tr>
+<tr><td>कैश</td><td>के लिए आइटम आइटम और पैरामीटर, <code>param_hash</code> है उपयोग किया गया को आइटम आइटम / कैश आइटम.</td></tr>
+<tr><td>UI स्थिति</td><td>संख्यात्मक इनपुट, आइटम इनपुट, और आइटम स्थिति हैं सहेजा के रूप में <code>AIEffectState.param_ui_state</code> .</td></tr>
+<tr><td>आइटम</td><td>केवल जब डीबग सक्षम है, <code>user_data/logs/ai_effect.log</code> है आइटम के रूप में JSON रेखाएँ.</td></tr>
+<tr><td>सेटिंग्स</td><td>पुनः प्रयास, कैश, API आइटम, और संबंधित सेटिंग्स हैं प्रबंधित में प्राथमिकताएँ -&gt; AI प्रभाव. सेटिंग्स फ़ाइल है <code>user_data/ai_effect/preferences.json</code> .</td></tr>
+</table>
+<p>जब ComfyUI है नहीं चल रहा या प्रीसेट हैं नहीं आइटम, मार्गदर्शन आइटम, आइटम आइटम, या आइटम हैं दिखाया गया. को आइटम आइटम कनेक्शन आइटम, स्वचालित कनेक्शन जब आइटम AI प्रभाव लेयर है आइटम.</p>
+</div>
+<!-- ══════════════════ AI 連携 ══════════════════ -->
+<h2 id="ai-comfyui">ComfyUI पैनल <span class="tag tag-ai">AI</span></h2>
+<p>ComfyUI सर्वर से जुड़ता है और AI छवि जनरेशन वर्कफ़्लो चलाता है। यह तभी उपलब्ध है जब बाहरी सेवा पहुँच की अनुमति हो।</p>
+<div class="card">
+<h4>कनेक्शन बार</h4>
+<table>
+<tr><th>विजेट</th><th>विवरण</th></tr>
+<tr><td>आइटम इनपुट</td><td>सर्वर आइटम (डिफ़ॉल्ट: 127.0.0.1:8188)</td></tr>
+<tr><td>SSL चेकबॉक्स</td><td>उपयोग HTTPS/WSS</td></tr>
+<tr><td>आइटम / आइटम बटन</td><td>आरंभ या आइटम कनेक्शन</td></tr>
+<tr><td>आइटम बटन</td><td>आइटम नोड आइटम</td></tr>
+</table>
+<h4>वर्कफ़्लो</h4>
+<table>
+<tr><th>विजेट</th><th>विवरण</th></tr>
+<tr><td>वर्कफ़्लो कॉम्बो बॉक्स</td><td>सूची का सहेजा वर्कफ़्लो</td></tr>
+<tr><td>लोड बटन</td><td>लोड .json वर्कफ़्लो फ़ाइल</td></tr>
+</table>
+<p>वर्कफ़्लो हैं सहेजा में <code>user_data/plugins/comfyui/workflows</code> और आउटपुट लेयर उपयोग <code>user_data/cache/LoomStroke/layers</code> .</p>
+<h4>टैब 1 — वर्कफ़्लो आइटम</h4>
+<p>प्रत्येक नोड में पहले सेलोड वर्कफ़्लो है दिखाया गया के रूप में गतिशील टैब जहाँ पैरामीटर कर सकता है होना संपादित. आइटम पैरामीटर कर सकता है होना संपादित साथ प्रॉम्प्ट कम्पोज़र.</p>
+<h4>टैब 2 — Queue</h4>
+<table>
+<tr><th>विजेट</th><th>विवरण</th></tr>
+<tr><td>कार्य आइटम</td><td>छह कॉलम: ID, स्थिति, आइटम, वर्कफ़्लो, पहले सेशुरू, आइटम</td></tr>
+<tr><td>रद्द बटन</td><td>रद्द चयनित कार्य</td></tr>
+<tr><td>पूर्वावलोकन बटन</td><td>पूर्वावलोकन कार्य परिणाम</td></tr>
+<tr><td>स्पष्ट Finished बटन</td><td>स्पष्ट आइटम कार्य</td></tr>
+</table>
+<h4>आइटम नियंत्रित करता है</h4>
+<table>
+<tr><th>विजेट</th><th>विवरण</th></tr>
+<tr><td>Queue बटन</td><td>आइटम कार्य (हरा)</td></tr>
+<tr><td>रद्द बटन</td><td>रद्द चल रहा कार्य</td></tr>
+<tr><td>आइटम स्पिन बॉक्स</td><td>0=आइटम, -1=आइटम, N=आइटम N आइटम</td></tr>
+<tr><td>आइटम चेकबॉक्स</td><td>आइटम आइटम</td></tr>
+</table>
+</div>
+<h2 id="ai-nanobanana">NanoBanana पैनल <span class="tag tag-ai">AI</span></h2>
+<p>AI छवि जनरेशन पैनल उपयोग करते हुए Google Gemini API. API कुंजी है सहेजा में OS keyring और यह कर सकता है होना उपयोग किया गया केवल जब बाहरी सेवा पहुँच है अनुमत.</p>
+<div class="card">
+<h4>विजेट सूची</h4>
+<table>
+<tr><th>विजेट</th><th>आइटम / सीमा</th><th>विवरण</th></tr>
+<tr><td>प्रॉम्प्ट</td><td>पाठ / चिप कम्पोज़र</td><td>जनरेशन प्रॉम्प्ट इनपुट</td></tr>
+<tr><td>इनपुट लेयर</td><td>लेयर कॉम्बो x N</td><td>लेयर उपयोग किया गया के रूप में इनपुट (एकाधिक चयन समर्थित)</td></tr>
+<tr><td>मॉडल</td><td>कॉम्बो बॉक्स</td><td>मोडl को उपयोग, आइटम के रूप में आइटम-2.5-आइटम</td></tr>
+<tr><td>सोच</td><td>आइटम / आइटम</td><td>आइटम स्तर</td></tr>
+<tr><td>प्रकार</td><td>पाठ+छवि / छवि</td><td>आउटपुट आइटम</td></tr>
+<tr><td>आकार</td><td>आइटम / 512 / 1K / 2K / 4K</td><td>आउटपुट छवि आकार</td></tr>
+<tr><td>आइटम अनुपात</td><td>1:1, 4:3, 3:4, 16:9, 9:16, आदि.</td><td>आइटम अनुपात साथ आइटम आइटम</td></tr>
+<tr><td>लक्ष्य लेयर</td><td>&lt;नई लेयर&gt; / मौजूदा लेयर</td><td>आउटपुट गंतव्य के लिए जनरेट किया गया छवि</td></tr>
+<tr><td>आइटम चेकबॉक्स</td><td>पर / OFF</td><td>आइटम आइटम आइटम</td></tr>
+<tr><td>Search चेकबॉक्स</td><td>पर / OFF</td><td>उपयोग Google Search</td></tr>
+<tr><td>जनरेट बटन</td><td>—</td><td>चलाएँ छवि जनरेशन (हरा)</td></tr>
+<tr><td>Status पाठ</td><td>—</td><td>स्थिति लॉग प्रदर्शन</td></tr>
+</table>
+</div>
+<h2 id="ai-prompt-editor">प्रॉम्प्ट संपादक <span class="tag tag-ai">AI</span></h2>
+<p>पैनल वह आइटम आइटम प्रॉम्प्ट आइटम, स्निपेट प्रबंधन, और LLM आइटम. स्निपेट हैं सहेजा में <code>user_data/text_editor/text_snippets.sqlite3</code> .</p>
+<div class="card">
+<h4>टैब 1 — आइटम</h4>
+<table>
+<tr><th>विजेट</th><th>विवरण</th></tr>
+<tr><td>घटक पैलेट</td><td>खींचें और छोड़ें चार घटक प्रकार: आइटम / सूची / पाठ / प्रॉम्प्ट</td></tr>
+<tr><td>आइटम प्रॉम्प्ट चिप प्रवाह</td><td>पुनः क्रमित आइटम को आइटम प्रॉम्प्ट</td></tr>
+<tr><td>आइटम इनपुट</td><td>आइटम के बीच घटक</td></tr>
+<tr><td>आइटम बटन</td><td>आइटम प्रॉम्प्ट</td></tr>
+<tr><td>कॉपी बटन</td><td>कॉपी परिणाम को आइटम</td></tr>
+<tr><td>सहेजें क्षेत्र</td><td>प्रॉम्प्ट नाम + श्रेणी + सहेजें/लोड/नया बटन</td></tr>
+</table>
+<h4>टैब 2 — लाइब्रेरी</h4>
+<table>
+<tr><th>विजेट</th><th>विवरण</th></tr>
+<tr><td>Search बार</td><td>पाठ खोज + प्रकार फ़िल्टर + टैग फ़िल्टर</td></tr>
+<tr><td>स्निपेट सूची</td><td>सूची का सहेजा स्निपेट</td></tr>
+<tr><td>आइटम आइटम</td><td>संपादित शीर्षक / टैग / प्रकार / आइटम</td></tr>
+<tr><td>डुप्लिकेट / हटाएँ / निर्यात</td><td>स्निपेट क्रिया बटन</td></tr>
+</table>
+<h4>टैब 3 — LLM</h4>
+<table>
+<tr><th>विजेट</th><th>आइटम / सीमा</th><th>विवरण</th></tr>
+<tr><td>आइटम चेकबॉक्स</td><td>पर / OFF</td><td>वर्तमान Gateway नॉन-स्ट्रीमिंग मोड में चलता है</td></tr>
+<tr><td>आइटम</td><td>कॉम्बो बॉक्स</td><td>AI आइटम चयन</td></tr>
+<tr><td>मॉडल</td><td>कॉम्बो बॉक्स</td><td>मोडl चयन</td></tr>
+<tr><td>आइटम</td><td>0.0 ～ 2.0</td><td>जनरेशन आइटम (डिफ़ॉल्ट: 0.7)</td></tr>
+<tr><td>अधिकतम आइटम</td><td>0 ～ 32000</td><td>अधिकतम टोकन गिनती (डिफ़ॉल्ट: 512)</td></tr>
+<tr><td>सिस्टम प्रॉम्प्ट</td><td>पाठ क्षेत्र</td><td>सिस्टम प्रॉम्प्ट</td></tr>
+<tr><td>उपयोगकर्ता प्रॉम्प्ट</td><td>पाठ क्षेत्र</td><td>उपयोगकर्ता प्रॉम्प्ट</td></tr>
+<tr><td>आउटपुट</td><td>पाठ क्षेत्र</td><td>प्रदर्शन LLM आइटम</td></tr>
+<tr><td>आइटम / रद्द / स्पष्ट</td><td>—</td><td>आइटम नियंत्रण बटन</td></tr>
+</table>
+</div>
+<!-- ══════════════════ キャンバス操作 ══════════════════ -->
+<h2 id="canvas-viewport">ज़ूम / पैन / घुमाएँ<span class="tag tag-param">कैनवास</span></h2>
+<div class="card">
+<table>
+<tr><th>क्रियाएँ</th><th>इनपुट</th><th>Notes</th></tr>
+<tr><td>ज़ूम इन</td><td><kbd>Ctrl+=</kbd>/ माउस व्हील ऊपर</td><td>अधिकतम 3200%</td></tr>
+<tr><td>ज़ूम आउट</td><td><kbd>Ctrl+-</kbd>/ माउस व्हील नीचे</td><td>आइटम 1%</td></tr>
+<tr><td>ज़ूम रीसेट</td><td><kbd>Ctrl+0</kbd></td><td>आइटम को 100%</td></tr>
+<tr><td>पैन (आइटम)</td><td>दायाँ-क्लिक खींचें</td><td>आइटम में सेटिंग्स</td></tr>
+<tr><td>कैनवास घुमाव</td><td>छवि मेनू</td><td>90° दक्षिणावर्त / 90° वामावर्त / 180°. बदलता सभी लेयर के रूप में इतिहास समूह.</td></tr>
+</table>
+<p><strong>आइटम आइटम:</strong> डिफ़ॉल्ट कैनवास है QImage-आधारित <code>SimpleCanvasService</code> . लेयर कर सकता है होना रास्टर, वेक्टर, या मास्क लेयर; के दौरान रास्टर आइटम, off-कैनवास क्षेत्र हैं भी सुरक्षित द्वारा <code>offset_x/y</code> .</p>
+</div>
+<h2 id="canvas-rulers">रूलर और गाइड <span class="tag tag-param">कैनवास</span></h2>
+<div class="card">
+<ul>
+<li><strong>रूलर:</strong> दिखाया गया पर ऊपर और बाएँ किनारे का कैनवास. आइटम कर सकता है होना px / mm / आइटम.</li>
+<li><strong>बनाएँ गाइड:</strong> खींचें से आइटम पर कैनवास</li>
+<li><strong>स्थानांतरण गाइड:</strong>गाइड लाइन को क्लिक करके खींचें</li>
+<li><strong>हटाएँ गाइड:</strong> कैनवास से बाहर खींचें</li>
+<li><strong>टॉगल प्रदर्शन:</strong> <kbd>R</kbd>कुंजी गाइड की दृश्यता बदलती है</li>
+<li><strong>स्नैप:</strong> स्वचालित स्नैपिंग को गाइड, ग्रिड, एंकर, और किनारे</li>
+<li><strong>गाइड रंग:</strong> आइटम में सेटिंग्स (डिफ़ॉल्ट: <code>#00B7FF</code>)</li>
+</ul>
+</div>
+<h2 id="canvas-grid">ग्रिड <span class="tag tag-param">कैनवास</span></h2>
+<div class="card">
+<ul>
+<li><strong>टॉगल प्रदर्शन:</strong> <kbd>G</kbd> कुंजी</li>
+<li><strong>ग्रिड आकार:</strong> डिफ़ॉल्ट 32 px, आइटम से 1 को 5000 px में प्राथमिकताएँ</li>
+<li><strong>ग्रिड स्नैप:</strong> कर सकता है होना सक्षम में स्थानांतरण उपकरण और समान उपकरण</li>
+</ul>
+</div>
+<!-- ══════════════════ ファイル入出力 ══════════════════ -->
+<h2 id="file-formats">समर्थित प्रारूप <span class="tag tag-param">फ़ाइल</span></h2>
+<div class="card">
+<table>
+<tr><th>प्रारूप</th><th>आयात</th><th>निर्यात</th><th>Notes</th></tr>
+<tr><td>.lstroke (मूल)</td><td>v1.0.0 / v1.1.0 / v1.2.0</td><td>v1.2.0</td><td>आइटम एकाधिक पृष्ठ, लेयर, वेक्टर, और UI लेआउट</td></tr>
+<tr><td>PNG</td><td>○</td><td>○</td><td>आइटम स्तर कर सकता है होना कॉन्फ़िगर</td></tr>
+<tr><td>JPEG</td><td>○</td><td>○</td><td>आइटम और आइटम सेटिंग्स कर सकता है होना कॉन्फ़िगर</td></tr>
+<tr><td>TIFF</td><td>○</td><td>○</td><td>LZW आइटम और 16-bit समर्थन</td></tr>
+<tr><td>BMP</td><td>○</td><td>○</td><td></td></tr>
+<tr><td>WebP</td><td>○</td><td>○</td><td>आइटम और आइटम सेटिंग्स कर सकता है होना कॉन्फ़िगर</td></tr>
+<tr><td>PSD</td><td>○</td><td>○</td><td>लेयर संरचनाएँ आयात करता है और लेयर सहित PSD निर्यात करता है</td></tr>
+<tr><td>ABR</td><td>○</td><td>—</td><td>आयात Photoshop ब्रश</td></tr>
+<tr><td>SVG</td><td>○</td><td>○</td><td>Through आकार प्रबंधक</td></tr>
+</table>
+<p>PNG / JPEG / WebP / BMP / TIFF फ़ाइलें कर सकता है होना आइटम से OS पर कैनवास और पहले सेजोड़ें के रूप में नया रास्टर लेयर.</p>
+</div>
+<h2 id="file-lstroke">.lstroke मूल प्रारूप <span class="tag tag-param">फ़ाइल</span></h2>
+<div class="card">
+<p>.lstroke है ZIP-आधारित मूल प्रारूप. पर सहेजें, यह आइटम को <code>*.lstroke.tmp</code> और आइटम आइटम लक्ष्य फ़ाइल. आइटम आइटम है सहेजा:</p>
+<ul>
+<li>JSON मैनिफेस्ट (आइटम और दस्तावेज़ मेटाडेटा)</li>
+<li>PNG छवि डेटा के लिए प्रत्येक लेयर</li>
+<li>वेक्टर ऑब्जेक्ट डेटा</li>
+<li>पृष्ठ आइटम (v1.1 आइटम-पेज)</li>
+<li>UI लेआउट स्नैपशॉट</li>
+<li>ICC रंग आइटम</li>
+</ul>
+</div>
+<!-- ══════════════════ 設定 ══════════════════ -->
+<h2 id="settings-preferences">प्राथमिकताएँ <span class="tag tag-param">सेटिंग्स</span></h2>
+<p><kbd>Ctrl+,</kbd>प्राथमिकताएँ संवाद खोलता है। वर्तमान में इसमें पाँच टैब हैं: आइटम / आइटम / आइटम I/O / आइटम / AI आइटम.</p>
+<div class="card">
+<h4>आइटम टैब</h4>
+<table>
+<tr><th>सेटिंग्स</th><th>सीमा</th><th>विवरण</th></tr>
+<tr><td>सक्षम Numba आइटम</td><td>पर / OFF</td><td>आइटम Numba JIT आइटम के लिए संख्यात्मक आइटम.</td></tr>
+<tr><td>कैश आकार</td><td>10 ～ 10000 आइटम</td><td>अधिकतम संख्या का में-app कैश प्रविष्टियाँ.</td></tr>
+<tr><td>पूर्ववत आइटम</td><td>10 ～ 1000</td><td>अधिकतम संख्या का पूर्ववत इतिहास आइटम</td></tr>
+<tr><td>आइटम सीमा</td><td>1 ～ 1000 MB</td><td>सीमा के लिए शुरू को उपयोग आइटम के लिए बड़ा छवि डेटा.</td></tr>
+<tr><td>आइटम FPS सीमा</td><td>10 ～ 120 fps</td><td>आइटम FPS सीमा उपयोग किया गया को कम करें CPU लोड पर बड़ा आइटम.</td></tr>
+<tr><td>शार्प वेक्टर ओवरले सक्षम करें (ज़ूम)</td><td>पर / OFF</td><td>दिखाता है आइटम वेक्टर लेयर आइटम में स्क्रीन रिज़ॉल्यूशन जबकि आइटम.</td></tr>
+<tr><td>वेक्टर ओवरले अधिकतम आयाम</td><td>2048 / 4096 / 8192</td><td>अधिकतम रास्टर आइटम के लिए तेज़ वेक्टर ओवरले. आइटम मान हैं अधिक आइटम लेकिन उपयोग अधिक VRAM.</td></tr>
+</table>
+<h4>आइटम टैब</h4>
+<table>
+<tr><th>सेटिंग्स</th><th>चयन</th><th>विवरण</th></tr>
+<tr><td>आइटम</td><td>सिस्टम डिफ़ॉल्ट / आइटम / आइटम / आइटम (आइटम / आइटम / आइटम आइटम) / आइटम / आइटम / आइटम / आइटम / आइटम (आइटम) / आइटम / आइटम</td><td>UI भाषा। बदलाव बिना पुनः आरंभ किए मुख्य UI क्षेत्रों पर लागू होते हैं।</td></tr>
+<tr><td>रंग आइटम</td><td>गहरा / लाइट / सिस्टम</td><td>रंग आइटम</td></tr>
+<tr><td>दिखाएँ टूलबार</td><td>पर / OFF</td><td>दिखाएँ टूलबार</td></tr>
+<tr><td>दिखाएँ स्थिति बार</td><td>पर / OFF</td><td>दिखाएँ स्थिति बार</td></tr>
+<tr><td>ग्रिड आइटम</td><td>1 ～ 5000 px</td><td>ग्रिड आइटम</td></tr>
+<tr><td>आइटम बाहरी AI सेवाएँ</td><td>पर / OFF</td><td>जब OFF, आइटम पहुँच को ComfyUI / LLM Gateway / NanoBanana है आइटम.</td></tr>
+<tr><td>आइटम</td><td>देखें / लेयर / फ़िल्टर / उपकरण / प्लगइन, आदि.</td><td>आइटम टॉगल दृश्यता के लिए लक्ष्य आइटम.</td></tr>
+<tr><td>मास्क ओवरले रंग</td><td>रंग (डिफ़ॉल्ट: #00FFFF)</td><td>चयन मास्क ओवरले रंग</td></tr>
+<tr><td>मास्क ओवरले अपारदर्शिता</td><td>0 ～ 255</td><td>चयन मास्क ओवरले अपारदर्शिता</td></tr>
+</table>
+<h4>फ़ाइल इनपुट/आउटपुट टैब</h4>
+<table>
+<tr><th>सेटिंग्स</th><th>सीमा</th><th>विवरण</th></tr>
+<tr><td>सक्षम ऑटोसेव</td><td>पर / OFF</td><td>आइटम ऑटोसेव. परिवर्तन आइटम प्रभाव बाद पुनरारंभ.</td></tr>
+<tr><td>ऑटोसेव आइटम</td><td>30 से 3600 सेकंड</td><td>ऑटोसेव आइटम. परिवर्तन आइटम प्रभाव बाद पुनरारंभ.</td></tr>
+<tr><td>आइटम आइटम</td><td>1 ～ 100</td><td>आइटम आइटम उपयोग किया गया जब सहेजना या आइटम.</td></tr>
+<tr><td>लेआउट आइटम</td><td>फ़ोल्डर पथ</td><td>UI लेआउट कहाँ सहेजे जाएँ यह निर्दिष्ट करता है। Browse… से चुनें।</td></tr>
+</table>
+<h4>शॉर्टकट टैब</h4>
+<p>सभी क्रियाओं के कीबोर्ड शॉर्टकट सूचीबद्ध और पुनः असाइन करता है। इसमें श्रेणी / स्वामी ट्री, खोज, संघर्ष प्रदर्शन और आइटम आइटम शामिल हैं। पैन जेस्चर और आइटम आइटम के लिए माउस असाइनमेंट भी बदले जा सकते हैं।</p>
+<h4>AI प्रभाव टैब</h4>
+<table>
+<tr><th>सेटिंग्स</th><th>सीमा / आइटम</th><th>विवरण</th></tr>
+<tr><td>डिफ़ॉल्ट ट्रिगर</td><td>Manual / पर बदलें / Debounced</td><td>डिफ़ॉल्ट ट्रिगर के लिए AI प्रभाव लेयर जनरेशन.</td></tr>
+<tr><td>आइटम आइटम</td><td>0 ～ 60000 ms</td><td>आइटम के लिए आइटम ट्रिगर.</td></tr>
+<tr><td>जनरेशन आइटम</td><td>10 ～ 86400 सेकंड</td><td>आइटम के लिए जनरेशन कार्य.</td></tr>
+<tr><td>कैश प्रति लेयर कैश प्रविष्टियाँ</td><td>1 ～ 500 प्रविष्टियाँ</td><td>कैश सीमा प्रति AI प्रभाव लेयर.</td></tr>
+<tr><td>अक्षम कैश के लिए मैनुअल आइटम</td><td>पर / OFF</td><td>आइटम कैश उपयोग के दौरान मैनुअल आइटम.</td></tr>
+<tr><td>Auto-retries पर 'पर बदलें' ट्रिगर</td><td>0 ～ 10</td><td>संख्या का स्वचालित पुनः प्रयास के लिए पर बदलें जनरेशन.</td></tr>
+<tr><td>आइटम आइटम</td><td>0 ～ 60000 ms</td><td>आइटम आइटम पहले आइटम.</td></tr>
+<tr><td>दिखाएँ पहला-जनरेट बैनर</td><td>पर / OFF</td><td>दिखाता है मार्गदर्शन बैनर बाद पहला जनरेशन पूरा होता है.</td></tr>
+<tr><td>आइटम पर-बदलें / आइटम आइटम में आइटम</td><td>पर / OFF</td><td>टॉगल क्या स्वचालित रूप से जनरेट किया गया परिणाम हैं पंजीकृत में आइटम.</td></tr>
+<tr><td>ComfyUI आइटम</td><td>Local URL / बाहरी URL</td><td>आइटम ComfyUI सर्वर आइटम URL के लिए AI प्रभाव. आइटम डिफ़ॉल्ट है <code>http://127.0.0.1:8188</code> .</td></tr>
+<tr><td>API आइटम</td><td>NanoBanana / OpenAI / Anthropic / Google Gemini</td><td>आइटम… / आइटम से API कुंजियाँ पंजीकृत या हटाएँ। मान इस माध्यम से संभाले जाते हैं:<code>SecretProvider</code> .</td></tr>
+</table>
+<p>AI प्रभाव टैब आइटम, कैश, पुनः प्रयास, और संबंधित सेटिंग्स हैं सहेजा में <code>user_data/ai_effect/preferences.json</code>. ComfyUI URL सामान्य सेटिंग में सहेजा जाता है और अगली बार लॉन्च होने पर लागू होता है।</p>
+</div>
+<h2 id="settings-shortcuts">शॉर्टकट सूची <span class="tag tag-param">सेटिंग्स</span></h2>
+<div class="card">
+<h4>फ़ाइल क्रियाएँ</h4>
+<table class="shortcut-table">
+<tr><td><kbd>Ctrl+N</kbd></td><td>नया</td></tr>
+<tr><td><kbd>Ctrl+O</kbd></td><td>खोलें</td></tr>
+<tr><td><kbd>Ctrl+S</kbd></td><td>सहेजें</td></tr>
+<tr><td><kbd>Ctrl+Shift+S</kbd></td><td>इस रूप में सहेजें</td></tr>
+<tr><td><kbd>Ctrl+Shift+I</kbd></td><td>इम्पोर्ट</td></tr>
+<tr><td><kbd>Ctrl+E</kbd></td><td>निर्यात</td></tr>
+<tr><td><kbd>Ctrl+W</kbd></td><td>बंद करें</td></tr>
+<tr><td><kbd>Ctrl+Q</kbd></td><td>बाहर निकलें</td></tr>
+</table>
+<h4>संपादन क्रियाएँ</h4>
+<table class="shortcut-table">
+<tr><td><kbd>Ctrl+Z</kbd></td><td>पूर्ववत</td></tr>
+<tr><td><kbd>Ctrl+Y</kbd></td><td>फिर करें</td></tr>
+<tr><td><kbd>Ctrl+X</kbd></td><td>काटें</td></tr>
+<tr><td><kbd>Ctrl+C</kbd></td><td>कॉपी</td></tr>
+<tr><td><kbd>Ctrl+V</kbd></td><td>चिपकाएँ</td></tr>
+<tr><td><kbd>Ctrl+A</kbd></td><td>सब चुनें</td></tr>
+<tr><td><kbd>Ctrl+L</kbd></td><td>सब चुनें वेक्टर</td></tr>
+<tr><td><kbd>Ctrl+D</kbd></td><td>चयन हटाएँ</td></tr>
+</table>
+<h4>उपकरण</h4>
+<table class="shortcut-table">
+<tr><td><kbd>B</kbd></td><td>पेन टूल</td></tr>
+<tr><td><kbd>E</kbd></td><td>इरेज़र टूल</td></tr>
+<tr><td><kbd>V</kbd></td><td>मूव टूल</td></tr>
+<tr><td><kbd>P</kbd></td><td>सटीक वेक्टर पेन</td></tr>
+<tr><td><kbd>T</kbd></td><td>टेक्स्ट टूल</td></tr>
+<tr><td><kbd>I</kbd></td><td>आईड्रॉपर टूल</td></tr>
+<tr><td><kbd>[</kbd> / <kbd>]</kbd></td><td>बदलें ब्रश आकार</td></tr>
+</table>
+<h4>दृश्य</h4>
+<table class="shortcut-table">
+<tr><td><kbd>Ctrl+=</kbd></td><td>ज़ूम इन</td></tr>
+<tr><td><kbd>Ctrl+-</kbd></td><td>ज़ूम आउट</td></tr>
+<tr><td><kbd>Ctrl+0</kbd></td><td>ज़ूम रीसेट</td></tr>
+<tr><td><kbd>G</kbd></td><td>टॉगल ग्रिड</td></tr>
+<tr><td><kbd>R</kbd></td><td>टॉगल गाइड</td></tr>
+<tr><td><kbd>F11</kbd></td><td>पूर्ण स्क्रीन</td></tr>
+</table>
+<h4>परतें</h4>
+<table class="shortcut-table">
+<tr><td><kbd>Ctrl+Shift+N</kbd></td><td>नई लेयर</td></tr>
+<tr><td><kbd>Ctrl+J</kbd></td><td>लेयर डुप्लिकेट</td></tr>
+<tr><td><kbd>Del</kbd></td><td>लेयर हटाएँ</td></tr>
+<tr><td><kbd>Ctrl+E</kbd></td><td>नीचे वाली लेयर में मर्ज करें</td></tr>
+<tr><td><kbd>Shift+R</kbd></td><td>रास्टराइज़ करें</td></tr>
+</table>
+<h4>फ़िल्टर</h4>
+<table class="shortcut-table">
+<tr><td><kbd>Ctrl+Alt+F</kbd></td><td>आइटम आइटम फ़िल्टर</td></tr>
+</table>
+<h4>सेटिंग्स</h4>
+<table class="shortcut-table">
+<tr><td><kbd>Ctrl+,</kbd></td><td>प्राथमिकताएँ</td></tr>
+</table>
+</div>
+</main>
+<!-- ===== SCRIPTS ===== -->
+<script>
+const sidebar=document.getElementById('sidebar');const toggle=document.getElementById('sidebar-toggle');if(toggle)toggle.addEventListener('click',()=>sidebar.classList.toggle('show'));
+document.querySelectorAll('.nav-section-title').forEach(t=>t.addEventListener('click',()=>t.parentElement.classList.toggle('open')));
+const s=document.getElementById('sidebar-search');if(s)s.addEventListener('input',()=>{const q=s.value.toLowerCase();document.querySelectorAll('.nav-section').forEach(sec=>{let any=false;sec.querySelectorAll('.nav-link').forEach(a=>{const m=a.textContent.toLowerCase().includes(q);a.style.display=m?'':'none';if(m)any=true;});sec.style.display=any||!q?'':'none';if(q&&any)sec.classList.add('open');});});
+const sel=document.getElementById('language-select');if(sel)sel.addEventListener('change',()=>{location.href='index_'+sel.value+'.html'});
+</script></body>
+</html>

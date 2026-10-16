@@ -1,0 +1,429 @@
+[build-system]
+requires = ["setuptools>=65", "wheel", "setuptools-scm"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "loomstroke"
+version = "0.1.0"
+description = "Plugin-based paint application with AI integration"
+authors = [{name = "LoomStroke Team"}]
+license = {text = "Proprietary"}
+readme = "README.md"
+requires-python = ">=3.11"
+classifiers = [
+    "Development Status :: 4 - Beta",
+    "Intended Audience :: End Users/Desktop",
+    "License :: Other/Proprietary License",
+    "Operating System :: Microsoft :: Windows",
+    "Operating System :: POSIX :: Linux",
+    "Programming Language :: Python :: 3.11",
+    "Programming Language :: Python :: 3.12",
+    "Topic :: Multimedia :: Graphics :: Editors",
+]
+
+dependencies = [
+    "PySide6==6.10.*",
+    "wgpu==0.31.0",
+    "numpy>=1.24.0,<2.4",
+    "Pillow>=12.1.1",
+    "opencv-python-headless>=4.8.0",
+    "aiohttp>=3.13.4",
+    "aiofiles>=23.0.0",
+    "qasync>=0.27.0",
+    "numba>=0.58.0",
+    "jsonschema>=4.19.0",
+    "packaging>=24.0",
+    "cryptography>=46.0.6",
+    "defusedxml>=0.7.0",
+    "psd-tools>=1.9.0",
+    # Phase 8a: required to route API keys through OS-native credential
+    # storage (Windows Credential Manager / DPAPI, macOS Keychain,
+    # Linux Secret Service). When keyring is missing, paid API key save
+    # / read paths fail closed instead of writing a co-located Fernet
+    # key + ciphertext fallback.
+    "keyring>=24.0",
+]
+
+[project.optional-dependencies]
+dev = [
+    "pytest>=7.4.0",
+    "pytest-qt>=4.2.0",
+    "pytest-asyncio>=0.21.0",
+    "pytest-cov>=4.1.0",
+    "pytest-benchmark>=4.0.0",
+    "ruff>=0.15.10,<0.16.0",
+    # Upper bounds pin to next major to prevent CI drift from new rules/breaks
+    # (R-H1, Pre-release audit §12-I). Lock file currently at:
+    # black==26.3.1 / isort==8.0.1 / mypy==1.20.0 — all within bounds below.
+    "black>=23.0.0,<27.0.0",
+    "isort>=5.12.0,<9.0.0",
+    "mypy>=1.5.0,<2.0.0",
+    "types-Pillow",
+    "types-jsonschema>=4.21.0",
+    "scipy-stubs",
+    "types-pywin32",
+]
+
+nanobanana = [
+    "Pillow>=10",
+    "google-genai>=0.3; python_version>='3.11'",
+]
+
+[project.urls]
+Homepage = "https://github.com/NakamuraShippo/LoomStroke"
+Documentation = "https://loomstroke.app/docs"
+Repository = "https://github.com/NakamuraShippo/LoomStroke.git"
+Issues = "https://github.com/NakamuraShippo/LoomStroke/issues"
+
+[project.scripts]
+loomstroke = "loomstroke.app:main"
+
+[tool.setuptools.packages.find]
+where = ["src"]
+include = ["loomstroke*"]
+namespaces = true
+
+[tool.black]
+line-length = 100
+target-version = ["py311"]
+include = '\.pyi?$'
+extend-exclude = '''
+/(
+    __pycache__
+  | \.git
+  | \.mypy_cache
+  | \.pytest_cache
+  | \.ruff_cache
+  | build
+  | dist
+)/
+'''
+
+[tool.ruff]
+line-length = 100
+target-version = "py311"
+exclude = [
+    "__pycache__",
+    "*.pyc",
+    "*.pyo",
+    "*.nbi",
+    "*.nbc",
+    ".git",
+    ".mypy_cache",
+    ".pytest_cache",
+    ".ruff_cache",
+    "build",
+    "dist",
+]
+
+[tool.ruff.lint]
+select = [
+    "E",    # pycodestyle errors
+    "F",    # pyflakes
+    "I",    # isort
+    "UP",   # pyupgrade
+    "B",    # flake8-bugbear
+    "SIM",  # flake8-simplify
+    "PL",   # pylint
+    "RUF",  # ruff-specific rules
+]
+ignore = [
+    "E203",  # whitespace before ':'
+    "PLR0913",  # Too many arguments
+    "PLR2004",  # Magic value comparison
+    "RUF100",  # Ignore unused noqa (existing inline suppressions in legacy files)
+    # --- Added for ruff 0.15 upgrade (Pre-release #12c): new rules not
+    # previously enforced; evaluated individually in separate tasks ---
+    "PLW0108",  # Lambda may be unnecessary (many legitimate call-wrapping usages in tests)
+    "UP042",    # str+Enum → StrEnum (semantics risk: pickle/subclass behavior; Alpha→Beta stability)
+    "PLC0207",  # String split count optimization (low priority cleanup)
+]
+
+[tool.ruff.lint.isort]
+combine-as-imports = false
+
+[tool.ruff.lint.per-file-ignores]
+# Magic values and asserts are fine in tests; RUF001 because Japanese test
+# fixtures legitimately contain fullwidth punctuation (？！：).
+"tests/**" = ["PLR2004", "S101", "RUF001"]
+# Translation tables are exempt from line-splitting (AGENTS.md §8); long JA
+# strings stay on one line so keys remain greppable.
+"src/loomstroke/ui/translations.py" = ["E501"]
+"src/loomstroke/plugins/basic_pen/pen_tool.py" = [
+    "E402",
+    "E501",
+    "F401",
+    "F811",
+    "F821",
+    "F841",
+    "PLC0415",
+    "RUF046",
+    "SIM105",
+]
+"src/loomstroke/plugins/basic_move/move_tool.py" = [
+    "PLR0911",
+    "PLR0912",
+    "PLR0915",
+]
+"src/loomstroke/plugins/basic_selection/rect_tool.py" = [
+    "PLR0911",
+    "PLR0912",
+    "PLR0915",
+]
+"src/loomstroke/plugins/comfyui/service.py" = [
+    "PLR0911",
+]
+"src/loomstroke/plugins/comfyui/ui/connection_bar.py" = [
+    "PLR0915",
+]
+"src/loomstroke/plugins/comfyui/ui/node_tabs.py" = [
+    "PLR0911",
+    "PLR0912",
+    "PLR0915",
+]
+"src/loomstroke/plugins/comfyui/ui/parameter_editor.py" = [
+    "PLR0911",
+]
+"src/loomstroke/plugins/common/outbound_policy.py" = [
+    "PLR0911",
+]
+"src/loomstroke/plugins/nanobanana/ui/panel.py" = [
+    "PLR0915",
+]
+"src/loomstroke/plugins/sdk/loader.py" = [
+    "PLR0912",
+]
+"src/loomstroke/plugins/sdk/registry.py" = [
+    "PLR0912",
+    "PLR0915",
+]
+"src/loomstroke/plugins/sdk/validator.py" = [
+    "PLR0911",
+    "PLR0912",
+]
+"src/loomstroke/plugins/text_tool/tool.py" = [
+    "PLR0911",
+    "PLR0912",
+    "PLR0915",
+]
+"src/loomstroke/ui/main_window.py" = [
+    "PLC0415",
+    "PLR0911",
+    "PLR0912",
+    "PLR0915",
+]
+"src/loomstroke/plugins/llm_gateway/config.py" = [
+    "PLW0603",
+]
+"src/loomstroke/plugins/nanobanana/service.py" = [
+    "PLW0603",
+]
+# --- Added for Pre-release #12c: CI quality gate initial ruff errors ---
+# Complexity violations in legacy files (PLR0911/0912/0915) and intentional
+# lazy imports (PLC0415) are ignored per-file to unblock CI. Refactoring
+# candidates are tracked separately in the pre-release audit.
+"src/loomstroke/app_enhanced.py" = [
+    "PLR0912",
+]
+"src/loomstroke/core/canvas_service_simple.py" = [
+    "PLR0912",
+    "PLR0915",
+]
+"src/loomstroke/core/commands.py" = [
+    "PLR0912",
+]
+"src/loomstroke/plugins/comfyui/async_connection.py" = [
+    "PLR0912",
+    "PLR0915",
+]
+"src/loomstroke/plugins/comfyui/extended_service.py" = [
+    "PLR0912",
+    "PLR0915",
+]
+"src/loomstroke/plugins/comfyui/ui/main_panel.py" = [
+    "PLR0912",
+    "PLR0915",
+]
+"src/loomstroke/plugins/vector_tools/parametric_shapes.py" = [
+    "PLR0915",
+]
+"src/loomstroke/ui/canvas/canvas_widget.py" = [
+    "PLR0915",
+]
+"src/loomstroke/ui/canvas/projection_state.py" = [
+    "PLR0912",
+    "PLR0915",
+]
+"src/loomstroke/ui/comfyui_integration_window.py" = [
+    "PLC0415",
+]
+"src/loomstroke/ui/context_toolbar/manager.py" = [
+    "PLC0415",
+]
+"src/loomstroke/ui/context_toolbar/text_toolbar.py" = [
+    "PLC0415",
+    "PLR0915",
+]
+"src/loomstroke/ui/panels/layer_panel.py" = [
+    "PLR0911",
+]
+"src/loomstroke/ui/panels/preview/preview_presenter.py" = [
+    "PLC0415",
+    "PLR0911",
+    "PLR0912",
+    "PLR0915",
+]
+"src/loomstroke/ui/panels/tool_panel.py" = [
+    "PLC0415",
+]
+"src/loomstroke/ui/widgets/property_widget_factory.py" = [
+    "PLC0415",
+]
+
+[tool.mypy]
+python_version = "3.11"
+strict = true
+warn_unused_ignores = true
+warn_redundant_casts = true
+disallow_any_generics = true
+disallow_untyped_defs = true
+no_implicit_optional = true
+# mypy_path = ["src"]: src-layout で duplicate module を回避。
+# explicit_package_bases と組み合わせることで、src/loomstroke/** を
+# "loomstroke.*" のみで解決させ、"src.loomstroke.*" の二重名を抑止する。
+# (Pre-release audit §12-C #11b 残, 2026-04-11)
+mypy_path = ["src"]
+explicit_package_bases = true
+show_error_codes = true
+pretty = true
+
+[[tool.mypy.overrides]]
+module = [
+    "psutil",
+    "psutil.*",
+    "scipy",
+    "scipy.*",
+    "py_cpuinfo",
+    "pywin32",
+    "pywin32.*",
+    "numba",
+    "numba.*",
+    "PySide6",
+    "PySide6.*",
+    "qasync",
+    "PIL",
+    "PIL.*",
+    "cryptography",
+    "cryptography.*",
+    "keyring",
+    "keyring.*",
+]
+ignore_missing_imports = true
+
+# Pre-release audit §12-M-11 Bucket C — Qt 動的属性 (signal / property の
+# 型表現限界) で attr-defined が大量発生するモジュールに限定して
+# disable_error_code を設定する。これらは QWidget サブクラスで signal を
+# class attribute として定義する慣習に起因し、静的型システムの表現力を
+# 超える Bucket C (§12-M-4) に分類されたもの。本番コードは無変更。
+[[tool.mypy.overrides]]
+module = [
+    "loomstroke.ui.panels.workflow_panel",
+    "loomstroke.ui.panels.comfyui_panel",
+    "loomstroke.ui.panels.prompt_panel",
+    "loomstroke.ui.panels.node_panel",
+    "loomstroke.ui.dialogs.plugin_compatibility_dialog",
+]
+disable_error_code = ["attr-defined"]
+
+[[tool.mypy.overrides]]
+module = [
+    "loomstroke.plugins.*",
+    "src.loomstroke.plugins.*",
+]
+ignore_errors = true
+
+[tool.isort]
+profile = "black"
+line_length = 100
+multi_line_output = 3
+include_trailing_comma = true
+force_grid_wrap = 0
+combine_as_imports = false
+use_parentheses = true
+ensure_newline_before_comments = true
+
+[tool.pytest.ini_options]
+minversion = "7.0"
+pythonpath = ["src"]
+testpaths = ["tests"]
+python_files = ["test_*.py", "*_test.py"]
+python_classes = ["Test*"]
+python_functions = ["test_*"]
+addopts = [
+    "-ra",
+    "--strict-markers",
+    "--strict-config",
+    "-p",
+    "no:cacheprovider",
+    "--import-mode=importlib",
+    "--basetemp=user_data/pytest_tmp",
+]
+asyncio_mode = "auto"
+markers = [
+    "slow: marks tests as slow (deselect with '-m \"not slow\"')",
+    "integration: marks tests as integration tests",
+    "unit: marks tests as unit tests",
+    "qt: marks tests that require pytest-qt",
+    "gpu: marks tests that require or probe GPU backends",
+    "headless: marks tests that verify offscreen/headless runtime behavior",
+]
+
+[tool.coverage.run]
+source = ["src"]
+omit = [
+    "*/tests/*",
+    "*/__pycache__/*",
+    "*/test_*.py",
+]
+
+[tool.coverage.report]
+exclude_lines = [
+    "pragma: no cover",
+    "def __repr__",
+    "if __name__ == '__main__':",
+    "raise NotImplementedError",
+    "pass",
+    "except ImportError:",
+]
+
+[tool.setuptools]
+license-files = ["LICENSE", "LICENSE_JA", "THIRD_PARTY_LICENSES"]
+
+[tool.setuptools.package-dir]
+"" = "src"
+
+
+
+[tool.setuptools.package-data]
+"loomstroke.io" = [
+    "lstroke_manifest_schema_v1.json",
+    "resources/icc/*.icc",
+    "resources/icc/*.ICC",
+    "resources/icc/*.json",
+    "resources/icc/*.txt",
+]
+"loomstroke.ui" = [
+    "resources/i18n/*.qm",
+    "resources/layouts/*.json",
+    "icons/*.svg",
+]
+"loomstroke.plugins.prompt_editor" = ["manifest.json"]
+"loomstroke.plugins.basic_pen" = ["icons/*.svg"]
+"loomstroke.plugins.basic_eraser" = ["icons/*.svg"]
+"loomstroke.plugins.basic_fill_bucket" = ["icons/*.svg"]
+"loomstroke.plugins.basic_move" = ["icons/*.svg"]
+"loomstroke.plugins.basic_selection" = ["icons/*.svg"]
+"loomstroke.plugins.color_manager" = ["icons/*.svg"]
+"loomstroke.plugins.shape_manager" = ["icons/*.svg"]
+"loomstroke.plugins.text_tool" = ["icons/*.svg"]
+"loomstroke.plugins.vector_tools" = ["icons/*.svg"]

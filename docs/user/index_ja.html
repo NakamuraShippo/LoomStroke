@@ -1,0 +1,1346 @@
+<!DOCTYPE html>
+
+<html lang="ja">
+<head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>LoomStroke — ユーザーガイド</title>
+<style>
+:root {
+  --bg: #1a1a2e;
+  --bg-panel: #16213e;
+  --bg-card: #1e2a4a;
+  --bg-card-hover: #253456;
+  --accent: #4fc3f7;
+  --accent-dim: #2980b9;
+  --text: #e0e6ed;
+  --text-dim: #8899aa;
+  --text-heading: #ffffff;
+  --border: #2a3a5c;
+  --sidebar-w: 280px;
+  --tag-tool: #4fc3f7;
+  --tag-panel: #ab47bc;
+  --tag-param: #66bb6a;
+  --tag-effect: #ff7043;
+  --tag-ai: #ffd54f;
+}
+* { margin:0; padding:0; box-sizing:border-box; }
+body {
+  font-family: 'Segoe UI', 'Noto Sans JP', 'Hiragino Kaku Gothic ProN', sans-serif;
+  background: var(--bg);
+  color: var(--text);
+  line-height: 1.7;
+  display: flex;
+  min-height: 100vh;
+}
+
+/* ── Sidebar ── */
+#sidebar {
+  width: var(--sidebar-w);
+  min-width: var(--sidebar-w);
+  background: var(--bg-panel);
+  border-right: 1px solid var(--border);
+  overflow-y: auto;
+  position: fixed;
+  top: 0; left: 0; bottom: 0;
+  z-index: 100;
+  transition: transform .25s ease;
+  scrollbar-width: thin;
+  scrollbar-color: var(--border) transparent;
+}
+#sidebar.collapsed { transform: translateX(calc(-1 * var(--sidebar-w))); }
+#sidebar-header {
+  padding: 20px 16px 12px;
+  border-bottom: 1px solid var(--border);
+  position: sticky; top: 0;
+  background: var(--bg-panel);
+  z-index: 1;
+}
+#sidebar-header h1 {
+  font-size: 16px; color: var(--accent);
+  font-weight: 700; letter-spacing: .5px;
+}
+#sidebar-header p { font-size: 11px; color: var(--text-dim); margin-top: 2px; }
+#sidebar-search {
+  width: 100%; margin-top: 10px; padding: 6px 10px;
+  background: var(--bg-card); border: 1px solid var(--border);
+  border-radius: 4px; color: var(--text); font-size: 13px; outline: none;
+}
+#sidebar-search:focus { border-color: var(--accent); }
+#sidebar-search::placeholder { color: var(--text-dim); }
+.language-picker {
+  margin-top: 10px;
+}
+.language-picker label {
+  display: block; margin-bottom: 4px;
+  color: var(--text-dim); font-size: 11px;
+}
+#language-select {
+  width: 100%; padding: 6px 10px;
+  background: var(--bg-card); border: 1px solid var(--border);
+  border-radius: 4px; color: var(--text); font-size: 13px; outline: none;
+}
+#language-select:focus { border-color: var(--accent); }
+#sidebar nav { padding: 8px 0 24px; }
+.nav-section { margin-bottom: 2px; }
+.nav-section-title {
+  display: flex; align-items: center; gap: 6px;
+  padding: 8px 16px; font-size: 12px; font-weight: 700;
+  color: var(--text-dim); text-transform: uppercase; letter-spacing: .8px;
+  cursor: pointer; user-select: none; transition: color .15s;
+}
+.nav-section-title:hover { color: var(--text); }
+.nav-section-title::before {
+  content: '▸'; display: inline-block; font-size: 10px;
+  transition: transform .2s; width: 12px; text-align: center;
+}
+.nav-section.open > .nav-section-title::before { transform: rotate(90deg); }
+.nav-section-items { display: none; }
+.nav-section.open > .nav-section-items { display: block; }
+.nav-link {
+  display: block; padding: 5px 16px 5px 34px;
+  font-size: 13px; color: var(--text-dim);
+  text-decoration: none; border-left: 3px solid transparent;
+  transition: all .15s;
+}
+.nav-link:hover { color: var(--text); background: rgba(79,195,247,.06); }
+.nav-link.active { color: var(--accent); border-left-color: var(--accent); background: rgba(79,195,247,.08); }
+
+/* ── Toggle button ── */
+#sidebar-toggle {
+  position: fixed; top: 12px; left: 12px; z-index: 200;
+  width: 36px; height: 36px; border: none; border-radius: 6px;
+  background: var(--accent-dim); color: #fff; font-size: 18px;
+  cursor: pointer; display: none; align-items: center; justify-content: center;
+  transition: background .15s;
+}
+#sidebar-toggle:hover { background: var(--accent); }
+
+/* ── Main content ── */
+#main {
+  flex: 1; margin-left: var(--sidebar-w);
+  padding: 32px 40px 80px;
+  max-width: 960px;
+  transition: margin-left .25s ease;
+}
+#main.expanded { margin-left: 0; }
+
+h2 {
+  font-size: 26px; color: var(--text-heading);
+  margin: 48px 0 16px; padding-bottom: 8px;
+  border-bottom: 2px solid var(--accent-dim);
+}
+h2:first-of-type { margin-top: 0; }
+h3 {
+  font-size: 19px; color: var(--accent);
+  margin: 32px 0 10px;
+}
+h4 {
+  font-size: 15px; color: var(--text-heading);
+  margin: 20px 0 8px;
+}
+p, li { font-size: 14px; }
+p { margin-bottom: 10px; }
+ul, ol { padding-left: 20px; margin-bottom: 12px; }
+li { margin-bottom: 4px; }
+
+.tag {
+  display: inline-block; font-size: 10px; font-weight: 700;
+  padding: 1px 7px; border-radius: 3px; margin-right: 4px;
+  vertical-align: middle; letter-spacing: .3px;
+}
+.tag-tool    { background: rgba(79,195,247,.18); color: var(--tag-tool); }
+.tag-panel   { background: rgba(171,71,188,.18); color: var(--tag-panel); }
+.tag-param   { background: rgba(102,187,106,.18); color: var(--tag-param); }
+.tag-effect  { background: rgba(255,112,67,.18);  color: var(--tag-effect); }
+.tag-ai      { background: rgba(255,213,79,.18);  color: var(--tag-ai); }
+
+.card {
+  background: var(--bg-card); border: 1px solid var(--border);
+  border-radius: 8px; padding: 18px 20px; margin-bottom: 16px;
+  transition: border-color .15s;
+}
+.card:hover { border-color: var(--accent-dim); }
+.card h4 { margin-top: 0; }
+
+table {
+  width: 100%; border-collapse: collapse; margin-bottom: 16px;
+  font-size: 13px;
+}
+th, td {
+  padding: 8px 12px; text-align: left;
+  border-bottom: 1px solid var(--border);
+}
+th { color: var(--accent); font-weight: 600; font-size: 12px; text-transform: uppercase; letter-spacing: .5px; }
+tr:hover td { background: rgba(79,195,247,.04); }
+
+kbd {
+  display: inline-block; background: var(--bg-card); border: 1px solid var(--border);
+  border-radius: 4px; padding: 1px 6px; font-size: 12px;
+  font-family: 'Consolas', 'Courier New', monospace; color: var(--accent);
+}
+
+.shortcut-table td:first-child { white-space: nowrap; }
+
+code {
+  background: var(--bg-card); padding: 2px 6px; border-radius: 3px;
+  font-size: 13px; font-family: 'Consolas', 'Courier New', monospace;
+  color: var(--accent);
+}
+
+.grid-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
+@media (max-width: 700px) { .grid-2 { grid-template-columns: 1fr; } }
+
+.hero {
+  background: linear-gradient(135deg, var(--bg-panel), var(--bg-card));
+  border: 1px solid var(--border); border-radius: 12px;
+  padding: 32px; margin-bottom: 32px; text-align: center;
+}
+.hero h2 { border: none; margin: 0 0 8px; font-size: 32px; }
+.hero p { color: var(--text-dim); font-size: 15px; margin: 0; }
+
+/* ── Page mode ── */
+.doc-page {
+  display: none;
+  animation: pageFade .16s ease;
+}
+.doc-page.active { display: block; }
+@keyframes pageFade {
+  from { opacity: 0; transform: translateY(6px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+.page-controls {
+  display: flex; align-items: center; justify-content: space-between;
+  gap: 12px; margin: 0 0 24px; padding: 10px 0;
+  border-bottom: 1px solid var(--border);
+}
+.page-controls-bottom {
+  margin: 24px 0 0; border-top: 1px solid var(--border);
+  border-bottom: none;
+}
+.page-button {
+  min-width: 92px; padding: 7px 12px;
+  border: 1px solid var(--border); border-radius: 6px;
+  background: var(--bg-card); color: var(--text);
+  cursor: pointer; font-size: 13px;
+}
+.page-button:hover:not(:disabled) {
+  border-color: var(--accent); color: var(--accent);
+}
+.page-button:disabled {
+  opacity: .4; cursor: default;
+}
+.page-status {
+  color: var(--text-dim); font-size: 13px; text-align: center;
+}
+
+/* 画像は docs/user/assets/user-guide/ に置き、下部 script の pageMedia に登録します。 */
+.media-slot {
+  margin: 14px 0 18px;
+  border: 1px solid var(--border); border-radius: 8px;
+  background: rgba(255,255,255,.025); overflow: hidden;
+}
+.media-slot img {
+  display: block; width: 100%; height: auto;
+}
+.media-caption {
+  padding: 8px 12px; color: var(--text-dim); font-size: 12px;
+  border-top: 1px solid var(--border);
+}
+.media-slot-empty:not(.media-slot-visible) { display: none; }
+.media-placeholder {
+  min-height: 180px; display: flex; flex-direction: column;
+  align-items: center; justify-content: center; gap: 6px;
+  color: var(--text-dim); border: 1px dashed var(--border);
+}
+.media-placeholder strong { color: var(--accent); font-size: 13px; }
+.media-placeholder span { font-size: 12px; }
+
+/* ── Responsive ── */
+@media (max-width: 900px) {
+  #sidebar { transform: translateX(calc(-1 * var(--sidebar-w))); }
+  #sidebar.show { transform: translateX(0); }
+  #sidebar-toggle { display: flex; }
+  #main { margin-left: 0; padding: 32px 20px 60px; }
+  .page-controls { position: sticky; top: 0; z-index: 20; background: var(--bg); }
+}
+
+@media print {
+  body { display: block; background: #fff; color: #000; }
+  #sidebar, #sidebar-toggle, .page-controls { display: none !important; }
+  #main { margin: 0; max-width: none; padding: 0; }
+  .doc-page { display: block !important; page-break-after: always; }
+  .media-slot-empty { display: none !important; }
+}
+</style>
+</head>
+<body>
+<button aria-label="メニュー切替" id="sidebar-toggle">☰</button>
+<!-- ===== SIDEBAR ===== -->
+<aside id="sidebar">
+<div id="sidebar-header">
+<h1>LoomStroke</h1>
+<p>ユーザーガイド</p>
+<input autocomplete="off" id="sidebar-search" placeholder="検索…" type="search"/>
+<div class="language-picker">
+<label for="language-select">表示言語</label>
+<select autocomplete="off" id="language-select">
+<option selected="selected" value="ja">日本語</option>
+<option value="en">英語</option>
+<option value="zh_CN">簡体字中国語</option>
+<option value="zh_Hant">繁体字中国語</option>
+<option value="zh_TW">台湾華語</option>
+<option value="ko">韓国語</option>
+<option value="es">スペイン語</option>
+<option value="ar">アラビア語</option>
+<option value="hi">ヒンディー語</option>
+<option value="pt_BR">ポルトガル語（ブラジル）</option>
+<option value="bn">ベンガル語</option>
+<option value="ru">ロシア語</option>
+</select>
+</div>
+</div>
+<nav>
+<!-- Overview -->
+<div class="nav-section open">
+<div class="nav-section-title">概要</div>
+<div class="nav-section-items">
+<a class="nav-link" href="#overview">アプリケーション概要</a>
+<a class="nav-link" href="#layout">画面レイアウト</a>
+</div>
+</div>
+<!-- Drawing Tools -->
+<div class="nav-section open">
+<div class="nav-section-title">描画ツール</div>
+<div class="nav-section-items">
+<a class="nav-link" href="#pen">ペンツール</a>
+<a class="nav-link" href="#eraser">消しゴムツール</a>
+<a class="nav-link" href="#fill-bucket">塗りつぶしツール</a>
+<a class="nav-link" href="#gradient">グラデーションツール</a>
+<a class="nav-link" href="#pattern-fill">パターンフィルツール</a>
+</div>
+</div>
+<!-- Selection Tools -->
+<div class="nav-section">
+<div class="nav-section-title">選択ツール</div>
+<div class="nav-section-items">
+<a class="nav-link" href="#selection-rect">矩形選択ツール</a>
+<a class="nav-link" href="#magic-wand">マジックワンドツール</a>
+</div>
+</div>
+<!-- Transform / Move -->
+<div class="nav-section">
+<div class="nav-section-title">変形・移動</div>
+<div class="nav-section-items">
+<a class="nav-link" href="#move">移動ツール</a>
+<a class="nav-link" href="#transform-panel">トランスフォームパネル</a>
+</div>
+</div>
+<!-- Vector Tools -->
+<div class="nav-section">
+<div class="nav-section-title">ベクターツール</div>
+<div class="nav-section-items">
+<a class="nav-link" href="#vector-path">ベクターパスツール</a>
+<a class="nav-link" href="#vector-precise">ベクター精密ペン</a>
+<a class="nav-link" href="#vector-edit">ベクター編集ツール</a>
+</div>
+</div>
+<!-- Text Tools -->
+<div class="nav-section">
+<div class="nav-section-title">テキストツール</div>
+<div class="nav-section-items">
+<a class="nav-link" href="#text-tool">テキストツール</a>
+<a class="nav-link" href="#text-vertical">縦書きテキストツール</a>
+<a class="nav-link" href="#font-panel">フォントパネル</a>
+</div>
+</div>
+<!-- Utility Tools -->
+<div class="nav-section">
+<div class="nav-section-title">ユーティリティ</div>
+<div class="nav-section-items">
+<a class="nav-link" href="#eyedropper">スポイトツール</a>
+</div>
+</div>
+<!-- Panels -->
+<div class="nav-section open">
+<div class="nav-section-title">パネル</div>
+<div class="nav-section-items">
+<a class="nav-link" href="#panel-toolbar">ツールバー</a>
+<a class="nav-link" href="#panel-tool-props">ツールプロパティ</a>
+<a class="nav-link" href="#panel-layers">レイヤーパネル</a>
+<a class="nav-link" href="#panel-color">カラーパネル</a>
+<a class="nav-link" href="#panel-brush-manager">ブラシマネージャー</a>
+<a class="nav-link" href="#panel-shape-manager">シェイプマネージャー</a>
+<a class="nav-link" href="#panel-effect">エフェクトパネル</a>
+<a class="nav-link" href="#panel-pages">ページパネル</a>
+<a class="nav-link" href="#panel-preview">プレビューパネル</a>
+<a class="nav-link" href="#panel-context-toolbar">コンテキストツールバー</a>
+</div>
+</div>
+<!-- Effects -->
+<div class="nav-section">
+<div class="nav-section-title">エフェクトレイヤー</div>
+<div class="nav-section-items">
+<a class="nav-link" href="#fx-gaussian-blur">ガウシアンブラー</a>
+<a class="nav-link" href="#fx-levels">レベル補正</a>
+<a class="nav-link" href="#fx-hue-saturation">色相・彩度</a>
+<a class="nav-link" href="#fx-invert">階調の反転</a>
+<a class="nav-link" href="#fx-brightness-contrast">明るさ・コントラスト</a>
+<a class="nav-link" href="#fx-sharpen">シャープ</a>
+<a class="nav-link" href="#fx-noise-reduction">ノイズリダクション</a>
+</div>
+</div>
+<!-- AI -->
+<div class="nav-section">
+<div class="nav-section-title">AI 連携</div>
+<div class="nav-section-items">
+<a class="nav-link" href="#ai-comfyui">ComfyUI パネル</a>
+<a class="nav-link" href="#ai-nanobanana">NanoBanana パネル</a>
+<a class="nav-link" href="#ai-prompt-editor">プロンプトエディタ</a>
+</div>
+</div>
+<!-- AI Effect Layer -->
+<div class="nav-section">
+<div class="nav-section-title">AI Effect</div>
+<div class="nav-section-items">
+<a class="nav-link" href="#ai-effect-overview">AI Effect Layer</a>
+<a class="nav-link" href="#ai-effect-manager">AI Effects Manager</a>
+<a class="nav-link" href="#ai-effect-editor">Effect Editor</a>
+<a class="nav-link" href="#ai-effect-runtime">生成と状態</a>
+</div>
+</div>
+<!-- Canvas -->
+<div class="nav-section">
+<div class="nav-section-title">キャンバス操作</div>
+<div class="nav-section-items">
+<a class="nav-link" href="#canvas-viewport">ズーム・パン・回転</a>
+<a class="nav-link" href="#canvas-rulers">ルーラーとガイド</a>
+<a class="nav-link" href="#canvas-grid">グリッド</a>
+</div>
+</div>
+<!-- File I/O -->
+<div class="nav-section">
+<div class="nav-section-title">ファイル入出力</div>
+<div class="nav-section-items">
+<a class="nav-link" href="#file-formats">対応フォーマット</a>
+<a class="nav-link" href="#file-lstroke">.lstroke ネイティブ形式</a>
+</div>
+</div>
+<!-- Settings -->
+<div class="nav-section">
+<div class="nav-section-title">設定</div>
+<div class="nav-section-items">
+<a class="nav-link" href="#settings-preferences">環境設定</a>
+<a class="nav-link" href="#settings-shortcuts">ショートカット一覧</a>
+</div>
+</div>
+</nav>
+</aside>
+<!-- ===== MAIN CONTENT ===== -->
+<main id="main">
+<!-- Hero -->
+<div class="hero">
+<h2 style="border:none;">LoomStroke</h2>
+<p>マンガ・イラスト制作のための統合デジタルペイントアプリケーション</p>
+</div>
+<!-- ────────────────── 概要 ────────────────── -->
+<section id="overview">
+<h2>アプリケーション概要</h2>
+<p>LoomStroke は、ラスタ描画、ベクターパス、テキスト編集、複数ページ、外部プラグイン、AI 連携を同じ制作環境で扱うデジタルペイントアプリケーションです。作業中のファイルは <code>.lstroke</code> 形式で保存できます。</p>
+<div class="grid-2">
+<div class="card">
+<h4>主要機能</h4>
+<ul>
+<li>筆圧・チルト対応ブラシエンジン</li>
+<li>レイヤーの不透明度・ブレンドモード管理</li>
+<li>ベクターパス・パラメトリックシェイプ</li>
+<li>横書き・縦書きテキスト</li>
+<li>ノンデストラクティブ・エフェクトレイヤー</li>
+<li>マルチページドキュメント</li>
+</ul>
+</div>
+<div class="card">
+<h4>AI 連携</h4>
+<ul>
+<li>ComfyUI ワークフロー統合</li>
+<li>NanoBanana (Gemini) 画像生成</li>
+<li>プロンプトエディタ・スニペット管理</li>
+<li>LLM Gateway (OpenAI / Anthropic / Gemini)</li>
+</ul>
+</div>
+</div>
+</section>
+<!-- ────────────────── Layout ────────────────── -->
+<section id="layout">
+<h2>画面レイアウト</h2>
+<p>メインウィンドウは以下の領域で構成されます。各パネルはドラッグ&amp;ドロップで自由に配置でき、タブ結合も可能です。</p>
+<div class="card">
+<table>
+<tr><th>領域</th><th>内容</th></tr>
+<tr><td>上部</td><td>メニューバー + ツールプロパティバー (アクティブツールの設定を横一列表示)</td></tr>
+<tr><td>左ドック</td><td>ツールバー、カラーパネル、フォントパネル、ページパネル</td></tr>
+<tr><td>中央</td><td>キャンバス (既定は QImage ベースの SimpleCanvasService) + ルーラー</td></tr>
+<tr><td>右ドック</td><td>レイヤーパネル、シェイプマネージャー、トランスフォーム、エフェクト、プレビュー</td></tr>
+<tr><td>フローティング</td><td>コンテキストツールバー (ストローク後に自動表示)</td></tr>
+</table>
+</div>
+<p><kbd>Window</kbd> メニューから各パネルの表示/非表示を切り替えられます。<kbd>F11</kbd> でフルスクリーンモードに切り替わります。</p>
+</section>
+<!-- ══════════════════ 描画ツール ══════════════════ -->
+<h2 id="pen">ペンツール <span class="tag tag-tool">TOOL</span></h2>
+<p>筆圧・チルト対応のラスター描画ブラシです。ABR (Photoshop) ブラシのインポートにも対応しています。</p>
+<div class="card">
+<p><strong>ショートカット:</strong> <kbd>B</kbd> / <kbd>Shift+B</kbd></p>
+<table>
+<tr><th>パラメーター</th><th>範囲</th><th>説明</th></tr>
+<tr><td>Size</td><td>1 ～ 128</td><td>ブラシの直径 (px)</td></tr>
+<tr><td>Opacity</td><td>0 ～ 1.0</td><td>ストローク全体の不透明度</td></tr>
+<tr><td>Hardness</td><td>0 ～ 1.0</td><td>エッジの硬さ (0=ソフト, 1=ハード)</td></tr>
+<tr><td>Spacing</td><td>0.01 ～ 1.0</td><td>スタンプ間隔 (ブラシ径に対する比率)</td></tr>
+<tr><td>Flow</td><td>0 ～ 1.0</td><td>インクのフロー量</td></tr>
+<tr><td>Stamp Density</td><td>0 ～ 1.0</td><td>スタンプ密度 (Spacing の逆数表現)</td></tr>
+<tr><td>Pressure Sensitive</td><td>ON / OFF</td><td>筆圧感度の有効化</td></tr>
+<tr><td>Smoothing</td><td>0 ～ 1.0</td><td>手ブレ補正 (スタビライズ)</td></tr>
+<tr><td>Tone Range</td><td>0 ～ 1.0</td><td>トーン範囲 (スクリーントーン調)</td></tr>
+<tr><td>Tone Gamma</td><td>0.1 ～ 2.0</td><td>トーンガンマ補正値</td></tr>
+<tr><td>Tilt Angle</td><td>ON / OFF</td><td>タブレットのチルトによるシェーディング</td></tr>
+</table>
+<p><strong>プリセット:</strong> Sketch, Inking + ABR インポートによるカスタムブラシ</p>
+</div>
+<h2 id="eraser">消しゴムツール <span class="tag tag-tool">TOOL</span></h2>
+<p>筆圧対応のラスター消しゴムです。</p>
+<div class="card">
+<p><strong>ショートカット:</strong> <kbd>E</kbd> / <kbd>Shift+E</kbd>   <strong>サイズ変更:</strong> <kbd>[</kbd> <kbd>]</kbd></p>
+<table>
+<tr><th>パラメーター</th><th>範囲</th><th>説明</th></tr>
+<tr><td>Size</td><td>1 ～ 200</td><td>消しゴムの直径 (px)</td></tr>
+<tr><td>Opacity</td><td>0 ～ 1.0</td><td>消去の強さ</td></tr>
+<tr><td>Hardness</td><td>0 ～ 1.0</td><td>エッジの硬さ</td></tr>
+<tr><td>Spacing</td><td>0.01 ～ 1.0</td><td>スタンプ間隔</td></tr>
+<tr><td>Anti Alias</td><td>ON / OFF</td><td>アンチエイリアス</td></tr>
+</table>
+<p><strong>プリセット:</strong> Soft Erase, Edge Cleanup</p>
+</div>
+<h2 id="fill-bucket">塗りつぶしツール <span class="tag tag-tool">TOOL</span></h2>
+<p>隣接する類似色の領域をフラッドフィルで塗りつぶします。</p>
+<div class="card">
+<table>
+<tr><th>パラメーター</th><th>範囲</th><th>説明</th></tr>
+<tr><td>Color Tolerance</td><td>0 ～ 255</td><td>塗りつぶし判定の色許容範囲</td></tr>
+<tr><td>Gap Close (px)</td><td>0 ～ 10</td><td>線の切れ目を自動で閉じるピクセル数</td></tr>
+<tr><td>Fill Target</td><td>Active Layer / New Layer</td><td>塗りつぶし先のレイヤー</td></tr>
+</table>
+</div>
+<h2 id="gradient">グラデーションツール <span class="tag tag-tool">TOOL</span></h2>
+<p>ドラッグ操作でリニア/ラジアルのグラデーションを描画します。ピンをドラッグして中間ストップを編集できます。</p>
+<div class="card">
+<table>
+<tr><th>パラメーター</th><th>範囲</th><th>説明</th></tr>
+<tr><td>Gradient Type</td><td>Linear / Radial</td><td>グラデーション形状</td></tr>
+<tr><td>Color A</td><td>カラー</td><td>開始色</td></tr>
+<tr><td>Color B</td><td>カラー</td><td>終了色</td></tr>
+<tr><td>Middle Stops</td><td>0 ～ 3</td><td>中間カラーストップの数</td></tr>
+<tr><td>Stop N Pos</td><td>0 ～ 1.0</td><td>各ストップの位置 (0=開始端, 1=終了端)</td></tr>
+<tr><td>Stop N Color</td><td>カラー</td><td>各ストップの色</td></tr>
+<tr><td>Dither</td><td>ON / OFF</td><td>ディザリング (バンディング軽減)</td></tr>
+</table>
+<p><strong>対応ブレンドモード:</strong> Normal, Darken, Multiply, Color Burn, Lighten, Screen, Color Dodge, Linear Dodge, Overlay, Soft Light, Hard Light, Difference, Exclusion</p>
+</div>
+<h2 id="pattern-fill">パターンフィルツール <span class="tag tag-tool">TOOL</span></h2>
+<p>タイルパターンで領域を繰り返し塗りつぶします。</p>
+<div class="card">
+<table>
+<tr><th>パラメーター</th><th>範囲</th><th>説明</th></tr>
+<tr><td>Pattern</td><td>Checkerboard / Horizontal Stripes / Vertical Stripes / Diagonal Stripes / Dots / Crosshatch</td><td>使用する内蔵パターン</td></tr>
+<tr><td>Pattern Scale</td><td>0.1 ～ 10.0</td><td>パターンの拡大率</td></tr>
+<tr><td>Color Tolerance</td><td>0 ～ 255</td><td>塗りつぶし判定の色許容範囲</td></tr>
+<tr><td>Gap Close (px)</td><td>0 ～ 10</td><td>線の切れ目を自動で閉じるピクセル数</td></tr>
+</table>
+<p><strong>操作:</strong> クリックした位置から、つながった領域を選択パターンでタイル状に塗りつぶします。</p>
+</div>
+<!-- ══════════════════ 選択ツール ══════════════════ -->
+<h2 id="selection-rect">矩形選択ツール <span class="tag tag-tool">TOOL</span></h2>
+<p>矩形ドラッグで選択範囲を作成します。ベクターオブジェクトの範囲選択にも対応しています。</p>
+<div class="card">
+<table>
+<tr><th>パラメーター</th><th>範囲</th><th>説明</th></tr>
+<tr><td>Selection Mode</td><td>Rectangle / Vector</td><td>ラスター矩形選択 / ベクター範囲選択</td></tr>
+<tr><td>Operation</td><td>Replace / Add / Subtract / Intersect</td><td>選択範囲の合成方法</td></tr>
+<tr><td>Pixel Perfect</td><td>ON / OFF</td><td>ピクセル単位で整列</td></tr>
+<tr><td>Feather Enabled</td><td>ON / OFF</td><td>ぼかし選択</td></tr>
+<tr><td>Feather Radius</td><td>0 ～ 128</td><td>ぼかし半径 (px)</td></tr>
+<tr><td>Mask Radius</td><td>0 ～ 128</td><td>選択マスクの拡張・縮小などで使う半径</td></tr>
+<tr><td>Transform X / Y</td><td>-10000 ～ 10000</td><td>変形中の移動量</td></tr>
+<tr><td>Transform Scale X / Y</td><td>0.01 ～ 100</td><td>変形中の拡大率</td></tr>
+<tr><td>Transform Rotation</td><td>-180° ～ 180°</td><td>変形中の回転角度</td></tr>
+</table>
+<p><strong>修飾キー:</strong> <kbd>Shift</kbd>=追加, <kbd>Alt</kbd>=除外, <kbd>Shift+Alt</kbd>=交差</p>
+<p><strong>変形モード (<kbd>Ctrl+T</kbd>):</strong> 移動 / スケール / 回転 / 反転 / リセット / 適用 / キャンセル</p>
+</div>
+<h2 id="magic-wand">マジックワンドツール <span class="tag tag-tool">TOOL</span></h2>
+<p>クリック位置から類似色の連続領域を自動選択します。</p>
+<div class="card">
+<table>
+<tr><th>パラメーター</th><th>範囲</th><th>説明</th></tr>
+<tr><td>Tolerance</td><td>0 ～ 255</td><td>色の許容範囲 (初期値: 32)</td></tr>
+<tr><td>Contiguous</td><td>ON / OFF</td><td>ON=隣接ピクセルのみ, OFF=全域の類似色</td></tr>
+<tr><td>Operation</td><td>Replace / Add / Subtract / Intersect</td><td>選択範囲の合成方法</td></tr>
+</table>
+<p>パラメーター変更時、直前のクリック位置で自動再選択されます。</p>
+</div>
+<!-- ══════════════════ 変形・移動 ══════════════════ -->
+<h2 id="move">移動ツール <span class="tag tag-tool">TOOL</span></h2>
+<p>レイヤーやベクターオブジェクトを移動・変形します。テキストオブジェクト上でダブルクリックすると編集モードに切り替わります。</p>
+<div class="card">
+<p><strong>ショートカット:</strong> <kbd>V</kbd></p>
+<table>
+<tr><th>パラメーター</th><th>範囲</th><th>説明</th></tr>
+<tr><td>Pixel Perfect</td><td>ON / OFF</td><td>ピクセル整列 (初期値: ON)</td></tr>
+<tr><td>Grid Snap</td><td>ON / OFF</td><td>グリッドスナップ</td></tr>
+<tr><td>Grid Size</td><td>1 ～ 1024</td><td>グリッドサイズ (px)</td></tr>
+</table>
+<p><strong>操作モード:</strong></p>
+<ul>
+<li><strong>選択範囲あり:</strong> 選択範囲のカット&amp;移動・変形</li>
+<li><strong>ベクター / テキスト:</strong> オブジェクトの移動。ダブルクリックで Path Edit または Text Tool に切り替え</li>
+<li><strong>ラスターレイヤー:</strong> レイヤー全体を移動</li>
+</ul>
+</div>
+<h2 id="transform-panel">トランスフォームパネル <span class="tag tag-panel">PANEL</span></h2>
+<p>選択中のオブジェクトの位置・サイズ・角度を数値入力で制御します。</p>
+<div class="card">
+<table>
+<tr><th>フィールド</th><th>範囲</th><th>説明</th></tr>
+<tr><td>X</td><td>-99999 ～ 99999</td><td>X 位置 (バウンディングボックス左上)</td></tr>
+<tr><td>Y</td><td>-99999 ～ 99999</td><td>Y 位置 (バウンディングボックス左上)</td></tr>
+<tr><td>W</td><td>0.1 ～ 99999</td><td>幅 (ベクター専用)</td></tr>
+<tr><td>H</td><td>0.1 ～ 99999</td><td>高さ (ベクター専用)</td></tr>
+<tr><td>Angle</td><td>-360° ～ 360°</td><td>回転角度</td></tr>
+</table>
+<p>ラスターレイヤー選択時は X/Y のみ編集可能です。</p>
+</div>
+<!-- ══════════════════ ベクターツール ══════════════════ -->
+<h2 id="vector-path">ベクターパスツール <span class="tag tag-tool">TOOL</span></h2>
+<p>クリックでアンカーポイントを配置し、ベジェ曲線パスを作成します。ドラッグで方向ハンドルを設定できます。</p>
+<div class="card">
+<table>
+<tr><th>パラメーター</th><th>範囲</th><th>説明</th></tr>
+<tr><td>Shift Mode</td><td>constraint / disable_snap</td><td><kbd>Shift</kbd> の動作を角度制約またはスナップ無効化に切り替え</td></tr>
+<tr><td>Auto Close Tolerance (px)</td><td>0 ～ 64</td><td>始点付近をクリックしたときに自動で閉じる距離</td></tr>
+<tr><td>Stroke Width</td><td>0.1 ～ 64</td><td>線幅</td></tr>
+<tr><td>Stroke Color</td><td>カラー</td><td>線色</td></tr>
+<tr><td>Fill Enabled</td><td>ON / OFF</td><td>塗りつぶし有効</td></tr>
+<tr><td>Fill Color</td><td>カラー</td><td>塗りつぶし色</td></tr>
+</table>
+<p><kbd>Enter</kbd> で確定、<kbd>Esc</kbd> で破棄。始点近くに戻るとパスが自動クローズされます。</p>
+</div>
+<h2 id="vector-precise">ベクター精密ペン <span class="tag tag-tool">TOOL</span></h2>
+<p>フリーハンドのストロークを自動的にスムーズなベジェ曲線に変換します。</p>
+<div class="card">
+<p><strong>ショートカット:</strong> <kbd>P</kbd></p>
+<table>
+<tr><th>パラメーター</th><th>範囲</th><th>説明</th></tr>
+<tr><td>Edit Mode</td><td>anchor / shape</td><td>アンカー編集寄りか、形状編集寄りかを選択</td></tr>
+<tr><td>Auto Close</td><td>ON / OFF</td><td>パスの自動クローズ</td></tr>
+<tr><td>Stroke Width</td><td>0.1 ～ 64</td><td>線幅</td></tr>
+<tr><td>Stroke Color</td><td>カラー</td><td>線色</td></tr>
+<tr><td>Fill Enabled</td><td>ON / OFF</td><td>塗りつぶし有効</td></tr>
+<tr><td>Fill Color</td><td>カラー</td><td>塗りつぶし色</td></tr>
+<tr><td>Anchor Density</td><td>0.1 ～ 1.0</td><td>生成するアンカーの密度</td></tr>
+<tr><td>Handle Smoothness</td><td>0 ～ 5.0</td><td>曲線のスムージング強度</td></tr>
+</table>
+</div>
+<h2 id="vector-edit">ベクター編集ツール <span class="tag tag-tool">TOOL</span></h2>
+<p>既存のベクターパスのアンカーポイントとハンドルを編集します。</p>
+<div class="card">
+<table>
+<tr><th>パラメーター</th><th>範囲</th><th>説明</th></tr>
+<tr><td>Stroke Color</td><td>カラー</td><td>選択中ベクターの線色</td></tr>
+<tr><td>Stroke Width</td><td>0.1 ～ 128</td><td>選択中ベクターの線幅</td></tr>
+<tr><td>Fill Enabled</td><td>ON / OFF</td><td>塗りつぶし有効</td></tr>
+<tr><td>Fill Color</td><td>カラー</td><td>選択中ベクターの塗り色</td></tr>
+</table>
+<ul>
+<li>アンカーをクリック&amp;ドラッグで移動</li>
+<li>ハンドルをドラッグで曲線の曲率を調整</li>
+<li><kbd>Alt</kbd>+ドラッグで複製移動、<kbd>Ctrl</kbd> でスナップを一時無効化</li>
+<li>未変換の基本図形はアンカーではなく shape handle でパラメトリック編集</li>
+<li>バウンディングボックスでスケール・回転</li>
+</ul>
+</div>
+<!-- ══════════════════ テキストツール ══════════════════ -->
+<h2 id="text-tool">テキストツール <span class="tag tag-tool">TOOL</span></h2>
+<p>横書きテキストを作成・編集します。クリックでポイントテキスト、ドラッグでエリアテキストを作成します。</p>
+<div class="card">
+<p><strong>ショートカット:</strong> <kbd>T</kbd></p>
+<table>
+<tr><th>パラメーター</th><th>範囲</th><th>説明</th></tr>
+<tr><td>Word Wrap</td><td>ON / OFF</td><td>エリアテキスト時のワードラップ</td></tr>
+<tr><td>Font Size (pt)</td><td>1 ～ 512</td><td>フォントサイズ</td></tr>
+<tr><td>Line Height</td><td>0.5 ～ 4.0</td><td>行間倍率</td></tr>
+<tr><td>Tracking</td><td>-64 ～ 128</td><td>字間 (トラッキング)</td></tr>
+<tr><td>Padding</td><td>0 ～ 256 (上下左右個別)</td><td>テキスト枠の内側余白</td></tr>
+</table>
+<p><strong>特記:</strong> IME 入力対応、インライン編集中の移動・回転・拡大縮小、Selection To Area による Shape-wrap Area Text に対応しています。フォントファミリー、スタイル、配置、色、不透明度はフォントパネル側で管理します。</p>
+</div>
+<h2 id="text-vertical">縦書きテキストツール <span class="tag tag-tool">TOOL</span></h2>
+<p>縦書きテキストの作成・編集に使用します。基本パラメーターはテキストツールと共通です。</p>
+<div class="card">
+<table>
+<tr><th>追加パラメーター</th><th>選択肢</th><th>説明</th></tr>
+<tr><td>Vertical Flow</td><td>left / right</td><td>段落送り方向</td></tr>
+<tr><td>Rotate Latin/Digits</td><td>ON / OFF</td><td>半角英数字を縦書き向けに回転</td></tr>
+</table>
+<p>句読点 (「、」「。」) の自動位置補正、長音符 (「ー」) の自動回転に対応。</p>
+</div>
+<h2 id="font-panel">フォントパネル <span class="tag tag-panel">PANEL</span></h2>
+<p>テキストツール使用中のタイポグラフィ設定を一元管理するパネルです。</p>
+<div class="card">
+<h4>ウィジェット一覧</h4>
+<table>
+<tr><th>ウィジェット</th><th>種類</th><th>説明</th></tr>
+<tr><td>Word Wrap</td><td>チェックボックス</td><td>ワードラップ ON/OFF</td></tr>
+<tr><td>Font Family</td><td>コンボボックス</td><td>システムフォント一覧から選択</td></tr>
+<tr><td>Font Style</td><td>コンボボックス</td><td>選択フォントのスタイル</td></tr>
+<tr><td>Font Size (pt)</td><td>スピンボックス</td><td>1.0 ～ 512.0, ステップ 1.0</td></tr>
+<tr><td>Vertical Writing</td><td>チェックボックス</td><td>縦書きモード切替</td></tr>
+<tr><td>Paragraph Flow</td><td>コンボボックス</td><td>Leftward / Rightward (縦書き時のみ)</td></tr>
+<tr><td>Alignment</td><td>コンボボックス</td><td>Left / Center / Right / Justify</td></tr>
+<tr><td>Line Height</td><td>スピンボックス</td><td>0.5 ～ 4.0, ステップ 0.1</td></tr>
+<tr><td>Tracking</td><td>スピンボックス</td><td>-64.0 ～ 128.0, ステップ 0.5</td></tr>
+<tr><td>Padding (Top/Bottom/Right/Left)</td><td>スピンボックス × 4</td><td>各辺 0.0 ～ 256.0</td></tr>
+<tr><td>Color</td><td>カラーボタン</td><td>クリックでカラーダイアログ</td></tr>
+<tr><td>Opacity</td><td>スライダー</td><td>0 ～ 100%</td></tr>
+<tr><td>Custom Font Folders</td><td>リスト + ボタン</td><td>フォントディレクトリの追加・削除・再読み込み</td></tr>
+</table>
+<p>対応フォント形式: TTF / OTF / TTC / OTC</p>
+</div>
+<!-- ══════════════════ ユーティリティ ══════════════════ -->
+<h2 id="eyedropper">スポイトツール <span class="tag tag-tool">TOOL</span></h2>
+<p>キャンバス上の色をピックしてフォアグラウンドカラーに設定します。</p>
+<div class="card">
+<p><strong>ショートカット:</strong> <kbd>I</kbd> / <kbd>Shift+I</kbd></p>
+</div>
+<!-- ══════════════════ パネル ══════════════════ -->
+<h2 id="panel-toolbar">ツールバー <span class="tag tag-panel">PANEL</span></h2>
+<p>左端に配置される縦型のツールボタンリストです。各ボタンはツールグループを表し、長押し (350ms) でフライアウトメニューからバリアントツールを選択できます。</p>
+<div class="card">
+<p>パネル幅の変更に応じて縦/横レイアウトが自動切替されます。アイコンサイズは 48×48px です。</p>
+</div>
+<h2 id="panel-tool-props">ツールプロパティパネル <span class="tag tag-panel">PANEL</span></h2>
+<p>アクティブツールの設定を表示するパネルです。メニューバー直下のバーモード (横一列) と、ドック内のパネルモード (縦配置) の 2 つのレイアウトを持ちます。</p>
+<div class="card">
+<h4>構成要素</h4>
+<ul>
+<li><strong>プリセット行:</strong> プリセット選択コンボボックス + 保存/削除ボタン</li>
+<li><strong>Common Properties グループ:</strong> Size, Opacity, Hardness, Spacing, Flow 等 (ツール共通)</li>
+<li><strong>Tool Properties グループ:</strong> ツール固有のパラメーター</li>
+<li><strong>Actions コンテナ:</strong> ツール固有のアクションボタン/チェックボックス</li>
+</ul>
+<p><strong>ウィジェット自動生成:</strong> float/int → スライダー, bool → チェックボックス, enum → コンボボックス, color → カラーボタン</p>
+</div>
+<h2 id="panel-layers">レイヤーパネル <span class="tag tag-panel">PANEL</span></h2>
+<p>ドキュメントのレイヤースタックを階層ツリーで表示・管理します。通常レイヤー、グループ、エフェクト、マスク、AI Effect レイヤーを同じツリー内で扱います。</p>
+<div class="card">
+<h4>上部コントロール</h4>
+<table>
+<tr><th>項目</th><th>説明</th></tr>
+<tr><td>Blend Mode</td><td>選択中レイヤーのブレンドモードを変更します。グループでは Pass Through も選べます。</td></tr>
+<tr><td>Opacity</td><td>0 ～ 100% のスライダーと数値表示で、選択中レイヤーの不透明度を変更します。</td></tr>
+</table>
+<h4>レイヤーツリー</h4>
+<table>
+<tr><th>表示 / 操作</th><th>説明</th></tr>
+<tr><td>サムネイル</td><td>通常は 32×32px のレイヤーサムネイルです。クリックでレイヤー本体を編集対象にします。</td></tr>
+<tr><td>マスクサムネイル</td><td>レイヤーマスクがある場合だけ表示されます。クリックでマスク編集モードに切り替わります。</td></tr>
+<tr><td>種別バッジ</td><td><code>V</code> Vector、<code>S</code> Shape、<code>T</code> Text、<code>FX</code> Effect、<code>G</code> Group、<code>M</code> Mask、<code>AI</code> AI Effect を示します。</td></tr>
+<tr><td>可視性</td><td>目アイコンで表示 / 非表示を切り替えます。非表示行は淡く表示されます。</td></tr>
+<tr><td>ロック</td><td>レイヤー編集をロックします。</td></tr>
+<tr><td>Alpha lock</td><td>透明部分を保護します。行内の専用トグルで切り替えます。</td></tr>
+<tr><td>ドラッグ&amp;ドロップ</td><td>レイヤーの並べ替えやグループ内移動に使います。AI Effect の Slot 行へレイヤーを落とすと、その Slot の入力に割り当てます。</td></tr>
+<tr><td>ダブルクリック</td><td>レイヤー名を変更します。</td></tr>
+</table>
+<h4>下部ボタン</h4>
+<table>
+<tr><th>ボタン</th><th>説明</th></tr>
+<tr><td>Add</td><td>新規ラスタレイヤーを追加します。</td></tr>
+<tr><td>Delete</td><td>選択中レイヤーを削除します。</td></tr>
+<tr><td>Duplicate</td><td>選択中レイヤーを複製します。選択がない場合は無効です。</td></tr>
+<tr><td>Mask</td><td>選択中レイヤーにレイヤーマスクを追加します。既にある場合はマスク削除として動作します。</td></tr>
+<tr><td>Add Effect Layer</td><td>通常のエフェクトレイヤーを追加します。AI Effect が有効な環境では <strong>AI Effect</strong> サブメニューから `.lsfx` プリセットも選べます。</td></tr>
+<tr><td>G</td><td>2 つ以上の選択レイヤーをグループ化します。</td></tr>
+<tr><td>V</td><td>新規ベクターレイヤーを追加します。</td></tr>
+</table>
+<h4>AI Effect 行</h4>
+<table>
+<tr><th>表示 / 操作</th><th>説明</th></tr>
+<tr><td>紫アクセント</td><td>AI Effect レイヤー本体を示します。</td></tr>
+<tr><td>Generate ボタン</td><td>AI Effect レイヤー行にだけ表示され、対象レイヤーの生成を開始します。生成中は無効になります。</td></tr>
+<tr><td>Slot 子行</td><td>AI Effect manifest の input_slots から作られる仮想行です。未設定の必須 Slot は警告表示されます。</td></tr>
+<tr><td>⊘ ボタン</td><td>Slot に入力レイヤーが割り当て済みのとき表示され、入力をブレンド対象外 / AI 入力専用に切り替えます。</td></tr>
+<tr><td>xN バッジ</td><td>他の AI Effect Slot から参照されている通常レイヤーに、参照数を表示します。</td></tr>
+<tr><td>緑アクセント</td><td>AI Effect が生成した出力レイヤーを示します。</td></tr>
+</table>
+<h4>右クリックメニュー</h4>
+<table>
+<tr><th>項目</th><th>説明</th></tr>
+<tr><td>Add Layer / Duplicate Layer / Delete Layer</td><td>基本的な追加、複製、削除です。</td></tr>
+<tr><td>Rename</td><td>名前変更ダイアログを開きます。</td></tr>
+<tr><td>Merge Down</td><td>下のレイヤーへ統合します。可能な場合のみ有効です。</td></tr>
+<tr><td>Merge Visible</td><td>可視レイヤーを 1 枚に統合します。非表示レイヤーは温存されます。</td></tr>
+<tr><td>Rasterize</td><td>ベクターなどをラスタへ変換します。可能な場合のみ有効です。</td></tr>
+<tr><td>Convert to Vector</td><td>未変換の基本図形を通常のベクターオブジェクトへ変換します。</td></tr>
+<tr><td>Group Layers / Ungroup</td><td>複数選択時はグループ化、グループ行ではグループ解除を行います。</td></tr>
+<tr><td>Create / Release Clipping Mask</td><td>クリッピングマスク状態を切り替えます。</td></tr>
+<tr><td>Add / Edit / Finish / Remove Layer Mask</td><td>レイヤーマスクの追加、編集モード切替、削除を行います。</td></tr>
+<tr><td>Add Effect</td><td>選択中レイヤーへ子エフェクトを追加します。グループでは無効です。</td></tr>
+<tr><td>Load as Selection / Invert Transparency</td><td>Mask レイヤー右クリック時だけ表示され、マスクを選択範囲へ読み込む、または透明部分を反転します。</td></tr>
+</table>
+<h4>ブレンドモード</h4>
+<p>レイヤーブレンドは、選択中レイヤーの色を下のレイヤー群にどう合成するかを決めます。Opacity はブレンド結果全体の強さとして後から効きます。描画内容を変更せず表示合成だけを変えるため、色味の調整、光や影の追加、テクスチャ重ねに使います。</p>
+<table>
+<tr><th>グループ</th><th>モード</th><th>説明</th></tr>
+<tr><td>Group only</td><td>Pass Through</td><td>グループ用です。子レイヤーをグループ内だけで閉じず、下のレイヤー群も含めた文脈で合成します。</td></tr>
+<tr><td>Normal</td><td>Normal</td><td>通常合成です。上のレイヤーをそのまま重ね、不透明度で強さを調整します。</td></tr>
+<tr><td>Normal</td><td>Dissolve</td><td>半透明部分をランダムな点状に見せる合成です。ざらついたエッジや粒状の表現に向きます。</td></tr>
+<tr><td>Darken</td><td>Darken</td><td>上と下の暗い成分を優先します。明るい部分を残しにくく、影や暗部の追加に使います。</td></tr>
+<tr><td>Darken</td><td>Multiply</td><td>色を掛け合わせて暗くします。線画、影、紙目、汚れの重ねで最も扱いやすい暗色系モードです。</td></tr>
+<tr><td>Darken</td><td>Color Burn</td><td>下地を強く焼き込むように暗くし、彩度やコントラストも強めます。濃い影や強い質感に向きます。</td></tr>
+<tr><td>Darken</td><td>Linear Burn</td><td>明度を直線的に下げて暗くします。Color Burn より計算感のある強い暗部になります。</td></tr>
+<tr><td>Darken</td><td>Darker Color</td><td>合成後の色ではなく、上と下のうち暗い色を選びます。色の置き換えに近い暗色優先の結果になります。</td></tr>
+<tr><td>Lighten</td><td>Lighten</td><td>上と下の明るい成分を優先します。暗い部分を消しながら光や明部を重ねたいときに使います。</td></tr>
+<tr><td>Lighten</td><td>Screen</td><td>Multiply の逆方向に働き、自然に明るくします。発光、ハイライト、煙、光素材の重ねに向きます。</td></tr>
+<tr><td>Lighten</td><td>Color Dodge</td><td>下地を強く明るくし、鮮やかな光を作ります。白飛びしやすいため Opacity で調整します。</td></tr>
+<tr><td>Lighten</td><td>Linear Dodge (Add)</td><td>色を加算して強く明るくします。光源、魔法効果、強い発光の表現に向きます。</td></tr>
+<tr><td>Lighten</td><td>Lighter Color</td><td>上と下のうち明るい色を選びます。明色優先で素材を重ねたいときに使います。</td></tr>
+<tr><td>Contrast</td><td>Overlay</td><td>下地の明暗を基準に Multiply と Screen を切り替えます。質感追加や陰影強調の定番です。</td></tr>
+<tr><td>Contrast</td><td>Soft Light</td><td>Overlay より柔らかくコントラストを加えます。肌、布、微妙な陰影調整に向きます。</td></tr>
+<tr><td>Contrast</td><td>Hard Light</td><td>上のレイヤーを基準に強い明暗効果を加えます。はっきりした光と影を作ります。</td></tr>
+<tr><td>Contrast</td><td>Vivid Light</td><td>Color Burn と Color Dodge を組み合わせたように、強く鮮やかなコントラストを作ります。</td></tr>
+<tr><td>Contrast</td><td>Linear Light</td><td>Linear Burn と Linear Dodge を組み合わせたように、明度を直線的に強く変化させます。</td></tr>
+<tr><td>Contrast</td><td>Pin Light</td><td>暗い部分と明るい部分を置き換えるように合成します。特殊な硬い質感や効果向けです。</td></tr>
+<tr><td>Contrast</td><td>Hard Mix</td><td>色を強く二値化したような結果に寄せます。ポスター調、ノイズ調、実験的な効果に向きます。</td></tr>
+<tr><td>Inversion</td><td>Difference</td><td>上と下の差分を表示します。位置合わせ確認、反転風の効果、特殊な色変化に使います。</td></tr>
+<tr><td>Inversion</td><td>Exclusion</td><td>Difference より柔らかい差分合成です。反転感を抑えた特殊効果に向きます。</td></tr>
+<tr><td>Inversion</td><td>Subtract</td><td>下地から上の色を引いて暗くします。色を削るような効果や暗い特殊効果に使います。</td></tr>
+<tr><td>Inversion</td><td>Divide</td><td>下地を上の色で割るように明るくします。補正、抜き、強い明部変化の確認に使います。</td></tr>
+<tr><td>Component</td><td>Hue</td><td>上の色相だけを下地へ適用し、下地の明度と彩度を保ちます。色味だけ変えたいときに使います。</td></tr>
+<tr><td>Component</td><td>Saturation</td><td>上の彩度だけを下地へ適用します。鮮やかさの追加や彩度を落とす調整に使います。</td></tr>
+<tr><td>Component</td><td>Color</td><td>上の色相と彩度を下地へ適用し、下地の明度を保ちます。グレースケールの陰影に色を乗せる用途に向きます。</td></tr>
+<tr><td>Component</td><td>Luminosity</td><td>上の明度だけを下地へ適用し、下地の色相と彩度を保ちます。陰影や明暗だけを差し替えます。</td></tr>
+</table>
+<p>ブレンドモードはレイヤー、エフェクトレイヤー、グループ合成、PSD エクスポートの表示結果に関係します。モード変更はキャンバスを再合成しますが、レイヤーのピクセルそのものは書き換えません。</p>
+</div>
+<h2 id="panel-color">カラーパネル <span class="tag tag-panel">PANEL</span></h2>
+<p>HSV カラーホイール+トライアングル、数値入力、パレット管理を統合したカラーセレクターです。</p>
+<div class="card">
+<h4>ウィジェット一覧</h4>
+<table>
+<tr><th>ウィジェット</th><th>説明</th></tr>
+<tr><td>カラーホイール</td><td>外周リングで色相 (0～360°) を選択</td></tr>
+<tr><td>トーントライアングル</td><td>内部三角形で彩度/明度を選択</td></tr>
+<tr><td>HSV スピンボックス (H/S/V)</td><td>H: 0～359°, S: 0～100%, V: 0～100%</td></tr>
+<tr><td>RGB スピンボックス (R/G/B)</td><td>各 0～255</td></tr>
+<tr><td>Hex テキスト入力</td><td>#RRGGBB 形式</td></tr>
+<tr><td>Add to Palette ボタン</td><td>現在の色をパレットに追加</td></tr>
+<tr><td>パレットグリッド</td><td>スウォッチタイル (32×32px) のグリッド表示。ホバーで削除ボタン表示</td></tr>
+<tr><td>カラー履歴</td><td>最近使用した 10 色を横並び表示 (24×24px)</td></tr>
+</table>
+<p>デフォルトパレット: Black, White, Red, Green, Blue</p>
+</div>
+<h2 id="panel-brush-manager">ブラシマネージャー <span class="tag tag-panel">PANEL</span></h2>
+<p>カスタムブラシチップの管理パネルです。ブラシの作成・インポート・削除ができます。</p>
+<div class="card">
+<h4>ウィジェット一覧</h4>
+<table>
+<tr><th>ウィジェット</th><th>説明</th></tr>
+<tr><td>ブラシチップグリッド</td><td>アイコンモードでブラシチッププレビューを表示。ダブルクリックでリネーム</td></tr>
+<tr><td>Create Tip ボタン</td><td>キャンバスの選択範囲からブラシチップを作成</td></tr>
+<tr><td>Save Params ボタン</td><td>現在のペン設定をブラシに保存</td></tr>
+<tr><td>Rescan ABR ボタン</td><td>ABR ライブラリフォルダを再スキャン</td></tr>
+<tr><td>Import ABR ボタン</td><td>Photoshop .abr ブラシファイルをインポート</td></tr>
+<tr><td>Import PNG ボタン</td><td>PNG 画像をブラシチップとしてインポート</td></tr>
+<tr><td>Delete ボタン</td><td>選択中のブラシを削除</td></tr>
+</table>
+</div>
+<h2 id="panel-shape-manager">シェイプマネージャー <span class="tag tag-panel">PANEL</span></h2>
+<p>ベクターシェイプのライブラリ管理とアラインメント機能を提供します。マンガの吹き出しや集中線などの特殊シェイプも含みます。</p>
+<div class="card">
+<h4>Tab 1 — Shape Manager (ライブラリ)</h4>
+<table>
+<tr><th>ウィジェット</th><th>説明</th></tr>
+<tr><td>Category フィルター</td><td>カテゴリでシェイプを絞り込み</td></tr>
+<tr><td>Tag フィルター</td><td>タグでシェイプを絞り込み</td></tr>
+<tr><td>シェイプグリッド</td><td>サムネイルをアイコンモードで表示</td></tr>
+<tr><td>Stamp / Add to Canvas</td><td>シェイプをスタンプまたはキャンバスに追加</td></tr>
+<tr><td>Import SVG / Export SVG</td><td>SVG ファイルのインポート/エクスポート</td></tr>
+<tr><td>New Category / Rename / Delete</td><td>カテゴリ・シェイプの管理</td></tr>
+</table>
+<h4>Tab 2 — Basic Shapes (内蔵シェイプ)</h4>
+<table>
+<tr><th>カテゴリ</th><th>シェイプ一覧</th></tr>
+<tr><td>Basic</td><td>Ellipse, Rounded Rectangle, Parallelogram, Trapezoid</td></tr>
+<tr><td>Effect</td><td>Focus Lines (Circle), Focus Lines (Rect)</td></tr>
+<tr><td>Balloon</td><td>Speech Balloon (Round / Rect / Cloud), Spiky Balloon</td></tr>
+<tr><td>Polygon</td><td>Triangle, Quadrilateral, Pentagon, Hexagon, Heptagon, Octagon, Nonagon, Decagon</td></tr>
+</table>
+<h4>アラインメント・配置ツール</h4>
+<table>
+<tr><th>ウィジェット</th><th>説明</th></tr>
+<tr><td>Align Reference</td><td>基準: Selection / Canvas / First Object / Last Object</td></tr>
+<tr><td>Fit (contain) / Fit (stretch) / Center</td><td>フィット・センタリング</td></tr>
+<tr><td>Align Left / Center (H) / Right</td><td>水平方向の整列</td></tr>
+<tr><td>Align Top / Middle (V) / Bottom</td><td>垂直方向の整列</td></tr>
+<tr><td>Distribute Horizontally / Vertically</td><td>等間隔配置</td></tr>
+</table>
+</div>
+<h2 id="panel-effect">エフェクトパネル <span class="tag tag-panel">PANEL</span></h2>
+<p>選択中のエフェクトレイヤーのパラメーターを編集します。パラメーター UI はエフェクトの種類に応じて動的に生成されます。</p>
+<div class="card">
+<p>エフェクトレイヤーをレイヤーパネルで選択すると、そのエフェクト名がグループボックスのタイトルに表示され、各パラメーターのスピンボックスが自動生成されます。変更は即座にプレビューに反映されます (Undo 対応)。</p>
+</div>
+<h2 id="panel-pages">ページパネル <span class="tag tag-panel">PANEL</span></h2>
+<p>マルチページドキュメントの管理パネルです。</p>
+<div class="card">
+<h4>ウィジェット一覧</h4>
+<table>
+<tr><th>ウィジェット</th><th>説明</th></tr>
+<tr><td>+ (Add Page) ボタン</td><td>ページ追加 (Basic / Custom テンプレート + テンプレート保存メニュー)</td></tr>
+<tr><td>Dup ボタン</td><td>現在のページを複製</td></tr>
+<tr><td>Del ボタン</td><td>ページ削除</td></tr>
+<tr><td>Up / Down ボタン</td><td>ページ順序の変更</td></tr>
+<tr><td>ページリスト</td><td>ページ番号 + ページ名 + ダーティインジケーター (*)。サムネイルは現状プレースホルダ表示</td></tr>
+</table>
+<p>ダブルクリックまたは <kbd>F2</kbd> でページ名を変更できます。パネルのアスペクト比に応じてリストモード/アイコンモードが切り替わります。</p>
+</div>
+<h2 id="panel-preview">プレビューパネル <span class="tag tag-panel">PANEL</span></h2>
+<p>キャンバス全体の縮小プレビューをリアルタイムで表示します。</p>
+<div class="card">
+<p>マウスドラッグでパン、ズーム操作でプレビュー表示範囲を調整できます。キャンバスの合成結果が更新されるたびに自動で再描画されます。</p>
+</div>
+<h2 id="panel-context-toolbar">コンテキストツールバー <span class="tag tag-panel">PANEL</span></h2>
+<p>ストローク完了後やアクション実行後にキャンバス上に自動表示されるフローティングツールバーです。アクティブツールのクイック設定が表示されます。</p>
+<div class="card">
+<table>
+<tr><th>ツール</th><th>表示タイミング</th><th>表示項目</th></tr>
+<tr><td>Pen / Eraser</td><td>ストローク完了後</td><td>Size, Opacity, Hardness</td></tr>
+<tr><td>Magic Wand</td><td>選択作成後</td><td>Tolerance, Contiguous, Operation</td></tr>
+<tr><td>Gradient</td><td>プレビュー開始時</td><td>Type, Color A/B, Stops, Dither</td></tr>
+<tr><td>Vector Path / Precise</td><td>ストローク完了後</td><td>Stroke Width/Color, Fill</td></tr>
+</table>
+</div>
+<!-- ══════════════════ エフェクトレイヤー ══════════════════ -->
+<h2 id="fx-gaussian-blur">ガウシアンブラー <span class="tag tag-effect">EFFECT</span></h2>
+<p>レイヤーにガウシアンぼかしを適用するノンデストラクティブ・エフェクトです。</p>
+<div class="card">
+<table>
+<tr><th>パラメーター</th><th>範囲</th><th>説明</th></tr>
+<tr><td>Radius</td><td>0 ～ 250 px</td><td>ぼかし半径</td></tr>
+</table>
+</div>
+<h2 id="fx-levels">レベル補正 <span class="tag tag-effect">EFFECT</span></h2>
+<p>入力/出力レベルとガンマを調整してコントラストを制御します。</p>
+<div class="card">
+<table>
+<tr><th>パラメーター</th><th>範囲</th><th>説明</th></tr>
+<tr><td>In Black</td><td>0 ～ 255</td><td>入力レベルの暗部ポイント</td></tr>
+<tr><td>In White</td><td>0 ～ 255</td><td>入力レベルの明部ポイント</td></tr>
+<tr><td>Gamma</td><td>0.01 ～ 9.99</td><td>ガンマ補正値</td></tr>
+<tr><td>Out Black</td><td>0 ～ 255</td><td>出力レベルの暗部ポイント</td></tr>
+<tr><td>Out White</td><td>0 ～ 255</td><td>出力レベルの明部ポイント</td></tr>
+</table>
+</div>
+<h2 id="fx-hue-saturation">色相・彩度 <span class="tag tag-effect">EFFECT</span></h2>
+<p>色相・彩度・明度を調整する色補正エフェクトです。</p>
+<div class="card">
+<table>
+<tr><th>パラメーター</th><th>範囲</th><th>説明</th></tr>
+<tr><td>Hue</td><td>-180 ～ 180°</td><td>色相シフト</td></tr>
+<tr><td>Saturation</td><td>-100 ～ 100</td><td>彩度調整</td></tr>
+<tr><td>Lightness</td><td>-100 ～ 100</td><td>明度調整</td></tr>
+</table>
+</div>
+<h2 id="fx-invert">階調の反転 <span class="tag tag-effect">EFFECT</span></h2>
+<p>レイヤーの階調 (色の明暗) を反転させます。</p>
+<div class="card">
+<table>
+<tr><th>パラメーター</th><th>範囲</th><th>説明</th></tr>
+<tr><td>Strength</td><td>0 ～ 100%</td><td>反転の適用強度</td></tr>
+</table>
+</div>
+<h2 id="fx-brightness-contrast">明るさ・コントラスト <span class="tag tag-effect">EFFECT</span></h2>
+<p>レイヤーの明るさとコントラストを調整します。CPU/GPU 両経路を持つ組み込み live-filter effect です。</p>
+<div class="card">
+<table>
+<tr><th>パラメーター</th><th>範囲</th><th>説明</th></tr>
+<tr><td>Brightness</td><td>-100 ～ 100</td><td>明るさ調整</td></tr>
+<tr><td>Contrast</td><td>-100 ～ 100</td><td>コントラスト調整</td></tr>
+</table>
+</div>
+<h2 id="fx-sharpen">シャープ <span class="tag tag-effect">EFFECT</span></h2>
+<p>アンシャープマスク方式でエッジを強調します。</p>
+<div class="card">
+<table>
+<tr><th>パラメーター</th><th>範囲</th><th>説明</th></tr>
+<tr><td>Amount</td><td>0 ～ 500</td><td>シャープの強さ</td></tr>
+<tr><td>Radius</td><td>0.1 ～ 50</td><td>シャープの適用半径</td></tr>
+<tr><td>Threshold</td><td>0 ～ 255</td><td>ノイズ無視のしきい値</td></tr>
+</table>
+</div>
+<h2 id="fx-noise-reduction">ノイズリダクション <span class="tag tag-effect">EFFECT</span></h2>
+<p>非局所平均 (NLM) 法によるノイズ除去エフェクトです。</p>
+<div class="card">
+<table>
+<tr><th>パラメーター</th><th>範囲</th><th>説明</th></tr>
+<tr><td>Strength</td><td>1 ～ 40</td><td>輝度ノイズの除去強度</td></tr>
+<tr><td>Color Strength</td><td>1 ～ 40</td><td>カラーノイズの除去強度</td></tr>
+</table>
+</div>
+<!-- ══════════════════ AI Effect Layer ══════════════════ -->
+<h2 id="ai-effect-overview">AI Effect Layer <span class="tag tag-ai">AI EFFECT</span></h2>
+<p>AI Effect Layer は、<code>.lsfx</code> プリセットをレイヤーとしてキャンバスに配置し、ComfyUI Gateway または NanoBanana Gateway へ入力レイヤーとパラメーターを渡して画像を生成する機能です。通常の ComfyUI パネルや NanoBanana パネルとは別に、Layer Panel / Effect Panel / AI Effects Manager と連携して動きます。</p>
+<div class="card">
+<h4>基本の流れ</h4>
+<ol>
+<li>AI メニューの <strong>AI Effect Presets...</strong> で AI Effects Manager を開く</li>
+<li>プリセットを右クリックして <strong>Add AI Effect Layer</strong> を選ぶ</li>
+<li>Layer Panel で AI Effect レイヤー配下の Slot 行に入力レイヤーを割り当てる</li>
+<li>Effect Panel でパラメーター、出力先、Generate を操作する</li>
+<li>生成結果を AI Effect レイヤー自身、または真上の新規出力レイヤーへ反映する</li>
+</ol>
+<table>
+<tr><th>項目</th><th>内容</th></tr>
+<tr><td>レイヤー種別</td><td><code>layer_type="ai_effect"</code></td></tr>
+<tr><td>プリセット形式</td><td><code>.lsfx</code>。ZIP 内に manifest、Gateway 設定、アイコンなどを保持</td></tr>
+<tr><td>対応 Gateway</td><td>ComfyUI Gateway / NanoBanana Gateway</td></tr>
+<tr><td>保存</td><td><code>.lstroke</code> v1.2 の <code>ai_effect</code> payload として状態を保持</td></tr>
+</table>
+<p>外部サービス接続が必要な Gateway は、Preferences の外部サービス許可と API キー / 接続先設定が揃っている場合のみ実行できます。</p>
+</div>
+<h2 id="ai-effect-manager">AI Effects Manager <span class="tag tag-ai">AI EFFECT</span></h2>
+<p>インストール済み <code>.lsfx</code> プリセットを一覧し、追加、編集、削除、インポートを行う管理画面です。</p>
+<div class="card">
+<table>
+<tr><th>操作</th><th>説明</th></tr>
+<tr><td>Add AI Effect Layer</td><td>選択したプリセットを現在のキャンバスへ AI Effect レイヤーとして追加します。</td></tr>
+<tr><td>Edit</td><td>プリセットを Effect Editor で開き、既存設定を読み戻して編集します。</td></tr>
+<tr><td>Import</td><td>外部の <code>.lsfx</code> を <code>user_data/ai_effect/presets/</code> に取り込みます。</td></tr>
+<tr><td>Delete</td><td><code>user_data/ai_effect/presets/</code> のユーザープリセットを削除します。</td></tr>
+</table>
+<p>The default build ships no bundled <code>.lsfx</code> presets. Use Import or Register to add presets to <code>user_data/ai_effect/presets/</code>.</p>
+</div>
+<h2 id="ai-effect-editor">Effect Editor <span class="tag tag-ai">AI EFFECT</span></h2>
+<p>ComfyUI workflow や NanoBanana の parameter mapping から <code>.lsfx</code> プリセットを作成・編集する画面です。</p>
+<div class="card">
+<table>
+<tr><th>領域</th><th>役割</th></tr>
+<tr><td>Metadata</td><td>プリセット名、カテゴリ、説明、タグ、アイコンなどを設定します。</td></tr>
+<tr><td>Candidates / Inspector</td><td>Gateway から取得した候補パラメーターや入力スロットを選び、ユーザー向け UI として公開します。</td></tr>
+<tr><td>Import preset</td><td>既存 <code>.lsfx</code> を読み込んで、Effect Editor 上で編集を再開します。</td></tr>
+<tr><td>Export</td><td>検証済みの manifest と Gateway ファイルを <code>.lsfx</code> として atomic write します。</td></tr>
+</table>
+<p>書き出した <code>.lsfx</code> は、そのまま AI Effects Manager へ登録できます。ファイル名に <code>.lsfx</code> がない場合は保存時に補われます。</p>
+</div>
+<h2 id="ai-effect-runtime">生成と状態 <span class="tag tag-ai">AI EFFECT</span></h2>
+<p>AI Effect レイヤーを選択すると Effect Panel にプリセット由来の動的パラメーターが表示されます。生成は Command として履歴に登録され、Undo / Redo に対応します。</p>
+<div class="card">
+<h4>Layer Panel / Effect Panel</h4>
+<table>
+<tr><th>項目</th><th>説明</th></tr>
+<tr><td>Slot 行</td><td>AI Effect レイヤー配下に表示される入力枠です。別レイヤーを参照として割り当てます。</td></tr>
+<tr><td>⊘ ボタン</td><td>入力スロットをブレンド対象外、AI 入力専用として扱う切替です。</td></tr>
+<tr><td>Generate</td><td>選択レイヤー、または Layer Panel の AI Effect 行から生成を開始します。</td></tr>
+<tr><td>Output to this layer</td><td>有効時は AI Effect レイヤー自身へ出力します。無効時は真上に新規出力レイヤーを作ります。</td></tr>
+<tr><td>Progress / Cancel</td><td>実行中は進捗を表示し、外部キャンセルは <code>cancel_layer(layer_id)</code> 経路で処理されます。</td></tr>
+</table>
+<h4>実行と保存</h4>
+<table>
+<tr><th>項目</th><th>説明</th></tr>
+<tr><td>入力解決</td><td>Raster / Group / Mask / AI Effect の参照レイヤーを Gateway 用 PNG として解決します。</td></tr>
+<tr><td>キャッシュ</td><td>同じ入力・パラメーターの場合は <code>param_hash</code> で Gallery / cache hit を判定します。</td></tr>
+<tr><td>UI state</td><td>数値入力、seed 入力、LivePrompt の状態は <code>AIEffectState.param_ui_state</code> として保存されます。</td></tr>
+<tr><td>Telemetry</td><td>debug 設定時のみ <code>user_data/logs/ai_effect.log</code> に JSON-line で記録されます。</td></tr>
+<tr><td>設定</td><td>Preferences → AI Effect で retries、cache、API Keys などを管理します。設定ファイルは <code>user_data/ai_effect/preferences.json</code> です。</td></tr>
+</table>
+<p>ComfyUI 未起動やプリセット未導入などの状態では、案内ダイアログや toast / banner が表示されます。ComfyUI は連続接続試行を避けるため、AI Effect レイヤー配置時の自動接続にクールダウンがあります。</p>
+</div>
+<!-- ══════════════════ AI 連携 ══════════════════ -->
+<h2 id="ai-comfyui">ComfyUI パネル <span class="tag tag-ai">AI</span></h2>
+<p>ComfyUI サーバーと接続し、AI 画像生成ワークフローを実行します。外部サービス接続が許可されている場合のみ利用できます。</p>
+<div class="card">
+<h4>接続バー</h4>
+<table>
+<tr><th>ウィジェット</th><th>説明</th></tr>
+<tr><td>Address 入力</td><td>サーバーアドレス (初期値: 127.0.0.1:8188)</td></tr>
+<tr><td>SSL チェックボックス</td><td>HTTPS/WSS 使用</td></tr>
+<tr><td>Connect / Disconnect ボタン</td><td>接続の開始/切断</td></tr>
+<tr><td>Refresh ボタン</td><td>ノード情報の再取得</td></tr>
+</table>
+<h4>ワークフロー</h4>
+<table>
+<tr><th>ウィジェット</th><th>説明</th></tr>
+<tr><td>Workflow コンボボックス</td><td>保存済みワークフロー一覧</td></tr>
+<tr><td>Load ボタン</td><td>.json ワークフローファイルを読み込み</td></tr>
+</table>
+<p>ワークフローは <code>user_data/plugins/comfyui/workflows</code> に保存され、出力レイヤーは <code>user_data/cache/LoomStroke/layers</code> を使います。</p>
+<h4>Tab 1 — Workflow Nodes</h4>
+<p>読み込んだワークフローの各ノードを動的タブで表示し、パラメーターを編集できます。STRING パラメーターはプロンプトコンポーザーで編集可能です。</p>
+<h4>Tab 2 — Queue</h4>
+<table>
+<tr><th>ウィジェット</th><th>説明</th></tr>
+<tr><td>ジョブテーブル</td><td>ID, Status, Progress, Workflow, Started, Notes の 6 列</td></tr>
+<tr><td>Cancel ボタン</td><td>選択中のジョブをキャンセル</td></tr>
+<tr><td>Preview ボタン</td><td>ジョブ結果のプレビュー</td></tr>
+<tr><td>Clear Finished ボタン</td><td>完了済みジョブをクリア</td></tr>
+</table>
+<h4>実行制御</h4>
+<table>
+<tr><th>ウィジェット</th><th>説明</th></tr>
+<tr><td>Queue ボタン</td><td>ジョブの投入 (緑色)</td></tr>
+<tr><td>Cancel ボタン</td><td>実行中ジョブのキャンセル</td></tr>
+<tr><td>Repeat スピンボックス</td><td>0=1回, -1=無限, N=N回繰り返し</td></tr>
+<tr><td>∞ チェックボックス</td><td>無限繰り返し</td></tr>
+</table>
+</div>
+<h2 id="ai-nanobanana">NanoBanana パネル <span class="tag tag-ai">AI</span></h2>
+<p>Google Gemini API を使用した AI 画像生成パネルです。API キーは OS keyring に保存され、外部サービス接続が許可されている場合のみ利用できます。</p>
+<div class="card">
+<h4>ウィジェット一覧</h4>
+<table>
+<tr><th>ウィジェット</th><th>選択肢 / 範囲</th><th>説明</th></tr>
+<tr><td>Prompt</td><td>テキスト / チップコンポーザー</td><td>生成プロンプト入力</td></tr>
+<tr><td>Input Layers</td><td>レイヤーコンボ × N</td><td>入力として使用するレイヤー (複数選択可)</td></tr>
+<tr><td>Model</td><td>コンボボックス</td><td>使用するモデル (gemini-2.5-flash 等)</td></tr>
+<tr><td>Thinking</td><td>Minimal / High</td><td>思考レベル</td></tr>
+<tr><td>Modality</td><td>Text+Image / Image</td><td>出力モダリティ</td></tr>
+<tr><td>Size</td><td>Auto / 512 / 1K / 2K / 4K</td><td>出力画像サイズ</td></tr>
+<tr><td>Aspect Ratio</td><td>1:1, 4:3, 3:4, 16:9, 9:16 等</td><td>アスペクト比 (ピクセル寸法表示付き)</td></tr>
+<tr><td>Target Layer</td><td>&lt;New Layer&gt; / 既存レイヤー</td><td>生成画像の出力先</td></tr>
+<tr><td>Thoughts チェック</td><td>ON / OFF</td><td>思考プロセスを含める</td></tr>
+<tr><td>Search チェック</td><td>ON / OFF</td><td>Google 検索を使用</td></tr>
+<tr><td>Generate ボタン</td><td>—</td><td>画像生成を実行 (緑色)</td></tr>
+<tr><td>Status テキスト</td><td>—</td><td>ステータスログ表示</td></tr>
+</table>
+</div>
+<h2 id="ai-prompt-editor">プロンプトエディタ <span class="tag tag-ai">AI</span></h2>
+<p>構造化プロンプトの作成・スニペット管理・LLM 実行を統合したパネルです。スニペットは <code>user_data/text_editor/text_snippets.sqlite3</code> に保存されます。</p>
+<div class="card">
+<h4>Tab 1 — Compose</h4>
+<table>
+<tr><th>ウィジェット</th><th>説明</th></tr>
+<tr><td>Components パレット</td><td>4 種のコンポーネント (String / List / Text / Prompt) をドラッグ&amp;ドロップ</td></tr>
+<tr><td>Live Prompt チップフロー</td><td>チップを並べ替えてプロンプトを構成</td></tr>
+<tr><td>Separator 入力</td><td>コンポーネント間の区切り文字</td></tr>
+<tr><td>Compose ボタン</td><td>プロンプトをビルド</td></tr>
+<tr><td>Copy ボタン</td><td>結果をクリップボードにコピー</td></tr>
+<tr><td>Save 領域</td><td>プロンプト名 + カテゴリ + 保存/読込/新規ボタン</td></tr>
+</table>
+<h4>Tab 2 — Library</h4>
+<table>
+<tr><th>ウィジェット</th><th>説明</th></tr>
+<tr><td>検索バー</td><td>テキスト検索 + タイプフィルター + タグフィルター</td></tr>
+<tr><td>スニペットリスト</td><td>保存済みスニペットの一覧</td></tr>
+<tr><td>詳細エディタ</td><td>タイトル / タグ / 種類 / 本文の編集</td></tr>
+<tr><td>Duplicate / Delete / Export</td><td>スニペット操作ボタン</td></tr>
+</table>
+<h4>Tab 3 — LLM</h4>
+<table>
+<tr><th>ウィジェット</th><th>選択肢 / 範囲</th><th>説明</th></tr>
+<tr><td>Stream チェック</td><td>ON / OFF</td><td>現行 Gateway は非ストリーミング動作です</td></tr>
+<tr><td>Provider</td><td>コンボボックス</td><td>AI プロバイダー選択</td></tr>
+<tr><td>Model</td><td>コンボボックス</td><td>モデル選択</td></tr>
+<tr><td>Temperature</td><td>0.0 ～ 2.0</td><td>生成のランダム性 (初期値: 0.7)</td></tr>
+<tr><td>Max Tokens</td><td>0 ～ 32000</td><td>最大トークン数 (初期値: 512)</td></tr>
+<tr><td>System Prompt</td><td>テキストエリア</td><td>システムプロンプト</td></tr>
+<tr><td>User Prompt</td><td>テキストエリア</td><td>ユーザープロンプト</td></tr>
+<tr><td>Output</td><td>テキストエリア</td><td>LLM の応答を表示</td></tr>
+<tr><td>Submit / Cancel / Clear</td><td>—</td><td>実行制御ボタン</td></tr>
+</table>
+</div>
+<!-- ══════════════════ キャンバス操作 ══════════════════ -->
+<h2 id="canvas-viewport">ズーム・パン・回転 <span class="tag tag-param">CANVAS</span></h2>
+<div class="card">
+<table>
+<tr><th>操作</th><th>入力</th><th>補足</th></tr>
+<tr><td>ズームイン</td><td><kbd>Ctrl+=</kbd> / マウスホイール上</td><td>最大 3200%</td></tr>
+<tr><td>ズームアウト</td><td><kbd>Ctrl+-</kbd> / マウスホイール下</td><td>最小 1%</td></tr>
+<tr><td>ズームリセット</td><td><kbd>Ctrl+0</kbd></td><td>100% に戻す</td></tr>
+<tr><td>パン (スクロール)</td><td>右クリックドラッグ</td><td>設定で変更可能</td></tr>
+<tr><td>キャンバス回転</td><td>Image メニュー</td><td>90° CW / 90° CCW / 180°。全レイヤーを履歴グループとして変換</td></tr>
+</table>
+<p><strong>実装メモ:</strong> 既定 Canvas は QImage ベースの <code>SimpleCanvasService</code> です。レイヤーはラスタ、ベクター、マスクを扱え、ラスタ移動ではオフキャンバス部分も <code>offset_x/y</code> で保持されます。</p>
+</div>
+<h2 id="canvas-rulers">ルーラーとガイド <span class="tag tag-param">CANVAS</span></h2>
+<div class="card">
+<ul>
+<li><strong>ルーラー:</strong> キャンバスの上端・左端に表示。単位は px / mm / inch から選択</li>
+<li><strong>ガイド作成:</strong> ルーラーからキャンバスにドラッグ</li>
+<li><strong>ガイド移動:</strong> ガイド線をクリック&amp;ドラッグ</li>
+<li><strong>ガイド削除:</strong> キャンバス外にドラッグアウト</li>
+<li><strong>表示切替:</strong> <kbd>R</kbd> キーでガイドの表示/非表示</li>
+<li><strong>スナップ:</strong> ガイド・グリッド・アンカー・エッジへの自動スナップ</li>
+<li><strong>ガイド色:</strong> 設定で変更可能 (初期値: <code>#00B7FF</code>)</li>
+</ul>
+</div>
+<h2 id="canvas-grid">グリッド <span class="tag tag-param">CANVAS</span></h2>
+<div class="card">
+<ul>
+<li><strong>表示切替:</strong> <kbd>G</kbd> キー</li>
+<li><strong>グリッドサイズ:</strong> 初期値 32px (環境設定で 1～5000px に変更可能)</li>
+<li><strong>グリッドスナップ:</strong> 移動ツール等で有効化可能</li>
+</ul>
+</div>
+<!-- ══════════════════ ファイル入出力 ══════════════════ -->
+<h2 id="file-formats">対応フォーマット <span class="tag tag-param">FILE</span></h2>
+<div class="card">
+<table>
+<tr><th>フォーマット</th><th>読込</th><th>書出</th><th>備考</th></tr>
+<tr><td>.lstroke (ネイティブ)</td><td>v1.0.0 / v1.1.0 / v1.2.0</td><td>v1.2.0</td><td>マルチページ、レイヤー、ベクター、UI レイアウト保持</td></tr>
+<tr><td>PNG</td><td>○</td><td>○</td><td>圧縮レベル設定可</td></tr>
+<tr><td>JPEG</td><td>○</td><td>○</td><td>品質・プログレッシブ設定可</td></tr>
+<tr><td>TIFF</td><td>○</td><td>○</td><td>LZW 圧縮、16bit 対応</td></tr>
+<tr><td>BMP</td><td>○</td><td>○</td><td></td></tr>
+<tr><td>WebP</td><td>○</td><td>○</td><td>品質・ロスレス設定可</td></tr>
+<tr><td>PSD</td><td>○</td><td>○</td><td>レイヤー構造の読み込みとレイヤー付き PSD 書き出し</td></tr>
+<tr><td>ABR</td><td>○</td><td>—</td><td>Photoshop ブラシのインポート</td></tr>
+<tr><td>SVG</td><td>○</td><td>○</td><td>シェイプマネージャー経由</td></tr>
+</table>
+<p>PNG / JPEG / WebP / BMP / TIFF は OS からキャンバスへドラッグ&amp;ドロップすると、新規ラスタレイヤーとして追加できます。</p>
+</div>
+<h2 id="file-lstroke">.lstroke ネイティブ形式 <span class="tag tag-param">FILE</span></h2>
+<div class="card">
+<p>.lstroke は ZIP ベースのネイティブ形式です。保存時は <code>*.lstroke.tmp</code> へ書き出してから置き換えます。以下の情報が保存されます:</p>
+<ul>
+<li>JSON マニフェスト (バージョン、ドキュメントメタデータ)</li>
+<li>各レイヤーの PNG 画像データ</li>
+<li>ベクターオブジェクトデータ</li>
+<li>ページ情報 (v1.1 マルチページ)</li>
+<li>UI レイアウトスナップショット</li>
+<li>ICC カラープロファイル</li>
+</ul>
+</div>
+<!-- ══════════════════ 設定 ══════════════════ -->
+<h2 id="settings-preferences">環境設定 <span class="tag tag-param">SETTINGS</span></h2>
+<p><kbd>Ctrl+,</kbd> で環境設定ダイアログを開きます。現在は Performance / Interface / File I/O / Shortcuts / AI Effect の 5 タブで構成されています。</p>
+<div class="card">
+<h4>Performance タブ</h4>
+<table>
+<tr><th>設定項目</th><th>範囲</th><th>説明</th></tr>
+<tr><td>Enable Numba optimizations</td><td>ON / OFF</td><td>数値処理の Numba JIT 最適化を有効にします。</td></tr>
+<tr><td>Cache Size</td><td>10 ～ 10000 items</td><td>アプリ内キャッシュの最大エントリ数です。</td></tr>
+<tr><td>Undo Steps</td><td>10 ～ 1000</td><td>Undo 履歴の最大ステップ数</td></tr>
+<tr><td>Memmap Threshold</td><td>1 ～ 1000 MB</td><td>大きな画像データで memmap を使い始める目安です。</td></tr>
+<tr><td>Recompose FPS Limit</td><td>10 ～ 120 fps</td><td>大きなキャンバスで CPU 負荷を抑えるための再合成 FPS 上限です。</td></tr>
+<tr><td>Enable sharp vector overlay (zoom)</td><td>ON / OFF</td><td>最上位ベクターレイヤーをズーム時に画面解像度でシャープ表示します。</td></tr>
+<tr><td>Vector Overlay Max Dim</td><td>2048 / 4096 / 8192</td><td>Sharp vector overlay の最大ラスタ寸法です。大きいほど精細ですが VRAM を使います。</td></tr>
+</table>
+<h4>Interface タブ</h4>
+<table>
+<tr><th>設定項目</th><th>選択肢</th><th>説明</th></tr>
+<tr><td>Language</td><td>System Default / English / 日本語 / Chinese (Simplified / Traditional / Taiwan Mandarin) / Korean / Spanish / Arabic / Hindi / Portuguese (Brazil) / Bengali / Russian</td><td>UI 言語。変更は再起動なしで主要 UI に反映されます。</td></tr>
+<tr><td>Color Theme</td><td>Dark / Light / System</td><td>カラーテーマ</td></tr>
+<tr><td>Show toolbar</td><td>ON / OFF</td><td>ツールバーの表示</td></tr>
+<tr><td>Show status bar</td><td>ON / OFF</td><td>ステータスバーの表示</td></tr>
+<tr><td>Grid interval</td><td>1 ～ 5000 px</td><td>グリッドの間隔</td></tr>
+<tr><td>Allow external AI services</td><td>ON / OFF</td><td>OFF の場合、ComfyUI / LLM Gateway / NanoBanana へのネットワークアクセスをブロックします。</td></tr>
+<tr><td>Menus</td><td>View / Layer / Filter / Tools / Plugins など</td><td>対象メニューの表示を個別に切り替えます。</td></tr>
+<tr><td>Mask overlay color</td><td>カラー (初期値: #00FFFF)</td><td>選択マスクオーバーレイの色</td></tr>
+<tr><td>Mask Overlay Opacity</td><td>0 ～ 255</td><td>選択マスクオーバーレイの不透明度</td></tr>
+</table>
+<h4>File I/O タブ</h4>
+<table>
+<tr><th>設定項目</th><th>範囲</th><th>説明</th></tr>
+<tr><td>Enable autosave</td><td>ON / OFF</td><td>自動保存を有効にします。反映は再起動後です。</td></tr>
+<tr><td>Autosave interval</td><td>30 ～ 3600 sec</td><td>自動保存の間隔です。反映は再起動後です。</td></tr>
+<tr><td>Compression quality</td><td>1 ～ 100</td><td>保存 / 書き出し時の圧縮品質です。</td></tr>
+<tr><td>Layout directory</td><td>フォルダパス</td><td>UI レイアウト保存先を指定します。Browse… から選択できます。</td></tr>
+</table>
+<h4>Shortcuts タブ</h4>
+<p>全アクションのキーボードショートカットを一覧表示・再設定できます。カテゴリ / 所有者のツリー、検索、競合表示、Reset Shortcuts を備えています。マウス操作では Pan gesture と Context menu の割り当ても変更できます。</p>
+<h4>AI Effect タブ</h4>
+<table>
+<tr><th>設定項目</th><th>範囲 / 選択肢</th><th>説明</th></tr>
+<tr><td>Default trigger</td><td>Manual / On change / Debounced</td><td>AI Effect レイヤー生成の既定トリガーです。</td></tr>
+<tr><td>Debounce delay</td><td>0 ～ 60000 ms</td><td>Debounced trigger の待ち時間です。</td></tr>
+<tr><td>Generation timeout</td><td>10 ～ 86400 sec</td><td>生成ジョブのタイムアウトです。</td></tr>
+<tr><td>Cache entries per layer</td><td>1 ～ 500 entries</td><td>AI Effect レイヤーごとのキャッシュ上限です。</td></tr>
+<tr><td>Disable cache for manual regenerate</td><td>ON / OFF</td><td>手動再生成時にキャッシュを使わないようにします。</td></tr>
+<tr><td>Auto-retries on 'on change' trigger</td><td>0 ～ 10</td><td>On change 生成の自動リトライ回数です。</td></tr>
+<tr><td>Retry delay</td><td>0 ～ 60000 ms</td><td>リトライ前の待ち時間です。</td></tr>
+<tr><td>Show first-generation banner</td><td>ON / OFF</td><td>初回生成完了時の案内バナーを表示します。</td></tr>
+<tr><td>Register on-change / debounced generations in Gallery</td><td>ON / OFF</td><td>自動生成結果を Gallery に登録するかを切り替えます。</td></tr>
+<tr><td>ComfyUI Servers</td><td>Local URL / External URL</td><td>AI Effect 用 ComfyUI server registry の URL を設定します。Local の既定は <code>http://127.0.0.1:8188</code> です。</td></tr>
+<tr><td>API Keys</td><td>NanoBanana / OpenAI / Anthropic / Google Gemini</td><td>Change… / Clear から API キーを登録・削除します。値は <code>SecretProvider</code> 経由で扱われます。</td></tr>
+</table>
+<p>AI Effect タブの既定値、キャッシュ、リトライなどは <code>user_data/ai_effect/preferences.json</code> に保存されます。ComfyUI URL は通常設定側へ保存され、次回起動時に反映されます。</p>
+</div>
+<h2 id="settings-shortcuts">ショートカット一覧 <span class="tag tag-param">SETTINGS</span></h2>
+<div class="card">
+<h4>ファイル操作</h4>
+<table class="shortcut-table">
+<tr><td><kbd>Ctrl+N</kbd></td><td>新規作成</td></tr>
+<tr><td><kbd>Ctrl+O</kbd></td><td>開く</td></tr>
+<tr><td><kbd>Ctrl+S</kbd></td><td>保存</td></tr>
+<tr><td><kbd>Ctrl+Shift+S</kbd></td><td>名前を付けて保存</td></tr>
+<tr><td><kbd>Ctrl+Shift+I</kbd></td><td>インポート</td></tr>
+<tr><td><kbd>Ctrl+E</kbd></td><td>エクスポート</td></tr>
+<tr><td><kbd>Ctrl+W</kbd></td><td>閉じる</td></tr>
+<tr><td><kbd>Ctrl+Q</kbd></td><td>終了</td></tr>
+</table>
+<h4>編集操作</h4>
+<table class="shortcut-table">
+<tr><td><kbd>Ctrl+Z</kbd></td><td>元に戻す (Undo)</td></tr>
+<tr><td><kbd>Ctrl+Y</kbd></td><td>やり直し (Redo)</td></tr>
+<tr><td><kbd>Ctrl+X</kbd></td><td>切り取り</td></tr>
+<tr><td><kbd>Ctrl+C</kbd></td><td>コピー</td></tr>
+<tr><td><kbd>Ctrl+V</kbd></td><td>貼り付け</td></tr>
+<tr><td><kbd>Ctrl+A</kbd></td><td>全選択</td></tr>
+<tr><td><kbd>Ctrl+L</kbd></td><td>全ベクター選択</td></tr>
+<tr><td><kbd>Ctrl+D</kbd></td><td>選択解除</td></tr>
+</table>
+<h4>ツール</h4>
+<table class="shortcut-table">
+<tr><td><kbd>B</kbd></td><td>ペンツール</td></tr>
+<tr><td><kbd>E</kbd></td><td>消しゴムツール</td></tr>
+<tr><td><kbd>V</kbd></td><td>移動ツール</td></tr>
+<tr><td><kbd>P</kbd></td><td>ベクター精密ペン</td></tr>
+<tr><td><kbd>T</kbd></td><td>テキストツール</td></tr>
+<tr><td><kbd>I</kbd></td><td>スポイトツール</td></tr>
+<tr><td><kbd>[</kbd> / <kbd>]</kbd></td><td>ブラシサイズ変更</td></tr>
+</table>
+<h4>表示</h4>
+<table class="shortcut-table">
+<tr><td><kbd>Ctrl+=</kbd></td><td>ズームイン</td></tr>
+<tr><td><kbd>Ctrl+-</kbd></td><td>ズームアウト</td></tr>
+<tr><td><kbd>Ctrl+0</kbd></td><td>ズームリセット</td></tr>
+<tr><td><kbd>G</kbd></td><td>グリッド表示切替</td></tr>
+<tr><td><kbd>R</kbd></td><td>ガイド表示切替</td></tr>
+<tr><td><kbd>F11</kbd></td><td>フルスクリーン</td></tr>
+</table>
+<h4>レイヤー</h4>
+<table class="shortcut-table">
+<tr><td><kbd>Ctrl+Shift+N</kbd></td><td>新規レイヤー</td></tr>
+<tr><td><kbd>Ctrl+J</kbd></td><td>レイヤー複製</td></tr>
+<tr><td><kbd>Del</kbd></td><td>レイヤー削除</td></tr>
+<tr><td><kbd>Ctrl+E</kbd></td><td>下のレイヤーと結合</td></tr>
+<tr><td><kbd>Shift+R</kbd></td><td>ラスタライズ</td></tr>
+</table>
+<h4>フィルター</h4>
+<table class="shortcut-table">
+<tr><td><kbd>Ctrl+Alt+F</kbd></td><td>最後のフィルターを再適用</td></tr>
+</table>
+<h4>設定</h4>
+<table class="shortcut-table">
+<tr><td><kbd>Ctrl+,</kbd></td><td>環境設定</td></tr>
+</table>
+</div>
+</main>
+<!-- ===== SCRIPTS ===== -->
+
+<script>
+const sidebar=document.getElementById('sidebar');const toggle=document.getElementById('sidebar-toggle');if(toggle)toggle.addEventListener('click',()=>sidebar.classList.toggle('show'));
+document.querySelectorAll('.nav-section-title').forEach(t=>t.addEventListener('click',()=>t.parentElement.classList.toggle('open')));
+const s=document.getElementById('sidebar-search');if(s)s.addEventListener('input',()=>{const q=s.value.toLowerCase();document.querySelectorAll('.nav-section').forEach(sec=>{let any=false;sec.querySelectorAll('.nav-link').forEach(a=>{const m=a.textContent.toLowerCase().includes(q);a.style.display=m?'':'none';if(m)any=true;});sec.style.display=any||!q?'':'none';if(q&&any)sec.classList.add('open');});});
+const sel=document.getElementById('language-select');if(sel)sel.addEventListener('change',()=>{location.href='index_'+sel.value+'.html'});
+</script></body>
+</html>

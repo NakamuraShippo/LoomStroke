@@ -1,0 +1,86 @@
+{
+  "version": 1,
+  "checked_on": "2026-10-10",
+  "profiles": [
+    {
+      "filename": "ISOcoated_v2_300_bas.ICC",
+      "description": "ISO Coated v2 300% (basICColor)",
+      "region": "Europe / ISO",
+      "printing_condition": "FOGRA39, coated paper, TAC 300%",
+      "license_file": "LICENSE-ZLIB-bICC.txt",
+      "source_url": "https://sources.debian.org/data/main/i/icc-profiles-free/2.4/icc-profiles-basiccolor-printing2009/default_profiles/printing/ISOcoated_v2_300_bas.ICC",
+      "byte_count": 1052612,
+      "sha256": "b424c77f40c3423c925536f8ae08634985ccd0fe80eb253d5d229197ded7e886"
+    },
+    {
+      "filename": "ISOcoated_v2_bas.ICC",
+      "description": "ISO Coated v2 (basICColor)",
+      "region": "Europe / ISO",
+      "printing_condition": "FOGRA39, coated paper",
+      "license_file": "LICENSE-ZLIB-bICC.txt",
+      "source_url": "https://sources.debian.org/data/main/i/icc-profiles-free/2.4/icc-profiles-basiccolor-printing2009/default_profiles/printing/ISOcoated_v2_bas.ICC",
+      "byte_count": 1052608,
+      "sha256": "7cdd1a643a1703fe62c30cd0cd2aba0fb01ae8d5a1ac985c8f8964ff73e4fae0"
+    },
+    {
+      "filename": "PSO_Uncoated_ISO12647_bas.ICC",
+      "description": "PSO Uncoated ISO12647 (basICColor)",
+      "region": "Europe / ISO",
+      "printing_condition": "FOGRA47, uncoated paper",
+      "license_file": "LICENSE-ZLIB-bICC.txt",
+      "source_url": "https://sources.debian.org/data/main/i/icc-profiles-free/2.4/icc-profiles-basiccolor-printing2009/default_profiles/printing/PSO_Uncoated_ISO12647_bas.ICC",
+      "byte_count": 1879756,
+      "sha256": "fb66b8ca8cb795575628e6fee8eee7b26e71084db882ef2b0b17329fa5127b49"
+    },
+    {
+      "filename": "ISOnewspaper_v4_26_bas.ICC",
+      "description": "ISO Newspaper v4 26 (basICColor)",
+      "region": "Europe / ISO",
+      "printing_condition": "ISO newspaper printing",
+      "license_file": "LICENSE-ZLIB-bICC.txt",
+      "source_url": "https://sources.debian.org/data/main/i/icc-profiles-free/2.4/icc-profiles-basiccolor-printing2009/default_profiles/printing/ISOnewspaper_v4_26_bas.ICC",
+      "byte_count": 1018366,
+      "sha256": "208dcda9d4b35ba6c20733f19e6eeeeab657ab557474f46b17c9bd932869ba7e"
+    },
+    {
+      "filename": "PSO_LWC_Improved_bas.ICC",
+      "description": "PSO LWC Improved (basICColor)",
+      "region": "Europe / ISO",
+      "printing_condition": "FOGRA45, improved lightweight coated paper",
+      "license_file": "LICENSE-ZLIB-bICC.txt",
+      "source_url": "https://sources.debian.org/data/main/i/icc-profiles-free/2.4/icc-profiles-basiccolor-printing2009/default_profiles/printing/PSO_LWC_Improved_bas.ICC",
+      "byte_count": 1880108,
+      "sha256": "77c687c736f02206b7d1e4d0ed160429b00f50d8ec56ef611bced813f648ac8f"
+    },
+    {
+      "filename": "SC_paper_bas.ICC",
+      "description": "SC paper (basICColor)",
+      "region": "Europe / ISO",
+      "printing_condition": "FOGRA40, supercalendered paper",
+      "license_file": "LICENSE-ZLIB-bICC.txt",
+      "source_url": "https://sources.debian.org/data/main/i/icc-profiles-free/2.4/icc-profiles-basiccolor-printing2009/default_profiles/printing/SC_paper_bas.ICC",
+      "byte_count": 1045874,
+      "sha256": "10ba48e5629cd15a72597ca3418a2145c6c74b707f029dc2c731980b1efdae45"
+    },
+    {
+      "filename": "APTEC_Offset_Coated_LinearCTV_2025.icc",
+      "description": "APTEC_Offset_Coated_LinearCTV_2025.icc",
+      "region": "Hong Kong / Asia",
+      "printing_condition": "ISO 12647-2:2013 premium coated paper, TAC 320%, linear CTV",
+      "license_file": "LICENSE-APTEC.txt",
+      "source_url": "https://registry.color.org/profile-registry/profiles/APTEC_Offset_Coated_LinearCTV_2025.icc",
+      "byte_count": 2685584,
+      "sha256": "2a0a26387276046dc129d4330a7a45542b736c8640e3ec4cb74df809c5ccfb0e"
+    },
+    {
+      "filename": "APTEC_Offset_Uncoated_LinearCTV_2025.icc",
+      "description": "APTEC_Offset_Uncoated_LinearCTV_2025.icc",
+      "region": "Hong Kong / Asia",
+      "printing_condition": "ISO 12647-2:2013 wood-free uncoated paper, TAC 280%, linear CTV",
+      "license_file": "LICENSE-APTEC.txt",
+      "source_url": "https://registry.color.org/profile-registry/profiles/APTEC_Offset_Uncoated_LinearCTV_2025.icc",
+      "byte_count": 2675436,
+      "sha256": "b9b0e71256f2754414b32382009289d12085b30a75e36adb87c607cf821256fe"
+    }
+  ]
+}

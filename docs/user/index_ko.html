@@ -1,0 +1,1346 @@
+<!DOCTYPE html>
+
+<html lang="ko">
+<head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>LoomStroke — 사용자 가이드</title>
+<style>
+:root {
+  --bg: #1a1a2e;
+  --bg-panel: #16213e;
+  --bg-card: #1e2a4a;
+  --bg-card-hover: #253456;
+  --accent: #4fc3f7;
+  --accent-dim: #2980b9;
+  --text: #e0e6ed;
+  --text-dim: #8899aa;
+  --text-heading: #ffffff;
+  --border: #2a3a5c;
+  --sidebar-w: 280px;
+  --tag-tool: #4fc3f7;
+  --tag-panel: #ab47bc;
+  --tag-param: #66bb6a;
+  --tag-effect: #ff7043;
+  --tag-ai: #ffd54f;
+}
+* { margin:0; padding:0; box-sizing:border-box; }
+body {
+  font-family: 'Segoe UI', 'Noto Sans JP', 'Hiragino Kaku Gothic ProN', sans-serif;
+  background: var(--bg);
+  color: var(--text);
+  line-height: 1.7;
+  display: flex;
+  min-height: 100vh;
+}
+
+/* ── Sidebar ── */
+#sidebar {
+  width: var(--sidebar-w);
+  min-width: var(--sidebar-w);
+  background: var(--bg-panel);
+  border-right: 1px solid var(--border);
+  overflow-y: auto;
+  position: fixed;
+  top: 0; left: 0; bottom: 0;
+  z-index: 100;
+  transition: transform .25s ease;
+  scrollbar-width: thin;
+  scrollbar-color: var(--border) transparent;
+}
+#sidebar.collapsed { transform: translateX(calc(-1 * var(--sidebar-w))); }
+#sidebar-header {
+  padding: 20px 16px 12px;
+  border-bottom: 1px solid var(--border);
+  position: sticky; top: 0;
+  background: var(--bg-panel);
+  z-index: 1;
+}
+#sidebar-header h1 {
+  font-size: 16px; color: var(--accent);
+  font-weight: 700; letter-spacing: .5px;
+}
+#sidebar-header p { font-size: 11px; color: var(--text-dim); margin-top: 2px; }
+#sidebar-search {
+  width: 100%; margin-top: 10px; padding: 6px 10px;
+  background: var(--bg-card); border: 1px solid var(--border);
+  border-radius: 4px; color: var(--text); font-size: 13px; outline: none;
+}
+#sidebar-search:focus { border-color: var(--accent); }
+#sidebar-search::placeholder { color: var(--text-dim); }
+.language-picker {
+  margin-top: 10px;
+}
+.language-picker label {
+  display: block; margin-bottom: 4px;
+  color: var(--text-dim); font-size: 11px;
+}
+#language-select {
+  width: 100%; padding: 6px 10px;
+  background: var(--bg-card); border: 1px solid var(--border);
+  border-radius: 4px; color: var(--text); font-size: 13px; outline: none;
+}
+#language-select:focus { border-color: var(--accent); }
+#sidebar nav { padding: 8px 0 24px; }
+.nav-section { margin-bottom: 2px; }
+.nav-section-title {
+  display: flex; align-items: center; gap: 6px;
+  padding: 8px 16px; font-size: 12px; font-weight: 700;
+  color: var(--text-dim); text-transform: uppercase; letter-spacing: .8px;
+  cursor: pointer; user-select: none; transition: color .15s;
+}
+.nav-section-title:hover { color: var(--text); }
+.nav-section-title::before {
+  content: '▸'; display: inline-block; font-size: 10px;
+  transition: transform .2s; width: 12px; text-align: center;
+}
+.nav-section.open > .nav-section-title::before { transform: rotate(90deg); }
+.nav-section-items { display: none; }
+.nav-section.open > .nav-section-items { display: block; }
+.nav-link {
+  display: block; padding: 5px 16px 5px 34px;
+  font-size: 13px; color: var(--text-dim);
+  text-decoration: none; border-left: 3px solid transparent;
+  transition: all .15s;
+}
+.nav-link:hover { color: var(--text); background: rgba(79,195,247,.06); }
+.nav-link.active { color: var(--accent); border-left-color: var(--accent); background: rgba(79,195,247,.08); }
+
+/* ── Toggle button ── */
+#sidebar-toggle {
+  position: fixed; top: 12px; left: 12px; z-index: 200;
+  width: 36px; height: 36px; border: none; border-radius: 6px;
+  background: var(--accent-dim); color: #fff; font-size: 18px;
+  cursor: pointer; display: none; align-items: center; justify-content: center;
+  transition: background .15s;
+}
+#sidebar-toggle:hover { background: var(--accent); }
+
+/* ── Main content ── */
+#main {
+  flex: 1; margin-left: var(--sidebar-w);
+  padding: 32px 40px 80px;
+  max-width: 960px;
+  transition: margin-left .25s ease;
+}
+#main.expanded { margin-left: 0; }
+
+h2 {
+  font-size: 26px; color: var(--text-heading);
+  margin: 48px 0 16px; padding-bottom: 8px;
+  border-bottom: 2px solid var(--accent-dim);
+}
+h2:first-of-type { margin-top: 0; }
+h3 {
+  font-size: 19px; color: var(--accent);
+  margin: 32px 0 10px;
+}
+h4 {
+  font-size: 15px; color: var(--text-heading);
+  margin: 20px 0 8px;
+}
+p, li { font-size: 14px; }
+p { margin-bottom: 10px; }
+ul, ol { padding-left: 20px; margin-bottom: 12px; }
+li { margin-bottom: 4px; }
+
+.tag {
+  display: inline-block; font-size: 10px; font-weight: 700;
+  padding: 1px 7px; border-radius: 3px; margin-right: 4px;
+  vertical-align: middle; letter-spacing: .3px;
+}
+.tag-tool    { background: rgba(79,195,247,.18); color: var(--tag-tool); }
+.tag-panel   { background: rgba(171,71,188,.18); color: var(--tag-panel); }
+.tag-param   { background: rgba(102,187,106,.18); color: var(--tag-param); }
+.tag-effect  { background: rgba(255,112,67,.18);  color: var(--tag-effect); }
+.tag-ai      { background: rgba(255,213,79,.18);  color: var(--tag-ai); }
+
+.card {
+  background: var(--bg-card); border: 1px solid var(--border);
+  border-radius: 8px; padding: 18px 20px; margin-bottom: 16px;
+  transition: border-color .15s;
+}
+.card:hover { border-color: var(--accent-dim); }
+.card h4 { margin-top: 0; }
+
+table {
+  width: 100%; border-collapse: collapse; margin-bottom: 16px;
+  font-size: 13px;
+}
+th, td {
+  padding: 8px 12px; text-align: left;
+  border-bottom: 1px solid var(--border);
+}
+th { color: var(--accent); font-weight: 600; font-size: 12px; text-transform: uppercase; letter-spacing: .5px; }
+tr:hover td { background: rgba(79,195,247,.04); }
+
+kbd {
+  display: inline-block; background: var(--bg-card); border: 1px solid var(--border);
+  border-radius: 4px; padding: 1px 6px; font-size: 12px;
+  font-family: 'Consolas', 'Courier New', monospace; color: var(--accent);
+}
+
+.shortcut-table td:first-child { white-space: nowrap; }
+
+code {
+  background: var(--bg-card); padding: 2px 6px; border-radius: 3px;
+  font-size: 13px; font-family: 'Consolas', 'Courier New', monospace;
+  color: var(--accent);
+}
+
+.grid-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
+@media (max-width: 700px) { .grid-2 { grid-template-columns: 1fr; } }
+
+.hero {
+  background: linear-gradient(135deg, var(--bg-panel), var(--bg-card));
+  border: 1px solid var(--border); border-radius: 12px;
+  padding: 32px; margin-bottom: 32px; text-align: center;
+}
+.hero h2 { border: none; margin: 0 0 8px; font-size: 32px; }
+.hero p { color: var(--text-dim); font-size: 15px; margin: 0; }
+
+/* ── Page mode ── */
+.doc-page {
+  display: none;
+  animation: pageFade .16s ease;
+}
+.doc-page.active { display: block; }
+@keyframes pageFade {
+  from { opacity: 0; transform: translateY(6px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+.page-controls {
+  display: flex; align-items: center; justify-content: space-between;
+  gap: 12px; margin: 0 0 24px; padding: 10px 0;
+  border-bottom: 1px solid var(--border);
+}
+.page-controls-bottom {
+  margin: 24px 0 0; border-top: 1px solid var(--border);
+  border-bottom: none;
+}
+.page-button {
+  min-width: 92px; padding: 7px 12px;
+  border: 1px solid var(--border); border-radius: 6px;
+  background: var(--bg-card); color: var(--text);
+  cursor: pointer; font-size: 13px;
+}
+.page-button:hover:not(:disabled) {
+  border-color: var(--accent); color: var(--accent);
+}
+.page-button:disabled {
+  opacity: .4; cursor: default;
+}
+.page-status {
+  color: var(--text-dim); font-size: 13px; text-align: center;
+}
+
+/* 画像は docs/user/assets/user-guide/ に置き、下部 script の pageMedia に登録します。 */
+.media-slot {
+  margin: 14px 0 18px;
+  border: 1px solid var(--border); border-radius: 8px;
+  background: rgba(255,255,255,.025); overflow: hidden;
+}
+.media-slot img {
+  display: block; width: 100%; height: auto;
+}
+.media-caption {
+  padding: 8px 12px; color: var(--text-dim); font-size: 12px;
+  border-top: 1px solid var(--border);
+}
+.media-slot-empty:not(.media-slot-visible) { display: none; }
+.media-placeholder {
+  min-height: 180px; display: flex; flex-direction: column;
+  align-items: center; justify-content: center; gap: 6px;
+  color: var(--text-dim); border: 1px dashed var(--border);
+}
+.media-placeholder strong { color: var(--accent); font-size: 13px; }
+.media-placeholder span { font-size: 12px; }
+
+/* ── Responsive ── */
+@media (max-width: 900px) {
+  #sidebar { transform: translateX(calc(-1 * var(--sidebar-w))); }
+  #sidebar.show { transform: translateX(0); }
+  #sidebar-toggle { display: flex; }
+  #main { margin-left: 0; padding: 32px 20px 60px; }
+  .page-controls { position: sticky; top: 0; z-index: 20; background: var(--bg); }
+}
+
+@media print {
+  body { display: block; background: #fff; color: #000; }
+  #sidebar, #sidebar-toggle, .page-controls { display: none !important; }
+  #main { margin: 0; max-width: none; padding: 0; }
+  .doc-page { display: block !important; page-break-after: always; }
+  .media-slot-empty { display: none !important; }
+}
+</style>
+</head>
+<body>
+<button aria-label="메뉴 전환" id="sidebar-toggle">☰</button>
+<!-- ===== SIDEBAR ===== -->
+<aside id="sidebar">
+<div id="sidebar-header">
+<h1>LoomStroke</h1>
+<p>사용자 가이드</p>
+<input autocomplete="off" id="sidebar-search" placeholder="검색..." type="search"/>
+<div class="language-picker">
+<label for="language-select">표시 언어</label>
+<select autocomplete="off" id="language-select">
+<option value="ja">일본어</option>
+<option value="en">영어</option>
+<option value="zh_CN">중국어 간체</option>
+<option value="zh_Hant">중국어 번체</option>
+<option value="zh_TW">대만 중국어</option>
+<option selected="selected" value="ko">한국어</option>
+<option value="es">스페인어</option>
+<option value="ar">아랍어</option>
+<option value="hi">힌디어</option>
+<option value="pt_BR">포르투갈어(브라질)</option>
+<option value="bn">벵골어</option>
+<option value="ru">러시아어</option>
+</select>
+</div>
+</div>
+<nav>
+<!-- Overview -->
+<div class="nav-section open">
+<div class="nav-section-title">개요</div>
+<div class="nav-section-items">
+<a class="nav-link" href="#overview">애플리케이션 개요</a>
+<a class="nav-link" href="#layout">화면 레이아웃</a>
+</div>
+</div>
+<!-- Drawing Tools -->
+<div class="nav-section open">
+<div class="nav-section-title">그리기 도구</div>
+<div class="nav-section-items">
+<a class="nav-link" href="#pen">펜 도구</a>
+<a class="nav-link" href="#eraser">지우개 도구</a>
+<a class="nav-link" href="#fill-bucket">채우기 도구</a>
+<a class="nav-link" href="#gradient">그라데이션 도구</a>
+<a class="nav-link" href="#pattern-fill">패턴 채우기 도구</a>
+</div>
+</div>
+<!-- Selection Tools -->
+<div class="nav-section">
+<div class="nav-section-title">선택 도구</div>
+<div class="nav-section-items">
+<a class="nav-link" href="#selection-rect">사각형 선택 도구</a>
+<a class="nav-link" href="#magic-wand">마술봉 도구</a>
+</div>
+</div>
+<!-- Transform / Move -->
+<div class="nav-section">
+<div class="nav-section-title">변형 / 이동</div>
+<div class="nav-section-items">
+<a class="nav-link" href="#move">이동 도구</a>
+<a class="nav-link" href="#transform-panel">변형 패널</a>
+</div>
+</div>
+<!-- Vector Tools -->
+<div class="nav-section">
+<div class="nav-section-title">벡터 도구</div>
+<div class="nav-section-items">
+<a class="nav-link" href="#vector-path">벡터 경로 도구</a>
+<a class="nav-link" href="#vector-precise">정밀 벡터 펜</a>
+<a class="nav-link" href="#vector-edit">벡터 편집 도구</a>
+</div>
+</div>
+<!-- Text Tools -->
+<div class="nav-section">
+<div class="nav-section-title">텍스트 도구</div>
+<div class="nav-section-items">
+<a class="nav-link" href="#text-tool">텍스트 도구</a>
+<a class="nav-link" href="#text-vertical">세로 텍스트 도구</a>
+<a class="nav-link" href="#font-panel">글꼴 패널</a>
+</div>
+</div>
+<!-- Utility Tools -->
+<div class="nav-section">
+<div class="nav-section-title">유틸리티</div>
+<div class="nav-section-items">
+<a class="nav-link" href="#eyedropper">스포이드 도구</a>
+</div>
+</div>
+<!-- Panels -->
+<div class="nav-section open">
+<div class="nav-section-title">패널</div>
+<div class="nav-section-items">
+<a class="nav-link" href="#panel-toolbar">도구 모음</a>
+<a class="nav-link" href="#panel-tool-props">도구 속성</a>
+<a class="nav-link" href="#panel-layers">레이어 패널</a>
+<a class="nav-link" href="#panel-color">색상 패널</a>
+<a class="nav-link" href="#panel-brush-manager">브러시 관리자</a>
+<a class="nav-link" href="#panel-shape-manager">도형 관리자</a>
+<a class="nav-link" href="#panel-effect">효과 패널</a>
+<a class="nav-link" href="#panel-pages">페이지 패널</a>
+<a class="nav-link" href="#panel-preview">미리보기 패널</a>
+<a class="nav-link" href="#panel-context-toolbar">컨텍스트 도구 모음</a>
+</div>
+</div>
+<!-- Effects -->
+<div class="nav-section">
+<div class="nav-section-title">효과 레이어</div>
+<div class="nav-section-items">
+<a class="nav-link" href="#fx-gaussian-blur">가우시안 블러</a>
+<a class="nav-link" href="#fx-levels">레벨</a>
+<a class="nav-link" href="#fx-hue-saturation">색상 / 채도</a>
+<a class="nav-link" href="#fx-invert">반전</a>
+<a class="nav-link" href="#fx-brightness-contrast">밝기 / 대비</a>
+<a class="nav-link" href="#fx-sharpen">선명하게</a>
+<a class="nav-link" href="#fx-noise-reduction">노이즈 감소</a>
+</div>
+</div>
+<!-- AI -->
+<div class="nav-section">
+<div class="nav-section-title">AI 연동</div>
+<div class="nav-section-items">
+<a class="nav-link" href="#ai-comfyui">ComfyUI 패널</a>
+<a class="nav-link" href="#ai-nanobanana">NanoBanana 패널</a>
+<a class="nav-link" href="#ai-prompt-editor">프롬프트 편집기</a>
+</div>
+</div>
+<!-- AI Effect Layer -->
+<div class="nav-section">
+<div class="nav-section-title">AI 효과</div>
+<div class="nav-section-items">
+<a class="nav-link" href="#ai-effect-overview">AI 효과 레이어</a>
+<a class="nav-link" href="#ai-effect-manager">AI 효과 관리자</a>
+<a class="nav-link" href="#ai-effect-editor">효과 편집기</a>
+<a class="nav-link" href="#ai-effect-runtime">생성 및 상태</a>
+</div>
+</div>
+<!-- Canvas -->
+<div class="nav-section">
+<div class="nav-section-title">캔버스 조작</div>
+<div class="nav-section-items">
+<a class="nav-link" href="#canvas-viewport">확대/축소 / 팬 / 회전</a>
+<a class="nav-link" href="#canvas-rulers">눈금자와 가이드</a>
+<a class="nav-link" href="#canvas-grid">그리드</a>
+</div>
+</div>
+<!-- File I/O -->
+<div class="nav-section">
+<div class="nav-section-title">파일 입출력</div>
+<div class="nav-section-items">
+<a class="nav-link" href="#file-formats">지원 형식</a>
+<a class="nav-link" href="#file-lstroke">.lstroke 네이티브 형식</a>
+</div>
+</div>
+<!-- Settings -->
+<div class="nav-section">
+<div class="nav-section-title">설정</div>
+<div class="nav-section-items">
+<a class="nav-link" href="#settings-preferences">환경 설정</a>
+<a class="nav-link" href="#settings-shortcuts">단축키 목록</a>
+</div>
+</div>
+</nav>
+</aside>
+<!-- ===== MAIN CONTENT ===== -->
+<main id="main">
+<!-- Hero -->
+<div class="hero">
+<h2 style="border:none;">LoomStroke</h2>
+<p>만화와 일러스트 제작을 위한 통합 디지털 페인팅 애플리케이션</p>
+</div>
+<!-- ────────────────── 概要 ────────────────── -->
+<section id="overview">
+<h2>애플리케이션 개요</h2>
+<p>LoomStroke는 래스터 페인팅, 벡터 경로, 텍스트 편집, 여러 페이지, 외부 플러그인, AI 연동을 하나의 제작 작업 공간에 통합한 디지털 페인팅 애플리케이션입니다. 작업 파일은<code>.lstroke</code>형식으로 저장할 수 있습니다.</p>
+<div class="grid-2">
+<div class="card">
+<h4>주요 기능</h4>
+<ul>
+<li>필압과 기울기를 지원하는 브러시 엔진</li>
+<li>레이어 불투명도 및 블렌드 모드 관리</li>
+<li>벡터 경로 및 파라메트릭 도형</li>
+<li>가로 및 세로 텍스트</li>
+<li>비파괴 효과 레이어</li>
+<li>다중 페이지 문서</li>
+</ul>
+</div>
+<div class="card">
+<h4>AI 연동</h4>
+<ul>
+<li>ComfyUI 워크플로 연동</li>
+<li>NanoBanana (Gemini) 이미지 생성</li>
+<li>프롬프트 편집기 및 스니펫 관리</li>
+<li>LLM Gateway (OpenAI / Anthropic / Gemini)</li>
+</ul>
+</div>
+</div>
+</section>
+<!-- ────────────────── Layout ────────────────── -->
+<section id="layout">
+<h2>화면 레이아웃</h2>
+<p>메인 창은 아래 영역으로 구성됩니다. 각 패널은 드래그 앤 드롭으로 자유롭게 배치할 수 있으며 탭으로 결합할 수도 있습니다.</p>
+<div class="card">
+<table>
+<tr><th>영역</th><th>내용</th></tr>
+<tr><td>상단</td><td>메뉴 바 + 도구 속성 바, 활성 도구 설정을 한 줄로 표시</td></tr>
+<tr><td>왼쪽 도크</td><td>도구 모음, 색상 패널, 글꼴 패널 및 페이지 패널</td></tr>
+<tr><td>가운데</td><td>캔버스(기본값: QImage 기반 SimpleCanvasService) + 눈금자</td></tr>
+<tr><td>오른쪽 도크</td><td>레이어 패널, 도형 관리자, 변형, 효과 및 미리보기</td></tr>
+<tr><td>플로팅</td><td>컨텍스트 도구 모음, 스트로크 후 자동 표시</td></tr>
+</table>
+</div>
+<p><kbd>Window</kbd> 각 패널은 메뉴에서 표시하거나 숨길 수 있습니다.<kbd>F11</kbd> 전체 화면 모드로 전환합니다.</p>
+</section>
+<!-- ══════════════════ 描画ツール ══════════════════ -->
+<h2 id="pen">펜 도구 <span class="tag tag-tool">도구</span></h2>
+<p>필압과 기울기를 지원하는 래스터 페인팅 브러시입니다. ABR(Photoshop) 브러시 가져오기도 지원합니다.</p>
+<div class="card">
+<p><strong>단축키:</strong> <kbd>B</kbd> / <kbd>Shift+B</kbd></p>
+<table>
+<tr><th>매개변수</th><th>범위</th><th>설명</th></tr>
+<tr><td>크기</td><td>1 ～ 128</td><td>브러시 지름 (px)</td></tr>
+<tr><td>불투명도</td><td>0 ～ 1.0</td><td>불투명도 용 전체 스트로크</td></tr>
+<tr><td>경도</td><td>0 ～ 1.0</td><td>가장자리 경도 (0=부드러움, 1=딱딱함)</td></tr>
+<tr><td>간격</td><td>0.01 ～ 1.0</td><td>스탬프 간격 로 비율 의 브러시 지름</td></tr>
+<tr><td>흐름</td><td>0 ～ 1.0</td><td>잉크 흐름량</td></tr>
+<tr><td>스탬프 밀도</td><td>0 ～ 1.0</td><td>스탬프 밀도, 표현 로 역수 의 간격</td></tr>
+<tr><td>필압 감지</td><td>에서 / OFF</td><td>활성화 압력 감도</td></tr>
+<tr><td>보정</td><td>0 ～ 1.0</td><td>스트로크 항목</td></tr>
+<tr><td>톤 범위</td><td>0 ～ 1.0</td><td>톤 범위 용 스크린톤 스타일 렌더링</td></tr>
+<tr><td>톤 감마</td><td>0.1 ～ 2.0</td><td>톤 감마 보정값</td></tr>
+<tr><td>틸트 각도</td><td>에서 / OFF</td><td>태블릿 기울기에 따른 음영 처리</td></tr>
+</table>
+<p><strong>프리셋:</strong> 항목, 항목 및 ABR에서 가져온 사용자 지정 브러시</p>
+</div>
+<h2 id="eraser">지우개 도구 <span class="tag tag-tool">도구</span></h2>
+<p>필압을 지원하는 래스터 지우개입니다.</p>
+<div class="card">
+<p><strong>단축키:</strong> <kbd>E</kbd> / <kbd>Shift+E</kbd>   <strong>크기 변경:</strong> <kbd>[</kbd> <kbd>]</kbd></p>
+<table>
+<tr><th>매개변수</th><th>범위</th><th>설명</th></tr>
+<tr><td>크기</td><td>1 ～ 200</td><td>지우개 지름 (px)</td></tr>
+<tr><td>불투명도</td><td>0 ～ 1.0</td><td>지우개 강도</td></tr>
+<tr><td>경도</td><td>0 ～ 1.0</td><td>가장자리 경도</td></tr>
+<tr><td>간격</td><td>0.01 ～ 1.0</td><td>스탬프 간격</td></tr>
+<tr><td>항목 항목</td><td>에서 / OFF</td><td>안티앨리어싱</td></tr>
+</table>
+<p><strong>프리셋:</strong> 부드러움 항목, 가장자리 항목</p>
+</div>
+<h2 id="fill-bucket">채우기 도구 <span class="tag tag-tool">도구</span></h2>
+<p>비슷한 색상의 인접 영역을 플러드 필로 채웁니다.</p>
+<div class="card">
+<table>
+<tr><th>매개변수</th><th>범위</th><th>설명</th></tr>
+<tr><td>색 허용 오차</td><td>0 ～ 255</td><td>색상 항목 사용 용 채우기 검출</td></tr>
+<tr><td>틈 메우기 (px)</td><td>0 ～ 10</td><td>수 의 픽셀 사용 로 자동 닫기 틈 에 선</td></tr>
+<tr><td>채우기 대상</td><td>활성 레이어 / 새 레이어</td><td>대상 레이어 용 채우기</td></tr>
+</table>
+</div>
+<h2 id="gradient">그라데이션 도구 <span class="tag tag-tool">도구</span></h2>
+<p>드래그로 선형 또는 방사형 그라데이션을 그립니다. 중간 스톱은 핀을 드래그하여 편집할 수 있습니다.</p>
+<div class="card">
+<table>
+<tr><th>매개변수</th><th>범위</th><th>설명</th></tr>
+<tr><td>그라데이션 유형</td><td>선형 / 방사형</td><td>그라데이션 도형</td></tr>
+<tr><td>색상</td><td>색상</td><td>시작 색상</td></tr>
+<tr><td>색상 B</td><td>색상</td><td>끝 색상</td></tr>
+<tr><td>중간 스톱</td><td>0 ～ 3</td><td>수 의 중간 색상 스톱</td></tr>
+<tr><td>스톱 N 위치</td><td>0 ～ 1.0</td><td>위치 의 각 스톱 (0=시작 가장자리, 1=끝 가장자리)</td></tr>
+<tr><td>스톱 N 색상</td><td>색상</td><td>색상 의 각 스톱</td></tr>
+<tr><td>디더링</td><td>에서 / OFF</td><td>항목 로 줄임 밴딩</td></tr>
+</table>
+<p><strong>지원되는 블렌드 모드:</strong> 일반, 어둡게, 곱하기, 색상 번, 밝게, 스크린, 색상 닷지, 선형 닷지, 오버레이, 소프트 라이트, 하드 라이트, 차이, 제외</p>
+</div>
+<h2 id="pattern-fill">패턴 채우기 도구 <span class="tag tag-tool">도구</span></h2>
+<p>타일 패턴으로 영역을 반복해서 채웁니다.</p>
+<div class="card">
+<table>
+<tr><th>매개변수</th><th>범위</th><th>설명</th></tr>
+<tr><td>패턴</td><td>체커보드 / 가로 줄무늬 / 세로 줄무늬 / 대각선 줄무늬 / 점 / 크로스해치</td><td>Built-에서 패턴 로 사용</td></tr>
+<tr><td>패턴 스케일</td><td>0.1 ～ 10.0</td><td>패턴 스케일 배율</td></tr>
+<tr><td>색 허용 오차</td><td>0 ～ 255</td><td>색상 항목 사용 용 채우기 검출</td></tr>
+<tr><td>틈 메우기 (px)</td><td>0 ～ 10</td><td>수 의 픽셀 사용 로 자동 닫기 틈 에 선</td></tr>
+</table>
+<p><strong>작업:</strong> 클릭한 지점부터 선택한 타일 패턴으로 연결 영역을 채웁니다.</p>
+</div>
+<!-- ══════════════════ 選択ツール ══════════════════ -->
+<h2 id="selection-rect">사각형 선택 도구 <span class="tag tag-tool">도구</span></h2>
+<p>사각형을 드래그하여 선택 영역을 만듭니다. 벡터 오브젝트의 범위 선택도 지원합니다.</p>
+<div class="card">
+<table>
+<tr><th>매개변수</th><th>범위</th><th>설명</th></tr>
+<tr><td>선택 모드</td><td>사각형 / 벡터</td><td>래스터 사각형 선택 / 벡터 범위 선택</td></tr>
+<tr><td>작업</td><td>바꾸기 / 추가 / 빼기 / 교차</td><td>방법 선택 입니다 결합</td></tr>
+<tr><td>픽셀 퍼펙트</td><td>에서 / OFF</td><td>정렬 로 픽셀</td></tr>
+<tr><td>페더 활성화됨</td><td>에서 / OFF</td><td>페더 선택</td></tr>
+<tr><td>페더 반경</td><td>0 ～ 128</td><td>페더 반경 (px)</td></tr>
+<tr><td>마스크 반경</td><td>0 ～ 128</td><td>반경 사용 용 항목 또는 항목 선택 마스크</td></tr>
+<tr><td>변형 X / Y</td><td>-10000 ～ 10000</td><td>항목 양 동안 변형</td></tr>
+<tr><td>변형 스케일 X / Y</td><td>0.01 ～ 100</td><td>스케일 배율 동안 변형</td></tr>
+<tr><td>변형 회전</td><td>-180° ～ 180°</td><td>변형 중 회전 각도</td></tr>
+</table>
+<p><strong>보조 키:</strong> <kbd>Shift</kbd>=추가, <kbd>Alt</kbd>=빼기, <kbd>Shift+Alt</kbd>=교차</p>
+<p><strong>변형 모드 (<kbd>Ctrl+T</kbd>):</strong> 이동 / 스케일 / 회전 / 반전 / 재설정 / 적용 / 취소</p>
+</div>
+<h2 id="magic-wand">마술봉 도구 <span class="tag tag-tool">도구</span></h2>
+<p>클릭한 지점에서 유사한 색상의 연속 영역을 자동으로 선택합니다.</p>
+<div class="card">
+<table>
+<tr><th>매개변수</th><th>범위</th><th>설명</th></tr>
+<tr><td>허용치</td><td>0 ～ 255</td><td>색상 항목 (기본: 32)</td></tr>
+<tr><td>인접</td><td>에서 / OFF</td><td>에서=인접 픽셀 만, OFF=유사 색상 전체 전체 이미지</td></tr>
+<tr><td>작업</td><td>바꾸기 / 추가 / 빼기 / 교차</td><td>방법 선택 입니다 결합</td></tr>
+</table>
+<p>매개변수가 변경되면 도구가 마지막으로 클릭한 지점에서 자동으로 다시 선택합니다.</p>
+</div>
+<!-- ══════════════════ 変形・移動 ══════════════════ -->
+<h2 id="move">이동 도구 <span class="tag tag-tool">도구</span></h2>
+<p>레이어나 벡터 오브젝트를 이동하고 변형합니다. 텍스트 오브젝트를 두 번 클릭하면 편집 모드로 전환됩니다.</p>
+<div class="card">
+<p><strong>단축키:</strong> <kbd>V</kbd></p>
+<table>
+<tr><th>매개변수</th><th>범위</th><th>설명</th></tr>
+<tr><td>픽셀 퍼펙트</td><td>에서 / OFF</td><td>항목 정렬 (기본: 에서)</td></tr>
+<tr><td>그리드 스냅</td><td>에서 / OFF</td><td>그리드 스냅</td></tr>
+<tr><td>그리드 크기</td><td>1 ～ 1024</td><td>그리드 크기 (px)</td></tr>
+</table>
+<p><strong>항목 모드:</strong></p>
+<ul>
+<li><strong>와 선택:</strong> 잘라내기, 이동, 및 변형 선택된 영역</li>
+<li><strong>벡터 / 텍스트:</strong> 이동 오브젝트. Double-클릭 로 전환 로 경로 편집 또는 텍스트 도구</li>
+<li><strong>래스터 레이어:</strong> 이동 항목 레이어</li>
+</ul>
+</div>
+<h2 id="transform-panel">변형 패널 <span class="tag tag-panel">패널</span></h2>
+<p>숫자 입력으로 선택한 오브젝트의 위치, 크기, 각도를 제어합니다.</p>
+<div class="card">
+<table>
+<tr><th>항목</th><th>범위</th><th>설명</th></tr>
+<tr><td>X</td><td>-99999 ～ 99999</td><td>X 위치 (위-왼쪽 의 경계 상자)</td></tr>
+<tr><td>Y</td><td>-99999 ～ 99999</td><td>Y 위치 (위-왼쪽 의 경계 상자)</td></tr>
+<tr><td>W</td><td>0.1 ～ 99999</td><td>너비 (벡터 만)</td></tr>
+<tr><td>H</td><td>0.1 ～ 99999</td><td>높이 (벡터 만)</td></tr>
+<tr><td>각도</td><td>-360° ～ 360°</td><td>회전 각도</td></tr>
+</table>
+<p>때 래스터 레이어 입니다 선택된, 만 X/Y 가능 되다 편집됨.</p>
+</div>
+<!-- ══════════════════ ベクターツール ══════════════════ -->
+<h2 id="vector-path">벡터 경로 도구 <span class="tag tag-tool">도구</span></h2>
+<p>클릭하여 앵커 포인트를 배치하고 베지어 경로를 만듭니다. 드래그하여 방향 핸들을 설정할 수 있습니다.</p>
+<div class="card">
+<table>
+<tr><th>매개변수</th><th>범위</th><th>설명</th></tr>
+<tr><td>Shift 모드</td><td>제약 / 비활성화_스냅</td><td><kbd>Shift</kbd> 전환 동작 로 각도 제약 또는 스냅 억제</td></tr>
+<tr><td>자동 닫기 허용값 (px)</td><td>0 ～ 64</td><td>거리 용 자동 닫기 때 클릭 근처 시작 점</td></tr>
+<tr><td>선 두께</td><td>0.1 ～ 64</td><td>선 두께</td></tr>
+<tr><td>선 색상</td><td>색상</td><td>스트로크 색상</td></tr>
+<tr><td>채우기 사용</td><td>에서 / OFF</td><td>채우기 활성화됨</td></tr>
+<tr><td>채우기 색상</td><td>색상</td><td>채우기 색상</td></tr>
+</table>
+<p><kbd>Enter</kbd> 로 항목,<kbd>Esc</kbd> 로 폐기. 돌아가기 근처 시작 점 닫음 경로 자동.</p>
+</div>
+<h2 id="vector-precise">정밀 벡터 펜 <span class="tag tag-tool">도구</span></h2>
+<p>자유hand 스트로크를 부드러운 베지어 곡선으로 자동 변환합니다.</p>
+<div class="card">
+<p><strong>단축키:</strong> <kbd>P</kbd></p>
+<table>
+<tr><th>매개변수</th><th>범위</th><th>설명</th></tr>
+<tr><td>편집 모드</td><td>앵커 / 도형</td><td>선택 여부 도구 우선 앵커 편집 또는 도형 편집</td></tr>
+<tr><td>자동 닫기</td><td>에서 / OFF</td><td>자동 경로 닫기</td></tr>
+<tr><td>선 두께</td><td>0.1 ～ 64</td><td>선 두께</td></tr>
+<tr><td>선 색상</td><td>색상</td><td>스트로크 색상</td></tr>
+<tr><td>채우기 사용</td><td>에서 / OFF</td><td>채우기 활성화됨</td></tr>
+<tr><td>채우기 색상</td><td>색상</td><td>채우기 색상</td></tr>
+<tr><td>앵커 밀도</td><td>0.1 ～ 1.0</td><td>밀도 의 생성됨 앵커</td></tr>
+<tr><td>핸들 부드러움</td><td>0 ～ 5.0</td><td>곡선 스무딩 강도</td></tr>
+</table>
+</div>
+<h2 id="vector-edit">벡터 편집 도구 <span class="tag tag-tool">도구</span></h2>
+<p>기존 벡터 경로의 앵커 포인트와 핸들을 편집합니다.</p>
+<div class="card">
+<table>
+<tr><th>매개변수</th><th>범위</th><th>설명</th></tr>
+<tr><td>선 색상</td><td>색상</td><td>스트로크 색상 의 선택된 벡터</td></tr>
+<tr><td>선 두께</td><td>0.1 ～ 128</td><td>스트로크 너비 의 선택된 벡터</td></tr>
+<tr><td>채우기 사용</td><td>에서 / OFF</td><td>채우기 활성화됨</td></tr>
+<tr><td>채우기 색상</td><td>색상</td><td>채우기 색상 의 선택된 벡터</td></tr>
+</table>
+<ul>
+<li>클릭 및 드래그 앵커 로 이동 그것들</li>
+<li>핸들을 드래그하여 곡률 조정</li>
+<li><kbd>Alt</kbd>+드래그 로 복제 동안 이동,<kbd>Ctrl</kbd> 항목 항목 스냅</li>
+<li>변환되지 않은 기본 도형은 앵커 대신 도형 핸들로 파라메트릭하게 편집됩니다.</li>
+<li>스케일 및 회전 와 경계 상자</li>
+</ul>
+</div>
+<!-- ══════════════════ テキストツール ══════════════════ -->
+<h2 id="text-tool">텍스트 도구 <span class="tag tag-tool">도구</span></h2>
+<p>가로 텍스트를 만들고 편집합니다. 클릭하면 포인트 텍스트, 드래그하면 영역 텍스트를 만듭니다.</p>
+<div class="card">
+<p><strong>단축키:</strong> <kbd>T</kbd></p>
+<table>
+<tr><th>매개변수</th><th>범위</th><th>설명</th></tr>
+<tr><td>자동 줄 바꿈</td><td>에서 / OFF</td><td>항목 줄바꿈 용 영역 텍스트</td></tr>
+<tr><td>글꼴 크기 (pt)</td><td>1 ～ 512</td><td>글꼴 크기</td></tr>
+<tr><td>줄 간격</td><td>0.5 ～ 4.0</td><td>선-높이 항목</td></tr>
+<tr><td>자간</td><td>-64 ～ 128</td><td>항목 간격 (자간)</td></tr>
+<tr><td>패딩</td><td>0 로 256, 개별 용 위, 아래, 왼쪽, 및 오른쪽</td><td>항목 패딩 의 텍스트 상자</td></tr>
+</table>
+<p><strong>Notes:</strong> 지원 IME 입력, 이동/회전/스케일 동안 편집 인라인, 및 도형 감싸기 영역 텍스트 통해 선택 로 영역. 글꼴 패밀리, 스타일, 정렬, 색상, 및 불투명도 입니다 관리됨 에 글꼴 패널.</p>
+</div>
+<h2 id="text-vertical">세로 텍스트 도구 <span class="tag tag-tool">도구</span></h2>
+<p>세로 텍스트를 만들고 편집하는 데 사용합니다. 기본 매개변수는 텍스트 도구와 공통입니다.</p>
+<div class="card">
+<table>
+<tr><th>항목 매개변수</th><th>선택지</th><th>설명</th></tr>
+<tr><td>세로 흐름</td><td>왼쪽 / 오른쪽</td><td>항목 흐름 방향</td></tr>
+<tr><td>회전 항목/항목</td><td>에서 / OFF</td><td>회전 반각 영숫자 문자 용 세로 쓰기</td></tr>
+</table>
+<p>일본어 문장부호의 자동 위치 보정과 장음 기호의 자동 회전을 지원합니다.</p>
+</div>
+<h2 id="font-panel">글꼴 패널 <span class="tag tag-panel">패널</span></h2>
+<p>텍스트 도구에서 사용하는 타이포그래피 설정을 관리하는 패널입니다.</p>
+<div class="card">
+<h4>위젯 목록</h4>
+<table>
+<tr><th>위젯</th><th>유형</th><th>설명</th></tr>
+<tr><td>자동 줄 바꿈</td><td>체크박스</td><td>항목 줄바꿈 에서/OFF</td></tr>
+<tr><td>글꼴 계열</td><td>콤보 상자</td><td>선택 에서 시스템 글꼴 목록</td></tr>
+<tr><td>글꼴 스타일</td><td>콤보 상자</td><td>스타일 의 선택된 글꼴</td></tr>
+<tr><td>글꼴 크기 (pt)</td><td>스핀 상자</td><td>1.0 로 512.0, 단계 1.0</td></tr>
+<tr><td>세로쓰기</td><td>체크박스</td><td>세로 쓰기 모드 토글</td></tr>
+<tr><td>문단 흐름</td><td>콤보 상자</td><td>항목 / 항목 (세로 쓰기 만)</td></tr>
+<tr><td>정렬</td><td>콤보 상자</td><td>왼쪽 / 중앙 / 오른쪽 / 항목</td></tr>
+<tr><td>줄 간격</td><td>스핀 상자</td><td>0.5 로 4.0, 단계 0.1</td></tr>
+<tr><td>자간</td><td>스핀 상자</td><td>-64.0 로 128.0, 단계 0.5</td></tr>
+<tr><td>패딩 (위/아래/오른쪽/왼쪽)</td><td>네 개 스핀 상자</td><td>0.0 로 256.0 용 각 항목</td></tr>
+<tr><td>색상</td><td>색상 버튼</td><td>클릭하면 색상 대화상자가 열립니다</td></tr>
+<tr><td>불투명도</td><td>슬라이더</td><td>0 ～ 100%</td></tr>
+<tr><td>사용자 글꼴 폴더</td><td>목록 + 버튼</td><td>글꼴 디렉터리 추가, 제거 및 다시 스캔</td></tr>
+</table>
+<p>지원 글꼴 형식: TTF / OTF / TTC / OTC</p>
+</div>
+<!-- ══════════════════ ユーティリティ ══════════════════ -->
+<h2 id="eyedropper">스포이드 도구 <span class="tag tag-tool">도구</span></h2>
+<p>캔버스에서 색을 추출하여 전경색으로 설정합니다.</p>
+<div class="card">
+<p><strong>단축키:</strong> <kbd>I</kbd> / <kbd>Shift+I</kbd></p>
+</div>
+<!-- ══════════════════ パネル ══════════════════ -->
+<h2 id="panel-toolbar">도구 모음 <span class="tag tag-panel">패널</span></h2>
+<p>왼쪽 가장자리에 배치된 세로형 도구 버튼 목록입니다. 각 버튼은 도구 그룹을 나타내며, 350 ms 길게 누르면 변형 도구를 고르는 플라이아웃이 열립니다.</p>
+<div class="card">
+<p>레이아웃 전환 자동 사이 세로 및 가로 로 패널 너비 변경. 아이콘 크기 입니다 48x48 px.</p>
+</div>
+<h2 id="panel-tool-props">도구 속성 패널 <span class="tag tag-panel">패널</span></h2>
+<p>활성 도구의 설정을 표시하는 패널입니다. 메뉴 바 바로 아래의 바 모드와 도크 안의 패널 모드 두 가지 레이아웃을 제공합니다.</p>
+<div class="card">
+<h4>구성 요소</h4>
+<ul>
+<li><strong>프리셋 행:</strong> 프리셋 선택 콤보 상자 + 저장/삭제 버튼</li>
+<li><strong>항목 항목 그룹:</strong> 크기, 불투명도, 경도, 간격, 흐름, 및 항목 항목 도구 설정</li>
+<li><strong>도구 속성 그룹:</strong> 도구-특정 매개변수</li>
+<li><strong>동작 항목:</strong> 도구-특정 동작 버튼 및 항목</li>
+</ul>
+<p><strong>자동 위젯 생성:</strong> 항목/int -&gt; 슬라이더, 항목 -&gt; 체크박스, 항목 -&gt; 콤보 상자, 색상 -&gt; 색상 버튼</p>
+</div>
+<h2 id="panel-layers">레이어 패널 <span class="tag tag-panel">패널</span></h2>
+<p>문서의 레이어 스택을 계층 트리로 표시하고 관리합니다. 일반 레이어, 그룹, 효과, 마스크, AI 효과 레이어를 같은 트리에서 다룹니다.</p>
+<div class="card">
+<h4>위 제어</h4>
+<table>
+<tr><th>항목</th><th>설명</th></tr>
+<tr><td>블렌드 모드</td><td>변경 블렌드 모드 의 선택된 레이어. 그룹 가능 또한 사용 Pass Through.</td></tr>
+<tr><td>불투명도</td><td>변경 선택된 레이어 불투명도 와 0 로 100% 슬라이더 및 숫자 표시.</td></tr>
+</table>
+<h4>레이어 트리</h4>
+<table>
+<tr><th>표시 / 작업</th><th>설명</th></tr>
+<tr><td>썸네일</td><td>일반적으로 32×32 px인 레이어 썸네일입니다. 클릭하면 레이어 내용을 편집합니다.</td></tr>
+<tr><td>마스크 썸네일</td><td>표시 만 때 레이어 마스크 존재. 클릭 그것 로 전환 로 마스크 편집 모드.</td></tr>
+<tr><td>유형 항목</td><td><code>V</code> 벡터、<code>S</code> 도형、<code>T</code> 텍스트、<code>FX</code> 효과、<code>G</code> 그룹、<code>M</code> 마스크、<code>AI</code> 항목 AI 효과.</td></tr>
+<tr><td>가시성</td><td>눈 아이콘 전환 가시성. 숨김 행 입니다 표시 흐리게.</td></tr>
+<tr><td>항목</td><td>항목 레이어 편집.</td></tr>
+<tr><td>항목 항목</td><td>항목 투명 픽셀. 사용 전용 토글 에 행.</td></tr>
+<tr><td>드래그 및 드롭</td><td>사용 이 로 재정렬 레이어 또는 이동 그것들 으로 그룹. 드롭 레이어 위로 AI 효과 Slot 행 할당 그것 로 그 Slot's 입력.</td></tr>
+<tr><td>Double-클릭</td><td>항목 레이어.</td></tr>
+</table>
+<h4>아래 버튼</h4>
+<table>
+<tr><th>버튼</th><th>설명</th></tr>
+<tr><td>추가</td><td>추가 새 래스터 레이어.</td></tr>
+<tr><td>삭제</td><td>선택한 레이어를 삭제합니다.</td></tr>
+<tr><td>복제</td><td>항목 선택된 레이어. 비활성화됨 때 항목 입니다 no 선택.</td></tr>
+<tr><td>마스크</td><td>선택한 레이어에 레이어 마스크를 추가합니다. 이미 있으면 마스크를 제거합니다.</td></tr>
+<tr><td>추가 효과 레이어</td><td>일반 효과 레이어를 추가합니다. AI 효과가 활성화된 환경에서는 <strong>AI 효과</strong> 사용자 가능 또한 선택 .lsfx 프리셋 에서 하위 메뉴.</td></tr>
+<tr><td>G</td><td>그룹 두 개 또는 더 많은 선택된 레이어.</td></tr>
+<tr><td>V</td><td>추가 새 벡터 레이어.</td></tr>
+</table>
+<h4>AI 효과 행</h4>
+<table>
+<tr><th>표시 / 작업</th><th>설명</th></tr>
+<tr><td>항목 항목</td><td>항목 AI 효과 레이어 자체.</td></tr>
+<tr><td>생성 버튼</td><td>AI 효과 레이어 행에만 표시됩니다. 해당 레이어의 생성을 시작하며 생성 중에는 비활성화됩니다.</td></tr>
+<tr><td>항목 자식 행</td><td>가상 행 생성됨 에서 입력_슬롯 에 AI 효과 매니페스트. 필수 슬롯 그 입니다 아님 설정 입니다 표시 와 경고.</td></tr>
+<tr><td>제외 버튼</td><td>Slot에 입력 레이어가 지정되었을 때 표시됩니다. 입력을 블렌드 제외 / AI 입력 전용 모드로 전환합니다.</td></tr>
+<tr><td>xN 항목</td><td>표시 참조 개수 에 일반 레이어 참조된 통해 항목 AI 효과 슬롯.</td></tr>
+<tr><td>녹색 항목</td><td>항목 출력 레이어 생성됨 통해 AI 효과.</td></tr>
+</table>
+<h4>오른쪽-클릭 메뉴</h4>
+<table>
+<tr><th>항목</th><th>설명</th></tr>
+<tr><td>추가 레이어 / 레이어 복제 / 레이어 삭제</td><td>기본 추가, 복제, 및 삭제 항목.</td></tr>
+<tr><td>항목</td><td>이름 변경 대화상자를 엽니다.</td></tr>
+<tr><td>아래 레이어와 병합</td><td>항목 으로 레이어 아래. 활성화됨 만 때 가능.</td></tr>
+<tr><td>항목 표시</td><td>항목 표시 레이어 으로 하나의 레이어. 숨김 레이어 입니다 보존됨.</td></tr>
+<tr><td>래스터화</td><td>변환 벡터 및 유사 항목 로 래스터. 활성화됨 만 때 가능.</td></tr>
+<tr><td>항목 로 벡터</td><td>변환 변환되지 않은 기본 도형 으로 일반 벡터 오브젝트.</td></tr>
+<tr><td>그룹 레이어 / 항목</td><td>그룹 여러 선택된 레이어, 또는 항목 때 사용 에 그룹 행.</td></tr>
+<tr><td>생성 / 항목 항목 마스크</td><td>전환 항목 마스크 상태.</td></tr>
+<tr><td>레이어 마스크 추가 / 편집 / 완료 / 제거</td><td>추가 레이어 마스크, 전환 마스크 편집 모드, 또는 항목 마스크.</td></tr>
+<tr><td>추가 효과</td><td>추가 자식 효과 로 선택된 레이어. 비활성화됨 용 그룹.</td></tr>
+<tr><td>불러오기 로 선택 / 반전 항목</td><td>마스크 레이어를 오른쪽 클릭했을 때만 표시됩니다. 마스크를 선택 영역으로 불러오거나 투명 픽셀을 반전합니다.</td></tr>
+</table>
+<h4>블렌드 모드</h4>
+<p>레이어 블렌딩은 선택한 레이어가 아래 레이어들과 어떻게 합성되는지를 제어합니다. 불투명도는 전체 블렌드 결과에 나중에 적용됩니다. 픽셀을 직접 편집하지 않고 표시 합성만 바꾸므로 색 보정, 빛과 그림자 추가, 텍스처 오버레이에 유용합니다.</p>
+<table>
+<tr><th>그룹</th><th>모드</th><th>설명</th></tr>
+<tr><td>그룹 만</td><td>패스 스루</td><td>용 그룹. 항목 자식 레이어 에 항목 의 레이어 아래, 대신 의 항목 그것들 내부 그룹.</td></tr>
+<tr><td>표준</td><td>표준</td><td>표준 합성. 위 레이어 입니다 배치됨 로-입니다, 와 불투명도 항목 해당 강도.</td></tr>
+<tr><td>표준</td><td>Dissolve</td><td>반투명 영역을 무작위 점으로 표시합니다. 거친 가장자리와 입자감 표현에 유용합니다.</td></tr>
+<tr><td>어둡게</td><td>어둡게</td><td>위아래 레이어 중 더 어두운 성분을 우선합니다. 밝은 부분을 억제하면서 그림자와 어두운 영역을 추가할 때 유용합니다.</td></tr>
+<tr><td>어둡게</td><td>곱하기</td><td>색을 곱해 어둡게 만듭니다. 선화, 그림자, 종이 질감, 오염 텍스처를 겹칠 때 가장 다루기 쉬운 어둡게 계열 모드입니다.</td></tr>
+<tr><td>어둡게</td><td>색상 번</td><td>밑색을 강하게 태워 넣듯 어둡게 하며 채도와 대비도 높입니다. 깊은 그림자와 강한 질감에 적합합니다.</td></tr>
+<tr><td>어둡게</td><td>선형 번</td><td>휘도를 선형으로 낮춰 어둡게 합니다. Color Burn보다 더 계산적인 강한 암부를 만듭니다.</td></tr>
+<tr><td>어둡게</td><td>어두운 색상</td><td>위아래 레이어를 섞지 않고 더 어두운 색을 선택합니다. 어두운 색을 우선하는 색상 대체에 가까운 결과가 됩니다.</td></tr>
+<tr><td>밝게</td><td>밝게</td><td>위아래 레이어 중 더 밝은 성분을 우선합니다. 어두운 부분을 제거하면서 빛이나 하이라이트를 추가할 때 사용합니다.</td></tr>
+<tr><td>밝게</td><td>스크린</td><td>Multiply의 반대 방향으로 작동하여 자연스럽게 밝게 합니다. 발광, 하이라이트, 연기, 빛 소재에 적합합니다.</td></tr>
+<tr><td>밝게</td><td>색상 닷지</td><td>항목 기반 강하게 및 생성 항목 빛. 그것 가능 항목 로 항목 항목, so 조정 와 불투명도.</td></tr>
+<tr><td>밝게</td><td>선형 닷지(추가)</td><td>추가 색상 로 항목 강하게. 유용 용 빛 항목, 항목 효과, 및 항목 항목.</td></tr>
+<tr><td>밝게</td><td>밝은 색상</td><td>위아래 레이어 중 더 밝은 색을 선택합니다. 밝은 색을 우선해 소재를 겹칠 때 사용합니다.</td></tr>
+<tr><td>대비</td><td>오버레이</td><td>전환 사이 Multiply 및 스크린 기반 에 밝기 의 기반. 표준 선택 용 추가 텍스처 및 강화 음영.</td></tr>
+<tr><td>대비</td><td>소프트 라이트</td><td>추가 대비 더 많은 항목 보다 오버레이. 좋음 용 항목, 항목, 및 항목 음영 항목.</td></tr>
+<tr><td>대비</td><td>하드 라이트</td><td>위 레이어를 기준으로 강한 명암 효과를 더해 선명한 하이라이트와 그림자를 만듭니다.</td></tr>
+<tr><td>대비</td><td>비비드 라이트</td><td>생성 강한, 항목 대비 유사 로 항목 의 색상 번 및 색상 닷지.</td></tr>
+<tr><td>대비</td><td>리니어 라이트</td><td>Linear Burn과 Linear Dodge를 조합한 것처럼 휘도를 강하게 선형으로 변화시킵니다.</td></tr>
+<tr><td>대비</td><td>핀 라이트</td><td>어두운 영역과 밝은 영역을 대체하듯 합성합니다. 특수한 단단한 질감과 효과에 적합합니다.</td></tr>
+<tr><td>대비</td><td>하드 믹스</td><td>항목 색상 항목 강하게 항목 결과. 유용 용 항목-항목, 항목, 또는 항목 효과.</td></tr>
+<tr><td>반전</td><td>차이</td><td>표시 차이 사이 위 및 아래 레이어. 유용 용 정렬 항목, 반전-항목 효과, 및 항목 색상 항목.</td></tr>
+<tr><td>반전</td><td>제외</td><td>항목 차이 블렌드 보다 차이. 좋음 용 항목 효과 와 항목 반전 항목.</td></tr>
+<tr><td>반전</td><td>빼기</td><td>밑색에서 위 색을 빼서 어둡게 합니다. 색을 제거하는 효과나 어두운 특수 효과에 유용합니다.</td></tr>
+<tr><td>반전</td><td>나누기</td><td>항목 로 만약 항목 기반 통해 위 색상. 유용 용 보정, 항목, 및 항목 강한 항목 변경.</td></tr>
+<tr><td>구성 요소</td><td>색조</td><td>적용 만 위 색상 로 기반 동안 항목 기반 휘도 및 채도. 사용 그것 때 사용자 만 항목 로 변경 색상.</td></tr>
+<tr><td>구성 요소</td><td>채도</td><td>적용 만 위 채도 로 기반. 사용 그것 로 추가 항목 또는 줄임 채도.</td></tr>
+<tr><td>구성 요소</td><td>색상</td><td>적용 위 색상 및 채도 로 기반 동안 항목 기반 휘도. 좋음 용 항목 항목 음영.</td></tr>
+<tr><td>구성 요소</td><td>광도</td><td>적용 만 위 휘도 로 기반 동안 항목 기반 색상 및 채도. 항목 만 음영 또는 밝기.</td></tr>
+</table>
+<p>블렌드 모드 항목 표시됨 결과 의 레이어, 효과 레이어, 그룹 합성, 및 PSD 내보내기. 항목 모드 항목 캔버스 하지만 항목 아님 항목 레이어 픽셀 항목.</p>
+</div>
+<h2 id="panel-color">색상 패널 <span class="tag tag-panel">패널</span></h2>
+<p>색상 선택기 결합 HSV 색상 휠 및 삼각형, 숫자 입력, 및 팔레트 관리.</p>
+<div class="card">
+<h4>위젯 목록</h4>
+<table>
+<tr><th>위젯</th><th>설명</th></tr>
+<tr><td>색상 휠</td><td>선택 색상 에 외곽 링 (0 로 360 도)</td></tr>
+<tr><td>톤 삼각형</td><td>선택 채도 및 값 내부 삼각형</td></tr>
+<tr><td>HSV 스핀 상자 (H/S/V)</td><td>H: 0～359°, S: 0～100%, V: 0～100%</td></tr>
+<tr><td>RGB 스핀 상자 (R/G/B)</td><td>0 로 255 각</td></tr>
+<tr><td>Hex 텍스트 입력</td><td>#항목 형식</td></tr>
+<tr><td>추가 로 팔레트 버튼</td><td>추가 현재 색상 로 팔레트</td></tr>
+<tr><td>팔레트 그리드</td><td>그리드 표시 의 항목 항목 (32x32 px). 삭제 버튼 표시됨 에 항목.</td></tr>
+<tr><td>색상 기록</td><td>표시 10 항목 항목 색상 에 행 (24x24 px)</td></tr>
+</table>
+<p>기본 팔레트: 검정, 흰색, 빨강, 초록, 파랑</p>
+</div>
+<h2 id="panel-brush-manager">브러시 관리자 <span class="tag tag-panel">패널</span></h2>
+<p>사용자 지정 브러시 팁을 관리하는 패널입니다. 브러시를 만들고 가져오며 삭제할 수 있습니다.</p>
+<div class="card">
+<h4>위젯 목록</h4>
+<table>
+<tr><th>위젯</th><th>설명</th></tr>
+<tr><td>브러시 팁 그리드</td><td>표시 브러시 팁 항목 에 아이콘 모드. 항목-클릭 로 항목.</td></tr>
+<tr><td>생성 팁 버튼</td><td>생성 브러시 팁 에서 캔버스 선택</td></tr>
+<tr><td>매개변수 저장 버튼</td><td>저장 현재 펜 설정 로 브러시</td></tr>
+<tr><td>ABR 다시 스캔 버튼</td><td>ABR 라이브러리 폴더를 다시 스캔</td></tr>
+<tr><td>가져오기 ABR 버튼</td><td>가져오기 Photoshop .abr 브러시 파일</td></tr>
+<tr><td>가져오기 PNG 버튼</td><td>가져오기 PNG 이미지 로 브러시 팁</td></tr>
+<tr><td>삭제 버튼</td><td>삭제 선택된 브러시</td></tr>
+</table>
+</div>
+<h2 id="panel-shape-manager">도형 관리자 <span class="tag tag-panel">패널</span></h2>
+<p>항목 벡터 도형 라이브러리 관리 및 정렬 도구. 그것 또한 포함 항목 도형 항목 로 만화 항목 항목 및 항목 선.</p>
+<div class="card">
+<h4>탭 1 - 도형 관리자 (라이브러리)</h4>
+<table>
+<tr><th>위젯</th><th>설명</th></tr>
+<tr><td>카테고리 필터</td><td>필터 도형 통해 카테고리</td></tr>
+<tr><td>태그 필터</td><td>필터 도형 통해 태그</td></tr>
+<tr><td>도형 그리드</td><td>표시 썸네일 에 아이콘 모드</td></tr>
+<tr><td>스탬프 / 추가 로 캔버스</td><td>추가 도형 로 스탬프 또는 위로 캔버스</td></tr>
+<tr><td>가져오기 SVG / 내보내기 SVG</td><td>가져오기/내보내기 SVG 파일</td></tr>
+<tr><td>새 카테고리 / 항목 / 삭제</td><td>항목 항목 및 도형</td></tr>
+</table>
+<h4>탭 2 - 기본 도형 (built-에서 도형)</h4>
+<table>
+<tr><th>카테고리</th><th>도형 목록</th></tr>
+<tr><td>기본</td><td>항목, 항목 사각형, 항목, 항목</td></tr>
+<tr><td>효과</td><td>항목 선 (항목), 항목 선 (항목)</td></tr>
+<tr><td>항목</td><td>항목 항목 (항목 / 항목 / 항목), 항목 항목</td></tr>
+<tr><td>항목</td><td>삼각형, 항목, 항목, 항목, 항목, 항목, 항목, 항목</td></tr>
+</table>
+<h4>정렬 및 항목 도구</h4>
+<table>
+<tr><th>위젯</th><th>설명</th></tr>
+<tr><td>정렬 참조</td><td>항목: 선택 / 캔버스 / 첫 번째 오브젝트 / 항목 오브젝트</td></tr>
+<tr><td>맞춤(포함) / 맞춤(늘이기) / 가운데</td><td>맞춤 및 항목</td></tr>
+<tr><td>정렬 왼쪽 / 중앙 (H) / 오른쪽</td><td>가로 정렬</td></tr>
+<tr><td>정렬 위 / 중간 (V) / 아래</td><td>세로 정렬</td></tr>
+<tr><td>항목 항목 / 항목</td><td>항목 항목</td></tr>
+</table>
+</div>
+<h2 id="panel-effect">효과 패널 <span class="tag tag-panel">패널</span></h2>
+<p>편집 매개변수 용 선택된 효과 레이어. 매개변수 UI 입니다 생성됨 항목 항목 로 효과 유형.</p>
+<div class="card">
+<p>때 효과 레이어 입니다 선택된 에 레이어 패널, 해당 효과 이름 표시됨 에 그룹 상자 제목 및 스핀 상자 입니다 생성됨 용 각 매개변수. 변경 입니다 항목 에 미리보기 항목 및 지원 실행 취소.</p>
+</div>
+<h2 id="panel-pages">페이지 패널 <span class="tag tag-panel">패널</span></h2>
+<p>다중 페이지 문서를 관리하는 패널입니다.</p>
+<div class="card">
+<h4>위젯 목록</h4>
+<table>
+<tr><th>위젯</th><th>설명</th></tr>
+<tr><td>+ (추가 페이지) 버튼</td><td>추가 페이지 (기본 / 사용자 지정 항목 + 항목 저장 메뉴)</td></tr>
+<tr><td>복제 버튼</td><td>복제 현재 페이지</td></tr>
+<tr><td>삭제 버튼</td><td>삭제 페이지</td></tr>
+<tr><td>Up / 항목 버튼</td><td>변경 페이지 항목</td></tr>
+<tr><td>페이지 목록</td><td>페이지 번호 + 페이지 이름 + 변경 표시(*). 썸네일은 현재 자리 표시자로 표시됩니다.</td></tr>
+</table>
+<p>Double-클릭 또는 <kbd>F2</kbd> 로 항목 페이지. 패널 전환 사이 목록 모드 및 아이콘 모드 항목 에 해당 항목 비율.</p>
+</div>
+<h2 id="panel-preview">미리보기 패널 <span class="tag tag-panel">패널</span></h2>
+<p>전체 캔버스의 축소 미리보기를 실시간으로 표시합니다.</p>
+<div class="card">
+<p>마우스로 드래그하여 팬하고, 확대/축소 조작으로 미리보기 뷰포트를 조정할 수 있습니다. 캔버스 합성 결과가 업데이트될 때마다 자동으로 다시 그려집니다.</p>
+</div>
+<h2 id="panel-context-toolbar">컨텍스트 도구 모음 <span class="tag tag-panel">패널</span></h2>
+<p>항목 도구 모음 그 표시됨 자동 에 캔버스 후 스트로크 또는 동작. 그것 표시 항목 설정 용 활성 도구.</p>
+<div class="card">
+<table>
+<tr><th>도구</th><th>표시 항목</th><th>표시됨 항목</th></tr>
+<tr><td>펜 / 지우개</td><td>후 스트로크 완료</td><td>크기, 불투명도, 경도</td></tr>
+<tr><td>마술봉</td><td>후 생성 선택</td><td>항목, 연속, 항목</td></tr>
+<tr><td>그라데이션</td><td>때 미리보기 시작</td><td>유형, 색상 /B, 스톱, 디더링</td></tr>
+<tr><td>벡터 경로 / 정밀</td><td>후 스트로크 완료</td><td>스트로크 너비/색상, 채우기</td></tr>
+</table>
+</div>
+<!-- ══════════════════ エフェクトレイヤー ══════════════════ -->
+<h2 id="fx-gaussian-blur">가우시안 블러 <span class="tag tag-effect">효과</span></h2>
+<p>레이어에 가우시안 블러를 적용하는 비파괴 효과입니다.</p>
+<div class="card">
+<table>
+<tr><th>매개변수</th><th>범위</th><th>설명</th></tr>
+<tr><td>반경</td><td>0 ～ 250 px</td><td>페더 반경</td></tr>
+</table>
+</div>
+<h2 id="fx-levels">레벨 <span class="tag tag-effect">효과</span></h2>
+<p>입력/출력 레벨과 감마를 조정하여 대비를 제어합니다.</p>
+<div class="card">
+<table>
+<tr><th>매개변수</th><th>범위</th><th>설명</th></tr>
+<tr><td>에 검정</td><td>0 ～ 255</td><td>어두운 점 의 입력 레벨</td></tr>
+<tr><td>에 흰색</td><td>0 ～ 255</td><td>빛 점 의 입력 레벨</td></tr>
+<tr><td>감마</td><td>0.01 ～ 9.99</td><td>감마 보정 값</td></tr>
+<tr><td>출력 검정</td><td>0 ～ 255</td><td>어두운 점 의 출력 레벨</td></tr>
+<tr><td>출력 검정</td><td>0 ～ 255</td><td>빛 점 의 출력 레벨</td></tr>
+</table>
+</div>
+<h2 id="fx-hue-saturation">색상 / 채도 <span class="tag tag-effect">효과</span></h2>
+<p>색상, 채도, 명도를 조정하는 색 보정 효과입니다.</p>
+<div class="card">
+<table>
+<tr><th>매개변수</th><th>범위</th><th>설명</th></tr>
+<tr><td>색조</td><td>-180 ～ 180°</td><td>색상 항목</td></tr>
+<tr><td>채도</td><td>-100 ～ 100</td><td>채도 조정</td></tr>
+<tr><td>명도</td><td>-100 ～ 100</td><td>명도 조정</td></tr>
+</table>
+</div>
+<h2 id="fx-invert">반전 <span class="tag tag-effect">효과</span></h2>
+<p>레이어의 톤 범위, 즉 색의 밝고 어두움을 반전합니다.</p>
+<div class="card">
+<table>
+<tr><th>매개변수</th><th>범위</th><th>설명</th></tr>
+<tr><td>강도</td><td>0 ～ 100%</td><td>반전 강도</td></tr>
+</table>
+</div>
+<h2 id="fx-brightness-contrast">밝기 / 대비 <span class="tag tag-effect">효과</span></h2>
+<p>항목 레이어 밝기 및 대비. 이 입니다 내장-에서 항목-항목 효과 와 항목 CPU 및 GPU 경로.</p>
+<div class="card">
+<table>
+<tr><th>매개변수</th><th>범위</th><th>설명</th></tr>
+<tr><td>밝기</td><td>-100 ～ 100</td><td>밝기 조정</td></tr>
+<tr><td>대비</td><td>-100 ～ 100</td><td>대비 조정</td></tr>
+</table>
+</div>
+<h2 id="fx-sharpen">선명하게 <span class="tag tag-effect">효과</span></h2>
+<p>언샤프 마스크 방식으로 가장자리를 선명하게 합니다.</p>
+<div class="card">
+<table>
+<tr><th>매개변수</th><th>범위</th><th>설명</th></tr>
+<tr><td>양</td><td>0 ～ 500</td><td>선명하게 강도</td></tr>
+<tr><td>반경</td><td>0.1 ～ 50</td><td>선명하게 반경</td></tr>
+<tr><td>임계값</td><td>0 ～ 255</td><td>노이즈 항목 임계값</td></tr>
+</table>
+</div>
+<h2 id="fx-noise-reduction">노이즈 감소 <span class="tag tag-effect">효과</span></h2>
+<p>비국소 평균(NLM) 방법을 기반으로 한 노이즈 감소 효과입니다.</p>
+<div class="card">
+<table>
+<tr><th>매개변수</th><th>범위</th><th>설명</th></tr>
+<tr><td>강도</td><td>1 ～ 40</td><td>휘도 노이즈 감소 강도</td></tr>
+<tr><td>색상 강도</td><td>1 ～ 40</td><td>색상 노이즈 감소 강도</td></tr>
+</table>
+</div>
+<!-- ══════════════════ AI Effect Layer ══════════════════ -->
+<h2 id="ai-effect-overview">AI 효과 레이어 <span class="tag tag-ai">AI 효과</span></h2>
+<p>AI 효과 레이어 입니다 항목 그 항목<code>.lsfx</code> 프리셋 에 캔버스 로 레이어, 그런 다음 전송 입력 레이어 및 매개변수 로 ComfyUI Gateway 또는 NanoBanana Gateway 로 생성 이미지. 그것 항목 와 레이어 패널, 효과 패널, 및 AI 효과 관리자 개별 에서 일반 ComfyUI 및 NanoBanana 패널.</p>
+<div class="card">
+<h4>기본 흐름</h4>
+<ol>
+<li>에서 AI 메뉴, 선택 <strong>AI 효과 프리셋...</strong> 로 열기 AI 효과 관리자</li>
+<li>오른쪽-클릭 프리셋 및 선택 <strong>AI 효과 레이어 추가</strong> </li>
+<li>에 레이어 패널, 항목 입력 레이어 로 항목 행 아래 AI 효과 레이어</li>
+<li>사용 효과 패널 로 제어 매개변수, 출력 대상, 및 생성</li>
+<li>적용 생성됨 결과 로 AI 효과 레이어 자체 또는 로 새 출력 레이어 직접 위 그것</li>
+</ol>
+<table>
+<tr><th>항목</th><th>내용</th></tr>
+<tr><td>레이어 유형</td><td><code>layer_type="ai_effect"</code></td></tr>
+<tr><td>프리셋 형식</td><td><code>.lsfx</code>. ZIP 포함 매니페스트, Gateway 설정, 아이콘, 및 관련 데이터</td></tr>
+<tr><td>항목 프리셋</td><td>항목, 항목 항목, 항목 항목, HDR 효과, 항목 XL</td></tr>
+<tr><td>지원되는 Gateway</td><td>ComfyUI Gateway / NanoBanana Gateway</td></tr>
+<tr><td>저장</td><td><code>.lstroke</code> v1.2 <code>ai_effect</code> 항목 항목 상태</td></tr>
+</table>
+<p>항목 그 필요 외부 서비스 접근 실행 가능 만 때 외부 서비스 입니다 허용됨 에 환경 설정 및 필수 API 키 또는 연결 설정 입니다 설정됨.</p>
+</div>
+<h2 id="ai-effect-manager">AI 효과 관리자 <span class="tag tag-ai">AI 효과</span></h2>
+<p>항목 <code>.lsfx</code> 관리 스크린 용 항목, 추가, 편집, 항목, 및 가져오기 프리셋.</p>
+<div class="card">
+<table>
+<tr><th>동작</th><th>설명</th></tr>
+<tr><td>AI 효과 레이어 추가</td><td>추가 선택된 프리셋 로 현재 캔버스 로 AI 효과 레이어.</td></tr>
+<tr><td>편집</td><td>열기s 프리셋 에 효과 항목 및 항목 기존 설정 용 편집.</td></tr>
+<tr><td>가져오기</td><td>가져오기s 외부 <code>.lsfx</code> 으로 <code>user_data/ai_effect/presets/</code> .</td></tr>
+<tr><td>삭제</td><td>항목 사용자 프리셋. 항목 프리셋 입니다 항목 와 스냅샷 so 사용자 변경 입니다 항목.</td></tr>
+</table>
+<p>The default build ships no bundled <code>.lsfx</code> presets. Use Import or Register to add presets to <code>user_data/ai_effect/presets/</code>.</p>
+</div>
+<h2 id="ai-effect-editor">효과 편집기 <span class="tag tag-ai">AI 효과</span></h2>
+<p>스크린 용 생성 및 편집 <code>.lsfx</code> 프리셋 에서 ComfyUI 워크플로 또는 NanoBanana 매개변수 항목.</p>
+<div class="card">
+<table>
+<tr><th>영역</th><th>항목</th></tr>
+<tr><td>메타데이터</td><td>항목 프리셋 이름, 카테고리, 설명, 태그, 아이콘, 및 관련 메타데이터.</td></tr>
+<tr><td>항목 / 항목</td><td>항목 후보 매개변수 및 입력 슬롯 가져온 에서 Gateway 및 노출 그것들 로 사용자-항목 UI.</td></tr>
+<tr><td>프리셋 가져오기</td><td>기존 <code>.lsfx</code> 가능 되다 항목 로 다시 시작 편집 에 효과 항목.</td></tr>
+<tr><td>내보내기</td><td>항목 검증된 매니페스트 및 Gateway 파일 원자적으로 로 <code>.lsfx</code> .</td></tr>
+</table>
+<p>항목 <code>.lsfx</code> 가능 되다 등록됨 직접 에 AI 효과 관리자. 만약 항목 항목 아님 포함 <code>.lsfx</code> , 그것 입니다 항목 때 저장.</p>
+</div>
+<h2 id="ai-effect-runtime">생성 및 상태 <span class="tag tag-ai">AI 효과</span></h2>
+<p>때 AI 효과 레이어 입니다 선택된, 효과 패널 표시 동적 매개변수 에서 프리셋. 생성 입니다 등록됨 에 기록 로 항목 및 지원 실행 취소 / 다시 실행.</p>
+<div class="card">
+<h4>레이어 패널 / 효과 패널</h4>
+<table>
+<tr><th>항목</th><th>설명</th></tr>
+<tr><td>Slot 행</td><td>입력 행 표시 아래 AI 효과 레이어. 항목 항목 레이어 로 참조.</td></tr>
+<tr><td>제외 버튼</td><td>입력 Slot을 블렌드에서 제외하고 AI 입력으로만 사용하도록 전환합니다.</td></tr>
+<tr><td>생성</td><td>시작 생성 에서 선택된 레이어 또는 에서 AI 효과 행 에 레이어 패널.</td></tr>
+<tr><td>출력 로 이 레이어</td><td>때 활성화됨, 출력 입니다 항목 항목 로 AI 효과 레이어 자체. 때 비활성화됨, 새 출력 레이어 입니다 생성됨 직접 위 그것.</td></tr>
+<tr><td>Progress / 취소</td><td>실행 중에는 진행률이 표시되며, 외부 취소는 다음 경로로 처리됩니다.<code>cancel_layer(layer_id)</code> .</td></tr>
+</table>
+<h4>항목 및 저장</h4>
+<table>
+<tr><th>항목</th><th>설명</th></tr>
+<tr><td>입력 해결</td><td>해결 참조된 래스터 / 그룹 / 마스크 / AI 효과 레이어 로 PNG 파일 용 Gateway.</td></tr>
+<tr><td>캐시</td><td>용 항목 항목 및 매개변수, <code>param_hash</code> 입니다 사용 로 항목 항목 / 캐시 항목.</td></tr>
+<tr><td>UI 상태</td><td>숫자 입력, 항목 입력, 및 항목 상태 입니다 저장 로 <code>AIEffectState.param_ui_state</code> .</td></tr>
+<tr><td>항목</td><td>만 때 디버그가 활성화됨, <code>user_data/logs/ai_effect.log</code> 입니다 항목 로 JSON 선.</td></tr>
+<tr><td>설정</td><td>재시도, 캐시, API 항목, 및 관련 설정 입니다 관리됨 에 환경 설정 -&gt; AI 효과. 설정 파일 입니다 <code>user_data/ai_effect/preferences.json</code> .</td></tr>
+</table>
+<p>때 ComfyUI 입니다 아님 실행 중 또는 프리셋 입니다 아님 항목, 안내 항목, 항목 항목, 또는 항목 입니다 표시. 로 항목 항목 연결 항목, 자동 연결 때 항목 AI 효과 레이어 있음 항목.</p>
+</div>
+<!-- ══════════════════ AI 連携 ══════════════════ -->
+<h2 id="ai-comfyui">ComfyUI 패널 <span class="tag tag-ai">AI</span></h2>
+<p>ComfyUI 서버에 연결하여 AI 이미지 생성 워크플로를 실행합니다. 외부 서비스 접근이 허용된 경우에만 사용할 수 있습니다.</p>
+<div class="card">
+<h4>연결 바</h4>
+<table>
+<tr><th>위젯</th><th>설명</th></tr>
+<tr><td>항목 입력</td><td>서버 항목 (기본: 127.0.0.1:8188)</td></tr>
+<tr><td>SSL 체크박스</td><td>사용 HTTPS/WSS</td></tr>
+<tr><td>항목 / 항목 버튼</td><td>시작 또는 항목 연결</td></tr>
+<tr><td>항목 버튼</td><td>항목 노드 항목</td></tr>
+</table>
+<h4>워크플로</h4>
+<table>
+<tr><th>위젯</th><th>설명</th></tr>
+<tr><td>워크플로 콤보 상자</td><td>목록 의 저장 워크플로</td></tr>
+<tr><td>불러오기 버튼</td><td>불러오기 .json 워크플로 파일</td></tr>
+</table>
+<p>워크플로 입니다 저장 에 <code>user_data/plugins/comfyui/workflows</code> 및 출력 레이어 사용 <code>user_data/cache/LoomStroke/layers</code> .</p>
+<h4>탭 1 — 워크플로 항목</h4>
+<p>각 노드 에 항목 워크플로 입니다 표시 로 동적 탭 에서 매개변수 가능 되다 편집됨. 항목 매개변수 가능 되다 편집됨 와 프롬프트 컴포저.</p>
+<h4>탭 2 — Queue</h4>
+<table>
+<tr><th>위젯</th><th>설명</th></tr>
+<tr><td>작업 항목</td><td>6개 열: ID, 상태, 항목, 워크플로, 항목, 항목</td></tr>
+<tr><td>취소 버튼</td><td>취소 선택된 작업</td></tr>
+<tr><td>미리보기 버튼</td><td>미리보기 작업 결과</td></tr>
+<tr><td>Clear Finished 버튼</td><td>항목 항목 작업</td></tr>
+</table>
+<h4>항목 제어</h4>
+<table>
+<tr><th>위젯</th><th>설명</th></tr>
+<tr><td>Queue 버튼</td><td>항목 작업 (녹색)</td></tr>
+<tr><td>취소 버튼</td><td>취소 실행 중 작업</td></tr>
+<tr><td>항목 스핀 상자</td><td>0=항목, -1=항목, N=항목 N 항목</td></tr>
+<tr><td>항목 체크박스</td><td>항목 항목</td></tr>
+</table>
+</div>
+<h2 id="ai-nanobanana">NanoBanana 패널 <span class="tag tag-ai">AI</span></h2>
+<p>AI 이미지 생성 패널 사용 Google Gemini API. API 키 입니다 저장 에 OS keyring 및 그것 가능 되다 사용 만 때 외부 서비스 접근 입니다 허용됨.</p>
+<div class="card">
+<h4>위젯 목록</h4>
+<table>
+<tr><th>위젯</th><th>항목 / 범위</th><th>설명</th></tr>
+<tr><td>프롬프트</td><td>텍스트 / 칩 컴포저</td><td>생성 프롬프트 입력</td></tr>
+<tr><td>입력 레이어</td><td>레이어 콤보 x N</td><td>레이어 사용 로 입력 (여러 선택 지원되는)</td></tr>
+<tr><td>모델</td><td>콤보 상자</td><td>모드l 로 사용, 항목 로 항목-2.5-항목</td></tr>
+<tr><td>사고</td><td>항목 / 항목</td><td>항목 수준</td></tr>
+<tr><td>형식</td><td>텍스트+이미지 / 이미지</td><td>출력 항목</td></tr>
+<tr><td>크기</td><td>항목 / 512 / 1K / 2K / 4K</td><td>출력 이미지 크기</td></tr>
+<tr><td>항목 비율</td><td>1:1, 4:3, 3:4, 16:9, 9:16, 등.</td><td>항목 비율 와 항목 항목</td></tr>
+<tr><td>대상 레이어</td><td>&lt;새 레이어&gt; / 기존 레이어</td><td>출력 대상 용 생성됨 이미지</td></tr>
+<tr><td>항목 체크박스</td><td>에서 / OFF</td><td>항목 항목 항목</td></tr>
+<tr><td>Search 체크박스</td><td>에서 / OFF</td><td>사용 Google Search</td></tr>
+<tr><td>생성 버튼</td><td>—</td><td>이미지 생성 실행 (녹색)</td></tr>
+<tr><td>Status 텍스트</td><td>—</td><td>상태 로그 표시</td></tr>
+</table>
+</div>
+<h2 id="ai-prompt-editor">프롬프트 편집기 <span class="tag tag-ai">AI</span></h2>
+<p>패널 그 항목 항목 프롬프트 항목, 스니펫 관리, 및 LLM 항목. 스니펫 입니다 저장 에 <code>user_data/text_editor/text_snippets.sqlite3</code> .</p>
+<div class="card">
+<h4>탭 1 — 항목</h4>
+<table>
+<tr><th>위젯</th><th>설명</th></tr>
+<tr><td>구성 요소 팔레트</td><td>드래그 및 드롭 네 개 구성 요소 항목: 항목 / 목록 / 텍스트 / 프롬프트</td></tr>
+<tr><td>항목 프롬프트 칩 흐름</td><td>재정렬 항목 로 항목 프롬프트</td></tr>
+<tr><td>항목 입력</td><td>항목 사이 구성 요소</td></tr>
+<tr><td>항목 버튼</td><td>항목 프롬프트</td></tr>
+<tr><td>복사 버튼</td><td>복사 결과 로 항목</td></tr>
+<tr><td>저장 영역</td><td>프롬프트 이름 + 카테고리 + 저장/불러오기/새 버튼</td></tr>
+</table>
+<h4>탭 2 — 라이브러리</h4>
+<table>
+<tr><th>위젯</th><th>설명</th></tr>
+<tr><td>Search 바</td><td>텍스트 검색 + 유형 필터 + 태그 필터</td></tr>
+<tr><td>스니펫 목록</td><td>목록 의 저장 스니펫</td></tr>
+<tr><td>항목 항목</td><td>편집 제목 / 태그 / 유형 / 항목</td></tr>
+<tr><td>복제 / 삭제 / 내보내기</td><td>스니펫 동작 버튼</td></tr>
+</table>
+<h4>탭 3 — LLM</h4>
+<table>
+<tr><th>위젯</th><th>항목 / 범위</th><th>설명</th></tr>
+<tr><td>항목 체크박스</td><td>에서 / OFF</td><td>현재 Gateway는 비스트리밍 모드로 동작합니다</td></tr>
+<tr><td>항목</td><td>콤보 상자</td><td>AI 항목 선택</td></tr>
+<tr><td>모델</td><td>콤보 상자</td><td>모드l 선택</td></tr>
+<tr><td>항목</td><td>0.0 ～ 2.0</td><td>생성 항목 (기본: 0.7)</td></tr>
+<tr><td>최대 항목</td><td>0 ～ 32000</td><td>최대 토큰 개수 (기본: 512)</td></tr>
+<tr><td>시스템 프롬프트</td><td>텍스트 영역</td><td>시스템 프롬프트</td></tr>
+<tr><td>사용자 프롬프트</td><td>텍스트 영역</td><td>사용자 프롬프트</td></tr>
+<tr><td>출력</td><td>텍스트 영역</td><td>표시 LLM 항목</td></tr>
+<tr><td>항목 / 취소 / 항목</td><td>—</td><td>항목 제어 버튼</td></tr>
+</table>
+</div>
+<!-- ══════════════════ キャンバス操作 ══════════════════ -->
+<h2 id="canvas-viewport">확대/축소 / 팬 / 회전<span class="tag tag-param">캔버스</span></h2>
+<div class="card">
+<table>
+<tr><th>동작</th><th>입력</th><th>Notes</th></tr>
+<tr><td>확대</td><td><kbd>Ctrl+=</kbd>/ 마우스 휠 위로</td><td>최대 3200%</td></tr>
+<tr><td>축소</td><td><kbd>Ctrl+-</kbd>/ 마우스 휠 아래로</td><td>항목 1%</td></tr>
+<tr><td>확대/축소 재설정</td><td><kbd>Ctrl+0</kbd></td><td>항목 로 100%</td></tr>
+<tr><td>팬 (항목)</td><td>오른쪽-클릭 드래그</td><td>항목 에 설정</td></tr>
+<tr><td>캔버스 회전</td><td>이미지 메뉴</td><td>시계 방향 90° / 반시계 방향 90° / 180°. 변환 모든 레이어 로 기록 그룹.</td></tr>
+</table>
+<p><strong>항목 항목:</strong> 기본 캔버스 입니다 QImage-기반 <code>SimpleCanvasService</code> . 레이어 가능 되다 래스터, 벡터, 또는 마스크 레이어; 동안 래스터 항목, off-캔버스 영역 입니다 또한 보존됨 통해 <code>offset_x/y</code> .</p>
+</div>
+<h2 id="canvas-rulers">눈금자와 가이드 <span class="tag tag-param">캔버스</span></h2>
+<div class="card">
+<ul>
+<li><strong>눈금자:</strong> 표시 에 위 및 왼쪽 가장자리 의 캔버스. 항목 가능 되다 px / mm / 항목.</li>
+<li><strong>생성 가이드:</strong> 드래그 에서 항목 위로 캔버스</li>
+<li><strong>이동 가이드:</strong>가이드 선을 클릭하고 드래그</li>
+<li><strong>삭제 가이드:</strong> 캔버스 밖으로 드래그</li>
+<li><strong>토글 표시:</strong> <kbd>R</kbd>키로 가이드 표시를 전환</li>
+<li><strong>스냅:</strong> 자동 스냅 로 가이드, 그리드, 앵커, 및 가장자리</li>
+<li><strong>가이드 색상:</strong> 항목 에 설정 (기본: <code>#00B7FF</code>)</li>
+</ul>
+</div>
+<h2 id="canvas-grid">그리드 <span class="tag tag-param">캔버스</span></h2>
+<div class="card">
+<ul>
+<li><strong>토글 표시:</strong> <kbd>G</kbd> 키</li>
+<li><strong>그리드 크기:</strong> 기본 32 px, 항목 에서 1 로 5000 px 에 환경 설정</li>
+<li><strong>그리드 스냅:</strong> 가능 되다 활성화됨 에 이동 도구 및 유사 도구</li>
+</ul>
+</div>
+<!-- ══════════════════ ファイル入出力 ══════════════════ -->
+<h2 id="file-formats">지원 형식 <span class="tag tag-param">파일</span></h2>
+<div class="card">
+<table>
+<tr><th>형식</th><th>가져오기</th><th>내보내기</th><th>Notes</th></tr>
+<tr><td>.lstroke (네이티브)</td><td>v1.0.0 / v1.1.0 / v1.2.0</td><td>v1.2.0</td><td>항목 여러 페이지, 레이어, 벡터, 및 UI 레이아웃</td></tr>
+<tr><td>PNG</td><td>○</td><td>○</td><td>항목 수준 가능 되다 설정됨</td></tr>
+<tr><td>JPEG</td><td>○</td><td>○</td><td>항목 및 항목 설정 가능 되다 설정됨</td></tr>
+<tr><td>TIFF</td><td>○</td><td>○</td><td>LZW 항목 및 16-bit 지원</td></tr>
+<tr><td>BMP</td><td>○</td><td>○</td><td></td></tr>
+<tr><td>WebP</td><td>○</td><td>○</td><td>항목 및 항목 설정 가능 되다 설정됨</td></tr>
+<tr><td>PSD</td><td>○</td><td>○</td><td>레이어 구조를 가져오고 레이어 포함 PSD를 내보냅니다</td></tr>
+<tr><td>ABR</td><td>○</td><td>—</td><td>가져오기 Photoshop 브러시</td></tr>
+<tr><td>SVG</td><td>○</td><td>○</td><td>Through 도형 관리자</td></tr>
+</table>
+<p>PNG / JPEG / WebP / BMP / TIFF 파일 가능 되다 항목 에서 OS 위로 캔버스 및 항목 로 새 래스터 레이어.</p>
+</div>
+<h2 id="file-lstroke">.lstroke 네이티브 형식 <span class="tag tag-param">파일</span></h2>
+<div class="card">
+<p>.lstroke 입니다 ZIP-기반 네이티브 형식. 에 저장, 그것 항목 로 <code>*.lstroke.tmp</code> 및 항목 항목 대상 파일. 항목 항목 입니다 저장:</p>
+<ul>
+<li>JSON 매니페스트 (항목 및 문서 메타데이터)</li>
+<li>PNG 이미지 데이터 용 각 레이어</li>
+<li>벡터 오브젝트 데이터</li>
+<li>페이지 항목 (v1.1 항목-페이지)</li>
+<li>UI 레이아웃 스냅샷</li>
+<li>ICC 색상 항목</li>
+</ul>
+</div>
+<!-- ══════════════════ 設定 ══════════════════ -->
+<h2 id="settings-preferences">환경 설정 <span class="tag tag-param">설정</span></h2>
+<p><kbd>Ctrl+,</kbd>환경 설정 대화상자를 엽니다. 현재 항목 / 항목 / 항목 I/O / 항목 / AI 항목 다섯 개 탭으로 구성되어 있습니다.</p>
+<div class="card">
+<h4>항목 탭</h4>
+<table>
+<tr><th>항목</th><th>범위</th><th>설명</th></tr>
+<tr><td>활성화 Numba 항목</td><td>에서 / OFF</td><td>항목 Numba JIT 항목 용 숫자 항목.</td></tr>
+<tr><td>캐시 크기</td><td>10 ～ 10000 항목</td><td>최대 수 의 에서-app 캐시 항목.</td></tr>
+<tr><td>실행 취소 항목</td><td>10 ～ 1000</td><td>최대 수 의 실행 취소 기록 항목</td></tr>
+<tr><td>항목 임계값</td><td>1 ～ 1000 MB</td><td>임계값 용 시작 로 사용 항목 용 큰 이미지 데이터.</td></tr>
+<tr><td>항목 FPS 제한</td><td>10 ～ 120 fps</td><td>항목 FPS 제한 사용 로 줄임 CPU 불러오기 에 큰 항목.</td></tr>
+<tr><td>선명한 벡터 오버레이 활성화(확대/축소)</td><td>에서 / OFF</td><td>표시 항목 벡터 레이어 항목 at 스크린 해결 동안 항목.</td></tr>
+<tr><td>벡터 오버레이 최대 크기</td><td>2048 / 4096 / 8192</td><td>최대 래스터 항목 용 선명 벡터 오버레이. 항목 항목 입니다 더 많은 항목 하지만 사용 더 많은 VRAM.</td></tr>
+</table>
+<h4>항목 탭</h4>
+<table>
+<tr><th>항목</th><th>선택지</th><th>설명</th></tr>
+<tr><td>항목</td><td>시스템 기본 / 항목 / 항목 / 항목 (항목 / 항목 / 항목 항목) / 항목 / 항목 / 항목 / 항목 / 항목 (항목) / 항목 / 항목</td><td>UI 언어입니다. 변경 사항은 재시작 없이 주요 UI 영역에 적용됩니다.</td></tr>
+<tr><td>색상 항목</td><td>어두운 / 빛 / 시스템</td><td>색상 항목</td></tr>
+<tr><td>표시 도구 모음</td><td>에서 / OFF</td><td>표시 도구 모음</td></tr>
+<tr><td>표시 상태 바</td><td>에서 / OFF</td><td>표시 상태 바</td></tr>
+<tr><td>그리드 항목</td><td>1 ～ 5000 px</td><td>그리드 항목</td></tr>
+<tr><td>항목 외부 AI 서비스</td><td>에서 / OFF</td><td>때 OFF, 항목 접근 로 ComfyUI / LLM Gateway / NanoBanana 입니다 항목.</td></tr>
+<tr><td>항목</td><td>보기 / 레이어 / 필터 / 도구 / 플러그인, 등.</td><td>항목 전환 가시성 용 대상 항목.</td></tr>
+<tr><td>마스크 오버레이 색상</td><td>색상 (기본: #00FFFF)</td><td>선택 마스크 오버레이 색상</td></tr>
+<tr><td>마스크 오버레이 불투명도</td><td>0 ～ 255</td><td>선택 마스크 오버레이 불투명도</td></tr>
+</table>
+<h4>파일 입출력 탭</h4>
+<table>
+<tr><th>항목</th><th>범위</th><th>설명</th></tr>
+<tr><td>활성화 자동 저장</td><td>에서 / OFF</td><td>항목 자동 저장. 변경 항목 효과 후 재시작.</td></tr>
+<tr><td>자동 저장 항목</td><td>30 ～ 3600초</td><td>자동 저장 항목. 변경 항목 효과 후 재시작.</td></tr>
+<tr><td>항목 항목</td><td>1 ～ 100</td><td>항목 항목 사용 때 저장 또는 항목.</td></tr>
+<tr><td>레이아웃 항목</td><td>폴더 경로</td><td>UI 레이아웃 저장 위치를 지정합니다. Browse…로 선택할 수 있습니다.</td></tr>
+</table>
+<h4>단축키 탭</h4>
+<p>모든 동작의 키보드 단축키를 나열하고 다시 지정합니다. 카테고리 / 소유자 트리, 검색, 충돌 표시, 단축키 초기화를 포함합니다. 마우스의 팬 제스처와 컨텍스트 메뉴 할당도 변경할 수 있습니다.</p>
+<h4>AI 효과 탭</h4>
+<table>
+<tr><th>항목</th><th>범위 / 항목</th><th>설명</th></tr>
+<tr><td>기본 트리거</td><td>Manual / 에 변경 / Debounced</td><td>기본 트리거 용 AI 효과 레이어 생성.</td></tr>
+<tr><td>항목 항목</td><td>0 ～ 60000 ms</td><td>항목 용 항목 트리거.</td></tr>
+<tr><td>생성 항목</td><td>10 ～ 86400 초</td><td>항목 용 생성 작업.</td></tr>
+<tr><td>레이어당 캐시 항목</td><td>1 ～ 500 항목</td><td>캐시 제한 당 AI 효과 레이어.</td></tr>
+<tr><td>비활성화 캐시 용 수동 항목</td><td>에서 / OFF</td><td>항목 캐시 사용 동안 수동 항목.</td></tr>
+<tr><td>Auto-retries 에 '에 변경' 트리거</td><td>0 ～ 10</td><td>수 의 자동 재시도 용 에 변경 생성.</td></tr>
+<tr><td>항목 항목</td><td>0 ～ 60000 ms</td><td>항목 항목 전 항목.</td></tr>
+<tr><td>표시 첫 번째-항목 배너</td><td>에서 / OFF</td><td>표시 안내 배너 후 첫 번째 생성 완료.</td></tr>
+<tr><td>항목 에서-변경 / 항목 항목 에 항목</td><td>에서 / OFF</td><td>전환 여부 자동 생성됨 결과 입니다 등록됨 에 항목.</td></tr>
+<tr><td>ComfyUI 항목</td><td>Local URL / 외부 URL</td><td>항목 ComfyUI 서버 항목 URL 용 AI 효과. 항목 기본 입니다 <code>http://127.0.0.1:8188</code> .</td></tr>
+<tr><td>API 항목</td><td>NanoBanana / OpenAI / Anthropic / Google Gemini</td><td>변경… / 지우기에서 API 키를 등록하거나 삭제합니다. 값은 다음 경로로 처리됩니다.<code>SecretProvider</code> .</td></tr>
+</table>
+<p>AI 효과 탭 항목, 캐시, 재시도, 및 관련 설정 입니다 저장 에 <code>user_data/ai_effect/preferences.json</code>。ComfyUI URL은 일반 설정에 저장되며 다음 실행 시 적용됩니다.</p>
+</div>
+<h2 id="settings-shortcuts">단축키 목록 <span class="tag tag-param">설정</span></h2>
+<div class="card">
+<h4>파일 작업</h4>
+<table class="shortcut-table">
+<tr><td><kbd>Ctrl+N</kbd></td><td>새로 만들기</td></tr>
+<tr><td><kbd>Ctrl+O</kbd></td><td>열기</td></tr>
+<tr><td><kbd>Ctrl+S</kbd></td><td>저장</td></tr>
+<tr><td><kbd>Ctrl+Shift+S</kbd></td><td>다른 이름으로 저장</td></tr>
+<tr><td><kbd>Ctrl+Shift+I</kbd></td><td>가져오기</td></tr>
+<tr><td><kbd>Ctrl+E</kbd></td><td>내보내기</td></tr>
+<tr><td><kbd>Ctrl+W</kbd></td><td>닫기</td></tr>
+<tr><td><kbd>Ctrl+Q</kbd></td><td>종료</td></tr>
+</table>
+<h4>편집 작업</h4>
+<table class="shortcut-table">
+<tr><td><kbd>Ctrl+Z</kbd></td><td>실행 취소</td></tr>
+<tr><td><kbd>Ctrl+Y</kbd></td><td>다시 실행</td></tr>
+<tr><td><kbd>Ctrl+X</kbd></td><td>잘라내기</td></tr>
+<tr><td><kbd>Ctrl+C</kbd></td><td>복사</td></tr>
+<tr><td><kbd>Ctrl+V</kbd></td><td>붙여넣기</td></tr>
+<tr><td><kbd>Ctrl+A</kbd></td><td>전체 선택</td></tr>
+<tr><td><kbd>Ctrl+L</kbd></td><td>전체 선택 벡터</td></tr>
+<tr><td><kbd>Ctrl+D</kbd></td><td>선택 해제</td></tr>
+</table>
+<h4>도구</h4>
+<table class="shortcut-table">
+<tr><td><kbd>B</kbd></td><td>펜 도구</td></tr>
+<tr><td><kbd>E</kbd></td><td>지우개 도구</td></tr>
+<tr><td><kbd>V</kbd></td><td>이동 도구</td></tr>
+<tr><td><kbd>P</kbd></td><td>정밀 벡터 펜</td></tr>
+<tr><td><kbd>T</kbd></td><td>텍스트 도구</td></tr>
+<tr><td><kbd>I</kbd></td><td>스포이드 도구</td></tr>
+<tr><td><kbd>[</kbd> / <kbd>]</kbd></td><td>변경 브러시 크기</td></tr>
+</table>
+<h4>보기</h4>
+<table class="shortcut-table">
+<tr><td><kbd>Ctrl+=</kbd></td><td>확대</td></tr>
+<tr><td><kbd>Ctrl+-</kbd></td><td>축소</td></tr>
+<tr><td><kbd>Ctrl+0</kbd></td><td>확대/축소 재설정</td></tr>
+<tr><td><kbd>G</kbd></td><td>토글 그리드</td></tr>
+<tr><td><kbd>R</kbd></td><td>토글 가이드</td></tr>
+<tr><td><kbd>F11</kbd></td><td>전체 화면</td></tr>
+</table>
+<h4>레이어</h4>
+<table class="shortcut-table">
+<tr><td><kbd>Ctrl+Shift+N</kbd></td><td>새 레이어</td></tr>
+<tr><td><kbd>Ctrl+J</kbd></td><td>레이어 복제</td></tr>
+<tr><td><kbd>Del</kbd></td><td>레이어 삭제</td></tr>
+<tr><td><kbd>Ctrl+E</kbd></td><td>아래 레이어와 병합</td></tr>
+<tr><td><kbd>Shift+R</kbd></td><td>래스터화</td></tr>
+</table>
+<h4>필터</h4>
+<table class="shortcut-table">
+<tr><td><kbd>Ctrl+Alt+F</kbd></td><td>항목 항목 필터</td></tr>
+</table>
+<h4>설정</h4>
+<table class="shortcut-table">
+<tr><td><kbd>Ctrl+,</kbd></td><td>환경 설정</td></tr>
+</table>
+</div>
+</main>
+<!-- ===== SCRIPTS ===== -->
+<script>
+const sidebar=document.getElementById('sidebar');const toggle=document.getElementById('sidebar-toggle');if(toggle)toggle.addEventListener('click',()=>sidebar.classList.toggle('show'));
+document.querySelectorAll('.nav-section-title').forEach(t=>t.addEventListener('click',()=>t.parentElement.classList.toggle('open')));
+const s=document.getElementById('sidebar-search');if(s)s.addEventListener('input',()=>{const q=s.value.toLowerCase();document.querySelectorAll('.nav-section').forEach(sec=>{let any=false;sec.querySelectorAll('.nav-link').forEach(a=>{const m=a.textContent.toLowerCase().includes(q);a.style.display=m?'':'none';if(m)any=true;});sec.style.display=any||!q?'':'none';if(q&&any)sec.classList.add('open');});});
+const sel=document.getElementById('language-select');if(sel)sel.addEventListener('change',()=>{location.href='index_'+sel.value+'.html'});
+</script></body>
+</html>

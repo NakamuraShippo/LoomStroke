@@ -1,0 +1,21 @@
+{
+  "id": "prompt_editor_panel",
+  "name": "Prompt Editor",
+  "version": "0.1.0",
+  "description": "Compose prompts, manage a prompt library, and submit to LLM.",
+  "author": "LoomStroke Team",
+  "license": "MIT",
+  "entry_point": "__init__.create_plugin",
+  "types": ["ui_panel"],
+  "dependencies": [],
+  "host_version": ">=1.0.0",
+  "ui_config": {
+    "panel_id": "prompt_editor",
+    "display_name": "Prompt Editor",
+    "category": "ai_tools",
+    "default_position": "right",
+    "default_size": [360, 480],
+    "resizable": true,
+    "icon": "prompt-editor.svg"
+  }
+}

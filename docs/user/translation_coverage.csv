@@ -1,0 +1,13 @@
+language,visible_text_nodes,japanese_remaining,common_english_word_hits_excluding_allowed_terms,top_hits
+ja,1460,0,232,"[('tool', 14), ('add', 13), ('panel', 12), ('effect', 12), ('mask', 9), ('vector', 7), ('tab', 7), ('delete', 6), ('canvas', 6), ('import', 5), ('prompt', 5), ('change', 5)]"
+en,1459,0,2301,"[('the', 201), ('and', 136), ('for', 61), ('layer', 58), ('layers', 36), ('color', 35), ('vector', 33), ('parameters', 31), ('range', 30), ('panel', 29), ('are', 29), ('button', 29)]"
+zh_CN,1459,1288,6,"[('opens', 2), ('runs', 2), ('removes', 1), ('exports', 1)]"
+zh_Hant,1459,1288,6,"[('opens', 2), ('runs', 2), ('removes', 1), ('exports', 1)]"
+zh_TW,1459,1288,6,"[('opens', 2), ('runs', 2), ('removes', 1), ('exports', 1)]"
+ko,1459,0,208,"[('base', 12), ('dark', 9), ('light', 7), ('adjustment', 5), ('clear', 5), ('supported', 4), ('double', 4), ('running', 4), ('blending', 4), ('adding', 4), ('shadows', 4), ('than', 4)]"
+es,1459,0,226,"[('color', 73), ('panel', 50), ('prompt', 14), ('vertical', 13), ('base', 12), ('combo', 11), ('dark', 9), ('similar', 7), ('light', 7), ('horizontal', 5), ('stop', 4), ('value', 3)]"
+ar,1459,176,6,"[('opens', 2), ('runs', 2), ('removes', 1), ('exports', 1)]"
+hi,1459,178,6,"[('opens', 2), ('runs', 2), ('removes', 1), ('exports', 1)]"
+pt_BR,1459,0,108,"[('prompt', 16), ('vertical', 13), ('base', 12), ('combo', 11), ('dark', 9), ('light', 7), ('horizontal', 5), ('stop', 4), ('edited', 4), ('value', 3), ('where', 3), ('digital', 2)]"
+bn,1459,178,6,"[('opens', 2), ('runs', 2), ('removes', 1), ('exports', 1)]"
+ru,1459,0,208,"[('base', 12), ('dark', 9), ('light', 7), ('adjustment', 5), ('clear', 5), ('supported', 4), ('double', 4), ('running', 4), ('blending', 4), ('adding', 4), ('shadows', 4), ('than', 4)]"

@@ -1,0 +1,376 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "LoomStroke .lstroke manifest v1.3",
+  "type": "object",
+  "required": [
+    "format",
+    "format_version",
+    "canvas"
+  ],
+  "properties": {
+    "format": {
+      "const": "LoomStrokeDocument"
+    },
+    "format_version": {
+      "type": "string",
+      "pattern": "^1\\.\\d+\\.\\d+$"
+    },
+    "app_version": {
+      "type": "string"
+    },
+    "created": {
+      "type": "string",
+      "format": "date-time"
+    },
+    "modified": {
+      "type": "string",
+      "format": "date-time"
+    },
+    "canvas": {
+      "$ref": "#/$defs/canvas"
+    },
+    "color_profile": {
+      "$ref": "#/$defs/color_profile"
+    },
+    "ui_layout": {
+      "$ref": "#/$defs/ui_layout"
+    },
+    "layers": {
+      "type": "array",
+      "items": {
+        "$ref": "#/$defs/layer"
+      }
+    },
+    "pages": {
+      "type": "array",
+      "minItems": 1,
+      "items": {
+        "$ref": "#/$defs/page"
+      }
+    },
+    "metadata": {
+      "type": "object"
+    }
+  },
+  "anyOf": [
+    {"required": ["layers"]},
+    {"required": ["pages"]}
+  ],
+  "$defs": {
+    "canvas": {
+      "type": "object",
+      "required": [
+        "width",
+        "height",
+        "background_color"
+      ],
+      "properties": {
+        "width": {
+          "type": "integer",
+          "minimum": 1
+        },
+        "height": {
+          "type": "integer",
+          "minimum": 1
+        },
+        "background_color": {
+          "type": "array",
+          "items": {
+            "type": "integer",
+            "minimum": 0,
+            "maximum": 255
+          },
+          "minItems": 4,
+          "maxItems": 4
+        },
+        "dpi": {
+          "type": "array",
+          "items": {
+            "type": "number",
+            "minimum": 1
+          },
+          "minItems": 2,
+          "maxItems": 2
+        }
+      }
+    },
+    "color_profile": {
+      "type": "object",
+      "properties": {
+        "name": {
+          "type": "string"
+        },
+        "colorspace": {
+          "type": "string"
+        },
+        "icc_base64": {
+          "type": [
+            "string",
+            "null"
+          ]
+        }
+      }
+    },
+    "layer": {
+      "type": "object",
+      "required": [
+        "id",
+        "name",
+        "visible",
+        "opacity",
+        "blend_mode",
+        "image"
+      ],
+      "properties": {
+        "id": {
+          "type": "string"
+        },
+        "name": {
+          "type": "string"
+        },
+        "visible": {
+          "type": "boolean"
+        },
+        "opacity": {
+          "type": "number",
+          "minimum": 0,
+          "maximum": 1
+        },
+        "blend_mode": {
+          "type": "string"
+        },
+        "locked": {
+          "type": "boolean"
+        },
+        "image": {
+          "type": "string"
+        },
+        "thumbnail": {
+          "type": "string"
+        },
+        "bounds": {
+          "type": "array",
+          "items": {
+            "type": "integer"
+          },
+          "minItems": 4,
+          "maxItems": 4
+        },
+        "position": {
+          "type": "array",
+          "items": {
+            "type": "integer"
+          },
+          "minItems": 2,
+          "maxItems": 2
+        },
+        "metadata": {
+          "type": "object"
+        },
+        "layer_type": {
+          "type": "string",
+          "enum": ["raster", "vector", "mask", "group", "effect", "ai_effect", "3d"]
+        },
+        "vector_objects": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/vector_object"
+          }
+        },
+        "ai_effect": {
+          "type": "object"
+        },
+        "origin": {
+          "type": "object"
+        },
+        "scene_3d": {
+          "type": "object",
+          "properties": {
+            "path": {
+              "type": "string"
+            }
+          }
+        },
+        "camera_3d": {
+          "type": "object"
+        },
+        "lighting_3d": {
+          "type": "object"
+        },
+        "display_mode_3d": {
+          "type": "string"
+        },
+        "gen_3d": {
+          "type": "object"
+        }
+      }
+    },
+    "page": {
+      "type": "object",
+      "required": [
+        "id",
+        "layers"
+      ],
+      "properties": {
+        "id": {
+          "type": "string",
+          "pattern": "^[A-Za-z0-9_-]{1,64}$"
+        },
+        "name": {
+          "type": "string"
+        },
+        "index": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "canvas": {
+          "$ref": "#/$defs/canvas"
+        },
+        "layers": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/layer"
+          }
+        },
+        "page_thumbnail": {
+          "type": "string"
+        },
+        "metadata": {
+          "type": "object"
+        },
+        "view_state": {
+          "type": "object"
+        }
+      }
+    },
+    "ui_layout": {
+      "type": "object",
+      "properties": {
+        "window_state": {
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "window_geometry": {
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "panels": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "required": [
+              "id",
+              "geometry",
+              "visible"
+            ],
+            "properties": {
+              "id": {
+                "type": "string"
+              },
+              "geometry": {
+                "type": "array",
+                "items": {
+                  "type": "integer"
+                },
+                "minItems": 4,
+                "maxItems": 4
+              },
+              "dock_area": {
+                "type": [
+                  "string",
+                  "null"
+                ]
+              },
+              "floating": {
+                "type": "boolean"
+              },
+              "visible": {
+                "type": "boolean"
+              },
+              "z_index": {
+                "type": "integer"
+              }
+            }
+          }
+        }
+      }
+    },
+    "vector_anchor": {
+      "type": "object",
+      "properties": {
+        "pos": {
+          "type": "array",
+          "items": { "type": "number" },
+          "minItems": 2,
+          "maxItems": 2
+        },
+        "kind": { "type": "string" },
+        "h_in": {
+          "type": ["array", "null"],
+          "items": { "type": "number" },
+          "minItems": 2,
+          "maxItems": 2
+        },
+        "h_out": {
+          "type": ["array", "null"],
+          "items": { "type": "number" },
+          "minItems": 2,
+          "maxItems": 2
+        }
+      }
+    },
+    "vector_path": {
+      "type": "object",
+      "properties": {
+        "anchors": {
+          "type": "array",
+          "items": { "$ref": "#/$defs/vector_anchor" }
+        },
+        "closed": { "type": "boolean" }
+      }
+    },
+    "vector_style": {
+      "type": "object",
+      "properties": {
+        "stroke_color": {
+          "type": ["array", "null"],
+          "items": { "type": "integer", "minimum": 0, "maximum": 255 },
+          "minItems": 3,
+          "maxItems": 3
+        },
+        "stroke_width": { "type": "number", "minimum": 0 },
+        "fill_enabled": { "type": "boolean" },
+        "fill_color": {
+          "type": ["array", "null"],
+          "items": { "type": "integer", "minimum": 0, "maximum": 255 },
+          "minItems": 3,
+          "maxItems": 3
+        },
+        "join": { "type": "string" },
+        "cap": { "type": "string" },
+        "miter_limit": { "type": "number" },
+        "dash": {
+          "type": "array",
+          "items": { "type": "number" }
+        }
+      }
+    },
+    "vector_object": {
+      "type": "object",
+      "properties": {
+        "id": { "type": "string" },
+        "paths": {
+          "type": "array",
+          "items": { "$ref": "#/$defs/vector_path" }
+        },
+        "style": { "$ref": "#/$defs/vector_style" },
+        "meta": { "type": "object" },
+        "preview": { "type": "boolean" }
+      }
+    }
+  }
+}

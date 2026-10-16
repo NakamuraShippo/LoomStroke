@@ -1,0 +1,1346 @@
+<!DOCTYPE html>
+
+<html dir="rtl" lang="ar">
+<head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>LoomStroke — دليل المستخدم</title>
+<style>
+:root {
+  --bg: #1a1a2e;
+  --bg-panel: #16213e;
+  --bg-card: #1e2a4a;
+  --bg-card-hover: #253456;
+  --accent: #4fc3f7;
+  --accent-dim: #2980b9;
+  --text: #e0e6ed;
+  --text-dim: #8899aa;
+  --text-heading: #ffffff;
+  --border: #2a3a5c;
+  --sidebar-w: 280px;
+  --tag-tool: #4fc3f7;
+  --tag-panel: #ab47bc;
+  --tag-param: #66bb6a;
+  --tag-effect: #ff7043;
+  --tag-ai: #ffd54f;
+}
+* { margin:0; padding:0; box-sizing:border-box; }
+body {
+  font-family: 'Segoe UI', 'Noto Sans JP', 'Hiragino Kaku Gothic ProN', sans-serif;
+  background: var(--bg);
+  color: var(--text);
+  line-height: 1.7;
+  display: flex;
+  min-height: 100vh;
+}
+
+/* ── Sidebar ── */
+#sidebar {
+  width: var(--sidebar-w);
+  min-width: var(--sidebar-w);
+  background: var(--bg-panel);
+  border-right: 1px solid var(--border);
+  overflow-y: auto;
+  position: fixed;
+  top: 0; left: 0; bottom: 0;
+  z-index: 100;
+  transition: transform .25s ease;
+  scrollbar-width: thin;
+  scrollbar-color: var(--border) transparent;
+}
+#sidebar.collapsed { transform: translateX(calc(-1 * var(--sidebar-w))); }
+#sidebar-header {
+  padding: 20px 16px 12px;
+  border-bottom: 1px solid var(--border);
+  position: sticky; top: 0;
+  background: var(--bg-panel);
+  z-index: 1;
+}
+#sidebar-header h1 {
+  font-size: 16px; color: var(--accent);
+  font-weight: 700; letter-spacing: .5px;
+}
+#sidebar-header p { font-size: 11px; color: var(--text-dim); margin-top: 2px; }
+#sidebar-search {
+  width: 100%; margin-top: 10px; padding: 6px 10px;
+  background: var(--bg-card); border: 1px solid var(--border);
+  border-radius: 4px; color: var(--text); font-size: 13px; outline: none;
+}
+#sidebar-search:focus { border-color: var(--accent); }
+#sidebar-search::placeholder { color: var(--text-dim); }
+.language-picker {
+  margin-top: 10px;
+}
+.language-picker label {
+  display: block; margin-bottom: 4px;
+  color: var(--text-dim); font-size: 11px;
+}
+#language-select {
+  width: 100%; padding: 6px 10px;
+  background: var(--bg-card); border: 1px solid var(--border);
+  border-radius: 4px; color: var(--text); font-size: 13px; outline: none;
+}
+#language-select:focus { border-color: var(--accent); }
+#sidebar nav { padding: 8px 0 24px; }
+.nav-section { margin-bottom: 2px; }
+.nav-section-title {
+  display: flex; align-items: center; gap: 6px;
+  padding: 8px 16px; font-size: 12px; font-weight: 700;
+  color: var(--text-dim); text-transform: uppercase; letter-spacing: .8px;
+  cursor: pointer; user-select: none; transition: color .15s;
+}
+.nav-section-title:hover { color: var(--text); }
+.nav-section-title::before {
+  content: '▸'; display: inline-block; font-size: 10px;
+  transition: transform .2s; width: 12px; text-align: center;
+}
+.nav-section.open > .nav-section-title::before { transform: rotate(90deg); }
+.nav-section-items { display: none; }
+.nav-section.open > .nav-section-items { display: block; }
+.nav-link {
+  display: block; padding: 5px 16px 5px 34px;
+  font-size: 13px; color: var(--text-dim);
+  text-decoration: none; border-left: 3px solid transparent;
+  transition: all .15s;
+}
+.nav-link:hover { color: var(--text); background: rgba(79,195,247,.06); }
+.nav-link.active { color: var(--accent); border-left-color: var(--accent); background: rgba(79,195,247,.08); }
+
+/* ── Toggle button ── */
+#sidebar-toggle {
+  position: fixed; top: 12px; left: 12px; z-index: 200;
+  width: 36px; height: 36px; border: none; border-radius: 6px;
+  background: var(--accent-dim); color: #fff; font-size: 18px;
+  cursor: pointer; display: none; align-items: center; justify-content: center;
+  transition: background .15s;
+}
+#sidebar-toggle:hover { background: var(--accent); }
+
+/* ── Main content ── */
+#main {
+  flex: 1; margin-left: var(--sidebar-w);
+  padding: 32px 40px 80px;
+  max-width: 960px;
+  transition: margin-left .25s ease;
+}
+#main.expanded { margin-left: 0; }
+
+h2 {
+  font-size: 26px; color: var(--text-heading);
+  margin: 48px 0 16px; padding-bottom: 8px;
+  border-bottom: 2px solid var(--accent-dim);
+}
+h2:first-of-type { margin-top: 0; }
+h3 {
+  font-size: 19px; color: var(--accent);
+  margin: 32px 0 10px;
+}
+h4 {
+  font-size: 15px; color: var(--text-heading);
+  margin: 20px 0 8px;
+}
+p, li { font-size: 14px; }
+p { margin-bottom: 10px; }
+ul, ol { padding-left: 20px; margin-bottom: 12px; }
+li { margin-bottom: 4px; }
+
+.tag {
+  display: inline-block; font-size: 10px; font-weight: 700;
+  padding: 1px 7px; border-radius: 3px; margin-right: 4px;
+  vertical-align: middle; letter-spacing: .3px;
+}
+.tag-tool    { background: rgba(79,195,247,.18); color: var(--tag-tool); }
+.tag-panel   { background: rgba(171,71,188,.18); color: var(--tag-panel); }
+.tag-param   { background: rgba(102,187,106,.18); color: var(--tag-param); }
+.tag-effect  { background: rgba(255,112,67,.18);  color: var(--tag-effect); }
+.tag-ai      { background: rgba(255,213,79,.18);  color: var(--tag-ai); }
+
+.card {
+  background: var(--bg-card); border: 1px solid var(--border);
+  border-radius: 8px; padding: 18px 20px; margin-bottom: 16px;
+  transition: border-color .15s;
+}
+.card:hover { border-color: var(--accent-dim); }
+.card h4 { margin-top: 0; }
+
+table {
+  width: 100%; border-collapse: collapse; margin-bottom: 16px;
+  font-size: 13px;
+}
+th, td {
+  padding: 8px 12px; text-align: left;
+  border-bottom: 1px solid var(--border);
+}
+th { color: var(--accent); font-weight: 600; font-size: 12px; text-transform: uppercase; letter-spacing: .5px; }
+tr:hover td { background: rgba(79,195,247,.04); }
+
+kbd {
+  display: inline-block; background: var(--bg-card); border: 1px solid var(--border);
+  border-radius: 4px; padding: 1px 6px; font-size: 12px;
+  font-family: 'Consolas', 'Courier New', monospace; color: var(--accent);
+}
+
+.shortcut-table td:first-child { white-space: nowrap; }
+
+code {
+  background: var(--bg-card); padding: 2px 6px; border-radius: 3px;
+  font-size: 13px; font-family: 'Consolas', 'Courier New', monospace;
+  color: var(--accent);
+}
+
+.grid-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
+@media (max-width: 700px) { .grid-2 { grid-template-columns: 1fr; } }
+
+.hero {
+  background: linear-gradient(135deg, var(--bg-panel), var(--bg-card));
+  border: 1px solid var(--border); border-radius: 12px;
+  padding: 32px; margin-bottom: 32px; text-align: center;
+}
+.hero h2 { border: none; margin: 0 0 8px; font-size: 32px; }
+.hero p { color: var(--text-dim); font-size: 15px; margin: 0; }
+
+/* ── Page mode ── */
+.doc-page {
+  display: none;
+  animation: pageFade .16s ease;
+}
+.doc-page.active { display: block; }
+@keyframes pageFade {
+  from { opacity: 0; transform: translateY(6px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+.page-controls {
+  display: flex; align-items: center; justify-content: space-between;
+  gap: 12px; margin: 0 0 24px; padding: 10px 0;
+  border-bottom: 1px solid var(--border);
+}
+.page-controls-bottom {
+  margin: 24px 0 0; border-top: 1px solid var(--border);
+  border-bottom: none;
+}
+.page-button {
+  min-width: 92px; padding: 7px 12px;
+  border: 1px solid var(--border); border-radius: 6px;
+  background: var(--bg-card); color: var(--text);
+  cursor: pointer; font-size: 13px;
+}
+.page-button:hover:not(:disabled) {
+  border-color: var(--accent); color: var(--accent);
+}
+.page-button:disabled {
+  opacity: .4; cursor: default;
+}
+.page-status {
+  color: var(--text-dim); font-size: 13px; text-align: center;
+}
+
+/* 画像は docs/user/assets/user-guide/ に置き、下部 script の pageMedia に登録します. */
+.media-slot {
+  margin: 14px 0 18px;
+  border: 1px solid var(--border); border-radius: 8px;
+  background: rgba(255,255,255,.025); overflow: hidden;
+}
+.media-slot img {
+  display: block; width: 100%; height: auto;
+}
+.media-caption {
+  padding: 8px 12px; color: var(--text-dim); font-size: 12px;
+  border-top: 1px solid var(--border);
+}
+.media-slot-empty:not(.media-slot-visible) { display: none; }
+.media-placeholder {
+  min-height: 180px; display: flex; flex-direction: column;
+  align-items: center; justify-content: center; gap: 6px;
+  color: var(--text-dim); border: 1px dashed var(--border);
+}
+.media-placeholder strong { color: var(--accent); font-size: 13px; }
+.media-placeholder span { font-size: 12px; }
+
+/* ── Responsive ── */
+@media (max-width: 900px) {
+  #sidebar { transform: translateX(calc(-1 * var(--sidebar-w))); }
+  #sidebar.show { transform: translateX(0); }
+  #sidebar-toggle { display: flex; }
+  #main { margin-left: 0; padding: 32px 20px 60px; }
+  .page-controls { position: sticky; top: 0; z-index: 20; background: var(--bg); }
+}
+
+@media print {
+  body { display: block; background: #fff; color: #000; }
+  #sidebar, #sidebar-toggle, .page-controls { display: none !important; }
+  #main { margin: 0; max-width: none; padding: 0; }
+  .doc-page { display: block !important; page-break-after: always; }
+  .media-slot-empty { display: none !important; }
+}
+</style>
+</head>
+<body>
+<button aria-label="تبديل القائمة" id="sidebar-toggle">☰</button>
+<!-- ===== SIDEBAR ===== -->
+<aside id="sidebar">
+<div id="sidebar-header">
+<h1>LoomStroke</h1>
+<p>دليل المستخدم</p>
+<input autocomplete="off" id="sidebar-search" placeholder="بحث..." type="search"/>
+<div class="language-picker">
+<label for="language-select">لغة العرض</label>
+<select autocomplete="off" id="language-select">
+<option value="ja">اليابانية</option>
+<option value="en">الإنجليزية</option>
+<option value="zh_CN">الصينية المبسطة</option>
+<option value="zh_Hant">الصينية التقليدية</option>
+<option value="zh_TW">مندرين تايوان</option>
+<option value="ko">الكورية</option>
+<option value="es">الإسبانية</option>
+<option selected="selected" value="ar">العربية</option>
+<option value="hi">الهندية</option>
+<option value="pt_BR">البرتغالية (البرازيل)</option>
+<option value="bn">البنغالية</option>
+<option value="ru">الروسية</option>
+</select>
+</div>
+</div>
+<nav>
+<!-- Overview -->
+<div class="nav-section open">
+<div class="nav-section-title">نظرة عامة</div>
+<div class="nav-section-items">
+<a class="nav-link" href="#overview">نظرة عامة على التطبيق</a>
+<a class="nav-link" href="#layout">تخطيط الشاشة</a>
+</div>
+</div>
+<!-- Drawing Tools -->
+<div class="nav-section open">
+<div class="nav-section-title">أدوات الرسم</div>
+<div class="nav-section-items">
+<a class="nav-link" href="#pen">أداة القلم</a>
+<a class="nav-link" href="#eraser">أداة الممحاة</a>
+<a class="nav-link" href="#fill-bucket">أداة التعبئة</a>
+<a class="nav-link" href="#gradient">تدرج أداة</a>
+<a class="nav-link" href="#pattern-fill">نمط تعبئة أداة</a>
+</div>
+</div>
+<!-- Selection Tools -->
+<div class="nav-section">
+<div class="nav-section-title">أدوات التحديد</div>
+<div class="nav-section-items">
+<a class="nav-link" href="#selection-rect">مستطيل تحديد أداة</a>
+<a class="nav-link" href="#magic-wand">أداة العصا السحرية</a>
+</div>
+</div>
+<!-- Transform / Move -->
+<div class="nav-section">
+<div class="nav-section-title">تحويل / نقل</div>
+<div class="nav-section-items">
+<a class="nav-link" href="#move">أداة النقل</a>
+<a class="nav-link" href="#transform-panel">تحويل لوحة</a>
+</div>
+</div>
+<!-- Vector Tools -->
+<div class="nav-section">
+<div class="nav-section-title">أدوات المتجهات</div>
+<div class="nav-section-items">
+<a class="nav-link" href="#vector-path">متجه مسار أداة</a>
+<a class="nav-link" href="#vector-precise">دقيق متجه قلم</a>
+<a class="nav-link" href="#vector-edit">متجه تحرير أداة</a>
+</div>
+</div>
+<!-- Text Tools -->
+<div class="nav-section">
+<div class="nav-section-title">أداة النص</div>
+<div class="nav-section-items">
+<a class="nav-link" href="#text-tool">أداة النص</a>
+<a class="nav-link" href="#text-vertical">رأسي أداة النص</a>
+<a class="nav-link" href="#font-panel">لوحة الخط</a>
+</div>
+</div>
+<!-- Utility Tools -->
+<div class="nav-section">
+<div class="nav-section-title">أدوات مساعدة</div>
+<div class="nav-section-items">
+<a class="nav-link" href="#eyedropper">أداة القطارة</a>
+</div>
+</div>
+<!-- Panels -->
+<div class="nav-section open">
+<div class="nav-section-title">اللوحات</div>
+<div class="nav-section-items">
+<a class="nav-link" href="#panel-toolbar">شريط الأدوات</a>
+<a class="nav-link" href="#panel-tool-props">خصائص الأداة</a>
+<a class="nav-link" href="#panel-layers">لوحة الطبقات</a>
+<a class="nav-link" href="#panel-color">لوحة الألوان</a>
+<a class="nav-link" href="#panel-brush-manager">مدير الفراشي</a>
+<a class="nav-link" href="#panel-shape-manager">مدير الأشكال</a>
+<a class="nav-link" href="#panel-effect">لوحة التأثيرات</a>
+<a class="nav-link" href="#panel-pages">لوحة الصفحات</a>
+<a class="nav-link" href="#panel-preview">لوحة المعاينة</a>
+<a class="nav-link" href="#panel-context-toolbar">شريط أدوات السياق</a>
+</div>
+</div>
+<!-- Effects -->
+<div class="nav-section">
+<div class="nav-section-title">تأثير طبقات</div>
+<div class="nav-section-items">
+<a class="nav-link" href="#fx-gaussian-blur">تمويه غاوسي</a>
+<a class="nav-link" href="#fx-levels">مستويات</a>
+<a class="nav-link" href="#fx-hue-saturation">التدرج / التشبع</a>
+<a class="nav-link" href="#fx-invert">عكس</a>
+<a class="nav-link" href="#fx-brightness-contrast">السطوع / التباين</a>
+<a class="nav-link" href="#fx-sharpen">زيادة الحدة</a>
+<a class="nav-link" href="#fx-noise-reduction">تقليل الضجيج</a>
+</div>
+</div>
+<!-- AI -->
+<div class="nav-section">
+<div class="nav-section-title">AI تكامل</div>
+<div class="nav-section-items">
+<a class="nav-link" href="#ai-comfyui">ComfyUI لوحة</a>
+<a class="nav-link" href="#ai-nanobanana">لوحة NanoBanana</a>
+<a class="nav-link" href="#ai-prompt-editor">محرر المطالبات</a>
+</div>
+</div>
+<!-- AI Effect Layer -->
+<div class="nav-section">
+<div class="nav-section-title">AI تأثير</div>
+<div class="nav-section-items">
+<a class="nav-link" href="#ai-effect-overview">AI تأثير طبقة</a>
+<a class="nav-link" href="#ai-effect-manager">مدير تأثيرات الذكاء الاصطناعي</a>
+<a class="nav-link" href="#ai-effect-editor">تأثير محرر</a>
+<a class="nav-link" href="#ai-effect-runtime">توليد و حالة</a>
+</div>
+</div>
+<!-- Canvas -->
+<div class="nav-section">
+<div class="nav-section-title">عناصر تحكم اللوحة</div>
+<div class="nav-section-items">
+<a class="nav-link" href="#canvas-viewport">تكبير/تصغير / تحريك / تدوير</a>
+<a class="nav-link" href="#canvas-rulers">المساطر والأدلة</a>
+<a class="nav-link" href="#canvas-grid">الشبكة</a>
+</div>
+</div>
+<!-- File I/O -->
+<div class="nav-section">
+<div class="nav-section-title">إدخال/إخراج الملفات</div>
+<div class="nav-section-items">
+<a class="nav-link" href="#file-formats">الصيغ المدعومة</a>
+<a class="nav-link" href="#file-lstroke">.lstroke أصلي صيغة</a>
+</div>
+</div>
+<!-- Settings -->
+<div class="nav-section">
+<div class="nav-section-title">الإعدادات</div>
+<div class="nav-section-items">
+<a class="nav-link" href="#settings-preferences">التفضيلات</a>
+<a class="nav-link" href="#settings-shortcuts">قائمة الاختصارات</a>
+</div>
+</div>
+</nav>
+</aside>
+<!-- ===== MAIN CONTENT ===== -->
+<main id="main">
+<!-- Hero -->
+<div class="hero">
+<h2 style="border:none;">LoomStroke</h2>
+<p>تطبيق رسم رقمي متكامل لإنتاج المانغا والرسوم التوضيحية</p>
+</div>
+<!-- ────────────────── 概要 ────────────────── -->
+<section id="overview">
+<h2>نظرة عامة على التطبيق</h2>
+<p>LoomStroke تطبيق رسم رقمي يجمع الرسم النقطي ومسارات المتجهات وتحرير النصوص وتعدد الصفحات والملحقات الخارجية وتكامل AI في مساحة إنتاج واحدة. يمكن حفظ ملفات العمل بصيغة<code>.lstroke</code>.</p>
+<div class="grid-2">
+<div class="card">
+<h4>الميزات الرئيسية</h4>
+<ul>
+<li>محرك فرشاة يدعم الضغط والميل</li>
+<li>طبقة عتامة و مزج وضع إدارة</li>
+<li>متجه مسارات و معلمية أشكال</li>
+<li>أفقي و رأسي نص</li>
+<li>غير إتلافي تأثير طبقات</li>
+<li>مستندات متعددة الصفحات</li>
+</ul>
+</div>
+<div class="card">
+<h4>AI تكامل</h4>
+<ul>
+<li>ComfyUI سير عمل تكامل</li>
+<li>NanoBanana (Gemini) صورة توليد</li>
+<li>محرر المطالبات وإدارة المقتطفات</li>
+<li>LLM Gateway (OpenAI / Anthropic / Gemini)</li>
+</ul>
+</div>
+</div>
+</section>
+<!-- ────────────────── Layout ────────────────── -->
+<section id="layout">
+<h2>تخطيط الشاشة</h2>
+<p>تتكوّن النافذة الرئيسية من المناطق التالية. يمكن ترتيب اللوحات بحرية بالسحب والإفلات، ويمكن أيضًا دمجها كعلامات تبويب.</p>
+<div class="card">
+<table>
+<tr><th>منطقة</th><th>المحتوى</th></tr>
+<tr><td>الأعلى</td><td>شريط القوائم + شريط خصائص الأداة، مع عرض إعدادات الأداة النشطة في صف واحد</td></tr>
+<tr><td>يسار إرساء</td><td>شريط الأدوات ولوحة اللون ولوحة الخط ولوحة الصفحات</td></tr>
+<tr><td>توسيط</td><td>لوحة الرسم، تستخدم SimpleCanvasService المبني على QImage افتراضيًا، مع المساطر</td></tr>
+<tr><td>يمين إرساء</td><td>لوحة الطبقات ومدير الأشكال والتحويل والتأثيرات والمعاينة</td></tr>
+<tr><td>عائم</td><td>شريط أدوات سياقي يظهر تلقائيًا بعد الضربات</td></tr>
+</table>
+</div>
+<p><kbd>Window</kbd> كل لوحة يمكن يكون معروض أو مخفي من قائمة.<kbd>F11</kbd> يبدل إلى ملء الشاشة وضع.</p>
+</section>
+<!-- ══════════════════ 描画ツール ══════════════════ -->
+<h2 id="pen">أداة القلم <span class="tag tag-tool">أداة</span></h2>
+<p>فرشاة رسم نقطية تدعم الضغط والميل. كما تدعم استيراد فرش ABR (Photoshop).</p>
+<div class="card">
+<p><strong>اختصار:</strong> <kbd>B</kbd> / <kbd>Shift+B</kbd></p>
+<table>
+<tr><th>المعلمات</th><th>نطاق</th><th>الوصف</th></tr>
+<tr><td>الحجم</td><td>1 ～ 128</td><td>فرشاة قطر (px)</td></tr>
+<tr><td>التعتيم</td><td>0 ～ 1.0</td><td>عتامة لـ كامل ضربة</td></tr>
+<tr><td>الصلابة</td><td>0 ～ 1.0</td><td>حافة صلابة (0=ناعم, 1=صلب)</td></tr>
+<tr><td>التباعد</td><td>0.01 ～ 1.0</td><td>ختم تباعد كـ نسبة من فرشاة قطر</td></tr>
+<tr><td>التدفق</td><td>0 ～ 1.0</td><td>مقدار تدفق الحبر</td></tr>
+<tr><td>كثافة الختم</td><td>0 ～ 1.0</td><td>ختم كثافة, معبّر كـ معكوس من تباعد</td></tr>
+<tr><td>حساس للضغط</td><td>على / OFF</td><td>تمكين ضغط حساسية</td></tr>
+<tr><td>تنعيم</td><td>0 ～ 1.0</td><td>ضربة عنصر</td></tr>
+<tr><td>نطاق النغمة</td><td>0 ～ 1.0</td><td>نغمة نطاق لـ أسلوب سكرينتون تصيير</td></tr>
+<tr><td>غاما النغمة</td><td>0.1 ～ 2.0</td><td>نغمة غاما تصحيح قيمة</td></tr>
+<tr><td>إمالة زاوية</td><td>على / OFF</td><td>تظليل يعتمد على ميل الجهاز اللوحي</td></tr>
+</table>
+<p><strong>إعداد مسبق:</strong> عنصر, عنصر, و مخصص فرش مستوردة من ABR</p>
+</div>
+<h2 id="eraser">أداة الممحاة <span class="tag tag-tool">أداة</span></h2>
+<p>pressure-sensitive نقطي ممحاة.</p>
+<div class="card">
+<p><strong>اختصار:</strong> <kbd>E</kbd> / <kbd>Shift+E</kbd>   <strong>حجم تغيير:</strong> <kbd>[</kbd> <kbd>]</kbd></p>
+<table>
+<tr><th>المعلمات</th><th>نطاق</th><th>الوصف</th></tr>
+<tr><td>الحجم</td><td>1 ～ 200</td><td>ممحاة قطر (px)</td></tr>
+<tr><td>التعتيم</td><td>0 ～ 1.0</td><td>ممحاة قوة</td></tr>
+<tr><td>الصلابة</td><td>0 ～ 1.0</td><td>حافة صلابة</td></tr>
+<tr><td>التباعد</td><td>0.01 ～ 1.0</td><td>ختم تباعد</td></tr>
+<tr><td>عنصر عنصر</td><td>على / OFF</td><td>تنعيم الحواف</td></tr>
+</table>
+<p><strong>إعداد مسبق:</strong> ناعم عنصر, حافة عنصر</p>
+</div>
+<h2 id="fill-bucket">أداة التعبئة <span class="tag tag-tool">أداة</span></h2>
+<p>يملأ مجاور مناطق من مشابه لون مع تعبئة تعبئة.</p>
+<div class="card">
+<table>
+<tr><th>المعلمات</th><th>نطاق</th><th>الوصف</th></tr>
+<tr><td>سماحية اللون</td><td>0 ～ 255</td><td>لون عنصر مستخدم لـ تعبئة كشف</td></tr>
+<tr><td>إغلاق الفجوة (بكسل)</td><td>0 ～ 10</td><td>عدد من بكسلات مستخدم إلى تلقائياً إغلاق فجوات في خطوط</td></tr>
+<tr><td>هدف التعبئة</td><td>النشط طبقة / طبقة جديدة</td><td>هدف طبقة لـ تعبئة</td></tr>
+</table>
+</div>
+<h2 id="gradient">تدرج أداة <span class="tag tag-tool">أداة</span></h2>
+<p>يرسم خطي أو شعاعي تدرجات بواسطة السحب. وسيطة توقفات يمكن يكون محرر بواسطة السحب الخاصة بها دبابيس.</p>
+<div class="card">
+<table>
+<tr><th>المعلمات</th><th>نطاق</th><th>الوصف</th></tr>
+<tr><td>تدرج نوع</td><td>خطي / شعاعي</td><td>تدرج شكل</td></tr>
+<tr><td>لون</td><td>لون</td><td>بداية لون</td></tr>
+<tr><td>لون B</td><td>لون</td><td>نهاية لون</td></tr>
+<tr><td>وسط توقفات</td><td>0 ～ 3</td><td>عدد من وسيطة لون توقفات</td></tr>
+<tr><td>موضع التوقف N</td><td>0 ～ 1.0</td><td>موضع من كل توقف (0=بداية حافة, 1=نهاية حافة)</td></tr>
+<tr><td>توقف N لون</td><td>لون</td><td>لون من كل توقف</td></tr>
+<tr><td>تدرج ضوضائي</td><td>على / OFF</td><td>عنصر إلى تقليل تدرج متقطع</td></tr>
+</table>
+<p><strong>يدعم مزج وضع:</strong> عادي, تغميق, Multiply, لون حرق, Lighten, شاشة, لون تفتيح, خطي تفتيح, تراكب, ناعم ضوء, صلب ضوء, فرق, استبعاد</p>
+</div>
+<h2 id="pattern-fill">نمط تعبئة أداة <span class="tag tag-tool">أداة</span></h2>
+<p>يملأ منطقة عنصر مع متجانب نمط.</p>
+<div class="card">
+<table>
+<tr><th>المعلمات</th><th>نطاق</th><th>الوصف</th></tr>
+<tr><td>نمط</td><td>رقعة شطرنج / أفقي خطوط / رأسي خطوط / قطري خطوط / نقاط / تهشير متقاطع</td><td>Built-في نمط إلى استخدام</td></tr>
+<tr><td>نمط تحجيم</td><td>0.1 ～ 10.0</td><td>نمط تحجيم عامل</td></tr>
+<tr><td>سماحية اللون</td><td>0 ～ 255</td><td>لون عنصر مستخدم لـ تعبئة كشف</td></tr>
+<tr><td>إغلاق الفجوة (بكسل)</td><td>0 ～ 10</td><td>عدد من بكسلات مستخدم إلى تلقائياً إغلاق فجوات في خطوط</td></tr>
+</table>
+<p><strong>العملية:</strong> بدءاً من منقور نقطة, يملأ متصلة منطقة مع المحدد متجانب نمط.</p>
+</div>
+<!-- ══════════════════ 選択ツール ══════════════════ -->
+<h2 id="selection-rect">مستطيل تحديد أداة <span class="tag tag-tool">أداة</span></h2>
+<p>ينشئ تحديد بواسطة السحب مستطيل. هو أيضاً يدعم نطاق تحديد من متجه كائنات.</p>
+<div class="card">
+<table>
+<tr><th>المعلمات</th><th>نطاق</th><th>الوصف</th></tr>
+<tr><td>تحديد وضع</td><td>مستطيل / متجه</td><td>نقطي مستطيل تحديد / متجه نطاق تحديد</td></tr>
+<tr><td>العملية</td><td>استبدال / إضافة / طرح / تقاطع</td><td>كيف تحديد هو مدمجة</td></tr>
+<tr><td>دقة البكسل</td><td>على / OFF</td><td>محاذاة إلى بكسلات</td></tr>
+<tr><td>تنعيم الحافة ممكّن</td><td>على / OFF</td><td>تنعيم الحافة تحديد</td></tr>
+<tr><td>نصف قطر التنعيم</td><td>0 ～ 128</td><td>تنعيم الحافة نصف قطر (px)</td></tr>
+<tr><td>نصف قطر القناع</td><td>0 ～ 128</td><td>نصف قطر مستخدم لـ عنصر أو عنصر تحديد قناع</td></tr>
+<tr><td>تحويل X / Y</td><td>-10000 ～ 10000</td><td>عنصر مقدار أثناء تحويل</td></tr>
+<tr><td>تحويل تحجيم X / Y</td><td>0.01 ～ 100</td><td>تحجيم عامل أثناء تحويل</td></tr>
+<tr><td>دوران التحويل</td><td>-180° ～ 180°</td><td>زاوية الدوران أثناء التحويل</td></tr>
+</table>
+<p><strong>مفاتيح التعديل:</strong> <kbd>Shift</kbd>=إضافة, <kbd>Alt</kbd>=طرح, <kbd>Shift+Alt</kbd>=تقاطع</p>
+<p><strong>تحويل وضع (<kbd>Ctrl+T</kbd>):</strong> نقل / تحجيم / تدوير / قلب / إعادة ضبط / تطبيق / إلغاء</p>
+</div>
+<h2 id="magic-wand">أداة العصا السحرية <span class="tag tag-tool">أداة</span></h2>
+<p>تلقائياً عنصر متصل منطقة من مشابه لون من منقور نقطة.</p>
+<div class="card">
+<table>
+<tr><th>المعلمات</th><th>نطاق</th><th>الوصف</th></tr>
+<tr><td>عنصر</td><td>0 ～ 255</td><td>لون عنصر (افتراضي: 32)</td></tr>
+<tr><td>متصل</td><td>على / OFF</td><td>على=مجاور بكسلات فقط, OFF=مشابه ألوان على كامل كامل صورة</td></tr>
+<tr><td>العملية</td><td>استبدال / إضافة / طرح / تقاطع</td><td>كيف تحديد هو مدمجة</td></tr>
+</table>
+<p>عند معلمات تغيير, أداة تلقائياً عنصر من عنصر منقور نقطة.</p>
+</div>
+<!-- ══════════════════ 変形・移動 ══════════════════ -->
+<h2 id="move">أداة النقل <span class="tag tag-tool">أداة</span></h2>
+<p>ينقل و يحول طبقات أو متجه كائنات. نقر مزدوج نص كائن يبدل إلى تحرير وضع.</p>
+<div class="card">
+<p><strong>اختصار:</strong> <kbd>V</kbd></p>
+<table>
+<tr><th>المعلمات</th><th>نطاق</th><th>الوصف</th></tr>
+<tr><td>دقة البكسل</td><td>على / OFF</td><td>عنصر محاذاة (افتراضي: على)</td></tr>
+<tr><td>الشبكة التقاط</td><td>على / OFF</td><td>الشبكة التقاط</td></tr>
+<tr><td>الشبكة حجم</td><td>1 ～ 1024</td><td>الشبكة حجم (px)</td></tr>
+</table>
+<p><strong>عنصر وضع:</strong></p>
+<ul>
+<li><strong>مع تحديد:</strong> قص, نقل, و تحويل المحدد منطقة</li>
+<li><strong>متجه / نص:</strong> نقل كائنات. نقر مزدوج-نقر إلى تبديل إلى مسار تحرير أو أداة النص</li>
+<li><strong>نقطي طبقة:</strong> نقل عنصر طبقة</li>
+</ul>
+</div>
+<h2 id="transform-panel">تحويل لوحة <span class="tag tag-panel">لوحة</span></h2>
+<p>يتحكم المحدد كائن's موضع, حجم, و زاوية مع رقمي إدخال.</p>
+<div class="card">
+<table>
+<tr><th>عنصر</th><th>نطاق</th><th>الوصف</th></tr>
+<tr><td>X</td><td>-99999 ～ 99999</td><td>X موضع (أعلى-يسار من حدود مربع)</td></tr>
+<tr><td>Y</td><td>-99999 ～ 99999</td><td>Y موضع (أعلى-يسار من حدود مربع)</td></tr>
+<tr><td>W</td><td>0.1 ～ 99999</td><td>عرض (متجه فقط)</td></tr>
+<tr><td>H</td><td>0.1 ～ 99999</td><td>ارتفاع (متجه فقط)</td></tr>
+<tr><td>زاوية</td><td>-360° ～ 360°</td><td>زاوية الدوران</td></tr>
+</table>
+<p>عند نقطي طبقة هو المحدد, فقط X/Y يمكن يكون محرر.</p>
+</div>
+<!-- ══════════════════ ベクターツール ══════════════════ -->
+<h2 id="vector-path">متجه مسار أداة <span class="tag tag-tool">أداة</span></h2>
+<p>انقر إلى ضع مرساة نقاط و إنشاء عنصر مسارات. سحب إلى تعيين اتجاه مقابض.</p>
+<div class="card">
+<table>
+<tr><th>المعلمات</th><th>نطاق</th><th>الوصف</th></tr>
+<tr><td>وضع Shift</td><td>قيد / تعطيل_التقاط</td><td><kbd>Shift</kbd> يبدل سلوك إلى زاوية قيد أو التقاط تعطيل</td></tr>
+<tr><td>سماحية الإغلاق التلقائي (بكسل)</td><td>0 ～ 64</td><td>مسافة لـ تلقائي إغلاق عند نقر قرب بداية نقطة</td></tr>
+<tr><td>عرض الحد</td><td>0.1 ～ 64</td><td>عرض الحد</td></tr>
+<tr><td>لون الحد</td><td>لون</td><td>ضربة لون</td></tr>
+<tr><td>تمكين التعبئة</td><td>على / OFF</td><td>تعبئة ممكّن</td></tr>
+<tr><td>لون التعبئة</td><td>لون</td><td>تعبئة لون</td></tr>
+</table>
+<p><kbd>Enter</kbd> إلى عنصر,<kbd>Esc</kbd> إلى تجاهل. عودة قرب بداية نقطة يغلق مسار تلقائياً.</p>
+</div>
+<h2 id="vector-precise">دقيق متجه قلم <span class="tag tag-tool">أداة</span></h2>
+<p>تلقائياً يحوّل حر ضربات إلى ناعم عنصر منحنيات.</p>
+<div class="card">
+<p><strong>اختصار:</strong> <kbd>P</kbd></p>
+<table>
+<tr><th>المعلمات</th><th>نطاق</th><th>الوصف</th></tr>
+<tr><td>وضع التحرير</td><td>مرساة / شكل</td><td>اختر ما إذا أداة يفضل مرساة تحرير أو شكل تحرير</td></tr>
+<tr><td>إغلاق تلقائي</td><td>على / OFF</td><td>تلقائي مسار إغلاق</td></tr>
+<tr><td>عرض الحد</td><td>0.1 ～ 64</td><td>عرض الحد</td></tr>
+<tr><td>لون الحد</td><td>لون</td><td>ضربة لون</td></tr>
+<tr><td>تمكين التعبئة</td><td>على / OFF</td><td>تعبئة ممكّن</td></tr>
+<tr><td>لون التعبئة</td><td>لون</td><td>تعبئة لون</td></tr>
+<tr><td>كثافة نقاط الارتكاز</td><td>0.1 ～ 1.0</td><td>كثافة من مُولّد مراسي</td></tr>
+<tr><td>نعومة المقابض</td><td>0 ～ 5.0</td><td>قوة تنعيم المنحنى</td></tr>
+</table>
+</div>
+<h2 id="vector-edit">متجه تحرير أداة <span class="tag tag-tool">أداة</span></h2>
+<p>يحرر مرساة نقاط و مقابض على موجود متجه مسارات.</p>
+<div class="card">
+<table>
+<tr><th>المعلمات</th><th>نطاق</th><th>الوصف</th></tr>
+<tr><td>لون الحد</td><td>لون</td><td>ضربة لون من المحدد متجه</td></tr>
+<tr><td>عرض الحد</td><td>0.1 ～ 128</td><td>ضربة عرض من المحدد متجه</td></tr>
+<tr><td>تمكين التعبئة</td><td>على / OFF</td><td>تعبئة ممكّن</td></tr>
+<tr><td>لون التعبئة</td><td>لون</td><td>تعبئة لون من المحدد متجه</td></tr>
+</table>
+<ul>
+<li>انقر و سحب مراسي إلى نقل إياها</li>
+<li>اسحب المقابض لضبط انحناء المنحنى</li>
+<li><kbd>Alt</kbd>+سحب إلى تكرار أثناء نقل,<kbd>Ctrl</kbd> عنصر عنصر التقاط</li>
+<li>غير محوّل أساسي أشكال هي محرر بارامترياً مع شكل مقابض بدلاً من من مراسي</li>
+<li>تحجيم و تدوير مع حدود مربع</li>
+</ul>
+</div>
+<!-- ══════════════════ テキストツール ══════════════════ -->
+<h2 id="text-tool">أداة النص <span class="tag tag-tool">أداة</span></h2>
+<p>ينشئ و يحرر أفقي نص. انقر إلى إنشاء نقطة نص, أو سحب إلى إنشاء منطقة نص.</p>
+<div class="card">
+<p><strong>اختصار:</strong> <kbd>T</kbd></p>
+<table>
+<tr><th>المعلمات</th><th>نطاق</th><th>الوصف</th></tr>
+<tr><td>التفاف الكلمات</td><td>على / OFF</td><td>عنصر التفاف لـ منطقة نص</td></tr>
+<tr><td>حجم الخط (نقطة)</td><td>1 ～ 512</td><td>خط حجم</td></tr>
+<tr><td>ارتفاع السطر</td><td>0.5 ～ 4.0</td><td>خط-ارتفاع عنصر</td></tr>
+<tr><td>تباعد الأحرف</td><td>-64 ～ 128</td><td>عنصر تباعد (تباعد الأحرف)</td></tr>
+<tr><td>حشوة</td><td>0 إلى 256, بشكل منفصل لـ أعلى, أسفل, يسار, و يمين</td><td>عنصر حشوة من نص مربع</td></tr>
+</table>
+<p><strong>Notes:</strong> يدعم IME إدخال, نقل/تدوير/تحجيم أثناء تحرير ضمن السطر, و التفاف حول الشكل منطقة نص عبر تحديد إلى منطقة. خط عائلة, أسلوب, محاذاة, لون, و عتامة هي تدار في خط لوحة.</p>
+</div>
+<h2 id="text-vertical">رأسي أداة النص <span class="tag tag-tool">أداة</span></h2>
+<p>مستخدم إلى إنشاء و تحرير رأسي نص. أساسي معلمات هي مشتركة مع نص أداة.</p>
+<div class="card">
+<table>
+<tr><th>عنصر معلمات</th><th>الخيارات</th><th>الوصف</th></tr>
+<tr><td>رأسي تدفق</td><td>يسار / يمين</td><td>عنصر تدفق اتجاه</td></tr>
+<tr><td>تدوير عنصر/عنصر</td><td>على / OFF</td><td>تدوير نصف العرض أبجدي رقمي محارف لـ رأسي كتابة</td></tr>
+</table>
+<p>يدعم التموضع التلقائي لعلامات الترقيم اليابانية والتدوير التلقائي لعلامة المد الطويل.</p>
+</div>
+<h2 id="font-panel">لوحة الخط <span class="tag tag-panel">لوحة</span></h2>
+<p>لوحة لـ إدارة طباعة إعدادات مستخدم بواسطة نص أدوات.</p>
+<div class="card">
+<h4>عنصر قائمة</h4>
+<table>
+<tr><th>عنصر</th><th>نوع</th><th>الوصف</th></tr>
+<tr><td>التفاف الكلمات</td><td>مربع اختيار</td><td>عنصر التفاف على/OFF</td></tr>
+<tr><td>عائلة الخط</td><td>قائمة مربع</td><td>اختر من النظام خط قائمة</td></tr>
+<tr><td>نمط الخط</td><td>قائمة مربع</td><td>أسلوب من المحدد خط</td></tr>
+<tr><td>حجم الخط (نقطة)</td><td>رقمي مربع</td><td>1.0 إلى 512.0, خطوة 1.0</td></tr>
+<tr><td>كتابة عمودية</td><td>مربع اختيار</td><td>رأسي كتابة وضع مفتاح</td></tr>
+<tr><td>اتجاه الفقرة</td><td>قائمة مربع</td><td>عنصر / عنصر (رأسي كتابة فقط)</td></tr>
+<tr><td>محاذاة</td><td>قائمة مربع</td><td>يسار / الوسط / يمين / عنصر</td></tr>
+<tr><td>ارتفاع السطر</td><td>رقمي مربع</td><td>0.5 إلى 4.0, خطوة 0.1</td></tr>
+<tr><td>تباعد الأحرف</td><td>رقمي مربع</td><td>-64.0 إلى 128.0, خطوة 0.5</td></tr>
+<tr><td>حشوة (أعلى/أسفل/يمين/يسار)</td><td>أربعة رقمي مربعات</td><td>0.0 إلى 256.0 لـ كل عنصر</td></tr>
+<tr><td>اللون</td><td>لون زر</td><td>انقر لفتح مربع حوار اللون</td></tr>
+<tr><td>التعتيم</td><td>منزلق</td><td>0 ～ 100%</td></tr>
+<tr><td>مجلدات الخطوط المخصصة</td><td>قائمة + أزرار</td><td>إضافة مجلدات الخطوط وإزالتها وإعادة فحصها</td></tr>
+</table>
+<p>تنسيقات الخطوط المدعومة: TTF / OTF / TTC / OTC</p>
+</div>
+<!-- ══════════════════ ユーティリティ ══════════════════ -->
+<h2 id="eyedropper">أداة القطارة <span class="tag tag-tool">أداة</span></h2>
+<p>عنصر لون من لوحة الرسم و عنصر هو كـ أمامي لون.</p>
+<div class="card">
+<p><strong>اختصار:</strong> <kbd>I</kbd> / <kbd>Shift+I</kbd></p>
+</div>
+<!-- ══════════════════ パネル ══════════════════ -->
+<h2 id="panel-toolbar">شريط الأدوات <span class="tag tag-panel">لوحة</span></h2>
+<p>قائمة عمودية لأزرار الأدوات على الحافة اليسرى. يمثّل كل زر مجموعة أدوات؛ ويؤدي الضغط المطوّل لمدة 350 ms إلى فتح قائمة لاختيار متغيرات الأداة.</p>
+<div class="card">
+<p>تخطيط يبدل تلقائياً بين رأسي و أفقي كـ لوحة عرض تغييرات. أيقونة حجم هو 48x48 px.</p>
+</div>
+<h2 id="panel-tool-props">خصائص الأداة لوحة <span class="tag tag-panel">لوحة</span></h2>
+<p>لوحة تعرض إعدادات الأداة النشطة. لها تخطيطان: وضع الشريط أسفل شريط القوائم مباشرة، ووضع اللوحة داخل منطقة الإرساء.</p>
+<div class="card">
+<h4>مكوّن</h4>
+<ul>
+<li><strong>إعداد مسبق صف:</strong> إعداد مسبق تحديد قائمة مربع + حفظ/حذف أزرار</li>
+<li><strong>عنصر عنصر مجموعة:</strong> حجم, عتامة, صلابة, تباعد, تدفق, و عنصر عنصر أداة إعدادات</li>
+<li><strong>خصائص الأداة مجموعة:</strong> أداة-محدد معلمات</li>
+<li><strong>الإجراءات عنصر:</strong> أداة-محدد إجراء أزرار و عنصر</li>
+</ul>
+<p><strong>تلقائي عنصر توليد:</strong> عنصر/int -&gt; منزلق, عنصر -&gt; مربع اختيار, عنصر -&gt; قائمة مربع, لون -&gt; لون زر</p>
+</div>
+<h2 id="panel-layers">لوحة الطبقات <span class="tag tag-panel">لوحة</span></h2>
+<p>يعرض ويدير مكدس طبقات المستند كشجرة هرمية. تتم معالجة الطبقات العادية والمجموعات والتأثيرات والأقنعة وطبقات تأثير AI في الشجرة نفسها.</p>
+<div class="card">
+<h4>أعلى يتحكم</h4>
+<table>
+<tr><th>العنصر</th><th>الوصف</th></tr>
+<tr><td>وضع المزج</td><td>تغييرات مزج وضع من المحدد طبقة. مجموعات يمكن أيضاً استخدام Pass Through.</td></tr>
+<tr><td>التعتيم</td><td>تغييرات المحدد طبقة عتامة مع 0 إلى 100% منزلق و رقمي عرض.</td></tr>
+</table>
+<h4>طبقة شجرة</h4>
+<table>
+<tr><th>العرض / العملية</th><th>الوصف</th></tr>
+<tr><td>مصغرة</td><td>مصغّر للطبقة، عادةً 32×32 px. انقر عليه لتحرير محتوى الطبقة.</td></tr>
+<tr><td>قناع مصغرة</td><td>معروض فقط عند طبقة قناع موجود. انقر هو إلى تبديل إلى قناع تحرير وضع.</td></tr>
+<tr><td>نوع عنصر</td><td><code>V</code> متجه、<code>S</code> شكل、<code>T</code> نص、<code>FX</code> تأثير、<code>G</code> مجموعة、<code>M</code> قناع、<code>AI</code> عنصر AI تأثير.</td></tr>
+<tr><td>رؤية</td><td>عين أيقونة يبدل رؤية. مخفي صفوف هي معروض باهتة.</td></tr>
+<tr><td>عنصر</td><td>عنصر طبقة تحرير.</td></tr>
+<tr><td>عنصر عنصر</td><td>عنصر شفاف بكسلات. استخدام مخصص مفتاح في صف.</td></tr>
+<tr><td>سحب و إفلات</td><td>استخدام هذا إلى إعادة ترتيب طبقات أو نقل إياها إلى مجموعات. إسقاط طبقة على AI تأثير Slot صف يعيّن هو كـ ذلك Slot's إدخال.</td></tr>
+<tr><td>نقر مزدوج-نقر</td><td>عنصر طبقة.</td></tr>
+</table>
+<h4>أسفل أزرار</h4>
+<table>
+<tr><th>زر</th><th>الوصف</th></tr>
+<tr><td>إضافة</td><td>يضيف جديد نقطي طبقة.</td></tr>
+<tr><td>حذف</td><td>حذف المحدد طبقة.</td></tr>
+<tr><td>تكرار</td><td>عنصر المحدد طبقة. معطّل عند عنصر هو no تحديد.</td></tr>
+<tr><td>قناع</td><td>يضيف قناع طبقة إلى الطبقة المحددة. إذا كان موجودًا بالفعل، تتم إزالة القناع.</td></tr>
+<tr><td>إضافة تأثير طبقة</td><td>يضيف طبقة تأثير عادية. في البيئات التي يكون فيها تأثير AI ممكّنًا، <strong>AI تأثير</strong> يمكنك يمكن أيضاً اختر .lsfx إعدادات مسبقة من قائمة فرعية.</td></tr>
+<tr><td>G</td><td>مجموعات اثنان أو أكثر المحدد طبقات.</td></tr>
+<tr><td>V</td><td>يضيف جديد متجه طبقة.</td></tr>
+</table>
+<h4>AI تأثير صف</h4>
+<table>
+<tr><th>العرض / العملية</th><th>الوصف</th></tr>
+<tr><td>عنصر عنصر</td><td>عنصر AI تأثير طبقة نفسه.</td></tr>
+<tr><td>توليد زر</td><td>معروض فقط على AI تأثير طبقة صفوف. بدء توليد لـ ذلك طبقة و هو معطّل أثناء توليد هو قيد التشغيل.</td></tr>
+<tr><td>عنصر فرعي صف</td><td>افتراضي صف تم إنشاؤه من إدخال_فتحات في AI تأثير بيان. مطلوب فتحات ذلك هي ليس تعيين هي معروض مع تحذير.</td></tr>
+<tr><td>استبعاد زر</td><td>يظهر عند تعيين طبقة إدخال إلى Slot. يبدّل الإدخال إلى وضع خارج المزج / مخصص لإدخال AI فقط.</td></tr>
+<tr><td>xN عنصر</td><td>يعرض مرجع عدد على عادي طبقات مرجعية بواسطة عنصر AI تأثير فتحات.</td></tr>
+<tr><td>أخضر عنصر</td><td>عنصر إخراج طبقة مُولّد بواسطة AI تأثير.</td></tr>
+</table>
+<h4>يمين-نقر قائمة</h4>
+<table>
+<tr><th>العنصر</th><th>الوصف</th></tr>
+<tr><td>إضافة طبقة / تكرار الطبقة / حذف الطبقة</td><td>أساسي إضافة, تكرار, و حذف عنصر.</td></tr>
+<tr><td>عنصر</td><td>يفتح مربع حوار إعادة التسمية.</td></tr>
+<tr><td>دمج لأسفل</td><td>عنصر إلى طبقة أدناه. ممكّن فقط عند ممكن.</td></tr>
+<tr><td>عنصر مرئي</td><td>عنصر مرئي طبقات إلى واحد طبقة. مخفي طبقات هي محفوظ.</td></tr>
+<tr><td>تحويل إلى نقطي</td><td>يحوّل متجهات و مشابه عنصر إلى نقطي. ممكّن فقط عند ممكن.</td></tr>
+<tr><td>عنصر إلى متجه</td><td>يحوّل غير محوّل أساسي أشكال إلى عادي متجه كائنات.</td></tr>
+<tr><td>مجموعة طبقات / عنصر</td><td>مجموعات متعددة المحدد طبقات, أو عنصر عند مستخدم على مجموعة صف.</td></tr>
+<tr><td>إنشاء / عنصر عنصر قناع</td><td>يبدل عنصر قناع حالة.</td></tr>
+<tr><td>إضافة / تحرير / إنهاء / إزالة قناع الطبقة</td><td>يضيف طبقة قناع, يبدل قناع تحرير وضع, أو حذف قناع.</td></tr>
+<tr><td>إضافة تأثير</td><td>يضيف فرعي تأثير إلى المحدد طبقة. معطّل لـ مجموعات.</td></tr>
+<tr><td>تحميل كـ تحديد / عكس عنصر</td><td>يظهر فقط عند النقر بالزر الأيمن على طبقة قناع. يحمّل القناع كتحديد أو يعكس البكسلات الشفافة.</td></tr>
+</table>
+<h4>أوضاع المزج</h4>
+<p>يتحكم مزج الطبقات في كيفية تركيب الطبقة المحددة مع الطبقات أسفلها. تُطبّق العتامة بعد ذلك على نتيجة المزج بالكامل. لأنه يغيّر التركيب المعروض فقط دون تعديل البكسلات، فهو مفيد لضبط الألوان وإضافة الضوء أو الظلال وتراكب الخامات.</p>
+<table>
+<tr><th>المجموعة</th><th>الوضع</th><th>الوصف</th></tr>
+<tr><td>مجموعة فقط</td><td>Pass Through</td><td>تركيب قياسي مع ضبط القوة بالعتامة.</td></tr>
+<tr><td>عادي</td><td>عادي</td><td>قياسي تركيب. علوي طبقة هو وضع كـ-هو, مع عتامة تحكم خاصته قوة.</td></tr>
+<tr><td>عادي</td><td>Dissolve</td><td>يعرض المناطق شبه الشفافة كنقاط عشوائية. مفيد للحواف الخشنة والمظهر الحبيبي.</td></tr>
+<tr><td>تغميق</td><td>تغميق</td><td>يعطي الأولوية للمكوّنات الأغمق في الطبقتين العلوية والسفلية. مفيد لإضافة الظلال والمناطق الداكنة مع تقليل الأجزاء الساطعة.</td></tr>
+<tr><td>تغميق</td><td>Multiply</td><td>يضاعف الألوان لجعلها أغمق. هذا أسهل وضع تغميق لخطوط الرسم والظلال وملمس الورق وطبقات الاتساخ.</td></tr>
+<tr><td>تغميق</td><td>لون حرق</td><td>يغمّق الخلفية بقوة كما لو كان يحرقها، مع زيادة التشبع والتباين. مناسب للظلال العميقة والخامات القوية.</td></tr>
+<tr><td>تغميق</td><td>خطي حرق</td><td>يغمّق عبر خفض الإضاءة خطيًا. ينتج مناطق داكنة قوية وأكثر حسابية من Color Burn.</td></tr>
+<tr><td>تغميق</td><td>أكثرداكن لون</td><td>يختار اللون الأغمق من الطبقتين العلوية والسفلية بدلاً من مزجهما. تكون النتيجة قريبة من استبدال اللون مع أولوية للأغمق.</td></tr>
+<tr><td>Lighten</td><td>Lighten</td><td>يعطي الأولوية للمكوّنات الأفتح في الطبقتين العلوية والسفلية. استخدمه لإضافة الضوء أو اللمعات مع إزالة الأجزاء الداكنة.</td></tr>
+<tr><td>Lighten</td><td>شاشة</td><td>يعمل بعكس Multiply ويزيد السطوع بشكل طبيعي. مناسب للتوهج واللمعات والدخان ومواد الضوء.</td></tr>
+<tr><td>Lighten</td><td>لون تفتيح</td><td>تفتيح الخلفية بقوة و ينشئ زاهي ضوء. هو يمكن قص إلى أبيض بسهولة, so تعديل مع عتامة.</td></tr>
+<tr><td>Lighten</td><td>خطي تفتيح (إضافة)</td><td>يضيف ألوان إلى عنصر بقوة. مفيد لـ ضوء عنصر, سحر تأثيرات, و قويشديد توهجضوء.</td></tr>
+<tr><td>Lighten</td><td>Lighter لون</td><td>يختار اللون الأفتح من الطبقتين العلوية والسفلية. استخدمه عند تراكب مواد تعطي الأولوية للألوان الفاتحة.</td></tr>
+<tr><td>تباين</td><td>تراكب</td><td>يبدل بين Multiply و شاشة مبني على سطوع من الخلفية. قياسي اختيار لـ إضافة أنسجة و زيادةقوي تظليل.</td></tr>
+<tr><td>تباين</td><td>ناعم ضوء</td><td>يضيف تباين أكثر ناعم من تراكب. مناسب لـ جلد, قماش, و دقيق تظليل عنصر.</td></tr>
+<tr><td>تباين</td><td>صلب ضوء</td><td>يضيف تأثيرات قوية للضوء والظلام اعتمادًا على الطبقة العلوية. ينشئ لمعات وظلالًا واضحة.</td></tr>
+<tr><td>تباين</td><td>زاهي ضوء</td><td>ينشئ قوي, زاهي تباين مشابه إلى تركيب من لون حرق و لون تفتيح.</td></tr>
+<tr><td>تباين</td><td>خطي ضوء</td><td>يغيّر الإضاءة بقوة وبشكل خطي، كما لو كان يجمع بين Linear Burn وLinear Dodge.</td></tr>
+<tr><td>تباين</td><td>Pin ضوء</td><td>يركّب كما لو كان يستبدل المناطق الداكنة والفاتحة. مناسب للخامات الصلبة الخاصة والتأثيرات.</td></tr>
+<tr><td>تباين</td><td>صلب Mix</td><td>يدفع نحو ألوان نحو بقوة تأثير الملصق نتيجة. مفيد لـ poster-like, ضوضاء, أو تجريبي تأثيرات.</td></tr>
+<tr><td>عكس</td><td>فرق</td><td>يعرض فرق بين علوي و سفلي طبقات. مفيد لـ محاذاة فحص, inverted-looking تأثيرات, و غير عادي لون إزاحة.</td></tr>
+<tr><td>عكس</td><td>استبعاد</td><td>مزج فرق أنعم من Difference. مناسب للتأثيرات الخاصة التي تحتاج إحساسًا أقل بالانعكاس.</td></tr>
+<tr><td>عكس</td><td>طرح</td><td>يطرح اللون العلوي من الخلفية لتغميقها. مفيد لتأثيرات إزالة اللون والتأثيرات الداكنة الخاصة.</td></tr>
+<tr><td>عكس</td><td>Divide</td><td>يفتح النتيجة بالقسمة.</td></tr>
+<tr><td>مكوّن</td><td>تدرج لوني</td><td>تطبيق فقط علوي تدرج لوني إلى الخلفية أثناء حفظ الخلفية إضاءة و تشبع. استخدام هو عند يمكنك فقط يريد إلى تغيير تدرج لوني.</td></tr>
+<tr><td>مكوّن</td><td>تشبع</td><td>تطبيق فقط علوي تشبع إلى الخلفية. استخدام هو إلى إضافة عنصر أو تقليل تشبع.</td></tr>
+<tr><td>مكوّن</td><td>اللون</td><td>تطبيق علوي تدرج لوني و تشبع إلى الخلفية أثناء حفظ الخلفية إضاءة. مناسب لـ عنصر عنصر تظليل.</td></tr>
+<tr><td>مكوّن</td><td>Luminosity</td><td>يطبق السطوع فقط.</td></tr>
+</table>
+<p>مزج وضع عنصر عرض نتيجة من طبقات, تأثير طبقات, مجموعة تركيب, و PSD تصدير. عنصر وضع عنصر لوحة الرسم لكن عنصر ليس عنصر طبقة بكسلات عنصر.</p>
+</div>
+<h2 id="panel-color">لوحة الألوان <span class="tag tag-panel">لوحة</span></h2>
+<p>لون منتقي يجمع HSV لون عجلة و مثلث, رقمي إدخال, و لوحة ألوان إدارة.</p>
+<div class="card">
+<h4>عنصر قائمة</h4>
+<table>
+<tr><th>عنصر</th><th>الوصف</th></tr>
+<tr><td>لون عجلة</td><td>اختيار تدرج لوني على الحلقة الخارجية (0 إلى 360 درجات)</td></tr>
+<tr><td>نغمة مثلث</td><td>اختيار تشبع و قيمة داخل مثلث</td></tr>
+<tr><td>HSV رقمي مربعات (H/S/V)</td><td>H: 0～359°, S: 0～100%, V: 0～100%</td></tr>
+<tr><td>RGB رقمي مربعات (R/G/B)</td><td>0 إلى 255 كل</td></tr>
+<tr><td>Hex نص إدخال</td><td>#عنصر صيغة</td></tr>
+<tr><td>إضافة إلى لوحة ألوان زر</td><td>إضافة حالي لون إلى لوحة ألوان</td></tr>
+<tr><td>لوحة ألوان شبكة</td><td>الشبكة عرض من عنصر عنصر (32x32 px). حذف زر يظهر على عنصر.</td></tr>
+<tr><td>لون سجل</td><td>يعرض 10 عنصر عنصر ألوان في صف (24x24 px)</td></tr>
+</table>
+<p>لوحة الألوان الافتراضية: أسود، أبيض، أحمر، أخضر، أزرق</p>
+</div>
+<h2 id="panel-brush-manager">مدير الفراشي <span class="tag tag-panel">لوحة</span></h2>
+<p>لوحة لـ إدارة مخصص فرشاة رؤوس. يمكنك يمكن إنشاء, استيراد, و حذف فرش.</p>
+<div class="card">
+<h4>عنصر قائمة</h4>
+<table>
+<tr><th>عنصر</th><th>الوصف</th></tr>
+<tr><td>فرشاة رأس شبكة</td><td>يعرض فرشاة رأس عنصر في أيقونة وضع. نقر مزدوج-نقر إلى عنصر.</td></tr>
+<tr><td>إنشاء رأس زر</td><td>إنشاء فرشاة رأس من لوحة الرسم تحديد</td></tr>
+<tr><td>زر حفظ المعلمات</td><td>حفظ حالي قلم إعدادات إلى فرشاة</td></tr>
+<tr><td>زر إعادة فحص ABR</td><td>يعيد فحص مجلد مكتبة ABR</td></tr>
+<tr><td>استيراد ABR زر</td><td>استيراد Photoshop .abr فرشاة ملف</td></tr>
+<tr><td>استيراد PNG زر</td><td>استيراد PNG صورة كـ فرشاة رأس</td></tr>
+<tr><td>حذف زر</td><td>حذف المحدد فرشاة</td></tr>
+</table>
+</div>
+<h2 id="panel-shape-manager">مدير الأشكال <span class="tag tag-panel">لوحة</span></h2>
+<p>عنصر متجه شكل مكتبة إدارة و محاذاة أدوات. هو أيضاً يتضمن خاص أشكال عنصر كـ مانغا عنصر عنصر و عنصر خطوط.</p>
+<div class="card">
+<h4>تبويب 1 - مدير الأشكال (مكتبة)</h4>
+<table>
+<tr><th>عنصر</th><th>الوصف</th></tr>
+<tr><td>فئة مرشح</td><td>مرشح أشكال بواسطة فئة</td></tr>
+<tr><td>وسم مرشح</td><td>مرشح أشكال بواسطة وسم</td></tr>
+<tr><td>شكل شبكة</td><td>عرض مصغرات في أيقونة وضع</td></tr>
+<tr><td>ختم / إضافة إلى لوحة الرسم</td><td>إضافة شكل كـ ختم أو على لوحة الرسم</td></tr>
+<tr><td>استيراد SVG / تصدير SVG</td><td>استيراد/تصدير SVG ملفات</td></tr>
+<tr><td>جديد فئة / عنصر / حذف</td><td>عنصر عنصر و أشكال</td></tr>
+</table>
+<h4>تبويب 2 - أساسي أشكال (built-في أشكال)</h4>
+<table>
+<tr><th>الفئة</th><th>شكل قائمة</th></tr>
+<tr><td>أساسي</td><td>عنصر, عنصر مستطيل, عنصر, عنصر</td></tr>
+<tr><td>تأثير</td><td>عنصر خطوط (عنصر), عنصر خطوط (عنصر)</td></tr>
+<tr><td>عنصر</td><td>عنصر عنصر (عنصر / عنصر / عنصر), عنصر عنصر</td></tr>
+<tr><td>عنصر</td><td>مثلث, عنصر, عنصر, عنصر, عنصر, عنصر, عنصر, عنصر</td></tr>
+</table>
+<h4>محاذاة و عنصر أدوات</h4>
+<table>
+<tr><th>عنصر</th><th>الوصف</th></tr>
+<tr><td>محاذاة مرجع</td><td>عنصر: تحديد / لوحة الرسم / الأول كائن / عنصر كائن</td></tr>
+<tr><td>ملاءمة (احتواء) / ملاءمة (تمديد) / وسط</td><td>الملاءمة والعنصر</td></tr>
+<tr><td>محاذاة يسار / الوسط (H) / يمين</td><td>أفقي محاذاة</td></tr>
+<tr><td>محاذاة أعلى / وسط (V) / أسفل</td><td>رأسي محاذاة</td></tr>
+<tr><td>عنصر عنصر / عنصر</td><td>عنصر عنصر</td></tr>
+</table>
+</div>
+<h2 id="panel-effect">لوحة التأثيرات <span class="tag tag-panel">لوحة</span></h2>
+<p>يحرر معلمات لـ المحدد تأثير طبقة. معلمة UI هو مُولّد عنصر عنصر إلى تأثير نوع.</p>
+<div class="card">
+<p>عند تأثير طبقة هو المحدد في طبقة لوحة, خاصته تأثير اسم يظهر في مجموعة مربع عنوان و رقمي مربعات هي مُولّد لـ كل معلمة. تغييرات هي عنصر في معاينة عنصر و دعم تراجع.</p>
+</div>
+<h2 id="panel-pages">لوحة الصفحات <span class="tag tag-panel">لوحة</span></h2>
+<p>لوحة لـ إدارة عنصر-صفحة مستند.</p>
+<div class="card">
+<h4>عنصر قائمة</h4>
+<table>
+<tr><th>عنصر</th><th>الوصف</th></tr>
+<tr><td>+ (إضافة صفحة) زر</td><td>إضافة صفحة (أساسي / مخصص عنصر + عنصر حفظ قائمة)</td></tr>
+<tr><td>زر التكرار</td><td>تكرار حالي صفحة</td></tr>
+<tr><td>زر الحذف</td><td>حذف صفحة</td></tr>
+<tr><td>Up / عنصر أزرار</td><td>تغيير صفحة عنصر</td></tr>
+<tr><td>صفحة قائمة</td><td>رقم الصفحة + اسم الصفحة + مؤشر التعديل (*). تُعرض المصغرات حاليًا كعناصر نائبة.</td></tr>
+</table>
+<p>نقر مزدوج-نقر أو <kbd>F2</kbd> إلى عنصر صفحة. لوحة يبدل بين قائمة وضع و أيقونة وضع عنصر على خاصته عنصر نسبة.</p>
+</div>
+<h2 id="panel-preview">لوحة المعاينة <span class="tag tag-panel">لوحة</span></h2>
+<p>يعرض عنصر-عنصر عنصر معاينة من عنصر لوحة الرسم.</p>
+<div class="card">
+<p>اسحب بالماوس للتحريك، واستخدم أدوات التكبير/التصغير لضبط منفذ عرض المعاينة. يُعاد رسمها تلقائيًا كلما تحدّث تركيب لوحة الرسم.</p>
+</div>
+<h2 id="panel-context-toolbar">شريط أدوات السياق <span class="tag tag-panel">لوحة</span></h2>
+<p>عنصر شريط أدوات ذلك يظهر تلقائياً على لوحة الرسم بعد ضربة أو إجراء. هو يعرض عنصر إعدادات لـ النشط أداة.</p>
+<div class="card">
+<table>
+<tr><th>أدوات</th><th>عرض عنصر</th><th>عرض عنصر</th></tr>
+<tr><td>قلم / ممحاة</td><td>بعد ضربة يكتمل</td><td>حجم, عتامة, صلابة</td></tr>
+<tr><td>سحر العصا</td><td>بعد إنشاء تحديد</td><td>عنصر, متصل, عنصر</td></tr>
+<tr><td>تدرج</td><td>عند معاينة بدء</td><td>نوع, لون /B, توقفات, تدرج ضوضائي</td></tr>
+<tr><td>متجه مسار / دقيق</td><td>بعد ضربة يكتمل</td><td>ضربة عرض/لون, تعبئة</td></tr>
+</table>
+</div>
+<!-- ══════════════════ エフェクトレイヤー ══════════════════ -->
+<h2 id="fx-gaussian-blur">تمويه غاوسي <span class="tag tag-effect">تأثير</span></h2>
+<p>غير إتلافي تأثير ذلك تطبيق غاوسي تمويه إلى طبقة.</p>
+<div class="card">
+<table>
+<tr><th>المعلمات</th><th>نطاق</th><th>الوصف</th></tr>
+<tr><td>نصف قطر</td><td>0 ～ 250 px</td><td>نصف قطر التنعيم</td></tr>
+</table>
+</div>
+<h2 id="fx-levels">مستويات <span class="tag tag-effect">تأثير</span></h2>
+<p>يتحكم تباين بواسطة عنصر إدخال/إخراج مستويات و غاما.</p>
+<div class="card">
+<table>
+<tr><th>المعلمات</th><th>نطاق</th><th>الوصف</th></tr>
+<tr><td>في أسود</td><td>0 ～ 255</td><td>داكن نقطة من إدخال مستويات</td></tr>
+<tr><td>في أبيض</td><td>0 ～ 255</td><td>ضوء نقطة من إدخال مستويات</td></tr>
+<tr><td>غاما</td><td>0.01 ～ 9.99</td><td>غاما تصحيح قيمة</td></tr>
+<tr><td>أسود الإخراج</td><td>0 ～ 255</td><td>داكن نقطة من إخراج مستويات</td></tr>
+<tr><td>أبيض الإخراج</td><td>0 ～ 255</td><td>ضوء نقطة من إخراج مستويات</td></tr>
+</table>
+</div>
+<h2 id="fx-hue-saturation">التدرج / التشبع <span class="tag tag-effect">تأثير</span></h2>
+<p>لون تصحيح تأثير لـ عنصر تدرج لوني, تشبع, و إضاءة.</p>
+<div class="card">
+<table>
+<tr><th>المعلمات</th><th>نطاق</th><th>الوصف</th></tr>
+<tr><td>تدرج لوني</td><td>-180 ～ 180°</td><td>تدرج لوني عنصر</td></tr>
+<tr><td>تشبع</td><td>-100 ～ 100</td><td>تشبع تعديل</td></tr>
+<tr><td>إضاءة</td><td>-100 ～ 100</td><td>إضاءة تعديل</td></tr>
+</table>
+</div>
+<h2 id="fx-invert">عكس <span class="tag tag-effect">تأثير</span></h2>
+<p>عكسs نغمي نطاق, أو لون سطوع, من طبقة.</p>
+<div class="card">
+<table>
+<tr><th>المعلمات</th><th>نطاق</th><th>الوصف</th></tr>
+<tr><td>القوة</td><td>0 ～ 100%</td><td>عكس قوة</td></tr>
+</table>
+</div>
+<h2 id="fx-brightness-contrast">السطوع / التباين <span class="tag tag-effect">تأثير</span></h2>
+<p>عنصر طبقة سطوع و تباين. هذا هو مدمج-في عنصر-عنصر تأثير مع عنصر CPU و GPU مسارات.</p>
+<div class="card">
+<table>
+<tr><th>المعلمات</th><th>نطاق</th><th>الوصف</th></tr>
+<tr><td>سطوع</td><td>-100 ～ 100</td><td>سطوع تعديل</td></tr>
+<tr><td>تباين</td><td>-100 ～ 100</td><td>تباين تعديل</td></tr>
+</table>
+</div>
+<h2 id="fx-sharpen">زيادة الحدة <span class="tag tag-effect">تأثير</span></h2>
+<p>يشحذ حواف باستخدام عنصر قناع طريقة.</p>
+<div class="card">
+<table>
+<tr><th>المعلمات</th><th>نطاق</th><th>الوصف</th></tr>
+<tr><td>مقدار</td><td>0 ～ 500</td><td>زيادة الحدة قوة</td></tr>
+<tr><td>نصف قطر</td><td>0.1 ～ 50</td><td>زيادة الحدة نصف قطر</td></tr>
+<tr><td>عتبة</td><td>0 ～ 255</td><td>ضجيج عنصر عتبة</td></tr>
+</table>
+</div>
+<h2 id="fx-noise-reduction">تقليل الضجيج <span class="tag tag-effect">تأثير</span></h2>
+<p>ضجيج تقليل تأثير مبني على non-عنصر عنصر (NLM).</p>
+<div class="card">
+<table>
+<tr><th>المعلمات</th><th>نطاق</th><th>الوصف</th></tr>
+<tr><td>القوة</td><td>1 ～ 40</td><td>إضاءة ضجيج تقليل قوة</td></tr>
+<tr><td>لون قوة</td><td>1 ～ 40</td><td>لون ضجيج تقليل قوة</td></tr>
+</table>
+</div>
+<!-- ══════════════════ AI Effect Layer ══════════════════ -->
+<h2 id="ai-effect-overview">AI تأثير طبقة <span class="tag tag-ai">AI تأثير</span></h2>
+<p>AI تأثير طبقة هو عنصر ذلك عنصر<code>.lsfx</code> إعدادات مسبقة على لوحة الرسم كـ طبقات, ثم يرسل إدخال طبقات و معلمات إلى ComfyUI Gateway أو NanoBanana Gateway إلى توليد صورة. هو يعمل مع لوحة الطبقات, لوحة التأثيرات, و AI تأثيرات مدير بشكل منفصل من عادي ComfyUI و NanoBanana لوحات.</p>
+<div class="card">
+<h4>أساسي تدفق</h4>
+<ol>
+<li>من AI قائمة, اختر <strong>AI تأثير إعدادات مسبقة...</strong> إلى فتح AI تأثيرات مدير</li>
+<li>يمين-نقر إعداد مسبق و اختر <strong>إضافة طبقة AI تأثير</strong> </li>
+<li>في لوحة الطبقات, عنصر إدخال طبقات إلى عنصر صفوف تحت AI تأثير طبقة</li>
+<li>استخدام لوحة التأثيرات إلى تحكم معلمات, إخراج وجهة, و توليد</li>
+<li>تطبيق مُولّد نتيجة إلى AI تأثير طبقة نفسه أو إلى جديد إخراج طبقة مباشرة أعلى هو</li>
+</ol>
+<table>
+<tr><th>العنصر</th><th>المحتوى</th></tr>
+<tr><td>طبقة نوع</td><td><code>layer_type="ai_effect"</code></td></tr>
+<tr><td>إعداد مسبق صيغة</td><td><code>.lsfx</code>. ZIP يحتوي بيان, Gateway إعدادات, أيقونات, و ذات صلة بيانات</td></tr>
+<tr><td>عنصر إعدادات مسبقة</td><td>عنصر, عنصر عنصر, عنصر عنصر, HDR تأثيرات, عنصر XL</td></tr>
+<tr><td>يدعم Gateway</td><td>ComfyUI Gateway / NanoBanana Gateway</td></tr>
+<tr><td>حفظ</td><td><code>.lstroke</code> v1.2 <code>ai_effect</code> عنصر عنصر حالة</td></tr>
+</table>
+<p>عنصر ذلك يتطلب خارجي خدمة وصول يمكن تشغيل فقط عند خارجي خدمات هي مسموح في التفضيلات و مطلوب API مفتاح أو اتصال إعدادات هي مُعدّ.</p>
+</div>
+<h2 id="ai-effect-manager">مدير تأثيرات الذكاء الاصطناعي <span class="tag tag-ai">AI تأثير</span></h2>
+<p>عنصر <code>.lsfx</code> إدارة شاشة لـ عنصر, إضافة, تحرير, عنصر, و استيراد إعدادات مسبقة.</p>
+<div class="card">
+<table>
+<tr><th>الإجراءات</th><th>الوصف</th></tr>
+<tr><td>إضافة طبقة AI تأثير</td><td>يضيف المحدد إعداد مسبق إلى حالي لوحة الرسم كـ AI تأثير طبقة.</td></tr>
+<tr><td>تحرير</td><td>فتحs إعداد مسبق في تأثير عنصر و عنصر موجود إعدادات لـ تحرير.</td></tr>
+<tr><td>استيراد</td><td>استيرادs خارجي <code>.lsfx</code> إلى <code>user_data/ai_effect/presets/</code> .</td></tr>
+<tr><td>حذف</td><td>حذف مستخدم إعدادات مسبقة. عنصر إعدادات مسبقة هي عنصر مع لقطة so مستخدم تغييرات هي عنصر.</td></tr>
+</table>
+<p>The default build ships no bundled <code>.lsfx</code> presets. Use Import or Register to add presets to <code>user_data/ai_effect/presets/</code>.</p>
+</div>
+<h2 id="ai-effect-editor">تأثير محرر <span class="tag tag-ai">AI تأثير</span></h2>
+<p>شاشة لـ إنشاء و تحرير <code>.lsfx</code> إعدادات مسبقة من ComfyUI سير عمل أو NanoBanana معلمة عنصر.</p>
+<div class="card">
+<table>
+<tr><th>منطقة</th><th>عنصر</th></tr>
+<tr><td>بيانات وصفية</td><td>عنصر إعداد مسبق اسم, فئة, وصف, وسوم, أيقونة, و ذات صلة بيانات وصفية.</td></tr>
+<tr><td>عنصر / عنصر</td><td>اختيار مرشح معلمات و إدخال فتحات مأخوذة من Gateway و يعرض إياها كـ مستخدم-عنصر UI.</td></tr>
+<tr><td>استيراد إعداد مسبق</td><td>موجود <code>.lsfx</code> يمكن يكون تمتحميل إلى استئناف تحرير في تأثير عنصر.</td></tr>
+<tr><td>تصدير</td><td>عنصر متحقق منه بيان و Gateway ملفات بشكل ذري كـ <code>.lsfx</code> .</td></tr>
+</table>
+<p>عنصر <code>.lsfx</code> يمكن يكون مسجل مباشرة في AI تأثيرات مدير. إذا عنصر عنصر ليس يحتوي <code>.lsfx</code> , هو هو تمإضافة عند حفظ.</p>
+</div>
+<h2 id="ai-effect-runtime">توليد و حالة <span class="tag tag-ai">AI تأثير</span></h2>
+<p>عند AI تأثير طبقة هو المحدد, لوحة التأثيرات يعرض ديناميكي معلمات من إعداد مسبق. توليد هو مسجل في سجل كـ عنصر و يدعم تراجع / إعادة.</p>
+<div class="card">
+<h4>لوحة الطبقات / لوحة التأثيرات</h4>
+<table>
+<tr><th>العنصر</th><th>الوصف</th></tr>
+<tr><td>Slot صف</td><td>إدخال صف معروض تحت AI تأثير طبقة. عنصر عنصر طبقة كـ مرجع.</td></tr>
+<tr><td>استبعاد زر</td><td>يبدّل Slot الإدخال ليُستثنى من المزج ويُستخدم كإدخال AI فقط.</td></tr>
+<tr><td>إنشاء</td><td>بدء توليد من المحدد طبقة أو من AI تأثير صف في لوحة الطبقات.</td></tr>
+<tr><td>إخراج إلى هذا طبقة</td><td>عند ممكّن, إخراج هو عنصر عنصر إلى AI تأثير طبقة نفسه. عند معطّل, جديد إخراج طبقة هو تم إنشاؤه مباشرة أعلى هو.</td></tr>
+<tr><td>Progress / إلغاء</td><td>يظهر التقدم أثناء التشغيل، وتتم معالجة الإلغاء الخارجي عبر<code>cancel_layer(layer_id)</code> .</td></tr>
+</table>
+<h4>عنصر و حفظ</h4>
+<table>
+<tr><th>العنصر</th><th>الوصف</th></tr>
+<tr><td>إدخال حل</td><td>يحل مرجعية نقطي / مجموعة / قناع / AI تأثير طبقات كـ PNG ملفات لـ Gateway.</td></tr>
+<tr><td>ذاكرة مؤقتة</td><td>لـ عنصر عنصر و معلمات, <code>param_hash</code> هو مستخدم إلى عنصر عنصر / ذاكرة مؤقتة عنصر.</td></tr>
+<tr><td>UI حالة</td><td>رقمي إدخال, عنصر إدخال, و عنصر حالة هي محفوظ كـ <code>AIEffectState.param_ui_state</code> .</td></tr>
+<tr><td>عنصر</td><td>فقط عند التصحيح مفعّل, <code>user_data/logs/ai_effect.log</code> هو عنصر كـ JSON خطوط.</td></tr>
+<tr><td>الإعدادات</td><td>محاولات إعادة, ذاكرة مؤقتة, API عنصر, و ذات صلة إعدادات هي تدار في التفضيلات -&gt; AI تأثير. إعدادات ملف هو <code>user_data/ai_effect/preferences.json</code> .</td></tr>
+</table>
+<p>عند ComfyUI هو ليس قيد التشغيل أو إعدادات مسبقة هي ليس عنصر, إرشاد عنصر, عنصر عنصر, أو عنصر هي معروض. إلى عنصر عنصر اتصال عنصر, تلقائي اتصال عند عنصر AI تأثير طبقة له عنصر.</p>
+</div>
+<!-- ══════════════════ AI 連携 ══════════════════ -->
+<h2 id="ai-comfyui">ComfyUI لوحة <span class="tag tag-ai">AI</span></h2>
+<p>يتصل بخادم ComfyUI ويشغّل سير عمل توليد الصور بالذكاء الاصطناعي. لا يتاح إلا عند السماح بالوصول إلى الخدمات الخارجية.</p>
+<div class="card">
+<h4>اتصال شريط</h4>
+<table>
+<tr><th>عنصر</th><th>الوصف</th></tr>
+<tr><td>عنصر إدخال</td><td>خادم عنصر (افتراضي: 127.0.0.1:8188)</td></tr>
+<tr><td>SSL مربع اختيار</td><td>استخدام HTTPS/WSS</td></tr>
+<tr><td>عنصر / عنصر زر</td><td>بداية أو عنصر اتصال</td></tr>
+<tr><td>عنصر زر</td><td>عنصر عقدة عنصر</td></tr>
+</table>
+<h4>سير عمل</h4>
+<table>
+<tr><th>عنصر</th><th>الوصف</th></tr>
+<tr><td>سير عمل قائمة مربع</td><td>قائمة من محفوظ سير عمل</td></tr>
+<tr><td>تحميل زر</td><td>تحميل .json سير عمل ملف</td></tr>
+</table>
+<p>سير عمل هي محفوظ في <code>user_data/plugins/comfyui/workflows</code> و إخراج طبقات استخدام <code>user_data/cache/LoomStroke/layers</code> .</p>
+<h4>تبويب 1 — سير عمل عنصر</h4>
+<p>كل عقدة في تمتحميل سير عمل هو معروض كـ ديناميكي تبويب حيث معلمات يمكن يكون محرر. عنصر معلمات يمكن يكون محرر مع مطالبة مركّب.</p>
+<h4>تبويب 2 — Queue</h4>
+<table>
+<tr><th>عنصر</th><th>الوصف</th></tr>
+<tr><td>مهمة عنصر</td><td>ستة أعمدة: ID, حالة, عنصر, سير عمل, تمبدء, عنصر</td></tr>
+<tr><td>إلغاء زر</td><td>إلغاء المحدد مهمة</td></tr>
+<tr><td>معاينة زر</td><td>معاينة مهمة نتائج</td></tr>
+<tr><td>واضح Finished زر</td><td>واضح عنصر مهام</td></tr>
+</table>
+<h4>عنصر يتحكم</h4>
+<table>
+<tr><th>عنصر</th><th>الوصف</th></tr>
+<tr><td>Queue زر</td><td>عنصر مهمة (أخضر)</td></tr>
+<tr><td>إلغاء زر</td><td>إلغاء قيد التشغيل مهمة</td></tr>
+<tr><td>عنصر رقمي مربع</td><td>0=عنصر, -1=عنصر, N=عنصر N عنصر</td></tr>
+<tr><td>عنصر مربع اختيار</td><td>عنصر عنصر</td></tr>
+</table>
+</div>
+<h2 id="ai-nanobanana">لوحة NanoBanana <span class="tag tag-ai">AI</span></h2>
+<p>AI صورة توليد لوحة باستخدام Google Gemini API. API مفتاح هو محفوظ في OS keyring و هو يمكن يكون مستخدم فقط عند خارجي خدمة وصول هو مسموح.</p>
+<div class="card">
+<h4>عنصر قائمة</h4>
+<table>
+<tr><th>عنصر</th><th>عنصر / نطاق</th><th>الوصف</th></tr>
+<tr><td>المطالبة</td><td>نص / رقاقة مركّب</td><td>توليد مطالبة إدخال</td></tr>
+<tr><td>إدخال طبقات</td><td>طبقة قائمة x N</td><td>طبقات مستخدم كـ إدخال (متعددة تحديد يدعم)</td></tr>
+<tr><td>النموذج</td><td>قائمة مربع</td><td>الوضعl إلى استخدام, عنصر كـ عنصر-2.5-عنصر</td></tr>
+<tr><td>التفكير</td><td>عنصر / عنصر</td><td>عنصر مستوى</td></tr>
+<tr><td>النمط</td><td>نص+صورة / صورة</td><td>إخراج عنصر</td></tr>
+<tr><td>الحجم</td><td>عنصر / 512 / 1K / 2K / 4K</td><td>إخراج صورة حجم</td></tr>
+<tr><td>عنصر نسبة</td><td>1:1, 4:3, 3:4, 16:9, 9:16, إلخ.</td><td>عنصر نسبة مع عنصر عنصر</td></tr>
+<tr><td>هدف طبقة</td><td>&lt;طبقة جديدة&gt; / موجود طبقة</td><td>إخراج وجهة لـ مُولّد صورة</td></tr>
+<tr><td>عنصر مربع اختيار</td><td>على / OFF</td><td>عنصر عنصر عنصر</td></tr>
+<tr><td>Search مربع اختيار</td><td>على / OFF</td><td>استخدام Google Search</td></tr>
+<tr><td>توليد زر</td><td>—</td><td>تشغيل صورة توليد (أخضر)</td></tr>
+<tr><td>Status نص</td><td>—</td><td>عرض سجل الحالة</td></tr>
+</table>
+</div>
+<h2 id="ai-prompt-editor">محرر المطالبات <span class="tag tag-ai">AI</span></h2>
+<p>لوحة ذلك عنصر عنصر مطالبة عنصر, مقتطف إدارة, و LLM عنصر. مقتطفات هي محفوظ في <code>user_data/text_editor/text_snippets.sqlite3</code> .</p>
+<div class="card">
+<h4>تبويب 1 — عنصر</h4>
+<table>
+<tr><th>عنصر</th><th>الوصف</th></tr>
+<tr><td>مكوّن لوحة ألوان</td><td>سحب و إفلات أربعة مكوّن نوع: عنصر / قائمة / نص / مطالبة</td></tr>
+<tr><td>عنصر مطالبة رقاقة تدفق</td><td>إعادة ترتيب عنصر إلى عنصر مطالبة</td></tr>
+<tr><td>عنصر إدخال</td><td>عنصر بين مكوّن</td></tr>
+<tr><td>عنصر زر</td><td>عنصر مطالبة</td></tr>
+<tr><td>نسخ زر</td><td>نسخ نتيجة إلى عنصر</td></tr>
+<tr><td>حفظ منطقة</td><td>مطالبة اسم + فئة + حفظ/تحميل/جديد أزرار</td></tr>
+</table>
+<h4>تبويب 2 — مكتبة</h4>
+<table>
+<tr><th>عنصر</th><th>الوصف</th></tr>
+<tr><td>Search شريط</td><td>نص بحث + نوع مرشح + وسم مرشح</td></tr>
+<tr><td>مقتطف قائمة</td><td>قائمة من محفوظ مقتطفات</td></tr>
+<tr><td>عنصر عنصر</td><td>تحرير عنوان / وسوم / نوع / عنصر</td></tr>
+<tr><td>تكرار / حذف / تصدير</td><td>مقتطف إجراء أزرار</td></tr>
+</table>
+<h4>تبويب 3 — LLM</h4>
+<table>
+<tr><th>عنصر</th><th>عنصر / نطاق</th><th>الوصف</th></tr>
+<tr><td>عنصر مربع اختيار</td><td>على / OFF</td><td>تعمل البوابة الحالية في وضع غير متدفق</td></tr>
+<tr><td>عنصر</td><td>قائمة مربع</td><td>AI عنصر تحديد</td></tr>
+<tr><td>النموذج</td><td>قائمة مربع</td><td>الوضعl تحديد</td></tr>
+<tr><td>عنصر</td><td>0.0 ～ 2.0</td><td>توليد عنصر (افتراضي: 0.7)</td></tr>
+<tr><td>الحد الأقصى</td><td>0 ～ 32000</td><td>الحد الأقصى رمز عدد (افتراضي: 512)</td></tr>
+<tr><td>النظام مطالبة</td><td>نص منطقة</td><td>النظام مطالبة</td></tr>
+<tr><td>مستخدم مطالبة</td><td>نص منطقة</td><td>مستخدم مطالبة</td></tr>
+<tr><td>إخراج</td><td>نص منطقة</td><td>عرض LLM عنصر</td></tr>
+<tr><td>عنصر / إلغاء / واضح</td><td>—</td><td>عنصر تحكم أزرار</td></tr>
+</table>
+</div>
+<!-- ══════════════════ キャンバス操作 ══════════════════ -->
+<h2 id="canvas-viewport">تكبير/تصغير / تحريك / تدوير<span class="tag tag-param">لوحة الرسم</span></h2>
+<div class="card">
+<table>
+<tr><th>الإجراءات</th><th>إدخال</th><th>Notes</th></tr>
+<tr><td>تكبير</td><td><kbd>Ctrl+=</kbd>/ عجلة الماوس للأعلى</td><td>الحد الأقصى 3200%</td></tr>
+<tr><td>تصغير</td><td><kbd>Ctrl+-</kbd>/ عجلة الماوس للأسفل</td><td>عنصر 1%</td></tr>
+<tr><td>إعادة ضبط التكبير</td><td><kbd>Ctrl+0</kbd></td><td>عنصر إلى 100%</td></tr>
+<tr><td>تحريك (عنصر)</td><td>يمين-نقر سحب</td><td>عنصر في إعدادات</td></tr>
+<tr><td>دوران لوحة الرسم</td><td>صورة قائمة</td><td>90° مع عقارب الساعة / 90° عكس عقارب الساعة / 180°. يحوّل كل الطبقات كـ سجل مجموعة.</td></tr>
+</table>
+<p><strong>عنصر عنصر:</strong> افتراضي لوحة الرسم هو QImage-مبني <code>SimpleCanvasService</code> . طبقات يمكن يكون نقطي, متجه, أو قناع طبقات; أثناء نقطي عنصر, off-لوحة الرسم مناطق هي أيضاً محفوظ بواسطة <code>offset_x/y</code> .</p>
+</div>
+<h2 id="canvas-rulers">المساطر والأدلة <span class="tag tag-param">لوحة الرسم</span></h2>
+<div class="card">
+<ul>
+<li><strong>المساطر:</strong> معروض على أعلى و يسار حواف من لوحة الرسم. عنصر يمكن يكون px / mm / عنصر.</li>
+<li><strong>إنشاء أدلة:</strong> سحب من عنصر على لوحة الرسم</li>
+<li><strong>نقل أدلة:</strong>انقر واسحب خط دليل</li>
+<li><strong>حذف أدلة:</strong> السحب إلى خارج لوحة الرسم</li>
+<li><strong>مفتاح عرض:</strong> <kbd>R</kbd>المفتاح يبدّل ظهور الأدلة</li>
+<li><strong>التقاط:</strong> تلقائي التقاط إلى أدلة, شبكة, مراسي, و حواف</li>
+<li><strong>لون الدليل:</strong> عنصر في إعدادات (افتراضي: <code>#00B7FF</code>)</li>
+</ul>
+</div>
+<h2 id="canvas-grid">الشبكة <span class="tag tag-param">لوحة الرسم</span></h2>
+<div class="card">
+<ul>
+<li><strong>مفتاح عرض:</strong> <kbd>G</kbd> مفتاح</li>
+<li><strong>الشبكة حجم:</strong> افتراضي 32 px, عنصر من 1 إلى 5000 px في التفضيلات</li>
+<li><strong>الشبكة التقاط:</strong> يمكن يكون ممكّن في نقل أداة و مشابه أدوات</li>
+</ul>
+</div>
+<!-- ══════════════════ ファイル入出力 ══════════════════ -->
+<h2 id="file-formats">الصيغ المدعومة <span class="tag tag-param">ملف</span></h2>
+<div class="card">
+<table>
+<tr><th>صيغة</th><th>استيراد</th><th>تصدير</th><th>Notes</th></tr>
+<tr><td>.lstroke (أصلي)</td><td>v1.0.0 / v1.1.0 / v1.2.0</td><td>v1.2.0</td><td>عنصر متعددة صفحات, طبقات, متجهات, و UI تخطيط</td></tr>
+<tr><td>PNG</td><td>○</td><td>○</td><td>عنصر مستوى يمكن يكون مُعدّ</td></tr>
+<tr><td>JPEG</td><td>○</td><td>○</td><td>عنصر و عنصر إعدادات يمكن يكون مُعدّ</td></tr>
+<tr><td>TIFF</td><td>○</td><td>○</td><td>LZW عنصر و 16-bit دعم</td></tr>
+<tr><td>BMP</td><td>○</td><td>○</td><td></td></tr>
+<tr><td>WebP</td><td>○</td><td>○</td><td>عنصر و عنصر إعدادات يمكن يكون مُعدّ</td></tr>
+<tr><td>PSD</td><td>○</td><td>○</td><td>يستورد بنى الطبقات ويصدر PSD مع الطبقات</td></tr>
+<tr><td>ABR</td><td>○</td><td>—</td><td>استيراد Photoshop فرش</td></tr>
+<tr><td>SVG</td><td>○</td><td>○</td><td>Through مدير الأشكال</td></tr>
+</table>
+<p>PNG / JPEG / WebP / BMP / TIFF ملفات يمكن يكون عنصر من OS على لوحة الرسم و تمإضافة كـ جديد نقطي طبقات.</p>
+</div>
+<h2 id="file-lstroke">.lstroke أصلي صيغة <span class="tag tag-param">ملف</span></h2>
+<div class="card">
+<p>.lstroke هو ZIP-مبني أصلي صيغة. على حفظ, هو عنصر إلى <code>*.lstroke.tmp</code> و عنصر عنصر هدف ملف. عنصر عنصر هو محفوظ:</p>
+<ul>
+<li>JSON بيان (عنصر و مستند بيانات وصفية)</li>
+<li>PNG صورة بيانات لـ كل طبقة</li>
+<li>متجه كائن بيانات</li>
+<li>صفحة عنصر (v1.1 عنصر-صفحة)</li>
+<li>UI تخطيط لقطة</li>
+<li>ICC لون عنصر</li>
+</ul>
+</div>
+<!-- ══════════════════ 設定 ══════════════════ -->
+<h2 id="settings-preferences">التفضيلات <span class="tag tag-param">إعدادات</span></h2>
+<p><kbd>Ctrl+,</kbd>يفتح مربع حوار التفضيلات. يتكوّن حاليًا من خمس تبويبات: عنصر / عنصر / عنصر I/O / عنصر / AI عنصر.</p>
+<div class="card">
+<h4>عنصر تبويب</h4>
+<table>
+<tr><th>إعدادات</th><th>نطاق</th><th>الوصف</th></tr>
+<tr><td>تمكين Numba عنصر</td><td>على / OFF</td><td>عنصر Numba JIT عنصر لـ رقمي عنصر.</td></tr>
+<tr><td>ذاكرة مؤقتة حجم</td><td>10 ～ 10000 عنصر</td><td>الحد الأقصى عدد من في-app ذاكرة مؤقتة إدخالات.</td></tr>
+<tr><td>تراجع عنصر</td><td>10 ～ 1000</td><td>الحد الأقصى عدد من تراجع سجل عنصر</td></tr>
+<tr><td>عنصر عتبة</td><td>1 ～ 1000 MB</td><td>عتبة لـ بدءاً إلى استخدام عنصر لـ كبير صورة بيانات.</td></tr>
+<tr><td>عنصر FPS حد</td><td>10 ～ 120 fps</td><td>عنصر FPS حد مستخدم إلى تقليل CPU تحميل على كبير عنصر.</td></tr>
+<tr><td>تمكين تراكب المتجه الحاد (عند التكبير)</td><td>على / OFF</td><td>يعرض عنصر متجه طبقة عنصر في شاشة حل أثناء عنصر.</td></tr>
+<tr><td>متجه تراكب أقصى بُعد</td><td>2048 / 4096 / 8192</td><td>الحد الأقصى نقطي عنصر لـ حاد متجه تراكب. عنصر قيمة هي أكثر عنصر لكن استخدام أكثر VRAM.</td></tr>
+</table>
+<h4>عنصر تبويب</h4>
+<table>
+<tr><th>إعدادات</th><th>الخيارات</th><th>الوصف</th></tr>
+<tr><td>عنصر</td><td>النظام افتراضي / عنصر / عنصر / عنصر (عنصر / عنصر / عنصر عنصر) / عنصر / عنصر / عنصر / عنصر / عنصر (عنصر) / عنصر / عنصر</td><td>لغة واجهة المستخدم. تُطبّق التغييرات على مناطق الواجهة الرئيسية دون إعادة تشغيل.</td></tr>
+<tr><td>لون عنصر</td><td>داكن / ضوء / النظام</td><td>لون عنصر</td></tr>
+<tr><td>عرض شريط أدوات</td><td>على / OFF</td><td>عرض شريط أدوات</td></tr>
+<tr><td>عرض حالة شريط</td><td>على / OFF</td><td>عرض حالة شريط</td></tr>
+<tr><td>الشبكة عنصر</td><td>1 ～ 5000 px</td><td>الشبكة عنصر</td></tr>
+<tr><td>عنصر خارجي AI خدمات</td><td>على / OFF</td><td>عند OFF, عنصر وصول إلى ComfyUI / LLM Gateway / NanoBanana هو عنصر.</td></tr>
+<tr><td>عنصر</td><td>عرض / طبقة / مرشح / أدوات / ملحقات, إلخ.</td><td>عنصر يبدل رؤية لـ هدف عنصر.</td></tr>
+<tr><td>قناع تراكب لون</td><td>لون (افتراضي: #00FFFF)</td><td>تحديد قناع تراكب لون</td></tr>
+<tr><td>قناع تراكب عتامة</td><td>0 ～ 255</td><td>تحديد قناع تراكب عتامة</td></tr>
+</table>
+<h4>إدخال/إخراج الملفات تبويب</h4>
+<table>
+<tr><th>إعدادات</th><th>نطاق</th><th>الوصف</th></tr>
+<tr><td>تمكين حفظ تلقائي</td><td>على / OFF</td><td>عنصر حفظ تلقائي. تغييرات عنصر تأثير بعد إعادة تشغيل.</td></tr>
+<tr><td>حفظ تلقائي عنصر</td><td>30 إلى 3600 ثانية</td><td>حفظ تلقائي عنصر. تغييرات عنصر تأثير بعد إعادة تشغيل.</td></tr>
+<tr><td>عنصر عنصر</td><td>1 ～ 100</td><td>عنصر عنصر مستخدم عند حفظ أو عنصر.</td></tr>
+<tr><td>تخطيط عنصر</td><td>مجلد مسار</td><td>يحدد مكان حفظ تخطيطات UI. اختره عبر Browse…</td></tr>
+</table>
+<h4>اختصارات تبويب</h4>
+<p>يعرض ويعيد تعيين اختصارات لوحة المفاتيح لكل الإجراءات. يتضمن شجرة الفئات / المالكين والبحث وعرض التعارضات وإعادة تعيين الاختصارات. يمكن أيضًا تغيير تعيينات الماوس لإيماءة التحريك وقائمة السياق.</p>
+<h4>AI تأثير تبويب</h4>
+<table>
+<tr><th>إعدادات</th><th>نطاق / عنصر</th><th>الوصف</th></tr>
+<tr><td>افتراضي مشغل</td><td>Manual / على تغيير / Debounced</td><td>افتراضي مشغل لـ AI تأثير طبقة توليد.</td></tr>
+<tr><td>عنصر عنصر</td><td>0 ～ 60000 ms</td><td>عنصر لـ عنصر مشغل.</td></tr>
+<tr><td>توليد عنصر</td><td>10 ～ 86400 ثانية</td><td>عنصر لـ توليد مهام.</td></tr>
+<tr><td>ذاكرة مؤقتة إدخالات لكل طبقة</td><td>1 ～ 500 إدخالات</td><td>ذاكرة مؤقتة حد لكل AI تأثير طبقة.</td></tr>
+<tr><td>تعطيل ذاكرة مؤقتة لـ يدوي عنصر</td><td>على / OFF</td><td>عنصر ذاكرة مؤقتة استخدام أثناء يدوي عنصر.</td></tr>
+<tr><td>Auto-retries على 'على تغيير' مشغل</td><td>0 ～ 10</td><td>عدد من تلقائي محاولات إعادة لـ على تغيير توليد.</td></tr>
+<tr><td>عنصر عنصر</td><td>0 ～ 60000 ms</td><td>عنصر عنصر قبل عنصر.</td></tr>
+<tr><td>عرض الأول-توليد لافتة</td><td>على / OFF</td><td>يعرض إرشاد لافتة بعد الأول توليد يكتمل.</td></tr>
+<tr><td>عنصر على-تغيير / عنصر عنصر في عنصر</td><td>على / OFF</td><td>يبدل ما إذا تلقائياً مُولّد نتائج هي مسجل في عنصر.</td></tr>
+<tr><td>ComfyUI عنصر</td><td>Local URL / خارجي URL</td><td>عنصر ComfyUI خادم عنصر URL لـ AI تأثير. عنصر افتراضي هو <code>http://127.0.0.1:8188</code> .</td></tr>
+<tr><td>API عنصر</td><td>NanoBanana / OpenAI / Anthropic / Google Gemini</td><td>تسجيل أو حذف مفاتيح API عبر عنصر… / عنصر. تتم معالجة القيم عبر<code>SecretProvider</code> .</td></tr>
+</table>
+<p>AI تأثير تبويب عنصر, ذاكرة مؤقتة, محاولات إعادة, و ذات صلة إعدادات هي محفوظ في <code>user_data/ai_effect/preferences.json</code>. يُحفظ عنوان URL الخاص بـ ComfyUI في الإعدادات العادية ويُطبّق عند التشغيل التالي.</p>
+</div>
+<h2 id="settings-shortcuts">قائمة الاختصارات <span class="tag tag-param">إعدادات</span></h2>
+<div class="card">
+<h4>عمليات الملفات</h4>
+<table class="shortcut-table">
+<tr><td><kbd>Ctrl+N</kbd></td><td>جديد</td></tr>
+<tr><td><kbd>Ctrl+O</kbd></td><td>فتح</td></tr>
+<tr><td><kbd>Ctrl+S</kbd></td><td>حفظ</td></tr>
+<tr><td><kbd>Ctrl+Shift+S</kbd></td><td>حفظ باسم</td></tr>
+<tr><td><kbd>Ctrl+Shift+I</kbd></td><td>استيراد</td></tr>
+<tr><td><kbd>Ctrl+E</kbd></td><td>تصدير</td></tr>
+<tr><td><kbd>Ctrl+W</kbd></td><td>إغلاق</td></tr>
+<tr><td><kbd>Ctrl+Q</kbd></td><td>خروج</td></tr>
+</table>
+<h4>عمليات التحرير</h4>
+<table class="shortcut-table">
+<tr><td><kbd>Ctrl+Z</kbd></td><td>تراجع</td></tr>
+<tr><td><kbd>Ctrl+Y</kbd></td><td>إعادة</td></tr>
+<tr><td><kbd>Ctrl+X</kbd></td><td>قص</td></tr>
+<tr><td><kbd>Ctrl+C</kbd></td><td>نسخ</td></tr>
+<tr><td><kbd>Ctrl+V</kbd></td><td>لصق</td></tr>
+<tr><td><kbd>Ctrl+A</kbd></td><td>تحديد الكل</td></tr>
+<tr><td><kbd>Ctrl+L</kbd></td><td>تحديد الكل متجهات</td></tr>
+<tr><td><kbd>Ctrl+D</kbd></td><td>إلغاء التحديد</td></tr>
+</table>
+<h4>أدوات</h4>
+<table class="shortcut-table">
+<tr><td><kbd>B</kbd></td><td>أداة القلم</td></tr>
+<tr><td><kbd>E</kbd></td><td>أداة الممحاة</td></tr>
+<tr><td><kbd>V</kbd></td><td>أداة النقل</td></tr>
+<tr><td><kbd>P</kbd></td><td>دقيق متجه قلم</td></tr>
+<tr><td><kbd>T</kbd></td><td>أداة النص</td></tr>
+<tr><td><kbd>I</kbd></td><td>أداة القطارة</td></tr>
+<tr><td><kbd>[</kbd> / <kbd>]</kbd></td><td>تغيير فرشاة حجم</td></tr>
+</table>
+<h4>عرض</h4>
+<table class="shortcut-table">
+<tr><td><kbd>Ctrl+=</kbd></td><td>تكبير</td></tr>
+<tr><td><kbd>Ctrl+-</kbd></td><td>تصغير</td></tr>
+<tr><td><kbd>Ctrl+0</kbd></td><td>إعادة ضبط التكبير</td></tr>
+<tr><td><kbd>G</kbd></td><td>مفتاح الشبكة</td></tr>
+<tr><td><kbd>R</kbd></td><td>مفتاح أدلة</td></tr>
+<tr><td><kbd>F11</kbd></td><td>ملء الشاشة</td></tr>
+</table>
+<h4>الطبقات</h4>
+<table class="shortcut-table">
+<tr><td><kbd>Ctrl+Shift+N</kbd></td><td>طبقة جديدة</td></tr>
+<tr><td><kbd>Ctrl+J</kbd></td><td>تكرار الطبقة</td></tr>
+<tr><td><kbd>Del</kbd></td><td>حذف الطبقة</td></tr>
+<tr><td><kbd>Ctrl+E</kbd></td><td>دمج لأسفل</td></tr>
+<tr><td><kbd>Shift+R</kbd></td><td>تحويل إلى نقطي</td></tr>
+</table>
+<h4>مرشح</h4>
+<table class="shortcut-table">
+<tr><td><kbd>Ctrl+Alt+F</kbd></td><td>عنصر عنصر مرشح</td></tr>
+</table>
+<h4>الإعدادات</h4>
+<table class="shortcut-table">
+<tr><td><kbd>Ctrl+,</kbd></td><td>التفضيلات</td></tr>
+</table>
+</div>
+</main>
+<!-- ===== SCRIPTS ===== -->
+<script>
+const sidebar=document.getElementById('sidebar');const toggle=document.getElementById('sidebar-toggle');if(toggle)toggle.addEventListener('click',()=>sidebar.classList.toggle('show'));
+document.querySelectorAll('.nav-section-title').forEach(t=>t.addEventListener('click',()=>t.parentElement.classList.toggle('open')));
+const s=document.getElementById('sidebar-search');if(s)s.addEventListener('input',()=>{const q=s.value.toLowerCase();document.querySelectorAll('.nav-section').forEach(sec=>{let any=false;sec.querySelectorAll('.nav-link').forEach(a=>{const m=a.textContent.toLowerCase().includes(q);a.style.display=m?'':'none';if(m)any=true;});sec.style.display=any||!q?'':'none';if(q&&any)sec.classList.add('open');});});
+const sel=document.getElementById('language-select');if(sel)sel.addEventListener('change',()=>{location.href='index_'+sel.value+'.html'});
+</script></body>
+</html>
