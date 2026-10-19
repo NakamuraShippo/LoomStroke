@@ -24,6 +24,10 @@ ZIPを開いたまま実行せず、必ず展開してから操作してくだ�
 Python本体と仮想環境はインストール時に準備し、モデル重みとユーザーデータはZIPに含みません。
 詳しくは[インストールと起動ガイド](docs/user/INSTALL_AND_RUN.md)を参照してください。
 
+2026-10-20に、Python未導入のWindows 11・64-bit環境で、配布ZIPの展開から両BATによる
+自動セットアップ・起動、新規文書への描画、Undo/Redo、保存、通常終了まで確認しました。
+検証にはWindows Sandboxを使用しています。通常利用にWindows Sandboxは不要です。
+
 このリポジトリはLoomStroke License v1.0によるソース公開版です。
 利用条件は[LICENSE](LICENSE)を正本とし、日本語訳は[LICENSE_JA](LICENSE_JA)を参照してください。
 商用利用を含む使用が許可されています。再配布・共有、配布を目的とする改変、

@@ -56,7 +56,17 @@ Windows 64-bitではPythonの事前準備なしで、ZIPをすべて展開して
 自動取得経路は関連18件で既存環境の再利用・取得失敗・hash不一致の実行拒否・既存保持・
 別cwdからのlocal Python起動を検証しています。Python/pyをPATHから外したGitなしの展開先で、
 実際の取得→private Python 3.13.16→新規venv/pip check→通常GUI/native GPU/保存再読込/終了を確認しました。
-Pythonそのものを未導入にしたVMや他のWindows版・ARM64は未検証です。
+
+さらに、Python未導入のWindows Sandbox（Windows 11 Enterprise 10.0.26100 x64、ネット接続・vGPUあり）で、
+公開commit `ec6935902176fb1fe6fc9e65b543edbb0a68df1c` の配布ZIP（2,191ファイル）を新規展開しました。
+Pythonコマンド・登録・典型的な導入先はすべて空で、ホストのPython/venv/ユーザー設定は共有していません。
+配布ZIP内の無変更・追加引数なしの `install.bat` → `boot_LoomStroke.bat` が両方終了0となり、
+private Python 3.13.16、venv、pip check、実画面での832x1216文書のペン描画・Undo/Redo・保存と、
+実アプリの通常終了0を確認しました。最後のpauseのみ検証側でEnterを渡しています。
+保存文書は別の新規Sandboxの製品LayerIO（strict manifest検証）でも読み込めました。
+後半にSandboxの接続停止と再接続エラーがあり、GUI操作による再読込は未確認です。
+2回目のinstall/boot終了0とwindow handle保持は、実画面表示の成功としては扱っていません。
+他のWindows版・ARM64は未検証です。
 
 2026-10-20に追跡済み2,190ファイルからZIPを作り、Git情報のない日本語・空白入りの展開先で
 `install.bat --no-pause` による新規環境の作成とpip checkを確認しました。

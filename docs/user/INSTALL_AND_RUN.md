@@ -22,6 +22,17 @@ Pythonの事前インストールとGitは不要です。Windows 64-bitでイン
 ZIPにPython本体やモデル重みは含まれません。
 Pythonがない場合は `install.bat` が自動取得します。モデルの準備は対応機能の利用時に行います。
 
+### 導入の確認範囲（2026-10-20）
+
+Python未導入のWindows Sandbox（Windows 11 Enterprise 64-bit、ネット接続・vGPUあり）で、
+配布ZIPを展開し、追加オプションなしの `install.bat` → `boot_LoomStroke.bat` を実行しました。
+専用Python 3.13.16・venv・必須依存の自動導入と `pip check`、実画面での新規文書・ペン描画・
+Undo/Redo・保存・通常終了を確認しています。通常利用にWindows Sandboxは不要です。
+
+保存文書は別の新規Sandboxの製品読み込み処理でも正常に読めました。
+後半にSandboxの接続エラーが発生したため、GUI操作による再読込は未確認です。
+他のWindows版・ARM64、実ペンタブ、長時間利用、実AIバックエンドとの組合せは今回の検証に含めていません。
+
 ### インストーラーの動作とオプション
 
 Windowsでは `install.bat` をダブルクリックすると、既存環境を調べ、利用可能なPythonがなければ
