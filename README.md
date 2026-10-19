@@ -4,6 +4,26 @@ LoomStrokeは、PySide6とwgpuによるデスクトップペイントアプリ�
 ラスター・ベクター編集、マルチページ原稿、文字、コマ・吹き出し、
 ComfyUI・LLM・画像生成サービスとの連携を備えます。
 
+## Windows版をZIPでダウンロード
+
+### [最新版のLoomStrokeをダウンロード（ZIP）](https://github.com/NakamuraShippo/LoomStroke/archive/refs/heads/main.zip)
+
+事前に **64-bit Python 3.11以上**（3.13推奨）をインストールしてください。
+初回のセットアップにはインターネット接続が必要です。
+
+1. 上のリンクからZIPをダウンロードします。
+2. ZIPを右クリックして「すべて展開」し、中の `LoomStroke-main` フォルダを開きます。
+3. `install.bat` をダブルクリックし、「Installation completed successfully.」と表示されるまで待ちます。
+4. `boot_LoomStroke.bat` をダブルクリックして起動します。
+
+2回目以降は `boot_LoomStroke.bat` だけで起動できます。Gitのインストールやコマンド入力は不要です。
+ZIPを開いたまま実行せず、必ず展開してから操作してください。
+展開先のフォルダは、セットアップ後もそのまま使用します。
+
+このリンクは配布用 `main` の最新版を取得します。ZIPには本体・説明書・ライセンスを含み、
+Python本体、仮想環境、モデル重み、ユーザーデータは含みません。
+詳しくは[インストールと起動ガイド](docs/user/INSTALL_AND_RUN.md)を参照してください。
+
 このリポジトリはLoomStroke License v1.0によるソース公開版です。
 利用条件は[LICENSE](LICENSE)を正本とし、日本語訳は[LICENSE_JA](LICENSE_JA)を参照してください。
 商用利用を含む使用が許可されています。再配布・共有、配布を目的とする改変、

@@ -8,6 +8,22 @@
 
 ## 推奨セットアップ
 
+### Windows: ZIPを展開してインストール
+
+Gitは不要です。事前に64-bit Python 3.11以上（3.13推奨）をインストールし、
+インターネットに接続してください。
+
+1. [最新版の配布ZIP](https://github.com/NakamuraShippo/LoomStroke/archive/refs/heads/main.zip)をダウンロードします。
+2. ZIPを右クリックして「すべて展開」し、展開した `LoomStroke-main` フォルダを開きます。
+3. `install.bat` をダブルクリックします。初回は依存ライブラリの取得に時間がかかります。
+4. 「Installation completed successfully.」が表示されたら、`boot_LoomStroke.bat` をダブルクリックします。
+
+以後の起動は `boot_LoomStroke.bat` だけで行えます。ZIP内から直接実行しないでください。
+セットアップ後も同じ展開先を使います。設定や保存した作業用データは、展開先の `user_data/` に作られます。
+ZIPにPython本体やモデル重みは含まれません。
+
+### インストーラーの動作とオプション
+
 Windowsでは64-bit Python 3.11以上を準備し、リポジトリ直下の `install.bat` を
 ダブルクリックすると、仮想環境の作成と依存インストールを実行できます。
 既存の `.venv` / `venv` があれば再利用し、なければ `.venv` を作ります。
