@@ -10,8 +10,7 @@
 
 ### Windows: ZIPを展開してインストール
 
-Gitは不要です。事前に64-bit Python 3.11以上（3.13推奨）をインストールし、
-インターネットに接続してください。
+Pythonの事前インストールとGitは不要です。Windows 64-bitでインターネットに接続してください。
 
 1. [最新版の配布ZIP](https://github.com/NakamuraShippo/LoomStroke/archive/refs/heads/main.zip)をダウンロードします。
 2. ZIPを右クリックして「すべて展開」し、展開した `LoomStroke-main` フォルダを開きます。
@@ -21,15 +20,20 @@ Gitは不要です。事前に64-bit Python 3.11以上（3.13推奨）をイン�
 以後の起動は `boot_LoomStroke.bat` だけで行えます。ZIP内から直接実行しないでください。
 セットアップ後も同じ展開先を使います。設定や保存した作業用データは、展開先の `user_data/` に作られます。
 ZIPにPython本体やモデル重みは含まれません。
+Pythonがない場合は `install.bat` が自動取得します。モデルの準備は対応機能の利用時に行います。
 
 ### インストーラーの動作とオプション
 
-Windowsでは64-bit Python 3.11以上を準備し、リポジトリ直下の `install.bat` を
-ダブルクリックすると、仮想環境の作成と依存インストールを実行できます。
+Windowsでは `install.bat` をダブルクリックすると、既存環境を調べ、利用可能なPythonがなければ
+公式のCPython 3.13.16（64-bit）を `.runtime/` に自動取得します。
+固定SHA-256で検証し、venv/ensurepipを含むPythonが実行できてから依存インストールへ進みます。
+管理者権限、システムへのPython登録、永続的なPATH変更は不要です。
 既存の `.venv` / `venv` があれば再利用し、なければ `.venv` を作ります。
 完了後は `boot_LoomStroke.bat` で起動してください。失敗時はエラーを画面に残し、
 既存環境を削除・置換せず終了します。`--nanobanana` で追加依存、`--no-pause` で待機なし、
 `--python "C:\path\python.exe"` で新規環境の作成に使うPythonを指定できます。
+`--no-python-download` でPythonの自動取得を止められます。取得や検証に失敗すると処理は停止します。
+`.runtime/` は `.venv` の基盤なので、セットアップ後も削除・移動せず、同じ場所に残してください。
 
 手動でセットアップする場合は、以下の手順を使います。
 

@@ -8,8 +8,8 @@ ComfyUI・LLM・画像生成サービスとの連携を備えます。
 
 ### [最新版のLoomStrokeをダウンロード（ZIP）](https://github.com/NakamuraShippo/LoomStroke/archive/refs/heads/main.zip)
 
-事前に **64-bit Python 3.11以上**（3.13推奨）をインストールしてください。
-初回のセットアップにはインターネット接続が必要です。
+**Pythonの事前インストールは不要です。** Windows 64-bitと、初回セットアップ時の
+インターネット接続が必要です。Pythonが見つからない場合は、アプリ専用のPythonを自動取得します。
 
 1. 上のリンクからZIPをダウンロードします。
 2. ZIPを右クリックして「すべて展開」し、中の `LoomStroke-main` フォルダを開きます。
@@ -21,7 +21,7 @@ ZIPを開いたまま実行せず、必ず展開してから操作してくだ�
 展開先のフォルダは、セットアップ後もそのまま使用します。
 
 このリンクは配布用 `main` の最新版を取得します。ZIPには本体・説明書・ライセンスを含み、
-Python本体、仮想環境、モデル重み、ユーザーデータは含みません。
+Python本体と仮想環境はインストール時に準備し、モデル重みとユーザーデータはZIPに含みません。
 詳しくは[インストールと起動ガイド](docs/user/INSTALL_AND_RUN.md)を参照してください。
 
 このリポジトリはLoomStroke License v1.0によるソース公開版です。
@@ -33,7 +33,7 @@ Python本体、仮想環境、モデル重み、ユーザーデータは含み�
 
 ## 動作要件
 
-- Python 3.11以上
+- Python 3.11以上（Windowsでは `install.bat` が必要に応じて自動準備）
 - wgpu対応GPUとドライバ（WindowsのD3D12、LinuxのVulkan、macOSのMetal）
 - OSの資格情報ストア（paid GatewayのAPIキー保存・読出しに必要）
 
@@ -41,7 +41,9 @@ OSごとの実動作は環境に依存します。macOSでの実機検証は本�
 
 ## インストールと起動
 
-Windowsでは、64-bit Python 3.11以上を準備し、`install.bat` をダブルクリックしてください。
+Windows 64-bitでは、Python未導入のまま `install.bat` をダブルクリックできます。
+必要な場合は公式CPython 3.13.16を取得し、固定SHA-256の検証後、`.runtime/` 内に準備します。
+管理者権限、システムのPythonやPATHの変更は必要ありません。
 既存の `.venv` / `venv` を再利用し、なければ `.venv` を作り、本体と必須依存をインストールします。
 完了後は `boot_LoomStroke.bat` で起動します。失敗時はエラーを画面に残して終了し、
 既存の仮想環境を削除・置換しません。
@@ -49,6 +51,8 @@ Windowsでは、64-bit Python 3.11以上を準備し、`install.bat` をダブ�
 `install.bat --nanobanana` でNanoBananaの追加依存を有効にできます。
 自動実行時は `--no-pause`、新しい仮想環境の作成に使うPythonを指定する場合は
 `--python "C:\path\python.exe"` を追加してください。
+`--no-python-download` でPythonの自動取得を止められます。
+`.runtime/` と `.venv/` は起動に使うため、セットアップ後も同じ場所に残してください。
 
 手動でセットアップする場合は、リポジトリ直下で次を実行します。
 

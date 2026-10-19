@@ -14,7 +14,7 @@ LoomStroke本体の `LICENSE` と `LICENSE_JA` は開発側から内容を変更
 - ロゴ `img/`、第三者告知 `LICENSES/`、`THIRD_PARTY_LICENSES`
 - 利用者向け文書 `docs/user/`
 - `pyproject.toml`、`requirements.txt`
-- `main.py`、`install.bat`、`boot_LoomStroke.bat`、`run.sh`
+- `main.py`、`install.bat`、`install_python.ps1`、`boot_LoomStroke.bat`、`run.sh`
 
 公開側のREADMEと除外ルールを用意し、earcut移植部分のISC告知を補っています。
 本体コードは開発側の現行ファイルをそのまま収録し、配布独自の挙動変更は加えていません。
@@ -48,8 +48,15 @@ LoomStroke本体の `LICENSE` と `LICENSE_JA` は開発側から内容を変更
 READMEのZIPダウンロードリンクはGitHubが生成する配布用 `main` のソースアーカイブを使います。
 ZIP本体をリポジトリに重複収録せず、push後の追跡済みファイルが配布内容になります。
 `.git/`・ローカル仮想環境・ユーザーデータ・未追跡の生成物は含まれません。
-WindowsではPythonを事前に準備し、ZIPをすべて展開してから `install.bat`、
-続いて `boot_LoomStroke.bat` を実行します。
+Windows 64-bitではPythonの事前準備なしで、ZIPをすべて展開してから `install.bat`、
+続いて `boot_LoomStroke.bat` を実行します。Python未検出時は公式NuGet版CPython 3.13.16を
+固定SHA-256で検証して `.runtime/` に取得し、`.venv` を作ります。両フォルダはGit/配布ZIPに含めません。
+システムPython・永続的なPATH・他アプリの設定は変更しません。
+
+自動取得経路は関連18件で既存環境の再利用・取得失敗・hash不一致の実行拒否・既存保持・
+別cwdからのlocal Python起動を検証しています。Python/pyをPATHから外したGitなしの展開先で、
+実際の取得→private Python 3.13.16→新規venv/pip check→通常GUI/native GPU/保存再読込/終了を確認しました。
+Pythonそのものを未導入にしたVMや他のWindows版・ARM64は未検証です。
 
 2026-10-20に追跡済み2,190ファイルからZIPを作り、Git情報のない日本語・空白入りの展開先で
 `install.bat --no-pause` による新規環境の作成とpip checkを確認しました。

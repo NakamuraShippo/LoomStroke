@@ -13,6 +13,7 @@
 # Virtual environments, caches, and generated packages
 /venv/
 /.venv/
+/.runtime/
 __pycache__/
 *.py[cod]
 *.nbc
