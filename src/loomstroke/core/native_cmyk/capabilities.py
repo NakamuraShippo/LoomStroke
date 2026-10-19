@@ -1,5 +1,7 @@
 """Native colour-mode limits shared by editing, conversion, and presentation."""
 
+import math
+from dataclasses import astuple
 from types import SimpleNamespace
 
 from loomstroke.core.command_types import BlendMode
@@ -30,17 +32,14 @@ class NativeCmykCapabilities:
         mode = getattr(layer.blend_mode, "value", layer.blend_mode)
         transform = layer.transform
         if (
-            layer.layer_type not in ("raster", "mask", "group")
+            layer.layer_type not in ("raster", "mask", "group", "vector", "text")
             or mode not in cls.BLEND_MODES
-            or transform.scale_x != 1
-            or transform.scale_y != 1
-            or transform.rotation != 0
-            or transform.tx != 0
-            or transform.ty != 0
+            or not all(math.isfinite(value) for value in astuple(transform))
+            or transform.to_affine().inverse() is None
             or getattr(layer, "effect_type", None) is not None
             or getattr(layer, "filter_type", None) is not None
         ):
             raise ValueError(
-                "Native CMYK requires raster layers with supported blends "
-                "and no live filters or transforms"
+                "Native CMYK requires raster/vector layers with supported blends "
+                "and invertible transforms without live filters"
             )

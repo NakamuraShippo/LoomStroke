@@ -10,6 +10,7 @@ from loomstroke.ui.canvas.projection_state import ProjectionStateTracker
 from loomstroke.ui.canvas.render_scene import RenderSceneSnapshot, compute_render_scene_signature
 
 from .compositor import WgpuCompositor
+from .style_pipeline_preparation import StylePipelinePreparation, without_styles
 from .types import WgpuRenderMetrics, WgpuRenderTargetHandle
 
 
@@ -32,14 +33,35 @@ class WgpuProjectionCache:
     the returned target explicitly.
     """
 
-    def __init__(self, bundle: Any, *, compositor: WgpuCompositor | None = None) -> None:
-        self._compositor = compositor or WgpuCompositor(bundle)
+    def __init__(
+        self,
+        bundle: Any,
+        *,
+        compositor: WgpuCompositor | None = None,
+        repaint: Any = None,
+        style_pipeline_store: Any = None,
+    ) -> None:
+        self._compositor = compositor or (
+            WgpuCompositor(bundle, style_pipeline_store=style_pipeline_store)
+            if style_pipeline_store is not None
+            else WgpuCompositor(bundle)
+        )
         self._owns_compositor = compositor is None
         self._tracker = ProjectionStateTracker()
         self._target: WgpuRenderTargetHandle | None = None
         self._last_scene_signature: tuple[Any, ...] | None = None
         self._cache_hits = 0
         self._full_rebuilds = 0
+        self._style_preparation = (
+            StylePipelinePreparation(self._compositor.layer_style_processor.pipeline_store, repaint)
+            if repaint is not None
+            else None
+        )
+        self._last_base_signature: tuple[Any, ...] | None = None
+
+    @property
+    def pending(self) -> bool:
+        return self._style_preparation is not None and self._style_preparation.pending
 
     @property
     def cache_hits(self) -> int:
@@ -61,6 +83,27 @@ class WgpuProjectionCache:
         screen_space_vector_layer_id: str | None = None,
         view: Any | None = None,
     ) -> WgpuProjectionCacheResult:
+        base_signature = None
+        if self._style_preparation is not None:
+            ready = self._style_preparation.ready(scene)
+            base = without_styles(scene)
+            base_signature = self._projection_signature(base, screen_space_vector_layer_id, view)
+            if not ready:
+                if (
+                    self._target is not None
+                    and self._last_base_signature == base_signature
+                    and (invalidation is None or invalidation.gpu_resources.is_empty)
+                ):
+                    return WgpuProjectionCacheResult(
+                        target=self._target,
+                        warnings=(),
+                        metrics=WgpuRenderMetrics(
+                            layers_seen=len(scene.flat_layers), layers_drawn=0
+                        ),
+                        reused=True,
+                        rebuild_reason="style_preparation",
+                    )
+                scene = base
         signature = self._projection_signature(scene, screen_space_vector_layer_id, view)
         flags = self._tracker.detect_changes(
             list(scene.flat_layers),
@@ -95,6 +138,7 @@ class WgpuProjectionCache:
         old_target = self._target
         self._target = target
         self._last_scene_signature = signature
+        self._last_base_signature = base_signature
         self._full_rebuilds += 1
         if old_target is not None:
             self._destroy_target(old_target)
@@ -107,11 +151,15 @@ class WgpuProjectionCache:
         )
 
     def release(self) -> None:
+        if self._style_preparation is not None:
+            self._style_preparation.close()
+            self._style_preparation = None
         if self._target is not None:
             self._destroy_target(self._target)
             self._target = None
         self._tracker.reset()
         self._last_scene_signature = None
+        self._last_base_signature = None
         if self._owns_compositor:
             self._compositor.release()
 

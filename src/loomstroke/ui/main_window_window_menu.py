@@ -9,6 +9,7 @@ from PySide6.QtGui import QAction
 from PySide6.QtWidgets import QToolBar
 
 from ._dock_safe import is_valid
+from .panel_ids import is_window_menu_panel, panel_menu_categories, panel_menu_category
 
 if TYPE_CHECKING:
     from .menu_catalog import MenuDefinition
@@ -98,9 +99,33 @@ class MainWindowWindowMenuCoordinator:
                     toolbar_menu.addAction(action)
             window._window_menu.addSeparator()
 
-        logger.info("Window menu panels: %s", list(window._panel_actions.keys()))
-        for _panel_id, action in window._panel_actions.items():
-            window._window_menu.addAction(action)
+        window._panel_category_menus = {}
+        for category in panel_menu_categories():
+            category_menu = window._submenu(window._window_menu, category)
+            category_menu.menuAction().setVisible(False)
+            window._panel_category_menus[category] = category_menu
+
+        show_experimental = bool(getattr(window, "_show_experimental_menus", False))
+        menu_panel_ids = [
+            panel_id
+            for panel_id in window._panel_actions
+            if is_window_menu_panel(panel_id, show_experimental=show_experimental)
+        ]
+        logger.info("Window menu panels: %s", menu_panel_ids)
+        for panel_id in menu_panel_ids:
+            self.add_panel_action(panel_id, window._panel_actions[panel_id])
+
+    def add_panel_action(self, panel_id: str, action: QAction) -> None:
+        """Place a panel toggle in its Window menu category submenu."""
+        window = self._window
+        category_menus = getattr(window, "_panel_category_menus", {})
+        category_menu = category_menus.get(panel_menu_category(panel_id))
+        if category_menu is None or not is_valid(category_menu):
+            if is_valid(window._window_menu):
+                window._window_menu.addAction(action)
+            return
+        category_menu.addAction(action)
+        category_menu.menuAction().setVisible(True)
 
     def create_menu_toggle_action(self, definition: MenuDefinition) -> QAction:
         window = self._window

@@ -268,10 +268,9 @@ NON_JA_PANEL_FALLBACK_TRANSLATIONS: dict[str, dict[str, dict[str, str]]] = {'es'
                        'Opacity': 'Opacidad',
                        'Add Filter Layer': 'Añadir capa de filtro',
                        'Add Filter': 'Añadir filtro',
-                       'Layer Effects': 'Efectos de capa',
-                       'Layer effects between this layer and layers below': 'Efectos entre esta '
-                                                                            'capa y las capas '
-                                                                            'inferiores'},
+                       'Layer Blend': 'Fusión de capa',
+                       'How this layer blends with the layers below': 'Cómo se fusiona esta capa '
+                                                                      'con las capas inferiores'},
         'PresetManagerWindow': {'AI Effects Manager': 'Administrador de efectos de IA',
                                 'Search presets by name / tag / author...': 'Buscar presets por '
                                                                             'nombre / etiqueta / '
@@ -1326,10 +1325,9 @@ NON_JA_PANEL_FALLBACK_TRANSLATIONS: dict[str, dict[str, dict[str, str]]] = {'es'
                               'Edit parameters of filter layers.': 'تحرير معلمات طبقات المرشحات.'},
         'LayerPanel': {'Add Filter Layer': 'إضافة طبقة مرشح',
                        'Add Filter': 'إضافة مرشح',
-                       'Layer Effects': 'تأثيرات الطبقة',
-                       'Layer effects between this layer and layers below': 'تأثيرات بين هذه '
-                                                                            'الطبقة والطبقات '
-                                                                            'الموجودة أسفلها'},
+                       'Layer Blend': 'مزج الطبقة',
+                       'How this layer blends with the layers below': 'طريقة مزج هذه الطبقة مع '
+                                                                      'الطبقات الموجودة أسفلها'},
         'AppearancePanel': {'Filter Layer': 'طبقة مرشح',
                             'No filters available': 'لا توجد مرشحات متاحة'},
         'EffectPanelPlugin': {'Filters': 'المرشحات',
@@ -1586,8 +1584,8 @@ NON_JA_PANEL_FALLBACK_TRANSLATIONS: dict[str, dict[str, dict[str, str]]] = {'es'
                           'Opacity': '不透明度',
                           'Add Filter Layer': '添加滤镜图层',
                           'Add Filter': '添加滤镜',
-                          'Layer Effects': '图层效果',
-                          'Layer effects between this layer and layers below': '此图层与下方图层之间的效果'},
+                          'Layer Blend': '图层混合',
+                          'How this layer blends with the layers below': '此图层与下方图层的混合方式'},
            'PresetManagerWindow': {'AI Effects Manager': 'AI 效果管理器',
                                    'Search presets by name / tag / author...': '按名称 / 标签 / '
                                                                                '作者搜索预设...',
@@ -2501,10 +2499,10 @@ NON_JA_PANEL_FALLBACK_TRANSLATIONS: dict[str, dict[str, dict[str, str]]] = {'es'
                                                                       'camadas de filtro.'},
            'LayerPanel': {'Add Filter Layer': 'Adicionar camada de filtro',
                           'Add Filter': 'Adicionar filtro',
-                          'Layer Effects': 'Efeitos de camada',
-                          'Layer effects between this layer and layers below': 'Efeitos entre esta '
-                                                                               'camada e as '
-                                                                               'camadas abaixo'},
+                          'Layer Blend': 'Mesclagem de camada',
+                          'How this layer blends with the layers below': 'Como esta camada se '
+                                                                         'mescla com as camadas '
+                                                                         'abaixo'},
            'AppearancePanel': {'Filter Layer': 'Camada de filtro',
                                'No filters available': 'Nenhum filtro disponível'},
            'EffectPanelPlugin': {'Filters': 'Filtros',
@@ -3119,10 +3117,9 @@ NON_JA_PANEL_FALLBACK_TRANSLATIONS: dict[str, dict[str, dict[str, str]]] = {'es'
                                                                    'সম্পাদনা করুন।'},
         'LayerPanel': {'Add Filter Layer': 'ফিল্টার লেয়ার যোগ করুন',
                        'Add Filter': 'ফিল্টার যোগ করুন',
-                       'Layer Effects': 'লেয়ার ইফেক্ট',
-                       'Layer effects between this layer and layers below': 'এই লেয়ার এবং নিচের '
-                                                                            'লেয়ারগুলোর মধ্যে '
-                                                                            'ইফেক্ট'},
+                       'Layer Blend': 'লেয়ার ব্লেন্ড',
+                       'How this layer blends with the layers below': 'এই লেয়ার নিচের লেয়ারগুলোর '
+                                                                      'সাথে কীভাবে ব্লেন্ড হয়'},
         'AppearancePanel': {'Filter Layer': 'ফিল্টার লেয়ার',
                             'No filters available': 'কোনো ফিল্টার উপলব্ধ নেই'},
         'EffectPanelPlugin': {'Filters': 'ফিল্টার',
@@ -3423,10 +3420,9 @@ NON_JA_PANEL_FALLBACK_TRANSLATIONS: dict[str, dict[str, dict[str, str]]] = {'es'
                        'Opacity': 'Непрозрачность',
                        'Add Filter Layer': 'Добавить слой фильтра',
                        'Add Filter': 'Добавить фильтр',
-                       'Layer Effects': 'Эффекты слоя',
-                       'Layer effects between this layer and layers below': 'Эффекты между этим '
-                                                                            'слоем и нижележащими '
-                                                                            'слоями'},
+                       'Layer Blend': 'Наложение слоя',
+                       'How this layer blends with the layers below': 'Способ наложения этого слоя '
+                                                                      'на нижележащие слои'},
         'PresetManagerWindow': {'AI Effects Manager': 'Менеджер AI-эффектов',
                                 'Search presets by name / tag / author...': 'Поиск пресетов по '
                                                                             'имени / тегу / '
@@ -4066,8 +4062,8 @@ NON_JA_PANEL_FALLBACK_TRANSLATIONS: dict[str, dict[str, dict[str, str]]] = {'es'
                             'Opacity': '不透明度',
                             'Add Filter Layer': '新增濾鏡圖層',
                             'Add Filter': '新增濾鏡',
-                            'Layer Effects': '圖層效果',
-                            'Layer effects between this layer and layers below': '此圖層與下方圖層之間的效果'},
+                            'Layer Blend': '圖層混合',
+                            'How this layer blends with the layers below': '此圖層與下方圖層的混合方式'},
              'PresetManagerWindow': {'AI Effects Manager': 'AI 效果管理器',
                                      'Search presets by name / tag / author...': '依名稱 / 標籤 / '
                                                                                  '作者搜尋預設...',
@@ -4569,8 +4565,8 @@ NON_JA_PANEL_FALLBACK_TRANSLATIONS: dict[str, dict[str, dict[str, str]]] = {'es'
                           'Opacity': '不透明度',
                           'Add Filter Layer': '新增濾鏡圖層',
                           'Add Filter': '新增濾鏡',
-                          'Layer Effects': '圖層效果',
-                          'Layer effects between this layer and layers below': '此圖層與下方圖層之間的效果'},
+                          'Layer Blend': '圖層混合',
+                          'How this layer blends with the layers below': '此圖層與下方圖層的混合方式'},
            'PresetManagerWindow': {'AI Effects Manager': 'AI 效果管理器',
                                    'Search presets by name / tag / author...': '依名稱 / 標籤 / '
                                                                                '作者搜尋預設...',
@@ -5091,8 +5087,8 @@ NON_JA_PANEL_FALLBACK_TRANSLATIONS: dict[str, dict[str, dict[str, str]]] = {'es'
                        'Opacity': '불투명도',
                        'Add Filter Layer': '필터 레이어 추가',
                        'Add Filter': '필터 추가',
-                       'Layer Effects': '레이어 효과',
-                       'Layer effects between this layer and layers below': '이 레이어와 아래 레이어 사이의 효과'},
+                       'Layer Blend': '레이어 블렌드',
+                       'How this layer blends with the layers below': '이 레이어와 아래 레이어의 블렌드 방식'},
         'PresetManagerWindow': {'AI Effects Manager': 'AI 효과 관리자',
                                 'Search presets by name / tag / author...': '이름 / 태그 / 작성자로 프리셋 '
                                                                             '검색...',
@@ -6062,9 +6058,9 @@ NON_JA_PANEL_FALLBACK_TRANSLATIONS: dict[str, dict[str, dict[str, str]]] = {'es'
                                                                    'संपादित करें।'},
         'LayerPanel': {'Add Filter Layer': 'फ़िल्टर लेयर जोड़ें',
                        'Add Filter': 'फ़िल्टर जोड़ें',
-                       'Layer Effects': 'लेयर प्रभाव',
-                       'Layer effects between this layer and layers below': 'इस लेयर और नीचे की '
-                                                                            'लेयर के बीच प्रभाव'},
+                       'Layer Blend': 'लेयर ब्लेंड',
+                       'How this layer blends with the layers below': 'यह लेयर नीचे की लेयर के साथ '
+                                                                      'कैसे ब्लेंड होती है'},
         'AppearancePanel': {'Filter Layer': 'फ़िल्टर लेयर',
                             'No filters available': 'कोई फ़िल्टर उपलब्ध नहीं'},
         'EffectPanelPlugin': {'Filters': 'फ़िल्टर',

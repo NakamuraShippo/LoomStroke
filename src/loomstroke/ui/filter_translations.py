@@ -12,10 +12,8 @@ FILTER_PANEL_PLUGIN_JA = {
 FILTER_LAYER_JA = {
     "Add Filter Layer": "フィルターレイヤーを追加",
     "Add Filter": "フィルターを追加",
-    "Layer Effects": "レイヤーエフェクト",
-    "Layer effects between this layer and layers below": (
-        "このレイヤーと下のレイヤーとの間に適用するレイヤーエフェクト"
-    ),
+    "Layer Blend": "レイヤーブレンド",
+    "How this layer blends with the layers below": "このレイヤーと下のレイヤーのブレンド方法",
 }
 
 FILTER_APPEARANCE_JA = {

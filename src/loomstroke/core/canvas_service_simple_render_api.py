@@ -219,6 +219,33 @@ class CanvasServiceRenderApiMixin(_CanvasServiceRenderApiBase):
             getattr(self, "_vector_preview", None),
         )
 
+    def _rasterize_vector_coverage_layer(
+        self,
+        layer: _Layer,
+        scale: int = 1,
+        region: tuple[int, int, int, int] | None = None,
+    ) -> QImage:
+        from .comic_panels.vector_page_basis import rasterize_in_page_basis  # noqa: PLC0415
+
+        result = rasterize_in_page_basis(self, layer, scale=scale, region=region)
+        if result is not None:
+            return result
+        return self._vector_text_render().rasterize_vector_coverage_layer(
+            layer, scale=scale, region=region
+        )
+
+    def _rasterize_vector_coverage_layer_for_render(
+        self, layer: _Layer, scale: int = 1
+    ) -> QImage | VectorRasterResult | None:
+        from .comic_panels.vector_page_basis import rasterize_in_page_basis  # noqa: PLC0415
+
+        result = rasterize_in_page_basis(self, layer, scale=scale, for_render=True)
+        if result is not None:
+            return result
+        return self._vector_text_render().rasterize_vector_coverage_layer_for_render(
+            layer, scale=scale
+        )
+
     def _should_draw_vector_path_controls(  # noqa: PLR0911
         self,
         *,

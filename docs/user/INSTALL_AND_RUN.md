@@ -1,9 +1,10 @@
-> **最終照合: 2026-10-16**
+> **最終照合: 2026-10-20**
 
 # LoomStroke インストールと起動ガイド
 
-この文書は現行コードに合わせたセットアップ手順です。詳細な起動パターンは
-`docs/user/RUN_INSTRUCTIONS.md` を参照してください。公開対象の範囲はリポジトリ直下の `PUBLICATION.md` に記載しています。
+この文書は配布用ソースのセットアップ手順です。詳細な起動パターンは
+[RUN_INSTRUCTIONS.md](RUN_INSTRUCTIONS.md)、操作説明は
+[日本語ガイド](index_ja.html)を参照してください。
 
 ## 推奨セットアップ
 
@@ -38,12 +39,6 @@ source .venv/bin/activate
 python -m pip install -e .
 ```
 
-開発用ツール込み:
-
-```powershell
-python -m pip install -e .[dev]
-```
-
 NanoBanana の依存関係も使う場合:
 
 ```powershell
@@ -51,7 +46,9 @@ python -m pip install -e .[nanobanana]
 ```
 
 `wgpu==0.31.0` は必須依存に登録されており、`rendercanvas` とともに自動で入ります。
-`requirements.txt` にも両パッケージが含まれます。開発・検証用のlockはこの配布版には含めません。
+`requirements.txt` にも両パッケージが含まれます。これは実行用依存の固定一覧で、
+NanoBananaの追加SDKも含みます。通常は上記の `pip install -e .` だけで十分です。
+開発用の `requirements.lock` やテスト用ツールは配布対象に含めません。
 
 `qasync` は通常の依存関係に含まれているため、現行構成では追加で個別
 インストールする必要はありません。

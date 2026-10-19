@@ -10,6 +10,7 @@ from PySide6.QtCore import Qt
 from PySide6.QtGui import QCursor
 
 from ...core.color_state import ColorDescriptor
+from ...core.native_cmyk.vector_paints import capture_paint, capture_vector_paints
 from ...host_api import StrokePoint as HostStrokePoint
 from ..common.vector_hit_test_geometry import VectorHitTestGeometry
 from ..sdk import PropertySpec, PropertyType, ToolDescriptor, ToolMetadata
@@ -320,7 +321,7 @@ class VectorPreciseTool:
             self.settings.handle_smoothness = max(0.0, min(5.0, float(value or 0.0)))
 
         if key in ("stroke_color", "fill_color"):
-            self._sync_active_color_from_settings()
+            self._sync_active_color_from_settings(preserve_native=False)
         if self._is_drawing:
             self._refresh_live_preview()
 
@@ -434,6 +435,7 @@ class VectorPreciseTool:
         stroke_profile = self._build_stroke_profile(samples)
         if stroke_profile is not None:
             meta[VECTOR_STROKE_PROFILE_META_KEY] = stroke_profile
+        meta = capture_vector_paints(meta, getattr(self, "_paint_color", None), style)
         obj = make_vector_object([path], style, meta)
         return ensure_vector_element_ids(obj)
 
@@ -1410,7 +1412,8 @@ class VectorPreciseTool:
         if not host or not getattr(host, "color_state", None):
             return
         try:
-            rgba = host.color_state.current.rgba
+            self._paint_color = host.color_state.current
+            rgba = self._paint_color.rgba
             rgb = tuple(int(max(0, min(255, round(c * 255)))) for c in rgba[:3])
             self.settings.stroke_color = rgb
             if self.settings.fill_enabled and self.settings.fill_color is None:
@@ -1418,9 +1421,11 @@ class VectorPreciseTool:
         except Exception:
             logger.debug("VectorPrecise active color fetch failed", exc_info=True)
 
-    def _sync_active_color_from_settings(self) -> None:
+    def _sync_active_color_from_settings(self, *, preserve_native: bool = True) -> None:
         host = self.host_api
         if not host or not getattr(host, "color_state", None):
+            return
+        if preserve_native and capture_paint(host.color_state.current) is not None:
             return
         try:
             rgb = self.settings.stroke_color

@@ -1205,7 +1205,7 @@ class LayerPanel(QWidget):
         self._thumbnail_manager = LayerPanelThumbnailManager(self, THUMBNAIL_SIZE)
         self._lock_tooltip = self._ts("Toggle layer lock")
         self._visibility_tooltip = self._ts("Toggle layer visibility")
-        self._blend_tooltip = self._ts("Layer effects between this layer and layers below")
+        self._blend_tooltip = self._ts("How this layer blends with the layers below")
         self._opacity_tooltip = self._ts("Layer opacity")
         self._translation_binder.register(self._set_lock_tooltip, self._lock_tooltip)
         self._translation_binder.register(self._set_visibility_tooltip, self._visibility_tooltip)
@@ -1269,7 +1269,7 @@ class LayerPanel(QWidget):
     def _setup_blend_row(self, layout: QVBoxLayout) -> None:
         blend_row = QHBoxLayout()
         blend_row.setSpacing(6)
-        blend_text = self._ts("Layer Effects")
+        blend_text = self._ts("Layer Blend")
         blend_label = QLabel(blend_text, self)
         blend_label.setWordWrap(True)
         blend_label.setSizePolicy(QSizePolicy.Policy.Minimum, QSizePolicy.Policy.Preferred)

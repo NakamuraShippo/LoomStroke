@@ -12,6 +12,7 @@ from PySide6.QtGui import QImage
 from loomstroke.core.canvas_invalidation import RenderInvalidation
 
 from .initial_texture_upload import upload_initial_or_full
+from .native_cmyk_tile_textures import NativeCmykTileTextures
 from .qimage_region_converter import WgpuQImageRegionConverter
 from .types import (
     WgpuDeviceBundle,
@@ -32,11 +33,13 @@ class WgpuTextureManager:
         self.texture_format = texture_format
         self._textures: dict[str, WgpuTextureHandle] = {}
         self._region_converter = WgpuQImageRegionConverter()
+        self._native_tiles = NativeCmykTileTextures()
 
     def get(self, layer_id: str) -> WgpuTextureHandle | None:
         return self._textures.get(layer_id)
 
     def remove(self, layer_id: str) -> None:
+        self._native_tiles.forget(layer_id)
         handle = self._textures.pop(layer_id, None)
         if handle is not None and hasattr(handle.texture, "destroy"):
             handle.texture.destroy()
@@ -64,14 +67,11 @@ class WgpuTextureManager:
         active_layer_id: str | None = None,
     ) -> tuple[WgpuTextureHandle, WgpuTextureUploadReport, tuple[str, ...]]:
         layer_id = str(getattr(layer, "id", ""))
-        image = getattr(layer, "image", None)
-        if image is None or image.isNull():
-            raise WgpuTextureError(f"layer {layer_id!r} has no raster image")
-
-        width, height = int(image.width()), int(image.height())
-        version = int(getattr(layer, "texture_version", 0))
-        offset_x = int(getattr(layer, "offset_x", 0))
-        offset_y = int(getattr(layer, "offset_y", 0))
+        if getattr(layer, "native_display", None) is not None:
+            return self._native_tiles.sync(self, layer, invalidation, qimage_to_straight_rgba)
+        if self._native_tiles.forget(layer_id) is not None:
+            self.remove(layer_id)
+        image, width, height, version, offset_x, offset_y = self._raster_input(layer, layer_id)
         existing = self._textures.get(layer_id)
         resources_invalidated = invalidation is not None and (
             invalidation.gpu_resources.all_resources
@@ -85,10 +85,9 @@ class WgpuTextureManager:
             and existing.width == width
             and existing.height == height
         ):
-            updated = replace(existing, offset_x=offset_x, offset_y=offset_y)
-            self._textures[layer_id] = updated
+            self._textures[layer_id] = replace(existing, offset_x=offset_x, offset_y=offset_y)
             return (
-                updated,
+                self._textures[layer_id],
                 WgpuTextureUploadReport(
                     layer_id=layer_id,
                     texture_version=version,
@@ -183,9 +182,27 @@ class WgpuTextureManager:
         warnings = (f"layer {layer_id}: {reason}",) if reason else ()
         return updated, report, warnings
 
+    @staticmethod
+    def _raster_input(layer: Any, layer_id: str) -> tuple[QImage, int, int, int, int, int]:
+        image = getattr(layer, "image", None)
+        if image is None or image.isNull():
+            raise WgpuTextureError(f"layer {layer_id!r} has no raster image")
+        return (
+            image,
+            int(image.width()),
+            int(image.height()),
+            int(getattr(layer, "texture_version", 0)),
+            int(getattr(layer, "offset_x", 0)),
+            int(getattr(layer, "offset_y", 0)),
+        )
+
     def _layer_upload_rect(self, layer, dirty_rect, texture_size):
-        from loomstroke.core.command_layer_access import _layer_transform  # noqa: PLC0415
-        from loomstroke.core.raster_edit_geometry import RasterEditGeometry  # noqa: PLC0415
+        from loomstroke.core.command_layer_access import (  # noqa: PLC0415
+            _layer_transform,
+        )
+        from loomstroke.core.raster_edit_geometry import (  # noqa: PLC0415
+            RasterEditGeometry,
+        )
 
         if dirty_rect is not None and getattr(layer, "layer_type", None) in {"raster", "ai_effect"}:
             transform = _layer_transform(layer)

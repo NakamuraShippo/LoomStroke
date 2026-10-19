@@ -6,11 +6,14 @@ import math
 import os
 import time
 from collections.abc import Callable
+from copy import deepcopy
 from dataclasses import dataclass, field
 from typing import Any
 
 from PySide6.QtGui import QColor, QImage
 
+from loomstroke.core.appearance import LayerStyleStack
+from loomstroke.core.appearance.live_styles import layer_styles, style_signature
 from loomstroke.core.canvas_models import (
     CanvasStateSnapshot,
     SelectionStateSnapshot,
@@ -172,6 +175,8 @@ class RenderLayerSnapshot:
     mask_region_eligible: bool = False
     initial_dirty_rect: tuple[int, int, int, int] | None = None
     initial_upload_key: tuple[int, int] | None = None
+    style_stack: LayerStyleStack = field(default_factory=LayerStyleStack)
+    native_display: Any | None = None
 
     @classmethod
     def from_layer(
@@ -186,12 +191,21 @@ class RenderLayerSnapshot:
         vector_raster_scale: int = 1,
     ) -> RenderLayerSnapshot:
         layer_id = str(getattr(layer, "id", ""))
-        from loomstroke.core.comic_panels.stroke_upload import initial_upload_rect  # noqa: PLC0415
+        from loomstroke.core.comic_panels.stroke_upload import (  # noqa: PLC0415
+            initial_upload_rect,
+        )
 
         layer_type = str(getattr(layer, "layer_type", "raster"))
         image = getattr(layer, "image", None)
         skip_rasterize = layer_id in (skip_rasterize_layer_ids or frozenset())
         direct_payload = (direct_vector_payloads or {}).get(layer_id)
+        styles = deepcopy(layer_styles(layer))
+        if styles.enabled():
+            # Styled vectors keep editable objects, using their existing raster
+            # snapshot as input to the GPU styles in document pixel units.
+            direct_payload = None
+            skip_rasterize = False
+            vector_raster_scale = 1
         raster_scale_used = 1
         raster_origin = (0, 0)
         render_transform = getattr(layer, "transform", None)
@@ -238,6 +252,7 @@ class RenderLayerSnapshot:
             ),
             transform_version=int(getattr(layer, "transform_version", 0)),
             image=image,
+            style_stack=styles,
             native_cmyk=getattr(layer, "native_cmyk", None),
             offset_x=int(getattr(layer, "offset_x", 0)),
             offset_y=int(getattr(layer, "offset_y", 0)),
@@ -353,6 +368,7 @@ class RenderSceneSnapshot:
     scene_flatten_ms: float = 0.0
     channel_view: tuple[str, str] | None = None
     frame_preview_source_layers: tuple[RenderLayerSnapshot, ...] | None = None
+    native_selection_preview: Any | None = None
 
     @property
     def width(self) -> int:
@@ -381,6 +397,21 @@ def build_render_scene_snapshot(
     canvas_state = canvas.get_canvas_state_snapshot()
     selection = canvas.get_selection_state_snapshot()
     vector = canvas.get_vector_state_snapshot()
+    native_buffer = next(
+        (
+            layer.native_cmyk
+            for layer in getattr(
+                canvas, "_flatten_layers", lambda: getattr(canvas, "_layers", ())
+            )()
+            if getattr(layer, "native_cmyk", None) is not None
+        ),
+        None,
+    )
+    native_document = native_buffer is not None
+    if native_document:
+        rasterize_vector_layers = True
+        vector_raster_scale = 1
+        skip_rasterize_layer_ids = None
     rasterize_vector: Callable[..., QImage | None] | None = None
     copy_rasterized_vector = True
     if rasterize_vector_layers:
@@ -388,6 +419,12 @@ def build_render_scene_snapshot(
         if callable(render_rasterize):
             rasterize_vector = render_rasterize
             copy_rasterized_vector = False
+            if native_document:
+                from .native_cmyk_coverage_raster import native_coverage_rasterizer  # noqa: PLC0415
+
+                rasterize_vector = native_coverage_rasterizer(
+                    canvas, native_buffer, render_rasterize
+                )
         else:
             rasterize_vector = getattr(canvas, "_rasterize_vector_layer", None)
     skipped_ids = set(skip_rasterize_layer_ids or ())
@@ -401,7 +438,7 @@ def build_render_scene_snapshot(
         # coordinates and cannot compensate a prescaled texture.
         raster_scale = 1
     direct_vector_payloads: dict[str, Any] = {}
-    if rasterize_vector_layers and direct_vector_rendering_enabled():
+    if rasterize_vector_layers and direct_vector_rendering_enabled() and not native_document:
         direct_vector_payloads = _collect_direct_vector_payloads(
             canvas,
             exclude_ids=skipped_ids,
@@ -454,6 +491,7 @@ def build_render_scene_snapshot(
         scene_flatten_ms=flatten_ms,
         channel_view=getattr(getattr(canvas, "_channels_service", None), "view", None),
         frame_preview_source_layers=frame_preview_source_layers,
+        native_selection_preview=getattr(canvas, "_native_selection_preview", None),
     )
 
 
@@ -521,7 +559,9 @@ def _scene_requires_bitmap_flatten(canvas: Any, *, include_selection_preview: bo
         WgpuCompositor,
         is_cpu_only_filter_layer,
     )
-    from loomstroke.ui.canvas.wgpu_backend.shader_library import WgpuShaderLibrary  # noqa: PLC0415
+    from loomstroke.ui.canvas.wgpu_backend.shader_library import (  # noqa: PLC0415
+        WgpuShaderLibrary,
+    )
 
     if (
         include_selection_preview
@@ -621,6 +661,7 @@ def compute_render_scene_signature(scene: RenderSceneSnapshot) -> tuple[Any, ...
                     )
                 ),
                 image_key,
+                style_signature(layer),
                 _scene_3d_signature(getattr(layer, "scene_3d", None)),
                 _stable_signature(getattr(layer, "camera_3d", None)),
                 str(getattr(layer, "display_mode_3d", "solid") or "solid"),

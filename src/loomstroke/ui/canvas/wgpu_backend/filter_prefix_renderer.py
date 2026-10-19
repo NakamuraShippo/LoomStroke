@@ -21,8 +21,9 @@ class WgpuFilterPrefixRenderer:
     project its cached GPU texture. Layers above it retain view rendering.
     """
 
-    def __init__(self, bundle: Any) -> None:
+    def __init__(self, bundle: Any, *, style_pipeline_store: Any = None) -> None:
         self._bundle = bundle
+        self._style_pipeline_store = style_pipeline_store
         self._caches: dict[str, Any] = {}
         self._used: set[str] = set()
 
@@ -62,7 +63,10 @@ class WgpuFilterPrefixRenderer:
             # ProjectionCache imports the compositor; defer to avoid a cycle.
             from .projection_cache import WgpuProjectionCache  # noqa: PLC0415
 
-            cache = WgpuProjectionCache(self._bundle)
+            cache = WgpuProjectionCache(
+                self._bundle,
+                style_pipeline_store=self._style_pipeline_store,
+            )
             self._caches[key] = cache
         cache.compositor.MAX_WGPU_GROUP_DEPTH = max(0, max_depth - depth)
         cache.compositor.set_three_d_display_scale(display_scale)

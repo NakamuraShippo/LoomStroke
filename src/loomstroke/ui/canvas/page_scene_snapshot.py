@@ -16,6 +16,7 @@ from typing import Any
 import numpy as np
 from PySide6.QtGui import QColor, QGuiApplication, QImage
 
+from loomstroke.core.appearance.live_styles import layer_styles
 from loomstroke.core.canvas_models import (
     CanvasStateSnapshot,
     SelectionStateSnapshot,
@@ -71,6 +72,7 @@ def render_layer_from_snapshot(
         blend_mode=snapshot.blend_mode,
         texture_version=0,
         image=image,
+        style_stack=layer_styles(snapshot),
         native_cmyk=snapshot.native_cmyk,
         offset_x=int(snapshot.position[0]),
         offset_y=int(snapshot.position[1]),

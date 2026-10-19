@@ -11,6 +11,7 @@ from PySide6.QtCore import Qt
 from PySide6.QtGui import QCursor
 
 from ...core.color_state import ColorDescriptor
+from ...core.native_cmyk.vector_paints import capture_paint, capture_vector_paints
 from ...host_api import StrokePoint as HostStrokePoint
 from ..common.vector_hit_test_geometry import VectorHitTestGeometry
 from ..sdk import PropertySpec, PropertyType, ToolDescriptor, ToolMetadata
@@ -173,7 +174,7 @@ class VectorPathTool:
         else:
             setattr(self.config, key, value)
         if key in ("stroke_color", "fill_color"):
-            self._sync_active_color_from_settings()
+            self._sync_active_color_from_settings(preserve_native=False)
 
     def get_settings_dict(self) -> dict[str, object]:
         return dict(vars(self.config))
@@ -432,6 +433,7 @@ class VectorPathTool:
             "autoCloseTolerancePx": self.config.auto_close_tolerance_px,
             "shiftMode": self.config.shift_mode,
         }
+        meta = capture_vector_paints(meta, getattr(self, "_paint_color", None), style)
         obj = make_vector_object([path], style, meta)
         cmd = VectorCreateCommand(
             obj,
@@ -558,7 +560,8 @@ class VectorPathTool:
         if not host or not getattr(host, "color_state", None):
             return
         try:
-            rgba = host.color_state.current.rgba  # (r,g,b,a) floats 0-1
+            self._paint_color = host.color_state.current
+            rgba = self._paint_color.rgba  # (r,g,b,a) floats 0-1
             rgb = tuple(int(max(0, min(255, round(c * 255)))) for c in rgba[:3])
             self.config.stroke_color = rgb
             if self.config.fill_enabled and self.config.fill_color is None:
@@ -566,10 +569,12 @@ class VectorPathTool:
         except Exception:
             logger.debug("VectorPathTool active color fetch failed", exc_info=True)
 
-    def _sync_active_color_from_settings(self) -> None:
+    def _sync_active_color_from_settings(self, *, preserve_native: bool = True) -> None:
         """Push stroke color to the shared Color panel for palette consistency."""
         host = self.host_api
         if not host or not getattr(host, "color_state", None):
+            return
+        if preserve_native and capture_paint(host.color_state.current) is not None:
             return
         try:
             rgb = self.config.stroke_color
@@ -604,7 +609,8 @@ class VectorPathTool:
             cap=self.config.cap,
             dash=self.config.dash,
         )
-        obj = make_vector_object([path], style, {"preview": True})
+        meta = capture_vector_paints({"preview": True}, getattr(self, "_paint_color", None), style)
+        obj = make_vector_object([path], style, meta)
         try:
             canvas = self.host_api.canvas
             if self._target_layer_id is None:

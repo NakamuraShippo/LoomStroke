@@ -287,6 +287,11 @@ class CutSelectionCommand(Command):
         self._layer_ref: Any | None = None
 
     def apply(self, canvas: Canvas) -> bool:  # noqa: PLR0911, PLR0912, PLR0915
+        from .native_cmyk.selection_commands import apply  # noqa: PLC0415
+
+        native = apply(self, canvas)
+        if native is not None:
+            return native
         width, height = UpdateSelectionMaskCommand._canvas_size(canvas)
         if width <= 0 or height <= 0:
             return False
@@ -433,8 +438,16 @@ class CutSelectionCommand(Command):
         return True
 
     def revert(self, canvas: Canvas) -> bool:
-        if not self._before_selection or self._bounds is None or self._layer_ref is None:
-            return False
+        from .native_cmyk.selection_commands import revert  # noqa: PLC0415
+
+        native = revert(self, canvas)
+        if (
+            native is not None
+            or not self._before_selection
+            or self._bounds is None
+            or self._layer_ref is None
+        ):
+            return bool(native)
         x, y, w, h = self._bounds
         layer = self._layer_ref
         if _is_qimage_layer(layer):
@@ -496,6 +509,11 @@ class PasteSelectionCommand(Command):
         self._layer_ref: Any | None = None
 
     def apply(self, canvas: Canvas) -> bool:  # noqa: PLR0911, PLR0912, PLR0915
+        from .native_cmyk.selection_commands import apply  # noqa: PLC0415
+
+        native = apply(self, canvas)
+        if native is not None:
+            return native
         width, height = UpdateSelectionMaskCommand._canvas_size(canvas)
         if width <= 0 or height <= 0:
             return False
@@ -661,6 +679,11 @@ class PasteSelectionCommand(Command):
         return True
 
     def revert(self, canvas: Canvas) -> bool:
+        from .native_cmyk.selection_commands import revert  # noqa: PLC0415
+
+        native = revert(self, canvas)
+        if native is not None:
+            return native
         if not self._before_selection or self._bounds is None or self._layer_ref is None:
             return False
         x, y, w, h = self._bounds
@@ -761,6 +784,11 @@ class TransformSelectionCommand(Command):
         self._layer_ref: Any | None = None
 
     def apply(self, canvas: Canvas) -> bool:  # noqa: PLR0911, PLR0912, PLR0915
+        from .native_cmyk.selection_commands import apply  # noqa: PLC0415
+
+        native = apply(self, canvas)
+        if native is not None:
+            return native
         width, height = UpdateSelectionMaskCommand._canvas_size(canvas)
         if width <= 0 or height <= 0:
             return False
@@ -964,6 +992,11 @@ class TransformSelectionCommand(Command):
         return True
 
     def revert(self, canvas: Canvas) -> bool:
+        from .native_cmyk.selection_commands import revert  # noqa: PLC0415
+
+        native = revert(self, canvas)
+        if native is not None:
+            return native
         if not self._before_selection or self._bounds is None or self._layer_ref is None:
             return False
         x, y, w, h = self._bounds

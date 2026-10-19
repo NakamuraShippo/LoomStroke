@@ -45,7 +45,9 @@ class ChannelsPanel(QWidget):
             "Channels of the active layer; alpha channels store selections.",
         )
         layout.addWidget(self.description)
-        self.ink_controls = NativeCmykForegroundControls(lambda: self.controller.service, self)
+        self.ink_controls = NativeCmykForegroundControls(
+            lambda: self.controller.service, self, host_provider=lambda: self.controller.host
+        )
         layout.addWidget(self.ink_controls)
         self.rows = QListWidget(self)
         self.rows.setIconSize(QSize(42, 32))

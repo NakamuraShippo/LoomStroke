@@ -7,6 +7,7 @@ from PySide6.QtCore import QRect
 
 from loomstroke.core.native_cmyk.pixels import NativeCmykPixels
 
+from .native_cmyk_vector_scene import NativeCmykVectorScene
 from .page_scene_snapshot import flatten_render_layers
 from .render_scene import RenderLayerSnapshot, build_render_scene_snapshot
 from .wgpu_backend.native_cmyk_compositor import NativeCmykCompositor
@@ -16,7 +17,12 @@ class NativeCmykSceneRenderer:
     @classmethod
     def from_canvas(cls, canvas, layers):
         scene = build_render_scene_snapshot(canvas)
-        roots = tuple(RenderLayerSnapshot.from_layer(layer) for layer in layers)
+        roots = tuple(
+            RenderLayerSnapshot.from_layer(
+                layer, rasterize_vector=canvas._rasterize_vector_layer_for_render
+            )
+            for layer in layers
+        )
         flat, parents = flatten_render_layers(roots)
         scene = replace(
             scene,
@@ -24,6 +30,7 @@ class NativeCmykSceneRenderer:
             flat_layers=tuple(flat),
             parent_ids=tuple(parents),
             channel_view=None,
+            native_selection_preview=None,
         )
         renderer = cls()
         try:
@@ -35,6 +42,7 @@ class NativeCmykSceneRenderer:
         self.compositor = NativeCmykCompositor(device_manager)
 
     def render(self, scene):
+        scene = NativeCmykVectorScene().prepare(scene)
         source = next(
             (layer.native_cmyk for layer in scene.flat_layers if layer.native_cmyk is not None),
             None,

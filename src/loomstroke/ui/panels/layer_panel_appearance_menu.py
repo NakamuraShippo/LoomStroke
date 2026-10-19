@@ -12,6 +12,7 @@ from PySide6.QtWidgets import QMenu
 
 from loomstroke.core.appearance import AppearanceRegistry, FillSpec, LayerStyleStack
 from loomstroke.ui.appearance_service import AppearanceService
+from loomstroke.ui.layer_style_edit_session import LayerStyleEditSession
 from loomstroke.ui.translations import translated_literal_domain
 
 __all__ = ["LayerPanelAppearanceMenuBuilder"]
@@ -166,19 +167,31 @@ class LayerPanelAppearanceMenuBuilder:
         if service is None:
             return
         stack = service.styles_for(layer_id)
-        dialog = self._styles_dialog(
-            self._registry,
-            stack,
-            on_apply=lambda new_stack: self._apply_styles(layer_id, new_stack),
-            on_rasterize=lambda: self.rasterize(layer_id),
-            parent=self._panel,
-        )
-        exec_ = getattr(dialog, "exec", None)
-        if callable(exec_):
-            exec_()
-        delete = getattr(dialog, "deleteLater", None)
-        if callable(delete):
-            delete()
+        session = LayerStyleEditSession(service, layer_id)
+        dialog = None
+
+        def rasterize() -> str | None:
+            session.finish()
+            return self.rasterize(layer_id)
+
+        try:
+            dialog = self._styles_dialog(
+                self._registry,
+                stack,
+                on_apply=session.apply,
+                can_apply=session.ready,
+                on_rasterize=rasterize,
+                parent=self._panel,
+            )
+            exec_ = getattr(dialog, "exec", None)
+            if callable(exec_):
+                exec_()
+        finally:
+            session.finish()
+            self._refresh_panel()
+            delete = getattr(dialog, "deleteLater", None)
+            if callable(delete):
+                delete()
 
     def _apply_styles(self, layer_id: str, stack: LayerStyleStack) -> bool:
         service = self.service()

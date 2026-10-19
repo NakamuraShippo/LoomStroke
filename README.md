@@ -43,6 +43,8 @@ macOS / Linuxでは、仮想環境の有効化に `source .venv/bin/activate` �
 
 描画に必須の `wgpu==0.31.0` は依存定義に含まれ、`rendercanvas` とともに自動で入ります。
 `requirements.txt` にも登録されているため、個別インストールは不要です。
+同ファイルは実行用のバージョン固定一覧で、NanoBanana用の追加SDKを含みます。
+テスト・整形・型検査・ビルド用ツールは含めていません。
 
 NanoBananaの追加依存を使う場合は、同じ仮想環境で次を実行します。
 
@@ -53,7 +55,17 @@ python -m pip install -e ".[nanobanana]"
 `keyring` は必須依存です。APIキーは `SecretProvider` 経由でOSの資格情報ストアを利用し、
 そのストアが利用できない場合、paid GatewayのAPIキー保存・読出しは拒否されます。
 外部サービスへの接続には、アプリ設定の `privacy/allow_external_services` による許可が必要です。
-SAMの実行環境やモデル重みは同梱せず、対応機能の利用時に別途準備します。
+AI SelectionのSAM3.1実行環境やモデル重みは同梱せず、対応機能の利用時に別途準備します。
+
+## 説明書
+
+- [利用者向けガイドの入口](docs/user/index.html)
+- [日本語マニュアル](docs/user/index_ja.html)
+- [インストールと起動](docs/user/INSTALL_AND_RUN.md)
+- [起動方法・トラブルシューティング](docs/user/RUN_INSTRUCTIONS.md)
+
+2026-10-20時点の開発版を反映しています。CMYK描画、レイヤースタイル、
+RGB/CMYK色パネル、ベクター線幅編集などを含みます。
 
 ## ソース構成
 
@@ -64,7 +76,6 @@ SAMの実行環境やモデル重みは同梱せず、対応機能の利用時�
 
 開発リポジトリの履歴、非公開テスト素材、テスト一式、内部開発資料、
 ユーザーデータ、APIキー、モデル重み、仮想環境、ビルド済み配布物は含みません。
-既存ガイド内の `docs/dev/` への参照先は、このスナップショットには含まれません。
 公開対象の境界は[PUBLICATION.md](PUBLICATION.md)に記載しています。
 
 ## 第三者コンポーネント

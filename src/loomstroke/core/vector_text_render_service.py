@@ -9,12 +9,18 @@ from typing import Any, cast
 from PySide6.QtCore import Qt
 from PySide6.QtGui import QImage, QPainter, QPainterPath
 
-from .comic_panels.raster_region import is_comic_record_carrier, uses_comic_raster_region
+from .comic_panels.raster_region import (
+    is_comic_record_carrier,
+    uses_comic_raster_region,
+)
 from .filters.vector_raster_bounds import vector_raster_filter_padding
 from .japanese_text.typography import has_typography
 from .vector_text_cache import VectorTextCacheManager
 from .vector_text_render_primitives import TextObjectRenderContext, TextRenderPrimitives
-from .vector_text_selection import HorizontalTextSelectionSpan, TextSelectionRenderPolicy
+from .vector_text_selection import (
+    HorizontalTextSelectionSpan,
+    TextSelectionRenderPolicy,
+)
 
 # Guaranteed wgpu texture-dimension limit; keeps prescaled rasters uploadable
 # on every adapter (view-resolution compositing C2).
@@ -55,8 +61,11 @@ class VectorTextRenderService(TextRenderPrimitives):
     """Coordinate vector/text rasterization and render-only caches."""
 
     def __init__(self, canvas: Any) -> None:
+        from .vector_live_raster_cache import VectorLiveRasterCache  # noqa: PLC0415
+
         self._canvas = canvas
         self._cache = VectorTextCacheManager(canvas)
+        self._live_rasters = VectorLiveRasterCache()
 
     def prune_qpath_cache(self, preview_obj: Any | None = None) -> None:
         """Remove QPainterPath cache entries for objects no longer in any layer."""
@@ -101,6 +110,23 @@ class VectorTextRenderService(TextRenderPrimitives):
         content bounds keep high buckets under the texture size limit.
         """
 
+        return self._rasterize_vector_layer_image(
+            layer, scale, region, QImage.Format.Format_ARGB32_Premultiplied
+        )
+
+    def rasterize_vector_coverage_layer(
+        self, layer: Any, scale: int = 1, region: tuple[int, int, int, int] | None = None
+    ) -> QImage:
+        """Coverage for proven single-ink vectors; text retains its RGBA renderer."""
+        return self._rasterize_vector_layer_image(layer, scale, region, QImage.Format.Format_Alpha8)
+
+    def _rasterize_vector_layer_image(
+        self,
+        layer: Any,
+        scale: int,
+        region: tuple[int, int, int, int] | None,
+        image_format: QImage.Format,
+    ) -> QImage:
         prescale = max(1, int(scale))
         if region is not None:
             region_x, region_y, region_w, region_h = region
@@ -111,7 +137,7 @@ class VectorTextRenderService(TextRenderPrimitives):
         image = QImage(
             region_w * prescale,
             region_h * prescale,
-            QImage.Format.Format_ARGB32_Premultiplied,
+            image_format,
         )
         image.fill(Qt.GlobalColor.transparent)
 
@@ -142,7 +168,7 @@ class VectorTextRenderService(TextRenderPrimitives):
         painter.end()
         return image
 
-    def rasterize_vector_layer_for_render(  # noqa: PLR0911, PLR0912, PLR0915
+    def rasterize_vector_layer_for_render(
         self,
         layer: Any,
         scale: int = 1,
@@ -157,6 +183,16 @@ class VectorTextRenderService(TextRenderPrimitives):
         (even when clamped back to 1, so callers see the effective scale).
         """
 
+        return self._rasterize_for_render(layer, scale, coverage_only=False)
+
+    def rasterize_vector_coverage_layer_for_render(
+        self, layer: Any, scale: int = 1
+    ) -> QImage | VectorRasterResult | None:
+        return self._rasterize_for_render(layer, scale, coverage_only=True)
+
+    def _rasterize_for_render(  # noqa: PLR0911, PLR0912, PLR0915
+        self, layer: Any, scale: int, *, coverage_only: bool
+    ) -> QImage | VectorRasterResult | None:
         requested = max(1, int(scale))
 
         if is_comic_record_carrier(layer):
@@ -209,13 +245,10 @@ class VectorTextRenderService(TextRenderPrimitives):
                     int(self._canvas._width),
                     int(self._canvas._height),
                 )
-            if prescale > 1 or region is not None:
-                image = cast(
-                    "QImage | None",
-                    self._canvas._rasterize_vector_layer(layer, scale=prescale, region=region),
-                )
-            else:
-                image = cast("QImage | None", self._canvas._rasterize_vector_layer(layer))
+            options = {"coverage_only": True} if coverage_only else {}
+            image = self._live_rasters.render(
+                self._canvas, layer, projected, prescale, region, **options
+            )
             if image is None:
                 return None
             if requested == 1 and region is None:
@@ -230,7 +263,7 @@ class VectorTextRenderService(TextRenderPrimitives):
         prescale = requested
         region = None
         tight_comic = uses_comic_raster_region(layer)
-        if requested > 1 or tight_comic:
+        if requested > 1 or tight_comic or coverage_only:
             region = self._layer_raster_region(layer)
             if region is not None:
                 prescale = clamp_raster_scale_to_max_dim(requested, region[2], region[3])
@@ -240,7 +273,7 @@ class VectorTextRenderService(TextRenderPrimitives):
                     int(self._canvas._width),
                     int(self._canvas._height),
                 )
-            if prescale == 1 and not tight_comic:
+            if prescale == 1 and not tight_comic and not coverage_only:
                 region = None
 
         origin_x = int(region[0]) if region is not None else 0
@@ -249,14 +282,19 @@ class VectorTextRenderService(TextRenderPrimitives):
         raster_height = (int(region[3]) if region is not None else self._canvas._height) * prescale
 
         def rasterize() -> QImage | None:
+            rasterize_layer = (
+                self._canvas._rasterize_vector_coverage_layer
+                if coverage_only
+                else self._canvas._rasterize_vector_layer
+            )
             # ``scale``/``region`` are passed for tight regions/upscaling so
             # duck-typed single-argument doubles keep working.
             if prescale > 1 or region is not None:
                 return cast(
                     "QImage | None",
-                    self._canvas._rasterize_vector_layer(layer, scale=prescale, region=region),
+                    rasterize_layer(layer, scale=prescale, region=region),
                 )
-            return cast("QImage | None", self._canvas._rasterize_vector_layer(layer))
+            return cast("QImage | None", rasterize_layer(layer))
 
         def wrap(image: QImage | None) -> QImage | VectorRasterResult | None:
             if image is None or (requested == 1 and region is None):
@@ -291,6 +329,7 @@ class VectorTextRenderService(TextRenderPrimitives):
                 and cached_origin == (origin_x, origin_y)
                 and cached_image.width() == raster_width
                 and cached_image.height() == raster_height
+                and ((cached_image.format() == QImage.Format.Format_Alpha8) == coverage_only)
             ):
                 if requested == 1 and region is None:
                     return cast("QImage | None", cached_image)
@@ -330,7 +369,9 @@ class VectorTextRenderService(TextRenderPrimitives):
         if self._layer_has_explicit_transform(layer):
             return None
         if not extra_objects and not vector_raster_filter_padding(layer):
-            from .comic_panels.nominal_edge_region import nominal_edge_region  # noqa: PLC0415
+            from .comic_panels.nominal_edge_region import (  # noqa: PLC0415
+                nominal_edge_region,
+            )
 
             ink = nominal_edge_region(layer, (int(self._canvas._width), int(self._canvas._height)))
             if ink is not None:
@@ -347,21 +388,7 @@ class VectorTextRenderService(TextRenderPrimitives):
             bx0, by0, bx1, by1 = bounds
             payload = VectorTextRenderService.extract_text_payload(vec)
             if payload is not None:
-                # Text draws clipped to its (possibly rotated) frame; the
-                # circumscribed square covers every rotation angle.
-                cx = (bx0 + bx1) * 0.5
-                cy = (by0 + by1) * 0.5
-                radius = math.hypot(bx1 - bx0, by1 - by0) * 0.5
-                bx0, by0, bx1, by1 = cx - radius, cy - radius, cx + radius, cy + radius
-                if has_typography(payload):
-                    from .japanese_text.typography_painter import (  # noqa: PLC0415
-                        japanese_ink_bounds,
-                    )
-
-                    ink = japanese_ink_bounds(payload)
-                    if not ink.isEmpty():
-                        bx0, by0 = min(bx0, ink.left()), min(by0, ink.top())
-                        bx1, by1 = max(bx1, ink.right()), max(by1, ink.bottom())
+                bx0, by0, bx1, by1 = self._text_raster_bounds(payload, (bx0, by0, bx1, by1))
                 margin = 4.0
             else:
                 style = getattr(vec, "style", None)
@@ -382,6 +409,43 @@ class VectorTextRenderService(TextRenderPrimitives):
         if x1 <= x0 or y1 <= y0:
             return None
         return (x0, y0, x1 - x0, y1 - y0)
+
+    @staticmethod
+    def _text_raster_bounds(
+        payload: Any, bounds: tuple[float, float, float, float]
+    ) -> tuple[float, float, float, float]:
+        bx0, by0, bx1, by1 = bounds
+        formatted = has_typography(payload)
+        wrap = VectorTextRenderService.text_wrap_mode_from_payload(
+            payload, text_mode=VectorTextRenderService.text_mode_from_payload(payload)
+        )
+        if (
+            not formatted
+            and wrap != "shape"
+            and abs(VectorTextRenderService.text_rotation_from_payload(payload)) <= 1e-6
+            and not payload.get("visual_flip_h")
+            and not payload.get("visual_flip_v")
+        ):
+            # Legacy rectangular text, including its caret/selection, is
+            # clipped to draw_rect. Retain payload bounds if geometry differs.
+            drawn = VectorTextRenderService.text_bbox_from_payload(payload)
+            if drawn is not None:
+                bx0, by0 = min(bx0, drawn[0]), min(by0, drawn[1])
+                bx1, by1 = max(bx1, drawn[2]), max(by1, drawn[3])
+        else:
+            # Keep the original conservative extent for transformed frames,
+            # shaped text and typography that may paint beyond its frame.
+            cx, cy = (bx0 + bx1) * 0.5, (by0 + by1) * 0.5
+            radius = math.hypot(bx1 - bx0, by1 - by0) * 0.5
+            bx0, by0, bx1, by1 = cx - radius, cy - radius, cx + radius, cy + radius
+        if formatted:
+            from .japanese_text.typography_painter import japanese_ink_bounds  # noqa: PLC0415
+
+            ink = japanese_ink_bounds(payload)
+            if not ink.isEmpty():
+                bx0, by0 = min(bx0, ink.left()), min(by0, ink.top())
+                bx1, by1 = max(bx1, ink.right()), max(by1, ink.bottom())
+        return bx0, by0, bx1, by1
 
     @staticmethod
     def _layer_has_explicit_transform(layer: Any) -> bool:

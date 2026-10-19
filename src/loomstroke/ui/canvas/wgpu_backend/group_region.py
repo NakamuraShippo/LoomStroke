@@ -6,6 +6,8 @@ import math
 from contextlib import contextmanager
 from typing import Any
 
+from loomstroke.core.appearance.live_styles import style_signature
+
 from .types import WgpuViewParams
 
 
@@ -21,7 +23,11 @@ def group_target_region(compositor: Any, scene: Any, children: tuple[Any, ...]):
     points: list[tuple[float, float]] = []
 
     def visit(layer: Any, depth: int = 0) -> bool:
-        if depth >= compositor.MAX_WGPU_GROUP_DEPTH or getattr(layer, "vector_direct_ready", False):
+        if (
+            style_signature(layer)
+            or depth >= compositor.MAX_WGPU_GROUP_DEPTH
+            or getattr(layer, "vector_direct_ready", False)
+        ):
             return False
         if not getattr(layer, "visible", True) or float(getattr(layer, "opacity", 1.0)) <= 0:
             return True
@@ -80,6 +86,18 @@ def group_region_view(compositor: Any, region: tuple[int, int, int, int], scene:
     a, b, c, d, tx, ty = affine
     view = WgpuViewParams((a, b, c, d, tx - x, ty - y), width, height)
     compositor._view, compositor._view_inverse = view, view.inverse()
+    try:
+        yield
+    finally:
+        compositor._view, compositor._view_inverse = previous, inverse
+
+
+@contextmanager
+def document_group_view(compositor: Any, enabled: bool):
+    """Evaluate styled group pixels in document units before viewport sampling."""
+    previous, inverse = compositor._view, compositor._view_inverse
+    if enabled:
+        compositor._view = compositor._view_inverse = None
     try:
         yield
     finally:

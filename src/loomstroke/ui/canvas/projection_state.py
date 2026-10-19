@@ -14,6 +14,8 @@ from __future__ import annotations
 from dataclasses import dataclass
 from typing import Any
 
+from loomstroke.core.appearance.live_styles import style_signature
+
 __all__ = [
     "ProjectionStateTracker",
     "StructuralChangeFlags",
@@ -112,6 +114,7 @@ def compute_layer_state(layer: Any, effect_hash: int = 0) -> tuple[Any, ...]:
         getattr(layer, "layer_mask", None) is not None,
         bool(getattr(layer, "mask_enabled", True)),
         int(effect_hash),
+        style_signature(layer),
     )
 
 

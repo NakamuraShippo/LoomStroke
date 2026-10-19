@@ -82,6 +82,9 @@ class _FloodFillBase(Command):
 
     @property
     def retained_bytes(self) -> int | None:
+        native = getattr(self, "_native_fill_patch", None)
+        if native is not None:
+            return int(native.retained_bytes)
         placed = getattr(self, "_placed_edit", None)
         if placed is None:
             return None
@@ -157,10 +160,14 @@ class _FloodFillBase(Command):
         return True
 
     def _apply_to_layer(self, canvas: Any, layer: Any, *, record_backup: bool) -> bool:
-        if self._spans is None or self._bounds is None:
+        if self._spans is None or self._bounds is None or not _layer_allows_edit(layer):
             return False
-        if not _layer_allows_edit(layer):
-            return False
+        if getattr(layer, "native_cmyk", None) is not None:
+            from loomstroke.core.native_cmyk.fill_spans import (  # noqa: PLC0415
+                apply_spans,
+            )
+
+            return apply_spans(self, canvas, layer)
 
         if uses_placed_pixels(canvas, layer):
             return apply_placed_fill(self, canvas, layer)
@@ -310,7 +317,10 @@ class _FloodFillBase(Command):
             segment[:, :3] = np.clip(out_rgb * 255.0, 0.0, 255.0)
             segment[:, 3] = np.clip(out_alpha * 255.0, 0.0, 255.0)
 
-    def _restore_to_layer(self, layer: Any) -> bool:
+    def _restore_to_layer(self, layer: Any, canvas: Any = None) -> bool:
+        native = getattr(self, "_native_fill_patch", None)
+        if native is not None:
+            return bool(canvas is not None and native.revert(canvas))
         placed = getattr(self, "_placed_edit", None)
         if placed is not None:
             return placed.write_pixels(layer, before=True)
@@ -353,7 +363,7 @@ class FloodFillCommand(_FloodFillBase):
         layer = _resolve_target_layer(canvas, self._target_layer_id)
         if layer is None:
             return False
-        if not self._restore_to_layer(layer):
+        if not self._restore_to_layer(layer, canvas):
             return False
         self._executed = False
         return True
@@ -740,7 +750,7 @@ class PatternFillCommand(_FloodFillBase):
         layer = _resolve_target_layer(canvas, self._target_layer_id)
         if layer is None:
             return False
-        if not self._restore_to_layer(layer):
+        if not self._restore_to_layer(layer, canvas):
             return False
         self._executed = False
         return True
@@ -752,6 +762,12 @@ class PatternFillCommand(_FloodFillBase):
             return False
         if not _layer_allows_edit(layer):
             return False
+        if getattr(layer, "native_cmyk", None) is not None:
+            from loomstroke.core.native_cmyk.fill_spans import (  # noqa: PLC0415
+                apply_spans,
+            )
+
+            return apply_spans(self, canvas, layer)
 
         if uses_placed_pixels(canvas, layer):
             return apply_placed_fill(self, canvas, layer, pattern=True)

@@ -8,6 +8,7 @@ from .color_state import ColorDescriptor, ColorState, ColorStateSnapshot
 from .command_types import Command
 from .event_bus import EventBus
 from .events import ColorChangeEvent, Events
+from .native_cmyk.color_descriptor import set_canvas_foreground
 
 if TYPE_CHECKING:
     from .canvas import Canvas
@@ -33,8 +34,8 @@ class SetActiveColorCommand(Command):
         self._after: ColorStateSnapshot | None = None
 
     def apply(self, canvas: Canvas) -> bool:
-        del canvas
         self._before = self._state.as_snapshot()
+        set_canvas_foreground(canvas, self._new_color)
         if self._before.current == self._new_color:
             self._after = self._before
             return True
@@ -44,9 +45,9 @@ class SetActiveColorCommand(Command):
         return True
 
     def revert(self, canvas: Canvas) -> bool:
-        del canvas
         if not self._before:
             return False
+        set_canvas_foreground(canvas, self._before.current)
         self._state.revert(self._before)
         self._emit_event(self._before)
         self._executed = False

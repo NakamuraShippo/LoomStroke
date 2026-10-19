@@ -482,10 +482,22 @@ class WgpuShaderLibrary:
         return self._sampler
 
     def get_layer_blend_pipeline(self) -> Any:
-        key = f"layer_blend:{self.target_format}"
+        return self._layer_blend_pipeline(normal_only=False)
+
+    def _normal_layer_blend_pipeline(self) -> Any:
+        return self._layer_blend_pipeline(normal_only=True)
+
+    def _layer_blend_pipeline(self, *, normal_only: bool) -> Any:
+        suffix = ":normal" if normal_only else ""
+        key = f"layer_blend:{self.target_format}{suffix}"
         if key in self._pipelines:
             return self._pipelines[key]
-        module = self._shader_module("blend_compositor", BLEND_COMPOSITOR_WGSL)
+        source = BLEND_COMPOSITOR_WGSL
+        if normal_only:
+            # Only selected after checking every descendant. Constant folding
+            # avoids compiling unused blend branches on the first normal frame.
+            source = source.replace("let mode = i32(params.blend_mode + 0.5);", "let mode = 0;")
+        module = self._shader_module(f"blend_compositor{suffix}", source)
         layout = self._device.create_pipeline_layout(
             bind_group_layouts=[self.blend_bind_group_layout]
         )

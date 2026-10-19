@@ -3,10 +3,12 @@
 from contextlib import contextmanager
 from types import SimpleNamespace
 
+from loomstroke.core.appearance.live_styles import style_signature
+
 
 @contextmanager
 def group_mask_upload_scope(compositor, layer, region, scene):
-    if not getattr(layer, "mask_region_eligible", False):
+    if style_signature(layer) or not getattr(layer, "mask_region_eligible", False):
         yield
         return
     previous = getattr(compositor, "_mask_region_request", None)

@@ -107,7 +107,8 @@ class SpreadCompanionFrame:
 class SpreadCompanionPass:
     """Owns the companion page's composite target across frames."""
 
-    def __init__(self) -> None:
+    def __init__(self, *, repaint: Any = None) -> None:
+        self._repaint = repaint
         self._cache: WgpuProjectionCache | None = None
         self._compositor: Any | None = None
         self._target: WgpuRenderTargetHandle | None = None
@@ -194,7 +195,8 @@ class SpreadCompanionPass:
         # the old one and must not be blitted into the new surface.
         self.release()
         try:
-            self._cache = WgpuProjectionCache(bundle, compositor=compositor)
+            options = {"repaint": self._repaint} if self._repaint is not None else {}
+            self._cache = WgpuProjectionCache(bundle, compositor=compositor, **options)
         except Exception as exc:  # noqa: BLE001 - preview must never break editing
             logger.warning("spread companion cache unavailable: %s", exc)
             self._cache = None

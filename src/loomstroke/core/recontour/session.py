@@ -6,16 +6,17 @@ import copy
 import logging
 from concurrent.futures import Future, ThreadPoolExecutor
 from dataclasses import replace
-from typing import Any
+from typing import Any, cast
 
 from PySide6.QtCore import QRect
 from PySide6.QtGui import QImage
 
 from ..commands import StampBrushCommand, _load_tip_mask
 from ..dab_variation import DabVariation
+from ..native_cmyk.stroke_image import NativeStrokeImage, commit_native_image
 from .geometry import Anchor, Curve, fit
 from .preimage import Preimage, check_size
-from .raster import command_bounds, crop, paste, render
+from .raster import StrokeImage, command_bounds, crop, paste, render, stroke_pixel_bytes
 
 logger = logging.getLogger(__name__)
 _FITTER = ThreadPoolExecutor(max_workers=1, thread_name_prefix="recontour-fit")
@@ -34,8 +35,8 @@ class RasterStrokeSession:
         self.curves: dict[int, Curve] = {}
         self.edited: dict[int, tuple[Anchor, ...]] = {}
         self.rect = QRect()
-        self.before = QImage()
-        self.original = QImage()
+        self.before: StrokeImage = QImage()
+        self.original: StrokeImage = QImage()
         self.original_rect = QRect()
         self.tips: dict = {}
         self.tip_bytes = 0
@@ -66,10 +67,17 @@ class RasterStrokeSession:
             return ()
         image = layer.layer_mask if self.mask else layer.image
         selection = getattr(canvas, "_selection_mask", None)
+        native = getattr(layer, "native_cmyk", None) if not self.mask else None
+        native_signature = (
+            (id(native), native.version, tuple(canvas.channels().selected))
+            if native is not None
+            else None
+        )
         return (
             id(canvas),
             id(layer),
             image.cacheKey() if image is not None else None,
+            native_signature,
             bool(layer.mask_edit_mode),
             bool(layer.alpha_lock),
             bool(layer.locked),
@@ -93,7 +101,7 @@ class RasterStrokeSession:
 
     def _extend(self, canvas: Any, rect: QRect) -> None:
         union = self.rect.united(rect) if not self.rect.isEmpty() else QRect(rect)
-        check_size(union)
+        check_size(union, bytes_per_pixel=stroke_pixel_bytes(self.layer, mask=self.mask))
         if union == self.rect:
             return
         before = crop(self.layer, union, mask=self.mask)
@@ -233,7 +241,30 @@ class RasterStrokeSession:
                 mask=self.mask,
             )
         previous = crop(self.layer, self.rect, mask=self.mask)
+        return self._commit_candidate(canvas, candidate, previous, edited)
+
+    def _commit_candidate(
+        self,
+        canvas: Any,
+        candidate: StrokeImage,
+        previous: StrokeImage,
+        edited: dict[int, tuple[Anchor, ...]],
+    ) -> bool:
         if candidate == previous:
+            self.edited = dict(edited)
+            return True
+        if isinstance(candidate, NativeStrokeImage):
+            if not self.valid(canvas):
+                return False
+            commit_native_image(
+                canvas,
+                self.layer,
+                self.rect,
+                cast(NativeStrokeImage, previous),
+                candidate,
+                "Recontour",
+            )
+            self.expected = self._signature(canvas)
             self.edited = dict(edited)
             return True
         metadata = {"command": "recontour"}

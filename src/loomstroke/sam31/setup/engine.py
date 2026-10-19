@@ -137,11 +137,12 @@ class Sam31SetupEngine:
             count = len(self._stages)
             for index, stage in enumerate(self._stages):
                 if cancel_event.is_set():
-                    report.error_code = CANCELLED
-                    report.error_message = "setup was cancelled"
-                    report.error_action = ACTIONS.get(CANCELLED, "")
-                    report.failed_stage = stage.name
-                    report.stages.append((stage.name, STAGE_CANCELLED))
+                    self._record_failure(
+                        report,
+                        stage,
+                        Sam31SetupError(CANCELLED, "setup was cancelled"),
+                        status=STAGE_CANCELLED,
+                    )
                     return report
                 self._emit(progress, index, count, stage, "checking")
                 log(f"--- [{index + 1}/{count}] {stage.label} ({stage.name})")
@@ -167,11 +168,7 @@ class Sam31SetupEngine:
                         )
                     report.stages.append((stage.name, STAGE_APPLIED))
                 except Sam31SetupError as error:
-                    report.error_code = error.code
-                    report.error_message = str(error)
-                    report.error_action = error.action
-                    report.failed_stage = stage.name
-                    report.stages.append((stage.name, STAGE_FAILED))
+                    self._record_failure(report, stage, error)
                     log(f"    FAILED [{error.code}]: {error}")
                     return report
             report.ok = True
@@ -184,6 +181,20 @@ class Sam31SetupEngine:
             report.elapsed_s = time.time() - started
             if log_file is not None:
                 log_file.close()
+
+    @staticmethod
+    def _record_failure(
+        report: SetupReport,
+        stage: SetupStage,
+        error: Sam31SetupError,
+        *,
+        status: str = STAGE_FAILED,
+    ) -> None:
+        report.error_code = error.code
+        report.error_message = str(error)
+        report.error_action = error.action
+        report.failed_stage = stage.name
+        report.stages.append((stage.name, status))
 
     @staticmethod
     def _open_log(root: Sam31Root):

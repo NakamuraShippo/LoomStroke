@@ -1951,6 +1951,8 @@ class LoomStrokeMcpService:
         explicit = arguments.get("targetServerId", arguments.get("target_server_id"))
         if isinstance(explicit, str) and explicit.strip():
             return explicit.strip()
+        if self._comfyui_object_info_provider is not None:
+            return "local"
         try:
             from loomstroke.plugins.comfyui.server_registry import get_registry  # noqa: PLC0415
 

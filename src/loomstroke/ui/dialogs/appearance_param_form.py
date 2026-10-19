@@ -19,6 +19,11 @@ from PySide6.QtWidgets import (
 )
 
 from loomstroke.core.appearance import AppearanceKind, AppearanceParam
+from loomstroke.ui.translations import translated_literal_domain
+
+from .appearance_numeric_slider import AppearanceNumericSlider
+from .layer_style_lights_editor import LayerStyleLightsEditor
+from .layer_style_profile_editor import LayerStyleProfileEditor
 
 __all__ = ["AppearanceParamForm"]
 
@@ -33,13 +38,15 @@ class AppearanceParamForm(QWidget):
         *,
         color_picker: ColorPicker | None = None,
         on_change: Callable[[], None] | None = None,
+        numeric_sliders: bool = False,
     ) -> None:
         super().__init__(parent)
         self._form = QFormLayout(self)
         self._form.setContentsMargins(0, 0, 0, 0)
         self._editors: dict[str, Any] = {}
         self._kind: AppearanceKind | None = None
-        self._color_picker = color_picker or self._pick_color
+        self._color_picker = color_picker
+        self._numeric_sliders = numeric_sliders
         self._on_change = on_change or (lambda: None)
         self.set_kind(kind)
 
@@ -59,11 +66,19 @@ class AppearanceParamForm(QWidget):
         merged = dict(kind.defaults())
         merged.update(dict(values or {}))
         for param in kind.params:
-            editor = self._editor(param, merged.get(param.key, param.default))
+            editor = self._editor(param, merged.get(param.key, param.default), merged)
             self._editors[param.key] = editor
-            self._form.addRow(
-                param.label or param.key, editor if isinstance(editor, QWidget) else editor[0]
-            )
+            label = param.label or param.key
+            if self._numeric_sliders:
+                label = translated_literal_domain("AppearancePanel", label, use_fallback=True)
+                if isinstance(editor, QWidget):
+                    editor.setAccessibleName(label)
+            if isinstance(editor, AppearanceNumericSlider):
+                editor.slider.setAccessibleName(label)
+                editor.spin.setAccessibleName(label)
+            self._form.addRow(label, editor if isinstance(editor, QWidget) else editor[0])
+            if "lights" in merged and param.key in {"angle", "elevation"}:
+                self._form.setRowVisible(self._form.rowCount() - 1, False)
 
     def values(self) -> dict[str, Any]:
         out: dict[str, Any] = {}
@@ -79,30 +94,26 @@ class AppearanceParamForm(QWidget):
 
     # -- editors -----------------------------------------------------------------------
 
-    def _editor(self, param: AppearanceParam, value: Any) -> Any:
+    def _editor(self, param: AppearanceParam, value: Any, values: dict[str, Any]) -> Any:
+        if param.kind in {"lights", "curve"}:
+            return self._structured_editor(param, value, values)
         if param.kind == "bool":
             box = QCheckBox()
             box.setChecked(bool(value))
             box.toggled.connect(lambda _v: self._on_change())
             return box
-        if param.kind == "int":
-            spin = QSpinBox()
-            spin.setRange(int(param.minimum or -100000), int(param.maximum or 100000))
-            spin.setValue(int(value or 0))
-            spin.valueChanged.connect(lambda _v: self._on_change())
-            return spin
-        if param.kind == "float":
-            spin = QDoubleSpinBox()
-            spin.setDecimals(3)
-            spin.setSingleStep(float(param.step or 0.1))
-            spin.setRange(float(param.minimum or -1e6), float(param.maximum or 1e6))
-            spin.setValue(float(value or 0.0))
-            spin.valueChanged.connect(lambda _v: self._on_change())
-            return spin
+        if param.kind in ("int", "float"):
+            return self._numeric_editor(param, value)
         if param.kind == "enum":
             combo = QComboBox()
+            combo.setObjectName(f"{param.key}_choice")
             for choice in param.choices:
-                combo.addItem(choice, choice)
+                title = (
+                    translated_literal_domain("AppearancePanel", choice, use_fallback=True)
+                    if self._numeric_sliders
+                    else choice
+                )
+                combo.addItem(title, choice)
             if value in param.choices:
                 combo.setCurrentIndex(param.choices.index(value))
             combo.currentIndexChanged.connect(lambda _i: self._on_change())
@@ -127,7 +138,39 @@ class AppearanceParamForm(QWidget):
             spins.append(spin)
         return holder, spins
 
+    def _structured_editor(
+        self, param: AppearanceParam, value: Any, values: dict[str, Any]
+    ) -> QWidget:
+        if param.kind == "lights":
+            return LayerStyleLightsEditor(values, self._on_change, self._color_picker)
+        return LayerStyleProfileEditor(value, self._on_change)
+
+    def _numeric_editor(self, param: AppearanceParam, value: Any) -> QWidget:
+        if self._numeric_sliders:
+            return AppearanceNumericSlider(param, value, self._on_change)
+        spin: QSpinBox | QDoubleSpinBox
+        if param.kind == "int":
+            spin = QSpinBox()
+            spin.setRange(
+                int(param.minimum if param.minimum is not None else -100000),
+                int(param.maximum if param.maximum is not None else 100000),
+            )
+            spin.setValue(int(value or 0))
+        else:
+            spin = QDoubleSpinBox()
+            spin.setDecimals(3)
+            spin.setSingleStep(float(param.step or 0.1))
+            spin.setRange(
+                float(param.minimum if param.minimum is not None else -1e6),
+                float(param.maximum if param.maximum is not None else 1e6),
+            )
+            spin.setValue(float(value or 0.0))
+        spin.valueChanged.connect(lambda _v: self._on_change())
+        return spin
+
     def _read(self, param: AppearanceParam, editor: Any) -> Any:
+        if param.kind in {"lights", "curve"}:
+            return editor.value()
         if param.kind == "bool":
             return bool(editor.isChecked())
         if param.kind in ("int", "float"):
@@ -141,9 +184,21 @@ class AppearanceParamForm(QWidget):
 
     def _choose_color(self, button: QPushButton) -> None:
         current = list(button.property("color_value") or [0, 0, 0, 255])
-        picked = self._color_picker(QColor(*current[:4]), self)
+        if self._numeric_sliders and self._color_picker is None:
+            dialog = QColorDialog(QColor(*current[:4]), self)
+            dialog.setOption(QColorDialog.ColorDialogOption.ShowAlphaChannel)
+            dialog.currentColorChanged.connect(lambda color: self._set_color(button, color))
+            if dialog.exec() != QColorDialog.DialogCode.Accepted:
+                self._set_color(button, QColor(*current[:4]))
+            dialog.deleteLater()
+            return
+        picker = self._color_picker or self._pick_color
+        picked = picker(QColor(*current[:4]), self)
         if picked is None or not picked.isValid():
             return
+        self._set_color(button, picked)
+
+    def _set_color(self, button: QPushButton, picked: QColor) -> None:
         button.setProperty(
             "color_value", [picked.red(), picked.green(), picked.blue(), picked.alpha()]
         )
@@ -155,7 +210,8 @@ class AppearanceParamForm(QWidget):
         value = list(button.property("color_value") or [0, 0, 0, 255])
         color = QColor(*value[:4])
         button.setText(color.name(QColor.NameFormat.HexArgb))
-        button.setStyleSheet(f"background-color: {color.name()};")
+        foreground = "#111111" if color.lightnessF() > 0.55 else "#ffffff"
+        button.setStyleSheet(f"background-color: {color.name()}; color: {foreground};")
 
     @staticmethod
     def _pick_color(current: QColor, parent: QWidget) -> QColor | None:

@@ -8,10 +8,12 @@ from typing import TYPE_CHECKING
 from .cubic_hit_test import CubicHitTest
 from .edit_anchor_selection import _AnchorSelection
 from .edit_selection import _Selection
+from .vector_width_editor import VectorWidthEditor
 
 if TYPE_CHECKING:
     from PySide6.QtCore import QRect
 
+from ...core.native_cmyk.vector_paints import without_paint
 from ...host_api import StrokePoint as HostStrokePoint
 from ..common.vector_hit_test_geometry import VectorHitTestGeometry
 from ..sdk import PropertySpec, PropertyType, ToolDescriptor, ToolMetadata
@@ -168,6 +170,7 @@ class VectorPathEditTool:
 
     def __init__(self) -> None:
         self.host_api = None
+        self._width_editor = VectorWidthEditor(self)
         self._selected: _Selection | None = None
         self._hover_cursor_set: bool = False
         self._editing_object = None
@@ -228,7 +231,13 @@ class VectorPathEditTool:
     def context_toolbar_spec(self) -> ContextToolbarSpec | None:
         return ContextToolbarSpec(
             show_trigger="pointer_up",
-            property_keys=["stroke_color", "stroke_width", "fill_enabled", "fill_color"],
+            property_keys=[
+                "edit_width_on_canvas",
+                "stroke_color",
+                "stroke_width",
+                "fill_enabled",
+                "fill_color",
+            ],
             custom_widgets=[
                 *self._path_correction_actions().widgets(),
                 *self._width_actions().widgets(),
@@ -308,6 +317,9 @@ class VectorPathEditTool:
         meta: bool = False,
     ) -> None:
         del meta
+        if self._width_editor.enabled:
+            self._width_editor.down(pt, alt=alt)
+            return
         self._dragging = False
         prev_vec_id = self._selected.vec_id if self._selected else None
         self._hydrate_selection_from_canvas()
@@ -400,6 +412,9 @@ class VectorPathEditTool:
         last = self._last_point(pts)
         if last is None:
             return
+        if self._width_editor.enabled:
+            self._width_editor.move(last)
+            return
         if self._anchor_box_start is not None:
             self._last_hover_pt = last
             self._update_anchor_box_preview(last)
@@ -422,6 +437,9 @@ class VectorPathEditTool:
         return last
 
     def on_pointer_up(self, pt: HostStrokePoint) -> None:
+        if self._width_editor.enabled:
+            self._width_editor.up(pt)
+            return
         if self._transform_mode:
             self._update_transform_drag(pt, preview_only=False)
             self._commit_transform()
@@ -444,6 +462,9 @@ class VectorPathEditTool:
         self._commit_editing_object()
 
     def on_pointer_hover(self, pt: HostStrokePoint) -> None:
+        if self._width_editor.enabled:
+            self._width_editor.hover()
+            return
         self._last_hover_pt = pt
         if not self._selected:
             self._hydrate_selection_from_canvas()
@@ -473,6 +494,14 @@ class VectorPathEditTool:
         self._hover_cursor_set = apply_hover_cursor(cursor, is_set=self._hover_cursor_set)
 
     def on_key(self, key: str, pressed: bool) -> bool:
+        if self._width_editor.enabled:
+            if pressed and key.lower() in ("esc", "escape"):
+                self._width_editor.cancel()
+                return True
+            return False
+        return self._on_path_key(key, pressed)
+
+    def _on_path_key(self, key: str, pressed: bool) -> bool:
         key_lower = key.lower()
         if key_lower in ("alt", "alt_l", "alt_r"):
             self._alt_pressed = pressed
@@ -509,6 +538,12 @@ class VectorPathEditTool:
     def _property_specs(self) -> list[PropertySpec]:
         return [
             PropertySpec(
+                key="edit_width_on_canvas",
+                display_name=_ts("Edit Width on Canvas"),
+                type=PropertyType.BOOL,
+                default_value=self._width_editor.enabled,
+            ),
+            PropertySpec(
                 key="stroke_color",
                 display_name=_ts("Stroke Color"),
                 type=PropertyType.COLOR,
@@ -542,9 +577,12 @@ class VectorPathEditTool:
         ]
 
     def get_settings(self) -> dict[str, object]:
-        return dict(self._style_settings)
+        return {**self._style_settings, "edit_width_on_canvas": self._width_editor.enabled}
 
     def set_settings(self, settings: dict[str, object]) -> None:
+        settings = dict(settings or {})
+        if "edit_width_on_canvas" in settings:
+            self._width_editor.set_enabled(bool(settings.pop("edit_width_on_canvas")))
         self._hydrate_selection_from_canvas()
         merged: dict[str, object] = dict(self._style_settings)
         merged.update(settings or {})
@@ -557,10 +595,21 @@ class VectorPathEditTool:
             merged["fill_enabled"] = False
         if merged == self._style_settings:
             return
+        clear_roles = tuple(
+            role
+            for role in ("stroke", "fill")
+            if merged.get(f"{role}_color") != self._style_settings.get(f"{role}_color")
+        )
         self._style_settings = merged
-        self._apply_style_settings_to_selection()
+        self._apply_style_settings_to_selection(clear_roles=clear_roles)
 
     def set_setting(self, key: str, value: object) -> None:
+        if key == "edit_width_on_canvas":
+            self._width_editor.set_enabled(bool(value))
+            return
+        self._set_style_setting(key, value)
+
+    def _set_style_setting(self, key: str, value: object) -> None:
         if key not in self._style_settings:
             return
         self._hydrate_selection_from_canvas()
@@ -592,9 +641,11 @@ class VectorPathEditTool:
             self._style_settings[key] = value
         if self._style_settings == before:
             return
-        self._apply_style_settings_to_selection()
+        self._apply_style_settings_to_selection(
+            clear_roles=(key.removesuffix("_color"),) if key.endswith("_color") else ()
+        )
 
-    def _apply_style_settings_to_selection(self) -> None:
+    def _apply_style_settings_to_selection(self, *, clear_roles: tuple[str, ...] = ()) -> None:
         if not self._selected:
             self._hydrate_selection_from_canvas()
         if not self._selected:
@@ -617,11 +668,14 @@ class VectorPathEditTool:
             dash=getattr(style, "dash", ()),
             miter_limit=getattr(style, "miter_limit", 4.0) if style else 4.0,
         )
+        meta = dict(getattr(obj, "meta", {}) or {})
+        for role in clear_roles:
+            meta = without_paint(meta, role)
         new_obj = type(obj)(
             id=getattr(obj, "id", None),
             paths=list(getattr(obj, "paths", []) or []),
             style=style_updated,
-            meta=dict(getattr(obj, "meta", {}) or {}),
+            meta=meta,
             preview=getattr(obj, "preview", False),
         )
         cmd = VectorReplaceCommand(self._selected.vec_id, new_obj, layer_id=self._selected.layer_id)
@@ -1520,6 +1574,7 @@ class VectorPathEditTool:
         keep_auto_return: bool = False,
     ) -> None:
         style_settings = dict(self._style_settings) if keep_style_settings else None
+        self._width_editor.set_enabled(False)
         auto_return_tool_id = self._auto_return_tool_id if keep_auto_return else None
         auto_return_origin_id = self._auto_return_origin_id if keep_auto_return else None
         self._clear_anchor_box_preview()

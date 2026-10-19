@@ -14,6 +14,7 @@ from loomstroke.plugins.sdk.base import PluginMetadata, PluginType
 from loomstroke.plugins.sdk.ui import PanelDescriptor, UIPanelPlugin
 from loomstroke.ui.translations import translated_literal_domain
 
+from .color_context_controller import ColorContextController
 from .color_models import DEFAULT_PALETTE_ID, ColorPalette, PaletteSwatch
 from .palette_repository import ColorPaletteRepository
 from .widgets import ColorPanel
@@ -44,6 +45,7 @@ class ColorPanelPlugin(UIPanelPlugin):
         self._repository: ColorPaletteRepository | None = None
         self._loop: asyncio.AbstractEventLoop | None = None
         self._color_subscription: object | None = None
+        self._color_context: ColorContextController | None = None
 
     def descriptor(self) -> PanelDescriptor:
         return PanelDescriptor(
@@ -69,6 +71,9 @@ class ColorPanelPlugin(UIPanelPlugin):
         self._subscribe_color()
 
     def deactivate(self) -> None:
+        if self._color_context is not None:
+            self._color_context.dispose()
+            self._color_context = None
         self._unsubscribe_color()
         self._panel = None
         self._repository = None
@@ -93,6 +98,8 @@ class ColorPanelPlugin(UIPanelPlugin):
                 except Exception as exc:
                     logger.debug("Unable to initialize color snapshot: %s", exc)
             self._schedule_task(self._load_palettes())
+            if self._host:
+                self._color_context = ColorContextController(self._panel, self._host)
         return self._panel
 
     # --- Event handlers -----------------------------------------------------
@@ -121,7 +128,7 @@ class ColorPanelPlugin(UIPanelPlugin):
             current = getattr(self._host, "get_active_color", lambda: None)()
         except Exception:
             current = None
-        if current and getattr(current, "rgba", None) == descriptor.rgba:
+        if current == descriptor:
             return
         try:
             self._host.set_active_color(descriptor, source=source)

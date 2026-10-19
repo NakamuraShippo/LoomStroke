@@ -577,6 +577,25 @@ class MainWindowMenuBuilderCoordinator:
         m_edit.addSeparator()
         m_edit.addAction(
             window._mk_action(
+                "S&wap Foreground/Background Colors",
+                lambda _checked=False: self._run_color_pair_action("swap"),
+                "X",
+                action_id="color.swap_foreground_background",
+                shortcut_category="Edit",
+            )
+        )
+        m_edit.addAction(
+            window._mk_action(
+                "Default Foreground/Background C&olors",
+                lambda _checked=False: self._run_color_pair_action("reset_defaults"),
+                "D",
+                action_id="color.default_foreground_background",
+                shortcut_category="Edit",
+            )
+        )
+        m_edit.addSeparator()
+        m_edit.addAction(
+            window._mk_action(
                 "Canvas &Size...",
                 window._on_canvas_resize,
                 action_id="edit.canvas_size",
@@ -692,6 +711,12 @@ class MainWindowMenuBuilderCoordinator:
                     lambda checked=False, path=path: window._open_recent_file(path),
                 )
             )
+
+    def _run_color_pair_action(self, operation: str) -> None:
+        colors = getattr(self._window, "_foreground_background_colors", None)
+        handler = getattr(colors, operation, None)
+        if callable(handler):
+            handler()
 
     def populate_panels_menu(self, menu: QMenu) -> None:
         """Populate panels menu from plugins (kept for View > Panels submenu)."""

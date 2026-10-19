@@ -9,6 +9,7 @@ from typing import Any, cast
 from PySide6.QtCore import QRectF, Qt
 from PySide6.QtGui import QImage, QPainter
 
+from loomstroke.core.appearance.live_styles import style_signature
 from loomstroke.core.canvas_blend_service import CanvasBlendService
 from loomstroke.core.canvas_invalidation import RenderInvalidation
 from loomstroke.core.commands import BlendMode
@@ -21,11 +22,17 @@ from .filter_processor import WgpuFilterProcessor, WgpuFilterResult
 from .filter_raster_context import DEFAULT_FILTER_RASTER_CONTEXT, FilterRasterContext
 from .group_composite_cache import GroupCompositeCache, group_composite_key
 from .group_mask_upload import group_mask_upload_scope
-from .group_region import group_region_view, group_target_region
+from .group_region import document_group_view, group_region_view, group_target_region
+from .layer_style_processor import WgpuLayerStyleProcessor, finish_render_caches
 from .mask_texture_manager import WgpuMaskTextureManager
 from .mask_upload_region import nearest_mask_upload_region
 from .shader_library import WgpuShaderLibrary
-from .target_reuse import allocate_render_target, release_targets_on_error, take_retired_target
+from .style_backdrop import backdrop_keys, backdrop_region, clip_backdrop_scope, style_backdrop
+from .target_reuse import (
+    allocate_render_target,
+    release_targets_on_error,
+    take_retired_target,
+)
 from .texture_manager import WgpuTextureManager
 from .three_d_renderer import Wgpu3DLayerRenderer
 from .transform_processor import WgpuTransformProcessor
@@ -118,6 +125,7 @@ class WgpuCompositor:
         transform_processor: WgpuTransformProcessor | None = None,
         three_d_renderer: Wgpu3DLayerRenderer | None = None,
         vector_renderer: WgpuVectorRenderer | None = None,
+        style_pipeline_store: Any = None,
     ) -> None:
         if (
             filter_processor is not None
@@ -147,7 +155,12 @@ class WgpuCompositor:
         self._screen_space_vector_layer_id: str | None = None
         self._view: WgpuViewParams | None = None
         self._view_inverse: tuple[float, float, float, float, float, float] | None = None
-        self._filter_prefix_renderer = WgpuFilterPrefixRenderer(bundle)
+        self.layer_style_processor = WgpuLayerStyleProcessor(
+            bundle, pipeline_store=style_pipeline_store
+        )
+        self._filter_prefix_renderer = WgpuFilterPrefixRenderer(
+            bundle, style_pipeline_store=self.layer_style_processor.pipeline_store
+        )
 
     @property
     def effect_processor(self) -> WgpuFilterProcessor:
@@ -184,6 +197,7 @@ class WgpuCompositor:
         # instead of canvas pixels.  Degenerate views fall back to canvas.
         self._view = view if view is not None and view.inverse() is not None else None
         self._view_inverse = self._view.inverse() if self._view is not None else None
+        self._style_backdrop_keys = backdrop_keys(scene)
         self._encoder_scratch = EncoderScratchTargets()
         self._filter_prefix_renderer.begin_frame()
         composite_width, composite_height = self._composite_size(scene)
@@ -231,8 +245,7 @@ class WgpuCompositor:
             )
             self._queue.submit([encoder.finish()])
         except Exception:
-            self._group_composite_cache.finish(False)
-            self.filter_processor.finish_frame(active_layer_ids, submitted=False)
+            finish_render_caches(self, active_layer_ids, submitted=False)
             self._filter_prefix_renderer.finish_frame()
             if pass_result is not None:
                 for owned_target in pass_result.owned_targets:
@@ -240,8 +253,7 @@ class WgpuCompositor:
             raise
         finally:
             self._encoder_scratch = None
-        self._group_composite_cache.finish(True)
-        self.filter_processor.finish_frame(active_layer_ids, submitted=True)
+        finish_render_caches(self, active_layer_ids, submitted=True)
 
         self._retire_targets(
             [
@@ -289,6 +301,22 @@ class WgpuCompositor:
     def _create_retained_target(self, width: int, height: int) -> WgpuRenderTargetHandle:
         return allocate_render_target(self._bundle, width, height)
 
+    def _blend_pipeline_for(self, layers: tuple[Any, ...]) -> Any:
+        def normal_stack(nodes: Any, depth: int) -> bool:
+            if depth > self.MAX_WGPU_GROUP_DEPTH:
+                return False
+            return all(
+                self._blend_mode_name(getattr(node, "blend_mode", "normal"))
+                in ("normal", "pass_through")
+                and normal_stack(getattr(node, "children", ()), depth + 1)
+                for node in nodes
+            )
+
+        specialized = getattr(self.shader_library, "_normal_layer_blend_pipeline", None)
+        if callable(specialized) and normal_stack(layers, 0):
+            return specialized()
+        return self.shader_library.get_layer_blend_pipeline()
+
     def _draw_layer_passes(
         self,
         encoder: Any,
@@ -319,8 +347,8 @@ class WgpuCompositor:
             layers_drawn += draw_result.layers_drawn
 
         try:
-            pipeline = self.shader_library.get_layer_blend_pipeline()
             layer_list = tuple(draw_layers)
+            pipeline = self._blend_pipeline_for(layer_list)
             index = 0
             if self._view is not None:
                 prefix = self._filter_prefix_renderer.render(
@@ -544,14 +572,15 @@ class WgpuCompositor:
             self._destroy_target(run_initial)
             raise
 
-        run_result = self._draw_layer_passes(
-            encoder,
-            run_initial,
-            scene,
-            members,
-            invalidation,
-            depth=depth + 1,
-        )
+        with clip_backdrop_scope(self, members, current_target):
+            run_result = self._draw_layer_passes(
+                encoder,
+                run_initial,
+                scene,
+                members,
+                invalidation,
+                depth=depth + 1,
+            )
         owned_targets = list(run_result.owned_targets)
         if run_result.layers_drawn <= 0:
             return _TargetDrawResult(
@@ -618,6 +647,8 @@ class WgpuCompositor:
 
         composite_width, composite_height = self._composite_size(scene)
         region = group_target_region(self, scene, children)
+        if style_signature(layer):
+            region = (0, 0, scene.width, scene.height)
         cache_key = group_composite_key(
             self, layer, scene, region, depth=depth, mask_upload_policy=nearest_mask_upload_region
         )
@@ -631,7 +662,10 @@ class WgpuCompositor:
             except Exception:
                 self._destroy_target(group_initial)
                 raise
-            with group_region_view(self, region, scene):
+            with (
+                document_group_view(self, bool(style_signature(layer))),
+                group_region_view(self, region, scene),
+            ):
                 group_result = self._draw_layer_passes(
                     encoder, group_initial, scene, children, invalidation, depth=depth + 1
                 )
@@ -666,12 +700,18 @@ class WgpuCompositor:
             if spare_target is None:
                 spare_target = self.create_target(composite_width, composite_height)
                 owned_targets.append(spare_target)
+            backdrop = style_backdrop(self, scene, layer, current_target, group=True)
+            group_texture, padding = self.layer_style_processor.apply(
+                encoder, group_result.current_target, layer, premultiplied=True, backdrop=backdrop
+            )
+            if backdrop is not None:
+                region = (0, 0, composite_width, composite_height)
             bind_group = self.shader_library.create_blend_bind_group(
                 current_target,
-                group_result.current_target,
+                group_texture,
                 canvas_size=(float(composite_width), float(composite_height)),
-                dest_origin=(float(region[0]), float(region[1])),
-                dest_size=(float(region[2]), float(region[3])),
+                dest_origin=(float(region[0] - padding), float(region[1] - padding)),
+                dest_size=(float(region[2] + 2 * padding), float(region[3] + 2 * padding)),
                 uv_origin=(0.0, 0.0),
                 uv_size=(1.0, 1.0),
                 opacity=self._clamped_opacity(getattr(layer, "opacity", 1.0)),
@@ -680,9 +720,12 @@ class WgpuCompositor:
                 mask_nearest=bool(getattr(layer, "mask_nearest", False)),
                 atop_composite=bool(getattr(layer, "wgpu_atop_composite", False)),
                 # Group results are composite render targets: premultiplied.
-                src_premultiplied=True,
+                src_premultiplied=group_texture is group_result.current_target,
                 # Group results live in the composite target's own space.
-                **dict(self._view_blend_kwargs(scene), src_in_target_space=True),
+                **dict(
+                    self._view_blend_kwargs(scene),
+                    src_in_target_space=backdrop is not None or not bool(style_signature(layer)),
+                ),
             )
             self._draw_blend_pass(encoder, pipeline, spare_target, bind_group)
             if self._encoder_scratch is not None:
@@ -728,6 +771,33 @@ class WgpuCompositor:
         # works on the LOGICAL size; the origin shifts the placement.
         prescale = max(1, int(getattr(layer, "vector_raster_scale", 1) or 1))
         raster_origin = tuple(getattr(layer, "vector_raster_origin", (0, 0)) or (0, 0))
+        backdrop = style_backdrop(
+            self, scene, layer, current_target, scale=prescale, origin=raster_origin
+        )
+        source_texture, style_padding = self.layer_style_processor.apply(
+            encoder,
+            source_texture,
+            layer,
+            scale=prescale,
+            backdrop=backdrop,
+            reference=(
+                (
+                    int(raster_origin[0]) * prescale,
+                    int(raster_origin[1]) * prescale,
+                    scene.width * prescale,
+                    scene.height * prescale,
+                )
+                if layer.layer_type in {"text", "vector"}
+                else None
+            ),
+            dirty=(
+                self.texture_manager._layer_upload_rect(
+                    layer, invalidation.dirty_rect, (texture.width, texture.height)
+                )
+                if report.partial and invalidation is not None and source_texture is texture
+                else None
+            ),
+        )
         logical_width = -(-source_texture.width // prescale)
         logical_height = -(-source_texture.height // prescale)
         region = self.transform_processor.compute_draw_region(
@@ -736,9 +806,14 @@ class WgpuCompositor:
             canvas_height=scene.height,
             texture_width=logical_width,
             texture_height=logical_height,
-            extra_offset=(int(raster_origin[0]), int(raster_origin[1])),
+            extra_offset=(
+                int(raster_origin[0]) - style_padding // prescale,
+                int(raster_origin[1]) - style_padding // prescale,
+            ),
         )
-        if bool(getattr(layer, "mask_nearest", False)):
+        if backdrop is not None:
+            region = backdrop_region(backdrop)
+        if bool(getattr(layer, "mask_nearest", False)) and backdrop is None:
             mask_texture, mask_report = self._sync_mask_texture(
                 layer, region=region, canvas_size=(scene.width, scene.height)
             )
@@ -780,8 +855,8 @@ class WgpuCompositor:
             atop_composite=bool(getattr(layer, "wgpu_atop_composite", False)),
             # Raster textures stay canvas-resolution; placement math runs in
             # canvas space via the view inverse.
-            src_prescaled=prescale > 1,
-            **self._view_blend_kwargs(scene, src_in_target_space=False),
+            src_prescaled=prescale > 1 and backdrop is None,
+            **self._view_blend_kwargs(scene, src_in_target_space=backdrop is not None),
         )
         self._draw_blend_pass(encoder, pipeline, spare_target, bind_group)
         return _TargetDrawResult(
@@ -1240,7 +1315,10 @@ class WgpuCompositor:
             return getattr(layer, "scene_3d", None) is not None
         if layer_type not in _RASTER_LIKE_LAYER_TYPES:
             return False
-        return getattr(layer, "image", None) is not None
+        return (
+            getattr(layer, "image", None) is not None
+            or getattr(layer, "native_display", None) is not None
+        )
 
     @staticmethod
     def _is_vector_direct_drawable(layer: Any) -> bool:
@@ -1597,6 +1675,8 @@ class WgpuCompositor:
             )
             return group_image
         image = getattr(layer, "image", None)
+        if image is None and getattr(layer, "native_display", None) is not None:
+            image = layer.native_display.image
         if image is None or image.isNull():
             return None
         return self._apply_cpu_filters(
@@ -1805,6 +1885,7 @@ class WgpuCompositor:
     _apply_cpu_effects = _apply_cpu_filters
 
     def release(self) -> None:
+        self.layer_style_processor.release()
         self._group_composite_cache.release()
         release_bindings = getattr(self.shader_library, "release_blend_bindings", None)
         if callable(release_bindings):

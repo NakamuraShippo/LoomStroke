@@ -353,7 +353,10 @@ class MainWindowDocumentWorkflowCoordinator:
                 if layer_ids:
                     self._window._set_document_present(True)
                     self._window.statusBar().showMessage(
-                        f"Imported {path.name} ({len(layer_ids)} layers)", 3000
+                        self._window._ts("Imported {name} ({count} layers)").format(
+                            name=path.name, count=len(layer_ids)
+                        ),
+                        3000,
                     )
                     return True
 
@@ -378,7 +381,9 @@ class MainWindowDocumentWorkflowCoordinator:
             )
             return False
         self._window._set_document_present(True)
-        self._window.statusBar().showMessage(f"Imported {path.name}", 3000)
+        self._window.statusBar().showMessage(
+            self._window._ts("Imported {name}").format(name=path.name), 3000
+        )
         return True
 
     def open_recent_file(self, path: str) -> None:

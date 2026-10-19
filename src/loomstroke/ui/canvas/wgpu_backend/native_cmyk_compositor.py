@@ -3,20 +3,31 @@
 from __future__ import annotations
 
 import struct
+from collections.abc import Iterable
+from copy import copy
+from typing import Any
 
 import numpy as np
 from PySide6.QtCore import QRect
 
+from loomstroke.core.appearance.live_styles import layer_styles
 from loomstroke.core.mask_coverage import mask_coverage_alpha8
+from loomstroke.core.native_cmyk.affine import placement, sample
 from loomstroke.core.native_cmyk.pixels import NativeCmykPixels
 
 from .device_manager import WgpuDeviceManager
+from .native_cmyk_batch import NativeCmykBatch
 from .native_cmyk_shader import NativeCmykShader
+from .style_backdrop import needs_backdrop
 
 
 class NativeCmykCompositor:
     TILE = 256
     MAX_DEPTH = 16
+    _rect: QRect
+    _count: int
+    _allocated_bytes: int
+    _encoder: Any
 
     def __init__(self, device_manager=None):
         self.manager = device_manager or WgpuDeviceManager()
@@ -26,38 +37,19 @@ class NativeCmykCompositor:
         self.pipeline = self.bundle.device.create_compute_pipeline(
             layout="auto", compute={"module": shader, "entry_point": "main"}
         )
+        self._bind_layout = self.pipeline.get_bind_group_layout(0)
+        self._batch = NativeCmykBatch(self.bundle)
+        self._buffers = []
+        self._encoder = None
+        self._style_processor = None
+        self.capture_id: str | None = None
+        self._captured = None
 
     def tile(self, scene, rect: QRect) -> NativeCmykPixels:
-        rect = rect.intersected(QRect(0, 0, scene.width, scene.height))
-        if rect.isEmpty() or rect.width() > self.TILE or rect.height() > self.TILE:
-            raise ValueError("Native composite requires a bounded canvas tile")
-        native = next(
-            (layer.native_cmyk for layer in scene.flat_layers if layer.native_cmyk is not None),
-            None,
-        )
-        if native is None:
-            raise ValueError("No native CMYK layers")
-        dtype = native.inks.dtype
-        self._buffers = []
-        self._allocated_bytes = 0
-        self._rect = rect
-        self._count = rect.width() * rect.height()
-        self._encoder = self.bundle.device.create_command_encoder()
-        try:
-            zero = self._buffer(np.zeros((self._count, 5), np.float32))
-            result = self._stack(scene.layers, zero, 0)
-            self.bundle.queue.submit([self._encoder.finish()])
-            data = np.frombuffer(self.bundle.queue.read_buffer(result), np.float32).reshape(
-                rect.height(), rect.width(), 5
-            )
-            maximum = np.iinfo(dtype).max
-            values = np.rint(np.clip(data, 0, 1) * maximum).astype(dtype)
-            return NativeCmykPixels(values[:, :, :4], values[:, :, 4], native.profile)
-        finally:
-            for buffer in self._buffers:
-                buffer.destroy()
-            self._buffers = []
-            self._encoder = None
+        return self.tiles(scene, (rect,))[0]
+
+    def tiles(self, scene: Any, rects: Iterable[QRect]) -> list[NativeCmykPixels]:
+        return self._batch.render(self, scene, rects)
 
     def _stack(self, nodes, destination, depth, inherited_opacity=1.0):
         if depth > self.MAX_DEPTH:
@@ -80,44 +72,81 @@ class NativeCmykCompositor:
                 and mode == "pass_through"
                 and (node.layer_mask is None or not node.mask_enabled)
                 and not clipped
+                and not layer_styles(node).enabled()
             ):
                 destination = self._stack(
                     node.children, destination, depth + 1, inherited_opacity * node.opacity
                 )
                 continue
-            source = self._source(node, depth)
+            source = self._source(node, depth, destination)
             if source is None:
                 continue
             for clip in clipped:
                 if clip.visible:
-                    clip_source = self._source(clip, depth)
+                    background = source
+                    if needs_backdrop(clip):
+                        carrier = copy(node)
+                        carrier.blend_mode = "normal"
+                        carrier.layer_mask = None
+                        background = self._blend(source, destination, carrier, 1.0)
+                    clip_source = self._source(clip, depth, background)
                     if clip_source is not None:
                         source = self._blend(clip_source, source, clip, clip.opacity, atop=True)
             destination = self._blend(source, destination, node, node.opacity * inherited_opacity)
         return destination
 
-    def _source(self, node, depth):
+    def _source(self, node: Any, depth: int, backdrop: Any = None) -> Any:
+        if layer_styles(node).enabled():
+            from .native_layer_style_processor import (  # noqa: PLC0415
+                NativeLayerStyleProcessor,
+            )
+
+            if self._style_processor is None:
+                self._style_processor = NativeLayerStyleProcessor(self.bundle)
+            source = self._style_processor.render(self, node, depth, backdrop)
+        else:
+            source = self._unstyled_source(node, depth)
+        if source is not None and node.id == self.capture_id:
+            isolated = copy(node)
+            isolated.blend_mode = "normal"
+            zero = self._buffer(np.zeros((self._count, 5), np.float32))
+            captured = self._blend(source, zero, isolated, node.opacity)
+            self._captured = (captured, QRect(self._rect))
+        return source
+
+    def _unstyled_source(self, node: Any, depth: int) -> Any:
         if node.layer_type == "group":
+            child_depth = (
+                depth if getattr(node, "vector_kind", "") == "native-cmyk-paints" else depth + 1
+            )
             return self._stack(
-                node.children, self._buffer(np.zeros((self._count, 5), np.float32)), depth + 1
+                node.children, self._buffer(np.zeros((self._count, 5), np.float32)), child_depth
             )
         native = node.native_cmyk
         if native is None:
             raise ValueError("A CMYK composite contains a non-native colour layer")
-        transform = node.transform
-        if transform is not None and (
-            transform.scale_x != 1
-            or transform.scale_y != 1
-            or transform.rotation != 0
-            or transform.tx != 0
-            or transform.ty != 0
+        affine = placement(node)
+        if (affine.a, affine.b, affine.c, affine.d) != (1, 0, 0, 1) or (
+            affine.tx != round(affine.tx) or affine.ty != round(affine.ty)
         ):
-            raise ValueError("CMYK transforms must be rasterized")
-        packed = np.zeros((self._rect.height(), self._rect.width(), 5), np.float32)
-        bounds = QRect(node.offset_x, node.offset_y, native.inks.shape[1], native.inks.shape[0])
+            pixels = sample(native, self._rect, affine)
+            if (
+                not np.any(pixels.alpha)
+                and getattr(node.blend_mode, "value", node.blend_mode) == "normal"
+            ):
+                return None
+            maximum = np.iinfo(native.inks.dtype).max
+            return self._buffer(
+                np.concatenate(
+                    (pixels.inks / maximum, pixels.alpha[:, :, None] / maximum), axis=2
+                ).astype(np.float32)
+            )
+        packed = None
+        offset_x, offset_y = round(affine.tx), round(affine.ty)
+        bounds = QRect(offset_x, offset_y, native.inks.shape[1], native.inks.shape[0])
         intersection = self._rect.intersected(bounds)
         if not intersection.isEmpty():
-            sx, sy = intersection.x() - node.offset_x, intersection.y() - node.offset_y
+            sx, sy = intersection.x() - offset_x, intersection.y() - offset_y
             dx, dy = intersection.x() - self._rect.x(), intersection.y() - self._rect.y()
             width, height = intersection.width(), intersection.height()
             maximum = np.iinfo(native.inks.dtype).max
@@ -127,8 +156,16 @@ class NativeCmykCompositor:
             else:
                 inks = native.inks[sy : sy + height, sx : sx + width]
                 alpha = native.alpha[sy : sy + height, sx : sx + width]
+            mode = getattr(node.blend_mode, "value", node.blend_mode)
+            if mode == "normal" and not np.any(alpha):
+                return None
+            packed = np.zeros((self._rect.height(), self._rect.width(), 5), np.float32)
             packed[dy : dy + height, dx : dx + width, :4] = inks / maximum
             packed[dy : dy + height, dx : dx + width, 4] = alpha / maximum
+        if packed is None:
+            if getattr(node.blend_mode, "value", node.blend_mode) == "normal":
+                return None
+            packed = np.zeros((self._rect.height(), self._rect.width(), 5), np.float32)
         return self._buffer(packed)
 
     def _blend(self, source, destination, node, opacity, *, atop=False):
@@ -161,13 +198,13 @@ class NativeCmykCompositor:
             self._rect.y(),
             0,
         )
-        uniform = self.bundle.device.create_buffer_with_data(
-            data=parameters, usage=self.bundle.wgpu.BufferUsage.UNIFORM
+        uniform = self._batch.upload(
+            np.frombuffer(parameters, np.uint8), self.bundle.wgpu.BufferUsage.UNIFORM
         )
         self._buffers.append(uniform)
         bindings = [source, destination, output, mask_buffer, uniform]
         group = self.bundle.device.create_bind_group(
-            layout=self.pipeline.get_bind_group_layout(0),
+            layout=self._bind_layout,
             entries=[
                 {"binding": i, "resource": {"buffer": buffer}} for i, buffer in enumerate(bindings)
             ],
@@ -184,13 +221,14 @@ class NativeCmykCompositor:
         if self._allocated_bytes > 128 * 1024 * 1024:
             raise ValueError("CMYK tile exceeds the GPU working-memory budget")
         flags = self.bundle.wgpu.BufferUsage
-        buffer = self.bundle.device.create_buffer_with_data(
-            data=np.ascontiguousarray(data), usage=flags.STORAGE | flags.COPY_SRC
-        )
+        buffer = self._batch.upload(data, flags.STORAGE | flags.COPY_SRC)
         self._buffers.append(buffer)
         return buffer
 
     def release(self):
+        self._batch.release()
+        self._style_processor = None
+        self._bind_layout = None
         self.pipeline = None
         if self._owns_manager:
             self.manager.release()

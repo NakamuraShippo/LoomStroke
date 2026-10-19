@@ -3,18 +3,29 @@
 from __future__ import annotations
 
 from dataclasses import replace
+from typing import Any
 
 import numpy as np
+from numpy.typing import NDArray
 from PySide6.QtCore import QRect, Qt
 from PySide6.QtGui import QColor, QImage, QPainter
 
 from loomstroke.core.channels.channel_pixel_policy import ChannelPixelPolicy
 from loomstroke.core.commands import StampBrushCommand
 
+from .tool_space import document_bounds, validate_coverage_size
+
 
 class NativeCmykStrokeCoverage:
     @staticmethod
-    def render(canvas, command, layer, *, erase=False):
+    def render(
+        canvas: Any,
+        command: Any,
+        layer: Any,
+        *,
+        erase: bool = False,
+        tips: dict[Any, Any] | None = None,
+    ) -> tuple[QRect, NDArray[Any], NDArray[Any]] | None:
         points = (
             canvas._stamp_points(command)
             if isinstance(command, StampBrushCommand)
@@ -43,16 +54,22 @@ class NativeCmykStrokeCoverage:
         )
         if bounds is None:
             return None
-        bounds = bounds.intersected(
-            QRect(layer.offset_x, layer.offset_y, layer.image.width(), layer.image.height())
-        )
+        bounds = bounds.intersected(document_bounds(layer))
+        selection, selection_bounds = canvas._selection_clip_state()
+        if selection_bounds is not None:
+            bounds = bounds.intersected(selection_bounds)
         if bounds.isEmpty():
             return None
+        validate_coverage_size(bounds)
         mask = QImage(bounds.size(), QImage.Format.Format_ARGB32_Premultiplied)
         mask.fill(Qt.GlobalColor.transparent)
         if isinstance(command, StampBrushCommand):
             view = np.zeros((bounds.height(), bounds.width(), 4), np.uint8)
-            cache = {}
+            cache = {
+                size: tip * command.brush.opacity * command.brush.flow
+                for (path, hardness, size), tip in (tips or {}).items()
+                if path == command.tip_path and hardness == command.brush.hardness
+            }
             for point in points:
                 canvas._stroke_stamp_brush().apply_stamp_point(
                     view=view,
@@ -90,9 +107,26 @@ class NativeCmykStrokeCoverage:
                     painter, points, command.brush, QColor("black"), offset=bounds
                 )
             painter.end()
-        selection, _ = canvas._selection_clip_state()
         if selection is not None:
             canvas._apply_selection_mask_to_image(mask, selection.copy(bounds))
+        return NativeCmykStrokeCoverage._coverage_result(mask, bounds)
+
+    @staticmethod
+    def _coverage_result(
+        mask: QImage,
+        bounds: QRect,
+    ) -> tuple[QRect, NDArray[Any], NDArray[Any]] | None:
         neutral = ChannelPixelPolicy.pixels(mask, straight=True)
         coverage = neutral[:, :, 3].copy()
-        return bounds, coverage, 255 - neutral[:, :, 0]
+        rows = np.flatnonzero(np.any(coverage, axis=1))
+        columns = np.flatnonzero(np.any(coverage, axis=0))
+        if not len(rows) or not len(columns):
+            return None
+        x, y = int(columns[0]), int(rows[0])
+        right, bottom = int(columns[-1]) + 1, int(rows[-1]) + 1
+        bounds = QRect(bounds.x() + x, bounds.y() + y, right - x, bottom - y)
+        return (
+            bounds,
+            coverage[y:bottom, x:right].copy(),
+            (255 - neutral[y:bottom, x:right, 0]).copy(),
+        )

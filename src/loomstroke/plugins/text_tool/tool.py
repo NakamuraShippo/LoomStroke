@@ -1891,6 +1891,8 @@ class TextTool:
         layer_id: str | None,
         target_hit: _TextHit | None,
     ) -> bool:
+        from .native_color import new_ink_text_object  # noqa: PLC0415
+
         self._finish_inline_edit(commit=True)
         if not self._edit_lifecycle.can_edit_layer(layer_id):
             return False
@@ -1909,7 +1911,11 @@ class TextTool:
             word_wrap=word_wrap,
             layer_id=layer_id,
             object_id=object_id,
-            object_ref=(clone_text_for_edit(target_hit.obj) if target_hit is not None else None),
+            object_ref=(
+                clone_text_for_edit(target_hit.obj)
+                if target_hit is not None
+                else new_ink_text_object(self, initial_text, rect, word_wrap)
+            ),
             rotation_deg=(
                 self._payload_rotation(target_hit.payload) if target_hit is not None else 0.0
             ),

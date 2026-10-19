@@ -36,23 +36,29 @@ class FilterPenSnapshot:
     geometry: RasterEditGeometry | None = None
     ancestor_signature: tuple = ()
     clip_masks: tuple[QImage, ...] = ()
+    native: Any = None
+    native_identity: int | None = None
+    native_version: int | None = None
 
     @classmethod
     def capture(cls, canvas: Any) -> FilterPenSnapshot:
         layer = canvas._get_active_layer()
         if layer is None or layer.layer_type != "raster" or layer.image is None:
             raise ValueError("Filter Pen requires a raster layer.")
-        if getattr(layer, "native_cmyk", None) is not None:
-            raise ValueError("Filter Pen requires RGB mode.")
+        native = getattr(layer, "native_cmyk", None)
         if layer.locked or layer.mask_edit_mode:
             raise ValueError("Filter Pen cannot paint a locked layer or a layer mask.")
         transform = getattr(layer, "transform", LayerTransform.identity())
         ancestors = tuple(raster_ancestors(canvas, layer))
         placed = transform.scale_x != 1.0 or transform.scale_y != 1.0 or transform.rotation != 0.0
+        if native is not None:
+            placed = (
+                placed or transform.tx != round(transform.tx) or transform.ty != round(transform.ty)
+            )
         content = any(
             (node.metadata or {}).get(PART_KEY, {}).get("role") == "content" for node in ancestors
         )
-        if placed and not content:
+        if placed and not content and native is None:
             raise ValueError("Rasterize the layer transform before using Filter Pen.")
         if panel_stroke_reason(canvas):
             raise ValueError("The panel drawing target is not editable.")
@@ -83,9 +89,12 @@ class FilterPenSnapshot:
                 for node in ancestors
                 if node.mask_enabled and node.layer_mask is not None
             ),
+            native=native.snapshot() if native is not None else None,
+            native_identity=id(native) if native is not None else None,
+            native_version=native.version if native is not None else None,
         )
 
-    def valid(self, canvas: Any, version: int) -> bool:
+    def valid(self, canvas: Any, version: int, *, native_version: int | None = None) -> bool:
         layer = canvas._get_active_layer()
         try:
             ancestors_match = (
@@ -103,6 +112,15 @@ class FilterPenSnapshot:
             and not layer.mask_edit_mode
             and layer.alpha_lock == self.alpha_lock
             and layer.texture_version == version
+            and (
+                (id(layer.native_cmyk) if getattr(layer, "native_cmyk", None) is not None else None)
+                == self.native_identity
+            )
+            and (
+                self.native is None
+                or layer.native_cmyk.version
+                == (self.native_version if native_version is None else native_version)
+            )
             and getattr(layer, "_preview_transform", None) is None
             and ancestors_match
             and (

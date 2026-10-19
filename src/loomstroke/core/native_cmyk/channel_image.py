@@ -9,6 +9,9 @@ from loomstroke.core.channels.channel_pixel_policy import ChannelPixelPolicy
 class NativeCmykChannelImage:
     @staticmethod
     def image(native, channel, max_extent=None):
+        if hasattr(native, "region"):
+            height, width = native.inks.shape[:2]
+            native = native.region((0, 0, width, height))
         index = {"c": 0, "m": 1, "y": 2, "k": 3}.get(channel)
         values = native.alpha if channel == "transparency" else native.inks[:, :, index]
         if max_extent is not None:

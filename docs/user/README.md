@@ -1,6 +1,11 @@
 # LoomStroke User Guide — Full Translation Package
 
-This package contains static HTML pages for all 12 language choices from the uploaded guide. `index.html` is a language landing page.
+This package contains static HTML pages for all 12 language choices. Open
+[index.html](index.html) to choose a language, or [index_ja.html](index_ja.html)
+for the Japanese guide. The detailed illustrated manual is in `manual/`.
+
+For setup, see [INSTALL_AND_RUN.md](INSTALL_AND_RUN.md). For launch commands
+and troubleshooting, see [RUN_INSTRUCTIONS.md](RUN_INSTRUCTIONS.md).
 
 Files:
 - `index_ja.html`
@@ -17,4 +22,5 @@ Files:
 - `index_ru.html`
 - `ROADMAP.md` — Japanese user-facing development roadmap
 
-`index_dynamic_original.html` preserves the original uploaded dynamic page for reference. See `TRANSLATION_QA.md` for the residual-check report.
+Translation audit reports and the original reference copy are maintained in the
+development repository and are not part of this distribution.

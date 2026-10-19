@@ -12,6 +12,7 @@ from typing import Any
 from loomstroke.core.japanese_text.character_geometry import geometry_values
 from loomstroke.core.japanese_text.frame_flow import flow_values, payload_flow
 from loomstroke.core.japanese_text.typography import normalize_typography
+from loomstroke.core.native_cmyk.vector_paints import object_paints, without_paint
 
 from .character_style_controller import selection_color, selection_font_values
 from .common import TextToolSettings, extract_text_payload
@@ -66,7 +67,7 @@ def replace_text_property(obj: Any, key: str, value: Any) -> Any:
         layout[key] = value
     if key == "word_wrap":
         _replace_wrap_properties(payload, value)
-    if payload == original:
+    if payload == original and not (key == "color_rgba" and "text" in object_paints(obj)):
         return obj
     payload["updated_at"] = time.time()
     meta = deepcopy(obj.meta)
@@ -74,6 +75,7 @@ def replace_text_property(obj: Any, key: str, value: Any) -> Any:
     style = obj.style
     if key == "color_rgba":
         style = replace(style, stroke_color=tuple(value[:3]))
+        meta = without_paint(meta, "text")
     return replace(obj, meta=meta, style=style)
 
 

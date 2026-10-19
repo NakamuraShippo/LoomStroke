@@ -2,11 +2,19 @@
 
 from __future__ import annotations
 
+from typing import Any
+
 import numpy as np
+from numpy.typing import NDArray
 from PySide6.QtCore import QRect
 
-from loomstroke.core.fill.flood_fill import _apply_gap_close, _bounds_from_spans, _scanline_fill
+from loomstroke.core.fill.flood_fill import (
+    _apply_gap_close,
+    _bounds_from_spans,
+    _scanline_fill,
+)
 
+from .affine import placement
 from .buffer import NativeCmykBuffer
 from .color_transform import CmykColorTransform
 from .convert_command import ConvertNativeCmykCommand
@@ -14,6 +22,7 @@ from .patch_command import NativeCmykPatchCommand
 from .pixel_operations import NativeCmykPixelOperations
 from .pixels import NativeCmykPixels
 from .stroke_coverage import NativeCmykStrokeCoverage
+from .tool_space import is_placed, local_paint, selection_local
 
 
 class CanvasNativeCmykService:
@@ -21,6 +30,7 @@ class CanvasNativeCmykService:
         self.canvas = canvas
         self._foreground: tuple[int, int, int, int] | None = None
         self.selected = (0, 1, 2, 3)
+        self._color_cache: dict[tuple, tuple[int, int, int, int]] = {}
 
     def profile(self) -> bytes | None:
         for layer in self.canvas._layer_tree().flatten_layers():
@@ -58,7 +68,9 @@ class CanvasNativeCmykService:
         self._foreground = tuple(int(value) for value in np.rint(values * 65535 / 100))
 
     def convert_document(self, pages, profile, *, bits=8, source_profile=None):
-        from .document_convert_command import DocumentCmykConvertCommand  # noqa: PLC0415
+        from .document_convert_command import (  # noqa: PLC0415
+            DocumentCmykConvertCommand,
+        )
 
         command = DocumentCmykConvertCommand(profile, bits=bits, source_profile=source_profile)
         return pages._book_history.execute(command)
@@ -80,9 +92,16 @@ class CanvasNativeCmykService:
             return tuple((v * maximum + 32767) // 65535 for v in self._foreground)
         values = np.zeros((1, 1, 4), np.uint8)
         values[0, 0] = (*np.rint(tuple(rgb)[:3]).astype(np.uint8), 255)
+        key = (layer.native_cmyk.profile, layer.native_cmyk.inks.dtype.str, tuple(values[0, 0, :3]))
+        if key in self._color_cache:
+            return self._color_cache[key]
         inks, _ = CmykColorTransform.from_rgb(values, layer.native_cmyk.profile)
         scale = 257 if layer.native_cmyk.inks.dtype == np.uint16 else 1
-        return tuple(int(v) * scale for v in inks[0, 0])
+        result = tuple(int(v) * scale for v in inks[0, 0])
+        if len(self._color_cache) >= 128:
+            del self._color_cache[next(iter(self._color_cache))]
+        self._color_cache[key] = result
+        return result
 
     def initialize_layer(self, layer) -> None:
         profile = self.profile()
@@ -108,11 +127,13 @@ class CanvasNativeCmykService:
             return False
         if getattr(command.brush, "color_mixing", 0.0) != 0:
             return False
+        base = np.asarray(self.color(command.brush.color, layer), dtype=np.uint32)
+        command._native_ink_color = tuple(int(value) for value in base)
+        command._native_plates = tuple(self.selected)
         rendered = NativeCmykStrokeCoverage.render(self.canvas, command, layer, erase=erase)
         if rendered is None:
             return False
         bounds, coverage, strength = rendered
-        base = np.asarray(self.color(command.brush.color, layer), dtype=np.uint32)
         color = ((base * strength[:, :, None] + 127) // 255).astype(layer.native_cmyk.inks.dtype)
         return self._commit(layer, bounds, color, coverage, erase=erase, label="CMYK Stroke")
 
@@ -126,6 +147,12 @@ class CanvasNativeCmykService:
             return False
         native = layer.native_cmyk
         x, y = command.seed_x - layer.offset_x, command.seed_y - layer.offset_y
+        if is_placed(layer):
+            inverse = placement(layer).inverse()
+            if inverse is None:
+                return False
+            sx, sy = inverse.apply(command.seed_x + 0.5, command.seed_y + 0.5)
+            x, y = int(np.floor(sx)), int(np.floor(sy))
         height, width = native.alpha.shape
         if not (0 <= x < width and 0 <= y < height):
             return False
@@ -148,11 +175,34 @@ class CanvasNativeCmykService:
         coverage = np.zeros((rh, rw), np.uint8)
         for sy, sx0, sx1 in spans:
             coverage[sy - ry, sx0 - rx : sx1 - rx + 1] = command.fill_rgba[3]
-        bounds = QRect(rx + layer.offset_x, ry + layer.offset_y, rw, rh)
-        coverage = self._selection_coverage(bounds, coverage)
-        return self._commit(
-            layer, bounds, self.color(command.fill_rgba, layer), coverage, label="CMYK Fill"
+        bounds = QRect(rx, ry, rw, rh)
+        from loomstroke.core.fill.commands_fill import (  # noqa: PLC0415
+            PatternFillCommand,
         )
+
+        color: Any
+        if isinstance(command, PatternFillCommand):
+            pattern = command._scaled_pattern()
+            ph, pw = pattern.shape[:2]
+            ox, oy = command._pattern_offset
+            yy, xx = np.mgrid[ry : ry + rh, rx : rx + rw]
+            if is_placed(layer):
+                mapping = placement(layer)
+                xx, yy = (
+                    mapping.a * (xx + 0.5) + mapping.b * (yy + 0.5) + mapping.tx,
+                    mapping.c * (xx + 0.5) + mapping.d * (yy + 0.5) + mapping.ty,
+                )
+                xx, yy = np.floor(xx).astype(np.int64), np.floor(yy).astype(np.int64)
+            else:
+                xx, yy = xx + layer.offset_x, yy + layer.offset_y
+            rgba = pattern[(yy + oy) % ph, (xx + ox) % pw]
+            inks, alpha = CmykColorTransform.from_rgb(rgba, native.profile)
+            color = inks.astype(native.inks.dtype) * scale
+            coverage = ((coverage.astype(np.uint16) * alpha + 127) // 255).astype(np.uint8)
+        else:
+            color = self.color(command.fill_rgba, layer)
+        coverage = selection_local(self.canvas, layer, bounds, coverage)
+        return self._commit_local(layer, bounds, color, coverage, label="CMYK Fill")
 
     def gradient(self, command) -> bool:
         layer = self._target(command._layer_id)
@@ -162,6 +212,12 @@ class CanvasNativeCmykService:
         yy, xx = np.mgrid[:height, :width]
         dx, dy = command._x1 - command._x0, command._y1 - command._y0
         px, py = xx + layer.offset_x - command._x0, yy + layer.offset_y - command._y0
+        if is_placed(layer):
+            mapping = placement(layer)
+            px, py = (
+                mapping.a * (xx + 0.5) + mapping.b * (yy + 0.5) + mapping.tx - command._x0,
+                mapping.c * (xx + 0.5) + mapping.d * (yy + 0.5) + mapping.ty - command._y0,
+            )
         if command._gradient_type == "radial":
             amount = np.hypot(px, py) / max(np.hypot(dx, dy), 1e-10)
         elif command._gradient_type == "linear":
@@ -187,9 +243,13 @@ class CanvasNativeCmykService:
         color = np.stack([np.interp(amount, positions, samples[:, c]) for c in range(4)], axis=2)
         color = np.rint(color).astype(layer.native_cmyk.inks.dtype)
         coverage = np.rint(np.interp(amount, positions, samples[:, 4])).astype(np.uint8)
-        bounds = QRect(layer.offset_x, layer.offset_y, width, height)
-        return self._commit(
-            layer, bounds, color, self._selection_coverage(bounds, coverage), label="CMYK Gradient"
+        bounds = QRect(0, 0, width, height)
+        return self._commit_local(
+            layer,
+            bounds,
+            color,
+            selection_local(self.canvas, layer, bounds, coverage),
+            label="CMYK Gradient",
         )
 
     def invert(self) -> bool:
@@ -200,8 +260,10 @@ class CanvasNativeCmykService:
         before = layer.native_cmyk.region((0, 0, width, height))
         inks = before.inks.copy()
         maximum = np.iinfo(inks.dtype).max
-        coverage = self._selection_coverage(
-            QRect(layer.offset_x, layer.offset_y, width, height),
+        coverage = selection_local(
+            self.canvas,
+            layer,
+            QRect(0, 0, width, height),
             np.full((height, width), 255, np.uint8),
         ).astype(np.uint64)
         for channel in self.selected:
@@ -223,14 +285,6 @@ class CanvasNativeCmykService:
             or self.canvas._mask_edit_flag
         ):
             return None
-        if (
-            layer.transform.scale_x != 1
-            or layer.transform.scale_y != 1
-            or layer.transform.rotation != 0
-            or layer.transform.tx != 0
-            or layer.transform.ty != 0
-        ):
-            return None
         return layer
 
     def _selection_coverage(self, bounds, coverage):
@@ -246,14 +300,22 @@ class CanvasNativeCmykService:
         )
 
     def _commit(self, layer, bounds, color, coverage, *, erase=False, label):
+        rect, color, coverage = local_paint(layer, bounds, color, coverage)
+        return self._commit_local(layer, rect, color, coverage, erase=erase, label=label)
+
+    def _commit_local(
+        self,
+        layer: Any,
+        bounds: QRect,
+        color: Any,
+        coverage: NDArray[Any],
+        *,
+        erase: bool = False,
+        label: str,
+    ) -> bool:
         if not np.any(coverage):
             return False
-        rect = (
-            bounds.x() - layer.offset_x,
-            bounds.y() - layer.offset_y,
-            bounds.width(),
-            bounds.height(),
-        )
+        rect = bounds.x(), bounds.y(), bounds.width(), bounds.height()
         before = layer.native_cmyk.region(rect)
         after = NativeCmykPixelOperations.paint(
             before, color, coverage, self.selected, erase=erase, alpha_lock=layer.alpha_lock
@@ -262,7 +324,14 @@ class CanvasNativeCmykService:
             return False
         return self._submit(layer, rect, before, after, label)
 
-    def _submit(self, layer, rect, before, after, label):
+    def _submit(
+        self,
+        layer: Any,
+        rect: tuple[int, int, int, int],
+        before: NativeCmykPixels,
+        after: NativeCmykPixels,
+        label: str,
+    ) -> bool:
         command = NativeCmykPatchCommand(layer.id, rect, before, after)
         if not command.apply(self.canvas):
             return False

@@ -1,6 +1,9 @@
 """Japanese labels for selection, fill, vector erasing, and brush dynamics."""
 
 PAINTING_TOOL_JA = {
+    "VectorPathEditTool": {
+        "Edit Width on Canvas": "キャンバス上で線幅を編集",
+    },
     "BasicSelectionRectTool": {
         "Polygon": "多角形",
         "Unable to apply selection.": "選択範囲を反映できませんでした。",
@@ -71,6 +74,16 @@ PAINTING_TOOL_JA = {
         "The document changed. The vector erase was cancelled.": "文書が変更されたため、ベクター消去を取り消しました。",  # noqa: E501
     },
     "VectorTools": {
+        "Drag to change width; Alt-click a stop to remove it; Esc cancels.": (
+            "ドラッグで線幅を変更、Altクリックで調整点を削除、Escで取り消します。"
+        ),
+        "Select an unlocked single-path stroke with at most 64 width samples.": (
+            "ロックされていない単一パスの線を選択してください。線幅サンプルは64点まで対応します。"
+        ),
+        "This stroke already has 64 width stops.": "線幅の調整点は64点までです。",
+        "The width edit could not be applied. The original stroke was preserved.": (
+            "線幅の変更を反映できませんでした。元の線を保持しました。"
+        ),
         "Edit Width Stop": "線幅の調整点を編集",
         "Reset Width Profile": "線幅の調整をリセット",
         "Position along stroke (%)": "線上の位置 (%)",

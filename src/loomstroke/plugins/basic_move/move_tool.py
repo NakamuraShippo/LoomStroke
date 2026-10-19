@@ -372,7 +372,10 @@ class BasicMoveTool:
             self._clear_last_click_state()
 
     def on_pointer_hover(self, pt: StrokePoint) -> None:
-        from ...plugins.sdk.cursors import apply_hover_cursor, cursor_for_handle  # noqa: PLC0415
+        from ...plugins.sdk.cursors import (  # noqa: PLC0415
+            apply_hover_cursor,
+            cursor_for_handle,
+        )
 
         cursor = None
         layer_handle = self._hit_test_layer_transform(pt)
@@ -1109,7 +1112,9 @@ class BasicMoveTool:
         try:
             from PySide6.QtGui import QImage  # noqa: PLC0415
 
-            from loomstroke.core.mask_coverage import mask_coverage_alpha8  # noqa: PLC0415
+            from loomstroke.core.mask_coverage import (  # noqa: PLC0415
+                mask_coverage_alpha8,
+            )
         except Exception:
             return mask
         if not isinstance(mask, QImage) or mask.isNull():
@@ -2382,6 +2387,11 @@ class BasicMoveTool:
         canvas = getattr(self.host_api, "canvas", None)
         if canvas is None:
             return
+        from ...core.native_cmyk.selection_preview import update  # noqa: PLC0415
+
+        if update(canvas, self._selection_payload, self._selection_matrix):
+            self._recompose_canvas()
+            return
         width, height = UpdateSelectionMaskCommand._canvas_size(canvas)
         if width <= 0 or height <= 0:
             return
@@ -2635,6 +2645,7 @@ class BasicMoveTool:
             return
         canvas._selection_preview_image = None
         canvas._selection_preview_bounds = None
+        canvas._native_selection_preview = None
         self._recompose_canvas()
 
     def _selection_exists(self) -> bool:

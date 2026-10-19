@@ -4,6 +4,8 @@ from collections import OrderedDict
 from dataclasses import dataclass
 from types import SimpleNamespace
 
+from loomstroke.core.appearance.live_styles import style_signature
+
 from .types import WgpuRenderTargetHandle
 
 
@@ -121,6 +123,7 @@ def group_composite_key(compositor, layer, scene, region, *, depth=0, mask_uploa
         mask = getattr(node, "layer_mask", None)
         return (
             node.id,
+            style_signature(node),
             getattr(node, "texture_version", 0),
             bool(getattr(node, "visible", True)),
             float(getattr(node, "opacity", 1)),

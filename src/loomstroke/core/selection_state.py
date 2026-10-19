@@ -48,6 +48,7 @@ class SelectionStateService:
         self._canvas._selection_mask_full = None
         self._canvas._selection_preview_image = None
         self._canvas._selection_preview_bounds = None
+        self._canvas._native_selection_preview = None
 
     def get_selection(self) -> Selection | None:
         """Get current selection if available."""
@@ -79,15 +80,19 @@ class SelectionStateService:
 
     def get_selection_snapshot(self) -> SelectionPayload | None:
         """Return a snapshot of the current selection (image + mask)."""
-        mask, bounds = self.selection_clip_state()
-        if mask is None or bounds is None or bounds.isEmpty():
-            return None
         if not self._canvas._layers or self._canvas._active_index >= len(self._canvas._layers):
             return None
         # The active layer itself: indexing the root list would copy from the
         # ancestor group when a nested layer is active.
         layer = self._canvas._get_active_layer()
         if layer is None or layer.image is None or layer.image.isNull():
+            return None
+        if getattr(layer, "native_cmyk", None) is not None:
+            from .native_cmyk.selection_pixels import capture  # noqa: PLC0415
+
+            return capture(self._canvas, layer)
+        mask, bounds = self.selection_clip_state()
+        if mask is None or bounds is None or bounds.isEmpty():
             return None
         image = layer.image.copy(bounds)
         mask_patch = mask.copy(bounds)
@@ -182,6 +187,8 @@ class SelectionStateService:
 
     def draw_selection_overlay(self, painter: QPainter) -> None:
         """Draw the current selection preview image onto *painter*."""
+        if getattr(self._canvas, "_native_selection_preview", None) is not None:
+            return
         preview_image = getattr(self._canvas, "_selection_preview_image", None)
         preview_bounds = getattr(self._canvas, "_selection_preview_bounds", None)
         if preview_image is None or preview_bounds is None:

@@ -13,6 +13,7 @@ from PySide6.QtWidgets import QApplication
 
 from loomstroke.core.canvas_invalidation import RenderInvalidation
 
+from .bitmap_style_preparation import BitmapStylePreparation
 from .canvas_presenter import CanvasPresenterDiagnostics
 from .channels_bitmap_renderer import ChannelsBitmapRenderer
 from .native_cmyk_projection import NativeCmykProjection
@@ -34,6 +35,7 @@ class WgpuBitmapPresenter:
         self._last_document_scene: RenderSceneSnapshot | None = None
         self._frame_preview_export_scene: RenderSceneSnapshot | None = None
         self._channels_renderer: ChannelsBitmapRenderer | None = None
+        self._style_preparation: BitmapStylePreparation | None = None
         self.diagnostics = CanvasPresenterDiagnostics(
             backend_name=self.backend_name,
             adapter_name=self._adapter_name(),
@@ -43,6 +45,12 @@ class WgpuBitmapPresenter:
     @property
     def last_warnings(self) -> tuple[str, ...]:
         return self._last_warnings
+
+    def enable_async_display(self, repaint: Any) -> None:
+        compositor = getattr(self._renderer, "_compositor", None)
+        if compositor is not None and self._style_preparation is None:
+            self._style_preparation = BitmapStylePreparation(compositor, repaint)
+            self._native_cmyk_repaint = repaint
 
     def render_frame(
         self,
@@ -59,12 +67,21 @@ class WgpuBitmapPresenter:
         if previous_view != scene.channel_view:
             readback_rect = None
         self._last_document_scene = scene
-        projection = getattr(self, "_native_cmyk_projection", None)
-        if projection is None and any(layer.native_cmyk is not None for layer in scene.flat_layers):
-            projection = NativeCmykProjection(getattr(self._renderer, "device_manager", None))
-            self._native_cmyk_projection = projection
-        if projection is not None:
-            scene = projection.scene(scene)
+        scene = NativeCmykProjection.prepare(self, scene)
+        if self._style_preparation is not None and scene.channel_view is None:
+            prepared = self._style_preparation.scene(
+                scene,
+                has_frame=(
+                    self._last_image is not None
+                    and (invalidation is None or invalidation.gpu_resources.is_empty)
+                ),
+            )
+            if prepared is None:
+                return self.cached_frame(device_pixel_ratio=device_pixel_ratio)
+            scene = prepared
+            # Finishing preparation can affect pixels beyond the last edit ROI.
+            if self._style_preparation.full_readback:
+                readback_rect = None
         if scene.channel_view is not None:
             if self._channels_renderer is None:
                 self._channels_renderer = ChannelsBitmapRenderer(self._renderer)
@@ -168,6 +185,12 @@ class WgpuBitmapPresenter:
         return self._last_pixmap
 
     def readback_for_export(self) -> QImage | None:
+        if self._style_preparation is not None and self._last_document_scene is not None:
+            from .panel_frame_preview_export import without_frame_preview  # noqa: PLC0415
+
+            scene = replace(without_frame_preview(self._last_document_scene), channel_view=None)
+            result = self._renderer.render_scene(scene)
+            return self._result_to_qimage(result.rgba, result.width, result.height)
         if self._frame_preview_export_scene is not None:
             from .panel_frame_preview_export import without_frame_preview  # noqa: PLC0415
 
@@ -192,6 +215,9 @@ class WgpuBitmapPresenter:
         return self._last_image.copy() if self._last_image is not None else None
 
     def release(self) -> None:
+        if self._style_preparation is not None:
+            self._style_preparation.release()
+            self._style_preparation = None
         projection = getattr(self, "_native_cmyk_projection", None)
         if projection is not None:
             projection.release()

@@ -249,6 +249,10 @@ class ScreenSpaceOverlayManager:
         """
         if getattr(layer, "layer_type", None) != "vector":
             return False
+        from loomstroke.core.appearance.live_styles import style_signature  # noqa: PLC0415
+
+        if style_signature(layer):
+            return False
         if not getattr(layer, "visible", True):
             return False
         if getattr(layer, "layer_mask", None) is not None and getattr(layer, "mask_enabled", True):

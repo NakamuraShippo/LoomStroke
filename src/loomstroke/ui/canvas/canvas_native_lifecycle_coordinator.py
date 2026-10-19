@@ -15,6 +15,9 @@ from PySide6.QtWidgets import QApplication, QWidget
 
 from loomstroke.ui._dock_safe import is_valid as _is_qt_object_valid
 
+from .native_surface_visibility import native_surface_obscured
+from .native_window_capture import capture_composed_native_surface
+
 logger = logging.getLogger(__name__)
 
 
@@ -69,7 +72,11 @@ class NativeVisualProbeCoordinator:
     def schedule(self) -> None:
         if not self._host.native_surface_active:
             return
-        if self._host._native_visual_probe_pending or self._host._native_visual_probe_passed:
+        if (
+            self._host._native_visual_probe_pending
+            or self._host._native_visual_probe_passed
+            or self._host._native_visual_probe_running
+        ):
             return
         self._host._native_visual_probe_pending = True
         self._timer_single_shot(0, self._host._run_deferred_native_visual_probe)
@@ -106,7 +113,9 @@ class NativeVisualProbeCoordinator:
                 self._not_ready_reason,
                 self._transient_mismatch_reason,
             }:
-                if self._retry_or_fallback(reason, retry_limit=self._deferred_retries):
+                if self._defer_obscured_probe(reason) or self._retry_or_fallback(
+                    reason, retry_limit=self._deferred_retries
+                ):
                     return
             else:
                 self._host._activate_legacy_fallback(reason)
@@ -114,8 +123,33 @@ class NativeVisualProbeCoordinator:
         self._host._native_visual_probe_retry_count = 0
         self._host._request_native_present(force_full_recompose=True)
 
+    def _defer_obscured_probe(self, reason: str) -> bool:
+        if reason != self._not_ready_reason or not native_surface_obscured(
+            self._host._native_surface
+        ):
+            return False
+        # Foreign pixels cannot diagnose our surface. Leave the failure
+        # budget intact and validate when the desktop becomes visible.
+        self._host._native_visual_probe_pending = True
+        self._timer_single_shot(250, self._host._run_deferred_native_visual_probe)
+        return True
+
     def run_probe_body(self, presenter: Any) -> str | None:
         if self._host._native_visual_probe_running:
+            return self._not_ready_reason
+        if getattr(self._host, "_last_native_visual_probe_status", "") == "deferred" and (
+            native_surface_obscured(self._host._native_surface)
+        ):
+            # The desktop still belongs to another app. Poll visibility only;
+            # repeated activation and GPU/capture work would disturb its use.
+            self.record_visual_probe(
+                presenter,
+                status="deferred",
+                reason=self._not_ready_reason,
+                capture_supported=getattr(
+                    self._host, "_native_live_surface_capture_supported", False
+                ),
+            )
             return self._not_ready_reason
         self._host._native_visual_probe_running = True
         self._host._native_scene_presented_after_probe = False
@@ -195,18 +229,14 @@ class NativeVisualProbeCoordinator:
                 QApplication.processEvents()
             capture = self._host._capture_native_surface_image()
             window_capture = self._host._capture_native_surface_window_image()
-            matching_capture = next(
-                (
-                    candidate
-                    for candidate in (capture, window_capture)
-                    if candidate is not None
-                    and not candidate.isNull()
-                    and candidate.width() >= 16
-                    and candidate.height() >= 16
-                    and self._image_matches_native_smoke_frame(candidate)
-                ),
-                None,
+            obscured = native_surface_obscured(getattr(self._host, "_native_surface", None))
+            matching_capture = self._matching_smoke_capture(
+                (window_capture,) if obscured else (capture, window_capture)
             )
+            if matching_capture is None:
+                matching_capture = self._matching_smoke_capture(
+                    (capture_composed_native_surface(getattr(self._host, "_native_surface", None)),)
+                )
             if matching_capture is not None:
                 capture = matching_capture
                 self._host._native_visual_probe_passed = True
@@ -217,6 +247,14 @@ class NativeVisualProbeCoordinator:
                     capture_supported=True,
                 )
                 return None
+            if obscured:
+                self.record_visual_probe(
+                    presenter,
+                    status="deferred",
+                    reason=self._not_ready_reason,
+                    capture_supported=capture is not None and not capture.isNull(),
+                )
+                return self._not_ready_reason
         if capture is None or capture.isNull():
             reason = "live native surface capture unsupported"
             self.record_visual_probe(
@@ -243,6 +281,20 @@ class NativeVisualProbeCoordinator:
             capture_supported=True,
         )
         return reason
+
+    def _matching_smoke_capture(self, captures: tuple[QImage | None, ...]) -> QImage | None:
+        return next(
+            (
+                candidate
+                for candidate in captures
+                if candidate is not None
+                and not candidate.isNull()
+                and candidate.width() >= 16
+                and candidate.height() >= 16
+                and self._image_matches_native_smoke_frame(candidate)
+            ),
+            None,
+        )
 
     def record_visual_probe(
         self,

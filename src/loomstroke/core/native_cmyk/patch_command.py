@@ -10,6 +10,7 @@ from PySide6.QtGui import QPainter
 from loomstroke.core.channels.channel_pixel_policy import ChannelPixelPolicy
 from loomstroke.core.command_types import Command, DirtyRegion
 
+from .affine import document_rect, placement
 from .pixels import NativeCmykPixels
 
 
@@ -55,12 +56,15 @@ class NativeCmykPatchCommand(Command):
         painter.end()
         layer.texture_version += 1
         x, y, width, height = self.rect
-        self._dirty_region = DirtyRegion(x + layer.offset_x, y + layer.offset_y, width, height)
+        changed = document_rect(QRect(x, y, width, height), placement(layer))
+        self._dirty_region = DirtyRegion(
+            changed.x(), changed.y(), changed.width(), changed.height()
+        )
         self._executed = executed
         canvas._emit_layer_content_changed(
             layer,
-            QRect(self._dirty_region.x, self._dirty_region.y, width, height),
+            changed,
             {"command": "native_cmyk_patch"},
         )
-        canvas._recompose_region(QRect(self._dirty_region.x, self._dirty_region.y, width, height))
+        canvas._recompose_region(changed)
         return True

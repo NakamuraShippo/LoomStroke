@@ -2,13 +2,15 @@
 
 from PySide6.QtWidgets import QCheckBox, QDoubleSpinBox, QGridLayout, QLabel, QWidget
 
+from loomstroke.core.native_cmyk.color_descriptor import from_ink_percentages, without_inks
 from loomstroke.ui.translations import TranslationBinder, translate_with_fallback
 
 
 class NativeCmykForegroundControls(QWidget):
-    def __init__(self, service_provider, parent=None):
+    def __init__(self, service_provider, parent=None, *, host_provider=None):
         super().__init__(parent)
         self._provider = service_provider
+        self._host_provider = host_provider
         self._refreshing = False
         self._translations = TranslationBinder(
             lambda text: translate_with_fallback("NativeCmyk", text)
@@ -43,9 +45,21 @@ class NativeCmykForegroundControls(QWidget):
         if service is not None:
             if not self.enabled.isChecked() and self.sender() is not self.enabled:
                 self.enabled.setChecked(True)
-            service.set_foreground(
+            percentages = (
                 tuple(spin.value() for spin in self.values) if self.enabled.isChecked() else None
             )
+            host = self._host_provider() if self._host_provider is not None else None
+            setter = getattr(host, "set_active_color", None)
+            if callable(setter):
+                current = host.get_active_color()
+                color = (
+                    from_ink_percentages(percentages, service.profile(), current)
+                    if percentages is not None
+                    else without_inks(current)
+                )
+                setter(color, source="channels:foreground")
+            else:
+                service.set_foreground(percentages)
 
     def refresh(self):
         service = self._service()

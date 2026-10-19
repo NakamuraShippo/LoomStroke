@@ -34,10 +34,16 @@ __pycache__/
 /benchmarks/
 /scripts/
 /tools/
+/src/tools/
 /artifacts/
 /experiments/
 /telemetry/
 /docs/dev/
+/docs/user/translation_coverage.csv
+/docs/user/translation_qa.csv
+/docs/user/TRANSLATION_QA.md
+/docs/user/TRANSLATION_QA.txt
+/docs/user/index_dynamic_original.html
 /.agents/
 /.claude/
 /.codex/

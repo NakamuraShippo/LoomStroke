@@ -3,12 +3,15 @@
 from __future__ import annotations
 
 import math
+from copy import deepcopy
 from dataclasses import dataclass
 from typing import Any, Literal
 
+from .relief_style_parameters import clean_lights, clean_profile
+
 __all__ = ["AppearanceParam", "ParamKind"]
 
-ParamKind = Literal["float", "int", "bool", "color", "enum", "point"]
+ParamKind = Literal["float", "int", "bool", "color", "enum", "point", "lights", "curve"]
 
 
 @dataclass(frozen=True, slots=True)
@@ -38,7 +41,16 @@ class AppearanceParam:
             return (value, None) if value in self.choices else (self.default, "param_choice")
         if self.kind == "color":
             return self._color(value)
-        return self._point(value)
+        return self._structured(value)
+
+    def _structured(self, value: Any) -> tuple[Any, str | None]:
+        if self.kind == "point":
+            return self._point(value)
+        try:
+            clean = clean_lights(value) if self.kind == "lights" else clean_profile(value)
+            return clean, None
+        except (ValueError, TypeError, OverflowError):
+            return deepcopy(self.default), "param_type"
 
     def _number(self, value: Any) -> tuple[Any, str | None]:
         if isinstance(value, bool) or not isinstance(value, (int, float)):

@@ -6,16 +6,25 @@ import copy
 import logging
 import math
 from dataclasses import replace
-from typing import Any
+from typing import Any, cast
 
 from PySide6.QtCore import QRect
 
 from .canvas_render_invalidation_service import CanvasRenderInvalidationService
 from .commands import StampBrushCommand, _load_tip_mask
 from .dab_variation import DabVariation
+from .native_cmyk.stroke_image import NativeStrokeImage, commit_native_image
+from .native_cmyk.tool_space import clip_replay_region
 from .pen_taper_model import TaperStrokePoint, taper_scale
 from .recontour.preimage import TILE, check_size
-from .recontour.raster import command_bounds, crop, paste, render
+from .recontour.raster import (
+    command_bounds,
+    crop,
+    paste,
+    render,
+    stroke_pixel_bytes,
+    submit_live_stroke,
+)
 from .recontour.session import RasterStrokeSession
 
 logger = logging.getLogger(__name__)
@@ -157,10 +166,12 @@ class PenTaperSession(RasterStrokeSession):
                     if bounds is not None:
                         region = region.united(bounds) if not region.isEmpty() else QRect(bounds)
             if not region.isEmpty():
-                clipped = canvas._apply_selection_clip(region)
+                clipped = clip_replay_region(canvas, self.layer, region)
                 if clipped is not None:
                     region = clipped
-                    check_size(region)
+                    check_size(
+                        region, bytes_per_pixel=stroke_pixel_bytes(self.layer, mask=self.mask)
+                    )
                     commands = [
                         cmd
                         for _lane, cmd in final
@@ -212,12 +223,7 @@ class PenTaperSession(RasterStrokeSession):
             cmd.points = [replace(point, width_scale=1.0) for point in cmd.points]
             if record is not None:
                 record.capture_before(canvas, cmd)
-            submit = (
-                canvas._submit_stamp_brush
-                if isinstance(cmd, StampBrushCommand)
-                else canvas._submit_paint
-            )
-            applied = bool(submit(cmd))
+            applied = submit_live_stroke(canvas, cmd)
             if record is not None:
                 record.capture_after(canvas, lane, cmd, applied)
         return True
@@ -230,6 +236,16 @@ class PenTaperSession(RasterStrokeSession):
         layer = self.layer
         previous = crop(layer, region, mask=self.mask)
         if previous == candidate:
+            return
+        if isinstance(candidate, NativeStrokeImage):
+            commit_native_image(
+                canvas,
+                layer,
+                region,
+                cast(NativeStrokeImage, previous),
+                candidate,
+                "CMYK Pen Taper",
+            )
             return
         metadata = {"command": "pen_taper"}
         if self.mask:

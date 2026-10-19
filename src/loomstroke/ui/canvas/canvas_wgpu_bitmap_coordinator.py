@@ -42,6 +42,11 @@ class CanvasWidgetWgpuBitmapCoordinator:
             return self._widget._wgpu_bitmap_presenter
         try:
             self._widget._wgpu_bitmap_presenter = self._presenter_factory()
+            enable_async = getattr(
+                self._widget._wgpu_bitmap_presenter, "enable_async_display", None
+            )
+            if callable(enable_async):
+                enable_async(self._request_prepared_frame)
         except self._unavailable_error_type as exc:
             self.disable(f"wgpu unavailable: {exc}")
             return None
@@ -50,6 +55,10 @@ class CanvasWidgetWgpuBitmapCoordinator:
             return None
         logger.info("wgpu bitmap presenter initialized")
         return self._widget._wgpu_bitmap_presenter
+
+    def _request_prepared_frame(self) -> None:
+        self._widget._last_wgpu_bitmap_scene_signature = None
+        self._widget.update()
 
     def disable(self, reason: str, canvas: Any | None = None) -> None:
         self._widget._wgpu_bitmap_disabled_reason = reason

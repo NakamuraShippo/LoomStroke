@@ -11,7 +11,13 @@ from PySide6.QtCore import Qt
 from PySide6.QtWidgets import QDockWidget, QMessageBox, QWidget
 
 from ..plugins.sdk.base import PluginType
-from .panel_ids import canonical_panel_id, panel_title_default, special_panel_note
+from ._dock_safe import is_valid as _is_qt_object_valid
+from .panel_ids import (
+    canonical_panel_id,
+    is_window_menu_panel,
+    panel_title_default,
+    special_panel_note,
+)
 from .translations import translate_with_fallback, translated_literal_domain
 
 logger = logging.getLogger(__name__)
@@ -53,7 +59,7 @@ class MainWindowPanelVisibilityCoordinator:
         """Sync menu action state from dock visibility change."""
         panel_id = canonical_panel_id(panel_id)
         act = self._window._panel_actions.get(panel_id)
-        if act and act.isChecked() != visible:
+        if _is_qt_object_valid(act) and act.isChecked() != visible:
             old = act.blockSignals(True)
             act.setChecked(visible)
             act.blockSignals(old)
@@ -482,6 +488,10 @@ class MainWindowPanelRegistryCoordinator:
         if action is not None and self._window._window_menu is not None:
             with suppress(Exception):
                 self._window._window_menu.removeAction(action)
+            for category_menu in getattr(self._window, "_panel_category_menus", {}).values():
+                with suppress(Exception):
+                    category_menu.removeAction(action)
+                    category_menu.menuAction().setVisible(bool(category_menu.actions()))
         if action is not None:
             with suppress(Exception):
                 action.deleteLater()
@@ -726,8 +736,15 @@ class MainWindowPanelRegistryCoordinator:
                 lambda on, pid=panel_id: self._window._toggle_dock_from_menu(pid, on)
             )
             self._window._panel_actions[panel_id] = act
-            if self._window._window_menu is not None:
-                self._window._window_menu.addAction(act)
+            show_experimental = bool(getattr(self._window, "_show_experimental_menus", False))
+            if self._window._window_menu is not None and is_window_menu_panel(
+                panel_id, show_experimental=show_experimental
+            ):
+                add_panel_menu_action = getattr(self._window, "_add_panel_menu_action", None)
+                if callable(add_panel_menu_action):
+                    add_panel_menu_action(panel_id, act)
+                else:
+                    self._window._window_menu.addAction(act)
         else:
             act.setText(translated_title)
 

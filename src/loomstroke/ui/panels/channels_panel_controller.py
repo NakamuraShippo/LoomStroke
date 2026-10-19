@@ -57,6 +57,7 @@ class ChannelsPanelController(QObject):
                 Events.DOC_LOADED,
                 Events.DOC_CREATED,
                 Events.ACTIVE_PAGE_CHANGED,
+                Events.COLOR_CHANGED,
                 Events.LANGUAGE_CHANGED,
             ):
                 handler = (

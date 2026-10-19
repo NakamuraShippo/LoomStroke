@@ -676,7 +676,10 @@ class BasicSelectionRectTool:
         self._selection_overlay.refresh()
         if self._free_selection_controller.enabled:
             self._free_selection_controller.move([pt])
-        from ...plugins.sdk.cursors import apply_hover_cursor, cursor_for_handle  # noqa: PLC0415
+        from ...plugins.sdk.cursors import (  # noqa: PLC0415
+            apply_hover_cursor,
+            cursor_for_handle,
+        )
 
         cursor = None
         if self._is_vector_mode():
@@ -1100,6 +1103,9 @@ class BasicSelectionRectTool:
         canvas = getattr(self.host_api, "canvas", None)
         if canvas is None:
             return None
+        layer = _resolve_target_layer(canvas, None)
+        if layer is not None and getattr(layer, "native_cmyk", None) is not None:
+            return canvas.get_selection_snapshot()
         width, height = UpdateSelectionMaskCommand._canvas_size(canvas)
         if width <= 0 or height <= 0:
             return None
@@ -2798,6 +2804,17 @@ class BasicSelectionRectTool:
         canvas = getattr(self.host_api, "canvas", None) if self.host_api else None
         if canvas is None:
             return
+        from ...core.native_cmyk.selection_preview import update  # noqa: PLC0415
+
+        if update(
+            canvas,
+            self._transform_payload,
+            self._transform_matrix,
+            binary=self._transform_mask_mode == "binary",
+        ):
+            self._recompose_canvas()
+            self._sync_transform_properties()
+            return
         width, height = UpdateSelectionMaskCommand._canvas_size(canvas)
         if width <= 0 or height <= 0:
             return
@@ -2850,6 +2867,7 @@ class BasicSelectionRectTool:
         canvas = getattr(self.host_api, "canvas", None)
         if canvas is None:
             return
+        canvas._native_selection_preview = None
         canvas._selection_preview_image = None
         canvas._selection_preview_bounds = None
         self._recompose_canvas()

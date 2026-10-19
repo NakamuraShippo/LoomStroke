@@ -23,6 +23,7 @@ from PySide6.QtCore import (
     Qt,
     QTimer,
     Signal,
+    Slot,
 )
 from PySide6.QtGui import (
     QAction,
@@ -1522,6 +1523,7 @@ class MainWindow(QMainWindow):
         """Schedule a deferred collapse check, coalescing multiple requests."""
         _dock_layout_for(self).schedule_collapse_empty_dock_areas()
 
+    @Slot()
     def _clear_collapse_cooldown(self) -> None:
         _dock_layout_for(self).clear_collapse_cooldown()
 
@@ -2767,6 +2769,9 @@ class MainWindow(QMainWindow):
     def _build_window_menu(self) -> None:
         """Build Window menu with panel management."""
         _window_menu_for(self).build_window_menu()
+
+    def _add_panel_menu_action(self, panel_id: str, action: QAction) -> None:
+        _window_menu_for(self).add_panel_action(panel_id, action)
 
     def _create_menu_toggle_action(self, definition: MenuDefinition) -> QAction:
         return _window_menu_for(self).create_menu_toggle_action(definition)

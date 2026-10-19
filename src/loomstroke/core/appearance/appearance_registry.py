@@ -7,6 +7,7 @@ from typing import Any, ClassVar
 from .appearance_issue import AppearanceValidationIssue
 from .appearance_kind import AppearanceFamily, AppearanceKind
 from .appearance_param import AppearanceParam
+from .extended_style_kinds import extended_style_kinds
 
 __all__ = ["AppearanceRegistry"]
 
@@ -104,16 +105,22 @@ def _style_kinds() -> tuple[AppearanceKind, ...]:
 
 class AppearanceRegistry:
     STYLE_RENDER_ORDER: ClassVar[tuple[str, ...]] = (
+        "gaussian_blur",
         "drop_shadow",
         "outer_glow",
         "color_overlay",
+        "gradient_overlay",
+        "inner_shadow",
+        "inner_glow",
+        "three_d",
+        "bevel_emboss",
         "stroke",
     )
     """Fixed composite order (below the source ... above the source), CT-21 §5.3."""
 
     def __init__(self, *, include_adjustments: bool = True) -> None:
         self._kinds: dict[tuple[str, str], AppearanceKind] = {}
-        for kind in (*_fill_kinds(), *_style_kinds()):
+        for kind in (*_fill_kinds(), *_style_kinds(), *extended_style_kinds()):
             self._kinds[(kind.family, kind.kind_id)] = kind
         if include_adjustments:
             for kind in self._adjustment_kinds():

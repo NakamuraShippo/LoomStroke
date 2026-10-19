@@ -12,6 +12,7 @@ from typing import Any, cast
 from PySide6.QtCore import QEvent, QObject, QPoint, QSize, Qt, QTimer, Signal, Slot
 from PySide6.QtGui import (
     QAction,
+    QCloseEvent,
     QColor,
     QContextMenuEvent,
     QHideEvent,
@@ -62,6 +63,7 @@ from loomstroke.ui.panels.pen_property_presentation import PenPropertyPresentati
 from loomstroke.ui.panels.tool_panel_overflow import ToolOverflowMenuController
 from loomstroke.ui.panels.tool_panel_presets import ToolPresetController
 from loomstroke.ui.theme import current_theme_name
+from loomstroke.ui.widgets.foreground_background_swatch import ForegroundBackgroundSwatch
 
 from ..translations import (
     TranslationBinder,
@@ -713,6 +715,7 @@ class FloatingToolToolbarFrame(QWidget):
     _SNAP_MARGIN = 18
     _EDGE_PADDING = 8
     _HANDLE_SIZE = 12
+    _SWATCH_GAP = 4
 
     def __init__(
         self,
@@ -736,6 +739,7 @@ class FloatingToolToolbarFrame(QWidget):
         self._syncing_parent_pos = False
         self._z_order_parent: QWidget | None = None
         self._z_order_sibling_ids: set[int] = set()
+        self._closed_while_visible = False
 
         self.toolbar = ToolToolbar(host_api, self)
         self.toolbar.orientation_changed.connect(self._on_toolbar_orientation_changed)
@@ -747,11 +751,18 @@ class FloatingToolToolbarFrame(QWidget):
         self._drag_handle.setCursor(Qt.CursorShape.SizeAllCursor)
         self._drag_handle.installEventFilter(self)
 
+        self.color_swatch = ForegroundBackgroundSwatch(_TOOL_BUTTON_SIDE, self)
+
         layout = QVBoxLayout(self)
         layout.setContentsMargins(4, 4, 4, 4)
         layout.setSpacing(2)
         layout.addWidget(self._drag_handle)
-        layout.addWidget(self.toolbar)
+        self._body_layout = QBoxLayout(QBoxLayout.Direction.TopToBottom)
+        self._body_layout.setContentsMargins(0, 0, 0, 0)
+        self._body_layout.setSpacing(self._SWATCH_GAP)
+        self._body_layout.addWidget(self.toolbar)
+        self._body_layout.addWidget(self.color_swatch, 0, Qt.AlignmentFlag.AlignCenter)
+        layout.addLayout(self._body_layout)
 
         self.setStyleSheet(
             "QWidget#floatingToolToolbarFrame {"
@@ -795,7 +806,7 @@ class FloatingToolToolbarFrame(QWidget):
             "x": int(self._current_parent_pos().x()),
             "y": int(self._current_parent_pos().y()),
             "horizontal": bool(self._orientation_horizontal),
-            "visible": not self.isHidden(),
+            "visible": not self.isHidden() or self._closed_while_visible,
         }
 
     def restore_state(self, state: Mapping[str, object]) -> bool:
@@ -834,9 +845,17 @@ class FloatingToolToolbarFrame(QWidget):
 
     def showEvent(self, event: QShowEvent) -> None:  # pragma: no cover - Qt event passthrough
         super().showEvent(event)
+        self._closed_while_visible = False
         self._install_z_order_tracking()
         self._schedule_raise_if_visible()
         self._request_underlay_refresh()
+
+    def closeEvent(self, event: QCloseEvent) -> None:
+        # The frame has no user close control; Qt 6 QApplication.quit() closes
+        # this Tool window before MainWindow persists layout state, so keep the
+        # user's visibility choice instead of saving the shutdown-hidden state.
+        self._closed_while_visible = not self.isHidden()
+        super().closeEvent(event)
 
     def hideEvent(self, event: QHideEvent) -> None:  # pragma: no cover - Qt event passthrough
         super().hideEvent(event)
@@ -1034,21 +1053,27 @@ class FloatingToolToolbarFrame(QWidget):
         count = max(len(getattr(self.toolbar, "_buttons", {})), 1)
         spacing = _TOOL_BUTTON_SPACING
         content_length = count * _TOOL_BUTTON_SIDE + max(0, count - 1) * spacing
+        swatch_extent = _TOOL_BUTTON_SIDE + self._SWATCH_GAP
         chrome = self._HANDLE_SIZE + 12
         parent = self.parentWidget()
         max_width = parent.width() - self._EDGE_PADDING * 2 if parent is not None else 640
         max_height = parent.height() - self._EDGE_PADDING * 2 if parent is not None else 480
         if self._orientation_horizontal:
-            width = min(max_width, content_length + 14)
+            self._body_layout.setDirection(QBoxLayout.Direction.LeftToRight)
+            width = min(max_width, content_length + swatch_extent + 14)
             height = min(max_height, _TOOL_BUTTON_SIDE + chrome)
         else:
+            self._body_layout.setDirection(QBoxLayout.Direction.TopToBottom)
             width = min(max_width, _TOOL_BUTTON_SIDE + 14)
-            height = min(max_height, content_length + chrome)
+            height = min(max_height, content_length + swatch_extent + chrome)
         self.setFixedSize(max(width, _TOOL_BUTTON_SIDE), max(height, _TOOL_BUTTON_SIDE))
-        self.toolbar.setFixedSize(
-            self.width() - 8,
-            self.height() - self._HANDLE_SIZE - 10,
-        )
+        toolbar_width = self.width() - 8
+        toolbar_height = self.height() - self._HANDLE_SIZE - 10
+        if self._orientation_horizontal:
+            toolbar_width -= swatch_extent
+        else:
+            toolbar_height -= swatch_extent
+        self.toolbar.setFixedSize(max(toolbar_width, 1), max(toolbar_height, 1))
         self.move(self._clamp_pos(self.pos()))
 
 

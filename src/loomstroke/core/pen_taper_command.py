@@ -5,7 +5,8 @@ from __future__ import annotations
 import logging
 from typing import Any
 
-from .commands import Command, StampBrushCommand
+from .commands import Command
+from .recontour.raster import submit_live_stroke
 
 logger = logging.getLogger(__name__)
 
@@ -36,15 +37,17 @@ class PenTaperCommand(Command):
                 record.capture_before(canvas, cmd)
             except Exception:
                 record.fail()
-        submit = (
-            canvas._submit_stamp_brush
-            if isinstance(cmd, StampBrushCommand)
-            else canvas._submit_paint
+        applied = submit_live_stroke(canvas, cmd)
+        # A zero-width native entry dab has no covered pixels yet. Retain
+        # its captured ink/geometry so releasing a click can render a dot.
+        captured = applied or (
+            getattr(cmd, "_native_ink_color", None) is not None
+            and bool(cmd.points)
+            and all(getattr(point, "width_scale", 1.0) == 0 for point in cmd.points)
         )
-        applied = bool(submit(cmd))
-        self.session.capture_after(canvas, self.lane, cmd, applied)
+        self.session.capture_after(canvas, self.lane, cmd, captured)
         if record is not None:
-            record.capture_after(canvas, self.lane, cmd, applied)
+            record.capture_after(canvas, self.lane, cmd, captured)
         return applied
 
     def revert(self, canvas: Any) -> bool:

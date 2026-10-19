@@ -4,7 +4,8 @@ from __future__ import annotations
 
 from typing import Any
 
-from ..commands import Command, StampBrushCommand
+from ..commands import Command
+from .raster import submit_live_stroke
 from .session import RasterStrokeSession
 
 
@@ -33,12 +34,7 @@ class RecontourCommand(Command):
             except Exception:
                 record.fail()
             # Capture failures must never suppress ordinary drawing.
-            submit = (
-                canvas._submit_stamp_brush
-                if isinstance(self.stroke, StampBrushCommand)
-                else canvas._submit_paint
-            )
-            applied = bool(submit(self.stroke))
+            applied = submit_live_stroke(canvas, self.stroke)
             record.capture_after(canvas, self.lane, self.stroke, applied)
             return applied
         try:

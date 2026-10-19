@@ -2,14 +2,42 @@
 
 from concurrent.futures import ThreadPoolExecutor
 from types import SimpleNamespace
+from typing import Any
 
 import numpy as np
-from PySide6.QtCore import QRect, QTimer
+from PySide6.QtCore import QRect
 from PySide6.QtGui import QImage
 
+from loomstroke.core.appearance.live_styles import document_style_padding, layer_styles
 from loomstroke.core.mask_coverage import mask_coverage_alpha8
+from loomstroke.core.native_cmyk.affine import placement, source_rect
 
+from .native_cmyk_completion import NativeCmykCompletion
+from .native_cmyk_display_frame import NativeCmykDisplayCache
+from .native_cmyk_frame_snapshot import NativeCmykFrameSnapshot, split_regions
 from .wgpu_backend.native_cmyk_compositor import NativeCmykCompositor
+from .wgpu_backend.native_layer_style_processor import NativeLayerStyleProcessor
+
+
+def _freeze_pixels(native: Any, regions: Any, x: int, y: int, affine: Any = None) -> Any:
+    if affine is not None and (affine.a, affine.b, affine.c, affine.d, affine.tx, affine.ty) != (
+        1,
+        0,
+        0,
+        1,
+        x,
+        y,
+    ):
+        regions = tuple(
+            source_rect(native, QRect(*region), affine).translated(x, y).getRect()
+            for region in regions
+        )
+    freeze = getattr(native, "freeze", None)
+    return (
+        freeze(regions, x, y)
+        if freeze is not None
+        else NativeCmykFrameSnapshot(native, regions, x, y)
+    )
 
 
 class NativeCmykProjectionWorker:
@@ -18,43 +46,51 @@ class NativeCmykProjectionWorker:
         self._future = None
         self._key = None
         self._compositor = None
-        self._repaint = repaint
-        self._timer = QTimer()
-        self._timer.setSingleShot(True)
-        self._timer.timeout.connect(self._poll)
+        self._completion = NativeCmykCompletion(repaint)
+        self._display_cache = NativeCmykDisplayCache()
         self._closed = False
         self._mask_cache = {}
         self._coverage_cache = {}
+        self.preparing = False
+        self.materialize_image = False
 
-    def patches(self, scene, rect, key):
+    def patches(self, scene, rect, key, *, allow_older=False, inherit_contexts=()):
         if self._future is not None:
             if not self._future.done():
                 return None
             future, previous = self._future, self._key
             self._future = None
             result = future.result()  # Propagate GPU failures through the presenter.
-            if previous == key:
+            same_context = (
+                allow_older
+                and isinstance(previous, tuple)
+                and isinstance(key, tuple)
+                and previous[0] == key[0]
+            )
+            if previous == key or same_context:
                 return result
-        snapshot = self._snapshot(scene)
-        bounds = (rect.x(), rect.y(), rect.width(), rect.height())
+        regions = split_regions((rect,)) if isinstance(rect, QRect) else split_regions(rect)
+        snapshot = self._snapshot(scene, regions)
+        snapshot.projection_key = key
+        snapshot.inherit_contexts = inherit_contexts
         self._key = key
-        self._future = self._executor.submit(self._render, snapshot, bounds)
-        self._timer.start(10)
+        self._future = self._executor.submit(self._render, snapshot, regions)
+        self._future.add_done_callback(self._completion.notify)
         return None
 
-    def _poll(self):
-        if self._closed or self._future is None:
-            return
-        if self._future.done():
-            self._repaint()
-        else:
-            self._timer.start(10)
-
-    def _snapshot(self, scene):
+    def _snapshot(self, scene, regions=None):
         flat = []
         mask_keys = set()
+        if regions is None:
+            regions = split_regions(((0, 0, scene.width, scene.height),))
 
-        def node(layer):
+        def node(layer, parent_visible=True, halo=0):
+            visible = parent_visible and layer.visible
+            styles = layer_styles(layer)
+            halo += document_style_padding(layer)
+            captured_regions = tuple(
+                QRect(*r).adjusted(-halo, -halo, halo, halo).getRect() for r in regions
+            )
             mask = layer.layer_mask
             if mask is not None:
                 key = (layer.id, mask.cacheKey())
@@ -79,8 +115,19 @@ class NativeCmykProjectionWorker:
                 mask = owned
             result = SimpleNamespace(
                 id=layer.id,
-                native_cmyk=layer.native_cmyk,
+                native_cmyk=(
+                    _freeze_pixels(
+                        layer.native_cmyk,
+                        captured_regions if visible else (),
+                        layer.offset_x,
+                        layer.offset_y,
+                        placement(layer),
+                    )
+                    if layer.native_cmyk is not None
+                    else None
+                ),
                 layer_type=layer.layer_type,
+                vector_kind=getattr(layer, "vector_kind", "draw"),
                 visible=layer.visible,
                 opacity=layer.opacity,
                 blend_mode=layer.blend_mode,
@@ -89,11 +136,13 @@ class NativeCmykProjectionWorker:
                 mask_enabled=layer.mask_enabled,
                 offset_x=layer.offset_x,
                 offset_y=layer.offset_y,
-                transform=layer.transform,
+                transform=getattr(layer, "_preview_transform", None) or layer.transform,
+                _preview_transform=getattr(layer, "_preview_transform", None),
                 children=[],
+                style_stack=styles,
             )
             flat.append(result)
-            result.children = [node(child) for child in layer.children]
+            result.children = [node(child, visible, halo) for child in layer.children]
             return result
 
         layers = [node(layer) for layer in scene.layers]
@@ -105,6 +154,8 @@ class NativeCmykProjectionWorker:
         )
 
     def _render(self, scene, bounds):
+        if self._closed:
+            return []
         mask_keys = set()
         for layer in scene.flat_layers:
             owned = layer.layer_mask
@@ -132,19 +183,45 @@ class NativeCmykProjectionWorker:
         self._coverage_cache = {
             key: value for key, value in self._coverage_cache.items() if key in mask_keys
         }
-        if self._compositor is None:
-            self._compositor = NativeCmykCompositor()
-        x0, y0, width, height = bounds
-        size = self._compositor.TILE
+        self._prepare_gpu(scene)
+        if self._closed:
+            return []
         patches = []
-        for y in range(y0, y0 + height, size):
-            for x in range(x0, x0 + width, size):
-                if self._closed:
-                    return []
-                rect = QRect(x, y, min(size, x0 + width - x), min(size, y0 + height - y))
-                pixels = self._compositor.tile(scene, rect)
-                patches.append(((x, y, rect.width(), rect.height()), pixels.preview()))
-        return patches
+        render_tiles = getattr(self._compositor, "tiles", None)
+        rects = [QRect(*region) for region in bounds]
+        tiles = (
+            render_tiles(scene, rects)
+            if callable(render_tiles)
+            else [self._compositor.tile(scene, rect) for rect in rects]
+        )
+        for region, pixels in zip(bounds, tiles, strict=True):
+            if self._closed:
+                return []
+            patches.append((region, pixels.preview()))
+        frame = self._display_cache.publish(
+            scene.width,
+            scene.height,
+            patches,
+            scene.projection_key,
+            inherit_contexts=getattr(scene, "inherit_contexts", ()),
+        )
+        if self.materialize_image:
+            _ = frame.image
+        return frame
+
+    def _prepare_gpu(self, scene):
+        self.preparing = True
+        try:
+            if self._compositor is None:
+                self._compositor = NativeCmykCompositor()
+            if getattr(self._compositor, "_style_processor", False) is None and any(
+                layer_styles(layer).enabled() for layer in scene.flat_layers
+            ):
+                self._compositor._style_processor = NativeLayerStyleProcessor(
+                    self._compositor.bundle
+                )
+        finally:
+            self.preparing = False
 
     def _release_gpu(self):
         self._coverage_cache.clear()
@@ -154,8 +231,7 @@ class NativeCmykProjectionWorker:
 
     def release(self):
         self._closed = True
-        self._timer.stop()
-        self._repaint = lambda: None
+        self._completion.close()
         self._mask_cache.clear()
         self._executor.submit(self._release_gpu)
         self._executor.shutdown(wait=False)

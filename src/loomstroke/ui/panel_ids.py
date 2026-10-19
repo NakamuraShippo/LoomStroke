@@ -38,6 +38,64 @@ PANEL_TITLE_SOURCE_DEFAULTS: Mapping[str, tuple[str, str]] = {
     "ui.ai_effect_manager": ("AI Effects Manager", "MainWindow"),
 }
 
+# Unfinished panels stay registered (layout restore, programmatic toggles) but
+# are listed in the Window menu only when ``ui/show_experimental_menus`` is on.
+INCOMPLETE_PANEL_IDS: tuple[str, ...] = ("ui.production_control", "ui.canvas_copilot")
+
+# Window menu groups panels into category submenus, in this order. Panels not
+# listed here (e.g. third-party plugin panels) go to ``PANEL_MENU_OTHER_CATEGORY``.
+PANEL_MENU_CATEGORIES: tuple[tuple[str, tuple[str, ...]], ...] = (
+    (
+        "Layers / Pages",
+        (
+            "ui.layers",
+            "ui.preview",
+            "pages_panel",
+            "loomstroke.transform_panel.panel",
+            "loomstroke.effect_panel.panel",
+        ),
+    ),
+    (
+        "Drawing",
+        (
+            "ui.brush_manager",
+            "ui.color",
+            "ui.text_font",
+            "loomstroke.shape_manager.panel",
+            "drawing_assist_panel",
+            "loomstroke.reference_viewer.panel",
+        ),
+    ),
+    (
+        "Comic",
+        (
+            "comic_tools_panel",
+            "comic_assets_panel",
+            "comic_project_panel",
+            "comic_workflow_panel",
+            "links_panel",
+            "actions_panel",
+        ),
+    ),
+    (
+        "AI",
+        (
+            "ui.prompt_editor",
+            "ui.nano_banana",
+            "ui.gptimage2",
+            "ui.comfyui",
+            "ui.gallery",
+            "ui.ai_effect_manager",
+            "ui.sam3_ai_select_candidates",
+            "ui.sam3_ai_select_manga_mask_assistant",
+            "loomstroke.generated_3d_preview.panel",
+            "ui.canvas_copilot",
+            "ui.production_control",
+        ),
+    ),
+)
+PANEL_MENU_OTHER_CATEGORY = "Other"
+
 SPECIAL_PANEL_HANDLING: Mapping[str, str] = {
     "ui.comfyui": "ComfyUI fallback, service binding, and workflow layout handling",
     "ui.gallery": "generation history provider restore handling",
@@ -64,6 +122,27 @@ def panel_lookup_ids(panel_id: str) -> tuple[str, ...]:
 def panel_title_default(panel_id: str) -> tuple[str, str] | None:
     """Return the translated title source default for a panel id or alias."""
     return PANEL_TITLE_SOURCE_DEFAULTS.get(canonical_panel_id(panel_id))
+
+
+def is_window_menu_panel(panel_id: str, *, show_experimental: bool) -> bool:
+    """Return whether the panel's toggle action belongs in the Window menu."""
+    if show_experimental:
+        return True
+    return canonical_panel_id(panel_id) not in INCOMPLETE_PANEL_IDS
+
+
+def panel_menu_categories() -> tuple[str, ...]:
+    """Return Window menu category titles in display order."""
+    return (*(title for title, _ids in PANEL_MENU_CATEGORIES), PANEL_MENU_OTHER_CATEGORY)
+
+
+def panel_menu_category(panel_id: str) -> str:
+    """Return the Window menu category title for a panel id or alias."""
+    canonical_id = canonical_panel_id(panel_id)
+    for title, panel_ids in PANEL_MENU_CATEGORIES:
+        if canonical_id in panel_ids:
+            return title
+    return PANEL_MENU_OTHER_CATEGORY
 
 
 def special_panel_note(panel_id: str) -> str | None:

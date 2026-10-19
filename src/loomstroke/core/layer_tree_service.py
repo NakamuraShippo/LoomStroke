@@ -607,7 +607,11 @@ class LayerCreationService:
             for layer in self._canvas._layer_tree().flatten_layers()
         ):
             native = self._canvas.native_cmyk()
-        if native is not None and native.profile() is not None and kind not in ("raster", "mask"):
+        if (
+            native is not None
+            and native.profile() is not None
+            and kind not in ("raster", "mask", "vector")
+        ):
             raise ValueError("Native CMYK requires raster layers")
         image: QImage | None = None
         if kind != "vector":

@@ -14,7 +14,9 @@ class NativeCmykBuffer:
         self.alpha = snapshot.alpha.copy()
         self.profile = snapshot.profile
         self.version = 0
+        self._projection_identity = object()
         self._dirty = deque(maxlen=64)
+        self._tile_versions: dict[tuple[int, int], int] = {}
         self._lock = RLock()
 
     def snapshot(self) -> NativeCmykPixels:
@@ -43,6 +45,9 @@ class NativeCmykBuffer:
             self.alpha[y : y + height, x : x + width] = pixels.alpha
             self.version += 1
             self._dirty.append((self.version, rect))
+            for ty in range(y // 256, (y + height - 1) // 256 + 1):
+                for tx in range(x // 256, (x + width - 1) // 256 + 1):
+                    self._tile_versions[tx, ty] = self.version
 
     def dirty_since(self, version: int):
         if version == self.version:
@@ -58,4 +63,19 @@ class NativeCmykBuffer:
                 self.inks[y : y + height, x : x + width],
                 self.alpha[y : y + height, x : x + width],
                 self.profile,
+            )
+
+    def dirty_regions_since(self, version: int):
+        """Retain sparse tile progress even after the short exact-rect log expires."""
+        with self._lock:
+            if version < 0:
+                return None
+            recent = self.dirty_since(version)
+            if recent is not None:
+                return recent
+            height, width = self.alpha.shape
+            return tuple(
+                (tx * 256, ty * 256, min(256, width - tx * 256), min(256, height - ty * 256))
+                for (tx, ty), revision in self._tile_versions.items()
+                if revision > version
             )

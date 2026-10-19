@@ -1336,12 +1336,12 @@
         <translation>フィルターを追加</translation>
     </message>
     <message>
-        <source>Layer Effects</source>
-        <translation>レイヤーエフェクト</translation>
+        <source>Layer Blend</source>
+        <translation>レイヤーブレンド</translation>
     </message>
     <message>
-        <source>Layer effects between this layer and layers below</source>
-        <translation>このレイヤーと下のレイヤーとの間に適用するレイヤーエフェクト</translation>
+        <source>How this layer blends with the layers below</source>
+        <translation>このレイヤーと下のレイヤーのブレンド方法</translation>
     </message>
 </context>
 <context>
@@ -1782,7 +1782,7 @@
     </message>
     <message>
         <source>Rotate Canvas 90° C&amp;CW</source>
-        <translation>キャンバスを90°回転(反時計回り)(&amp;C)</translation>
+        <translation>キャンバスを90°回転(反時計回り)(&amp;W)</translation>
     </message>
     <message>
         <source>Rotate Canvas &amp;180°</source>
@@ -6287,6 +6287,10 @@ Use "Edit Filters" to add.</source>
 <context>
     <name>VectorPathEditTool</name>
     <message>
+        <source>Edit Width on Canvas</source>
+        <translation>キャンバス上で線幅を編集</translation>
+    </message>
+    <message>
         <source>Path Edit</source>
         <translation>パス編集</translation>
     </message>
@@ -7835,12 +7839,356 @@ Use "Edit Filters" to add.</source>
 <context>
     <name>AppearancePanel</name>
     <message>
+        <source>Gaussian Blur</source>
+        <translation>ガウスぼかし</translation>
+    </message>
+    <message>
+        <source>Radius</source>
+        <translation>半径</translation>
+    </message>
+    <message>
+        <source>Inner Shadow</source>
+        <translation>シャドウ (内側)</translation>
+    </message>
+    <message>
+        <source>Inner Glow</source>
+        <translation>光彩 (内側)</translation>
+    </message>
+    <message>
+        <source>Gradient Overlay</source>
+        <translation>グラデーションオーバーレイ</translation>
+    </message>
+    <message>
+        <source>Shape</source>
+        <translation>形状</translation>
+    </message>
+    <message>
+        <source>Start color</source>
+        <translation>開始色</translation>
+    </message>
+    <message>
+        <source>End color</source>
+        <translation>終了色</translation>
+    </message>
+    <message>
+        <source>Angle</source>
+        <translation>角度</translation>
+    </message>
+    <message>
+        <source>Scale</source>
+        <translation>スケール</translation>
+    </message>
+    <message>
+        <source>Center X</source>
+        <translation>中心 X</translation>
+    </message>
+    <message>
+        <source>Center Y</source>
+        <translation>中心 Y</translation>
+    </message>
+    <message>
+        <source>linear</source>
+        <translation>線形</translation>
+    </message>
+    <message>
+        <source>radial</source>
+        <translation>放射状</translation>
+    </message>
+    <message>
+        <source>Bevel / Emboss</source>
+        <translation>ベベル / エンボス</translation>
+    </message>
+    <message>
+        <source>Type</source>
+        <translation>種類</translation>
+    </message>
+    <message>
+        <source>Invert</source>
+        <translation>反転</translation>
+    </message>
+    <message>
+        <source>Depth</source>
+        <translation>深さ</translation>
+    </message>
+    <message>
+        <source>Soften</source>
+        <translation>ソフト化</translation>
+    </message>
+    <message>
+        <source>Light direction</source>
+        <translation>光の方向</translation>
+    </message>
+    <message>
+        <source>Elevation</source>
+        <translation>光の高さ</translation>
+    </message>
+    <message>
+        <source>Highlight color</source>
+        <translation>ハイライト色</translation>
+    </message>
+    <message>
+        <source>Shadow color</source>
+        <translation>シャドウ色</translation>
+    </message>
+    <message>
+        <source>inner</source>
+        <translation>内側ベベル</translation>
+    </message>
+    <message>
+        <source>outer</source>
+        <translation>外側ベベル</translation>
+    </message>
+    <message>
+        <source>emboss</source>
+        <translation>エンボス</translation>
+    </message>
+    <message>
+        <source>pillow</source>
+        <translation>ピローエンボス</translation>
+    </message>
+    <message>
+        <source>3D</source>
+        <translation>3D</translation>
+    </message>
+    <message>
+        <source>Ambient</source>
+        <translation>環境光</translation>
+    </message>
+    <message>
+        <source>Diffuse</source>
+        <translation>拡散光</translation>
+    </message>
+    <message>
+        <source>Specular</source>
+        <translation>鏡面反射</translation>
+    </message>
+    <message>
+        <source>Shininess</source>
+        <translation>光沢</translation>
+    </message>
+    <message>
+        <source>Offset X</source>
+        <translation>横方向の距離</translation>
+    </message>
+    <message>
+        <source>Offset Y</source>
+        <translation>縦方向の距離</translation>
+    </message>
+    <message>
+        <source>Blur</source>
+        <translation>ぼかし</translation>
+    </message>
+    <message>
+        <source>Color</source>
+        <translation>色</translation>
+    </message>
+    <message>
+        <source>Opacity</source>
+        <translation>不透明度</translation>
+    </message>
+    <message>
+        <source>Size</source>
+        <translation>サイズ</translation>
+    </message>
+    <message>
         <source>Filter Layer</source>
         <translation>フィルターレイヤー</translation>
     </message>
     <message>
         <source>No filters available</source>
         <translation>利用できるフィルターがありません</translation>
+    </message>
+    <message>
+        <source>Light sources</source>
+        <translation>光源</translation>
+    </message>
+    <message>
+        <source>Add light</source>
+        <translation>光源を追加</translation>
+    </message>
+    <message>
+        <source>Remove light</source>
+        <translation>光源を削除</translation>
+    </message>
+    <message>
+        <source>Light {number}</source>
+        <translation>光源 {number}</translation>
+    </message>
+    <message>
+        <source>Intensity</source>
+        <translation>強さ</translation>
+    </message>
+    <message>
+        <source>Profile</source>
+        <translation>プロファイル</translation>
+    </message>
+    <message>
+        <source>Interpolation</source>
+        <translation>補間</translation>
+    </message>
+    <message>
+        <source>Linear</source>
+        <translation>線形</translation>
+    </message>
+    <message>
+        <source>Smooth</source>
+        <translation>滑らか</translation>
+    </message>
+    <message>
+        <source>Reset profile</source>
+        <translation>曲線をリセット</translation>
+    </message>
+    <message>
+        <source>Remove point</source>
+        <translation>制御点を削除</translation>
+    </message>
+    <message>
+        <source>Input</source>
+        <translation>入力</translation>
+    </message>
+    <message>
+        <source>Output</source>
+        <translation>出力</translation>
+    </message>
+    <message>
+        <source>Click to add a point. Drag to adjust. Right-click or Delete removes an interior point.</source>
+        <translation>クリックで制御点を追加、ドラッグで調整。右クリックまたはDeleteキーで途中の制御点を削除します。</translation>
+    </message>
+    <message>
+        <source>Effects</source>
+        <translation>効果</translation>
+    </message>
+    <message>
+        <source>Presets</source>
+        <translation>プリセット</translation>
+    </message>
+    <message>
+        <source>Blend mode</source>
+        <translation>描画モード</translation>
+    </message>
+    <message>
+        <source>Normal</source>
+        <translation>通常</translation>
+    </message>
+    <message>
+        <source>Darken</source>
+        <translation>比較 (暗)</translation>
+    </message>
+    <message>
+        <source>Multiply</source>
+        <translation>乗算</translation>
+    </message>
+    <message>
+        <source>Color Burn</source>
+        <translation>焼き込みカラー</translation>
+    </message>
+    <message>
+        <source>Linear Burn</source>
+        <translation>焼き込み (リニア)</translation>
+    </message>
+    <message>
+        <source>Darker Color</source>
+        <translation>カラー比較 (暗)</translation>
+    </message>
+    <message>
+        <source>Lighten</source>
+        <translation>比較 (明)</translation>
+    </message>
+    <message>
+        <source>Screen</source>
+        <translation>スクリーン</translation>
+    </message>
+    <message>
+        <source>Color Dodge</source>
+        <translation>覆い焼きカラー</translation>
+    </message>
+    <message>
+        <source>Linear Dodge</source>
+        <translation>覆い焼き (リニア)</translation>
+    </message>
+    <message>
+        <source>Lighter Color</source>
+        <translation>カラー比較 (明)</translation>
+    </message>
+    <message>
+        <source>Overlay</source>
+        <translation>オーバーレイ</translation>
+    </message>
+    <message>
+        <source>Soft Light</source>
+        <translation>ソフトライト</translation>
+    </message>
+    <message>
+        <source>Hard Light</source>
+        <translation>ハードライト</translation>
+    </message>
+    <message>
+        <source>Vivid Light</source>
+        <translation>ビビッドライト</translation>
+    </message>
+    <message>
+        <source>Linear Light</source>
+        <translation>リニアライト</translation>
+    </message>
+    <message>
+        <source>Pin Light</source>
+        <translation>ピンライト</translation>
+    </message>
+    <message>
+        <source>Hard Mix</source>
+        <translation>ハードミックス</translation>
+    </message>
+    <message>
+        <source>Difference</source>
+        <translation>差の絶対値</translation>
+    </message>
+    <message>
+        <source>Exclusion</source>
+        <translation>除外</translation>
+    </message>
+    <message>
+        <source>Subtract</source>
+        <translation>減算</translation>
+    </message>
+    <message>
+        <source>Divide</source>
+        <translation>除算</translation>
+    </message>
+    <message>
+        <source>Apply preset</source>
+        <translation>プリセットを適用</translation>
+    </message>
+    <message>
+        <source>Save new</source>
+        <translation>新規登録</translation>
+    </message>
+    <message>
+        <source>Update preset</source>
+        <translation>内容を更新</translation>
+    </message>
+    <message>
+        <source>Rename</source>
+        <translation>名前を変更</translation>
+    </message>
+    <message>
+        <source>Delete preset</source>
+        <translation>プリセットを削除</translation>
+    </message>
+    <message>
+        <source>Reload</source>
+        <translation>再読込</translation>
+    </message>
+    <message>
+        <source>Preset name</source>
+        <translation>プリセット名</translation>
+    </message>
+    <message>
+        <source>No presets yet. Save the current styles to create one.</source>
+        <translation>プリセットはまだありません。現在のスタイルを登録できます。</translation>
+    </message>
+    <message>
+        <source>Could not access presets. The previous library was kept. Check permissions and reload.</source>
+        <translation>プリセットを読み書きできません。元のライブラリは保持しました。権限を確認して再読込してください。</translation>
     </message>
 </context>
 <context>
@@ -7856,6 +8204,22 @@ Use "Edit Filters" to add.</source>
 </context>
 <context>
     <name>VectorTools</name>
+    <message>
+        <source>Drag to change width; Alt-click a stop to remove it; Esc cancels.</source>
+        <translation>ドラッグで線幅を変更、Altクリックで調整点を削除、Escで取り消します。</translation>
+    </message>
+    <message>
+        <source>Select an unlocked single-path stroke with at most 64 width samples.</source>
+        <translation>ロックされていない単一パスの線を選択してください。線幅サンプルは64点まで対応します。</translation>
+    </message>
+    <message>
+        <source>This stroke already has 64 width stops.</source>
+        <translation>線幅の調整点は64点までです。</translation>
+    </message>
+    <message>
+        <source>The width edit could not be applied. The original stroke was preserved.</source>
+        <translation>線幅の変更を反映できませんでした。元の線を保持しました。</translation>
+    </message>
     <message>
         <source>Edit Width Stop</source>
         <translation>線幅の調整点を編集</translation>

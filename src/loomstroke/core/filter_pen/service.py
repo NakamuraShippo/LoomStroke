@@ -221,7 +221,11 @@ class FilterPenService(QObject):
         self._worker.close()
 
     def _valid(self, session: FilterPenSession) -> bool:
-        return session.snapshot.valid(self.canvas, session.command.expected_version)
+        return session.snapshot.valid(
+            self.canvas,
+            session.command.expected_version,
+            native_version=session.command.expected_native_version,
+        )
 
     def _stale(self) -> None:
         self._timer.stop()
@@ -252,9 +256,9 @@ class FilterPenService(QObject):
         self._flush()
 
     def _flush(self) -> None:
-        self._timer.stop()
         session = self._session
         if session is None:
+            self._timer.stop()
             return
         if not self._valid(session):
             self._stale()
@@ -279,6 +283,7 @@ class FilterPenService(QObject):
                     self.finished.emit()
         except Exception:
             logger.exception("Filter Pen stroke update failed")
+            self._timer.stop()
             self._session = None
             self.failed.emit(
                 "The filter stroke failed. Previously committed pixels were preserved."
@@ -326,9 +331,14 @@ class FilterPenService(QObject):
         if (
             session.pending_points
             or session.pending_dab is not None
-            or (session.filtered is not None and session.pending_tiles)
+            or (session.filtered is not None and (session.pending_tiles or not session.released))
         ):
-            self._timer.start()
+            # Keep the clock during a live stroke: restarting after an empty
+            # commit adds a second 16 ms wait behind the canvas input coalescer.
+            if not self._timer.isActive():
+                self._timer.start()
+        else:
+            self._timer.stop()
 
 
 # Compatibility aliases for existing imports.

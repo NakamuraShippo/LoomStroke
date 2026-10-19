@@ -29,6 +29,8 @@ from loomstroke.core.events import Events
 from loomstroke.plugins.color_manager.color_models import ColorPalette, PaletteSwatch
 from loomstroke.ui.translations import TranslationBinder
 
+from .color_mode_editor import ColorModeEditor
+
 
 class ColorPreviewFrame(QFrame):
     """Displays a single color preview tile."""
@@ -640,6 +642,7 @@ class ColorPanel(QWidget):
         self._saturation = 0.0
         self._value = 1.0
         self._current_descriptor_value = ColorDescriptor((1.0, 1.0, 1.0, 1.0))
+        self._source_descriptor_value = self._current_descriptor_value
 
         self.selector = ColorSelectorWidget()
         self.hex_edit = QLineEdit("#FFFFFF")
@@ -652,6 +655,7 @@ class ColorPanel(QWidget):
         self.add_swatch_button = QPushButton(add_text)
         self._translation_binder.register(self.add_swatch_button.setText, add_text)
         self.palette_view = PaletteGridView()
+        self._source_palettes: list[ColorPalette] = []
 
         self._build_ui()
         self._connect_signals()
@@ -752,7 +756,11 @@ class ColorPanel(QWidget):
 
         controls_wrapper = QHBoxLayout()
         controls_wrapper.addStretch(1)
-        controls_wrapper.addWidget(controls_container)
+        self.mode_editor = ColorModeEditor(controls_container, self)
+        self.mode_editor.colorSelected.connect(
+            lambda descriptor: self._dispatch_descriptor(descriptor, commit=False)
+        )
+        controls_wrapper.addWidget(self.mode_editor)
         controls_wrapper.addStretch(1)
         main_layout.addLayout(controls_wrapper)
 
@@ -806,7 +814,13 @@ class ColorPanel(QWidget):
         self._apply_descriptor(snapshot.current)
 
     def set_palettes(self, palettes: Sequence[ColorPalette]) -> None:
-        self.palette_view.set_palettes(palettes)
+        self._source_palettes = list(palettes)
+        self.palette_view.set_palettes(self.mode_editor.project_palettes(self._source_palettes))
+
+    def set_cmyk_profile(self, profile: bytes | None, *, reset_mode: bool = False) -> None:
+        if self.mode_editor.set_profile(profile, reset_mode=reset_mode):
+            self.set_palettes(self._source_palettes)
+            self._apply_descriptor(self._source_descriptor_value)
 
     def _on_hue_changed(self, hue: float) -> None:
         if self._updating:
@@ -873,6 +887,7 @@ class ColorPanel(QWidget):
         self.paletteSwatchRemoved.emit(swatch_id)
 
     def _dispatch_descriptor(self, descriptor: ColorDescriptor, *, commit: bool) -> None:
+        descriptor = self.mode_editor.adapt(descriptor)
         self._apply_descriptor(descriptor)
         self.colorSelected.emit(descriptor)
         if commit:
@@ -880,7 +895,10 @@ class ColorPanel(QWidget):
 
     def _apply_descriptor(self, descriptor: ColorDescriptor) -> None:
         self._updating = True
+        self._source_descriptor_value = descriptor
+        descriptor = self.mode_editor.adapt(descriptor)
         self._current_descriptor_value = descriptor
+        self.mode_editor.set_descriptor(descriptor)
         color = QColor.fromRgbF(*descriptor.rgba)
         hue = color.hsvHueF()
         if hue < 0:

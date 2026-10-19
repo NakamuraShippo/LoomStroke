@@ -1199,6 +1199,10 @@ Use "Edit Filters" to add.</source>
     </context>
     <context>
         <name>VectorPathEditTool</name>
+    <message>
+        <source>Edit Width on Canvas</source>
+        <translation>Edit Width on Canvas</translation>
+    </message>
         <message>
             <source>Path Edit</source>
             <translation>패스 편집</translation>
@@ -2758,12 +2762,12 @@ Use "Edit Filters" to add.</source>
         <translation>필터 추가</translation>
     </message>
     <message>
-        <source>Layer Effects</source>
-        <translation>레이어 효과</translation>
+        <source>Layer Blend</source>
+        <translation>레이어 블렌드</translation>
     </message>
     <message>
-        <source>Layer effects between this layer and layers below</source>
-        <translation>이 레이어와 아래 레이어 사이의 효과</translation>
+        <source>How this layer blends with the layers below</source>
+        <translation>이 레이어와 아래 레이어의 블렌드 방식</translation>
     </message>
 </context>
 <context>
@@ -3580,12 +3584,356 @@ Use "Edit Filters" to add.</source>
 <context>
     <name>AppearancePanel</name>
     <message>
+        <source>Gaussian Blur</source>
+        <translation>가우시안 블러</translation>
+    </message>
+    <message>
+        <source>Radius</source>
+        <translation>반경</translation>
+    </message>
+    <message>
+        <source>Inner Shadow</source>
+        <translation>Inner Shadow</translation>
+    </message>
+    <message>
+        <source>Inner Glow</source>
+        <translation>Inner Glow</translation>
+    </message>
+    <message>
+        <source>Gradient Overlay</source>
+        <translation>Gradient Overlay</translation>
+    </message>
+    <message>
+        <source>Shape</source>
+        <translation>Shape</translation>
+    </message>
+    <message>
+        <source>Start color</source>
+        <translation>Start color</translation>
+    </message>
+    <message>
+        <source>End color</source>
+        <translation>End color</translation>
+    </message>
+    <message>
+        <source>Angle</source>
+        <translation>각도</translation>
+    </message>
+    <message>
+        <source>Scale</source>
+        <translation>크기 조절</translation>
+    </message>
+    <message>
+        <source>Center X</source>
+        <translation>Center X</translation>
+    </message>
+    <message>
+        <source>Center Y</source>
+        <translation>Center Y</translation>
+    </message>
+    <message>
+        <source>linear</source>
+        <translation>linear</translation>
+    </message>
+    <message>
+        <source>radial</source>
+        <translation>radial</translation>
+    </message>
+    <message>
+        <source>Bevel / Emboss</source>
+        <translation>Bevel / Emboss</translation>
+    </message>
+    <message>
+        <source>Type</source>
+        <translation>유형</translation>
+    </message>
+    <message>
+        <source>Invert</source>
+        <translation>반전</translation>
+    </message>
+    <message>
+        <source>Depth</source>
+        <translation>Depth</translation>
+    </message>
+    <message>
+        <source>Soften</source>
+        <translation>Soften</translation>
+    </message>
+    <message>
+        <source>Light direction</source>
+        <translation>Light direction</translation>
+    </message>
+    <message>
+        <source>Elevation</source>
+        <translation>Elevation</translation>
+    </message>
+    <message>
+        <source>Highlight color</source>
+        <translation>Highlight color</translation>
+    </message>
+    <message>
+        <source>Shadow color</source>
+        <translation>Shadow color</translation>
+    </message>
+    <message>
+        <source>inner</source>
+        <translation>inner</translation>
+    </message>
+    <message>
+        <source>outer</source>
+        <translation>outer</translation>
+    </message>
+    <message>
+        <source>emboss</source>
+        <translation>emboss</translation>
+    </message>
+    <message>
+        <source>pillow</source>
+        <translation>pillow</translation>
+    </message>
+    <message>
+        <source>3D</source>
+        <translation>3D</translation>
+    </message>
+    <message>
+        <source>Ambient</source>
+        <translation>Ambient</translation>
+    </message>
+    <message>
+        <source>Diffuse</source>
+        <translation>Diffuse</translation>
+    </message>
+    <message>
+        <source>Specular</source>
+        <translation>Specular</translation>
+    </message>
+    <message>
+        <source>Shininess</source>
+        <translation>Shininess</translation>
+    </message>
+    <message>
+        <source>Offset X</source>
+        <translation>Offset X</translation>
+    </message>
+    <message>
+        <source>Offset Y</source>
+        <translation>Offset Y</translation>
+    </message>
+    <message>
+        <source>Blur</source>
+        <translation>Blur</translation>
+    </message>
+    <message>
+        <source>Color</source>
+        <translation>색상</translation>
+    </message>
+    <message>
+        <source>Opacity</source>
+        <translation>불투명도</translation>
+    </message>
+    <message>
+        <source>Size</source>
+        <translation>크기</translation>
+    </message>
+    <message>
         <source>Filter Layer</source>
         <translation>필터 레이어</translation>
     </message>
     <message>
         <source>No filters available</source>
         <translation>사용 가능한 필터 없음</translation>
+    </message>
+    <message>
+        <source>Light sources</source>
+        <translation>Light sources</translation>
+    </message>
+    <message>
+        <source>Add light</source>
+        <translation>Add light</translation>
+    </message>
+    <message>
+        <source>Remove light</source>
+        <translation>Remove light</translation>
+    </message>
+    <message>
+        <source>Light {number}</source>
+        <translation>Light {number}</translation>
+    </message>
+    <message>
+        <source>Intensity</source>
+        <translation>Intensity</translation>
+    </message>
+    <message>
+        <source>Profile</source>
+        <translation>Profile</translation>
+    </message>
+    <message>
+        <source>Interpolation</source>
+        <translation>Interpolation</translation>
+    </message>
+    <message>
+        <source>Linear</source>
+        <translation>선형</translation>
+    </message>
+    <message>
+        <source>Smooth</source>
+        <translation>Smooth</translation>
+    </message>
+    <message>
+        <source>Reset profile</source>
+        <translation>Reset profile</translation>
+    </message>
+    <message>
+        <source>Remove point</source>
+        <translation>Remove point</translation>
+    </message>
+    <message>
+        <source>Input</source>
+        <translation>Input</translation>
+    </message>
+    <message>
+        <source>Output</source>
+        <translation>Output</translation>
+    </message>
+    <message>
+        <source>Click to add a point. Drag to adjust. Right-click or Delete removes an interior point.</source>
+        <translation>Click to add a point. Drag to adjust. Right-click or Delete removes an interior point.</translation>
+    </message>
+    <message>
+        <source>Effects</source>
+        <translation>Effects</translation>
+    </message>
+    <message>
+        <source>Presets</source>
+        <translation>Presets</translation>
+    </message>
+    <message>
+        <source>Blend mode</source>
+        <translation>Blend mode</translation>
+    </message>
+    <message>
+        <source>Normal</source>
+        <translation>표준</translation>
+    </message>
+    <message>
+        <source>Darken</source>
+        <translation>어둡게</translation>
+    </message>
+    <message>
+        <source>Multiply</source>
+        <translation>곱하기</translation>
+    </message>
+    <message>
+        <source>Color Burn</source>
+        <translation>색상 번</translation>
+    </message>
+    <message>
+        <source>Linear Burn</source>
+        <translation>선형 번</translation>
+    </message>
+    <message>
+        <source>Darker Color</source>
+        <translation>어두운 색상</translation>
+    </message>
+    <message>
+        <source>Lighten</source>
+        <translation>밝게</translation>
+    </message>
+    <message>
+        <source>Screen</source>
+        <translation>스크린</translation>
+    </message>
+    <message>
+        <source>Color Dodge</source>
+        <translation>색상 닷지</translation>
+    </message>
+    <message>
+        <source>Linear Dodge</source>
+        <translation>Linear Dodge</translation>
+    </message>
+    <message>
+        <source>Lighter Color</source>
+        <translation>밝은 색상</translation>
+    </message>
+    <message>
+        <source>Overlay</source>
+        <translation>오버레이</translation>
+    </message>
+    <message>
+        <source>Soft Light</source>
+        <translation>소프트 라이트</translation>
+    </message>
+    <message>
+        <source>Hard Light</source>
+        <translation>하드 라이트</translation>
+    </message>
+    <message>
+        <source>Vivid Light</source>
+        <translation>비비드 라이트</translation>
+    </message>
+    <message>
+        <source>Linear Light</source>
+        <translation>리니어 라이트</translation>
+    </message>
+    <message>
+        <source>Pin Light</source>
+        <translation>핀 라이트</translation>
+    </message>
+    <message>
+        <source>Hard Mix</source>
+        <translation>하드 믹스</translation>
+    </message>
+    <message>
+        <source>Difference</source>
+        <translation>차이</translation>
+    </message>
+    <message>
+        <source>Exclusion</source>
+        <translation>제외</translation>
+    </message>
+    <message>
+        <source>Subtract</source>
+        <translation>빼기</translation>
+    </message>
+    <message>
+        <source>Divide</source>
+        <translation>나누기</translation>
+    </message>
+    <message>
+        <source>Apply preset</source>
+        <translation>Apply preset</translation>
+    </message>
+    <message>
+        <source>Save new</source>
+        <translation>Save new</translation>
+    </message>
+    <message>
+        <source>Update preset</source>
+        <translation>Update preset</translation>
+    </message>
+    <message>
+        <source>Rename</source>
+        <translation>Rename</translation>
+    </message>
+    <message>
+        <source>Delete preset</source>
+        <translation>프리셋 삭제</translation>
+    </message>
+    <message>
+        <source>Reload</source>
+        <translation>Reload</translation>
+    </message>
+    <message>
+        <source>Preset name</source>
+        <translation>프리셋 이름</translation>
+    </message>
+    <message>
+        <source>No presets yet. Save the current styles to create one.</source>
+        <translation>No presets yet. Save the current styles to create one.</translation>
+    </message>
+    <message>
+        <source>Could not access presets. The previous library was kept. Check permissions and reload.</source>
+        <translation>Could not access presets. The previous library was kept. Check permissions and reload.</translation>
     </message>
 </context>
 <context>
@@ -3601,6 +3949,22 @@ Use "Edit Filters" to add.</source>
 </context>
 <context>
     <name>VectorTools</name>
+    <message>
+        <source>Drag to change width; Alt-click a stop to remove it; Esc cancels.</source>
+        <translation>Drag to change width; Alt-click a stop to remove it; Esc cancels.</translation>
+    </message>
+    <message>
+        <source>Select an unlocked single-path stroke with at most 64 width samples.</source>
+        <translation>Select an unlocked single-path stroke with at most 64 width samples.</translation>
+    </message>
+    <message>
+        <source>This stroke already has 64 width stops.</source>
+        <translation>This stroke already has 64 width stops.</translation>
+    </message>
+    <message>
+        <source>The width edit could not be applied. The original stroke was preserved.</source>
+        <translation>The width edit could not be applied. The original stroke was preserved.</translation>
+    </message>
     <message>
         <source>Edit Width Stop</source>
         <translation type="unfinished"/>

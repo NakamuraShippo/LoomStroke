@@ -120,25 +120,53 @@ class AppearanceService:
 
     # -- styles ------------------------------------------------------------------------
 
-    def set_styles(self, layer_id: str, stack: LayerStyleStack) -> bool:
+    def set_styles(
+        self, layer_id: str, stack: LayerStyleStack, *, transaction: bool = True
+    ) -> bool:
         canvas = self.canvas
         layer = self.layer(layer_id)
         if canvas is None or layer is None:
             return False
         payload = self._codec.payload_with_styles(getattr(layer, "metadata", None), stack)
-        self._begin("Layer Styles")
+        if transaction:
+            self._begin("Layer Styles")
         try:
             return bool(
                 canvas.submit(SetLayerMetadataKeyCommand(layer_id, self._codec.NAMESPACE, payload))
             )
         finally:
-            self._end()
+            if transaction:
+                self._end()
+            else:
+                # A modal live editor owns the history group. Publish each new
+                # stack without bumping source texture versions or GPU resources.
+                recompose = getattr(canvas, "_recompose", None)
+                if callable(recompose):
+                    recompose()
 
     def rasterize_appearance(self, layer_id: str, *, keep_source: bool = True) -> str | None:
         canvas = self.canvas
         layer = self.layer(layer_id)
         if canvas is None or layer is None:
             return None
+        from .canvas.wgpu_backend.style_backdrop import needs_backdrop  # noqa: PLC0415
+
+        if needs_backdrop(layer):
+            from .backdrop_style_bake import bake_backdrop_styles  # noqa: PLC0415
+
+            return bake_backdrop_styles(self, layer, keep_source=keep_source)
+        flatten = getattr(canvas, "_flatten_layers", None)
+        nodes = flatten() if callable(flatten) else getattr(canvas, "_layers", ())
+        if any(getattr(n, "native_cmyk", None) is not None for n in nodes):
+            from .native_layer_style_bake import bake_native_styles  # noqa: PLC0415
+
+            return bake_native_styles(self, layer, keep_source=keep_source)
+        return self._rasterize_rgb_appearance(layer_id, layer, keep_source=keep_source)
+
+    def _rasterize_rgb_appearance(
+        self, layer_id: str, layer: Any, *, keep_source: bool
+    ) -> str | None:
+        canvas = self.canvas
         source = appearance_source_image(layer, *self.canvas_size())
         if not isinstance(source, QImage) or source.isNull():
             return None

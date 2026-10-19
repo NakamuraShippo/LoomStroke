@@ -17,6 +17,21 @@ _INTENTS = {
 }
 
 
+class _OutputProfile(ImageCms.ImageCmsProfile):
+    """A transform-owned profile whose unchanged embedding bytes are reused."""
+
+    def __init__(self, profile: ImageCms.ImageCmsProfile) -> None:
+        super().__init__(profile.profile)
+        self._serialized: bytes | None = None
+
+    def tobytes(self) -> bytes:
+        # Pillow embeds this metadata on every applyTransform, even for tiles
+        # whose callers only consume the pixels. Keep the same bytes once.
+        if self._serialized is None:
+            self._serialized = super().tobytes()
+        return self._serialized
+
+
 class CmykColorTransform:
     @staticmethod
     @lru_cache(maxsize=16)
@@ -41,7 +56,7 @@ class CmykColorTransform:
             source, destination = destination, source
         return ImageCms.buildTransform(
             source,
-            destination,
+            _OutputProfile(destination),
             "CMYK" if to_rgb else "RGB",
             "RGB" if to_rgb else "CMYK",
             renderingIntent=_INTENTS[intent],
@@ -82,7 +97,7 @@ class CmykColorTransform:
             cls.validate_profile(profile)
             transform = ImageCms.buildTransform(
                 ImageCms.ImageCmsProfile(BytesIO(source_profile)),
-                ImageCms.ImageCmsProfile(BytesIO(profile)),
+                _OutputProfile(ImageCms.ImageCmsProfile(BytesIO(profile))),
                 "RGB",
                 "CMYK",
                 renderingIntent=_INTENTS["relative"],

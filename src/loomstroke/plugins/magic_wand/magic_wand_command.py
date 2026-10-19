@@ -16,7 +16,10 @@ from ...core.commands import (
 )
 from ...core.fill.flood_fill import _scanline_fill
 from ...core.mask_coverage import mask_coverage_alpha8
-from ...core.raster_selection_reference import image_rgba_copy, raster_selection_reference
+from ...core.raster_selection_reference import (
+    image_rgba_copy,
+    raster_selection_reference,
+)
 
 
 class MagicWandCommand(Command):
@@ -116,6 +119,9 @@ class MagicWandCommand(Command):
 
     @staticmethod
     def _get_layer_rgba(layer: Any) -> np.ndarray | None:
+        native = getattr(layer, "native_cmyk", None)
+        if native is not None:
+            return native.snapshot().preview()
         if _is_qimage_layer(layer):
             img = getattr(layer, "image", None) or getattr(layer, "qimage", None)
             if img is None:

@@ -1199,6 +1199,10 @@ Use "Edit Filters" to add.</source>
     </context>
     <context>
         <name>VectorPathEditTool</name>
+    <message>
+        <source>Edit Width on Canvas</source>
+        <translation>Edit Width on Canvas</translation>
+    </message>
         <message>
             <source>Path Edit</source>
             <translation>Редактирование контура</translation>
@@ -2758,12 +2762,12 @@ Use "Edit Filters" to add.</source>
         <translation>Добавить фильтр</translation>
     </message>
     <message>
-        <source>Layer Effects</source>
-        <translation>Эффекты слоя</translation>
+        <source>Layer Blend</source>
+        <translation>Наложение слоя</translation>
     </message>
     <message>
-        <source>Layer effects between this layer and layers below</source>
-        <translation>Эффекты между этим слоем и нижележащими слоями</translation>
+        <source>How this layer blends with the layers below</source>
+        <translation>Способ наложения этого слоя на нижележащие слои</translation>
     </message>
 </context>
 <context>
@@ -3580,12 +3584,356 @@ Use "Edit Filters" to add.</source>
 <context>
     <name>AppearancePanel</name>
     <message>
+        <source>Gaussian Blur</source>
+        <translation>Размытие по Гауссу</translation>
+    </message>
+    <message>
+        <source>Radius</source>
+        <translation>Радиус</translation>
+    </message>
+    <message>
+        <source>Inner Shadow</source>
+        <translation>Inner Shadow</translation>
+    </message>
+    <message>
+        <source>Inner Glow</source>
+        <translation>Inner Glow</translation>
+    </message>
+    <message>
+        <source>Gradient Overlay</source>
+        <translation>Gradient Overlay</translation>
+    </message>
+    <message>
+        <source>Shape</source>
+        <translation>Shape</translation>
+    </message>
+    <message>
+        <source>Start color</source>
+        <translation>Start color</translation>
+    </message>
+    <message>
+        <source>End color</source>
+        <translation>End color</translation>
+    </message>
+    <message>
+        <source>Angle</source>
+        <translation>Угол</translation>
+    </message>
+    <message>
+        <source>Scale</source>
+        <translation>Масштаб</translation>
+    </message>
+    <message>
+        <source>Center X</source>
+        <translation>Center X</translation>
+    </message>
+    <message>
+        <source>Center Y</source>
+        <translation>Center Y</translation>
+    </message>
+    <message>
+        <source>linear</source>
+        <translation>linear</translation>
+    </message>
+    <message>
+        <source>radial</source>
+        <translation>radial</translation>
+    </message>
+    <message>
+        <source>Bevel / Emboss</source>
+        <translation>Bevel / Emboss</translation>
+    </message>
+    <message>
+        <source>Type</source>
+        <translation>Тип</translation>
+    </message>
+    <message>
+        <source>Invert</source>
+        <translation>Инвертировать</translation>
+    </message>
+    <message>
+        <source>Depth</source>
+        <translation>Depth</translation>
+    </message>
+    <message>
+        <source>Soften</source>
+        <translation>Soften</translation>
+    </message>
+    <message>
+        <source>Light direction</source>
+        <translation>Light direction</translation>
+    </message>
+    <message>
+        <source>Elevation</source>
+        <translation>Elevation</translation>
+    </message>
+    <message>
+        <source>Highlight color</source>
+        <translation>Highlight color</translation>
+    </message>
+    <message>
+        <source>Shadow color</source>
+        <translation>Shadow color</translation>
+    </message>
+    <message>
+        <source>inner</source>
+        <translation>inner</translation>
+    </message>
+    <message>
+        <source>outer</source>
+        <translation>outer</translation>
+    </message>
+    <message>
+        <source>emboss</source>
+        <translation>emboss</translation>
+    </message>
+    <message>
+        <source>pillow</source>
+        <translation>pillow</translation>
+    </message>
+    <message>
+        <source>3D</source>
+        <translation>3D</translation>
+    </message>
+    <message>
+        <source>Ambient</source>
+        <translation>Ambient</translation>
+    </message>
+    <message>
+        <source>Diffuse</source>
+        <translation>Diffuse</translation>
+    </message>
+    <message>
+        <source>Specular</source>
+        <translation>Specular</translation>
+    </message>
+    <message>
+        <source>Shininess</source>
+        <translation>Shininess</translation>
+    </message>
+    <message>
+        <source>Offset X</source>
+        <translation>Offset X</translation>
+    </message>
+    <message>
+        <source>Offset Y</source>
+        <translation>Offset Y</translation>
+    </message>
+    <message>
+        <source>Blur</source>
+        <translation>Blur</translation>
+    </message>
+    <message>
+        <source>Color</source>
+        <translation>Цвет</translation>
+    </message>
+    <message>
+        <source>Opacity</source>
+        <translation>Непрозрачность</translation>
+    </message>
+    <message>
+        <source>Size</source>
+        <translation>Размер</translation>
+    </message>
+    <message>
         <source>Filter Layer</source>
         <translation>Слой фильтра</translation>
     </message>
     <message>
         <source>No filters available</source>
         <translation>Нет доступных фильтров</translation>
+    </message>
+    <message>
+        <source>Light sources</source>
+        <translation>Light sources</translation>
+    </message>
+    <message>
+        <source>Add light</source>
+        <translation>Add light</translation>
+    </message>
+    <message>
+        <source>Remove light</source>
+        <translation>Remove light</translation>
+    </message>
+    <message>
+        <source>Light {number}</source>
+        <translation>Light {number}</translation>
+    </message>
+    <message>
+        <source>Intensity</source>
+        <translation>Intensity</translation>
+    </message>
+    <message>
+        <source>Profile</source>
+        <translation>Profile</translation>
+    </message>
+    <message>
+        <source>Interpolation</source>
+        <translation>Interpolation</translation>
+    </message>
+    <message>
+        <source>Linear</source>
+        <translation>Линейный</translation>
+    </message>
+    <message>
+        <source>Smooth</source>
+        <translation>Smooth</translation>
+    </message>
+    <message>
+        <source>Reset profile</source>
+        <translation>Reset profile</translation>
+    </message>
+    <message>
+        <source>Remove point</source>
+        <translation>Remove point</translation>
+    </message>
+    <message>
+        <source>Input</source>
+        <translation>Input</translation>
+    </message>
+    <message>
+        <source>Output</source>
+        <translation>Output</translation>
+    </message>
+    <message>
+        <source>Click to add a point. Drag to adjust. Right-click or Delete removes an interior point.</source>
+        <translation>Click to add a point. Drag to adjust. Right-click or Delete removes an interior point.</translation>
+    </message>
+    <message>
+        <source>Effects</source>
+        <translation>Effects</translation>
+    </message>
+    <message>
+        <source>Presets</source>
+        <translation>Presets</translation>
+    </message>
+    <message>
+        <source>Blend mode</source>
+        <translation>Blend mode</translation>
+    </message>
+    <message>
+        <source>Normal</source>
+        <translation>Нормальный</translation>
+    </message>
+    <message>
+        <source>Darken</source>
+        <translation>Затемнение</translation>
+    </message>
+    <message>
+        <source>Multiply</source>
+        <translation>Умножение</translation>
+    </message>
+    <message>
+        <source>Color Burn</source>
+        <translation>Затемнение основы</translation>
+    </message>
+    <message>
+        <source>Linear Burn</source>
+        <translation>Линейный затемнитель</translation>
+    </message>
+    <message>
+        <source>Darker Color</source>
+        <translation>Темнее</translation>
+    </message>
+    <message>
+        <source>Lighten</source>
+        <translation>Замена светлым</translation>
+    </message>
+    <message>
+        <source>Screen</source>
+        <translation>Экран</translation>
+    </message>
+    <message>
+        <source>Color Dodge</source>
+        <translation>Осветление основы</translation>
+    </message>
+    <message>
+        <source>Linear Dodge</source>
+        <translation>Linear Dodge</translation>
+    </message>
+    <message>
+        <source>Lighter Color</source>
+        <translation>Светлее</translation>
+    </message>
+    <message>
+        <source>Overlay</source>
+        <translation>Перекрытие</translation>
+    </message>
+    <message>
+        <source>Soft Light</source>
+        <translation>Мягкий свет</translation>
+    </message>
+    <message>
+        <source>Hard Light</source>
+        <translation>Жёсткий свет</translation>
+    </message>
+    <message>
+        <source>Vivid Light</source>
+        <translation>Яркий свет</translation>
+    </message>
+    <message>
+        <source>Linear Light</source>
+        <translation>Линейный свет</translation>
+    </message>
+    <message>
+        <source>Pin Light</source>
+        <translation>Точечный свет</translation>
+    </message>
+    <message>
+        <source>Hard Mix</source>
+        <translation>Жёсткое смешение</translation>
+    </message>
+    <message>
+        <source>Difference</source>
+        <translation>Разница</translation>
+    </message>
+    <message>
+        <source>Exclusion</source>
+        <translation>Исключение</translation>
+    </message>
+    <message>
+        <source>Subtract</source>
+        <translation>Вычесть</translation>
+    </message>
+    <message>
+        <source>Divide</source>
+        <translation>Разделение</translation>
+    </message>
+    <message>
+        <source>Apply preset</source>
+        <translation>Apply preset</translation>
+    </message>
+    <message>
+        <source>Save new</source>
+        <translation>Save new</translation>
+    </message>
+    <message>
+        <source>Update preset</source>
+        <translation>Update preset</translation>
+    </message>
+    <message>
+        <source>Rename</source>
+        <translation>Rename</translation>
+    </message>
+    <message>
+        <source>Delete preset</source>
+        <translation>Удалить пресет</translation>
+    </message>
+    <message>
+        <source>Reload</source>
+        <translation>Reload</translation>
+    </message>
+    <message>
+        <source>Preset name</source>
+        <translation>Имя пресета</translation>
+    </message>
+    <message>
+        <source>No presets yet. Save the current styles to create one.</source>
+        <translation>No presets yet. Save the current styles to create one.</translation>
+    </message>
+    <message>
+        <source>Could not access presets. The previous library was kept. Check permissions and reload.</source>
+        <translation>Could not access presets. The previous library was kept. Check permissions and reload.</translation>
     </message>
 </context>
 <context>
@@ -3601,6 +3949,22 @@ Use "Edit Filters" to add.</source>
 </context>
 <context>
     <name>VectorTools</name>
+    <message>
+        <source>Drag to change width; Alt-click a stop to remove it; Esc cancels.</source>
+        <translation>Drag to change width; Alt-click a stop to remove it; Esc cancels.</translation>
+    </message>
+    <message>
+        <source>Select an unlocked single-path stroke with at most 64 width samples.</source>
+        <translation>Select an unlocked single-path stroke with at most 64 width samples.</translation>
+    </message>
+    <message>
+        <source>This stroke already has 64 width stops.</source>
+        <translation>This stroke already has 64 width stops.</translation>
+    </message>
+    <message>
+        <source>The width edit could not be applied. The original stroke was preserved.</source>
+        <translation>The width edit could not be applied. The original stroke was preserved.</translation>
+    </message>
     <message>
         <source>Edit Width Stop</source>
         <translation type="unfinished"/>

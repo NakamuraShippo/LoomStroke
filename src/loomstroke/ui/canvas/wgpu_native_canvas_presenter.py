@@ -41,7 +41,10 @@ from .wgpu_backend.types import (
     WgpuViewParams,
 )
 from .wgpu_backend.vector.renderer import lod_bucket_for_scale
-from .wgpu_native_preview_renderer import DEFAULT_PREVIEW_MAX_EXTENT, WgpuNativePreviewRenderer
+from .wgpu_native_preview_renderer import (
+    DEFAULT_PREVIEW_MAX_EXTENT,
+    WgpuNativePreviewRenderer,
+)
 
 SURFACE_BLIT_WGSL = """
 struct VertexIn {
@@ -190,6 +193,7 @@ class WgpuNativeCanvasPresenter:
     """
 
     backend_name = "wgpu-native"
+    _supports_native_display_tiles = True
 
     def __init__(
         self,
@@ -278,6 +282,9 @@ class WgpuNativeCanvasPresenter:
         scene = NativeCmykProjection.prepare(self, scene)
         scene, self._channel_view_index = ChannelsSurfaceView.prepare(self, scene)
         scene_signature = compute_render_scene_signature(scene)
+        invalidation = NativeCmykProjection.display_invalidation(
+            scene, self._last_scene_signature, scene_signature, invalidation
+        )
         surface_blit_signature = self._surface_blit_signature(
             scene,
             device_pixel_ratio=device_pixel_ratio,
@@ -289,6 +296,7 @@ class WgpuNativeCanvasPresenter:
         )
         can_reuse_present = (
             self._has_presented_frame
+            and not getattr(getattr(self, "_projection_cache", None), "pending", False)
             and invalidation is not None
             and not invalidation.has_any
             and self._last_scene_signature == scene_signature
@@ -702,7 +710,9 @@ class WgpuNativeCanvasPresenter:
                 companion_pass.release()
             return None
         if companion_pass is None:
-            companion_pass = SpreadCompanionPass()
+            companion_pass = SpreadCompanionPass(
+                repaint=getattr(self, "_native_cmyk_repaint", None)
+            )
             self._companion_pass = companion_pass
         return companion_pass.prepare(
             companion,
@@ -907,7 +917,9 @@ class WgpuNativeCanvasPresenter:
         self._wgpu = bundle.wgpu
         self._device = bundle.device
         self._queue = bundle.queue
-        self._projection_cache = WgpuProjectionCache(bundle)
+        self._projection_cache = WgpuProjectionCache(
+            bundle, repaint=getattr(self, "_native_cmyk_repaint", None)
+        )
         self._compositor = self._projection_cache.compositor
         self.diagnostics = replace(self.diagnostics, adapter_name=self._adapter_name())
 

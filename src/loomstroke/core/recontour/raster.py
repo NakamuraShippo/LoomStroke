@@ -3,7 +3,7 @@
 from __future__ import annotations
 
 from types import SimpleNamespace
-from typing import Any
+from typing import Any, TypeAlias, cast
 
 from PySide6.QtCore import QRect
 from PySide6.QtGui import QImage, QPainter
@@ -11,39 +11,88 @@ from PySide6.QtGui import QImage, QPainter
 from ..canvas_stroke_layer_paint_service import CanvasStrokeLayerPaintService
 from ..canvas_stroke_stamp_brush_service import CanvasStrokeStampBrushService
 from ..commands import StampBrushCommand, _qimage_to_numpy_view, _tone_params_from_brush
+from ..native_cmyk.stroke_image import NativeStrokeImage
+from ..native_cmyk.stroke_replay import render_native_stroke
+from ..native_cmyk.tool_space import is_placed, stroke_region
+
+StrokeImage: TypeAlias = QImage | NativeStrokeImage
 
 
-def paste(target: QImage, image: QImage, x: int, y: int) -> None:
+def paste(target: StrokeImage, image: StrokeImage, x: int, y: int) -> None:
+    if isinstance(target, NativeStrokeImage):
+        target.paste(cast(NativeStrokeImage, image), x, y)
+        return
     painter = QPainter(target)
     try:
         painter.setCompositionMode(QPainter.CompositionMode.CompositionMode_Source)
-        painter.drawImage(x, y, image)
+        painter.drawImage(x, y, cast(QImage, image))
     finally:
         painter.end()
 
 
-def crop(layer: Any, rect: QRect, *, mask: bool = False) -> QImage:
+def crop(layer: Any, rect: QRect, *, mask: bool = False) -> StrokeImage:
+    if not mask and getattr(layer, "native_cmyk", None) is not None:
+        return NativeStrokeImage.crop(layer, rect)
     source = layer.layer_mask if mask else layer.image
-    return source.copy(rect.translated(-layer.offset_x, -layer.offset_y))
+    return cast(QImage, source.copy(rect.translated(-layer.offset_x, -layer.offset_y)))
 
 
 def command_bounds(canvas: Any, cmd: Any) -> QRect | None:
     if isinstance(cmd, StampBrushCommand):
-        return canvas._compute_stamp_bounds(cmd.points, cmd.brush)
-    return canvas._compute_stroke_bounds(cmd.points, cmd.brush)
+        bounds = canvas._compute_stamp_bounds(cmd.points, cmd.brush)
+    else:
+        bounds = canvas._compute_stroke_bounds(cmd.points, cmd.brush)
+    layer = canvas._get_active_layer()
+    if (
+        bounds is not None
+        and getattr(layer, "native_cmyk", None) is not None
+        and not (layer.mask_edit_mode and layer.layer_mask is not None)
+    ):
+        if is_placed(layer):
+            if isinstance(cmd, StampBrushCommand):
+                bounds = canvas._compute_stamp_bounds(canvas._stamp_points(cmd), cmd.brush)
+                if bounds is None:
+                    return None
+            local = stroke_region(layer, bounds)
+            return None if local.isEmpty() else local
+        bounds = bounds.intersected(
+            QRect(layer.offset_x, layer.offset_y, layer.image.width(), layer.image.height())
+        )
+    return bounds
+
+
+def stroke_pixel_bytes(layer: Any, *, mask: bool = False) -> int:
+    native = getattr(layer, "native_cmyk", None)
+    return 5 * native.inks.dtype.itemsize if native is not None and not mask else 4
+
+
+def submit_live_stroke(canvas: Any, cmd: Any) -> bool:
+    layer = canvas._get_active_layer()
+    if (
+        getattr(layer, "native_cmyk", None) is not None
+        and not (layer.mask_edit_mode and layer.layer_mask is not None)
+        and not canvas.channels().is_alpha(layer)
+    ):
+        return bool(canvas.native_cmyk().paint(cmd))
+    submit = (
+        canvas._submit_stamp_brush if isinstance(cmd, StampBrushCommand) else canvas._submit_paint
+    )
+    return bool(submit(cmd))
 
 
 def render(
     canvas: Any,
-    image: QImage,
+    image: StrokeImage,
     region: QRect,
     commands: list[Any],
     tips: dict,
     *,
     alpha_lock: bool,
     mask: bool,
-) -> QImage:
+) -> StrokeImage:
     """No layer, history, or event mutations until every command has succeeded."""
+    if isinstance(image, NativeStrokeImage):
+        return render_native_stroke(canvas, image, region, commands, tips, alpha_lock=alpha_lock)
     layer = SimpleNamespace(image=image, alpha_lock=alpha_lock)
     paint = CanvasStrokeLayerPaintService(canvas)
     stamp = CanvasStrokeStampBrushService(canvas)
@@ -108,4 +157,4 @@ def render(
         canvas._restore_alpha(layer, local, saved)
         if mask:
             canvas._normalize_mask_to_grayscale(layer.image)
-    return layer.image
+    return cast(QImage, layer.image)

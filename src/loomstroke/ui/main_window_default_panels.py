@@ -10,6 +10,7 @@ from typing import Any, cast
 from PySide6.QtCore import Qt
 from PySide6.QtWidgets import QDockWidget, QLabel, QListWidget
 
+from .foreground_background_colors import ForegroundBackgroundColors, bind_color_swatch
 from .main_window_channels_panel import MainWindowChannelsPanelBootstrap
 from .panels.layer_panel import LayerPanel
 from .panels.preview.preview_panel import PreviewPanel
@@ -164,6 +165,9 @@ class MainWindowDefaultPanelsCoordinator:
             window._floating_tool_toolbar = frame
             window._tool_list_panel = frame.toolbar
             frame.set_host_api(window.host)
+            colors = ForegroundBackgroundColors(window.host, window._settings, window)
+            window._foreground_background_colors = colors
+            bind_color_swatch(frame.color_swatch, colors)
             self._single_shot(0, window._restore_initial_floating_tool_toolbar_state)
             logger.info("Using floating ToolToolbar implementation")
         except Exception:
