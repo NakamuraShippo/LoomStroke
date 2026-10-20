@@ -1,4 +1,9 @@
-# LoomStroke
+<h1>
+  <picture>
+    <source media="(prefers-color-scheme: dark)" srcset="img/textlogo.png">
+    <img src="img/textlogo_br.png" alt="LoomStroke" width="500">
+  </picture>
+</h1>
 
 LoomStrokeは、PySide6とwgpuによるデスクトップペイントアプリです。
 ラスター・ベクター編集、マルチページ原稿、文字、コマ・吹き出し、
