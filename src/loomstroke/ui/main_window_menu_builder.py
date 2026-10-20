@@ -732,7 +732,10 @@ class MainWindowMenuBuilderCoordinator:
 
     def populate_filter_menu(self, menu: QMenu) -> None:
         """Populate filter menu from plugins."""
+        from .direct_filter_menu import populate_direct_filters  # noqa: PLC0415
+
         window = self._window
+        populate_direct_filters(window, menu)
         if not window._plugin_registry:
             return
 

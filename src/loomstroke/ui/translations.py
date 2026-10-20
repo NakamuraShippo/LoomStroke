@@ -11,6 +11,7 @@ from .channels_translations import CHANNELS_JA
 from .comic_frame_translations import FRAME_JA
 from .filter_pen_translations import FILTER_PEN_JA
 from .filter_translations import (
+    DIRECT_FILTER_JA,
     FILTER_APPEARANCE_JA,
     FILTER_EXPORT_JA,
     FILTER_LAYER_JA,
@@ -31,6 +32,7 @@ from .tool_locale_fallbacks import NON_JA_TOOL_FALLBACK_TRANSLATIONS
 TranslatorFn = Callable[[str], str]
 
 _JA_FALLBACK_TRANSLATIONS: dict[str, dict[str, str]] = {
+    "DirectFilter": DIRECT_FILTER_JA,
     "ComicPanelFrames": FRAME_JA,
     "ChannelsPanel": CHANNELS_JA,
     "IccProfileDownloads": ICC_PROFILE_DOWNLOAD_JA,

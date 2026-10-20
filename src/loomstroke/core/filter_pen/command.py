@@ -36,6 +36,7 @@ class FilterPenStrokeCommand(Command):
 
     filter_pen_command = True
     effect_pen_command = True  # Compatibility marker for older canvas routing.
+    description = "Filter Pen Stroke"
 
     def __init__(self, snapshot: FilterPenSnapshot) -> None:
         super().__init__()
@@ -266,7 +267,7 @@ def submit_filter_pen_command(canvas: Any, command: FilterPenStrokeCommand) -> b
     try:
         if not command.apply(canvas):
             return False
-        canvas._record_history_command("Filter Pen Stroke", command)
+        canvas._record_history_command(command.description, command)
     except Exception:
         if command._executed:
             guard.rollback(command)
