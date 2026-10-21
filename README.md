@@ -1,7 +1,8 @@
 <h1>
+  <img src="img/favicon.png" alt="" width="64" height="64" align="middle">&nbsp;&nbsp;
   <picture>
     <source media="(prefers-color-scheme: dark)" srcset="img/textlogo.png">
-    <img src="img/textlogo_br.png" alt="LoomStroke" width="500">
+    <img src="img/textlogo_br.png" alt="LoomStroke" width="400" align="middle">
   </picture>
 </h1>
 
