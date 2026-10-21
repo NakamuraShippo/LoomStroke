@@ -6,6 +6,8 @@
   </picture>
 </h1>
 
+### [patreon](https://www.patreon.com/c/LoomStroke)
+
 LoomStrokeは、PySide6とwgpuによるデスクトップペイントアプリです。
 ラスター・ベクター編集、マルチページ原稿、文字、コマ・吹き出し、
 ComfyUI・LLM・画像生成サービスとの連携を備えます。
