@@ -812,7 +812,11 @@ class LayerItemWidget(QWidget):
         already running. The Filters panel's mid-generation lock
         applied the same rule.
         """
-        is_ai_effect = entry.layer_type == "ai_effect" and entry.slot_info is None
+        from loomstroke.platform.launch_options import ai_features_enabled  # noqa: PLC0415
+
+        is_ai_effect = (
+            ai_features_enabled() and entry.layer_type == "ai_effect" and entry.slot_info is None
+        )
         self._row_layer_id = entry.layer_id
         self.generate_btn.configure(
             layer_id=entry.layer_id,
@@ -1395,6 +1399,9 @@ class LayerPanel(QWidget):
         ai_effect_text = self._ts("Add AI Effect Layer")
         self._add_ai_effect_btn = self._create_compact_icon_button(ai_effect_text, "ai_effect")
         self._add_ai_effect_btn.setEnabled(False)
+        from loomstroke.platform.launch_options import ai_features_enabled  # noqa: PLC0415
+
+        self._add_ai_effect_btn.setVisible(ai_features_enabled())
         button_row.addWidget(self._add_ai_effect_btn)
 
         group_text = self._ts("Group")
@@ -1778,7 +1785,9 @@ class LayerPanel(QWidget):
         # Phase 6-f-styling-b: append synthetic slot rows under AI Effect
         # layers so the mockup's "input slot child rows" visual is driven
         # directly by ``AIEffectState`` without polluting the canvas tree.
-        if layer_type == "ai_effect":
+        from loomstroke.platform.launch_options import ai_features_enabled  # noqa: PLC0415
+
+        if ai_features_enabled() and layer_type == "ai_effect":
             slot_children = self._build_slot_entries(layer)
             if slot_children:
                 if children_entries is None:

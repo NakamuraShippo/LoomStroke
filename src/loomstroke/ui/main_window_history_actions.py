@@ -7,6 +7,7 @@ from typing import Any
 
 from loomstroke.ui.history_action_presentation import HistoryActionPresenter
 from loomstroke.ui.inline_text_history_target import inline_text_history_target
+from loomstroke.ui.pending_comic_history import PendingComicHistory
 
 logger = logging.getLogger("loomstroke.ui.main_window")
 
@@ -17,6 +18,7 @@ class MainWindowHistoryActionCoordinator:
     def __init__(self, window: Any) -> None:
         self._window = window
         self._presenter = HistoryActionPresenter(window)
+        self._pending_comic = PendingComicHistory(window, self.update_history_actions)
 
     def initialize_state(self) -> None:
         """Initialize Undo/Redo action state on the MainWindow compatibility surface."""
@@ -55,15 +57,17 @@ class MainWindowHistoryActionCoordinator:
             return
 
         if undo_action is not None:
-            undo_action.setEnabled(history_can_undo or tool_can_undo)
+            undo_action.setEnabled(history_can_undo or tool_can_undo or self._pending_comic.active)
         if redo_action is not None:
-            redo_action.setEnabled(history_can_redo)
+            redo_action.setEnabled(
+                self._pending_comic.can_redo if self._pending_comic.active else history_can_redo
+            )
         # CT-05 H5c: re-derive the candidate-aware labels/tips from the
         # current unified state — runs on every history change, after
         # menu rebuilds (build_menubar calls back in here), and after
         # runtime language switches.  No-ops on windows without the
         # shortcut-label surface.
-        self._presenter.refresh_labels()
+        self._presenter.refresh_labels(pending=self._pending_comic.active)
 
     def on_undo(self) -> None:
         window = self._window
@@ -73,6 +77,8 @@ class MainWindowHistoryActionCoordinator:
             self.update_history_actions()
             return
         if hasattr(window, "_host_api") and window._host_api:
+            if self._pending_comic.defer("undo"):
+                return
             tool_manager = getattr(window._host_api, "_tool_manager", None)
             if tool_manager is not None and hasattr(tool_manager, "dispatch_undo"):
                 try:
@@ -92,6 +98,8 @@ class MainWindowHistoryActionCoordinator:
             self.update_history_actions()
             return
         if hasattr(window, "_host_api") and window._host_api:
+            if self._pending_comic.defer("redo"):
+                return
             window._host_api.history.redo()
         else:
             window._event_bus.emit("history.redo", {})

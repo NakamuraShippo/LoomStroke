@@ -24,6 +24,7 @@ from .native_comfy_translations import NATIVE_COMFY_JA
 from .new_document_color_translations import NEW_DOCUMENT_COLOR_JA
 from .painting_tool_translations import PAINTING_TOOL_JA
 from .panel_locale_fallbacks import NON_JA_PANEL_FALLBACK_TRANSLATIONS
+from .path_text_translations import PATH_TEXT_JA
 from .pen_preset_translations import PEN_PRESET_JA
 from .shared_locale_fallbacks import NON_JA_SHARED_FALLBACK_TRANSLATIONS
 from .text_typography_translations import TEXT_TYPOGRAPHY_JA
@@ -32,6 +33,7 @@ from .tool_locale_fallbacks import NON_JA_TOOL_FALLBACK_TRANSLATIONS
 TranslatorFn = Callable[[str], str]
 
 _JA_FALLBACK_TRANSLATIONS: dict[str, dict[str, str]] = {
+    "PathText": PATH_TEXT_JA,
     "DirectFilter": DIRECT_FILTER_JA,
     "ComicPanelFrames": FRAME_JA,
     "ChannelsPanel": CHANNELS_JA,

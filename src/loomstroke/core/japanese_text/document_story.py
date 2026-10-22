@@ -8,6 +8,7 @@ from loomstroke.plugins.vector_tools.common import ensure_vector_element_ids
 
 from ..document_text_objects import replace_text_objects, text_entries
 from ..page_history_memory import estimate_metadata_payload_bytes
+from ..path_text.metadata import path_settings
 from ..vector_text_layout import TextLayoutCalculator as Layout
 from .linked_story import assign_story, combine_payloads, story_of
 from .story_commands import LinkTextFramesCommand
@@ -71,10 +72,14 @@ class DocumentStoryService:
             if found is None or found[3]:
                 raise ValueError("A linked text frame is missing or locked.")
             obj = found[2]
+            if path_settings(obj.meta.get("text_tool")) is not None:
+                raise ValueError("The text frames could not be linked.")
             result.append((tuple(key), obj))
         return result
 
     def targets(self, current):
+        if path_settings(current.meta.get("text_tool")) is not None:
+            return []
         own = story_of(current)
         excluded = (
             {frame_key(frame) for frame in own["frames"]}
@@ -89,6 +94,7 @@ class DocumentStoryService:
             for key, (_, _, obj, locked) in text_entries(self.pages).items()
             if key not in excluded
             and not locked
+            and path_settings(obj.meta.get("text_tool")) is None
             and (key[0] != self.pages.get_active_page_id() or str(obj.id) not in local_ids)
         ]
 

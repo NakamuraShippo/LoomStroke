@@ -2,6 +2,7 @@
 
 from loomstroke.core.japanese_text.linked_story import story_objects, story_of
 from loomstroke.core.japanese_text.story_commands import LinkTextFramesCommand
+from loomstroke.core.path_text.metadata import path_settings
 
 from .typography_widget import _ts
 
@@ -47,6 +48,8 @@ def link_targets(tool, current):
     getter = getattr(canvas, "get_vector_objects", None)
     if current is None or not callable(getter):
         return []
+    if path_settings(current.meta.get("text_tool")) is not None:
+        return []
     service = getattr(getattr(tool.host_api, "pages", None), "document_stories", None)
     if service is not None:
         return [
@@ -58,7 +61,11 @@ def link_targets(tool, current):
     result = []
     for _layer_id, obj in getter(include_hidden=True):
         payload = (getattr(obj, "meta", None) or {}).get("text_tool")
-        if isinstance(payload, dict) and str(obj.id) not in excluded:
+        if (
+            isinstance(payload, dict)
+            and str(obj.id) not in excluded
+            and path_settings(payload) is None
+        ):
             text = str(payload.get("content", "")).replace("\n", " ")[:32]
             result.append((str(obj.id), text))
     return result

@@ -13,6 +13,7 @@ from typing import Any, Protocol
 
 from ..core.layout_serialization import payload_to_snapshot, snapshot_to_payload
 from ..host_api import PanelLayout, UILayoutService, UILayoutSnapshot
+from ..platform.launch_options import ai_features_enabled
 from ..platform.user_dirs import default_layout_directory, ensure_directory
 from .panel_ids import canonical_panel_id
 
@@ -57,6 +58,8 @@ class LayoutPersistence:
     def save_current_layout(self, *, name: str | None = None) -> Path | None:
         """Capture the current layout and persist it to disk."""
 
+        if not ai_features_enabled():
+            return None
         service = self._layout_service_getter()
         if service is None:
             self._logger.debug("Layout service unavailable; skipping layout save")

@@ -309,9 +309,10 @@ def parametric_handles(obj: object) -> tuple[ParametricHandle, ...]:
             )
         )
     elif shape_id in _FOCUS_LINES_IDS:
-        inner_ratio = float(params.get("inner_ratio", 0.3))
-        line_count = int(params.get("line_count", 30))
-        outer_width = float(params.get("outer_width", 0.0))
+        inner_ratio = float(params.get("inner_ratio", 0.35))
+        line_count = int(params.get("line_count", 90))
+        outer_width = float(params.get("outer_width", 0.2))
+        length_jitter = float(params.get("length_jitter", 0.6))
         inner_width = float(params.get("inner_width", 0.0))
         vp_x = float(params.get("vp_x", 0.0))
         vp_y = float(params.get("vp_y", 0.0))
@@ -352,6 +353,15 @@ def parametric_handles(obj: object) -> tuple[ParametricHandle, ...]:
                 pos=(min_x + inset, cy - height * 0.5 * inner_width),
                 kind="circle",
                 color=(60, 180, 80),
+            )
+        )
+        # Orange: inner length jitter (bottom edge, x maps to jitter)
+        handles.append(
+            ParametricHandle(
+                handle_id="length_jitter",
+                pos=(min_x + width * length_jitter, max_y),
+                kind="diamond",
+                color=(240, 150, 40),
             )
         )
         # Purple: vanishing point position
@@ -548,12 +558,13 @@ def _default_params(shape_id: str) -> dict[str, float | int]:  # noqa: PLR0911
         return {"top_inset": 0.2}
     if shape_id in _FOCUS_LINES_IDS:
         return {
-            "line_count": 30,
-            "inner_ratio": 0.28,
-            "outer_width": 0.0,
+            "line_count": 90,
+            "inner_ratio": 0.35,
+            "outer_width": 0.2,
             "inner_width": 0.0,
             "vp_x": 0.0,
             "vp_y": 0.0,
+            "length_jitter": 0.6,
         }
     if shape_id == "speech_round":
         return {"tail_x": 0.5, "tail_y": 1.15, "tail_width": 0.16}
@@ -589,12 +600,13 @@ def _normalize_params(shape_id: str, params: dict[str, object]) -> dict[str, flo
     elif shape_id == "trapezoid":
         data["top_inset"] = _clamp(_float(params.get("top_inset"), 0.2), 0.0, 0.45)
     elif shape_id in _FOCUS_LINES_IDS:
-        data["line_count"] = _int(params.get("line_count"), 30, min_value=8, max_value=200)
-        data["inner_ratio"] = _clamp(_float(params.get("inner_ratio"), 0.28), 0.05, 0.8)
-        data["outer_width"] = _clamp(_float(params.get("outer_width"), 0.0), 0.0, 1.0)
+        data["line_count"] = _int(params.get("line_count"), 90, min_value=8, max_value=200)
+        data["inner_ratio"] = _clamp(_float(params.get("inner_ratio"), 0.35), 0.05, 0.8)
+        data["outer_width"] = _clamp(_float(params.get("outer_width"), 0.2), 0.0, 1.0)
         data["inner_width"] = _clamp(_float(params.get("inner_width"), 0.0), 0.0, 1.0)
         data["vp_x"] = _clamp(_float(params.get("vp_x"), 0.0), -0.8, 0.8)
         data["vp_y"] = _clamp(_float(params.get("vp_y"), 0.0), -0.8, 0.8)
+        data["length_jitter"] = _clamp(_float(params.get("length_jitter"), 0.6), 0.0, 1.0)
     elif shape_id in {"speech_round", "speech_rect", "speech_cloud"}:
         data["tail_x"] = _clamp(
             _float(params.get("tail_x"), 0.55),
@@ -682,6 +694,9 @@ def _update_params_from_handle(  # noqa: PLR0911
         if handle_id == "inner_width":
             updated["inner_width"] = _clamp((cy - py) / (height * 0.5), 0.0, 1.0)
             return _normalize_params(shape_id, updated)
+        if handle_id == "length_jitter":
+            updated["length_jitter"] = _clamp((px - min_x) / width, 0.0, 1.0)
+            return _normalize_params(shape_id, updated)
     return None
 
 
@@ -705,9 +720,9 @@ def _build_paths(  # noqa: PLR0911
         inset = _float(params.get("top_inset"), 0.2)
         return [_polygon_path(_trapezoid_points(bbox, inset))]
     if shape_id in _FOCUS_LINES_IDS:
-        count = _int(params.get("line_count"), 30, min_value=8, max_value=200)
-        inner_ratio = _float(params.get("inner_ratio"), 0.28)
-        outer_width = _float(params.get("outer_width"), 0.0)
+        count = _int(params.get("line_count"), 90, min_value=8, max_value=200)
+        inner_ratio = _float(params.get("inner_ratio"), 0.35)
+        outer_width = _float(params.get("outer_width"), 0.2)
         inner_width = _float(params.get("inner_width"), 0.0)
         vp_x = _float(params.get("vp_x"), 0.0)
         vp_y = _float(params.get("vp_y"), 0.0)
@@ -721,6 +736,7 @@ def _build_paths(  # noqa: PLR0911
             vp_x=vp_x,
             vp_y=vp_y,
             rect_outer=rect_outer,
+            length_jitter=_float(params.get("length_jitter"), 0.6),
         )
     if shape_id == "speech_round":
         points = _ellipse_points(bbox, count=36)
@@ -839,10 +855,26 @@ def _focus_line_outer_point_circle(
     cy: float,
     rx: float,
     ry: float,
+    origin: tuple[float, float],
     angle: float,
-) -> tuple[float, float]:
-    """Outer endpoint on an ellipse."""
-    return (cx + math.cos(angle) * rx, cy + math.sin(angle) * ry)
+) -> tuple[float, float] | None:
+    """Outer endpoint where a ray from *origin* leaves the ellipse."""
+    cos_a = math.cos(angle)
+    sin_a = math.sin(angle)
+    ox = (origin[0] - cx) / rx
+    oy = (origin[1] - cy) / ry
+    dx = cos_a / rx
+    dy = sin_a / ry
+    a = dx * dx + dy * dy
+    b = 2.0 * (ox * dx + oy * dy)
+    c = ox * ox + oy * oy - 1.0
+    disc = b * b - 4.0 * a * c
+    if a <= 1e-12 or disc < 0.0:
+        return None
+    t = (-b + math.sqrt(disc)) / (2.0 * a)
+    if t <= 1e-6:
+        return None
+    return (origin[0] + cos_a * t, origin[1] + sin_a * t)
 
 
 def _focus_line_outer_point_rect(
@@ -878,6 +910,13 @@ def _focus_line_outer_point_rect(
     return (cx + cos_a * t_min, cy + sin_a * t_min)
 
 
+def _focus_line_random(idx: int, salt: int) -> float:
+    """Deterministic per-line pseudo-random value in [0, 1)."""
+    x = (idx * 374761393 + salt * 668265263) & 0xFFFFFFFF
+    x = ((x ^ (x >> 13)) * 1274126177) & 0xFFFFFFFF
+    return ((x ^ (x >> 16)) & 0xFFFFFF) / float(0x1000000)
+
+
 def _focus_line_paths(
     bbox: tuple[float, float, float, float],
     line_count: int,
@@ -888,7 +927,14 @@ def _focus_line_paths(
     vp_x: float = 0.0,
     vp_y: float = 0.0,
     rect_outer: bool = False,
+    length_jitter: float = 0.0,
 ) -> list[VectorPath]:
+    """Manga-style focus lines: wedges radiating from the vanishing point.
+
+    Each line is thick at the outer edge and tapers toward the vanishing
+    point.  Per-line angle, width and start distance are jittered with a
+    deterministic hash so rebuilding the shape is stable.
+    """
     min_x, min_y, max_x, max_y = bbox
     bbox_cx = (min_x + max_x) * 0.5
     bbox_cy = (min_y + max_y) * 0.5
@@ -900,83 +946,61 @@ def _focus_line_paths(
     rx = w * 0.5
     ry = h * 0.5
     inner = _clamp(inner_ratio, 0.05, 0.8)
+    jitter_amount = _clamp(length_jitter, 0.0, 1.0)
     n = max(8, line_count)
     avg_r = (rx + ry) * 0.5
     max_outer_w = avg_r * 0.15 * outer_width
     max_inner_w = avg_r * 0.15 * inner_width
     paths: list[VectorPath] = []
     for idx in range(n):
-        # Deterministic per-line angle jitter using golden-ratio hash
-        jitter = (((idx * 0.6180339887) % 1.0) - 0.5) * (2.0 * math.pi / n) * 0.8
-        angle = 2.0 * math.pi * idx / n + jitter
+        angle_jitter = (_focus_line_random(idx, 1) - 0.5) * (2.0 * math.pi / n) * 0.8
+        angle = 2.0 * math.pi * idx / n + angle_jitter
         cos_a = math.cos(angle)
         sin_a = math.sin(angle)
-        # Inner point: relative to vanishing point
-        x0 = vpx + cos_a * rx * inner
-        y0 = vpy + sin_a * ry * inner
-        # Outer point: on ellipse or rect edge (centered on bbox center)
+        # Outer point: where the ray from the vanishing point leaves the frame
         if rect_outer:
-            x1, y1 = _focus_line_outer_point_rect(
+            outer = _focus_line_outer_point_rect(
                 min_x,
                 min_y,
                 max_x,
                 max_y,
-                bbox_cx,
-                bbox_cy,
+                vpx,
+                vpy,
                 angle,
             )
         else:
-            x1, y1 = _focus_line_outer_point_circle(bbox_cx, bbox_cy, rx, ry, angle)
-        # Deterministic per-line random factor using golden-ratio hash
-        t = (idx * 0.6180339887) % 1.0
-        ow = max_outer_w * t
-        iw = max_inner_w * t
-        # Shorten/cull from the thinner side when its width < 1px.
-        # Only the side whose handle is actively used participates.
-        outer_active = max_outer_w > 0.1
-        inner_active = max_inner_w > 0.1
-        if outer_active or inner_active:
-            # Pick the thinner active side
-            if outer_active and inner_active:
-                thin_w = min(ow, iw)
-                shrink_outer = ow <= iw
-            elif outer_active:
-                thin_w = ow
-                shrink_outer = True
-            else:
-                thin_w = iw
-                shrink_outer = False
-            if thin_w < 1.0:
-                reach = thin_w  # 0.0-1.0
-                if reach < 0.05:
-                    continue
-                full_dx = x1 - x0
-                full_dy = y1 - y0
-                if shrink_outer:
-                    x1 = x0 + full_dx * reach
-                    y1 = y0 + full_dy * reach
-                else:
-                    x0 = x1 - full_dx * reach
-                    y0 = y1 - full_dy * reach
-        # Normal perpendicular to the line direction
-        dx = x1 - x0
-        dy = y1 - y0
-        line_len = math.hypot(dx, dy)
-        if line_len < 1e-6:
+            outer = _focus_line_outer_point_circle(bbox_cx, bbox_cy, rx, ry, (vpx, vpy), angle)
+        if outer is None:
             continue
-        nx = -dy / line_len
-        ny = dx / line_len
-        paths.append(
-            VectorPath(
-                anchors=[
-                    Anchor(pos=(x0 - nx * iw, y0 - ny * iw), kind="corner"),
-                    Anchor(pos=(x1 - nx * ow, y1 - ny * ow), kind="corner"),
-                    Anchor(pos=(x1 + nx * ow, y1 + ny * ow), kind="corner"),
-                    Anchor(pos=(x0 + nx * iw, y0 + ny * iw), kind="corner"),
-                ],
-                closed=True,
-            )
-        )
+        x1, y1 = outer
+        outer_dist = math.hypot(x1 - vpx, y1 - vpy)
+        # Inner start: on the inner ellipse around the vanishing point,
+        # pushed outward per line so the lines have uneven lengths.
+        base_dist = math.hypot(cos_a * rx * inner, sin_a * ry * inner)
+        reach = jitter_amount * 0.6 * _focus_line_random(idx, 2) ** 1.5
+        inner_dist = base_dist + max(0.0, outer_dist - base_dist) * reach
+        if outer_dist - inner_dist < 1.0:
+            continue
+        x0 = vpx + cos_a * inner_dist
+        y0 = vpy + sin_a * inner_dist
+        width_factor = 0.3 + 0.7 * _focus_line_random(idx, 3)
+        ow = max_outer_w * width_factor
+        iw = max_inner_w * width_factor
+        if ow < 0.05 and iw < 0.05:
+            continue
+        # Normal perpendicular to the line direction
+        nx = -sin_a
+        ny = cos_a
+        anchors = [
+            Anchor(pos=(x1 - nx * ow, y1 - ny * ow), kind="corner"),
+            Anchor(pos=(x1 + nx * ow, y1 + ny * ow), kind="corner"),
+        ]
+        if iw < 0.05:
+            anchors.append(Anchor(pos=(x0, y0), kind="corner"))
+        else:
+            anchors.append(Anchor(pos=(x0 + nx * iw, y0 + ny * iw), kind="corner"))
+            anchors.append(Anchor(pos=(x0 - nx * iw, y0 - ny * iw), kind="corner"))
+        paths.append(VectorPath(anchors=anchors, closed=True))
     return paths
 
 

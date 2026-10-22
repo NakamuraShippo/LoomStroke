@@ -24,6 +24,7 @@ from PySide6.QtWidgets import QPlainTextEdit, QWidget
 
 from loomstroke.core.japanese_text.grapheme_clusters import grapheme_spans
 from loomstroke.core.japanese_text.typography import typography_from_payload
+from loomstroke.core.path_text.metadata import path_settings
 from loomstroke.core.text_edit_geometry import python_index_from_utf16
 from loomstroke.host_api import HostAPI, StrokePoint
 from loomstroke.plugins.sdk.base import PluginBase, PluginMetadata, PluginType
@@ -71,6 +72,8 @@ from .inline_edit_controller import (
     InlineTextEditController,
 )
 from .inline_edit_controller import InlineTextEditor as _InlineTextEditor
+from .layer_naming import sync_text_layer_name
+from .path_text_controller import PathTextController
 from .properties_controller import (
     TextPropertiesController,
     replace_text_property,
@@ -226,6 +229,7 @@ class TextTool:
         self._properties = TextPropertiesController(self)
         self._edit_lifecycle = TextEditLifecycle(self)
         self._annotations = TextAnnotationsController(self)
+        self._path_text = PathTextController(self)
 
     @property
     def _inline_editor(self) -> _InlineTextEditor | None:
@@ -347,7 +351,12 @@ class TextTool:
                             key="text.convert_selection_to_area",
                             label=_ts("Selection To Area"),
                             kind="button",
-                        )
+                        ),
+                        ToolActionSpec(
+                            key="text.along_path",
+                            label=self._path_text_label(),
+                            kind="button",
+                        ),
                     ],
                 )
             ],
@@ -390,6 +399,7 @@ class TextTool:
         self._edit_lifecycle.connect()
 
     def disable(self) -> None:
+        self._path_text.close()
         if hasattr(self, "_link_picker"):
             self._link_picker.cancel()
         self._edit_lifecycle.disconnect()
@@ -422,6 +432,8 @@ class TextTool:
         meta: bool = False,
     ) -> None:
         del alt, shift, ctrl, meta
+        if self._path_text.pointer("press", pt):
+            return
         if hasattr(self, "_link_picker") and self._link_picker.pointer(pt, click=True):
             self._reset_state()
             return
@@ -514,6 +526,8 @@ class TextTool:
             last = point
         if last is None:
             return
+        if self._path_text.pointer("move", last):
+            return
         if hasattr(self, "_link_picker") and self._link_picker.pointer(last):
             return
         current = (float(last.pos[0]), float(last.pos[1]))
@@ -540,6 +554,8 @@ class TextTool:
         self._last_pos = current
 
     def on_pointer_up(self, pt: StrokePoint) -> None:
+        if self._path_text.pointer("release", pt):
+            return
         if self.host_api:
             self.host_api.input.release_capture(self.descriptor().id)
         if send_selection_pointer(self, "release", (float(pt.pos[0]), float(pt.pos[1]))):
@@ -592,6 +608,8 @@ class TextTool:
         self._reset_state()
 
     def on_pointer_hover(self, pt: StrokePoint) -> None:
+        if self._path_text.pointer("hover", pt):
+            return
         if hasattr(self, "_link_picker") and self._link_picker.pointer(pt):
             return
         from ..sdk.cursors import apply_hover_cursor, cursor_for_handle  # noqa: PLC0415
@@ -636,6 +654,8 @@ class TextTool:
             return False
         key_lower = key.lower()
         if key_lower in {"escape", "esc"}:
+            if self._path_text.cancel_drag():
+                return True
             if hasattr(self, "_link_picker") and self._link_picker.source is not None:
                 self._link_picker.cancel()
                 return True
@@ -677,6 +697,9 @@ class TextTool:
         return False
 
     def on_action(self, action_key: str, payload: dict[str, Any] | None = None) -> list[Any]:
+        if action_key == "text.along_path":
+            self._path_text.begin()
+            return []
         if action_key == "text.context_menu":
             self._show_context_menu(payload)
             return []
@@ -716,6 +739,9 @@ class TextTool:
             self.set_setting(key, value)
 
     def set_setting(self, key: str, value: Any) -> None:  # noqa: PLR0911, PLR0912
+        if key == "path_text_action":
+            self._path_text.begin()
+            return
         if not self.host_api:
             return
         hit = self._selected_text_hit()
@@ -1080,6 +1106,11 @@ class TextTool:
         content: str,
         settings: TextToolSettings,
     ) -> None:
+        if (
+            state.object_ref is not None
+            and path_settings(extract_text_payload(state.object_ref)) is not None
+        ):
+            return
         if state.word_wrap:
             # Both new and existing Area Text wrap inside the user's frame.
             return
@@ -1940,6 +1971,7 @@ class TextTool:
             )
         if started:
             self._properties.sync(force=True)
+            self._path_text.attach()
         return started
 
     def _shift_tracking_runs_on_edit(
@@ -2093,6 +2125,13 @@ class TextTool:
                     layer_id=state.layer_id,
                 )
                 self._submit_command(cmd)
+                sync_text_layer_name(
+                    self,
+                    state.layer_id,
+                    state.object_id,
+                    content,
+                    previous_content=extract_text_content(current_hit.payload),
+                )
                 self._set_inline_selection_for_object(
                     state.object_id,
                     state.layer_id,
@@ -2135,6 +2174,7 @@ class TextTool:
                 created_layer_id=created_layer_id,
             )
             self._submit_command(cmd)
+            sync_text_layer_name(self, target_layer_id, new_obj.id, content)
             self._set_inline_selection_for_object(
                 str(getattr(new_obj, "id", "")),
                 target_layer_id,
@@ -3092,6 +3132,8 @@ class TextTool:
                 cx, cy = to_canvas(float(global_pos.x()), float(global_pos.y()))
             except Exception:
                 return False
+            if tool_ref._path_text.handle_at(float(cx), float(cy)) is not None:
+                return True
             rotation = state.rotation_deg if hasattr(state, "rotation_deg") else 0.0
             result = tool_ref._hit_test_rotated_handle(
                 float(cx), float(cy), state.rect, rotation, include_move_area=False
@@ -3099,6 +3141,12 @@ class TextTool:
             return result is not None
 
         return _test
+
+    @staticmethod
+    def _path_text_label() -> str:
+        from .path_text_controls import ts  # noqa: PLC0415
+
+        return ts("Text Along Path")
 
     @staticmethod
     def _rect_from_drag(

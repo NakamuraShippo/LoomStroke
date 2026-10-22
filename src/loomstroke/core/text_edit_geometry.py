@@ -11,6 +11,7 @@ from PySide6.QtGui import QFont, QFontMetricsF, QTransform
 
 from .canvas_models import _MaskShapeContour
 from .japanese_text.typography import has_typography
+from .path_text.metadata import path_settings
 from .text_line_geometry import (
     ShapedCursorOffsets,
     TextLineGeometry,
@@ -173,6 +174,8 @@ def build_text_edit_geometry(
     x, y, w, h = Layout.text_padded_rect(
         0.0, 0.0, width, height, Layout.text_padding_from_payload(payload)
     )
+    if path_settings(payload) is not None:
+        x, y, w, h = 0.0, 0.0, width, height
     style = Layout.text_style_defaults(payload)
     vertical = bool(style.get("vertical", payload.get("vertical", False)))
     mode = Layout.text_wrap_mode_from_payload(

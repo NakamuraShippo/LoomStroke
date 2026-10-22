@@ -14,6 +14,9 @@
 /venv/
 /.venv/
 /.runtime/
+/.loomstroke-update-*/
+/.loomstroke-update.lock
+/.update-backups/
 __pycache__/
 *.py[cod]
 *.nbc

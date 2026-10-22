@@ -77,6 +77,7 @@ class TextEditLifecycle:
             self._cancel_page_edit()
 
     def _cancel_page_edit(self) -> None:
+        self._tool._path_text.close()
         tool = self._tool
         tool._flush_prop_transaction()
         tool._transform_controller.discard()

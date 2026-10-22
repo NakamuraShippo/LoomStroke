@@ -1,3 +1,5 @@
+> **最終照合: 2026-10-22**
+
 # LoomStroke 起動方法
 
 この文書は最短の起動リファレンスです。セットアップ全体は
@@ -21,6 +23,37 @@ python -m loomstroke
 
 - `python -m pip install -e .` を実行済み
 - もしくは通常インストール済み
+
+## AI 無しモード
+
+起動時に `--no-ai` を付けると、AI 機能と関連 UI を除いて起動します。
+Windows では `boot_LoomStroke_noAI.bat` をダブルクリックするだけで、このモードで起動できます。
+
+```powershell
+# Windows の起動バッチ
+.\boot_LoomStroke_noAI.bat
+# 通常のバッチに引数を付けても同じモードで起動
+.\boot_LoomStroke.bat --no-ai
+
+# インストール済み環境
+loomstroke --no-ai
+# または
+python -m loomstroke --no-ai
+
+# この開発環境
+.\venv\Scripts\python.exe -m loomstroke --no-ai
+```
+
+AI Effects Manager、AI Select、ComfyUI、LLM Gateway、GPT Image 2、NanoBanana、
+Prompt Editor、生成履歴、生成 3D プレビュー、Canvas Assistant、Production Control を
+起動対象から外します。Preferences の AI Effect・SAM 3.1・LoomStroke MCP と、
+Interface の外部 AI サービス許可欄も表示しません。ComfyUI・SAM・MCP の自動起動設定が
+ON でも、この起動中は実行しません。
+
+AI 設定やプリセットは削除せず、次回フラグなしで起動すると通常モードに戻ります。
+AI 無しモードではパネル配置を保存しないため、通常用レイアウトは上書きされません。
+既存文書の AI レイヤーデータは保持し、生成・入力スロット・AI パラメーター編集 UI は表示しません。
+通常の描画・選択・フィルター・文字・ページ・参照画像は利用できます。
 
 ## ソースツリーからの起動
 

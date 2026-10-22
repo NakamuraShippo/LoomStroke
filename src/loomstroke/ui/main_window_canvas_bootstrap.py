@@ -293,6 +293,10 @@ class MainWindowCanvasBootstrapCoordinator:
         # Create context toolbar manager
         window._context_toolbar_manager = window._create_context_toolbar_manager()
 
+        from loomstroke.platform.launch_options import ai_features_enabled  # noqa: PLC0415
+
+        if not ai_features_enabled():
+            return
         # Status-bar busy indicator for SAM3 worker / generation requests.
         try:
             from .sam3_status_indicator import Sam3BusyStatusIndicator  # noqa: PLC0415

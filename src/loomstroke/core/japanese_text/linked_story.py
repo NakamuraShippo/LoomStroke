@@ -5,6 +5,7 @@ from copy import deepcopy
 from dataclasses import replace
 from uuid import uuid4
 
+from ..path_text.metadata import path_settings
 from ..vector_text_layout import TextLayoutCalculator as Layout
 from .annotations import ANNOTATION_KEYS
 from .frame_flow import payload_flow
@@ -178,6 +179,8 @@ def story_objects(canvas, ids):
         payload = (getattr(obj, "meta", None) or {}).get("text_tool")
         if not isinstance(payload, Mapping):
             raise ValueError("A linked text frame is missing.")
+        if path_settings(payload) is not None:
+            raise ValueError("The text frames could not be linked.")
     return result
 
 

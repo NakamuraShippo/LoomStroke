@@ -193,6 +193,10 @@ class MainWindowToolChromeCoordinator:
         self.show_floating_tool_toolbar_at_default()
 
     def save_floating_tool_toolbar_state(self) -> None:
+        from loomstroke.platform.launch_options import ai_features_enabled  # noqa: PLC0415
+
+        if not ai_features_enabled():
+            return
         frame = getattr(self._window, "_floating_tool_toolbar", None)
         if frame is None:
             return

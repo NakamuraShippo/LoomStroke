@@ -9,6 +9,7 @@ from typing import Any, cast
 from PySide6.QtCore import QByteArray
 
 from ..host_api import UILayoutService, UILayoutSnapshot
+from ..platform.launch_options import ai_features_enabled
 
 logger = logging.getLogger(__name__)
 
@@ -85,6 +86,9 @@ class MainWindowLayoutStateCoordinator:
 
         window = self._window
         if getattr(window, "_layout_settings_freeze", 0) > 0:
+            return
+        if not ai_features_enabled():
+            window._settings.set("ui/recent_files", window._recent_files)
             return
 
         clear_transient_dock_spacers = getattr(window, "clear_transient_dock_spacers", None)

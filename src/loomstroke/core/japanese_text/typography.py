@@ -6,6 +6,7 @@ from collections.abc import Mapping
 from copy import deepcopy
 from typing import Any
 
+from ..path_text.metadata import path_settings
 from .annotations import ANNOTATION_KEYS, normalize_annotations
 from .character_fonts import has_font_overrides
 from .character_geometry import geometry_runs
@@ -79,7 +80,8 @@ def has_typography(payload: Any) -> bool:
 def has_japanese_layout(payload: Any) -> bool:
     """Color-only edits must retain the legacy line and glyph geometry."""
     if (
-        typography_from_payload(payload)["enabled"]
+        path_settings(payload) is not None
+        or typography_from_payload(payload)["enabled"]
         or has_font_overrides(payload)
         or bool(geometry_runs(payload))
         or has_frame_flow(payload)

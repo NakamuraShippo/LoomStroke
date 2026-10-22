@@ -11,7 +11,7 @@ from collections.abc import Callable
 from contextlib import suppress
 from typing import Any, cast
 
-from PySide6.QtCore import Qt
+from PySide6.QtCore import QEvent, Qt
 from PySide6.QtGui import QColor, QFontDatabase
 from PySide6.QtWidgets import (
     QCheckBox,
@@ -59,6 +59,15 @@ class TextContextContent(QWidget):
     """
 
     _vertical_flow_combo: QComboBox | None
+
+    def changeEvent(self, event) -> None:
+        super().changeEvent(event)
+        if event.type() == QEvent.Type.LanguageChange and hasattr(self, "_path_button"):
+            from loomstroke.plugins.text_tool.path_text_controls import (  # noqa: PLC0415
+                ts as path_ts,
+            )
+
+            self._path_button.setText(path_ts("Text Along Path"))
 
     def __init__(
         self,
@@ -148,6 +157,12 @@ class TextContextContent(QWidget):
         r1.addStretch(1)
 
         root.addWidget(row1)
+
+        from loomstroke.plugins.text_tool.path_text_controls import ts as path_ts  # noqa: PLC0415
+
+        self._path_button = QPushButton(path_ts("Text Along Path"), self)
+        self._path_button.clicked.connect(lambda: self._on_changed("path_text_action", True))
+        r1.addWidget(self._path_button)
 
         # ── Row 2 ──
         row2 = QWidget(self)

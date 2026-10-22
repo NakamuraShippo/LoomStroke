@@ -73,6 +73,11 @@ class FramePreviewPreparation:
                 controls, state, layout, page_id, page_size, token, factory, installer, auto_commit
             )
         )
+        emit = getattr(getattr(self.workflow.tool.host_api, "events", None), "emit", None)
+        if auto_commit and callable(emit):
+            emit(
+                "comic.panel.preparing", {"canvas": self.workflow.tool._canvas(), "task": self.task}
+            )
         return self.task
 
     async def _prepare(
@@ -99,7 +104,13 @@ class FramePreviewPreparation:
             if not guard.apply(self.workflow.tool._canvas()):
                 raise PanelFrameError(guard.last_error)
             self.task = self.token = None
-            controls.run(lambda: self._install(controls, repair, installer, auto_commit))
+            no_change = (
+                isinstance(repair, PanelRepairPreview)
+                and repair.fixed_frame
+                and not repair.content_changed()
+            )
+            result = controls.run(lambda: self._install(controls, repair, installer, auto_commit))
+            return result if not auto_commit else bool(result) and not no_change
         except asyncio.CancelledError:
             return
         except PanelFrameError as exc:

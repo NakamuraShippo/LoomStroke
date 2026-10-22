@@ -13,6 +13,7 @@ from loomstroke.core.japanese_text.character_geometry import geometry_values
 from loomstroke.core.japanese_text.frame_flow import flow_values, payload_flow
 from loomstroke.core.japanese_text.typography import normalize_typography
 from loomstroke.core.native_cmyk.vector_paints import object_paints, without_paint
+from loomstroke.core.path_text.metadata import path_settings
 
 from .character_style_controller import selection_color, selection_font_values
 from .common import TextToolSettings, extract_text_payload
@@ -137,9 +138,10 @@ class TextPropertiesController:
         obj = state.object_ref if state is not None else (hit.obj if hit else None)
         values["text_flow"] = payload_flow(extract_text_payload(obj) or {})
         payload = extract_text_payload(obj) or {}
-        values["rectangular_text_frame"] = not bool(payload.get("shape_frame"))
+        is_path = path_settings(payload) is not None
+        values["rectangular_text_frame"] = not bool(payload.get("shape_frame")) and not is_path
         values["linked_text_frame"] = bool(payload.get("linked_story"))
-        values["text_frame_selected"] = obj is not None or state is not None
+        values["text_frame_selected"] = (obj is not None or state is not None) and not is_path
         from .link_order_dialog import selected_frames  # noqa: PLC0415
 
         values["selected_frame_count"] = len(selected_frames(self._tool))

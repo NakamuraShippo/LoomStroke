@@ -25,6 +25,7 @@ from PySide6.QtWidgets import (
 )
 
 from loomstroke.platform.async_task_owner import AsyncTaskOwner
+from loomstroke.platform.launch_options import ai_features_enabled
 
 logger = logging.getLogger(__name__)
 
@@ -108,7 +109,7 @@ class AIEffectPanelSection(QWidget, AsyncTaskOwner):
     def _get_selected_ai_effect(self) -> tuple[str | None, Any]:
         """Return ``(layer_id, ai_effect_state)`` for the selection, or
         ``(None, None)`` when the selected layer is not an AI Effect."""
-        if self._host is None or self._selected_layer_id is None:
+        if not ai_features_enabled() or self._host is None or self._selected_layer_id is None:
             return (None, None)
         canvas = getattr(self._host, "canvas", None)
         if canvas is None:
@@ -177,15 +178,15 @@ class AIEffectPanelSection(QWidget, AsyncTaskOwner):
         if self._auto_connect_banner_visible:
             self._show_auto_connect_failure_banner()
 
-        # Phase 8c-2 preview thumbnail. Empty until the first
-        # ``set_preview_image`` call fires; hidden until then so the
-        # AI Effect group does not reserve dead vertical space.
-        self._preview_label = QLabel(self._ai_effect_group)
-        self._preview_label.setObjectName("aiEffectPreviewThumbnail")
-        self._preview_label.setAlignment(Qt.AlignmentFlag.AlignCenter)
-        self._preview_label.setStyleSheet(self._preview_thumbnail_stylesheet())
-        self._preview_label.hide()
-        group_layout.addWidget(self._preview_label)
+        # ComfyUI layers use this panel for parameter editing only. With no
+        # thumbnail label, late preview events are dropped before PNG decoding.
+        if str(getattr(state, "gateway_id", "") or "") != "comfyui":
+            self._preview_label = QLabel(self._ai_effect_group)
+            self._preview_label.setObjectName("aiEffectPreviewThumbnail")
+            self._preview_label.setAlignment(Qt.AlignmentFlag.AlignCenter)
+            self._preview_label.setStyleSheet(self._preview_thumbnail_stylesheet())
+            self._preview_label.hide()
+            group_layout.addWidget(self._preview_label)
 
         # ---- Input slots (Step 3) ----
         # Follows the mockup order: slots before params. Built before
@@ -814,10 +815,8 @@ class AIEffectPanelSection(QWidget, AsyncTaskOwner):
             return
         label = self._preview_label
         if label is None:
-            # Panel rebuild raced with a controller emission. The
-            # next build will start fresh; dropping this frame is
-            # safe because controller throttle guarantees the next
-            # preview arrives within ``preview_throttle_ms``.
+            # ComfyUI intentionally has no result thumbnail. This also covers
+            # controller emissions that race with a panel rebuild.
             return
         from PySide6.QtGui import QImage, QPixmap  # noqa: PLC0415
 
@@ -1675,7 +1674,7 @@ class AIEffectPanelSection(QWidget, AsyncTaskOwner):
         panel's ``_apply_seed_modes`` (called just before queue
         submit) for the bound-layer case.
         """
-        if not isinstance(layer_id, str) or not layer_id:
+        if not ai_features_enabled() or not isinstance(layer_id, str) or not layer_id:
             return
         if layer_id == self._current_ai_effect_id and self._native_comfy_panel is not None:
             self._native_comfy_panel.run(self._native_comfy_panel.commit(generate=True))

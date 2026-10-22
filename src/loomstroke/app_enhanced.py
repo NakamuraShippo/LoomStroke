@@ -31,6 +31,7 @@ from .core.event_bus_extensions import get_extended_event_bus
 from .host_api import HostAPI
 from .platform import get_settings_manager
 from .platform.async_manager_enhanced import get_enhanced_async_manager
+from .platform.launch_options import ai_features_enabled, enabled_plugin_modules
 from .platform.qt_async_integration import get_qt_async_integration
 from .plugins.sdk import PluginRegistry
 
@@ -268,9 +269,10 @@ class LoomStrokeAppEnhanced:
             GenerationHistoryStore,
         )
 
-        self._generation_history = GenerationHistoryStore()
-        self._generation_history.load()
-        self.host_api.attach_generation_history(self._generation_history)
+        if ai_features_enabled():
+            self._generation_history = GenerationHistoryStore()
+            self._generation_history.load()
+            self.host_api.attach_generation_history(self._generation_history)
 
         logger.info("Host API initialized")
 
@@ -512,7 +514,7 @@ class LoomStrokeAppEnhanced:
 
     def _builtin_plugin_modules(self) -> list[str]:
         # Use pen_tool.py which has the correct interface
-        return [
+        modules = [
             "loomstroke.plugins.basic_pen.pen_tool",
             "loomstroke.plugins.filter_pen.plugin",
             "loomstroke.plugins.basic_eraser.eraser_tool",
@@ -550,6 +552,7 @@ class LoomStrokeAppEnhanced:
             "loomstroke.plugins.reference_viewer",
             "loomstroke.plugins.three_d_generation.preview_panel",
         ]
+        return enabled_plugin_modules(modules)
 
     def _load_plugin_module(self, plugin_module: str) -> bool:
         try:

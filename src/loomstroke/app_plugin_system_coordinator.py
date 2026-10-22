@@ -5,6 +5,7 @@ from __future__ import annotations
 import logging
 from typing import Any
 
+from .platform.launch_options import enabled_plugin_modules
 from .plugins.sdk.base import PluginType
 
 logger = logging.getLogger(__name__)
@@ -47,7 +48,7 @@ class PluginSystemCoordinator:
 
         self.plugin_registry.set_host_api(self._host_api)
 
-        for plugin_module in self.builtin_plugins:
+        for plugin_module in enabled_plugin_modules(self.builtin_plugins):
             plugin_id: str | None = None
             try:
                 plugin_id = self.plugin_registry.load_from_module(plugin_module)

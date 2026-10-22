@@ -42,6 +42,7 @@ from loomstroke.core.commands import (
 )
 from loomstroke.core.commands_layer_image_replace import ReplaceLayerImageCommand
 from loomstroke.core.commands_layer_metadata_key import SetLayerMetadataKeyCommand
+from loomstroke.core.commands_layer_rename import RenameLayerCommand
 from loomstroke.core.fill.commands_fill import (
     FloodFillCommand,
     FloodFillToNewLayerCommand,
@@ -94,6 +95,12 @@ class CanvasCommandRoutingService:
             (PasteSelectionCommand, owner._submit_paste_selection),
             (TransformSelectionCommand, owner._submit_transform_selection),
             (MoveLayerCommand, owner._submit_move_layer),
+            (
+                RenameLayerCommand,
+                lambda command: owner._simple_layer_command_submit().submit(
+                    command, "Rename Layer"
+                ),
+            ),
             (LayerVisibilityCommand, owner._submit_layer_visibility),
             (TransformLayerCommand, owner._submit_transform_layer),
             (TransformCommand, owner._submit_transform),

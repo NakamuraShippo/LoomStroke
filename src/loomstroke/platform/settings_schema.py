@@ -227,6 +227,7 @@ DEFAULT_SETTINGS: dict[str, SettingsValue] = {
     "comfyui.local_url": "",
     "comfyui.local_folder": "",
     "comfyui.auto_start": False,
+    "comfyui.show_console": False,
     "comfyui.stop_on_exit": False,
     "comfyui.external_url": "",
     "comfyui.external_servers": [],

@@ -1,4 +1,4 @@
-> **最終照合: 2026-10-20**
+> **最終照合: 2026-10-22**
 
 # 公開用ソースの対象範囲
 
@@ -8,6 +8,25 @@
 開発リポジトリのGit履歴・ブランチ・タグ・remote設定を引き継ぎません。
 LoomStroke本体の `LICENSE` と `LICENSE_JA` は開発側から内容を変更せず収録しています。
 
+## 現行の配布スナップショット
+
+2026-10-22の開発側本体 `3d504410` を反映しています。アプリ番号は `0.1.0` を維持しています。
+本体と実行用資源2,031ファイルは開発側とSHA-256が一致しています。
+既存の公開README・Patreonリンク・実行用固定依存・第三者告知を保持し、起動/更新手順を追記しました。
+開発専用の更新履歴 `CHANGELOG.md` は収録していません。
+
+配布側の本体を読み込んだ関連検証は、unit867件とE2E39件の計906件が成功しました。
+途中でコマ分割準備中の数値欄がUndoキーを消費する問題を再現し、既存テストを変更せず、
+準備中だけ履歴キーを受け取る補完と4件の回帰テストを追加しました。
+同じnative E2E39件を再実行して全て成功し、未解決失敗はありません。
+変更Python55ファイルのRuff・Black・isort、保存schema、配布環境のpip checkも成功しました。
+検証は設定・レイアウト・自動保存等を隔離し、子processを含めて本体import元と実データ不変を確認しています。
+
+今回、全テストスイート、Python未導入Windowsでの再インストール、実ペンタブ、長時間利用、
+実AI推論は再検証していません。2026-10-20のSandbox検証は、その時点の配布物に対する記録です。
+新規ドキュメント直後のnative crashは調査中で、今回の更新で解消したとは扱いません。
+新しいタグやGitHub Releaseは作成せず、公開mainのソースZIPを更新します。
+
 ## 収録するもの
 
 - 本体ソース `src/loomstroke/` と実行に必要な翻訳・アイコン・schema・ICC
@@ -15,6 +34,7 @@ LoomStroke本体の `LICENSE` と `LICENSE_JA` は開発側から内容を変更
 - 利用者向け文書 `docs/user/`
 - `pyproject.toml`、`requirements.txt`
 - `main.py`、`install.bat`、`install_python.ps1`、`boot_LoomStroke.bat`、`run.sh`
+- AI無し専用入口 `boot_LoomStroke_noAI.bat`、ZIP更新用 `update.bat` / `update.ps1`
 
 公開側のREADMEと除外ルールを用意し、earcut移植部分のISC告知を補っています。
 本体コードは開発側の現行ファイルをそのまま収録し、配布独自の挙動変更は加えていません。
@@ -30,6 +50,7 @@ LoomStroke本体の `LICENSE` と `LICENSE_JA` は開発側から内容を変更
 ## 収録しないもの
 
 - 開発リポジトリの `.git/` と内部開発資料 `docs/dev/`
+- 開発側だけで管理する `CHANGELOG.md`
 - 開発・検証用の `requirements.lock`
 - 翻訳の監査レポート・検証用CSV・重複した原本ページ
 - `tests/`、`benchmarks/`、開発用 `scripts/`・`tools/`、CI設定

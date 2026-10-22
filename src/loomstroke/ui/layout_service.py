@@ -11,6 +11,7 @@ from PySide6.QtCore import QRect, Qt, QThread, QTimer
 from PySide6.QtWidgets import QDockWidget, QMainWindow, QToolBar
 
 from ..host_api import PanelLayout, UILayoutSnapshot
+from .floating_dock_geometry import install_floating_dock_guards
 from .panel_ids import canonical_panel_id, panel_lookup_ids
 
 
@@ -140,6 +141,7 @@ class QtUILayoutService(UILayoutServiceProtocol):
             self._apply_layout_tab_groups(panels, panel_map)
             self._schedule_layout_tab_group_apply(panels)
             self._finish_window_geometry_restore(geometry_payload, geometry_restored)
+            install_floating_dock_guards(set(panel_map.values()))
         finally:
             if toolbar_visibility:
                 self._restore_toolbar_visibility(toolbar_visibility)

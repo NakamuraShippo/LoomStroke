@@ -7,14 +7,15 @@ import copy
 import json
 from typing import Any
 
-from PySide6.QtCore import QTimer
-from PySide6.QtWidgets import QComboBox, QHBoxLayout
+from PySide6.QtCore import QEvent, QTimer
+from PySide6.QtWidgets import QComboBox, QHBoxLayout, QLabel
 
 from loomstroke.plugins.comfyui.server_registry import get_registry
 from loomstroke.plugins.comfyui.session_target import active_url
 
 from .layer_cache import identity, take, target_url
 from .panel import NativePanel, tr
+from .qt_node_forms import QtNodeForms
 from .seed_control import advance_controls
 from .values import layer_document, parameter_bindings, prompt_ui_state, snapshot_values
 
@@ -27,6 +28,8 @@ class ComfyLayerPanel(NativePanel):
         self._synced = copy.deepcopy(state.param_values)
         self._auto_open_attempted = False
         self._nodes_loaded = False
+        self._focus_path: list[str] | None = None
+        self._focus_task: Any = None
         self._session_timer = QTimer(self)
         self._session_timer.setInterval(1000)
         self._session_timer.timeout.connect(self.sync_connection)
@@ -46,6 +49,10 @@ class ComfyLayerPanel(NativePanel):
         bar.addWidget(self.prompt_button)
         self.body.insertLayout(0, bar)
         self.body.insertWidget(1, self.nodes)
+        self.classification_label = QLabel(self)
+        self.body.insertWidget(2, self.classification_label)
+        self.qt_forms = QtNodeForms(self)
+        self.body.insertWidget(3, self.qt_forms)
         self.status.setText(
             tr(
                 "Apply values before generating or changing layers. "
@@ -63,6 +70,11 @@ class ComfyLayerPanel(NativePanel):
             return
         self._auto_open_attempted = True
         self.run(self.open_nodes())
+
+    def changeEvent(self, event: Any) -> None:  # noqa: N802
+        super().changeEvent(event)
+        if event.type() == QEvent.Type.LanguageChange and hasattr(self, "qt_forms"):
+            self.qt_forms.retranslate()
 
     def current_state(self) -> Any:
         layer_id, state = self.section._get_selected_ai_effect()
@@ -96,6 +108,9 @@ class ComfyLayerPanel(NativePanel):
 
     def clear_nodes(self) -> None:
         self._nodes_loaded = False
+        self._focus_path = None
+        self.qt_forms.clear()
+        self.classification_label.clear()
         self.save_button.setEnabled(False)
         self.nodes.blockSignals(True)
         self.nodes.clear()
@@ -129,7 +144,9 @@ class ComfyLayerPanel(NativePanel):
             await self.push_values(state, previous_values=draft[1])
         else:
             self._synced = copy.deepcopy(state.param_values)
-        info = await view.call("describe")
+        info = await view.call("describe", True)
+        self.current_state()
+        self.qt_forms.rebuild(info, state)
         ids = {str(ref["node_id"]) for ref in parameter_bindings(state).values()}
         self.nodes.blockSignals(True)
         self.nodes.clear()
@@ -144,7 +161,7 @@ class ComfyLayerPanel(NativePanel):
                     self.nodes.blockSignals(True)
                     self.nodes.setCurrentIndex(index)
                     self.nodes.blockSignals(False)
-            await view.call("focus", self.nodes.currentData())
+            await self.qt_forms.focus(self.nodes.currentData())
         else:
             raise ValueError(tr("No published nodes were found in this workflow."))
         self.current_state()
@@ -173,12 +190,33 @@ class ComfyLayerPanel(NativePanel):
             self, "_pending_layer", None
         ):
             return
+        self.qt_forms.sync(state)
         if self.view is not None and not self._busy and state.param_values != self._synced:
-            self.run(self.push_values(copy.deepcopy(state)))
+            self.run(self.push_values(copy.deepcopy(state), previous_values=self._synced))
 
     def focus_node(self, index: int) -> None:
-        if self.view is not None and index >= 0:
-            self.run(self.view.call("focus", self.nodes.itemData(index)))
+        self._focus_path = None
+        if self.view is None or index < 0:
+            return
+        path = self.nodes.itemData(index)
+        if self.qt_forms.select(path):
+            return
+        self._focus_path = path
+        if self._focus_task is None or self._focus_task.done():
+            self._focus_task = self.create_owned_task(
+                self._focus_pending(), consume_exceptions=True
+            )
+
+    async def _focus_pending(self) -> None:
+        while self._focus_path is not None:
+            while self._busy:
+                await asyncio.sleep(0.02)
+            path, self._focus_path = self._focus_path, None
+            if path is None or not self._nodes_loaded or getattr(self, "_pending_layer", None):
+                continue
+            task = self.run(self.view.call("focus", path))
+            if task is not None:
+                await task
 
     def open_prompt(self) -> None:
         from .prompt_dialog import edit_prompt  # noqa: PLC0415
@@ -190,7 +228,10 @@ class ComfyLayerPanel(NativePanel):
             if generate:
                 self.section.ai_generate_requested.emit(self.layer_id)
             return
+        if generate:
+            self.qt_forms.advance_seeds()
         before = copy.deepcopy(self.current_state().param_values)
+        await self.qt_forms.apply_values(self.current_state(), exclude=ui_updates or ())
         if generate:
             await advance_controls(self.view, self.current_state())
         snapshot = await self.view.call("snapshot")
@@ -207,6 +248,7 @@ class ComfyLayerPanel(NativePanel):
             self.layer_id, param_values=values, slot_refs=state.slot_refs, param_ui_state=ui
         ):
             raise ValueError(tr("Could not update the AI Effect layer."))
+        self.qt_forms.sync(self.current_state())
         if hasattr(self, "_cache_identity"):
             self._cache_identity = copy.deepcopy(
                 (state.preset_snapshot, ui.get("comfyui_native"), state.target_server_id)

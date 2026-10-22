@@ -13,6 +13,7 @@ from PySide6.QtWidgets import QDockWidget, QMenu, QWidget
 
 from ..host_api import UILayoutSnapshot
 from ._dock_safe import is_valid
+from .floating_dock_geometry import install_floating_dock_guard
 
 logger = logging.getLogger(__name__)
 
@@ -87,6 +88,10 @@ class MainWindowDockSizeCacheController:
 
     def save_dock_sizes(self, key: str) -> None:
         """Persist current dock sizes to settings."""
+        from loomstroke.platform.launch_options import ai_features_enabled  # noqa: PLC0415
+
+        if not ai_features_enabled():
+            return
         data: dict[str, dict[str, list[int]]] = {}
         for dock in _dock_widgets(self._window):
             if self._owner.is_spacer_dock(dock):
@@ -816,6 +821,7 @@ class MainWindowDockLayoutController:
     def ensure_dock_tracking(self, dock: QDockWidget) -> None:
         if not is_valid(dock) or self.is_spacer_dock(dock):
             return
+        install_floating_dock_guard(dock)
         if dock.property(_DOCK_TRACKING_PROP):
             return
         dock.setProperty(_DOCK_TRACKING_PROP, True)

@@ -35,10 +35,12 @@ except ImportError:
     sys.exit(1)
 
 from . import app_ai_effect_coordinator as _ai_effect_coordinator
+from . import app_window_ai_wiring
 from .app_bootstrapper import ApplicationBootstrapper
 from .app_plugin_system_coordinator import PluginSystemCoordinator
 from .platform import AsyncManager, SettingsManager, get_async_manager, get_settings_manager
 from .platform.debug_config import configure_logging
+from .platform.launch_options import ai_features_enabled
 from .plugins.sdk import PluginRegistry
 
 # Configure logging before creating logger
@@ -443,10 +445,11 @@ class LoomStrokeApp:
             GenerationHistoryStore,
         )
 
-        generation_history = GenerationHistoryStore()
-        generation_history.load()
-        self._generation_history = generation_history
-        host_api.attach_generation_history(generation_history)
+        if ai_features_enabled():
+            generation_history = GenerationHistoryStore()
+            generation_history.load()
+            self._generation_history = generation_history
+            host_api.attach_generation_history(generation_history)
 
         # Autosave manager
         from .io.autosave import AutosaveManager  # noqa: PLC0415
@@ -472,6 +475,8 @@ class LoomStrokeApp:
 
         # AI Effect Layer subsystem (Phase 6-a). Kept in a separate method so
         # its failure does not block the rest of startup.
+        if not ai_features_enabled():
+            return
         try:
             await self._init_ai_effect_subsystem()
         except Exception:  # noqa: BLE001 — isolate AI Effect from core startup
@@ -484,6 +489,8 @@ class LoomStrokeApp:
             logger.exception("AI Effect subsystem init failed (continuing without it)")
 
     async def _init_ai_effect_subsystem(self) -> None:
+        if not ai_features_enabled():
+            return
         await _ai_effect_for(self)._init_ai_effect_subsystem()
 
     def _on_ai_effect_toast_event(self, payload: Any) -> None:
@@ -514,15 +521,21 @@ class LoomStrokeApp:
         _ai_effect_for(self)._show_ai_effect_manager_panel(panel)
 
     def open_effect_editor(self) -> Any | None:
+        if not ai_features_enabled():
+            return None
         return _ai_effect_for(self).open_effect_editor()
 
     def _on_effect_preset_exported(self, path: Any) -> None:
         _ai_effect_for(self)._on_effect_preset_exported(path)
 
     def open_effect_editor_with_preset(self, preset_id: str) -> None:
+        if not ai_features_enabled():
+            return
         _ai_effect_for(self).open_effect_editor_with_preset(preset_id)
 
     def open_preset_manager(self) -> None:
+        if not ai_features_enabled():
+            return
         _ai_effect_for(self).open_preset_manager()
 
     def _wire_ai_effect_preset_filter_menu(self) -> None:
@@ -562,6 +575,8 @@ class LoomStrokeApp:
         return _ai_effect_for(self)._ai_effect_task_scheduler(coro)
 
     def apply_ai_effect_preset(self, preset_id: str) -> str | None:
+        if not ai_features_enabled():
+            return None
         return _ai_effect_for(self).apply_ai_effect_preset(preset_id)
 
     async def _mcp_submit_generation(self, arguments: Mapping[str, Any]) -> dict[str, Any]:
@@ -604,55 +619,15 @@ class LoomStrokeApp:
             self.main_window = MainWindow(self._host_api, self.plugin_registry)
             self.main_window.set_plugin_registry(self.plugin_registry)
             self.main_window.set_host_api(self._host_api)
-            self.main_window.set_mcp_generation_handlers(
-                self._mcp_submit_generation,
-                self._mcp_cancel_generation,
-            )
-            self._host_api.attach_ai_effect_generation_submitter(
-                self._privacy_gated_generation_submitter
-            )
-
+            app_window_ai_wiring.attach_generation_handlers(self)
             if self._ui_service is not None:
                 self._ui_service.set_main_window(self.main_window)
 
-            # Phase 7-h-A: Filter menu "Installed AI Presets" submenu
-            # needs library access for enumeration and an applier
-            # callback to turn a preset id into a canvas layer. Wired
-            # via a single guarded branch to keep _create_main_window's
-            # branch count under the lint threshold.
-            if self._ai_effect_preset_library is not None:
-                self._wire_ai_effect_preset_filter_menu()
-                # Register before initialize_async can yield to the
-                # layout-restore QTimer scheduled by MainWindow.__init__.
-                # Otherwise the persisted snapshot sees no
-                # ui.ai_effect_manager dock and skips its saved area /
-                # floating geometry.
-                self._register_ai_effect_manager_panel()
-
+            app_window_ai_wiring.register_manager_before_restore(self)
             await self.main_window.initialize_async()
-            # Plugin panels are materialised during initialize_async, so
-            # wire the FilterPanel's AI signals (⊘ receiver + Generate
-            # button) now that the widget exists. Safe to call when
-            # the subsystem is unavailable — the method short-circuits.
-            wire_filter_panel = getattr(self, "_wire_filter_panel_ai_signals", None)
-            if not callable(wire_filter_panel):
-                wire_filter_panel = self._wire_effect_panel_ai_signals
-            wire_filter_panel()
-            # Register AI Effect gateways against their respective backend
-            # services now that the plugins have been loaded. Runs after the
-            # panel-signals wiring because each method short-circuits silently
-            # and ordering is not observable to tests today. Gateways need to
-            # be registered before the main window is shown so the Effect
-            # Editor's Gateway picker and MCP submit path offer the full set
-            # on first open.
-            self._wire_ai_effect_comfyui_gateway()
-            self._wire_ai_effect_nanobanana_gateway()
-            self._wire_ai_effect_gptimage2_gateway()
+            app_window_ai_wiring.connect_after_initialize(self)
             self.main_window.show()
-
-            from .plugins.comfyui.local_runtime import schedule  # noqa: PLC0415
-
-            schedule(self)
+            app_window_ai_wiring.schedule_local_runtime(self)
 
             # Defer recovery check until after event loop is running
             if hasattr(self, "_autosave_manager"):
@@ -717,9 +692,10 @@ class LoomStrokeApp:
         """Clean up application resources."""
         logger.info("Starting application cleanup")
 
-        from .plugins.comfyui.local_runtime import cancel_watch  # noqa: PLC0415
+        if ai_features_enabled():
+            from .plugins.comfyui.local_runtime import cancel_watch  # noqa: PLC0415
 
-        await cancel_watch(self)
+            await cancel_watch(self)
 
         try:
             if hasattr(self, "_autosave_manager"):
@@ -805,10 +781,11 @@ class LoomStrokeApp:
             return 1
 
         finally:
-            from .plugins.comfyui.local_runtime import stop_owned  # noqa: PLC0415
+            if ai_features_enabled():
+                from .plugins.comfyui.local_runtime import stop_owned  # noqa: PLC0415
 
-            # aboutToQuit can stop qasync before the cleanup coroutine completes.
-            stop_owned(self)
+                # aboutToQuit can stop qasync before cleanup completes.
+                stop_owned(self)
 
     async def _run_forever(self) -> int:
         """Run the event loop forever until quit."""

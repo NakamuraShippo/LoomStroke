@@ -19,7 +19,7 @@ REM COM initialization in Qt 6 + Windows, causing QTabletEvent.pressure()
 REM to return 0.0 permanently (tablet detected but pressure flat).
 REM `start "" /min` launches the app detached in a minimized console so
 REM this .bat terminates immediately and no foreground console remains.
-start "" /min "%LOOM_PYTHON%" -m loomstroke
+start "" /min "%LOOM_PYTHON%" -m loomstroke %*
 set "LOOM_EXIT_CODE=%ERRORLEVEL%"
 popd
 exit /b %LOOM_EXIT_CODE%

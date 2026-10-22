@@ -1,4 +1,4 @@
-> **最終照合: 2026-10-20**
+> **最終照合: 2026-10-22**
 
 # LoomStroke インストールと起動ガイド
 
@@ -45,6 +45,26 @@ Windowsでは `install.bat` をダブルクリックすると、既存環境を�
 `--python "C:\path\python.exe"` で新規環境の作成に使うPythonを指定できます。
 `--no-python-download` でPythonの自動取得を止められます。取得や検証に失敗すると処理は停止します。
 `.runtime/` は `.venv` の基盤なので、セットアップ後も削除・移動せず、同じ場所に残してください。
+
+### ZIP版のアップデート（Windows）
+
+1. 原稿を保存してLoomStrokeを終了します。
+2. 本体フォルダの `update.bat` をダブルクリックします。
+3. `Update completed successfully` と表示されたら、`boot_LoomStroke.bat` で起動します。
+
+公開mainの最新版を取得し、本体・同梱素材・説明書を置き換え、既存インストーラーで依存を更新します。
+`user_data/`、`.venv` / `venv`、`.runtime/`、本体フォルダ外の原稿やルートの個人ファイルは更新対象外です。
+旧本体は `.update-backups/日時-ID/` に残します。本体管理下の `src/loomstroke/`、`img/`、
+`docs/user/`、`LICENSES/` に直接追加した独自ファイルもバックアップ側へ移るため、
+個人の原稿や素材はこれらのフォルダに置かないでください。
+
+取得・ZIP検査の失敗では本体を変更せず、通常の適用失敗では旧本体を戻します。
+依存パッケージは巻き戻せないため、依存更新で失敗した場合は `install.bat` を再実行してください。
+停電・強制終了で中断した場合は、表示されたバックアップ先の `RECOVERY.txt` と `changes.json` を確認します。
+
+初回は最新版ZIPから `update.bat` / `update.ps1` の両方を現在の本体フォルダへコピーしてください。
+以降は `update.bat` で更新できます。Git checkoutには適用せず、従来のGit操作を使ってください。
+`update.bat --no-pause` は終了時のキー入力を省略します。
 
 手動でセットアップする場合は、以下の手順を使います。
 
@@ -99,6 +119,19 @@ loomstroke
 ```powershell
 python -m loomstroke
 ```
+
+AI機能を使わない場合は `boot_LoomStroke_noAI.bat` をダブルクリックするか、
+`loomstroke --no-ai` / `python -m loomstroke --no-ai` で起動します。
+設定やプリセットは保持され、通常のバッチでは通常モードに戻ります。
+
+### ComfyUI自動起動時のコンソール表示（Windows）
+
+Preferences → AI Effect → ComfyUI Foldersの「ComfyUIのコンソールウィンドウを表示」で切り替えます。
+ONでは次回の自動起動から別コンソールに出力し、OFF（既定）ではバックグラウンドで起動します。
+フォルダ指定・自動起動設定・外部サービス許可も必要です。既に起動済みのプロセスには反映しません。
+バックグラウンドで自動起動した所有ComfyUIはLoomStroke終了時に停止します。
+別コンソール起動は「LoomStroke終了時にComfyUIも終了する」に従います。
+既存/遠隔サーバーは停止しません。ブラウザーを自動表示する設定ではありません。
 
 ## ソースチェックアウトから直接起動したい場合
 

@@ -16,6 +16,7 @@ from shiboken6 import isValid
 from loomstroke.mcp.generation_capabilities import layer_generation_submitter
 from loomstroke.mcp.live_runtime import LiveMcpEndpointInfo, LiveMcpRuntimeController
 from loomstroke.mcp.types import McpStructuredError, ReasonCode
+from loomstroke.platform.launch_options import ai_features_enabled
 from loomstroke.platform.settings_schema import (
     MCP_CONFIRMATION_POLICY_KEY,
     MCP_LIVE_HTTP_ALLOWED_ORIGINS_KEY,
@@ -85,6 +86,8 @@ class MainWindowMcpRuntimeCoordinator:
         window._mcp_runtime_endpoint_info = controller.endpoint_info()
 
     async def start_on_launch(self) -> None:
+        if not ai_features_enabled():
+            return
         controller = self._controller()
         info = await controller.start_if_configured()
         if info is not None:
@@ -92,8 +95,8 @@ class MainWindowMcpRuntimeCoordinator:
             logger.info("LoomStroke MCP live HTTP started on %s", info.url)
 
     def handle_setting_side_effect(self, key: str, value: Any) -> bool:
-        if key not in MCP_RUNTIME_SETTING_KEYS:
-            return False
+        if key not in MCP_RUNTIME_SETTING_KEYS or not ai_features_enabled():
+            return key in MCP_RUNTIME_SETTING_KEYS
         controller = self._controller()
         if key == MCP_LIVE_HTTP_ENABLED_KEY:
             if bool(value):

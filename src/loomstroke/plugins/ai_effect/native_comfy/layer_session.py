@@ -49,6 +49,10 @@ async def switch(panel: Any, layer_id: str, state: Any) -> None:
         drafts = panel._layer_drafts = {}
     if panel._nodes_loaded and panel.view is not None:
         snapshot = await panel.view.call("draft")
+        # A Qt node does not need browser layout/focus; retain its selection here.
+        selected = panel.nodes.currentData()
+        if selected is not None:
+            snapshot.setdefault("probe", {})["selectedPath"] = selected
         drafts.pop(panel.layer_id, None)
         drafts[panel.layer_id] = (
             panel._cache_identity,

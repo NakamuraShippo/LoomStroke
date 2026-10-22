@@ -23,6 +23,7 @@ from .session_target import confirm
 logger = logging.getLogger(__name__)
 FOLDER_KEY = "comfyui.local_folder"
 AUTO_START_KEY = "comfyui.auto_start"
+SHOW_CONSOLE_KEY = "comfyui.show_console"
 STOP_ON_EXIT_KEY = "comfyui.stop_on_exit"
 STARTUP_STATES: dict[str, tuple[str, str]] = {}
 
@@ -78,7 +79,15 @@ async def server_ready(session: aiohttp.ClientSession, url: str) -> bool:
         return False
 
 
-def spawn(root: Path, args: list[str]) -> subprocess.Popen:
+def spawn(root: Path, args: list[str], *, show_console: bool = False) -> subprocess.Popen:
+    if show_console and os.name == "nt":
+        # Let Windows attach standard streams to the new console, including when
+        # LoomStroke itself was started without a console (pythonw / frozen app).
+        return subprocess.Popen(  # noqa: S603 - configured local installation, no shell
+            args,
+            cwd=root,
+            creationflags=subprocess.CREATE_NEW_CONSOLE,
+        )
     log_path = plugin_data_dir("comfyui") / "startup.log"
     log_path.parent.mkdir(parents=True, exist_ok=True)
     with log_path.open("wb") as log:
@@ -116,7 +125,8 @@ async def start(settings: Any, notify: Any, on_spawn: Any = None) -> None:
                 return
             if not is_external_services_allowed(settings):
                 return
-            process = spawn(root, args)
+            show_console = bool(settings.get(SHOW_CONSOLE_KEY, False)) and os.name == "nt"
+            process = spawn(root, args, show_console=show_console)
             if on_spawn is not None:
                 on_spawn(process)
             STARTUP_STATES[url] = ("Starting", "")
@@ -125,7 +135,9 @@ async def start(settings: Any, notify: Any, on_spawn: Any = None) -> None:
                 await asyncio.sleep(1)
                 if process.poll() is not None:
                     raise RuntimeError(
-                        "ComfyUI exited during startup. See the ComfyUI startup log."
+                        "ComfyUI exited during startup. See the ComfyUI console."
+                        if show_console
+                        else "ComfyUI exited during startup. See the ComfyUI startup log."
                     )
                 if not is_external_services_allowed(settings):
                     return
@@ -134,7 +146,11 @@ async def start(settings: Any, notify: Any, on_spawn: Any = None) -> None:
                     STARTUP_STATES.pop(url, None)
                     notify("ComfyUI is ready.")
                     return
-            raise TimeoutError("ComfyUI startup timed out. See the ComfyUI startup log.")
+            raise TimeoutError(
+                "ComfyUI startup timed out. See the ComfyUI console."
+                if show_console
+                else "ComfyUI startup timed out. See the ComfyUI startup log."
+            )
     except Exception as exc:
         STARTUP_STATES[url] = ("Startup failed", str(exc) or type(exc).__name__)
         logger.exception("ComfyUI automatic startup failed")
@@ -156,6 +172,10 @@ def schedule(app: Any) -> None:
 
     def own_process(process: subprocess.Popen) -> None:
         app._comfyui_owned_process = process
+        # Record this launch's mode. Preferences may change before teardown.
+        app._comfyui_owned_background = not (
+            os.name == "nt" and bool(settings.get(SHOW_CONSOLE_KEY, False))
+        )
 
     app._comfyui_startup_task = asyncio.create_task(start(settings, notify, own_process))
 
@@ -178,16 +198,21 @@ def stop_process(process: subprocess.Popen) -> None:
 
 async def cancel_watch(app: Any) -> None:
     task = getattr(app, "_comfyui_startup_task", None)
-    if task is not None:
-        task.cancel()
-        with contextlib.suppress(asyncio.CancelledError):
-            await task
-    stop_owned(app)
+    try:
+        if task is not None:
+            task.cancel()
+            with contextlib.suppress(asyncio.CancelledError):
+                await task
+    finally:
+        stop_owned(app)
 
 
 def stop_owned(app: Any) -> None:
     """Bounded synchronous teardown also works after the Qt loop has stopped."""
     settings = getattr(app, "settings", None)
     process = getattr(app, "_comfyui_owned_process", None)
-    if process is not None and settings is not None and settings.get(STOP_ON_EXIT_KEY, False):
+    background = getattr(app, "_comfyui_owned_background", False)
+    if process is not None and (
+        background or (settings is not None and settings.get(STOP_ON_EXIT_KEY, False))
+    ):
         stop_process(process)

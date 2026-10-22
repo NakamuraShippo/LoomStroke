@@ -69,6 +69,7 @@ from ..menu_catalog import MENU_DEFINITIONS
 if TYPE_CHECKING:
     from ..menu_catalog import MenuDefinition
 
+from ...platform.launch_options import AI_PREFERENCES_CATEGORIES, ai_features_enabled
 from ..translations import TranslationBinder, translate_with_fallback
 from .preferences_shortcuts import (
     MouseBindingHelper,
@@ -173,6 +174,12 @@ class PreferencesDialog(QDialog):
         self._page_map: dict[str, int] = {}
         self._translation_binder = TranslationBinder(self._translate_runtime)
         self._buttons: QDialogButtonBox | None = None
+        if not ai_features_enabled():
+            self.categories = tuple(
+                category
+                for category in self.categories
+                if category[0] not in AI_PREFERENCES_CATEGORIES
+            )
 
         self._translation_binder.register(self.setWindowTitle, self._ts("Preferences"))
         self.resize(960, 520)
@@ -574,6 +581,8 @@ class InterfacePage(PreferencesPage):
         form.addRow(self.per_page_zoom_check)
         form.addRow(self.external_services_check)
         form.addRow(self.external_services_help)
+        self.external_services_check.setVisible(ai_features_enabled())
+        self.external_services_help.setVisible(ai_features_enabled())
         form.addRow(self._menu_group)
         self._add_labeled_row(form, self._ts("Mask overlay color"), mask_color_row)
         self._add_labeled_row(form, self._ts("Mask overlay opacity"), self._mask_opacity_spin)
@@ -684,7 +693,11 @@ class InterfacePage(PreferencesPage):
             "ui/show_statusbar": self.statusbar_check.isChecked(),
             "view/grid_size": self.grid_size_spin.value(),
             "view/per_page_zoom_enabled": self.per_page_zoom_check.isChecked(),
-            "privacy/allow_external_services": self.external_services_check.isChecked(),
+            **(
+                {"privacy/allow_external_services": self.external_services_check.isChecked()}
+                if ai_features_enabled()
+                else {}
+            ),
             "ui/mask_overlay_color": self._mask_overlay_color.name(),
             "ui/mask_overlay_opacity": self._mask_opacity_spin.value(),
             **{

@@ -189,7 +189,7 @@ class HistoryActionPresenter:
 
     # ------------------------------------------------------------------
     # Application
-    def refresh_labels(self) -> None:
+    def refresh_labels(self, *, pending: bool = False) -> None:
         """Re-derive and apply Undo/Redo presentation from current state.
 
         Called on every history state change, after menu rebuilds, and
@@ -211,14 +211,16 @@ class HistoryActionPresenter:
             # While a tool-specific Undo is available it wins the actual
             # dispatch, and ToolManager exposes no operation metadata —
             # showing the document candidate would mislabel the action.
-            if inline_editing or bool(getattr(window, "_tool_can_undo", False)):
+            if pending or inline_editing or bool(getattr(window, "_tool_can_undo", False)):
                 candidate = None
             else:
                 candidate = self._peek_candidate(history, "_peek_undo_candidate")
             self._apply(undo_action, "edit.undo", "undo", candidate, history)
         if redo_action is not None:
             candidate = (
-                None if inline_editing else self._peek_candidate(history, "_peek_redo_candidate")
+                None
+                if pending or inline_editing
+                else self._peek_candidate(history, "_peek_redo_candidate")
             )
             self._apply(redo_action, "edit.redo", "redo", candidate, history)
 

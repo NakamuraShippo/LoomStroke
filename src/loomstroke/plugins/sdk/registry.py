@@ -18,6 +18,7 @@ from contextlib import suppress
 from pathlib import Path
 from typing import Any
 
+from ...platform.launch_options import ai_features_enabled, is_ai_plugin_module
 from ...platform.settings_manager import get_settings_manager
 from ...platform.user_dirs import plugin_data_root
 from .base import PluginLifecycle, PluginMetadata, PluginType
@@ -70,6 +71,8 @@ class PluginRegistry:
         Raises:
             PluginInitError: If plugin ID already exists
         """
+        if not ai_features_enabled() and PluginType.AI_SERVICE in metadata.types:
+            raise PluginInitError("AI plugins are disabled by --no-ai")
         if metadata.id in self._plugins:
             raise PluginInitError(f"Plugin with ID '{metadata.id}' already registered")
 
@@ -100,6 +103,8 @@ class PluginRegistry:
         Raises:
             PluginInitError: If loading fails
         """
+        if not ai_features_enabled() and is_ai_plugin_module(module_path):
+            raise PluginInitError("AI plugins are disabled by --no-ai")
         try:
             source_path = Path(module_path)
             allow_legacy_module = os.getenv("LOOMSTROKE_ALLOW_LEGACY_PLUGIN_MODULE", "0") == "1"
@@ -393,6 +398,8 @@ class PluginRegistry:
         loaded: list[str] = []
         discovered = self._loader.discover_plugins()
         for plugin_path, manifest in discovered:
+            if not ai_features_enabled() and "ai" in manifest.types:
+                continue
             plugin_id = manifest.id
 
             if plugin_id in self._plugins:
@@ -466,6 +473,8 @@ class PluginRegistry:
         except PluginLoadError as e:
             raise PluginInitError(f"Failed to load plugin source {module_path}: {e}") from e
 
+        if not ai_features_enabled() and "ai" in manifest.types:
+            raise PluginInitError("AI plugins are disabled by --no-ai")
         if granted_permissions is None:
             granted_permissions = self._load_granted_permissions(manifest.id)
 

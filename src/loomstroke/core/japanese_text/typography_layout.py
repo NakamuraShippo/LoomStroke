@@ -55,6 +55,15 @@ def build_japanese_layout(  # noqa: PLR0912, PLR0915 - paragraph/row/segment com
     text = Layout.text_content_from_payload(payload) if content is None else content
     base_font = QFont(font) if font is not None else Layout.make_text_font(payload)
     frame = _frame(payload, rect)
+    if payload.get("path_text") is not None:
+        from ..path_text.layout import build_path_layout  # noqa: PLC0415
+        from ..path_text.metadata import path_settings  # noqa: PLC0415
+
+        if path_settings(payload) is not None:
+            if rect is None:
+                x0, y0, x1, y1 = Layout.text_bbox_from_payload(payload) or (0, 0, 1, 1)
+                frame = QRectF(x0, y0, x1 - x0, y1 - y0)
+            return build_path_layout(payload, text, base_font, frame, build_japanese_layout)
     from .story_composition import compose_extended_story  # noqa: PLC0415
 
     story_result = compose_extended_story(payload, text, base_font, frame, build_japanese_layout)

@@ -165,12 +165,16 @@ FRONTEND = r"""/* Compatibility probe for the real ComfyUI frontend, never a wid
     }
     return describe();
   };
-  const describe = () => ({
+  const describe = (includeWidgetMetadata = false) => ({
     selected, selectedPath, mode,
     nodes: hierarchy.walk().map(({node:n, path}) => ({id: n.id, path,
       subgraph: Boolean(n.isSubgraphNode?.()), type: n.type, title: n.title,
+      ...(includeWidgetMetadata ? {inputSchema: n.constructor.nodeData?.input} : {}),
       widgets: (n.widgets ?? []).map(w => ({name: w.name, type: w.type,
-        dom: Boolean(w.element), value: w.value}))})),
+        dom: Boolean(w.element), value: w.value,
+        ...(includeWidgetMetadata ? {domTag: w.element?.tagName,
+          customDraw: typeof w.draw === 'function',
+          customSerialize: typeof w.serializeValue === 'function'} : {})}))})),
     canvas: {width: canvas.width, height: canvas.height},
   });
   const checkTopology = () => {

@@ -187,13 +187,16 @@ class MainWindowDefaultPanelsCoordinator:
         window._setup_color_panel_if_available()
         window._setup_text_font_panel_if_available()
         window._setup_shape_manager_panel_if_available()
-        window._setup_prompt_editor_panel_if_available()
-        window._setup_nano_banana_panel_if_available()
-        window._setup_gptimage2_panel_if_available()
-        window._setup_comfyui_panel_if_available()
-        window._setup_gallery_panel_if_available()
-        self.setup_canvas_copilot_panel_if_available()
-        window._setup_production_control_panel_if_available()
+        from loomstroke.platform.launch_options import ai_features_enabled  # noqa: PLC0415
+
+        if ai_features_enabled():
+            window._setup_prompt_editor_panel_if_available()
+            window._setup_nano_banana_panel_if_available()
+            window._setup_gptimage2_panel_if_available()
+            window._setup_comfyui_panel_if_available()
+            window._setup_gallery_panel_if_available()
+            self.setup_canvas_copilot_panel_if_available()
+            window._setup_production_control_panel_if_available()
         self.setup_comic_project_panel_if_available()
         self.setup_links_panel_if_available()
         self.setup_actions_panel_if_available()
