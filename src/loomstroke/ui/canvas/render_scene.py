@@ -455,6 +455,9 @@ def build_render_scene_snapshot(
         )
         for layer in getattr(canvas, "_layers", [])
     )
+    from .path_text_preview_layer import append_path_text_preview  # noqa: PLC0415
+
+    layers = append_path_text_preview(canvas, layers, rasterize_vector, raster_scale)
     layers = _apply_transient_overrides(canvas, layers)
     frame_preview_source_layers = None
     if include_frame_preview:

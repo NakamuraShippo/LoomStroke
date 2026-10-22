@@ -5,11 +5,12 @@ from copy import deepcopy
 
 from PySide6.QtCore import QPointF, Qt
 from PySide6.QtGui import QCursor
+from PySide6.QtWidgets import QWidget
 
 from loomstroke.core.japanese_text.typography_layout import build_japanese_layout
 from loomstroke.core.japanese_text.typography_painter import text_rotation_transform
 from loomstroke.core.path_text.geometry import PathTrack
-from loomstroke.core.path_text.metadata import path_settings
+from loomstroke.core.path_text.metadata import DRAFT_PREVIEW_LAYER_ID, path_settings
 from loomstroke.core.path_text.sources import canvas_raster_contours, vector_contours
 from loomstroke.plugins.vector_tools.common import VectorReplaceCommand
 
@@ -17,6 +18,10 @@ from .common import ensure_text_vector_object, extract_text_payload
 from .editing_metadata import clone_text_for_edit, replace_edited_text
 from .path_text_controls import PathTextControls, ts
 from .path_text_overlay import PathTextOverlay
+from .path_text_smoothing import PathTextSmoothing
+
+# Retain the legacy key name without reading, writing or deleting its stored value.
+OVERFLOW_NOTICE_KEY = "text_tool/path_text_show_overflow_notice"
 
 
 class PathTextController:
@@ -28,8 +33,12 @@ class PathTextController:
         self.contours = []
         self._layout_payload = None
         self._layout_diagnostics = ()
+        self.smoothing = PathTextSmoothing(self)
+        self._notice_editor = None
 
     def target(self):
+        if self.smoothing.current is not None:
+            return self.smoothing.current, self.smoothing.layer_id, self.smoothing.fresh
         if self.drag is not None and self.drag[-1] is not None:
             return self.drag[-1], self.drag[2], self.drag[3]
         state = self.tool._inline_state
@@ -43,6 +52,16 @@ class PathTextController:
         if hit is not None and path_settings(hit.payload) is not None:
             return hit.obj, hit.layer_id, False
         return None
+
+    @staticmethod
+    def preview_layer_id(state):
+        if (
+            state.object_id is None
+            and state.object_ref is not None
+            and path_settings(extract_text_payload(state.object_ref)) is not None
+        ):
+            return DRAFT_PREVIEW_LAYER_ID
+        return state.layer_id
 
     def begin(self):
         if not self.tool.host_api:
@@ -125,9 +144,41 @@ class PathTextController:
             editor.windowHandle().setOpacity(0.0)
         if self.overlay is None:
             self.overlay = PathTextOverlay(self, canvas)
+        if not isinstance(canvas, QWidget):
+            return
+        if self.dialog is None:
+            self.dialog = PathTextControls(self, canvas)
+        if editor is not self._notice_editor:
+            self.detach_editor()
+            self._notice_editor = editor
+            if editor is not None:
+                editor.textChanged.connect(self.refresh_controls)
+        self.dialog.body.bind(editor)
+        self.refresh_controls()
+        self.dialog.show()
+
+    def detach_editor(self):
+        if self._notice_editor is not None:
+            self._notice_editor.textChanged.disconnect(self.refresh_controls)
+            self._notice_editor = None
+        if self.dialog is not None:
+            self.dialog.body.detach()
+
+    def edit_body(self):
+        if self.tool._inline_editor is None:
+            self.edit()
+        if self.dialog is not None and self.tool._inline_editor is not None:
+            self.dialog.activateWindow()
+            self.dialog.body.setFocus()
+
+    def sync_body_wrap(self, editor):
+        if self.dialog is not None and self.dialog.body._editor is editor:
+            self.dialog.body.sync_wrap()
 
     def close(self):
+        self.smoothing.cancel()
         self.cancel_drag()
+        self.detach_editor()
         if self.overlay is not None:
             self.overlay.close_overlay()
             self.overlay = None
@@ -155,6 +206,9 @@ class PathTextController:
         if target is None:
             return
         payload = extract_text_payload(target[0])
+        preview = getattr(self.tool.host_api.canvas, "_vector_preview", None)
+        if self.tool._inline_editor is not None and getattr(preview, "id", None) == target[0].id:
+            payload = extract_text_payload(preview) or payload
         self.dialog.contour.setEnabled(target[2] and len(self.contours) > 1)
         if payload != self._layout_payload:
             self._layout_payload = deepcopy(payload)
@@ -162,6 +216,10 @@ class PathTextController:
         self.dialog.refresh(
             path_settings(payload), "path_text_overflow" in self._layout_diagnostics
         )
+        if self.dialog.body.isReadOnly() and self.dialog.body.toPlainText() != payload.get(
+            "content", ""
+        ):
+            self.dialog.body.setPlainText(payload.get("content", ""))
 
     def choose_contour(self, index):
         target = self.target()
@@ -208,6 +266,20 @@ class PathTextController:
             self.tool._submit_command(VectorReplaceCommand(obj.id, updated, layer_id=layer_id))
         self.refresh_controls()
 
+    def swap_endpoints(self):
+        self.cancel_drag()
+        target = self.target()
+        if target is None:
+            return
+        settings = path_settings(extract_text_payload(target[0]))
+        self.change(
+            {
+                "start": settings.get("end", 1.0),
+                "end": settings.get("start", 0.0),
+                "full_loop": bool(settings.get("full_loop")),
+            }
+        )
+
     @staticmethod
     def patched(obj, patch):
         updated = clone_text_for_edit(obj)
@@ -219,7 +291,7 @@ class PathTextController:
         ):
             settings["start"], settings["end"] = settings.get("end", 1), settings.get("start", 0)
         settings.update(patch)
-        if "start" in patch or "end" in patch:
+        if ("start" in patch or "end" in patch) and "full_loop" not in patch:
             settings["full_loop"] = False
         return updated
 

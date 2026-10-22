@@ -1,11 +1,19 @@
 """Japanese fallback for the explicitly invoked path text controls."""
 
 PATH_TEXT_JA = {
+    "Avoid overlapping letters": "文字の重なりを避ける",
+    "Text": "本文",
+    "Contour smoothing": "輪郭のなめらかさ",
+    "0 keeps the original contour; higher values ignore smaller bumps.": (
+        "0では元の輪郭を使用し、値を上げるほど細かな凹凸を無視します。"
+    ),
+    "Edit text here. Ctrl+Enter to finish.": "ここで本文を編集できます。Ctrl+Enterで確定します。",
     "Text Along Path": "パスに沿って配置",
     "Start (%)": "開始位置 (%)",
     "End (%)": "終了位置 (%)",
     "Distance from path (px)": "パスからの距離 (px)",
     "Reverse direction": "進行方向を反転",
+    "Swap start and end": "開始点と終了点を入れ替える",
     "Use full loop": "全周を使用",
     "Rotate letters along path": "パスに沿って文字を回転",
     "Start": "開始",

@@ -1,6 +1,5 @@
 """Map shared shaped glyphs and editing carets onto a bounded path interval."""
 
-from bisect import bisect_right
 from copy import deepcopy
 from dataclasses import replace
 
@@ -8,15 +7,11 @@ from PySide6.QtCore import QRectF
 from PySide6.QtGui import QFontMetricsF
 
 from ..japanese_text.typography_layout_types import JapaneseLayoutResult
+from .collision import PathSpacing
 from .geometry import PathTrack
 
 
-def build_path_layout(payload, text, font, rect, compose):
-    track = PathTrack.from_payload(payload, rect=rect)
-    if track is None:
-        return JapaneseLayoutResult(
-            (), (), QRectF(), QRectF(), rect, QFontMetricsF(font).height(), ("path_text_invalid",)
-        )
+def _straight_source(payload, first_line):
     source = deepcopy(dict(payload))
     source.pop("path_text", None)
     source.pop("shape_frame", None)
@@ -29,11 +24,21 @@ def build_path_layout(payload, text, font, rect, compose):
     document = source.get("document", {})
     for paragraph in document.get("paragraphs", []):
         paragraph.update(align="left")
+    source["document"] = dict(document, text=first_line)
+    source["content"] = first_line
+    return source
+
+
+def build_path_layout(payload, text, font, rect, compose):
+    track = PathTrack.from_payload(payload, rect=rect)
+    if track is None:
+        return JapaneseLayoutResult(
+            (), (), QRectF(), QRectF(), rect, QFontMetricsF(font).height(), ("path_text_invalid",)
+        )
     # One contour carries one line. Keep subsequent lines in the saved body;
     # report overflow instead of silently wrapping or overlapping a second lap.
     first_line = text.split("\n", 1)[0]
-    source["document"] = dict(document, text=first_line)
-    source["content"] = first_line
+    source = _straight_source(payload, first_line)
     straight = compose(source, content=first_line, font=font, rect=QRectF(0, 0, 1e8, 1e6))
     baseline = straight.lines[0].baseline if straight.lines else QFontMetricsF(font).ascent()
     initial = straight.carets.get(0, QRectF()).left()
@@ -46,11 +51,8 @@ def build_path_layout(payload, text, font, rect, compose):
     bodies = [g for g in straight.glyphs if g.role == "base"]
     extra = spare / (len(bodies) - 1) if align == "justify" and len(bodies) > 1 else 0
     positions = {g.start: i * extra for i, g in enumerate(bodies)}
-    starts = sorted(positions)
-
-    def distance(x, index):
-        preceding = starts[max(0, bisect_right(starts, index) - 1)] if starts else 0
-        return x - initial + shift + positions.get(preceding, 0)
+    distance = PathSpacing(track, straight, baseline, initial, shift, positions)
+    cutoff = distance.cutoff
 
     def bend(x, index):
         result = track.frame_at(max(0, min(space, distance(x, index))))
@@ -60,6 +62,9 @@ def build_path_layout(payload, text, font, rect, compose):
     glyphs, ink, logical = [], QRectF(), QRectF()
     overflow = len(first_line) != len(text) or extent > space + 1e-6
     for glyph in straight.glyphs:
+        if cutoff is not None and glyph.start >= cutoff:
+            overflow = True
+            continue
         cell = glyph.group_cell if glyph.group_cell is not None else glyph.cell
         if distance(cell.right(), glyph.start) > space + 1e-6 or space <= 1e-6:
             overflow = True
@@ -86,6 +91,9 @@ def build_path_layout(payload, text, font, rect, compose):
     )
     for index in range(len(first_line), len(text) + 1):
         carets.setdefault(index, fallback)
+    if cutoff is not None:
+        for index in range(cutoff, len(text) + 1):
+            carets[index] = fallback
     if not carets:
         carets[0] = track.frame_at(0).mapRect(
             QRectF(0, -QFontMetricsF(font).ascent(), 1, QFontMetricsF(font).height())

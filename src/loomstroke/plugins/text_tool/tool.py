@@ -74,6 +74,7 @@ from .inline_edit_controller import (
 from .inline_edit_controller import InlineTextEditor as _InlineTextEditor
 from .layer_naming import sync_text_layer_name
 from .path_text_controller import PathTextController
+from .path_text_hit import path_body_contains
 from .properties_controller import (
     TextPropertiesController,
     replace_text_property,
@@ -458,8 +459,13 @@ class TextTool:
         selected_hit = self._selected_text_hit()
         if selected_hit is not None:
             sel_rot = self._payload_rotation(selected_hit.payload)
-            transform_handle = self._hit_test_rotated_handle(
-                x, y, selected_hit.rect, sel_rot, include_move_area=False
+            transform_handle = (
+                None
+                if path_settings(selected_hit.payload) is not None
+                and path_body_contains(selected_hit.payload, x, y)
+                else self._hit_test_rotated_handle(
+                    x, y, selected_hit.rect, sel_rot, include_move_area=False
+                )
             )
             if transform_handle is not None:
                 selected_id = str(getattr(selected_hit.obj, "id", ""))
@@ -474,10 +480,16 @@ class TextTool:
         # Retry with padding so clicks near the bounding box still select
         if press_hit is None:
             press_hit = self._find_text_object_at(x, y, pad=8.0)
-        # If nothing found but the point is inside the selected text box, use it
+        # Include new text held only in the preview, using its visible glyphs
+        # for path text and the existing frame behavior for ordinary text.
         if press_hit is None and selected_hit is not None:
             sel_rot = self._payload_rotation(selected_hit.payload)
-            if self._point_in_rotated_rect(x, y, selected_hit.rect, sel_rot, pad=8.0):
+            selected_contains = (
+                path_body_contains(selected_hit.payload, x, y, pad=8.0)
+                if path_settings(selected_hit.payload) is not None
+                else self._point_in_rotated_rect(x, y, selected_hit.rect, sel_rot, pad=8.0)
+            )
+            if selected_contains:
                 press_hit = selected_hit
         if inline_editor_active:
             press_id = str(getattr(press_hit.obj, "id", "")) if press_hit is not None else None
@@ -1663,7 +1675,12 @@ class TextTool:
             if rect is None:
                 continue
             rotation = self._payload_rotation(payload)
-            if self._point_in_rotated_rect(x, y, rect, rotation, pad=pad):
+            hit = (
+                path_body_contains(payload, x, y, pad=pad)
+                if path_settings(payload) is not None
+                else self._point_in_rotated_rect(x, y, rect, rotation, pad=pad)
+            )
+            if hit:
                 return _TextHit(layer_id=str(layer_id), obj=obj, rect=rect, payload=payload)
         return None
 
@@ -2060,6 +2077,7 @@ class TextTool:
             if isinstance(_pm, Mapping):
                 _preview_meta = dict(_pm)
 
+        self._path_text.detach_editor()
         finished = self._inline_controller.take_finish_context()
         if finished is None:
             return
@@ -2864,6 +2882,7 @@ class TextTool:
                 xx - ox, xy - oy, yx - ox, yy - oy, ox - editor.x(), oy - editor.y()
             )
             editor.set_text_layout_payload(layout_payload, frame_to_editor=frame_to_editor)
+        self._path_text.sync_body_wrap(editor)
         self._request_ime_update()
 
     def _inline_uses_shape_layout(self, state: _InlineEditState | None = None) -> bool:
@@ -2957,7 +2976,7 @@ class TextTool:
             )
         try:
             canvas._vector_preview = preview_obj  # type: ignore[attr-defined]  # duck-typed canvas attr
-            canvas._vector_preview_layer_id = state.layer_id  # type: ignore[attr-defined]  # duck-typed canvas attr
+            canvas._vector_preview_layer_id = self._path_text.preview_layer_id(state)
             # Set flag directly and sync geometry without triggering
             # _update_inline_selection_overlay (which calls _recompose).
             # The overlay update below will do a single _recompose.
@@ -3134,6 +3153,8 @@ class TextTool:
                 return False
             if tool_ref._path_text.handle_at(float(cx), float(cy)) is not None:
                 return True
+            if path_settings(extract_text_payload(state.object_ref)) is not None:
+                return False
             rotation = state.rotation_deg if hasattr(state, "rotation_deg") else 0.0
             result = tool_ref._hit_test_rotated_handle(
                 float(cx), float(cy), state.rect, rotation, include_move_area=False

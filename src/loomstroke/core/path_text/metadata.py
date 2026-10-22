@@ -3,6 +3,8 @@
 import math
 from collections.abc import Mapping
 
+DRAFT_PREVIEW_LAYER_ID = "loomstroke:path-text-draft-preview"
+
 
 def path_settings(payload):  # noqa: PLR0911, PLR0912 - reject untrusted optional metadata
     raw = payload.get("path_text") if isinstance(payload, Mapping) else None
@@ -32,6 +34,11 @@ def path_settings(payload):  # noqa: PLR0911, PLR0912 - reject untrusted optiona
         ):
             return None
         if abs(float(raw.get("offset", 0))) > 10000:
+            return None
+        smoothing = float(raw.get("smoothing", 0))
+        if not math.isfinite(smoothing) or not 0 <= smoothing <= 100:
+            return None
+        if not isinstance(raw.get("avoid_overlap", False), bool):
             return None
     except (TypeError, ValueError, AttributeError, OverflowError):
         return None

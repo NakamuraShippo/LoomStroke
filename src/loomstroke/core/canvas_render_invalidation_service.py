@@ -88,7 +88,9 @@ class CanvasRenderInvalidationService:
             if layer is not None:
                 layer.texture_version += 1
                 bumped = True
-        if not bumped:
+        from .path_text.metadata import DRAFT_PREVIEW_LAYER_ID  # noqa: PLC0415
+
+        if not bumped and lid != DRAFT_PREVIEW_LAYER_ID:
             for layer in self._owner._layers:
                 if layer.layer_type == "vector":
                     layer.texture_version += 1

@@ -355,6 +355,10 @@ class InlineTextEditor(QPlainTextEdit):
             super().inputMethodEvent(event)
         finally:
             cursor.endEditBlock()
+        self.record_preedit(event)
+
+    def record_preedit(self, event):
+        """Share IME preview state with another view of this text document."""
         content = self.toPlainText()
         cursor_pos = python_index_from_utf16(content, self.textCursor().position())
         preedit_text = str(event.preeditString() or "")

@@ -2,6 +2,7 @@
 
 import math
 from bisect import bisect_right
+from dataclasses import dataclass
 from functools import lru_cache
 
 import numpy as np
@@ -10,10 +11,17 @@ from PySide6.QtGui import QTransform
 
 from ..vector_text_layout import TextLayoutCalculator as Layout
 from .metadata import path_settings
+from .smoothing import smooth_samples
+
+
+@dataclass(eq=False, slots=True)
+class _PathSamples:
+    points: np.ndarray
+    distances: np.ndarray
 
 
 @lru_cache(maxsize=64)
-def _sample(anchors, closed, width, height):
+def _raw_sample(anchors, closed, width, height):
     values = []
     for pos, hin, hout in anchors:
         anchor = {"pos": pos}
@@ -39,7 +47,17 @@ def _sample(anchors, closed, width, height):
         [(p.x(), p.y()) for p in (path.pointAtPercent(i / count) for i in range(count + 1))]
     )
     distances = np.concatenate(([0.0], np.cumsum(np.linalg.norm(np.diff(points, axis=0), axis=1))))
-    return points, distances
+    return _PathSamples(points, distances)
+
+
+@lru_cache(maxsize=64)
+def _filtered_sample(samples, closed, smoothing):
+    return smooth_samples(samples.points, samples.distances, closed, smoothing)
+
+
+def _sample(anchors, closed, width, height, smoothing=0):
+    samples = _raw_sample(anchors, closed, width, height)
+    return _filtered_sample(samples, closed, smoothing) if samples is not None else None
 
 
 class PathTrack:
@@ -84,7 +102,9 @@ class PathTrack:
             )
             for a in path["anchors"]
         )
-        samples = _sample(anchors, bool(path.get("closed")), width, height)
+        samples = _sample(
+            anchors, bool(path.get("closed")), width, height, float(settings.get("smoothing", 0))
+        )
         return cls(settings, samples, (x, y)) if samples is not None else None
 
     def at_fraction(self, fraction):

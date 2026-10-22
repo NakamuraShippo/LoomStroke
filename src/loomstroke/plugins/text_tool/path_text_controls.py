@@ -7,9 +7,14 @@ from PySide6.QtWidgets import (
     QDialog,
     QDoubleSpinBox,
     QFormLayout,
+    QHBoxLayout,
     QLabel,
     QPushButton,
+    QSlider,
+    QWidget,
 )
+
+from .path_text_body import PathTextBodyEditor
 
 
 def ts(source):
@@ -44,10 +49,15 @@ class PathTextControls(QDialog):
             self.labels[key] = QLabel(self)
             self.labels[key].setProperty("source", source)
             form.addRow(self.labels[key], spin)
+        self.swap_button = QPushButton(self)
+        self.swap_button.clicked.connect(controller.swap_endpoints)
+        form.addRow(self.swap_button)
+        self._add_smoothing_control(form)
         for key, source in (
             ("reverse", "Reverse direction"),
             ("full_loop", "Use full loop"),
             ("rotate", "Rotate letters along path"),
+            ("avoid_overlap", "Avoid overlapping letters"),
         ):
             check = QCheckBox(self)
             check.setProperty("source", source)
@@ -75,10 +85,36 @@ class PathTextControls(QDialog):
         self.status = QLabel(self)
         self.status.setWordWrap(True)
         form.addRow(self.status)
+        self.labels["body"] = QLabel(self)
+        self.labels["body"].setProperty("source", "Text")
+        self.body = PathTextBodyEditor(controller, self)
+        form.addRow(self.labels["body"], self.body)
         self.edit_button = QPushButton(self)
-        self.edit_button.clicked.connect(controller.edit)
+        self.edit_button.clicked.connect(controller.edit_body)
         form.addRow(self.edit_button)
         self.retranslate()
+
+    def _add_smoothing_control(self, form):
+        row = QWidget(self)
+        layout = QHBoxLayout(row)
+        layout.setContentsMargins(0, 0, 0, 0)
+        slider = QSlider(Qt.Orientation.Horizontal, row)
+        slider.setRange(0, 100)
+        slider.setProperty(
+            "tooltip_source", "0 keeps the original contour; higher values ignore smaller bumps."
+        )
+        slider.sliderPressed.connect(self.controller.smoothing.begin)
+        slider.valueChanged.connect(self.controller.smoothing.preview)
+        slider.sliderReleased.connect(self.controller.smoothing.finish)
+        self.smoothing_value = QLabel("0", self)
+        self.smoothing_value.setMinimumWidth(25)
+        slider.valueChanged.connect(self.smoothing_value.setNum)
+        layout.addWidget(slider)
+        layout.addWidget(self.smoothing_value)
+        self.controls["smoothing"] = slider
+        self.labels["smoothing"] = QLabel(self)
+        self.labels["smoothing"].setProperty("source", "Contour smoothing")
+        form.addRow(self.labels["smoothing"], row)
 
     def refresh(self, settings, overflow):
         for key, control in self.controls.items():
@@ -89,7 +125,11 @@ class PathTextControls(QDialog):
                     key, False
                 ),
             )
-            if isinstance(control, QDoubleSpinBox):
+            if isinstance(control, QSlider):
+                if not control.isSliderDown():
+                    control.setValue(round(value))
+                self.smoothing_value.setNum(round(value))
+            elif isinstance(control, QDoubleSpinBox):
                 if not control.hasFocus():
                     control.setValue(value if key == "offset" else value * 100)
             elif isinstance(control, QComboBox):
@@ -112,9 +152,13 @@ class PathTextControls(QDialog):
         for control in self.controls.values():
             if isinstance(control, QCheckBox):
                 control.setText(ts(control.property("source")))
+            elif isinstance(control, QSlider):
+                control.setToolTip(ts(control.property("tooltip_source")))
         for i, source in enumerate(("Start", "Center", "End", "Distribute")):
             self.controls["align"].setItemText(i, ts(source))
         self.edit_button.setText(ts("Edit text"))
+        self.swap_button.setText(ts("Swap start and end"))
+        self.body.setPlaceholderText(ts("Edit text here. Ctrl+Enter to finish."))
 
     def changeEvent(self, event):
         super().changeEvent(event)
