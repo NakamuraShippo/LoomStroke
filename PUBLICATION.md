@@ -83,6 +83,12 @@ build backendが生成したパッケージMETADATAのVersionも`0.3.0.3`で一�
 
 ## 更新時の扱い
 
+配布更新では、同期元の本体と同じ版の`CHANGELOG.md`を必ず一緒に収録します。
+commit前に開発側との履歴内容の一致と、最新履歴の版番号（先頭のvを除く）・
+`pyproject.toml`の`project.version`・`src/loomstroke/__init__.py`の`__version__`の一致を確認します。
+配布だけのために別の版番号を採番せず、`update.ps1`のManagedPathsにも`CHANGELOG.md`を維持します。
+pushした場合は、公開main ZIPにも履歴と同じ版番号の定義が含まれ、コミット内容と一致することを確認します。
+
 READMEのZIPダウンロードリンクはGitHubが生成する配布用 `main` のソースアーカイブを使います。
 ZIP本体をリポジトリに重複収録せず、push後の追跡済みファイルが配布内容になります。
 `.git/`・ローカル仮想環境・ユーザーデータ・未追跡の生成物は含まれません。
