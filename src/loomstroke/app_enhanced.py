@@ -27,6 +27,7 @@ except ImportError:
     logging.critical("qasync is required. Install with: pip install qasync")
     sys.exit(1)
 
+from . import __version__
 from .core.event_bus_extensions import get_extended_event_bus
 from .host_api import HostAPI
 from .platform import get_settings_manager
@@ -169,7 +170,7 @@ class LoomStrokeAppEnhanced:
 
             # Configure application metadata
             self.app.setApplicationName("LoomStroke")
-            self.app.setApplicationVersion("0.1")
+            self.app.setApplicationVersion(__version__)
             self.app.setOrganizationName("LoomStroke")
             self.app.setOrganizationDomain("loomstroke.dev")
 

@@ -19,6 +19,8 @@ from PySide6.QtGui import QIcon
 from PySide6.QtWidgets import QApplication
 from qasync import QEventLoop
 
+from . import __version__
+
 logger = logging.getLogger(__name__)
 
 
@@ -151,7 +153,7 @@ class ApplicationBootstrapper:
             self.app = app
             app.setAttribute(Qt.ApplicationAttribute.AA_UseHighDpiPixmaps, True)
             app.setApplicationName("LoomStroke")
-            app.setApplicationVersion("0.1")
+            app.setApplicationVersion(__version__)
             app.setOrganizationName("LoomStroke")
             icon_path = Path(__file__).resolve().parents[2] / "img" / "favicon.png"
             if icon_path.exists():

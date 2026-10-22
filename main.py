@@ -21,9 +21,11 @@ if src_path.exists():
 
 def show_crash_log_info():
     """Display crash log location at startup."""
+    from loomstroke import __version__  # noqa: PLC0415
+
     crash_log_path = os.path.join(tempfile.gettempdir(), "loomstroke_crash.log")
     print("=" * 60)
-    print("LoomStroke v0.1.2 - Starting...")
+    print(f"LoomStroke v{__version__} - Starting...")
     print(f"Crash log location: {crash_log_path}")
     print("If the application crashes, check this file for details")
     print("=" * 60)

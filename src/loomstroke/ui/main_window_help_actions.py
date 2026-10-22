@@ -8,7 +8,6 @@ from typing import Any, cast
 from PySide6.QtCore import Qt
 from PySide6.QtGui import QIcon, QPixmap
 from PySide6.QtWidgets import (
-    QApplication,
     QDialog,
     QHBoxLayout,
     QLabel,
@@ -18,6 +17,7 @@ from PySide6.QtWidgets import (
     QWidget,
 )
 
+from .. import __version__
 from .dialogs.menu_telemetry_dialog import MenuTelemetryDialog
 from .theme import image_asset_path, text_logo_filename_for_theme
 
@@ -106,10 +106,8 @@ class MainWindowHelpActionCoordinator:
         layout.addWidget(logo_row)
 
     def _add_about_info(self, layout: QVBoxLayout) -> None:
-        app = QApplication.instance()
-        version = app.applicationVersion() if app else "0.1"
         info = QLabel(
-            f"<p style='margin:2px 0'>Version {version}</p>"
+            f"<p style='margin:2px 0'>Version {__version__}</p>"
             f"<p style='margin:2px 0'>Plugin-first paint application with AI integration.</p>"
             f"<p style='margin:2px 0'>Copyright NakamuraShippo. All rights reserved.</p>"
             f"<p style='margin:2px 0'>Contact: "

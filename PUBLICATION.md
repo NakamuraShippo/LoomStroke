@@ -10,10 +10,27 @@ LoomStroke本体の `LICENSE` と `LICENSE_JA` は開発側から内容を変更
 
 ## 現行の配布スナップショット
 
-2026-10-22の開発側本体 `3d504410` を反映しています。アプリ番号は `0.1.0` を維持しています。
+2026-10-22の開発側本体 `76ce7c0c` を反映し、更新履歴とアプリ番号を `0.3.0.3` に揃えています。
 本体と実行用資源2,031ファイルは開発側とSHA-256が一致しています。
 既存の公開README・Patreonリンク・実行用固定依存・第三者告知を保持し、起動/更新手順を追記しました。
-開発専用の更新履歴 `CHANGELOG.md` は収録していません。
+更新履歴 `CHANGELOG.md` を開発側と同じ内容で収録し、ZIP更新でも適用・失敗時復元の対象にしています。
+Qtのアプリ情報・タイトル・About・起動表示・新規文書/プロジェクトパッケージの作成アプリ情報も同じ番号です。
+版番号と更新履歴の追加後の検証結果は下記の追補に記載します。
+
+### 0.3.0.3 版番号・更新履歴の追補
+
+関連検証は開発側205件、配布側本体を読み込む162件が成功しました。
+Qt情報・About・タイトル再翻訳・起動表示・新規文書/パッケージの版番号を確認しています。
+開発側の更新関連43件では履歴の新規追加/更新・バックアップ・通常失敗時復元も確認し、
+配布側更新スクリプトとの内容一致を照合しています。保存format/schemaの変更はありません。
+既存test変更は新しいタイトル/翻訳sourceの期待値のみで、assertの削除/緩和はありません。
+検証processは設定等を隔離し、実設定/layoutのhash一致、実データへの拒否要求0を確認しました。
+配布環境のpip checkと共通版番号の実importも成功しています。
+build backendが生成したパッケージMETADATAのVersionも`0.3.0.3`で一致しています。
+本体/資源2,031ファイルのhashとCHANGELOGの内容一致、既存README/Patreon/固定依存/ISC告知の保持を確認しました。
+この追補で全pytest・GUI E2E・新規Windows導入・実ペンタブ・長時間・実AI推論は再実施していません。
+
+以下は、この追補前の本体同期に対する検証記録です。
 
 配布側の本体を読み込んだ関連検証は、unit867件とE2E39件の計906件が成功しました。
 途中でコマ分割準備中の数値欄がUndoキーを消費する問題を再現し、既存テストを変更せず、
@@ -33,6 +50,7 @@ LoomStroke本体の `LICENSE` と `LICENSE_JA` は開発側から内容を変更
 - ロゴ `img/`、第三者告知 `LICENSES/`、`THIRD_PARTY_LICENSES`
 - 利用者向け文書 `docs/user/`
 - `pyproject.toml`、`requirements.txt`
+- 更新履歴 `CHANGELOG.md`（2026-10-21のv0.3から開始、現在v0.3.0.3）
 - `main.py`、`install.bat`、`install_python.ps1`、`boot_LoomStroke.bat`、`run.sh`
 - AI無し専用入口 `boot_LoomStroke_noAI.bat`、ZIP更新用 `update.bat` / `update.ps1`
 
@@ -50,7 +68,6 @@ LoomStroke本体の `LICENSE` と `LICENSE_JA` は開発側から内容を変更
 ## 収録しないもの
 
 - 開発リポジトリの `.git/` と内部開発資料 `docs/dev/`
-- 開発側だけで管理する `CHANGELOG.md`
 - 開発・検証用の `requirements.lock`
 - 翻訳の監査レポート・検証用CSV・重複した原本ページ
 - `tests/`、`benchmarks/`、開発用 `scripts/`・`tools/`、CI設定

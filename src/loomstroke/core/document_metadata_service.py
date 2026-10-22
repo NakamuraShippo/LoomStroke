@@ -8,6 +8,7 @@ from typing import TYPE_CHECKING, Any, cast
 
 from PySide6.QtGui import QColor
 
+from .. import __version__
 from ..host_api import CanvasSpec as HostCanvasSpec
 from ..host_api import SaveOptions
 from ..io.file_io import ColorProfile
@@ -508,7 +509,7 @@ class DocumentMetadataService:
             background_color=meta.background_color,
             dpi=meta.dpi,
             color_profile=self.resolve_color_profile(options),
-            app_version="0.1.0-dev",
+            app_version=__version__,
             format_version=DOCUMENT_FORMAT_VERSION,
             metadata=dict(options.metadata) if options.metadata else {},
         )

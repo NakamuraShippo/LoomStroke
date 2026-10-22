@@ -8,7 +8,7 @@ param(
 $script:UpdateUrl = 'https://codeload.github.com/NakamuraShippo/LoomStroke/zip/refs/heads/main'
 $script:ManagedPaths = @(
     'src/loomstroke', 'img', 'docs/user', 'LICENSES',
-    'LICENSE', 'LICENSE_JA', 'THIRD_PARTY_LICENSES', 'README.md', 'PUBLICATION.md',
+    'LICENSE', 'LICENSE_JA', 'THIRD_PARTY_LICENSES', 'README.md', 'PUBLICATION.md', 'CHANGELOG.md',
     'pyproject.toml', 'requirements.txt', 'main.py', 'run.sh',
     'install.bat', 'install_python.ps1', 'boot_LoomStroke.bat', 'boot_LoomStroke_noAI.bat',
     'update.bat', 'update.ps1'

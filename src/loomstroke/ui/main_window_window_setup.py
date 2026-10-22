@@ -9,6 +9,7 @@ from typing import Any
 from PySide6.QtGui import QIcon
 from PySide6.QtWidgets import QMainWindow
 
+from .. import __version__
 from .theme import image_asset_path
 
 
@@ -28,10 +29,10 @@ class MainWindowWindowSetupCoordinator:
 
     def setup_window(self) -> None:
         window = self._window
-        base_title = window._ts("LoomStroke v0.1.0")
-        window._base_window_title = base_title
+        base_title = window._ts("LoomStroke v{version}")
+        window._base_window_title = base_title.format(version=__version__)
         window._translation_binder.register(
-            window._apply_window_title_translation,
+            lambda text: window._apply_window_title_translation(text.format(version=__version__)),
             base_title,
         )
         window._update_window_title()

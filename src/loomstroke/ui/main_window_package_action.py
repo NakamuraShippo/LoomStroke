@@ -10,6 +10,7 @@ from typing import Any
 
 from PySide6.QtWidgets import QMessageBox
 
+from loomstroke import __version__
 from loomstroke.core.linked_assets import (
     PackageAction,
     PackagePlan,
@@ -32,12 +33,7 @@ def _ts(text: str) -> str:
 
 
 def _app_version() -> str:
-    try:
-        from importlib.metadata import version  # noqa: PLC0415
-
-        return version("loomstroke")
-    except Exception:
-        return ""
+    return __version__
 
 
 class MainWindowPackageAction:
