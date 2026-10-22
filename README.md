@@ -36,7 +36,10 @@ Python本体と仮想環境はインストール時に準備し、モデル重�
 導入済みのZIP版を更新するときは、原稿を保存してLoomStrokeを終了し、`update.bat` を
 ダブルクリックします。旧本体は `.update-backups/` に残り、ユーザーデータと実行環境は保持します。
 初めてこの更新機能を追加する場合は、最新版ZIPから `update.bat` と `update.ps1` の両方を
-現在の本体フォルダへコピーしてください。Git checkoutは対象外です。
+現在の本体フォルダへコピーしてください。
+公開Git版も同じ`update.bat`から更新できます。Git for Windowsと`main`ブランチが必要です。
+ローカル変更や独自コミットは破棄せず停止します。
+[Git版のアップデート](docs/user/INSTALL_AND_RUN.md#git版のアップデートwindows)も参照してください。開発用フォルダは対象外です。
 
 2026-10-20に、Python未導入のWindows 11・64-bit環境で、配布ZIPの展開から両BATによる
 自動セットアップ・起動、新規文書への描画、Undo/Redo、保存、通常終了まで確認しました。

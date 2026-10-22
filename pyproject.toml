@@ -4,7 +4,7 @@ build-backend = "setuptools.build_meta"
 
 [project]
 name = "loomstroke"
-version = "0.3.0.3"
+version = "0.3.0.4"
 description = "Plugin-based paint application with AI integration"
 authors = [{name = "LoomStroke Team"}]
 license = {text = "Proprietary"}

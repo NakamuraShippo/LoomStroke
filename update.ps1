@@ -4,7 +4,7 @@ param(
     [Alias('-no-pause')][switch]$NoPause
 )
 
-# ZIP installations use the public source archive; Git checkouts stay with Git.
+# Public ZIP installations use an archive; public Git checkouts fast-forward.
 $script:UpdateUrl = 'https://codeload.github.com/NakamuraShippo/LoomStroke/zip/refs/heads/main'
 $script:ManagedPaths = @(
     'src/loomstroke', 'img', 'docs/user', 'LICENSES',
@@ -139,18 +139,67 @@ function Install-LoomStrokeUpdateDependencies {
     } finally { Pop-Location }
 }
 
+function Invoke-LoomStrokeGit {
+    param([string]$Executable, [string]$InstallRoot, [string[]]$Arguments)
+    # Windows PowerShell treats native stderr as errors, even for fetch progress.
+    $ErrorActionPreference = 'Continue'
+    $output = & $Executable -C $InstallRoot @Arguments 2>&1
+    $code = $LASTEXITCODE
+    $message = (($output | ForEach-Object { $_.ToString() }) -join "`n").Trim()
+    if ($code -ne 0) { throw ('Git ' + $Arguments[0] + ' failed: ' + $message) }
+    return $message
+}
+
+function Update-LoomStrokeGit {
+    param([string]$InstallRoot)
+    $git = (Get-Command git -CommandType Application -ErrorAction SilentlyContinue | Select-Object -First 1).Source
+    if (-not $git) { throw 'Install Git for Windows, then run update.bat again.' }
+    try { $top = Invoke-LoomStrokeGit $git $InstallRoot @('rev-parse', '--show-toplevel') }
+    catch { throw ('This is not a valid Git checkout. Use Git to repair it before updating. ' + $_.Exception.Message) }
+    if ([IO.Path]::GetFullPath($top).TrimEnd('\') -ine $InstallRoot) {
+        throw 'Run update.bat from the root of the public Git checkout.'
+    }
+    $origin = Invoke-LoomStrokeGit $git $InstallRoot @('config', '--get-all', 'remote.origin.url')
+    if ($origin -notmatch '^(https://github\.com/|git@github\.com:|ssh://git@github\.com/)NakamuraShippo/LoomStroke(?:\.git)?/?$') {
+        throw 'Git updates require origin to point to the public NakamuraShippo/LoomStroke repository.'
+    }
+    $branch = Invoke-LoomStrokeGit $git $InstallRoot @('rev-parse', '--abbrev-ref', 'HEAD')
+    if ($branch -cne 'main') { throw 'Switch to the main branch with Git before running update.bat.' }
+    foreach ($operation in @('MERGE_HEAD', 'CHERRY_PICK_HEAD', 'REVERT_HEAD', 'rebase-merge', 'rebase-apply')) {
+        $path = Invoke-LoomStrokeGit $git $InstallRoot @('rev-parse', '--git-path', $operation)
+        if (-not [IO.Path]::IsPathRooted($path)) { $path = Join-Path $InstallRoot $path }
+        if (Test-Path -LiteralPath $path) { throw 'Finish the pending Git operation before updating.' }
+    }
+    $status = Invoke-LoomStrokeGit $git $InstallRoot @('status', '--porcelain', '--untracked-files=normal')
+    if ($status) { throw 'Local changes were found. Preserve your local changes and update manually with Git.' }
+    $previous = Invoke-LoomStrokeGit $git $InstallRoot @('rev-parse', 'HEAD')
+    Write-Host 'Fetching the latest public LoomStroke Git main...'
+    Invoke-LoomStrokeGit $git $InstallRoot @('fetch', '--no-tags', 'origin', 'main') | Out-Host
+    $target = Invoke-LoomStrokeGit $git $InstallRoot @('rev-parse', 'FETCH_HEAD')
+    $localCommits = Invoke-LoomStrokeGit $git $InstallRoot @('rev-list', '--count', ($target + '..HEAD'))
+    if ([int]$localCommits -ne 0) { throw 'Local commits prevent a fast-forward. Update manually with Git.' }
+    Assert-LoomStrokeStopped $InstallRoot
+    $status = Invoke-LoomStrokeGit $git $InstallRoot @('status', '--porcelain', '--untracked-files=normal')
+    if ($status) { throw 'Local changes appeared during download. Update manually with Git.' }
+    Write-Host ('Previous Git commit: ' + $previous)
+    # Refuse even ignored-file collisions; never stash, reset, or force checkout.
+    Invoke-LoomStrokeGit $git $InstallRoot @('merge', '--ff-only', '--no-overwrite-ignore', $target) | Out-Host
+    try { Install-LoomStrokeUpdateDependencies $InstallRoot }
+    catch { throw ('Git source updated, but dependency setup failed. Run install.bat again. ' + $_.Exception.Message) }
+    Write-Host 'Update completed successfully. Start LoomStroke with boot_LoomStroke.bat.'
+}
+
 function Update-LoomStroke {
     param([string]$InstallRoot)
     $ErrorActionPreference = 'Stop'
     $rootPath = [IO.Path]::GetFullPath($InstallRoot).TrimEnd('\')
     if (-not (Test-Path -LiteralPath (Join-Path $rootPath 'pyproject.toml') -PathType Leaf) -or
         -not (Test-Path -LiteralPath (Join-Path $rootPath 'src/loomstroke') -PathType Container)) {
-        throw 'Run update.bat from an extracted LoomStroke source ZIP.'
+        throw 'Run update.bat from an extracted LoomStroke source ZIP or public Git checkout.'
     }
-    if ((Test-Path -LiteralPath (Join-Path $rootPath '.git')) -or
-        (Test-Path -LiteralPath (Join-Path $rootPath 'AGENTS.md')) -or
+    if ((Test-Path -LiteralPath (Join-Path $rootPath 'AGENTS.md')) -or
         (Test-Path -LiteralPath (Join-Path $rootPath 'docs/dev'))) {
-        throw 'This updater is for public ZIP installations. Use Git to update a development/Git checkout.'
+        throw 'Development folders are not updated automatically. Use Git to update this checkout.'
     }
     # Check parents too: a junction at src/ or docs/ could escape the installation.
     foreach ($name in @('', 'src', 'docs', '.update-backups')) {
@@ -169,6 +218,10 @@ function Update-LoomStroke {
     $backup = Join-Path $rootPath ('.update-backups/' + (Get-Date -Format 'yyyyMMdd-HHmmss-') + [Guid]::NewGuid().ToString('N'))
     $changes = New-Object 'Collections.Generic.List[object]'
     try {
+        if (Test-Path -LiteralPath (Join-Path $rootPath '.git')) {
+            Update-LoomStrokeGit $rootPath
+            return
+        }
         [IO.Directory]::CreateDirectory($stage) > $null
         $archive = Join-Path $stage 'update.zip'
         $payload = Join-Path $stage 'payload'

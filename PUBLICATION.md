@@ -10,6 +10,23 @@ LoomStroke本体の `LICENSE` と `LICENSE_JA` は開発側から内容を変更
 
 ## 現行の配布スナップショット
 
+現在のアプリ番号は`0.3.0.4`です。開発側commit`c3718cc8`の本体と更新スクリプトを反映しています。
+
+### 0.3.0.4 Git版のバッチ更新
+
+`update.bat`は公開Git版にも対応し、公開originのcleanな`main`をfetch/fast-forwardして依存を更新します。
+ローカル変更・独自commit・ignoredを含むファイルの衝突は破棄せず停止します。worktreeの`.git`ファイルにも対応します。
+開発用folderの拒否、ZIP版のバックアップ/復元、起動中検査と更新lockを維持しています。
+Gitで依存更新が失敗した場合はsource更新を保持し、`install.bat`の再実行を案内します。
+旧スクリプトからは一度Gitで取り込み、その後は`update.bat`だけで更新できます。
+`--no-pause`はPowerShellへ正しい引数で渡し、通常pause/no-pauseの実BATとGit自己更新を確認しました。
+関連94件（Git新規19件を含む）、配布側本体での版/タイトル検証14件、変更Python4fileのstyleが成功しました。
+両build backendのMETADATAは`0.3.0.4`で一致し、本体/資源2,031fileと更新スクリプトの同一内容を確認しました。
+配布側履歴は5版・18更新項目を保持し、README/Patreon/固定依存/第三者告知を維持しています。
+全pytest・GUI/E2E・新規Windows導入・実AI推論は本更新では再実施していません。
+
+### 0.3.0.3 の本体同期記録
+
 2026-10-22の開発側本体 `76ce7c0c` を反映し、更新履歴とアプリ番号を `0.3.0.3` に揃えています。
 本体と実行用資源2,031ファイルは開発側とSHA-256が一致しています。
 既存の公開README・Patreonリンク・実行用固定依存・第三者告知を保持し、起動/更新手順を追記しました。
@@ -52,7 +69,7 @@ build backendが生成したパッケージMETADATAのVersionも`0.3.0.3`で一�
 - ロゴ `img/`、第三者告知 `LICENSES/`、`THIRD_PARTY_LICENSES`
 - 利用者向け文書 `docs/user/`
 - `pyproject.toml`、`requirements.txt`
-- 更新履歴 `CHANGELOG.md`（2026-10-21のv0.3から開始、現在v0.3.0.3）
+- 更新履歴 `CHANGELOG.md`（2026-10-21のv0.3から開始、現在v0.3.0.4）
 - `main.py`、`install.bat`、`install_python.ps1`、`boot_LoomStroke.bat`、`run.sh`
 - AI無し専用入口 `boot_LoomStroke_noAI.bat`、ZIP更新用 `update.bat` / `update.ps1`
 
