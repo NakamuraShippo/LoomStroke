@@ -67,6 +67,9 @@ class PathTextOverlay(QWidget):
         painter.end()
 
     def draw(self, painter, map_point):
+        if self.controller.nodes.active:
+            self.controller.nodes.draw(painter, map_point)
+            return
         target = self.controller.target()
         if target is None:
             return

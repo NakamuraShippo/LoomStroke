@@ -52,7 +52,9 @@ class PathTextControls(QDialog):
         self.swap_button = QPushButton(self)
         self.swap_button.clicked.connect(controller.swap_endpoints)
         form.addRow(self.swap_button)
+        self._add_nodes_control(form)
         self._add_smoothing_control(form)
+        self._add_handle_smoothing_control(form)
         for key, source in (
             ("reverse", "Reverse direction"),
             ("full_loop", "Use full loop"),
@@ -94,6 +96,12 @@ class PathTextControls(QDialog):
         form.addRow(self.edit_button)
         self.retranslate()
 
+    def _add_nodes_control(self, form):
+        self.nodes_button = QPushButton(self)
+        self.nodes_button.setCheckable(True)
+        self.nodes_button.clicked.connect(self.controller.nodes.start)
+        form.addRow(self.nodes_button)
+
     def _add_smoothing_control(self, form):
         row = QWidget(self)
         layout = QHBoxLayout(row)
@@ -116,7 +124,35 @@ class PathTextControls(QDialog):
         self.labels["smoothing"].setProperty("source", "Contour smoothing")
         form.addRow(self.labels["smoothing"], row)
 
+    def _add_handle_smoothing_control(self, form):
+        row = QWidget(self)
+        layout = QHBoxLayout(row)
+        layout.setContentsMargins(0, 0, 0, 0)
+        slider = QSlider(Qt.Orientation.Horizontal, row)
+        slider.setRange(0, 50)
+        slider.setProperty(
+            "tooltip_source",
+            "Fit editable Bezier handles like the vector pen. "
+            "0 restores the path before correction.",
+        )
+        gesture = self.controller.handle_smoothing
+        slider.sliderPressed.connect(gesture.begin)
+        slider.valueChanged.connect(lambda value: gesture.preview(value / 10))
+        slider.sliderReleased.connect(gesture.finish)
+        self.handle_smoothing_value = QLabel("0.0", self)
+        self.handle_smoothing_value.setMinimumWidth(25)
+        slider.valueChanged.connect(
+            lambda value: self.handle_smoothing_value.setText(f"{value / 10:.1f}")
+        )
+        layout.addWidget(slider)
+        layout.addWidget(self.handle_smoothing_value)
+        self.controls["handle_smoothness"] = slider
+        self.labels["handle_smoothness"] = QLabel(self)
+        self.labels["handle_smoothness"].setProperty("source", "Handle smoothness")
+        form.addRow(self.labels["handle_smoothness"], row)
+
     def refresh(self, settings, overflow):
+        self.nodes_button.setChecked(self.controller.nodes.active)
         for key, control in self.controls.items():
             control.blockSignals(True)
             value = settings.get(
@@ -126,9 +162,13 @@ class PathTextControls(QDialog):
                 ),
             )
             if isinstance(control, QSlider):
+                scale = 10 if key == "handle_smoothness" else 1
                 if not control.isSliderDown():
-                    control.setValue(round(value))
-                self.smoothing_value.setNum(round(value))
+                    control.setValue(round(value * scale))
+                if key == "handle_smoothness":
+                    self.handle_smoothing_value.setText(f"{value:.1f}")
+                else:
+                    self.smoothing_value.setNum(round(value))
             elif isinstance(control, QDoubleSpinBox):
                 if not control.hasFocus():
                     control.setValue(value if key == "offset" else value * 100)
@@ -142,7 +182,11 @@ class PathTextControls(QDialog):
         self.status.setText(
             ts("Text exceeds the selected interval. The full text is retained.")
             if overflow
-            else ts("Drag the start and end handles along the contour.")
+            else (
+                ts("Click or drag anchors and handles. Alt-click deletes an anchor.")
+                if self.controller.nodes.active
+                else ts("Drag the start and end handles along the contour.")
+            )
         )
 
     def retranslate(self):
@@ -158,6 +202,14 @@ class PathTextControls(QDialog):
             self.controls["align"].setItemText(i, ts(source))
         self.edit_button.setText(ts("Edit text"))
         self.swap_button.setText(ts("Swap start and end"))
+        self.nodes_button.setText(ts("Edit path"))
+        self.nodes_button.setToolTip(
+            ts(
+                "Click a segment to add an anchor. Alt-click an anchor to delete. "
+                "Drag anchors or handles to reshape. S: smooth, C: corner, "
+                "B: break handles, M: symmetric. Esc to finish."
+            )
+        )
         self.body.setPlaceholderText(ts("Edit text here. Ctrl+Enter to finish."))
 
     def changeEvent(self, event):

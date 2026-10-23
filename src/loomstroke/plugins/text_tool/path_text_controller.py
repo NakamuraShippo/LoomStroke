@@ -17,6 +17,8 @@ from loomstroke.plugins.vector_tools.common import VectorReplaceCommand
 from .common import ensure_text_vector_object, extract_text_payload
 from .editing_metadata import clone_text_for_edit, replace_edited_text
 from .path_text_controls import PathTextControls, ts
+from .path_text_handle_smoothing import fit_text_handles
+from .path_text_node_editor import PathTextNodeEditor
 from .path_text_overlay import PathTextOverlay
 from .path_text_smoothing import PathTextSmoothing
 
@@ -34,11 +36,18 @@ class PathTextController:
         self._layout_payload = None
         self._layout_diagnostics = ()
         self.smoothing = PathTextSmoothing(self)
+        self.handle_smoothing = PathTextSmoothing(self, "handle_smoothness")
+        self.nodes = PathTextNodeEditor(self)
         self._notice_editor = None
 
     def target(self):
-        if self.smoothing.current is not None:
-            return self.smoothing.current, self.smoothing.layer_id, self.smoothing.fresh
+        if self.nodes.active and self.nodes.valid():
+            preview = self.tool.host_api.canvas._vector_preview
+            if preview is not None and preview.id == self.nodes.canvas.object_id:
+                return preview, self.nodes.canvas.layer_id, False
+        for gesture in (self.smoothing, self.handle_smoothing):
+            if gesture.current is not None:
+                return gesture.current, gesture.layer_id, gesture.fresh
         if self.drag is not None and self.drag[-1] is not None:
             return self.drag[-1], self.drag[2], self.drag[3]
         state = self.tool._inline_state
@@ -165,6 +174,7 @@ class PathTextController:
             self.dialog.body.detach()
 
     def edit_body(self):
+        self.nodes.stop()
         if self.tool._inline_editor is None:
             self.edit()
         if self.dialog is not None and self.tool._inline_editor is not None:
@@ -176,7 +186,9 @@ class PathTextController:
             self.dialog.body.sync_wrap()
 
     def close(self):
+        self.nodes.stop()
         self.smoothing.cancel()
+        self.handle_smoothing.cancel()
         self.cancel_drag()
         self.detach_editor()
         if self.overlay is not None:
@@ -189,6 +201,7 @@ class PathTextController:
         self.contours = []
 
     def edit(self):
+        self.nodes.stop()
         if self.tool._inline_state is None:
             hit = self.tool._selected_text_hit()
             if hit is not None and path_settings(hit.payload) is not None:
@@ -234,6 +247,8 @@ class PathTextController:
         self.change(
             {
                 "path": deepcopy(path),
+                "handle_source_path": None,
+                "handle_smoothness": 0.0,
                 "start": 0.0,
                 "end": 1.0,
                 "full_loop": bool(path.get("closed")),
@@ -242,6 +257,7 @@ class PathTextController:
         self.tool._sync_inline_editor_geometry()
 
     def change(self, patch):
+        self.nodes.stop()
         target = self.target()
         if target is None:
             return
@@ -263,7 +279,11 @@ class PathTextController:
             self.tool._inline_state.object_ref = updated
             self.tool._update_inline_text_preview()
         else:
-            self.tool._submit_command(VectorReplaceCommand(obj.id, updated, layer_id=layer_id))
+            command = VectorReplaceCommand(obj.id, updated, layer_id=layer_id)
+            if "handle_smoothness" in patch:
+                self.tool.host_api.canvas.submit(command, merge_key=None)
+            else:
+                self.tool._submit_command(command)
         self.refresh_controls()
 
     def swap_endpoints(self):
@@ -282,6 +302,8 @@ class PathTextController:
 
     @staticmethod
     def patched(obj, patch):
+        if patch.keys() == {"handle_smoothness"}:
+            return fit_text_handles(obj, patch["handle_smoothness"])
         updated = clone_text_for_edit(obj)
         settings = updated.meta["text_tool"]["path_text"]
         if (
@@ -290,7 +312,12 @@ class PathTextController:
             and bool(patch["reverse"]) != bool(settings.get("reverse"))
         ):
             settings["start"], settings["end"] = settings.get("end", 1), settings.get("start", 0)
-        settings.update(patch)
+        settings.update({k: v for k, v in patch.items() if k != "handle_smoothness"})
+        if settings.get("handle_source_path") is None:
+            settings.pop("handle_source_path", None)
+        if "handle_smoothness" in patch:
+            updated = fit_text_handles(updated, patch["handle_smoothness"])
+            settings = updated.meta["text_tool"]["path_text"]
         if ("start" in patch or "end" in patch) and "full_loop" not in patch:
             settings["full_loop"] = False
         return updated
@@ -332,7 +359,9 @@ class PathTextController:
                 return name
         return None
 
-    def pointer(self, phase, point):  # noqa: PLR0911, PLR0912 - pointer gesture phases
+    def pointer(self, phase, point, **modifiers):  # noqa: PLR0911, PLR0912
+        if self.nodes.pointer(phase, point, **modifiers):
+            return True
         if self.overlay is None and self.drag is None:
             return False
         x, y = float(point.pos[0]), float(point.pos[1])

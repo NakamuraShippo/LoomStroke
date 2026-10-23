@@ -432,8 +432,7 @@ class TextTool:
         ctrl: bool = False,
         meta: bool = False,
     ) -> None:
-        del alt, shift, ctrl, meta
-        if self._path_text.pointer("press", pt):
+        if self._path_text.pointer("press", pt, alt=alt, shift=shift, ctrl=ctrl, meta=meta):
             return
         if hasattr(self, "_link_picker") and self._link_picker.pointer(pt, click=True):
             self._reset_state()
@@ -662,6 +661,8 @@ class TextTool:
             self._hover_cursor_set = apply_hover_cursor(cursor, is_set=self._hover_cursor_set)
 
     def on_key(self, key: str, pressed: bool) -> bool:
+        if self._path_text.nodes.key(key, pressed):
+            return True
         if not pressed:
             return False
         key_lower = key.lower()
@@ -1941,6 +1942,7 @@ class TextTool:
     ) -> bool:
         from .native_color import new_ink_text_object  # noqa: PLC0415
 
+        self._path_text.nodes.stop()
         self._finish_inline_edit(commit=True)
         if not self._edit_lifecycle.can_edit_layer(layer_id):
             return False

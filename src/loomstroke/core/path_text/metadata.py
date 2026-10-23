@@ -38,6 +38,9 @@ def path_settings(payload):  # noqa: PLR0911, PLR0912 - reject untrusted optiona
         smoothing = float(raw.get("smoothing", 0))
         if not math.isfinite(smoothing) or not 0 <= smoothing <= 100:
             return None
+        handle_smoothness = float(raw.get("handle_smoothness", 0))
+        if not math.isfinite(handle_smoothness) or not 0 <= handle_smoothness <= 5:
+            return None
         if not isinstance(raw.get("avoid_overlap", False), bool):
             return None
     except (TypeError, ValueError, AttributeError, OverflowError):

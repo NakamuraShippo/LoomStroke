@@ -1,6 +1,23 @@
 """Japanese fallback for the explicitly invoked path text controls."""
 
 PATH_TEXT_JA = {
+    "Handle smoothness": "ハンドルの滑らかさ",
+    "Fit editable Bezier handles like the vector pen. 0 restores the path before correction.": (
+        "ベクターペンと同じ補正で、編集できるベジェハンドルを生成します。0で補正前のパスに戻ります。"
+    ),
+    "Edit path": "パスを編集",
+    "Click or drag anchors and handles. Alt-click deletes an anchor.": (
+        "アンカーやハンドルをクリック・ドラッグして編集します。Alt+クリックでアンカーを削除できます。"
+    ),
+    (
+        "Click a segment to add an anchor. Alt-click an anchor to delete. "
+        "Drag anchors or handles to reshape. S: smooth, C: corner, "
+        "B: break handles, M: symmetric. Esc to finish."
+    ): (
+        "線上クリックでアンカー追加、Alt+クリックで削除。"
+        "アンカーやハンドルをドラッグして形状を変更できます。"
+        "S: なめらか、C: 角、B: ハンドル分離、M: 対称。Escで終了します。"
+    ),
     "Avoid overlapping letters": "文字の重なりを避ける",
     "Text": "本文",
     "Contour smoothing": "輪郭のなめらかさ",
