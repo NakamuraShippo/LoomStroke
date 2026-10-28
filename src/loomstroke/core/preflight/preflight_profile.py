@@ -30,6 +30,8 @@ _ALL_RULES: tuple[str, ...] = (
     "color.icc",
     "print.bleed",
     "resource.linked",
+    "print.binding_danger",
+    "print.bleed_coverage",
 )
 
 

@@ -14,6 +14,7 @@ from PySide6.QtWidgets import QApplication, QWidget
 from loomstroke.host_api import StrokePoint
 from loomstroke.platform.settings_manager import get_settings_manager
 
+from .drawing_guide_snap import snap_drawing_position
 from .space_key_tracker import SpaceKeyTracker
 
 logger = logging.getLogger(__name__)
@@ -503,7 +504,7 @@ class InputHandler(QObject):
             tilt = (self.state.tilt_x, self.state.tilt_y)
 
         return StrokePoint(
-            pos=(self.state.last_x, self.state.last_y),
+            pos=snap_drawing_position(self.canvas, self.state.last_x, self.state.last_y),
             pressure=self.state.pressure,
             tilt=tilt,
             time=current_time,
@@ -763,4 +764,9 @@ class InputHandler(QObject):
         if self.state.tilt_x != 0 or self.state.tilt_y != 0:
             tilt = (self.state.tilt_x, self.state.tilt_y)
 
-        return StrokePoint(pos=(x, y), pressure=pressure, tilt=tilt, time=current_time)
+        return StrokePoint(
+            pos=snap_drawing_position(self.canvas, x, y),
+            pressure=pressure,
+            tilt=tilt,
+            time=current_time,
+        )

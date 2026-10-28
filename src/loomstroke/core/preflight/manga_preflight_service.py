@@ -109,7 +109,12 @@ class MangaPreflightService:
                 issues = tuple(rule.evaluate(snapshot, profile))
             except CapabilityMissing as missing:
                 outcomes.append(
-                    RuleOutcome(rule_id, "not_checked", reason_code=missing.reason_code)
+                    RuleOutcome(
+                        rule_id,
+                        "not_checked",
+                        issues=getattr(missing, "issues", ()),
+                        reason_code=missing.reason_code,
+                    )
                 )
             except Exception:
                 logger.warning("preflight rule %s failed", rule_id, exc_info=True)

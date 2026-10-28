@@ -1,5 +1,7 @@
 """Built-in preflight rules (CT-16 §5) — one rule per module."""
 
+from .binding_danger_rule import BindingDangerRule
+from .bleed_coverage_rule import BleedCoverageRule
 from .bleed_rule import BleedRule
 from .color_profile_rule import ColorProfileRule
 from .dpi_rule import DpiRule
@@ -13,6 +15,8 @@ from .page_size_rule import PageSizeRule
 from .text_overflow_rule import TextOverflowRule
 
 BUILTIN_RULES = (
+    BleedCoverageRule,
+    BindingDangerRule,
     PageCountRule,
     PageSizeRule,
     DpiRule,
@@ -28,6 +32,8 @@ BUILTIN_RULES = (
 
 __all__ = [
     "BUILTIN_RULES",
+    "BindingDangerRule",
+    "BleedCoverageRule",
     "BleedRule",
     "ColorProfileRule",
     "DpiRule",

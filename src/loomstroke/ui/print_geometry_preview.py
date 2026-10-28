@@ -13,6 +13,7 @@ from PySide6.QtGui import QColor, QPainter, QPaintEvent, QPen
 from PySide6.QtWidgets import QSizePolicy, QWidget
 
 from ..core.print_page_geometry import PrintPageGeometry
+from .print_margin_painter import draw_print_margin
 
 __all__ = ["PrintGeometryPreview"]
 
@@ -91,5 +92,19 @@ class PrintGeometryPreview(QWidget):
                     round(ox + mark.x2 * scale),
                     round(oy + mark.y2 * scale),
                 )
+            for cx, cy, radius in geometry.circle_marks:
+                painter.drawEllipse(
+                    QRectF(
+                        ox + (cx - radius) * scale,
+                        oy + (cy - radius) * scale,
+                        radius * 2 * scale,
+                        radius * 2 * scale,
+                    )
+                )
+            painter.save()
+            painter.translate(ox, oy)
+            painter.scale(scale, scale)
+            draw_print_margin(painter, geometry.margin_info)
+            painter.restore()
         finally:
             painter.end()

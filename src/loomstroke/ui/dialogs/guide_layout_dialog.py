@@ -23,6 +23,7 @@ from ...core.guide_layout_geometry import (
     numeric_guide,
     unit_to_pixels,
 )
+from ..canvas.guide_dialog_preview import attach_guide_preview
 from ..translations import translate_with_fallback
 
 
@@ -85,6 +86,9 @@ class GuideLayoutDialog(QDialog):
         self.mode.currentIndexChanged.connect(self._update_mode)
         self._retranslate()
         self._update_mode()
+        self._guide_preview = attach_guide_preview(
+            self, parent, "layout", lambda: (self.guide_positions(), self.replace.isChecked())
+        )
 
     def _distance(self) -> QDoubleSpinBox:
         spin = QDoubleSpinBox(self)

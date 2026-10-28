@@ -37,9 +37,12 @@ from loomstroke.host_api import HostAPI, StrokePoint
 from .canvas_diagnostics import build_canvas_widget_render_diagnostics
 from .canvas_presenter import CanvasPresenterDiagnostics
 from .canvas_wgpu_bitmap_coordinator import CanvasWidgetWgpuBitmapCoordinator
+from .composition_interaction import CompositionInteraction
 from .composition_overlay import draw_composition_overlay
 from .guide_controller import GuideController
+from .guide_dialog_preview import draw_layout_guide_preview
 from .input_handler import InputHandler
+from .layout_grid_overlay import draw_layout_grid
 from .projection_state import ProjectionStateTracker
 from .render_scene import (
     RenderSceneSnapshot,
@@ -47,6 +50,7 @@ from .render_scene import (
 )
 from .screen_space_overlay import ScreenSpaceOverlayManager
 from .three_d_interaction import Canvas3DLayerInteractionController
+from .trim_preview_overlay import draw_trim_preview
 from .vector_selection_overlay import draw_vector_selection_overlay
 from .viewport import Viewport
 from .wgpu_backend import WgpuBackendError, WgpuDeviceLostError, WgpuUnavailableError
@@ -184,6 +188,7 @@ class CanvasWidget(_CanvasWidgetBase):
 
         # Guide/ruler support
         self._guide_controller: GuideController | None = None
+        self._composition_interaction = CompositionInteraction(self)
 
         # Context toolbar manager (set by MainWindow)
         self._context_toolbar_manager: Any = None
@@ -980,6 +985,7 @@ class CanvasWidget(_CanvasWidgetBase):
             painter.drawPixmap(0, 0, self._overlay_buffer)
         if self._temp_buffer and self._is_drawing and self._show_stroke_preview:
             painter.drawPixmap(0, 0, self._temp_buffer)
+        draw_trim_preview(painter, self)
         self._draw_marching_ants(painter)
         self._draw_vector_selection_overlay(painter)
         if self._canvas_agent_overlay_fn is not None:
@@ -1334,6 +1340,14 @@ class CanvasWidget(_CanvasWidgetBase):
                 event,
                 QPointF(float(canvas_pos[0]), float(canvas_pos[1])),
             ):
+                self._composition_interaction.cancel()
+                event.accept()
+                return
+        if self._active_tool_can_move_guides() and not self._input_handler_intercepts(event):
+            pos = event.position()
+            if event.button() == Qt.MouseButton.LeftButton and self._composition_interaction.press(
+                QPointF(*self.viewport.widget_to_canvas(pos.x(), pos.y()))
+            ):
                 event.accept()
                 return
         self.input_handler.handle_mouse_press(event)
@@ -1353,6 +1367,13 @@ class CanvasWidget(_CanvasWidgetBase):
             if self._guide_controller.handle_mouse_move(
                 event,
                 QPointF(float(canvas_pos[0]), float(canvas_pos[1])),
+            ):
+                event.accept()
+                return
+        if self._active_tool_can_move_guides() and not self._input_handler_intercepts(event):
+            pos = event.position()
+            if self._composition_interaction.move(
+                QPointF(*self.viewport.widget_to_canvas(pos.x(), pos.y()))
             ):
                 event.accept()
                 return
@@ -1376,6 +1397,9 @@ class CanvasWidget(_CanvasWidgetBase):
             ):
                 event.accept()
                 return
+        if event.button() == Qt.MouseButton.LeftButton and self._composition_interaction.release():
+            event.accept()
+            return
         self.input_handler.handle_mouse_release(event)
 
     #: plugin payload drops forwarded as ``ui.canvas.drop`` events
@@ -1481,6 +1505,9 @@ class CanvasWidget(_CanvasWidgetBase):
         if event.key() == Qt.Key.Key_Space:
             return
 
+        if self._active_tool_can_move_guides() and self._composition_interaction.key(event):
+            event.accept()
+            return
         if self._guide_controller and self._guide_controller.handle_key_press(event):
             event.accept()
             return
@@ -1644,65 +1671,11 @@ class CanvasWidget(_CanvasWidgetBase):
         self.update()
 
     def _draw_grid(self, painter: QPainter) -> None:
-        """Draw grid overlay with pixel-snapped lines for uniform cells."""
-        if not self.state.grid_visible:
-            return
-
-        painter.save()
-
-        step = self.state.grid_size
-        if step <= 0:
-            step = 1
-
-        # Compute grid line positions in canvas coordinates
-        canvas_rect = QRectF(0.0, 0.0, float(self.state.width), float(self.state.height))
-        visible_rect = QRectF(self.viewport.get_visible_rect()).intersected(canvas_rect)
-        if visible_rect.isEmpty():
-            painter.restore()
-            return
-
-        # Switch to widget coordinates for pixel-perfect lines
-        transform = painter.transform()
-        painter.resetTransform()
-
-        pen = QPen(QColor(200, 200, 200), 1.0)
-        painter.setPen(pen)
-
-        # Map canvas clip rect to widget coords for clipping
-        widget_clip = transform.mapRect(canvas_rect)
-        painter.setClipRect(widget_clip)
-
-        # Map canvas boundary edges to widget coords
-        top_left_w = transform.map(QPointF(0.0, 0.0))
-        bot_right_w = transform.map(QPointF(float(self.state.width), float(self.state.height)))
-        w_left = top_left_w.x()
-        w_right = bot_right_w.x()
-        w_top = top_left_w.y()
-        w_bottom = bot_right_w.y()
-
-        # Draw vertical lines — snap each to nearest pixel
-        left = visible_rect.left()
-        right = visible_rect.right()
-        first_xi = int(left) // step
-        last_xi = int(right) // step + 1
-        for xi in range(first_xi, last_xi + 1):
-            pt = transform.map(QPointF(float(xi * step), 0.0))
-            wx = round(pt.x()) + 0.5
-            painter.drawLine(QPointF(wx, w_top), QPointF(wx, w_bottom))
-
-        # Draw horizontal lines — snap each to nearest pixel
-        top = visible_rect.top()
-        bottom = visible_rect.bottom()
-        first_yi = int(top) // step
-        last_yi = int(bottom) // step + 1
-        for yi in range(first_yi, last_yi + 1):
-            pt = transform.map(QPointF(0.0, float(yi * step)))
-            wy = round(pt.y()) + 0.5
-            painter.drawLine(QPointF(w_left, wy), QPointF(w_right, wy))
-
-        painter.restore()
+        draw_layout_grid(painter, self)
 
     def _draw_guides(self, painter: QPainter) -> None:
+        if draw_layout_guide_preview(painter, self):
+            return
         if self._guide_controller is None:
             return
         self._guide_controller.draw(painter)

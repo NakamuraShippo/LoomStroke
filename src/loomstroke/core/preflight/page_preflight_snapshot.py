@@ -25,6 +25,10 @@ class PagePreflightSnapshot:
     texts: tuple[TextPreflightSnapshot, ...] = field(default_factory=tuple)
     has_physical_layout: bool = False
     hydrated: bool = True
+    binding_danger: tuple[float, float, float, float] | None = None
+    binding_objects: tuple[tuple[str, str, tuple[float, float, float, float] | None], ...] = ()
+    trim_bounds: tuple[float, float, float, float] | None = None
+    bleed_layers: tuple[LayerPreflightSnapshot, ...] | None = None
 
     @property
     def visible_content_layers(self) -> tuple[LayerPreflightSnapshot, ...]:

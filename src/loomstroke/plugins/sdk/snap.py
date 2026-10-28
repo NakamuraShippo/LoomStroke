@@ -12,9 +12,11 @@ from __future__ import annotations
 
 from typing import Any
 
+from ...core.layout_grid_settings import read_layout_grid
+from ...core.layout_grid_snap import nearest_grid_point
 
-def get_guide_controller(host_api: Any) -> Any:
-    """Return the *GuideController* from ``CanvasWidget``, or ``None``."""
+
+def _canvas_widget(host_api: Any) -> Any:
     if host_api is None:
         return None
     ui = getattr(host_api, "ui", None)
@@ -23,8 +25,12 @@ def get_guide_controller(host_api: Any) -> Any:
     mw = getattr(ui, "get_main_window", lambda: None)()
     if mw is None:
         return None
-    canvas_widget = getattr(mw, "canvas", None)
-    return getattr(canvas_widget, "_guide_controller", None)
+    return getattr(mw, "canvas", None)
+
+
+def get_guide_controller(host_api: Any) -> Any:
+    """Return the *GuideController* from ``CanvasWidget``, or ``None``."""
+    return getattr(_canvas_widget(host_api), "_guide_controller", None)
 
 
 def is_snap_enabled(
@@ -38,6 +44,12 @@ def is_snap_enabled(
     if grid_snap is not None:
         grid_snap_enabled = bool(grid_snap)
     if grid_snap_enabled:
+        return True
+    if (
+        settings
+        and settings.get("view/guides_visible", True)
+        and settings.get("view/composition_overlay_kinds", [])
+    ):
         return True
     controller = get_guide_controller(host_api)
     return controller is not None and bool(getattr(controller, "guides_visible", True))
@@ -107,12 +119,37 @@ def snap_position(
     if grid_snap_enabled:
         default_grid_size = settings.get("view/grid_size", 10) if settings else 10
         gs = max(1, int(grid_size if grid_size is not None else default_grid_size))
-        sx = round(sx / gs) * gs
-        sy = round(sy / gs) * gs
+        origin = (0.0, 0.0)
+        controller = get_guide_controller(host_api)
+        if (
+            controller is not None
+            and settings is not None
+            and settings.get("view/grid_follow_ruler_origin", False)
+        ):
+            point = controller.ruler_state().origin
+            origin = point.x(), point.y()
+        pages = getattr(host_api, "pages", None)
+        dpi = (
+            pages.get_active_canvas_spec().dpi
+            if pages is not None
+            and settings is not None
+            and settings.get("view/grid_kind") == "baseline"
+            else (72.0, 72.0)
+        )
+        grid = read_layout_grid(settings, size=gs, origin=origin, dpi=dpi)
+        sx, sy = nearest_grid_point(grid, (sx, sy))
 
     # --- Guide snap (all edges, closest wins) ---
     gc = get_guide_controller(host_api)
     if gc is not None:
         sx, sy = _guide_snap(gc, x, y, w, h, sx, sy)
+
+    composition = getattr(_canvas_widget(host_api), "_composition_interaction", None)
+    if composition is not None:
+        cx, cy, hit = composition.snap_position(x, y, w, h)
+        if hit and (
+            (sx, sy) == (x, y) or (cx - x) ** 2 + (cy - y) ** 2 < (sx - x) ** 2 + (sy - y) ** 2
+        ):
+            sx, sy = cx, cy
 
     return sx, sy

@@ -146,23 +146,6 @@ class OverlayGeometryBuilder:
 
     # -- helpers -----------------------------------------------------------------------
 
-    def _build_ellipse(
-        self, assist: DrawingAssist, size: tuple[float, float]
-    ) -> AssistOverlayGeometry:
-        center = assist.point("center")
-        major = assist.number("major_diameter", 0.0)
-        minor = assist.number("minor_diameter", 0.0)
-        if center is None or not 1e-3 <= minor <= major:
-            return AssistOverlayGeometry()
-        count = self.CONCENTRIC_RINGS if assist.option("concentric", True) else 1
-        return AssistOverlayGeometry(
-            rotated_ellipses=tuple(
-                (*center, major / 2 * k, minor / 2 * k, assist.number("angle", 0.0))
-                for k in range(1, count + 1)
-            ),
-            markers=((*center, "+"),),
-        )
-
     @staticmethod
     def _extend(p0: Point, p1: Point, size: tuple[float, float]) -> tuple[Point, Point] | None:
         dx, dy = p1[0] - p0[0], p1[1] - p0[1]

@@ -73,17 +73,6 @@ class DrawingAssistValidator:
                 break
         return issues
 
-    def _validate_ellipse(self, assist: DrawingAssist, bounds: tuple[float, float]) -> list:
-        issues = self._require_points(assist, ("center",), bounds)
-        major = assist.number("major_diameter", 0.0)
-        minor = assist.number("minor_diameter", 0.0)
-        if not 1e-3 <= minor <= major or major > max(bounds) * self.FAR_FACTOR:
-            issues.append(AssistIssue("assist_ellipse_diameter_invalid", "major_diameter"))
-        angle = assist.number("angle", float("nan"))
-        if not math.isfinite(angle):
-            issues.append(AssistIssue("assist_angle_invalid", "angle"))
-        return issues
-
     # -- helpers -----------------------------------------------------------------------
 
     def _require_points(

@@ -33,6 +33,7 @@ from PySide6.QtWidgets import QApplication, QWidget
 from loomstroke.core.canvas_invalidation import RenderInvalidation
 from loomstroke.ui._dock_safe import is_valid as _is_qt_object_valid
 
+from .binding_danger_overlay import draw_binding_danger
 from .canvas_native_lifecycle_coordinator import (
     CanvasViewportNativeLifecycleCoordinator,
     NativeVisualProbeCoordinator,
@@ -1083,6 +1084,7 @@ class CanvasViewportHost(QWidget):
                 companion_rect=state.companion_canvas_rect(),
                 view_scale=scale,
             )
+            draw_binding_danger(painter, state, getattr(self.legacy_canvas, "_host_api", None))
         except Exception:
             logger.debug("spread frame overlay failed", exc_info=True)
 

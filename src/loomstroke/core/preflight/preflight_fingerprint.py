@@ -51,6 +51,14 @@ class PreflightFingerprint:
     @staticmethod
     def _page_parts(page: PagePreflightSnapshot) -> list[str]:
         parts = [f"page:{page.page_id}:{int(page.hydrated)}:{int(page.has_physical_layout)}"]
+        if page.binding_danger is not None:
+            parts.append(f"binding:{page.binding_danger}:{page.binding_objects}")
+        if page.trim_bounds is not None:
+            parts.append(f"bleed:{page.trim_bounds}:{page.bleed_layers is not None}")
+            parts.extend(
+                f"coverage:{layer.layer_id}:{layer.visible}:{layer.bleed_content_bounds}:{layer.bleed_bounds_checked}"
+                for layer in page.bleed_layers or ()
+            )
         for layer in page.layers:
             parts.append(
                 f"layer:{layer.layer_id}:{layer.layer_type}:{int(layer.visible)}:"

@@ -2,12 +2,38 @@
 
 from __future__ import annotations
 
+from collections.abc import Mapping, Sequence
 from math import isfinite
-from typing import Literal
+from typing import Any, Literal
 
 GuideAxis = Literal["horizontal", "vertical"]
 GuidePosition = tuple[GuideAxis, float]
 MAX_DIVISIONS = 1000
+
+
+def guide_role_edges(
+    guides: Sequence[Mapping[str, Any]], role: str, orientation: GuideAxis
+) -> tuple[float, float]:
+    """Read the two unambiguous generated edges for one page format role."""
+    positions = set()
+    for guide in guides:
+        if not isinstance(guide, Mapping):
+            raise ValueError("Invalid page guide")
+        if (
+            str(guide.get("id", "")).startswith(f"tpl-{role}-")
+            and guide.get("orientation") == orientation
+        ):
+            try:
+                value = float(guide["position"])
+            except (ValueError, TypeError, KeyError) as error:
+                raise ValueError("Invalid page guide") from error
+            if not isfinite(value):
+                raise ValueError("Invalid page guide")
+            positions.add(value)
+    if len(positions) != 2:
+        raise ValueError("Two generated page edges are required")
+    low, high = sorted(positions)
+    return low, high
 
 
 def canvas_snap_positions(extent: float, *, edges: bool, center: bool) -> list[float]:

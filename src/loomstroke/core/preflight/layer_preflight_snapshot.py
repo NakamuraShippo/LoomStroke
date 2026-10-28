@@ -21,3 +21,5 @@ class LayerPreflightSnapshot:
     bounds: tuple[int, int, int, int] | None = None
     effect_type: str | None = None
     object_count: int = 0
+    bleed_content_bounds: tuple[int, int, int, int] | None = None
+    bleed_bounds_checked: bool = False

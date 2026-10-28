@@ -13,11 +13,17 @@ from __future__ import annotations
 
 import logging
 from collections.abc import Callable, Mapping, Sequence
+from dataclasses import replace
 from typing import Any
 
 import numpy as np
 from PySide6.QtGui import QFontDatabase, QFontMetricsF
 
+from ..core.binding_danger_geometry import binding_danger_bounds
+from ..core.binding_margin_service import BindingMarginService
+from ..core.bleed_geometry import trim_bounds
+from ..core.book_spread_layout import BookLayout
+from ..core.live_bleed_bounds_service import LiveBleedBoundsService
 from ..core.preflight.document_preflight_snapshot import DocumentPreflightSnapshot
 from ..core.preflight.layer_preflight_snapshot import LayerPreflightSnapshot
 from ..core.preflight.page_preflight_snapshot import PagePreflightSnapshot
@@ -25,6 +31,8 @@ from ..core.preflight.preflight_fingerprint import PreflightFingerprint
 from ..core.preflight.text_preflight_snapshot import TextPreflightSnapshot
 from ..core.vector_text_layout import TextLayoutCalculator
 from ..io.layer_io import DocumentMetadata
+from .binding_preflight_facts import binding_objects
+from .bleed_preflight_facts import BleedBoundsBudget
 from .text_preflight_facts import character_font_facts, rich_text_overflow
 
 logger = logging.getLogger(__name__)
@@ -48,6 +56,8 @@ class DocumentPreflightSnapshotBuilder:
         reading_direction: str = "ltr",
         roles_by_id: Mapping[str, str] | None = None,
         font_available: FontAvailable | None = None,
+        book_layout: BookLayout | None = None,
+        live_canvas: Any = None,
     ) -> None:
         self._pages = page_service
         self._metadata = document_metadata
@@ -57,11 +67,22 @@ class DocumentPreflightSnapshotBuilder:
         self._reading_direction = reading_direction
         self._roles = dict(roles_by_id or {})
         self._font_available = font_available or self._qt_font_available
+        self._book_layout = book_layout or BookLayout()
+        self._binding_sides: dict[str, str] = {}
+        self._bleed_budget = BleedBoundsBudget()
+        self._live_canvas = live_canvas
+        self._live_document = getattr(live_canvas, "_doc", None)
 
     # -- public ------------------------------------------------------------------
 
     def build(self, page_ids: Sequence[str] | None = None) -> DocumentPreflightSnapshot:
         summaries = self._summaries()
+        self._bleed_budget = BleedBoundsBudget()
+        self._live_document = getattr(self._live_canvas, "_doc", None)
+        if callable(getattr(self._pages, "get_page_view_state", None)):
+            _, self._binding_sides = BindingMarginService(
+                self._pages, self._book_layout
+            ).page_inputs()
         wanted = set(page_ids) if page_ids is not None else None
         pages: list[PagePreflightSnapshot] = []
         for index, summary in enumerate(summaries):
@@ -123,18 +144,53 @@ class DocumentPreflightSnapshotBuilder:
         layers: list[LayerPreflightSnapshot] = []
         texts: list[TextPreflightSnapshot] = []
         hydrated = False
+        danger_objects = ()
+        danger = None
+        trim = None
+        bleed_layers = None
+        getter = getattr(self._pages, "get_page_view_state", None)
+        if callable(getter):
+            guides = (getter(page_id) or {}).get("guides", [])
+            if isinstance(guides, list) and all(isinstance(g, dict) for g in guides):
+                danger = binding_danger_bounds(guides, self._binding_sides.get(page_id, ""))
+                trim = trim_bounds(guides, (width, height))
         try:
             page = self._pages.get_page_snapshot(page_id)
             if page is not None:
                 hydrated = True
+                if danger is not None:
+                    danger_objects = binding_objects(getattr(page, "layers", None) or [])
                 for layer in getattr(page, "layers", None) or []:
                     self._collect_layer(layer, layers, texts)
+                if trim is not None and not (
+                    self._live_canvas is not None and page_id == self._pages.get_active_page_id()
+                ):
+                    facts = self._bleed_budget.collect(getattr(page, "layers", None) or [])
+                    bleed_layers = tuple(
+                        replace(
+                            layer,
+                            bleed_content_bounds=facts.get(layer.layer_id, (None, False))[0],
+                            bleed_bounds_checked=facts.get(layer.layer_id, (None, False))[1],
+                        )
+                        for layer in layers
+                    )
         except Exception:
             logger.warning("preflight: page %s could not be read", page_id, exc_info=True)
         finally:
             evict = getattr(self._pages, "evict_pages_to_budget", None)
             if callable(evict):
                 evict()
+        if (
+            trim is not None
+            and self._live_canvas is not None
+            and page_id == self._pages.get_active_page_id()
+        ):
+            if getattr(self._live_canvas, "_doc", None) is self._live_document:
+                bleed_layers, self._bleed_budget.remaining = LiveBleedBoundsService(
+                    self._live_canvas
+                ).capture(self._bleed_budget.remaining)
+            else:
+                bleed_layers = None
         return PagePreflightSnapshot(
             page_id=page_id,
             index=index,
@@ -147,6 +203,10 @@ class DocumentPreflightSnapshotBuilder:
             texts=tuple(texts),
             has_physical_layout=False,
             hydrated=hydrated,
+            binding_danger=danger,
+            binding_objects=danger_objects,
+            trim_bounds=trim,
+            bleed_layers=bleed_layers,
         )
 
     def _collect_layer(

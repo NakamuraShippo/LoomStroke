@@ -17,18 +17,24 @@ from __future__ import annotations
 
 import logging
 from collections.abc import Callable, Sequence
+from datetime import datetime
 from pathlib import Path
 from typing import Any
 
 import numpy as np
-from PySide6.QtCore import QMarginsF, QPointF, QRectF, QSizeF
-from PySide6.QtGui import QPageLayout, QPageSize, QPainter, QPdfWriter, QPen
+from PySide6.QtCore import QMarginsF, QRectF, QSizeF
+from PySide6.QtGui import QPageLayout, QPageSize, QPainter, QPdfWriter
 from PySide6.QtWidgets import QMessageBox, QProgressDialog, QWidget
 
+from ..core.print_margin_geometry import annotate_print_geometry
+from ..core.print_margin_models import PrintMarginContext, PrintMarginOptions
+from ..core.print_mark_models import PrintMarkOptions
 from ..core.print_page_geometry import PrintPageGeometry, geometry_for_canvas
 from ..io.atomic_export_writer import write_atomically
 from ..io.layer_io import DocumentMetadata
 from .canvas.page_scene_snapshot import array_to_qimage
+from .print_margin_painter import draw_print_margin
+from .print_mark_painter import draw_print_marks
 from .translations import translate_with_fallback
 
 logger = logging.getLogger(__name__)
@@ -63,6 +69,8 @@ def export_print_pdf(
     render_page: RenderPage | None = None,
     progress_factory: Callable[[int], Any] | None = None,
     message_box: Any = QMessageBox,
+    mark_options: PrintMarkOptions | None = None,
+    margin_options: PrintMarginOptions | None = None,
 ) -> dict[str, Any]:
     """Returns {"status": "success"|"cancelled"|"failed", "pages": int,
     "warnings": [str, ...]}."""
@@ -97,6 +105,14 @@ def export_print_pdf(
                 render_page,
                 progress,
                 warnings,
+                mark_options,
+                margin_options,
+                Path(destination).name,
+                (
+                    datetime.now().astimezone().isoformat(timespec="minutes")
+                    if margin_options is not None and margin_options.date_time
+                    else ""
+                ),
             ),
         )
         status = "success"
@@ -141,9 +157,17 @@ def _write_pdf(
     render_page: RenderPage,
     progress: Any,
     warnings: list[str],
+    mark_options: PrintMarkOptions | None = None,
+    margin_options: PrintMarginOptions | None = None,
+    file_name: str = "",
+    timestamp: str = "",
 ) -> None:
     writer = QPdfWriter(str(tmp_path))
     writer.setResolution(72)  # painter units == PDF points
+    if (with_marks and mark_options is not None and mark_options.color != "legacy") or (
+        margin_options is not None and margin_options.enabled
+    ):
+        writer.setColorModel(QPdfWriter.ColorModel.Auto)
     painter: QPainter | None = None
     try:
         for index, page_id in enumerate(page_ids):
@@ -156,7 +180,13 @@ def _write_pdf(
                 if page is None:
                     raise ValueError(f"page not found: {page_id}")
                 rgba = render_page(document_metadata, page)
-                geometry = _page_geometry(document_metadata, page, rgba, with_marks)
+                geometry = _page_geometry(document_metadata, page, rgba, with_marks, mark_options)
+                if margin_options is not None:
+                    geometry = annotate_print_geometry(
+                        geometry,
+                        margin_options,
+                        PrintMarginContext(file_name, index + 1, len(page_ids), timestamp, "RGB"),
+                    )
             except Exception as error:
                 raise _PageFailed(str(page_id)) from error
             if not geometry.has_bleed:
@@ -178,12 +208,22 @@ def _write_pdf(
 
 
 def _page_geometry(
-    document_metadata: DocumentMetadata, page: Any, rgba: np.ndarray, with_marks: bool
+    document_metadata: DocumentMetadata,
+    page: Any,
+    rgba: np.ndarray,
+    with_marks: bool,
+    mark_options: PrintMarkOptions | None = None,
 ) -> PrintPageGeometry:
     page_canvas = getattr(page, "canvas", None)
     dpi = tuple(page_canvas.dpi) if page_canvas is not None else tuple(document_metadata.dpi)
     height, width = rgba.shape[:2]
-    return geometry_for_canvas(width, height, (float(dpi[0]), float(dpi[1])), with_marks=with_marks)
+    return geometry_for_canvas(
+        width,
+        height,
+        (float(dpi[0]), float(dpi[1])),
+        with_marks=with_marks,
+        mark_options=mark_options,
+    )
 
 
 def _set_page_size(writer: QPdfWriter, geometry: PrintPageGeometry) -> None:
@@ -196,12 +236,8 @@ def _draw_page(painter: QPainter, geometry: PrintPageGeometry, rgba: np.ndarray)
     image = array_to_qimage(np.ascontiguousarray(rgba))
     cx, cy, cw, ch = geometry.content_rect_pt
     painter.drawImage(QRectF(cx, cy, cw, ch), image)
-    if geometry.marks:
-        pen = QPen()
-        pen.setWidthF(0.25)
-        painter.setPen(pen)
-        for mark in geometry.marks:
-            painter.drawLine(QPointF(mark.x1, mark.y1), QPointF(mark.x2, mark.y2))
+    draw_print_marks(painter, geometry)
+    draw_print_margin(painter, geometry.margin_info)
 
 
 def _default_render_page_factory() -> tuple[RenderPage, Callable[[], None]]:

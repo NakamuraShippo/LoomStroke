@@ -11,6 +11,9 @@ from PySide6.QtCore import QPoint
 from PySide6.QtGui import QAction
 from PySide6.QtWidgets import QMenu
 
+from .dialogs.path_pattern_dialog import can_place_pattern, open_path_pattern
+from .guide_cell_selection import guide_cell_candidate, select_guide_cell
+
 logger = logging.getLogger(__name__)
 
 ActionSlot = Callable[..., Any]
@@ -41,6 +44,7 @@ class MainWindowCanvasContextMenuCoordinator:
     ) -> None:
         self._window = window
         self._menu_factory = menu_factory or (lambda parent: QMenu(parent))
+        self._guide_cell_page_id: str | None = None
 
     def register_action(
         self,
@@ -101,6 +105,25 @@ class MainWindowCanvasContextMenuCoordinator:
     def register_default_actions(self) -> None:
         window = self._window
         defaults: list[dict[str, Any]] = [
+            {
+                "action_id": "vector.pattern_along_path",
+                "label": "Pattern Along Path",
+                "handler": lambda: open_path_pattern(window),
+                "enabled": lambda: can_place_pattern(window),
+                "shortcut_category": "Edit",
+                "group": "plugins",
+                "order": 36,
+            },
+            {
+                "action_id": "selection.guide_cell",
+                "label": "Select Guide Cell",
+                "handler": lambda: select_guide_cell(window, self._guide_cell_page_id),
+                "enabled": lambda: guide_cell_candidate(window, self._guide_cell_page_id)
+                is not None,
+                "shortcut_category": "Canvas",
+                "group": "canvas",
+                "order": 20,
+            },
             {
                 "action_id": "edit.undo",
                 "label": "&Undo",
@@ -285,6 +308,8 @@ class MainWindowCanvasContextMenuCoordinator:
             )
 
     def on_requested(self, payload: Any) -> None:
+        pages = getattr(getattr(self._window, "_host_api", None), "pages", None)
+        self._guide_cell_page_id = pages.get_active_page_id() if pages is not None else None
         global_pos: QPoint | None = None
         if isinstance(payload, Mapping):
             self._window._last_canvas_context = dict(payload)

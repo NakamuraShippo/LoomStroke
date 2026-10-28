@@ -9,6 +9,7 @@ from PySide6.QtGui import QAction
 from PySide6.QtWidgets import QMenu, QMenuBar
 
 from .dialogs.composition_guides_dialog import open_composition_guides
+from .dialogs.layout_grid_dialog import open_layout_grid
 from .guide_view_menu import populate_guide_view_menu
 from .menu_catalog import MENU_DEFINITIONS
 from .selection_delete_shortcut import install_selection_delete_shortcut
@@ -131,6 +132,7 @@ class MainWindowMenuBuilderCoordinator:
             )
         )
         panels_submenu = window._submenu(menu, "&Panels")
+        menu.addAction(window._mk_action("Grid Settings...", lambda: open_layout_grid(window)))
         populate_guide_view_menu(window, menu)
         menu.addAction(
             window._mk_action("Composition Guides...", lambda: open_composition_guides(window))

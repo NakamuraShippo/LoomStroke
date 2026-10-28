@@ -17,6 +17,11 @@ from PySide6.QtWidgets import (
 )
 
 from ...core.composition_geometry import KINDS
+from ..canvas.guide_dialog_preview import (
+    attach_guide_preview,
+    close_guide_preview,
+    preview_page_matches,
+)
 from ..translations import translate_with_fallback
 
 _NAMES = (
@@ -68,6 +73,7 @@ class CompositionGuidesDialog(QDialog):
         buttons.accepted.connect(self.accept)
         buttons.rejected.connect(self.reject)
         self._retranslate()
+        self._guide_preview = attach_guide_preview(self, parent, "composition", self.values)
 
     def values(self) -> dict[str, Any]:
         return {
@@ -98,10 +104,13 @@ class CompositionGuidesDialog(QDialog):
 
 def open_composition_guides(window: Any) -> None:
     dialog = CompositionGuidesDialog(window._settings, window)
-    if dialog.exec() != QDialog.DialogCode.Accepted:
-        return
-    for key, value in dialog.values().items():
-        window._settings.set(key, value)
-    canvas = getattr(window, "canvas", None)
-    if canvas is not None:
-        canvas.update()
+    try:
+        if dialog.exec() != QDialog.DialogCode.Accepted or not preview_page_matches(dialog):
+            return
+        for key, value in dialog.values().items():
+            window._settings.set(key, value)
+        canvas = getattr(window, "canvas", None)
+        if canvas is not None:
+            canvas.update()
+    finally:
+        close_guide_preview(dialog)

@@ -18,6 +18,7 @@ from typing import Any
 from PySide6.QtWidgets import QDialog, QFileDialog, QMessageBox
 
 from ..core.export_naming import NamingContext, NamingError, detect_collisions, render_export_names
+from ..core.print_mark_models import PrintMarkOptions
 from ..io.bundled_color_profiles import create_print_profile_registry
 from ..io.color_profile_registry import ColorProfileRegistry
 from ..io.layer_io import DocumentMetadata
@@ -128,6 +129,12 @@ class MainWindowPrintExportAction:
             page_ids=plan.page_ids,
             destination=Path(path_text),
             with_marks=plan.with_marks,
+            **(
+                {"mark_options": plan.mark_options}
+                if plan.mark_options != PrintMarkOptions()
+                else {}
+            ),
+            **({"margin_options": plan.margin_options} if plan.margin_options.enabled else {}),
         )
         return True
 

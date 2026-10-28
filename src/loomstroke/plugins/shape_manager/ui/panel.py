@@ -70,6 +70,7 @@ from ..svg.parse import parse_svg
 from ..svg.render_thumb import render_svg_thumbnail
 from ..svg.sanitize import sanitize_svg
 from .dnd import MIME_TYPE, build_payload, parse_payload
+from .effect_shape_dialog import configure_effect_shape
 from .library_load_feedback import (
     capture_library_load_issue,
     refresh_library_load_feedback,
@@ -1402,8 +1403,11 @@ class ShapeManagerPanel(QWidget):
             pos,
             default_size_px=default_size,
         )
+        if basic_shape_id in ("stream_lines", "solid_flash", "urchin_flash"):
+            vector_obj = configure_effect_shape(self._host, basic_shape_id, pos, default_size, self)
         if vector_obj is None:
-            self._notify(self._ts("Failed to build basic shape."))
+            if basic_shape_id not in ("stream_lines", "solid_flash", "urchin_flash"):
+                self._notify(self._ts("Failed to build basic shape."))
             return False
 
         canvas = self._host.canvas

@@ -345,6 +345,7 @@ def _same_wire_value(left: Any, right: Any) -> bool:
 def _builtin_templates() -> tuple[PageTemplate, ...]:
     # Lazy: comic_document_profile imports LayerTemplate from this module.
     from .comic_document_profile import builtin_comic_page_templates  # noqa: PLC0415
+    from .cover_profile import builtin_cover_templates  # noqa: PLC0415
 
     blanks: tuple[PageTemplate, ...] = (
         PageTemplate(
@@ -368,7 +369,7 @@ def _builtin_templates() -> tuple[PageTemplate, ...]:
             description="Create a page with default Background/Layer 1 layers.",
         ),
     )
-    return blanks + tuple(builtin_comic_page_templates())
+    return blanks + tuple(builtin_comic_page_templates()) + builtin_cover_templates()
 
 
 def _builtin_template_ids() -> set[str]:

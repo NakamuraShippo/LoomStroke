@@ -47,7 +47,9 @@ class PageTemplateManager:
         return self._template_store
 
     def list_summaries(self) -> Sequence[PageTemplateSummary]:
-        return self._template_store.list_summaries()
+        return tuple(
+            s for s in self._template_store.list_summaries() if s.category != "print_format"
+        )
 
     def get(self, template_id: str) -> PageTemplate | None:
         return self._template_store.get(template_id)

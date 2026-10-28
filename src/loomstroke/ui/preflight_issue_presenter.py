@@ -23,6 +23,8 @@ class PreflightIssuePresenter:
     DOMAIN: ClassVar[str] = "MangaPreflightDialog"
 
     MESSAGES: ClassVar[dict[str, str]] = {
+        "bleed_coverage_short": "Artwork reaches trim but not the bleed edge: {sides}.",
+        "binding_danger_content": "Text or balloon overlaps the binding danger zone.",
         "no_pages": "The document has no pages.",
         "duplicate_page_id": "Duplicate page id.",
         "odd_page_count": "Odd page count ({count}); print books usually need an even count.",
@@ -44,6 +46,8 @@ class PreflightIssuePresenter:
         "bleed_unknown": "No physical layout: bleed and trim are unknown for this page.",
     }
     ACTIONS: ClassVar[dict[str, str]] = {
+        "extend_to_bleed": "Extend artwork to the bleed edge",
+        "move_from_binding": "Move the object away from the binding edge",
         "add_blank_page": "Add a blank page",
         "image_size": "Adjust with Image Size...",
         "enlarge_frame": "Enlarge the text frame",
@@ -56,6 +60,12 @@ class PreflightIssuePresenter:
         "set_physical_layout": "Create the page from a manga profile",
     }
     NOT_CHECKED: ClassVar[dict[str, str]] = {
+        "bleed_bounds_unavailable": (
+            "Some content bounds could not be verified for the bleed check."
+        ),
+        "binding_bounds_unavailable": (
+            "Some text bounds could not be verified for the binding check."
+        ),
         "linked_assets_not_available": "Linked assets are not available in this build.",
         "page_content_not_loaded": "Page content was not loaded.",
         "font_database_unavailable": "The font database is unavailable.",
@@ -82,7 +92,12 @@ class PreflightIssuePresenter:
         if template is None:
             return issue.reason_code
         try:
-            return self._tr(template).format(**issue.args())
+            args = issue.args()
+            if issue.reason_code == "bleed_coverage_short":
+                args["sides"] = ", ".join(
+                    self._tr(side.title()) for side in str(args.get("sides", "")).split(",")
+                )
+            return self._tr(template).format(**args)
         except (KeyError, IndexError, ValueError):
             return self._tr(template)
 

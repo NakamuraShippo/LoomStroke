@@ -1354,6 +1354,8 @@
 </context>
 <context>
     <name>MainWindow</name>
+    <message><source>Cover Template...</source><translation>表紙テンプレート...</translation></message>
+    <message><source>Pattern Along Path</source><translation>パスに沿って模様を配置</translation></message>
     <message>
         <source>PSD export cannot preserve this filter layer. Export a flattened image instead.</source>
         <translation>このフィルターレイヤーはPSDで保持できません。統合した画像として書き出してください。</translation>
@@ -3196,6 +3198,9 @@ Type: {type}</source>
 </context>
 <context>
     <name>ShapeManagerPlugin</name>
+    <message><source>Solid Flash</source><translation>ベタフラッシュ</translation></message>
+    <message><source>Urchin Flash</source><translation>ウニフラッシュ</translation></message>
+    <message><source>Stream Lines</source><translation>流線</translation></message>
     <message>
         <source>Shape Manager</source>
         <translation>シェイプマネージャー</translation>
@@ -6706,6 +6711,7 @@ Use "Edit Filters" to add.</source>
 </context>
 <context>
     <name>PagePanelPlugin</name>
+    <message><source>A5 Wrap Cover (Color)</source><translation>A5 全面表紙 (カラー)</translation></message>
     <message>
         <source>Pages Panel</source>
         <translation>ページパネル</translation>
@@ -8596,16 +8602,6 @@ Use "Edit Filters" to add.</source>
     <message><source>Guides must be inside the canvas with valid margins.</source><translation>ガイドをキャンバス内に配置し、マージンを正しく指定してください。</translation></message>
 </context>
 <context>
-    <name>DrawingAssistPanel</name>
-    <message><source>ellipse</source><translation>楕円定規</translation></message>
-    <message><source>Center X</source><translation>中心 X</translation></message>
-    <message><source>Center Y</source><translation>中心 Y</translation></message>
-    <message><source>Major diameter</source><translation>長径</translation></message>
-    <message><source>Minor diameter</source><translation>短径</translation></message>
-    <message><source>Rotation</source><translation>回転角</translation></message>
-    <message><source>Concentric (0 or 1)</source><translation>同心楕円 (0 または 1)</translation></message>
-</context>
-<context>
     <name>CompositionGuidesDialog</name>
     <message><source>Composition Guides</source><translation>構図ガイド</translation></message>
     <message><source>Rule of thirds</source><translation>三分割</translation></message>
@@ -8658,5 +8654,263 @@ Use "Edit Filters" to add.</source>
 <context>
     <name>MainWindow</name>
     <message><source>Guide Templates...</source><translation>ガイドテンプレート...</translation></message>
+</context>
+<context>
+    <name>MainWindow</name>
+    <message><source>Select Guide Cell</source><translation>ガイドのセルを選択</translation></message>
+</context>
+<context>
+    <name>LayoutGridDialog</name>
+    <message><source>Grid Settings</source><translation>グリッド設定</translation></message>
+    <message><source>Grid type</source><translation>グリッドの種類</translation></message>
+    <message><source>Square</source><translation>正方</translation></message>
+    <message><source>Major and minor lines</source><translation>主線と補助線</translation></message>
+    <message><source>Separate X/Y spacing</source><translation>縦横別の間隔</translation></message>
+    <message><source>Isometric</source><translation>アイソメトリック</translation></message>
+    <message><source>Triangular</source><translation>三角</translation></message>
+    <message><source>Hexagonal</source><translation>六角</translation></message>
+    <message><source>Polar</source><translation>極座標</translation></message>
+    <message><source>Horizontal spacing</source><translation>横方向の間隔</translation></message>
+    <message><source>Vertical spacing</source><translation>縦方向の間隔</translation></message>
+    <message><source>Major line every</source><translation>主線の間隔</translation></message>
+    <message><source>Rotation</source><translation>回転角</translation></message>
+    <message><source>Polar divisions</source><translation>放射の分割数</translation></message>
+    <message><source>Follow ruler origin</source><translation>ルーラー原点に追従</translation></message>
+    <message><source>Show grid</source><translation>グリッドを表示</translation></message>
+    <message><source>Snap to grid</source><translation>グリッドに吸着</translation></message>
+    <message><source>Dense grids are visually thinned; snapping uses the full grid.</source><translation>密なグリッドは表示を間引きます。吸着にはすべての格子点を使います。</translation></message>
+</context>
+<context>
+    <name>MainWindow</name>
+    <message><source>Grid Settings...</source><translation>グリッド設定...</translation></message>
+</context>
+<context>
+    <name>LayoutGridDialog</name>
+    <message><source>Baseline</source><translation>行送り</translation></message>
+    <message><source>Line spacing</source><translation>行送り間隔</translation></message>
+    <message><source>Start position</source><translation>開始位置</translation></message>
+    <message><source>Baseline unit</source><translation>行送りの単位</translation></message>
+</context>
+<context>
+    <name>BindingMarginDialog</name>
+    <message><source>Binding Margin</source><translation>ノド余白</translation></message>
+    <message><source>Width (mm)</source><translation>幅 (mm)</translation></message>
+    <message><source>All pages</source><translation>全ページ</translation></message>
+    <message><source>Could not apply the binding margin. Check the page format; some pages may already have been updated.</source><translation>ノド余白を適用できませんでした。判型ガイドを確認してください。一部のページはすでに更新されている可能性があります。</translation></message>
+</context>
+<context>
+    <name>MainWindow</name>
+    <message><source>Binding Margin...</source><translation>ノド余白...</translation></message>
+</context>
+<context>
+    <name>CoverTemplateDialog</name>
+    <message><source>Cover Template</source><translation>表紙テンプレート</translation></message>
+    <message><source>Template name</source><translation>テンプレート名</translation></message>
+    <message><source>Binding</source><translation>綴じ方向</translation></message>
+    <message><source>Right binding</source><translation>右綴じ</translation></message>
+    <message><source>Left binding</source><translation>左綴じ</translation></message>
+    <message><source>Face width (mm)</source><translation>片面の仕上がり幅 (mm)</translation></message>
+    <message><source>Face height (mm)</source><translation>片面の仕上がり高さ (mm)</translation></message>
+    <message><source>Body pages</source><translation>本文ページ数</translation></message>
+    <message><source>Sheet thickness (mm)</source><translation>用紙1枚の厚み (mm)</translation></message>
+    <message><source>Spine width (mm)</source><translation>背幅 (mm)</translation></message>
+    <message><source>Flap width on each side (mm)</source><translation>両側の袖幅 (mm)</translation></message>
+    <message><source>Bleed (mm)</source><translation>塗り足し (mm)</translation></message>
+    <message><source>DPI</source><translation>DPI</translation></message>
+    <message><source>Specify spine width directly</source><translation>背幅を直接指定</translation></message>
+    <message><source>Spine {spine} mm; canvas {width} x {height} px. Saved templates appear in the Pages panel.</source><translation>背幅 {spine} mm、キャンバス {width} x {height} px。保存後はページパネルから追加できます。</translation></message>
+    <message><source>Invalid cover dimensions or pixel limit exceeded.</source><translation>表紙寸法が不正、または画素数の上限を超えています。</translation></message>
+    <message><source>Could not save the cover template.</source><translation>表紙テンプレートを保存できませんでした。</translation></message>
+</context>
+<context>
+    <name>PathPatternDialog</name>
+    <message><source>Pattern Along Path</source><translation>パスに沿って模様を配置</translation></message>
+    <message><source>Shape</source><translation>図形</translation></message>
+    <message><source>Size (px)</source><translation>大きさ (px)</translation></message>
+    <message><source>Spacing (px)</source><translation>間隔 (px)</translation></message>
+    <message><source>Variation</source><translation>ばらつき</translation></message>
+    <message><source>Random seed</source><translation>乱数シード</translation></message>
+    <message><source>Ellipse</source><translation>楕円</translation></message>
+    <message><source>Rounded Rectangle</source><translation>角丸矩形</translation></message>
+    <message><source>Triangle</source><translation>三角形</translation></message>
+    <message><source>Follow path rotation</source><translation>パスの向きに回転</translation></message>
+    <message><source>Could not place the pattern. Check the path, spacing and editable layer.</source><translation>模様を配置できませんでした。パス・間隔・編集対象レイヤーを確認してください。</translation></message>
+    <message><source>Select one path on an editable, untransformed vector layer.</source><translation>変形されていない編集可能なベクターレイヤーでパスを1つ選択してください。</translation></message>
+</context>
+<context>
+    <name>EffectShapeDialog</name>
+    <message><source>Centre X offset ratio</source><translation>中心Xの移動比率</translation></message>
+    <message><source>Centre Y offset ratio</source><translation>中心Yの移動比率</translation></message>
+    <message><source>Inner diameter ratio</source><translation>内径の比率</translation></message>
+    <message><source>Outer diameter ratio</source><translation>外径の比率</translation></message>
+    <message><source>Variation</source><translation>ばらつき</translation></message>
+    <message><source>White fill</source><translation>白抜き</translation></message>
+    <message><source>Effect Lines</source><translation>効果線</translation></message>
+    <message><source>Range</source><translation>範囲</translation></message>
+    <message><source>Rectangle</source><translation>矩形</translation></message>
+    <message><source>Selection bounding rectangle</source><translation>選択範囲の外接矩形</translation></message>
+    <message><source>Left</source><translation>左</translation></message>
+    <message><source>Top</source><translation>上</translation></message>
+    <message><source>Right</source><translation>右</translation></message>
+    <message><source>Bottom</source><translation>下</translation></message>
+    <message><source>Direction (degrees)</source><translation>方向 (度)</translation></message>
+    <message><source>Line count</source><translation>線の本数</translation></message>
+    <message><source>Length variation</source><translation>長さのばらつき</translation></message>
+    <message><source>Width ratio</source><translation>太さの比率</translation></message>
+    <message><source>Taper ratio</source><translation>入り抜きの比率</translation></message>
+    <message><source>Random seed</source><translation>乱数シード</translation></message>
+    <message><source>Invalid effect bounds.</source><translation>効果線の範囲が不正です。</translation></message>
+</context>
+<context>
+    <name>FormatGuidesDialog</name>
+    <message>
+        <source>Preset DPI X</source>
+        <translation>保存用DPI X</translation>
+    </message>
+    <message>
+        <source>Preset DPI Y</source>
+        <translation>保存用DPI Y</translation>
+    </message>
+    <message>
+        <source>Save Format Preset</source>
+        <translation>判型プリセットを保存</translation>
+    </message>
+    <message>
+        <source>Name</source>
+        <translation>名前</translation>
+    </message>
+    <message>
+        <source>Could not save the format preset.</source>
+        <translation>判型プリセットを保存できませんでした。</translation>
+    </message>
+    <message>
+        <source>B6 Body (Monochrome)</source>
+        <translation>B6 (モノクロ)</translation>
+    </message>
+    <message>
+        <source>B6 Body (Color)</source>
+        <translation>B6 (カラー)</translation>
+    </message>
+    <message>
+        <source>A6 Body (Monochrome)</source>
+        <translation>A6 文庫 (モノクロ)</translation>
+    </message>
+    <message>
+        <source>A6 Body (Color)</source>
+        <translation>A6 文庫 (カラー)</translation>
+    </message>
+    <message>
+        <source>Shinsho 103x182 (Monochrome)</source>
+        <translation>新書 103x182 (モノクロ)</translation>
+    </message>
+    <message>
+        <source>Shinsho 103x182 (Color)</source>
+        <translation>新書 103x182 (カラー)</translation>
+    </message>
+    <message>
+        <source>Shiroku 127x188 (Monochrome)</source>
+        <translation>四六判 127x188 (モノクロ)</translation>
+    </message>
+    <message>
+        <source>Shiroku 127x188 (Color)</source>
+        <translation>四六判 127x188 (カラー)</translation>
+    </message>
+    <message>
+        <source>Square 148x148 (Monochrome)</source>
+        <translation>正方形 148x148 (モノクロ)</translation>
+    </message>
+    <message>
+        <source>Square 148x148 (Color)</source>
+        <translation>正方形 148x148 (カラー)</translation>
+    </message>
+    <message><source>Page Format Guides</source><translation>判型ガイド</translation></message>
+    <message><source>Preset</source><translation>プリセット</translation></message>
+    <message><source>Custom</source><translation>カスタム</translation></message>
+    <message><source>Trim width</source><translation>仕上がり幅</translation></message>
+    <message><source>Trim height</source><translation>仕上がり高さ</translation></message>
+    <message><source>Bleed left</source><translation>塗り足し 左</translation></message>
+    <message><source>Bleed top</source><translation>塗り足し 上</translation></message>
+    <message><source>Bleed right</source><translation>塗り足し 右</translation></message>
+    <message><source>Bleed bottom</source><translation>塗り足し 下</translation></message>
+    <message><source>Safe left</source><translation>安全余白 左</translation></message>
+    <message><source>Safe top</source><translation>安全余白 上</translation></message>
+    <message><source>Safe right</source><translation>安全余白 右</translation></message>
+    <message><source>Safe bottom</source><translation>安全余白 下</translation></message>
+    <message><source>Binding margin</source><translation>ノド余白</translation></message>
+    <message><source>All pages</source><translation>全ページ</translation></message>
+    <message><source>Guides use each page's DPI. Canvas size is unchanged.</source><translation>各ページのDPIでガイドを作成します。キャンバスサイズは変更しません。</translation></message>
+    <message><source>Could not apply the page guides. The format must match the existing canvas size and leave a valid safe area. Some pages may already have been updated.</source><translation>判型ガイドを適用できませんでした。既存のキャンバスサイズに一致し、安全領域が残る寸法を指定してください。一部のページはすでに更新されている可能性があります。</translation></message>
+    <message><source>B5 Body (Monochrome)</source><translation>B5 本文 (モノクロ)</translation></message>
+    <message><source>B5 Body (Color)</source><translation>B5 本文 (カラー)</translation></message>
+    <message><source>A5 Body (Monochrome)</source><translation>A5 本文 (モノクロ)</translation></message>
+    <message><source>A5 Body (Color)</source><translation>A5 本文 (カラー)</translation></message>
+    <message><source>A4 Body (Monochrome)</source><translation>A4 本文 (モノクロ)</translation></message>
+    <message><source>A4 Body (Color)</source><translation>A4 本文 (カラー)</translation></message>
+</context>
+<context>
+    <name>MainWindow</name>
+    <message><source>Page Format Guides...</source><translation>判型ガイド...</translation></message>
+</context>
+<context>
+    <name>BindingMarginDialog</name>
+    <message><source>Show binding danger zone in spread view</source><translation>見開き表示でノド危険域を表示</translation></message>
+</context>
+<context>
+    <name>MangaPreflightDialog</name>
+    <message><source>Text or balloon overlaps the binding danger zone.</source><translation>文字または吹き出しがノド危険域と重なっています。</translation></message>
+    <message><source>Move the object away from the binding edge</source><translation>オブジェクトを綴じ端から離す</translation></message>
+    <message><source>Some text bounds could not be verified for the binding check.</source><translation>一部の文字範囲を確認できないため、ノド危険域の検査は未完了です。</translation></message>
+</context>
+<context>
+    <name>PrintMarkControls</name>
+    <message><source>Print marks</source><translation>印刷マーク</translation></message>
+    <message><source>Japanese corner (current)</source><translation>日本式角トンボ (従来)</translation></message>
+    <message><source>Japanese double</source><translation>日本式ダブルトンボ</translation></message>
+    <message><source>Western crop marks</source><translation>海外式裁断マーク</translation></message>
+    <message><source>Current black (RGB)</source><translation>従来の黒 (RGB)</translation></message>
+    <message><source>K only (100%)</source><translation>Kのみ (100%)</translation></message>
+    <message><source>Registration (CMYK 100%)</source><translation>レジストレーション (CMYK各100%)</translation></message>
+    <message><source>Crop marks</source><translation>裁断マーク</translation></message>
+    <message><source>Bleed marks</source><translation>塗り足しマーク</translation></message>
+    <message><source>Registration marks</source><translation>レジスターマーク</translation></message>
+    <message><source>Center marks</source><translation>センタートンボ</translation></message>
+    <message><source>Style</source><translation>種類</translation></message>
+    <message><source>Mark colour</source><translation>マークの色</translation></message>
+    <message><source>Line width (pt)</source><translation>線幅 (pt)</translation></message>
+    <message><source>Offset outside bleed (pt)</source><translation>塗り足し外側からの距離 (pt)</translation></message>
+</context>
+<context>
+    <name>PrintMarginControls</name>
+    <message><source>Margin information</source><translation>余白情報</translation></message>
+    <message><source>File name</source><translation>ファイル名</translation></message>
+    <message><source>Page number</source><translation>ページ番号</translation></message>
+    <message><source>Date and time</source><translation>日時</translation></message>
+    <message><source>Colour mode</source><translation>カラーモード</translation></message>
+    <message><source>Colour bar</source><translation>カラーバー</translation></message>
+    <message><source>Grey bar</source><translation>グレーバー</translation></message>
+</context>
+<context>
+    <name>BleedExtensionDialog</name>
+    <message><source>Extend Bleed</source><translation>塗り足しを延長</translation></message>
+    <message><source>Extend only the area outside the trim guides. Pixels inside trim stay unchanged.</source><translation>仕上がりガイドの外側だけを延長します。仕上がり内の画素は保持します。</translation></message>
+    <message><source>Method</source><translation>方法</translation></message>
+    <message><source>Stretch edge pixels</source><translation>端の画素を引き伸ばす</translation></message>
+    <message><source>Mirror edge pixels</source><translation>端の画素を鏡像にする</translation></message>
+    <message><source>Could not extend bleed. Select an unlocked, untransformed full-canvas RGBA raster layer and valid trim guides.</source><translation>塗り足しを延長できませんでした。ロックや変形のないキャンバス全面のRGBAラスターレイヤーと、有効な仕上がりガイドを選んでください。</translation></message>
+</context>
+<context>
+    <name>MainWindow</name>
+    <message><source>Preview Trimmed Page</source><translation>仕上がり表示</translation></message>
+    <message><source>Extend Bleed...</source><translation>塗り足しを延長...</translation></message>
+</context>
+<context>
+    <name>MangaPreflightDialog</name>
+    <message><source>Artwork reaches trim but not the bleed edge: {sides}.</source><translation>絵柄が仕上がり線に達していますが塗り足し縁まで届いていません: {sides}。</translation></message>
+    <message><source>Extend artwork to the bleed edge</source><translation>絵柄を塗り足し縁まで延長する</translation></message>
+    <message><source>Some content bounds could not be verified for the bleed check.</source><translation>一部の描画範囲を確認できないため、塗り足しの検査は未完了です。</translation></message>
+    <message><source>Left</source><translation>左</translation></message>
+    <message><source>Right</source><translation>右</translation></message>
+    <message><source>Top</source><translation>上</translation></message>
+    <message><source>Bottom</source><translation>下</translation></message>
 </context>
 </TS>

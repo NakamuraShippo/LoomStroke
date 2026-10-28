@@ -6,13 +6,11 @@ returned tuples) and used unchanged for preview and commit (CT-14 §performance)
 
 from __future__ import annotations
 
-import math
 from dataclasses import dataclass, field
 from typing import Any
 
 from .concentric_constraint import ConcentricConstraint
 from .drawing_assist import DrawingAssist
-from .ellipse_constraint import EllipseConstraint
 from .mirror_geometry import MirrorGeometry
 from .parallel_constraint import ParallelConstraint
 from .perspective_constraint import PerspectiveConstraint
@@ -48,8 +46,6 @@ class StrokeConstraintSession:
         """Constrain one incoming point; the first point of the stroke becomes the anchor."""
         if self.anchor is None:
             self.anchor = (x, y)
-            if isinstance(self.constraint, EllipseConstraint) and not self.constraint.concentric:
-                return self.constraint.project(self.anchor, x, y)
             return (x, y)
         if self.constraint is None:
             return (x, y)
@@ -139,24 +135,3 @@ class StrokeConstraintSession:
             return None
         axis = str(assist.option("axis", "auto") or "auto")
         return cls(assist.id, "perspective", constraint=PerspectiveConstraint(points[:3], axis))
-
-    @classmethod
-    def _compile_ellipse(cls, assist: DrawingAssist) -> StrokeConstraintSession | None:
-        center = assist.point("center")
-        major = assist.number("major_diameter", 0.0)
-        minor = assist.number("minor_diameter", 0.0)
-        if center is None or not 1e-3 <= minor <= major:
-            return None
-        angle = math.radians(assist.number("angle", 0.0))
-        return cls(
-            assist.id,
-            "ellipse",
-            constraint=EllipseConstraint(
-                *center,
-                major / 2,
-                minor / 2,
-                math.cos(angle),
-                math.sin(angle),
-                bool(assist.option("concentric", True)),
-            ),
-        )

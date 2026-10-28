@@ -16,6 +16,7 @@ from typing import Any
 from PySide6.QtWidgets import QMessageBox
 
 from ..core.book_layout_service import BookLayoutService
+from ..core.book_spread_layout import BookLayout
 from ..core.preflight.manga_preflight_service import MangaPreflightService
 from ..core.preflight.preflight_issue import PreflightIssue
 from ..core.preflight.preflight_profile import MangaPreflightProfile
@@ -89,6 +90,8 @@ class MainWindowPreflightAction:
             document_name=self._document_name(),
             has_color_profile=self._has_color_profile(),
             roles_by_id=self._roles_by_id(pages),
+            book_layout=self._book_layout(),
+            live_canvas=getattr(getattr(self._window, "_host_api", None), "canvas", None),
         )
         snapshot = builder.build(page_ids)
         report = self._service.run(snapshot, profile)
@@ -106,6 +109,12 @@ class MainWindowPreflightAction:
                 set_active(issue.page_id)
             except Exception:
                 logger.debug("preflight navigate: page switch failed", exc_info=True)
+
+    def _book_layout(self) -> BookLayout:
+        getter = getattr(self._window, "_get_document_service", None)
+        document = getter() if callable(getter) else None
+        resolver = getattr(document, "resolve_book_layout", None)
+        return resolver() if callable(resolver) else BookLayout()
 
     # -- helpers --------------------------------------------------------------------
 

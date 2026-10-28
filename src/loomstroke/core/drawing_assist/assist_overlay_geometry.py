@@ -17,9 +17,7 @@ class AssistOverlayGeometry:
     markers: tuple[tuple[float, float, str], ...] = ()
     """``(x, y, label)``."""
     truncated: bool = False
-    rotated_ellipses: tuple[tuple[float, float, float, float, float], ...] = ()
-    """``(cx, cy, rx, ry, angle_degrees)``."""
 
     @property
     def is_empty(self) -> bool:
-        return not (self.lines or self.ellipses or self.markers or self.rotated_ellipses)
+        return not (self.lines or self.ellipses or self.markers)

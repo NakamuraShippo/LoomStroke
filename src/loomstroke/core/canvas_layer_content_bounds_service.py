@@ -4,10 +4,11 @@ from __future__ import annotations
 
 from typing import Any
 
-import numpy as np
 from PySide6.QtGui import QImage
 
 from loomstroke.core.commands import _qimage_to_numpy_view
+
+from .alpha_content_bounds import alpha_content_bounds
 
 
 class CanvasLayerContentBoundsService:
@@ -34,15 +35,16 @@ class CanvasLayerContentBoundsService:
             return None
         # view shape: (H, W, 4) in BGRA order; alpha is channel 3.
         alpha = view[:, :, 3]
-        coords = np.argwhere(alpha > 0)
-        if coords.size == 0:
+        bounds = self.bounds_for_alpha(alpha)
+        if bounds is None:
             return None
-        y_min, x_min = coords.min(axis=0)
-        y_max, x_max = coords.max(axis=0)
+        x_min, y_min, width, height = bounds
         ox, oy = self._owner._layer_offset(target)
         return (
             int(x_min) + ox,
             int(y_min) + oy,
-            int(x_max - x_min + 1),
-            int(y_max - y_min + 1),
+            width,
+            height,
         )
+
+    bounds_for_alpha = staticmethod(alpha_content_bounds)

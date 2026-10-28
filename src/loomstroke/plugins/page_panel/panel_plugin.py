@@ -1070,12 +1070,12 @@ class PagePanelWidget(QWidget):
         builtin = [
             template
             for template in templates
-            if template.source == "builtin" and template.category != "comic"
+            if template.source == "builtin" and template.category not in ("comic", "cover")
         ]
         comic = [
             template
             for template in templates
-            if template.source == "builtin" and template.category == "comic"
+            if template.source == "builtin" and template.category in ("comic", "cover")
         ]
         custom = [template for template in templates if template.source != "builtin"]
 
@@ -1097,7 +1097,12 @@ class PagePanelWidget(QWidget):
         section_action.setEnabled(False)
         self._template_menu.addAction(section_action)
         for template in templates:
-            action = QAction(template.name, self._template_menu)
+            label = (
+                self._ts(template.name)
+                if template.source == "builtin" and template.category == "cover"
+                else template.name
+            )
+            action = QAction(label, self._template_menu)
             action.setData(template.id)
             if isinstance(template.description, str) and template.description.strip():
                 action.setToolTip(template.description.strip())

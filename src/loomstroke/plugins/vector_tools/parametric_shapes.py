@@ -12,6 +12,7 @@ from typing import Any
 from loomstroke.core.japanese_text.typography import has_typography
 
 from .common import Anchor, VectorObject, VectorPath, VectorStyle, make_vector_object
+from .effect_shapes import EFFECT_SHAPE_IDS, effect_params, effect_paths, effect_style
 
 logger = logging.getLogger(__name__)
 
@@ -72,6 +73,9 @@ BASIC_SHAPE_DEFINITIONS: tuple[BasicShapeDefinition, ...] = (
     BasicShapeDefinition("trapezoid", "Trapezoid", "basic"),
     BasicShapeDefinition("focus_lines_circle", "Focus Lines (Circle)", "effect"),
     BasicShapeDefinition("focus_lines_rect", "Focus Lines (Rect)", "effect"),
+    BasicShapeDefinition("stream_lines", "Stream Lines", "effect"),
+    BasicShapeDefinition("solid_flash", "Solid Flash", "effect"),
+    BasicShapeDefinition("urchin_flash", "Urchin Flash", "effect"),
     BasicShapeDefinition("speech_round", "Speech Balloon (Round)", "balloon"),
     BasicShapeDefinition("speech_rect", "Speech Balloon (Rect)", "balloon"),
     BasicShapeDefinition("speech_cloud", "Speech Balloon (Cloud)", "balloon"),
@@ -130,6 +134,8 @@ def create_basic_shape_object(
             fill_enabled=True,
             fill_color=(255, 255, 255),
         )
+    elif shape_id in EFFECT_SHAPE_IDS:
+        vector_style = effect_style(params)
     elif shape_id in _FOCUS_LINES_IDS:
         vector_style = VectorStyle(
             stroke_color=(0, 0, 0),
@@ -153,7 +159,9 @@ def create_basic_shape_object(
     }
     if (
         shape_id
-        in {"speech_round", "speech_rect", "speech_cloud", "parallelogram"} | _FOCUS_LINES_IDS
+        in {"speech_round", "speech_rect", "speech_cloud", "parallelogram"}
+        | _FOCUS_LINES_IDS
+        | EFFECT_SHAPE_IDS
     ):
         meta[PARAMETRIC_META_KEY]["reference_bbox"] = [bbox[0], bbox[1], bbox[2], bbox[3]]
     return make_vector_object(paths, vector_style, meta=meta)
@@ -422,7 +430,7 @@ def _reference_bbox_for_shape(  # noqa: PLR0911
 ) -> tuple[float, float, float, float] | None:
     # Shapes whose vertices don't span the full bbox: use stored reference_bbox.
     # Move/scale tools update reference_bbox in meta, so we trust it directly.
-    if shape_id in {"parallelogram"} | _FOCUS_LINES_IDS:
+    if shape_id in {"parallelogram"} | _FOCUS_LINES_IDS | EFFECT_SHAPE_IDS:
         if payload is not None:
             raw = payload.get("reference_bbox")
             if isinstance(raw, (list, tuple)) and len(raw) == 4:
@@ -550,6 +558,8 @@ def _default_size_for_shape(shape_id: str, base_size: float) -> tuple[float, flo
 
 
 def _default_params(shape_id: str) -> dict[str, float | int]:  # noqa: PLR0911
+    if shape_id in EFFECT_SHAPE_IDS:
+        return effect_params(shape_id, {})
     if shape_id == "rounded_rect":
         return {"radius": 0.2}
     if shape_id == "parallelogram":
@@ -592,6 +602,8 @@ def _sanitize_params(shape_id: str, raw: object) -> dict[str, float | int]:
 
 
 def _normalize_params(shape_id: str, params: dict[str, object]) -> dict[str, float | int]:
+    if shape_id in EFFECT_SHAPE_IDS:
+        return effect_params(shape_id, params)
     data: dict[str, float | int] = {}
     if shape_id == "rounded_rect":
         data["radius"] = _clamp(_float(params.get("radius"), 0.2), 0.02, 0.49)
@@ -705,6 +717,8 @@ def _build_paths(  # noqa: PLR0911
     bbox: tuple[float, float, float, float],
     params: dict[str, float | int],
 ) -> list[VectorPath]:
+    if shape_id in EFFECT_SHAPE_IDS:
+        return effect_paths(shape_id, bbox, params)
     if shape_id == "ellipse":
         return [_ellipse_path(bbox)]
     if shape_id.startswith("polygon_"):

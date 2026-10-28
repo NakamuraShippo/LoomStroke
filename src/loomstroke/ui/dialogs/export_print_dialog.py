@@ -12,7 +12,8 @@ The output file / folder itself is picked by the caller after OK.
 from __future__ import annotations
 
 from collections.abc import Callable, Mapping
-from dataclasses import dataclass
+from dataclasses import dataclass, field
+from datetime import datetime
 from typing import Any
 
 from PySide6.QtCore import QEvent, Qt
@@ -33,12 +34,17 @@ from PySide6.QtWidgets import (
 from ...core.batch_export_planner import ExportScopeError, resolve_scope_page_ids
 from ...core.export_collision_policy import ExportCollisionPolicy
 from ...core.export_naming import NamingError, validate_template
+from ...core.print_margin_geometry import annotate_print_geometry
+from ...core.print_margin_models import PrintMarginContext, PrintMarginOptions
+from ...core.print_mark_models import PrintMarkOptions
 from ...core.print_page_geometry import PrintPageGeometry, geometry_for_canvas
 from ...io.bundled_color_profiles import create_print_profile_registry
 from ...io.color_profile_registry import ColorProfileRegistry
 from ..print_geometry_preview import PrintGeometryPreview
 from ..print_profile_picker import PrintProfilePicker
 from ..translations import TranslationBinder, translate_with_fallback, translated_literal
+from ..widgets.print_margin_controls import PrintMarginControls
+from ..widgets.print_mark_controls import PrintMarkControls
 
 __all__ = [
     "DEFAULT_NAMING_TEMPLATE",
@@ -99,6 +105,8 @@ class ExportPrintPlan:
     black_point_compensation: bool = True
     naming_template: str = DEFAULT_NAMING_TEMPLATE
     collision_policy: str = "ask"
+    mark_options: PrintMarkOptions = field(default_factory=PrintMarkOptions)
+    margin_options: PrintMarginOptions = field(default_factory=PrintMarginOptions)
 
     @property
     def is_sequence(self) -> bool:
@@ -195,6 +203,8 @@ class ExportPrintDialog(QDialog):
         self._marks_box = QCheckBox(self)
         self._translation_binder.register(self._marks_box.setText, self._ts("Draw crop marks"))
         self._marks_box.setChecked(True)
+        self._mark_controls = PrintMarkControls(self)
+        self._margin_controls = PrintMarginControls(self)
         self._note_label = QLabel(self)
         self._note_label.setWordWrap(True)
 
@@ -266,6 +276,8 @@ class ExportPrintDialog(QDialog):
         left = QVBoxLayout()
         left.addLayout(form)
         left.addWidget(self._marks_box)
+        left.addWidget(self._mark_controls)
+        left.addWidget(self._margin_controls)
         left.addWidget(self._note_label)
         left.addWidget(self._color_group)
         left.addWidget(self._sequence_group)
@@ -290,6 +302,8 @@ class ExportPrintDialog(QDialog):
         self._range_edit.textChanged.connect(self._refresh)
         self._output_combo.currentIndexChanged.connect(self._refresh)
         self._marks_box.toggled.connect(self._refresh)
+        self._mark_controls.changed.connect(self._refresh)
+        self._margin_controls.changed.connect(self._refresh)
         self._profile_picker.profile_changed.connect(self._refresh)
         self._template_edit.textChanged.connect(self._refresh)
 
@@ -331,6 +345,9 @@ class ExportPrintDialog(QDialog):
         is_sequence = output in _SEQUENCE_OUTPUTS
         self._range_edit.setEnabled(self._scope_combo.currentData() == "range")
         self._marks_box.setEnabled(output == "pdf")
+        self._mark_controls.setEnabled(output == "pdf" and self._marks_box.isChecked())
+        self._mark_controls.setVisible(output == "pdf")
+        self._margin_controls.setVisible(output == "pdf")
         self._color_group.setVisible(is_sequence)
         self._profile_picker.setEnabled(output == "cmyk_tiff")
         self._intent_combo.setEnabled(output == "cmyk_tiff")
@@ -368,8 +385,22 @@ class ExportPrintDialog(QDialog):
             return
         with_marks = output == "pdf" and self._marks_box.isChecked()
         geometry = geometry_for_canvas(
-            int(width), int(height), self._context.dpi, with_marks=with_marks
+            int(width),
+            int(height),
+            self._context.dpi,
+            with_marks=with_marks,
+            mark_options=self._mark_controls.options(),
         )
+        if output == "pdf":
+            geometry = annotate_print_geometry(
+                geometry,
+                self._margin_controls.options(),
+                PrintMarginContext(
+                    file_name=translate_with_fallback("PrintMarginControls", "File name"),
+                    total_pages=len(self._context.page_ids),
+                    date_time=datetime.now().astimezone().isoformat(timespec="minutes"),
+                ),
+            )
         self._preview.set_geometry(geometry)
         _x, _y, trim_w, trim_h = geometry.trim_box_pt
         text = self._translate_runtime("Trim: {width} x {height} mm").format(
@@ -397,6 +428,8 @@ class ExportPrintDialog(QDialog):
             black_point_compensation=self._bpc_box.isChecked(),
             naming_template=self._template_edit.text().strip() or DEFAULT_NAMING_TEMPLATE,
             collision_policy=str(self._collision_combo.currentData() or "ask"),
+            mark_options=self._mark_controls.options(),
+            margin_options=self._margin_controls.options(),
         )
         self.accept()
 
@@ -406,6 +439,8 @@ class ExportPrintDialog(QDialog):
         self._translation_binder.set_translator(self._translate_runtime)
         self._translation_binder.retranslate()
         self._profile_picker.refresh_translations()
+        self._mark_controls.refresh_translations()
+        self._margin_controls.refresh_translations()
         self._refresh()
 
     def _translate_runtime(self, text: str) -> str:

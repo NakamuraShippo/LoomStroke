@@ -474,6 +474,11 @@ class BasicMoveTool:
             return False
         if not _is_qimage_layer(layer) and not self._live_capture.begin(canvas, [layer]):
             return False
+        image = getattr(layer, "image", None)
+        local_bounds = self._layer_content_local_bounds(layer, image)
+        if getattr(layer, "layer_type", "raster") == "raster" and local_bounds is None:
+            self._clear_vector_selection_on_miss()
+            return False
         self._layer_ref = layer
         self._layer_id = getattr(layer, "id", None)
         self._layer_offset0 = (
@@ -485,11 +490,6 @@ class BasicMoveTool:
         image_w = image.width() if image is not None and hasattr(image, "width") else 0
         image_h = image.height() if image is not None and hasattr(image, "height") else 0
         layer_transform = _layer_transform(layer).to_affine()
-        local_bounds = (
-            self._layer_content_local_bounds(layer, image)
-            if image is not None and hasattr(image, "isNull") and not image.isNull()
-            else None
-        )
         if local_bounds is None:
             local_bounds = (0, 0, int(image_w), int(image_h))
         self._layer_bounds0 = self._bounds_from_transform(layer_transform, local_bounds)
@@ -657,6 +657,7 @@ class BasicMoveTool:
             return False
         payload = self._layer_payload(layer)
         if payload is None:
+            self._clear_vector_selection_on_miss()
             return False
         local_bounds = self._layer_content_local_bounds(layer, image) or (
             0,
@@ -849,12 +850,9 @@ class BasicMoveTool:
         if not isinstance(image, QImage) or image.isNull():
             return None
         source = image.convertToFormat(QImage.Format.Format_ARGB32_Premultiplied)
-        local_bounds = self._layer_content_local_bounds(layer, source) or (
-            0,
-            0,
-            int(source.width()),
-            int(source.height()),
-        )
+        local_bounds = self._layer_content_local_bounds(layer, source)
+        if local_bounds is None:
+            return None
         lx, ly, lw, lh = local_bounds
         source = source.copy(QRect(lx, ly, lw, lh))
         mask = getattr(layer, "layer_mask", None)

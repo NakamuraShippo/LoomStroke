@@ -188,6 +188,16 @@ BUILTIN_COMIC_PROFILES: tuple[ComicProfile, ...] = (
     _profile("comic.a5.color", "A5 Body (Color)", "color", (148.0, 210.0), 350.0),
     _profile("comic.a4.mono", "A4 Body (Monochrome)", "mono", (210.0, 297.0), 600.0),
     _profile("comic.a4.color", "A4 Body (Color)", "color", (210.0, 297.0), 350.0),
+    _profile("comic.b6.mono", "B6 Body (Monochrome)", "mono", (128.0, 182.0), 600.0),
+    _profile("comic.b6.color", "B6 Body (Color)", "color", (128.0, 182.0), 350.0),
+    _profile("comic.a6.mono", "A6 Body (Monochrome)", "mono", (105.0, 148.0), 600.0),
+    _profile("comic.a6.color", "A6 Body (Color)", "color", (105.0, 148.0), 350.0),
+    _profile("comic.shinsho.mono", "Shinsho 103x182 (Monochrome)", "mono", (103.0, 182.0), 600.0),
+    _profile("comic.shinsho.color", "Shinsho 103x182 (Color)", "color", (103.0, 182.0), 350.0),
+    _profile("comic.shiroku.mono", "Shiroku 127x188 (Monochrome)", "mono", (127.0, 188.0), 600.0),
+    _profile("comic.shiroku.color", "Shiroku 127x188 (Color)", "color", (127.0, 188.0), 350.0),
+    _profile("comic.square.mono", "Square 148x148 (Monochrome)", "mono", (148.0, 148.0), 600.0),
+    _profile("comic.square.color", "Square 148x148 (Color)", "color", (148.0, 148.0), 350.0),
 )
 
 

@@ -1,3 +1,3 @@
 """LoomStroke top-level package."""
 
-__version__ = "0.3.0.6.132"
+__version__ = "0.3.0.7.2"
