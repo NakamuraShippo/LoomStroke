@@ -30,6 +30,7 @@ from loomstroke.core.commands import (
     TransformSelectionCommand,
     UpdateSelectionMaskCommand,
 )
+from loomstroke.core.document_capture_guard import notify_document_capture_committed
 from loomstroke.core.fill.commands_fill import (
     FloodFillCommand,
     FloodFillToNewLayerCommand,
@@ -67,7 +68,10 @@ class CanvasServiceCommandApiMixin(_CanvasServiceCommandApiBase):
     def submit(self, cmd: Command, *, merge_key: str | None = None) -> bool:
         """Submit a command through the command dispatcher boundary."""
 
-        return cast(bool, self._command_dispatcher.submit(cmd, merge_key=merge_key))
+        success = cast(bool, self._command_dispatcher.submit(cmd, merge_key=merge_key))
+        if success:
+            notify_document_capture_committed(cmd)
+        return success
 
     def _submit_command_direct(self, cmd: Command, *, merge_key: str | None = None) -> bool:
         """Legacy command dispatch table retained behind the adapter."""
@@ -202,3 +206,9 @@ class CanvasServiceCommandApiMixin(_CanvasServiceCommandApiBase):
     def is_busy(self) -> bool:
         """Check if service is busy (always False for simple implementation)."""
         return False
+
+
+_DEFAULT_RESOURCE_METADATA_HOOKS = {
+    name: getattr(CanvasServiceCommandApiMixin, name)
+    for name in ("submit", "begin_transaction", "end_transaction")
+}

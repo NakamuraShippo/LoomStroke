@@ -31,6 +31,10 @@ from typing import TYPE_CHECKING, Any
 
 from loomstroke.core.document_history_sequence import DocumentHistorySequence
 from loomstroke.core.document_history_state_notifier import DocumentHistoryStateNotifier
+from loomstroke.core.page_command_completion import (
+    _page_command_completion,
+    _refuse_nested_page_command,
+)
 from loomstroke.core.page_commands import PageCommand
 from loomstroke.core.page_history_memory import estimate_history_group_bytes
 
@@ -192,19 +196,25 @@ class PageCommandService:
         command discards only the *book* redo branch — content history
         redo branches (active or stored) are untouched.
         """
+        if _refuse_nested_page_command(self, command, "execute"):
+            return False
         # The whole logical operation — apply (which may switch pages and
         # move history bundles), stack append, redo clear, and the
         # synchronous trim — is one notifier batch: the unified listener
         # runs once afterwards and never observes an intermediate state
         # (H5b).  A failed apply marks nothing new itself, but any real
         # mutations its inner steps made still surface as actual state.
-        with self._state_notifier.batch():
+        with (
+            _page_command_completion(self, command) as completion,
+            self._state_notifier.batch(),
+            completion.attempt(),
+        ):
             try:
                 succeeded = bool(command.apply(self._service))
             except Exception:
                 logger.exception("Page command %s failed to apply", command.label_key)
                 return False
-            if not succeeded:
+            if not succeeded or not completion.allows_commit():
                 return False
             # The sequence is claimed only after a successful apply, right
             # before the entry enters the stack — failed/no-op commands never
@@ -221,44 +231,65 @@ class PageCommandService:
                 self._content_redo_invalidator()
             self._state_notifier.mark_changed()
             self.request_memory_trim()
+            completion.seal()
         return True
 
     def undo(self) -> bool:
         """Revert the newest entry; on failure the entry stays undoable."""
+        entry = self.peek_undo_entry()
+        if _refuse_nested_page_command(self, entry.command if entry else None, "undo"):
+            return False
         if not self._undo:
             return False
-        with self._state_notifier.batch():
-            entry = self._undo[-1]
+        entry = self._undo[-1]
+        with (
+            _page_command_completion(self, entry.command, "undo") as completion,
+            self._state_notifier.batch(),
+            completion.attempt(),
+        ):
             try:
                 succeeded = bool(entry.command.revert(self._service))
             except Exception:
                 logger.exception("Page command %s failed to revert", entry.label_key)
                 return False
-            if not succeeded:
+            if not succeeded or not completion.allows_commit():
+                return False
+            if completion.enabled and self.peek_undo_entry() is not entry:
                 return False
             self._undo.pop()
             self._redo.append(entry)
             self._state_notifier.mark_changed()
             self.request_memory_trim()
+            completion.seal()
         return True
 
     def redo(self) -> bool:
         """Re-apply the newest undone entry; on failure it stays redoable."""
+        entry = self.peek_redo_entry()
+        if _refuse_nested_page_command(self, entry.command if entry else None, "redo"):
+            return False
         if not self._redo:
             return False
-        with self._state_notifier.batch():
-            entry = self._redo[-1]
+        entry = self._redo[-1]
+        with (
+            _page_command_completion(self, entry.command, "redo") as completion,
+            self._state_notifier.batch(),
+            completion.attempt(),
+        ):
             try:
                 succeeded = bool(entry.command.apply(self._service))
             except Exception:
                 logger.exception("Page command %s failed to redo", entry.label_key)
                 return False
-            if not succeeded:
+            if not succeeded or not completion.allows_commit():
+                return False
+            if completion.enabled and self.peek_redo_entry() is not entry:
                 return False
             self._redo.pop()
             self._undo.append(entry)
             self._state_notifier.mark_changed()
             self.request_memory_trim()
+            completion.seal()
         return True
 
     # ------------------------------------------------------------------

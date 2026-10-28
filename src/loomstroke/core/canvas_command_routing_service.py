@@ -5,6 +5,8 @@ from __future__ import annotations
 import logging
 from typing import Any, cast
 
+from loomstroke.core.ai_effect_result_command import _ApplyAIEffectResultCommand
+from loomstroke.core.ai_effect_result_submit import _submit_ai_effect_result
 from loomstroke.core.commands import (
     AddFilterLayerCommand,
     AddLayerCommand,
@@ -40,8 +42,10 @@ from loomstroke.core.commands import (
     UngroupLayerCommand,
     UpdateSelectionMaskCommand,
 )
+from loomstroke.core.commands_layer_blend_mode import SetLayerBlendModeCommand
 from loomstroke.core.commands_layer_image_replace import ReplaceLayerImageCommand
 from loomstroke.core.commands_layer_metadata_key import SetLayerMetadataKeyCommand
+from loomstroke.core.commands_layer_opacity import SetLayerOpacityCommand
 from loomstroke.core.commands_layer_rename import RenameLayerCommand
 from loomstroke.core.fill.commands_fill import (
     FloodFillCommand,
@@ -52,8 +56,14 @@ from loomstroke.core.filter_pen.command import (
     FilterPenStrokeCommand,
     submit_filter_pen_command,
 )
+from loomstroke.core.layer_blend_submit import _submit_blend_command
+from loomstroke.core.layer_opacity_submit import _submit_opacity_command
 from loomstroke.core.pen_taper_command import PenTaperCommand
 from loomstroke.core.recontour.commands import RecontourCommand
+from loomstroke.core.resource_embed_command import _EmbedResourceConsumersCommand
+from loomstroke.core.resource_embed_submit import _submit_resource_embed
+from loomstroke.core.resource_place_command import PlaceResourceCommand
+from loomstroke.core.resource_place_submit import submit_resource_place
 from loomstroke.core.screentone.create_screentone_command import CreateScreentoneCommand
 from loomstroke.plugins.basic_gradient.gradient_command import GradientCommand
 
@@ -75,6 +85,7 @@ class CanvasCommandRoutingService:
         if filter_pen is not None:
             filter_pen.before_command(cmd)
         handlers = (
+            (_ApplyAIEffectResultCommand, lambda command: _submit_ai_effect_result(owner, command)),
             (PenTaperCommand, lambda command: command.apply(owner)),
             (FilterPenStrokeCommand, lambda command: submit_filter_pen_command(owner, command)),
             (RecontourCommand, lambda command: command.apply(owner)),
@@ -87,6 +98,11 @@ class CanvasCommandRoutingService:
                 owner._submit_flood_fill,
             ),
             (ApplyImageCommand, owner._apply_image_command),
+            (PlaceResourceCommand, lambda command: submit_resource_place(owner, command)),
+            (
+                _EmbedResourceConsumersCommand,
+                lambda command: _submit_resource_embed(owner, command),
+            ),
             (GradientCommand, owner._submit_gradient),
             (UpdateSelectionMaskCommand, owner._submit_update_selection_mask),
             (ApplySelectionMaskCommand, owner._submit_apply_selection_mask),
@@ -95,6 +111,8 @@ class CanvasCommandRoutingService:
             (PasteSelectionCommand, owner._submit_paste_selection),
             (TransformSelectionCommand, owner._submit_transform_selection),
             (MoveLayerCommand, owner._submit_move_layer),
+            (SetLayerBlendModeCommand, lambda command: _submit_blend_command(owner, command)),
+            (SetLayerOpacityCommand, lambda command: _submit_opacity_command(owner, command)),
             (
                 RenameLayerCommand,
                 lambda command: owner._simple_layer_command_submit().submit(

@@ -28,6 +28,7 @@ round-trip check that keeps the two implementations in sync.
 from __future__ import annotations
 
 import copy
+import json
 import logging
 import re
 import uuid
@@ -35,6 +36,7 @@ from dataclasses import asdict, dataclass
 from pathlib import Path
 from typing import Any
 
+from loomstroke.plugins.ai_effect._atomic_io import atomic_write_binary
 from loomstroke.plugins.ai_effect.editor.metadata_form import ExportMetadata
 from loomstroke.plugins.ai_effect.gateway_protocol import (
     AIGateway,
@@ -368,32 +370,52 @@ def export_preset(
         raise ExportValidationError(f"manifest_invalid:{validation.reason}")
 
     target = Path(output_path)
-    write_lsfx_atomic(
-        target,
-        manifest,
-        {gateway.gateway_id: gateway_file},
-        icon_bytes=icon_bytes,
-        preview_bytes=preview_bytes,
-    )
+    gateway_files = {gateway.gateway_id: gateway_file}
 
-    # Post-write self-verify: re-read the archive we just produced and
-    # confirm the manifest round-trips byte-for-byte. Guards against
-    # serialisation bugs inside ``write_lsfx_atomic`` and against disk or
-    # external interference between write and user consumption. Cheap
-    # because .lsfx files are small (KiB range).
-    try:
-        readback = read_lsfx(target, source="imported")
-    except (LsfxReadError, OSError) as exc:
-        logger.error("export_preset writeback unreadable for %s: %s", target, exc)
-        target.unlink(missing_ok=True)
-        raise ExportValidationError(f"writeback_unreadable:{exc}") from exc
-    if readback.manifest != manifest:
-        logger.error("export_preset writeback manifest mismatch for %s", target)
-        target.unlink(missing_ok=True)
-        raise ExportValidationError("writeback_manifest_mismatch")
+    def _write_verified(stage: Path) -> None:
+        write_lsfx_atomic(
+            stage,
+            manifest,
+            gateway_files,
+            icon_bytes=icon_bytes,
+            preview_bytes=preview_bytes,
+        )
+        _verify_export(stage, manifest, gateway_files, icon_bytes, preview_bytes)
 
+    # The binary helper closes its temporary descriptor before invoking this
+    # Path callback. The inner writer can replace that stage, then the normal
+    # reader checks its budgets/content before the outer final replacement.
+    atomic_write_binary(target, _write_verified)
     logger.info("Exported preset %s to %s", effective_preset_id, target)
     return target
+
+
+def _verify_export(
+    stage: Path,
+    manifest: dict[str, Any],
+    gateway_files: dict[str, dict[str, Any]],
+    icon_bytes: bytes | None,
+    preview_bytes: bytes | None,
+) -> None:
+    """Validate the complete candidate without touching the final destination."""
+    try:
+        readback = read_lsfx(stage, source="imported")
+    except (LsfxReadError, OSError) as exc:
+        logger.error("export_preset writeback unreadable for %s: %s", stage, exc)
+        raise ExportValidationError(f"writeback_unreadable:{exc}") from exc
+    if readback.manifest != manifest:
+        logger.error("export_preset writeback manifest mismatch for %s", stage)
+        raise ExportValidationError("writeback_manifest_mismatch")
+    # Match the existing JSON writer's meaning (e.g. tuple -> list and integer
+    # mapping keys -> strings), rather than rejecting a previously valid export.
+    expected_gateways = json.loads(json.dumps(gateway_files, ensure_ascii=False))
+    if (
+        readback.gateway_files != expected_gateways
+        or readback.icon_image != icon_bytes
+        or readback.preview_image != preview_bytes
+    ):
+        logger.error("export_preset writeback payload mismatch for %s", stage)
+        raise ExportValidationError("writeback_unreadable:payload_mismatch")
 
 
 # ---------------------------------------------------------------------------

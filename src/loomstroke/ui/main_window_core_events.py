@@ -13,6 +13,9 @@ class MainWindowCoreEventCoordinator:
 
     def __init__(self, window: Any) -> None:
         self._window = window
+        # Each receipt owns the exact bound method retained by the weak bus.
+        # Window lists remain compatibility views, never the unsubscribe key.
+        self._subscriptions: list[tuple[str, Any, str, Any, Any]] = []
 
     def initialize_state(self) -> None:
         self._window._active_tool = None
@@ -20,188 +23,146 @@ class MainWindowCoreEventCoordinator:
     def connect_signals(self) -> None:
         """Connect core document/tool/history signals to MainWindow facades."""
         window = self._window
-        window._core_event_handlers = [
-            window._on_tool_changed_event,
-            window._on_document_changed_event,
-            window._on_document_saved_event,
-            window._on_document_loaded_event,
-            window._on_document_created_event,
-            window._on_document_closed_event,
-            window._on_document_save_failed_event,
-            window._on_document_save_outcome_event,
-        ]
-        window._event_bus.on(Events.TOOL_CHANGED, window._core_event_handlers[0])
-        window._event_bus.on(Events.DOC_CHANGED, window._core_event_handlers[1])
-        window._event_bus.on(Events.DOC_SAVED, window._core_event_handlers[2])
-        window._event_bus.on(Events.DOC_LOADED, window._core_event_handlers[3])
-        window._event_bus.on(Events.DOC_CREATED, window._core_event_handlers[4])
-        window._event_bus.on(Events.DOC_CLOSED, window._core_event_handlers[5])
-        window._event_bus.on(Events.DOC_SAVE_FAILED, window._core_event_handlers[6])
-        window._event_bus.on(Events.DOC_SAVE_OUTCOME, window._core_event_handlers[7])
-
-        window._history_event_handlers.clear()
-        window._history_event_tokens.clear()
+        self._replace_group(
+            "core",
+            window._event_bus,
+            (
+                (Events.TOOL_CHANGED, window._on_tool_changed_event),
+                (Events.DOC_CHANGED, window._on_document_changed_event),
+                (Events.DOC_SAVED, window._on_document_saved_event),
+                (Events.DOC_LOADED, window._on_document_loaded_event),
+                (Events.DOC_CREATED, window._on_document_created_event),
+                (Events.DOC_CLOSED, window._on_document_closed_event),
+                (Events.DOC_SAVE_FAILED, window._on_document_save_failed_event),
+                (Events.DOC_SAVE_OUTCOME, window._on_document_save_outcome_event),
+            ),
+        )
         history_handler = window._on_history_changed_event
-        reset_handler = window._on_history_reset_event
-        window._history_event_handlers.extend([history_handler, reset_handler])
-        window._history_event_tokens.append(
-            window._event_bus.on(Events.HISTORY_CHANGED, history_handler)
-        )
-        window._history_event_tokens.append(
-            window._event_bus.on(Events.HISTORY_STATE, history_handler)
-        )
-        window._history_event_tokens.append(
-            window._event_bus.on(Events.DOC_HISTORY_RESET, reset_handler)
+        self._replace_group(
+            "history",
+            window._event_bus,
+            (
+                (Events.HISTORY_CHANGED, history_handler),
+                (Events.HISTORY_STATE, history_handler),
+                (Events.DOC_HISTORY_RESET, window._on_history_reset_event),
+            ),
         )
         self.connect_startpage_requests()
 
     def connect_startpage_requests(self) -> None:
         """Connect StartPage-related EventBus requests."""
         window = self._window
-        window._startpage_event_handlers.clear()
-        window._startpage_event_tokens.clear()
-        window._layer_event_bus_ids.clear()
-
-        new_handler = window._on_new_request
-        open_handler = window._on_open_request
-        close_handler = window._on_close_request
-        create_handler = window._on_create_document_request
-
-        window._startpage_event_handlers.extend(
-            [new_handler, open_handler, close_handler, create_handler]
-        )
-        window._startpage_event_tokens.append(window._event_bus.on("file.new", new_handler))
-        window._startpage_event_tokens.append(window._event_bus.on("file.open", open_handler))
-        window._startpage_event_tokens.append(window._event_bus.on("file.close", close_handler))
-        window._startpage_event_tokens.append(
-            window._event_bus.on("ui.request.create_document", create_handler)
+        self._replace_group(
+            "startpage",
+            window._event_bus,
+            (
+                ("file.new", window._on_new_request),
+                ("file.open", window._on_open_request),
+                ("file.close", window._on_close_request),
+                ("ui.request.create_document", window._on_create_document_request),
+            ),
         )
         self.subscribe_layer_events(window._event_bus)
 
     def connect_panel_events(self) -> None:
         """Connect panel/plugin EventBus handlers owned by MainWindow."""
         window = self._window
-        panel_register_handler = window._on_panel_register
-        panel_toggle_handler = window._on_panel_toggle
-        panel_rename_handler = window._on_panel_rename
-        plugin_manager_handler = window._on_plugin_manager_event
-        window._panel_event_handlers.extend(
-            [panel_register_handler, panel_toggle_handler, panel_rename_handler]
+        self._replace_group(
+            "panel",
+            window._event_bus,
+            (
+                ("ui.panel.register", window._on_panel_register),
+                ("ui.panel.toggle", window._on_panel_toggle),
+                ("ui.panel.rename", window._on_panel_rename),
+            ),
         )
-        window._panel_event_tokens.extend(
-            [
-                window._event_bus.on("ui.panel.register", panel_register_handler),
-                window._event_bus.on("ui.panel.toggle", panel_toggle_handler),
-                window._event_bus.on("ui.panel.rename", panel_rename_handler),
-            ]
+        self._replace_group(
+            "plugin_manager",
+            window._event_bus,
+            (("ui.plugins.manager", window._on_plugin_manager_event),),
         )
-        window._plugin_manager_event_handlers.append(plugin_manager_handler)
-        window._plugin_manager_event_tokens.append(
-            window._event_bus.on("ui.plugins.manager", plugin_manager_handler)
-        )
-
-        # Connect layer blend mode event (keep strong reference for weakref-based EventBus).
-        blend_handler = window._on_layer_blend_mode_changed
-        window._layer_event_handlers.append(blend_handler)
-        window._layer_event_tokens.append(
-            window._event_bus.on("layer.blend_mode_changed", blend_handler)
+        self._replace_group(
+            "blend",
+            window._event_bus,
+            (("layer.blend_mode_changed", window._on_layer_blend_mode_changed),),
         )
 
     def subscribe_layer_events(self, bus: Any) -> None:
         window = self._window
-        if bus is None or id(bus) in window._layer_event_bus_ids:
-            return
-        subscribe = getattr(bus, "on", None)
-        if not callable(subscribe):
+        if bus is None or any(
+            group == "layer" and source is bus for group, source, *_ in self._subscriptions
+        ):
             return
         handler = window._on_layer_event_from_bus
-        window._layer_event_handlers.append(handler)
-        window._layer_event_tokens.append(
-            subscribe(Events.LAYER_SELECTED, window._on_layer_selected_from_bus)
+        self._add_group(
+            "layer",
+            bus,
+            (
+                (Events.LAYER_SELECTED, window._on_layer_selected_from_bus),
+                (Events.ACTIVE_PAGE_CHANGED, handler),
+                (Events.LAYER_ADDED, handler),
+                (Events.LAYER_REMOVED, handler),
+                (Events.LAYER_CHANGED, handler),
+            ),
         )
-        for layer_event in (
-            Events.ACTIVE_PAGE_CHANGED,
-            Events.LAYER_ADDED,
-            Events.LAYER_REMOVED,
-            Events.LAYER_CHANGED,
-        ):
-            window._layer_event_tokens.append(subscribe(layer_event, handler))
-        window._layer_event_bus_ids.add(id(bus))
 
     def disconnect_event_bus_subscriptions(self) -> None:
         """Disconnect EventBus subscriptions owned by MainWindow."""
-        window = self._window
-        bus = window._event_bus
-        if bus is None:
+        self._remove_group(None)
+
+    def _replace_group(self, group: str, bus: Any, bindings: Any) -> None:
+        self._remove_group(group)
+        self._add_group(group, bus, bindings)
+
+    def _add_group(self, group: str, bus: Any, bindings: Any) -> None:
+        subscribe = getattr(bus, "on", None)
+        if not callable(subscribe):
             return
+        try:
+            for event, handler in bindings:
+                token = subscribe(event, handler)
+                self._subscriptions.append((group, bus, event, token, handler))
+        finally:
+            # Partial registration remains owned and can be disconnected.
+            self._sync_tracking_views()
 
-        window._history_event_handlers.clear()
-        window._panel_event_handlers.clear()
-        window._plugin_manager_event_handlers.clear()
-        window._layer_event_handlers.clear()
-        window._startpage_event_handlers.clear()
+    def _remove_group(self, group: str | None) -> None:
+        removed = [record for record in self._subscriptions if group is None or record[0] == group]
+        self._subscriptions = [
+            record for record in self._subscriptions if group is not None and record[0] != group
+        ]
+        try:
+            for index, (_kind, bus, event, token, _handler) in enumerate(removed):
+                try:
+                    bus.off(event, token)
+                except Exception:
+                    # Do not forget an off() failure or later registrations.
+                    self._subscriptions.extend(removed[index:])
+                    raise
+        finally:
+            self._sync_tracking_views()
 
-        if window._history_event_tokens:
-            history_events = [
-                Events.HISTORY_CHANGED,
-                Events.HISTORY_STATE,
-                Events.DOC_HISTORY_RESET,
-            ]
-            for event, token in zip(
-                history_events,
-                window._history_event_tokens,
-                strict=False,
-            ):
-                bus.off(event, token)
-            window._history_event_tokens.clear()
-
-        if window._startpage_event_tokens:
-            start_events = [
-                "file.new",
-                "file.open",
-                "file.close",
-                "ui.request.create_document",
-            ]
-            for event, token in zip(
-                start_events,
-                window._startpage_event_tokens,
-                strict=False,
-            ):
-                bus.off(event, token)
-            window._startpage_event_tokens.clear()
-
-        if window._panel_event_tokens:
-            panel_events = [
-                "ui.panel.register",
-                "ui.panel.toggle",
-                "ui.panel.rename",
-            ]
-            for event, token in zip(
-                panel_events,
-                window._panel_event_tokens,
-                strict=False,
-            ):
-                bus.off(event, token)
-            window._panel_event_tokens.clear()
-
-        if window._plugin_manager_event_tokens:
-            for token in window._plugin_manager_event_tokens:
-                bus.off("ui.plugins.manager", token)
-            window._plugin_manager_event_tokens.clear()
-
-        if window._layer_event_tokens:
-            layer_events = [
-                Events.ACTIVE_PAGE_CHANGED,
-                Events.LAYER_ADDED,
-                Events.LAYER_REMOVED,
-                Events.LAYER_CHANGED,
-                Events.LAYER_SELECTED,
-            ]
-            for event, token in zip(layer_events, window._layer_event_tokens, strict=False):
-                bus.off(event, token)
-            window._layer_event_tokens.clear()
-
+    def _sync_tracking_views(self) -> None:
+        window = self._window
+        for name in ("core", "history", "startpage", "panel", "plugin_manager", "layer"):
+            groups = ("layer", "blend") if name == "layer" else (name,)
+            records = [record for record in self._subscriptions if record[0] in groups]
+            handlers = []
+            for _kind, _bus, _event, _token, handler in records:
+                if all(existing is not handler for existing in handlers):
+                    handlers.append(handler)
+            handler_name = f"_{name}_event_handlers"
+            view = getattr(window, handler_name, None)
+            if isinstance(view, list):
+                view[:] = handlers
+            else:
+                setattr(window, handler_name, handlers)
+            if name != "core":
+                getattr(window, f"_{name}_event_tokens")[:] = [record[3] for record in records]
         window._layer_event_bus_ids.clear()
+        window._layer_event_bus_ids.update(
+            id(bus) for kind, bus, *_ in self._subscriptions if kind == "layer"
+        )
 
     def on_tool_changed_event(self, event: Any) -> None:
         """Handle tool change event from EventBus."""

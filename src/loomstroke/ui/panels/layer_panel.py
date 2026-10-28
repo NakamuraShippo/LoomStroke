@@ -24,7 +24,6 @@ from PySide6.QtWidgets import (
     QLabel,
     QMenu,
     QSizePolicy,
-    QSlider,
     QStyle,
     QToolButton,
     QTreeWidget,
@@ -41,6 +40,7 @@ from ...core.events import Events
 from ...host_api import HostAPI
 from ..ai_effect_preset_drag import ai_effect_preset_id_from_mime
 from ..translations import TranslationBinder, translate_with_fallback, translated_literal
+from ..widget_event_subscriptions import WidgetEventSubscriptions
 from .layer_channels_tabs import LayerChannelsTabs
 from .layer_item_widgets import (
     LayerGenerateButton,
@@ -1199,8 +1199,11 @@ class LayerPanel(QWidget):
         self._event_bus_ids: set[int] = set()
         self._translation_binder = TranslationBinder(self._translate_runtime)
         self._translations_ready = False
-        self._event_handlers: list[Any] = []
-        self._event_tokens: list[Any] = []
+        self._event_subscriptions = WidgetEventSubscriptions(self)
+        self._event_handlers, self._event_tokens = (
+            self._event_subscriptions.handlers,
+            self._event_subscriptions.tokens,
+        )
         self._ai_effect_preset_applier: Callable[[str], Any] | None = None
         self._ai_effect_preset_library_getter: Callable[[], list[Any]] | None = None
         self._ai_effect_menu_refs: list[QMenu] = []
@@ -1293,6 +1296,8 @@ class LayerPanel(QWidget):
         layout.addLayout(blend_row)
 
     def _setup_opacity_row(self, layout: QVBoxLayout) -> None:
+        from .layer_opacity_slider import _LayerOpacitySlider  # noqa: PLC0415
+
         opacity_row = QHBoxLayout()
         opacity_row.setSpacing(6)
         opacity_text = self._ts("Opacity")
@@ -1302,7 +1307,7 @@ class LayerPanel(QWidget):
         self._translation_binder.register(opacity_label.setText, opacity_text)
         opacity_row.addWidget(opacity_label)
 
-        self._opacity_slider = QSlider(Qt.Orientation.Horizontal, self)
+        self._opacity_slider = _LayerOpacitySlider(self)
         self._opacity_slider.setRange(0, 100)
         self._opacity_slider.setSingleStep(1)
         self._opacity_slider.setPageStep(5)
@@ -1501,15 +1506,10 @@ class LayerPanel(QWidget):
         if not callable(subscribe):
             return
 
-        language_handler = self._on_language_changed
-        if language_handler not in self._event_handlers:
-            self._event_handlers.append(language_handler)
-        self._event_tokens.append(subscribe(Events.LANGUAGE_CHANGED, language_handler))
-
-        page_handler = self._on_active_page_changed
-        if page_handler not in self._event_handlers:
-            self._event_handlers.append(page_handler)
-        self._event_tokens.append(subscribe(Events.ACTIVE_PAGE_CHANGED, page_handler))
+        self._event_subscriptions.subscribe(bus, Events.LANGUAGE_CHANGED, self._on_language_changed)
+        self._event_subscriptions.subscribe(
+            bus, Events.ACTIVE_PAGE_CHANGED, self._on_active_page_changed
+        )
         self._event_bus_ids.add(id(bus))
 
     def _on_language_changed(self, _payload: Any) -> None:
@@ -2365,19 +2365,9 @@ class LayerPanel(QWidget):
             self._suppress_blend_signal = False
 
     def _emit_blend_mode_changed(self, index: int, mode: str, layer_id: str | None = None) -> None:
-        host = self._host_api
-        if not host:
-            return
-        events = getattr(host, "events", None)
-        if events is None:
-            return
-        payload = {"index": index, "mode": mode, "layer_id": layer_id}
-        emit = getattr(events, "emit", None)
-        publish = getattr(events, "publish", None)
-        if callable(emit):
-            emit("layer.blend_mode_changed", payload)
-        elif callable(publish):
-            publish("layer.blend_mode_changed", payload)
+        from .layer_blend_request import _emit_panel_blend_request  # noqa: PLC0415
+
+        _emit_panel_blend_request(self, index, mode, layer_id)
 
     def _handle_visibility_changed(self, layer_id: str, visible: bool) -> None:
         entry = self._find_entry_by_id(layer_id)
@@ -2474,9 +2464,6 @@ class LayerPanel(QWidget):
         if not isinstance(mode, str):
             return
         layer_id = current.data(0, Qt.ItemDataRole.UserRole)
-        entry = self._find_entry_by_id(layer_id)
-        if entry:
-            entry.blend_mode = mode
         row = self._top_level_index_for_layer(layer_id)
         if row is not None:
             self._emit_blend_mode_changed(row, mode, layer_id=layer_id)
@@ -2485,19 +2472,18 @@ class LayerPanel(QWidget):
     def _on_opacity_slider_changed(self, value: int) -> None:
         if self._suppress_opacity_signal:
             return
-        self._set_opacity_value(value)
-        current = self._list.currentItem()
-        if current is None:
-            return
-        layer_id = current.data(0, Qt.ItemDataRole.UserRole)
-        opacity = max(0.0, min(1.0, value / 100.0))
-        self._handle_opacity_changed(layer_id, opacity)
+        from .layer_opacity_controller import _opacity_controller_for  # noqa: PLC0415
+
+        _opacity_controller_for(self).changed(value)
 
     def _on_item_changed(
         self,
         current: QTreeWidgetItem | None,
         _previous: QTreeWidgetItem | None,
     ) -> None:
+        controller = getattr(self, "_opacity_controller", None)
+        if controller is not None and not controller.before_selection_change():
+            return
         if current is None:
             self._selected_layer_id = None
             self._update_controls_state()
@@ -3082,20 +3068,9 @@ class LayerPanel(QWidget):
             self._rename_layer(layer_id)
 
     def _rename_layer(self, layer_id: str) -> None:
-        layer = self._resolve_canvas_layer(layer_id)
-        if layer is None:
-            return
-        current_name = str(getattr(layer, "name", ""))
-        new_name, ok = QInputDialog.getText(
-            self,
-            self._ts("Rename Layer"),
-            self._ts("Layer name:"),
-            text=current_name,
-        )
-        if not ok or not new_name.strip() or new_name == current_name:
-            return
-        layer.name = new_name.strip()
-        self._add_default_layers()
+        from .layer_panel_rename import _rename_layer_from_panel  # noqa: PLC0415
+
+        _rename_layer_from_panel(self, layer_id, QInputDialog)
 
     def _toggle_clipping(self, layer_id: str) -> None:
         canvas = self._get_canvas()
@@ -3119,48 +3094,14 @@ class LayerPanel(QWidget):
             logger.debug("set_clipping failed for %s", layer_id, exc_info=True)
 
     def _add_layer_mask(self, layer_id: str) -> None:
-        canvas = self._get_canvas()
-        if canvas is None:
-            self._release_layer_op()
-            return
-        try:
-            from loomstroke.core.commands import AddLayerMaskCommand  # noqa: PLC0415
+        from .layer_panel_mask_actions import _mask_action_from_panel  # noqa: PLC0415
 
-            submit = getattr(canvas, "submit", None)
-            if callable(submit):
-                submit(AddLayerMaskCommand(layer_id=layer_id))
-            else:
-                fn = getattr(canvas, "add_layer_mask", None)
-                if callable(fn):
-                    fn(layer_id)
-            # Auto-enter mask edit mode (like Photoshop)
-            self._toggle_mask_edit_mode(layer_id, True)
-            self._add_default_layers()
-            self._release_layer_op()
-        except Exception:
-            self._release_layer_op()
-            logger.debug("add_layer_mask failed for %s", layer_id, exc_info=True)
+        _mask_action_from_panel(self, layer_id, add=True)
 
     def _remove_layer_mask(self, layer_id: str) -> None:
-        canvas = self._get_canvas()
-        if canvas is None:
-            self._release_layer_op()
-            return
-        try:
-            from loomstroke.core.commands import RemoveLayerMaskCommand  # noqa: PLC0415
+        from .layer_panel_mask_actions import _mask_action_from_panel  # noqa: PLC0415
 
-            submit = getattr(canvas, "submit", None)
-            if callable(submit):
-                submit(RemoveLayerMaskCommand(layer_id=layer_id))
-            else:
-                fn = getattr(canvas, "remove_layer_mask", None)
-                if callable(fn):
-                    fn(layer_id)
-            self._add_default_layers()
-            self._release_layer_op()
-        except Exception:
-            self._release_layer_op()
-            logger.debug("remove_layer_mask failed for %s", layer_id, exc_info=True)
+        _mask_action_from_panel(self, layer_id, add=False)
 
     def _toggle_mask_edit_mode(self, layer_id: str, enabled: bool) -> None:
         canvas = self._get_canvas()

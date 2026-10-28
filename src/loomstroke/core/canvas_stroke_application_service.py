@@ -9,6 +9,7 @@ from PySide6.QtCore import QRect
 from loomstroke.core.command_types import LayerTransform
 from loomstroke.core.commands import EraseCommand, PaintCommand, StampBrushCommand
 from loomstroke.core.placed_raster_stroke import apply_placed_stroke
+from loomstroke.core.rgb_eraser_coverage import is_standard_zero_rgb_erase
 
 
 class CanvasStrokeApplicationService:
@@ -17,7 +18,8 @@ class CanvasStrokeApplicationService:
     def __init__(self, owner: Any) -> None:
         self._owner = owner
 
-    def apply_erase(self, cmd: EraseCommand) -> QRect | None:
+    # Keep target, selection and no-op guards before source mutation.
+    def apply_erase(self, cmd: EraseCommand) -> QRect | None:  # noqa: PLR0911
         """Apply erase command to a layer. Returns dirty rect or None."""
         owner = self._owner
         layer = owner._resolve_erase_target(cmd)
@@ -38,6 +40,8 @@ class CanvasStrokeApplicationService:
 
         if layer.transform != LayerTransform.identity() and not owner._mask_edit_flag:
             return apply_placed_stroke(owner, layer, cmd, clipped_bounds, erase=True)
+        if is_standard_zero_rgb_erase(owner, cmd.brush):
+            return clipped_bounds
         owner._ensure_layer_image_bounds(layer, clipped_bounds)
         offset_x, offset_y = owner._layer_offset(layer)
         ok = owner._apply_erase_into_layer(

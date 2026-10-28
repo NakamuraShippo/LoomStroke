@@ -6,6 +6,12 @@ from typing import Any
 
 from PySide6.QtCore import QRect
 
+from .rgb_eraser_coverage import (
+    is_standard_zero_rgb_erase,
+    paint_rgb_erase_coverage,
+    supports_rgb_erase_coverage,
+)
+
 
 class CanvasStrokePixelCommitService:
     """Commit paint / erase stroke pixels and related history state."""
@@ -24,6 +30,8 @@ class CanvasStrokePixelCommitService:
         offset_y: int,
     ) -> bool:
         owner = self._owner
+        if is_standard_zero_rgb_erase(owner, brush):
+            return True
         selection_mask, selection_bounds = owner._selection_clip_state()
         deferred = owner._txn_try_defer_paint(layer, bounds, offset_x, offset_y)
 
@@ -39,7 +47,20 @@ class CanvasStrokePixelCommitService:
 
         base_size = max(1, int(getattr(brush, "size", 10)))
 
-        if selection_mask is not None and selection_bounds is not None:
+        masked = selection_mask is not None and selection_bounds is not None
+        if supports_rgb_erase_coverage(owner, masked=masked):
+            paint_rgb_erase_coverage(
+                owner,
+                layer=layer,
+                points=points,
+                brush=brush,
+                bounds=bounds,
+                local_bounds=local_bounds,
+                offset_x=offset_x,
+                offset_y=offset_y,
+                selection_mask=selection_mask if masked else None,
+            )
+        elif masked:
             owner._paint_erased_masked_stroke(
                 layer=layer,
                 points=points,
@@ -65,6 +86,11 @@ class CanvasStrokePixelCommitService:
             after_patch = layer.image.copy(local_bounds)
             metadata: dict[str, Any] = {"command": "erase"}
             if getattr(owner, "_mask_edit_flag", False):
+                from .mask_coverage import normalize_mask_image  # noqa: PLC0415
+
+                # The outer mask swap normalizes the live mask after this
+                # capture. Store that same final form for an exact Redo.
+                normalize_mask_image(after_patch)
                 metadata["mask_edit"] = True
             owner._record_history_patch(
                 "Erase Stroke",

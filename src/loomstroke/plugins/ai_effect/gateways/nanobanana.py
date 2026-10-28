@@ -8,8 +8,8 @@ Design parallels the ComfyUI gateway:
 
 - **Delegate runtime to NanoBananaService**: the existing NanoBanana
   plugin already owns the Gemini SDK call, the read-on-demand API key
-  flow, and the result-PNG → layer apply step. This gateway never
-  duplicates that — ``submit`` builds a ``JobSpec`` and hands off to
+  flow. This gateway requests PNG assets without direct layer application;
+  ``submit`` builds a ``JobSpec`` and hands off to
   ``NanoBananaService.submit`` / ``stream`` / ``result``.
 
 - **No workflow-file concept**: NanoBanana is a parameter-only API;
@@ -675,6 +675,7 @@ class NanoBananaGateway(AIGateway):
             "input_layer_ids": input_layer_ids,
             "input_pngs": input_pngs,
             "options": options,
+            "apply_to_layer": False,
         }
 
         spec = JobSpec(op="generate", params=params_payload)

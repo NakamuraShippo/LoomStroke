@@ -633,3 +633,8 @@ class CanvasServiceImageApiMixin(_CanvasServiceImageApiBase):
 
     def _numpy_to_qimage(self, image: NDArray[Any], opacity: float) -> QImage | None:
         return self._apply_image_service_ref().numpy_to_qimage(image, opacity)
+
+
+# Definition-time identity keeps custom instance/subclass/class hooks on their
+# existing public configuration path during page installation.
+_DEFAULT_UPDATE_CANVAS_CONFIG = CanvasServiceImageApiMixin.update_canvas_config

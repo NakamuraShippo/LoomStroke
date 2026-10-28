@@ -1,13 +1,15 @@
 """Place / Reload / Relink / Embed of resource-backed layers through canvas commands (CT-18).
 
-Every mutation is a history transaction built from ``ReplaceLayerImageCommand``
-and ``SetLayerResourceCommand``; the source files are never written.  Only
-consumers on the *active* page are mutated (other pages are reported).
+Standard RGB Place and Embed commit one prepared command. Existing Reload and
+Relink retain their transaction-based image/metadata path; source files are
+never written. Only consumers on the active page are mutated.
 """
 
 from __future__ import annotations
 
+import logging
 from collections.abc import Callable
+from inspect import getattr_static
 from pathlib import Path
 from typing import Any
 
@@ -15,9 +17,14 @@ import numpy as np
 from PySide6.QtCore import Qt
 from PySide6.QtGui import QImage, QImageReader, QPainter
 
+from loomstroke.core.canvas_service_simple import SimpleCanvasService
+from loomstroke.core.canvas_service_simple_command_api import _DEFAULT_RESOURCE_METADATA_HOOKS
+from loomstroke.core.canvas_service_simple_layer_api import _DEFAULT_PLACEMENT_HOOKS
 from loomstroke.core.commands_layer_image_replace import ReplaceLayerImageCommand
 from loomstroke.core.commands_layer_lookup import find_layer
 from loomstroke.core.commands_layer_resource import SetLayerResourceCommand
+from loomstroke.core.document_service import _DEFAULT_IMPORT_LAYER, DocumentServiceImpl
+from loomstroke.core.layer_command_commit_context import _LayerCommandContext
 from loomstroke.core.linked_assets import (
     PlaceResourcePlan,
     RelinkPlan,
@@ -31,12 +38,19 @@ from loomstroke.core.linked_assets import (
     ResourceStatus,
     ResourceStatusService,
 )
+from loomstroke.core.resource_embed_submit import (
+    _capture_embed_scope,
+    _prepare_resource_embed,
+    _ResourceEmbedRejected,
+)
+from loomstroke.core.resource_place_command import PlaceResourceCommand
 
 from .document_resource_reader import DocumentResourceReader
 
 __all__ = ["ResourceLinkCoordinator"]
 
 ImageReader = Callable[[Path], Any | None]
+logger = logging.getLogger(__name__)
 
 
 class ResourceLinkCoordinator:
@@ -88,6 +102,20 @@ class ResourceLinkCoordinator:
         if not callable(importer):
             return None
         canvas = self._host.canvas
+        if isinstance(canvas, SimpleCanvasService):
+            if any(
+                layer.native_cmyk is not None for layer in canvas._layer_tree().flatten_layers()
+            ):
+                return None
+            if (
+                isinstance(document, DocumentServiceImpl)
+                and getattr_static(document, "import_layer", None) is _DEFAULT_IMPORT_LAYER
+                and all(
+                    getattr_static(canvas, name, None) is original
+                    for name, original in _DEFAULT_PLACEMENT_HOOKS.items()
+                )
+            ):
+                return self._place_prepared(plan, document, canvas)
         self._begin(canvas, "Place Image")
         try:
             layer_id = importer(str(plan.source_path))
@@ -96,6 +124,39 @@ class ResourceLinkCoordinator:
         finally:
             self._end(canvas)
         return str(layer_id) if layer_id else None
+
+    def _place_prepared(self, plan, document, canvas) -> str | None:
+        pages = getattr(self._host, "pages", None)
+        original = canvas._doc, getattr(pages, "_pages", None), self.active_page_id()
+        active = canvas.current_layer().id if canvas._layers else None
+
+        def same_document():
+            return (
+                canvas._doc is original[0]
+                and getattr(pages, "_pages", None) is original[1]
+                and self.active_page_id() == original[2]
+            )
+
+        data = document._file_io.read(plan.source_path)
+        if data is None:
+            return None
+        array = document._ensure_rgba(data[0])
+        name = document._resolve_import_layer_name(data[1])
+        image = self._qimage_from_array(array) if array is not None else None
+        if (
+            image is None
+            or not same_document()
+            or (canvas.current_layer().id if canvas._layers else None) != active
+        ):
+            return None
+        command = PlaceResourceCommand(image, plan.record, name=name)
+        if not canvas.submit(command) or not same_document():
+            return None
+        return (
+            command.layer_id
+            if find_layer(canvas, command.layer_id) is command._created.layer
+            else None
+        )
 
     # -- reload / relink / embed -------------------------------------------------------
 
@@ -127,6 +188,19 @@ class ResourceLinkCoordinator:
         return self._refresh_consumers(self.index(), plan.source_path, updated, "Relink Resource")
 
     def embed(self, resource_id: str) -> tuple[int, str]:
+        canvas = self._host.canvas
+        scope = None
+        if isinstance(canvas, SimpleCanvasService):
+            candidate = _LayerCommandContext(canvas)
+            if candidate.pages is getattr(self._host, "pages", None) and all(
+                getattr_static(canvas, name, None) is original
+                for name, original in _DEFAULT_RESOURCE_METADATA_HOOKS.items()
+            ):
+                try:
+                    scope = _capture_embed_scope(canvas, resource_id)
+                except Exception:
+                    logger.exception("Resource Embed scope preparation failed")
+                    return 0, "resource_embed_failed"
         index = self.index()
         record = index.record(resource_id)
         if record is None or record.mode == "embedded":
@@ -134,14 +208,32 @@ class ResourceLinkCoordinator:
         consumers = index.consumers_on_page(resource_id, self.active_page_id())
         if not consumers:
             return 0, "no_consumer_on_page"
-        canvas = self._host.canvas
+        if scope is not None:
+            return self._embed_prepared(canvas, scope, record, consumers)
+        count = 0
         self._begin(canvas, "Embed Resource")
         try:
             for consumer in consumers:
-                canvas.submit(SetLayerResourceCommand(consumer.layer_id, record.embedded()))
+                if canvas.submit(SetLayerResourceCommand(consumer.layer_id, record.embedded())):
+                    count += 1
         finally:
             self._end(canvas)
-        return len(consumers), ""
+        return count, ""
+
+    @staticmethod
+    def _embed_prepared(canvas, scope, record, consumers) -> tuple[int, str]:
+        try:
+            command = _prepare_resource_embed(canvas, scope, record, consumers)
+            if not canvas.submit(command):
+                return 0, "resource_embed_rejected"
+            return (
+                (len(command.layer_ids), "") if scope.current() else (0, "resource_scope_changed")
+            )
+        except _ResourceEmbedRejected as error:
+            return 0, error.reason_code
+        except Exception:
+            logger.exception("Resource Embed preparation failed")
+            return 0, "resource_embed_failed"
 
     # -- navigation --------------------------------------------------------------------
 

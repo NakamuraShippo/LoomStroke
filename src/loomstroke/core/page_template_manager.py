@@ -21,6 +21,7 @@ from ..io.layer_io import (
     deserialize_vector_objects,
     serialize_vector_objects,
 )
+from .page_canvas_ownership import inherited_page_canvas
 from .page_templates import (
     LayerTemplate,
     PageTemplate,
@@ -108,7 +109,12 @@ class PageTemplateManager:
             name=None,
             index=None,
             layers=layers,
-            canvas=self._page_canvas_override_for_template(template),
+            canvas=self._page_canvas_override_for_template(template)
+            or inherited_page_canvas(
+                template.canvas_mode,
+                base_page.canvas if base_page is not None else None,
+                canvas_spec,
+            ),
             page_thumbnail=None,
             metadata=self._build_template_metadata(template),
             view_state=None,

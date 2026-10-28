@@ -54,6 +54,7 @@ def _extract_runtime_input_pngs(payload: Mapping[str, Any]) -> list[bytes]:
 class _JobState:
     job_id: str
     params: NanoBananaParams
+    apply_to_layer: bool
     input_pngs: list[bytes]
     queue: asyncio.Queue[ProgressEvent]
     cancel_event: asyncio.Event
@@ -125,6 +126,7 @@ class NanoBananaService:
             raise ValueError("Prompt is required")
         if len(params.input_layer_ids) + len(input_pngs) > MAX_INPUT_LAYERS:
             raise ValueError(f"NanoBanana inputs must contain at most {MAX_INPUT_LAYERS} items")
+        apply_to_layer = bool(spec.params.get("apply_to_layer", True))
 
         job_id = uuid.uuid4().hex
         queue: asyncio.Queue[ProgressEvent] = asyncio.Queue()
@@ -132,6 +134,7 @@ class NanoBananaService:
         state = _JobState(
             job_id=job_id,
             params=params,
+            apply_to_layer=apply_to_layer,
             input_pngs=input_pngs,
             queue=queue,
             cancel_event=cancel_event,
@@ -298,7 +301,7 @@ class NanoBananaService:
                     job_id=job_id,
                     step=3,
                     total=4,
-                    message="applying",
+                    message="applying" if state.apply_to_layer else "finalizing",
                     preview_png=result_png,
                 )
             )
@@ -314,11 +317,12 @@ class NanoBananaService:
                 "prompt_length": len(params.prompt),
                 "input_layers": params.input_layer_ids,
             }
-            await self._transport.apply_png_to_layer(
-                result_png,
-                target_layer_id=params.options.target_layer_id,
-                metadata=metadata,
-            )
+            if state.apply_to_layer:
+                await self._transport.apply_png_to_layer(
+                    result_png,
+                    target_layer_id=params.options.target_layer_id,
+                    metadata=metadata,
+                )
 
             result = JobResult(
                 job_id=job_id,

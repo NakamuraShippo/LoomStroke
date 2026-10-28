@@ -4,13 +4,20 @@ from __future__ import annotations
 
 import copy
 import logging
+from pathlib import Path
 from typing import Any
 
 from .core.generation_record import GenerationRecord
+from .io.layer_io import LayerIO
+from .io.lstroke_archive_policy import png_dimensions_from_header
 from .plugins.ai_effect.gallery_bridge import extract_ai_effect_payload, matches_param_hash
+from .plugins.ai_effect.gateway_protocol import OutputImage
+from .services.generation_history_store import GenerationHistoryStore
 from .services.thumbnails import generate_gallery_thumbnail
 
 logger = logging.getLogger(__name__)
+# Match the existing Gallery reuse ceiling; decoded pixels use the archive budget.
+_MAX_CACHE_PNG_BYTES = 64 * 1024 * 1024
 
 
 class _AIEffectGalleryAdapter:
@@ -49,6 +56,83 @@ class _AIEffectGalleryAdapter:
         for index in range(len(images) - 1, -1, -1):
             output_record = record if index == 0 else self._sibling_record(record, index)
             self._append_image(output_record, images[index])
+
+    def _read_cached_image(self, record: GenerationRecord, param_hash: str) -> OutputImage:
+        """Read only the bounded original of a current, single-image primary."""
+        store = self._store
+        if type(store) is not GenerationHistoryStore or type(record) is not GenerationRecord:
+            raise ValueError("Unsupported cache store or record")
+        metadata = self._cache_metadata(record, param_hash)
+        relative, internal_id, width, height = metadata
+        if store.get_record(record.job_id) is not record:
+            raise ValueError("Cached record is no longer available")
+        rel = Path(relative)
+        parts = relative.replace("\\", "/").split("/")
+        if (
+            rel.anchor
+            or len(parts) != 2
+            or parts[0] != "images"
+            or rel.suffix.lower() != ".png"
+            or any(not part or part in (".", "..") or ":" in part for part in parts)
+        ):
+            raise ValueError("Invalid cached image path")
+        base = store.base_path.resolve()
+        path = store.resolve_path(relative).resolve()
+        if not path.is_relative_to(base):
+            raise ValueError("Cached image is outside its store")
+        if path.stat().st_size > _MAX_CACHE_PNG_BYTES:
+            raise ValueError("Cached image exceeds the Gallery byte budget")
+        with path.open("rb") as stream:
+            header = stream.read(33)
+            actual_width, actual_height = png_dimensions_from_header(header, "cached PNG")
+            pixels = actual_width * actual_height
+            if (
+                (actual_width, actual_height) != (width, height)
+                or pixels > LayerIO._MAX_LAYER_IMAGE_PIXELS
+                or pixels * 4 > LayerIO._MAX_LAYER_IMAGE_BYTES
+            ):
+                raise ValueError("Cached image dimensions exceed the image budget")
+            data = header + stream.read(_MAX_CACHE_PNG_BYTES + 1 - len(header))
+        if len(data) > _MAX_CACHE_PNG_BYTES:
+            raise ValueError("Cached image exceeds the Gallery byte budget")
+        if (
+            store.get_record(record.job_id) is not record
+            or self._cache_metadata(record, param_hash) != metadata
+        ):
+            raise ValueError("Cached record changed while reading")
+        return OutputImage(internal_id, data, width, height)
+
+    @staticmethod
+    def _cache_metadata(record: GenerationRecord, param_hash: str) -> tuple[str, str, int, int]:
+        snapshot = record.service_snapshot
+        payload = snapshot.get("ai_effect") if type(snapshot) is dict else None
+        if (
+            type(payload) is not dict
+            or type(param_hash) is not str
+            or type(payload.get("param_hash")) is not str
+            or payload["param_hash"] != param_hash
+            or type(payload.get("gallery_output_index", 0)) is not int
+            or payload.get("gallery_output_index", 0) != 0
+            or type(record.job_id) is not str
+            or type(record.status) is not str
+            or record.status != "completed"
+            or type(record.image_path) is not str
+            or not record.image_path
+            or type(record.output_images) is not list
+            or len(record.output_images) != 1
+        ):
+            raise ValueError("Invalid cached image record")
+        image = record.output_images[0]
+        if (
+            type(image) is not dict
+            or type(image.get("internal_id")) is not str
+            or type(image.get("width")) is not int
+            or type(image.get("height")) is not int
+            or image["width"] <= 0
+            or image["height"] <= 0
+        ):
+            raise ValueError("Invalid cached image metadata")
+        return record.image_path, image["internal_id"], image["width"], image["height"]
 
     @staticmethod
     def _sibling_record(record: GenerationRecord, index: int) -> GenerationRecord:

@@ -351,6 +351,14 @@ def parse_drop_payload(payload_json: str) -> tuple[str, str] | None:
     return category, asset_id
 
 
+_COMIC_ASSET_LISTING_DEFAULTS = (
+    ("root", ComicAssetStore.root),
+    ("categories", ComicAssetStore.categories),
+    ("list", ComicAssetStore.list),
+    ("_read", ComicAssetStore._read),
+)
+
+
 __all__ = [
     "ASSET_MIME",
     "CATEGORY_BALLOON",

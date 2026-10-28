@@ -2,6 +2,7 @@
 
 from __future__ import annotations
 
+from inspect import getattr_static
 from typing import TYPE_CHECKING, Any
 
 from .comic_panels.membership import prepare_reparent_membership
@@ -13,6 +14,10 @@ from .commands_filter import (
     ModifyFilterParamsCommand,
     RemoveFilterLayerCommand,
 )
+from .group_layer_history import GroupLayerHistory
+from .layer_creation_history import CreatedLayerHistory
+from .layer_creation_preparation import duplicate_payload
+from .layer_mask_command_state import _retained_mask_bytes
 
 AddEffectCommand = AddFilterLayerCommand
 ModifyEffectParamsCommand = ModifyFilterParamsCommand
@@ -35,8 +40,22 @@ class GroupLayersCommand(Command):
         self._layer_ids = list(layer_ids)
         self._name = name
         self._group_id: str | None = None
+        self._group_history = GroupLayerHistory()
+
+    @property
+    def retained_bytes(self) -> int:
+        return self._group_history.retained_bytes
 
     def apply(self, canvas: Canvas) -> bool:
+        if self._group_history.supports(canvas):
+            if self._group_history.group is None and not self._group_history.prepare_group(
+                canvas, self._layer_ids, self._name
+            ):
+                return False
+            success = self._group_history.set_grouped(canvas, True)
+            if success:
+                self._group_id, self._executed = self._group_history.group.id, True
+            return success
         fn = getattr(canvas, "group_layers", None)
         if not callable(fn):
             return False
@@ -47,6 +66,11 @@ class GroupLayersCommand(Command):
         return True
 
     def revert(self, canvas: Canvas) -> bool:
+        if self._group_history.group is not None:
+            success = self._group_history.set_grouped(canvas, False)
+            if success:
+                self._executed = False
+            return success
         if self._group_id is None:
             return False
         fn = getattr(canvas, "ungroup_layer", None)
@@ -65,8 +89,22 @@ class UngroupLayerCommand(Command):
         self._group_name: str | None = None
         self._parent_id: str | None = None
         self._insert_pos: int = -1
+        self._group_history = GroupLayerHistory()
+
+    @property
+    def retained_bytes(self) -> int:
+        return self._group_history.retained_bytes
 
     def apply(self, canvas: Canvas) -> bool:
+        if self._group_history.supports(canvas):
+            if self._group_history.group is None and not self._group_history.prepare_ungroup(
+                canvas, self._group_id
+            ):
+                return False
+            success = self._group_history.set_grouped(canvas, False)
+            if success:
+                self._executed = True
+            return success
         layer = _resolve_layer_by_id(canvas, self._group_id)
         if layer is None or getattr(layer, "layer_type", "") != "group":
             return False
@@ -85,6 +123,11 @@ class UngroupLayerCommand(Command):
         return bool(fn(self._group_id))
 
     def revert(self, canvas: Canvas) -> bool:
+        if self._group_history.group is not None:
+            success = self._group_history.set_grouped(canvas, True)
+            if success:
+                self._executed = False
+            return success
         if not self._child_ids:
             return False
         fn = getattr(canvas, "group_layers", None)
@@ -103,18 +146,31 @@ class AddLayerMaskCommand(Command):
     def __init__(self, layer_id: str) -> None:
         super().__init__()
         self._layer_id = layer_id
+        self._mask_state: Any = None
+        self._mask_submitting = False
+
+    @property
+    def retained_bytes(self) -> int:
+        return _retained_mask_bytes(self)
 
     def apply(self, canvas: Canvas) -> bool:
+        if self._mask_state is not None:
+            return self._restore_checked(canvas, use_after=True)
         fn = getattr(canvas, "add_layer_mask", None)
         if not callable(fn):
             return False
         return bool(fn(self._layer_id))
 
     def revert(self, canvas: Canvas) -> bool:
+        if self._mask_state is not None:
+            return self._restore_checked(canvas, use_after=False)
         fn = getattr(canvas, "remove_layer_mask", None)
         if not callable(fn):
             return False
         return bool(fn(self._layer_id))
+
+    def _restore_checked(self, canvas: Canvas, *, use_after: bool) -> bool:
+        return bool(self._mask_state.restore(canvas, self, use_after=use_after))
 
 
 class RemoveLayerMaskCommand(Command):
@@ -125,8 +181,16 @@ class RemoveLayerMaskCommand(Command):
         self._layer_id = layer_id
         self._saved_mask: Any | None = None
         self._mask_enabled: bool = True
+        self._mask_state: Any = None
+        self._mask_submitting = False
+
+    @property
+    def retained_bytes(self) -> int:
+        return _retained_mask_bytes(self)
 
     def apply(self, canvas: Canvas) -> bool:
+        if self._mask_state is not None:
+            return self._restore_checked(canvas, use_after=True)
         layer = _resolve_layer_by_id(canvas, self._layer_id)
         if layer is None:
             return False
@@ -141,6 +205,8 @@ class RemoveLayerMaskCommand(Command):
         return bool(fn(self._layer_id))
 
     def revert(self, canvas: Canvas) -> bool:
+        if self._mask_state is not None:
+            return self._restore_checked(canvas, use_after=False)
         if self._saved_mask is None:
             return False
         layer = _resolve_layer_by_id(canvas, self._layer_id)
@@ -152,6 +218,9 @@ class RemoveLayerMaskCommand(Command):
         if callable(recompose):
             recompose()
         return True
+
+    def _restore_checked(self, canvas: Canvas, *, use_after: bool) -> bool:
+        return bool(self._mask_state.restore(canvas, self, use_after=use_after))
 
 
 class SetLayerMaskCommand(Command):
@@ -165,8 +234,16 @@ class SetLayerMaskCommand(Command):
         self._old_mask: Any | None = None
         self._old_mask_enabled: bool = True
         self._applied = False
+        self._mask_state: Any = None
+        self._mask_submitting = False
+
+    @property
+    def retained_bytes(self) -> int:
+        return _retained_mask_bytes(self)
 
     def apply(self, canvas: Canvas) -> bool:
+        if self._mask_state is not None:
+            return self._restore_checked(canvas, use_after=True)
         layer = _resolve_layer_by_id(canvas, self._layer_id)
         if layer is None or _mask_is_null(self._mask):
             return False
@@ -186,6 +263,8 @@ class SetLayerMaskCommand(Command):
         return success
 
     def revert(self, canvas: Canvas) -> bool:
+        if self._mask_state is not None:
+            return self._restore_checked(canvas, use_after=False)
         if not self._applied:
             return False
         layer = _resolve_layer_by_id(canvas, self._layer_id)
@@ -198,6 +277,22 @@ class SetLayerMaskCommand(Command):
             self._old_mask_enabled,
             change_type="mask_restored",
         )
+
+    def _restore_checked(self, canvas: Canvas, *, use_after: bool) -> bool:
+        return bool(self._mask_state.restore(canvas, self, use_after=use_after))
+
+
+_MASK_DEFAULT_METHODS = {
+    kind: tuple((name, getattr(kind, name)) for name in ("apply", "revert", "_restore_checked"))
+    for kind in (AddLayerMaskCommand, RemoveLayerMaskCommand, SetLayerMaskCommand)
+}
+
+
+def _is_standard_mask_command(command: Any) -> bool:
+    defaults = _MASK_DEFAULT_METHODS.get(type(command))
+    return defaults is not None and all(
+        getattr_static(command, name, None) is method for name, method in defaults
+    )
 
 
 def _copy_mask(mask: Any | None) -> Any | None:
@@ -286,8 +381,23 @@ class AddLayerCommand(Command):
         self._name = name
         self._layer_type = layer_type
         self._layer_id: str | None = None
+        self._created = CreatedLayerHistory()
+
+    @property
+    def retained_bytes(self) -> int:
+        return self._created.retained_bytes
+
+    def _uses_standard_history(self, canvas: Canvas) -> bool:
+        # A custom revert owns its own payload; never acquire only half that contract.
+        return type(self).revert is AddLayerCommand.revert and self._created.supports(canvas)
 
     def apply(self, canvas: Canvas) -> bool:
+        if self._uses_standard_history(canvas):
+            succeeded = self._created.create(canvas, self._name, self._layer_type)
+            if succeeded:
+                self._layer_id = self._created.layer.id
+                self._executed = True
+            return succeeded
         fn = getattr(canvas, "add_layer", None)
         if not callable(fn):
             return False
@@ -298,6 +408,11 @@ class AddLayerCommand(Command):
         return self._layer_id is not None
 
     def revert(self, canvas: Canvas) -> bool:
+        if self._created.layer is not None:
+            succeeded = self._created.remove(canvas)
+            if succeeded:
+                self._executed = False
+            return succeeded
         if self._layer_id is None:
             return False
         fn = getattr(canvas, "remove_layer", None)
@@ -476,8 +591,19 @@ class DuplicateLayerCommand(Command):
         self._new_layer_id: str | None = None
         self._panel_command = None
         self.last_error = ""
+        self._created = CreatedLayerHistory()
+
+    @property
+    def retained_bytes(self) -> int:
+        return self._created.retained_bytes
 
     def apply(self, canvas: Canvas) -> bool:
+        if self._created.layer is not None:
+            succeeded = self._created.restore(canvas)
+            if succeeded:
+                self._new_layer_id = self._created.layer.id
+                self._executed = True
+            return succeeded
         from .comic_panels.content_tree_operation import (  # noqa: PLC0415
             apply_content_tree_operation,
         )
@@ -486,8 +612,6 @@ class DuplicateLayerCommand(Command):
         return self._apply_standard(canvas) if result is None else result
 
     def _apply_standard(self, canvas: Canvas) -> bool:
-        import copy  # noqa: PLC0415
-
         source = _resolve_layer_by_id(canvas, self._source_id)
         if source is None:
             return False
@@ -498,10 +622,16 @@ class DuplicateLayerCommand(Command):
         if not callable(add_layer):
             return False
 
+        values = duplicate_payload(source, BlendMode.NORMAL)
+        if self._created.supports(canvas):
+            succeeded = self._created.create(canvas, f"{source_name} Copy", layer_type, values)
+            if succeeded:
+                self._new_layer_id = self._created.layer.id
+                self._executed = True
+            return succeeded
+
         ref = add_layer(f"{source_name} Copy", layer_type=layer_type)
-        if ref is None:
-            return False
-        new_id = getattr(ref, "id", None)
+        new_id = getattr(ref, "id", None) if ref is not None else None
         if new_id is None:
             return False
         self._new_layer_id = new_id
@@ -510,34 +640,19 @@ class DuplicateLayerCommand(Command):
         if new_layer is None:
             return False
 
-        # Copy visual state
-        new_layer.visible = getattr(source, "visible", True)
-        new_layer.opacity = float(getattr(source, "opacity", 1.0))
-        new_layer.locked = bool(getattr(source, "locked", False))
-        new_layer.blend_mode = getattr(source, "blend_mode", BlendMode.NORMAL)
-        new_layer.offset_x = int(getattr(source, "offset_x", 0))
-        new_layer.offset_y = int(getattr(source, "offset_y", 0))
-
-        src_image = getattr(source, "image", None)
-        if src_image is not None and hasattr(src_image, "copy"):
-            new_layer.image = src_image.copy()
-        native = getattr(source, "native_cmyk", None)
-        if native is not None:
-            new_layer.native_cmyk = native.copy()
-
-        src_vectors = getattr(source, "vector_objects", None)
-        if src_vectors:
-            new_layer.vector_objects = copy.deepcopy(src_vectors)
-
-        src_metadata = getattr(source, "metadata", None)
-        if isinstance(src_metadata, dict):
-            new_layer.metadata = copy.deepcopy(src_metadata)
+        for key, value in values.items():
+            setattr(new_layer, key, value)
 
         return True
 
     def revert(self, canvas: Canvas) -> bool:
         if self._panel_command is not None:
             return self._panel_command.revert(canvas)
+        if self._created.layer is not None:
+            succeeded = self._created.remove(canvas)
+            if succeeded:
+                self._executed = False
+            return succeeded
         if self._new_layer_id is None:
             return False
         fn = getattr(canvas, "remove_layer", None)

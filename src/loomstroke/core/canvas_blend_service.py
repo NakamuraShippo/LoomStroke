@@ -172,9 +172,12 @@ class CanvasBlendService:
 
         a = (src_arr[:, :, 3:4].astype(np.float32) / 255.0) * opacity
         dst_rgb_pm = dst_arr[:, :, :3].astype(np.float32)
-        blended_n = blended / 255.0
+        dst_alpha = dst_arr[:, :, 3:4].astype(np.float32) / 255.0
+        # The blend mode applies only in the overlapping area. Keep the
+        # source's own color wherever the backdrop has no coverage.
+        source_color = s_rgb * (1.0 - dst_alpha) + blended * dst_alpha
         dst_arr[:, :, :3] = (
-            (blended_n * a * 255.0 + dst_rgb_pm * (1.0 - a)).clip(0, 255).astype(np.uint8)
+            (source_color * a + dst_rgb_pm * (1.0 - a)).clip(0, 255).astype(np.uint8)
         )
         sa_f = src_arr[:, :, 3].astype(np.float32) * opacity / 255.0
         da_f = dst_arr[:, :, 3].astype(np.float32) / 255.0

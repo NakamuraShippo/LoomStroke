@@ -19,6 +19,7 @@ from collections.abc import Mapping, Sequence
 from dataclasses import dataclass, field
 from datetime import UTC, datetime
 from io import BytesIO
+from numbers import Integral, Real
 from pathlib import Path
 from typing import Any, cast
 from uuid import uuid4
@@ -1209,7 +1210,8 @@ class LayerIO:
             color_profile=None,
         )
         layer_path = layers_dir / f"layer_{idx:03d}.png"
-        self._file_io.write(layer_path, image, meta, format=FileFormat.PNG)
+        if not self._file_io.write(layer_path, image, meta, format=FileFormat.PNG):
+            raise OSError(f"Failed to write layer image: {layer_path}")
         thumb_path = thumbnails_dir / f"thumb_{idx:03d}.png"
         self._write_thumbnail(image, thumb_path)
         # --- Layer mask ---
@@ -1223,7 +1225,8 @@ class LayerIO:
                 color_profile=None,
             )
             mask_path = layers_dir / f"mask_{idx:03d}.png"
-            self._file_io.write(mask_path, mask_img, mask_meta, format=FileFormat.PNG)
+            if not self._file_io.write(mask_path, mask_img, mask_meta, format=FileFormat.PNG):
+                raise OSError(f"Failed to write layer mask: {mask_path}")
         # --- Effect mask ---
         if snapshot.effect_mask_image is not None:
             emask_img = self._ensure_uint8(snapshot.effect_mask_image)
@@ -1235,7 +1238,8 @@ class LayerIO:
                 color_profile=None,
             )
             emask_path = layers_dir / f"effect_mask_{idx:03d}.png"
-            self._file_io.write(emask_path, emask_img, emask_meta, format=FileFormat.PNG)
+            if not self._file_io.write(emask_path, emask_img, emask_meta, format=FileFormat.PNG):
+                raise OSError(f"Failed to write effect mask: {emask_path}")
         # --- 3D scene payload ---
         if snapshot.layer_type == "3d" and snapshot.scene_3d is not None:
             scene_path = layers_dir / self._scene_3d_file_name(snapshot.id, idx)
@@ -1646,7 +1650,7 @@ class LayerIO:
         fill_color = self._coerce_color(getattr(style, "fill_color", None))
         return {
             "stroke_color": stroke_color,
-            "stroke_width": float(getattr(style, "stroke_width", 1.0) or 1.0),
+            "stroke_width": self._coerce_stroke_width(getattr(style, "stroke_width", 1.0)),
             "fill_enabled": bool(getattr(style, "fill_enabled", False)),
             "fill_color": fill_color,
             "join": str(getattr(style, "join", "miter") or "miter"),
@@ -1717,7 +1721,7 @@ class LayerIO:
         stroke_color = self._parse_color(raw.get("stroke_color")) or (0, 0, 0)
         fill_color = self._parse_color(raw.get("fill_color"))
         dash = self._parse_dash(raw.get("dash"))
-        stroke_width = float(raw.get("stroke_width", 1.0) or 1.0)
+        stroke_width = self._coerce_stroke_width(raw.get("stroke_width", 1.0))
         miter_limit = float(raw.get("miter_limit", 4.0) or 4.0)
         return VectorStyle(
             stroke_color=stroke_color,
@@ -1753,6 +1757,12 @@ class LayerIO:
         return None
 
     @staticmethod
+    def _coerce_stroke_width(value: Any) -> float:
+        if isinstance(value, Real) and not isinstance(value, bool) and value == 0:
+            return float(value)
+        return float(value or 1.0)
+
+    @staticmethod
     def _coerce_color(value: Any) -> list[int] | None:
         if value is None:
             return None
@@ -1761,7 +1771,11 @@ class LayerIO:
                 r_f, g_f, b_f = (float(value[0]), float(value[1]), float(value[2]))
             except (TypeError, ValueError):
                 return None
-            scale = 255.0 if max(r_f, g_f, b_f) <= 1.0 else 1.0
+            integer_rgb = all(
+                isinstance(channel, Integral) and not isinstance(channel, bool)
+                for channel in value[:3]
+            )
+            scale = 255.0 if not integer_rgb and max(r_f, g_f, b_f) <= 1.0 else 1.0
             r = round(r_f * scale)
             g = round(g_f * scale)
             b = round(b_f * scale)
@@ -1773,22 +1787,8 @@ class LayerIO:
 
     @staticmethod
     def _parse_color(value: Any) -> tuple[int, int, int] | None:
-        if value is None:
-            return None
-        if isinstance(value, (list, tuple)) and len(value) >= 3:
-            try:
-                r_f, g_f, b_f = (float(value[0]), float(value[1]), float(value[2]))
-            except (TypeError, ValueError):
-                return None
-            scale = 255.0 if max(r_f, g_f, b_f) <= 1.0 else 1.0
-            r = round(r_f * scale)
-            g = round(g_f * scale)
-            b = round(b_f * scale)
-            r = max(0, min(255, r))
-            g = max(0, min(255, g))
-            b = max(0, min(255, b))
-            return (r, g, b)
-        return None
+        colour = LayerIO._coerce_color(value)
+        return (colour[0], colour[1], colour[2]) if colour is not None else None
 
     @staticmethod
     def _coerce_dash(value: Any) -> list[float]:

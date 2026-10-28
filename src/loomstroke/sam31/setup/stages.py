@@ -242,11 +242,13 @@ class Sam3DependenciesStage(SetupStage):
     def apply(self, context: StageContext) -> None:
         source_dir = context.root.sam3_src_dir
         offline = (source_dir / "pyproject.toml").is_file()
-        if not offline and not context.network_allowed:
+        if not context.network_allowed:
+            # The engine skips apply() when check() confirms all packages.
+            # Source files alone do not provide runtime or build dependencies.
             raise errors.Sam31SetupError(
                 errors.NETWORK_CONSENT_REQUIRED,
-                "installing the sam3 package requires network access"
-                " (or an offline copy under runtime/sam3-src)",
+                "installing missing SAM 3.1 packages requires external services;"
+                " a local source copy does not supply runtime or build dependencies",
             )
         dependencies = list(_BASE_DEPENDENCIES)
         if context.is_windows:

@@ -2441,6 +2441,15 @@ class AIEffectPage(PreferencesPage):
             )
 
     def _collect_external_server_entries(self) -> list[dict[str, str]]:
+        from ...plugins.comfyui.server_registry import (  # noqa: PLC0415
+            _allocate_external_server_id,
+            _reserve_external_server_ids,
+        )
+
+        reserved = _reserve_external_server_ids(
+            (row.property("server_id"), bool(url_input.text().strip()))
+            for row, _name, url_input in self._external_url_rows
+        )
         entries: list[dict[str, str]] = []
         for _row, name_input, url_input in self._external_url_rows:
             url = url_input.text().strip()
@@ -2451,7 +2460,8 @@ class AIEffectPage(PreferencesPage):
             raw_server_id = _row.property("server_id")
             server_id = str(raw_server_id).strip() if raw_server_id else ""
             if not server_id:
-                server_id = "external" if index == 0 else f"external_{index + 1}"
+                server_id = _allocate_external_server_id(index, reserved)
+                _row.setProperty("server_id", server_id)
             entries.append(
                 {
                     "id": server_id,

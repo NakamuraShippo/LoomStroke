@@ -17,6 +17,10 @@ from loomstroke.rendering_3d import (
     ProjectionImportRequest,
     ProjectionImportService,
 )
+from loomstroke.rendering_3d.projection import (
+    _PROJECTION_FACE_LIMIT_MESSAGE,
+    _ProjectionFaceLimitExceeded,
+)
 
 from .editing_common import check_gui_thread, edit_operation, finite_number, invalid
 from .layer_operations import _editable, _layer
@@ -250,7 +254,14 @@ async def _project_layer(service: Any, name: str, args: dict, layer: Any) -> dic
     )
     async with edit_operation(service, name, args):
         _editable(canvas, target)
-        result = ProjectionImportService().import_to_canvas(layer.scene_3d, canvas, request)
+        try:
+            result = ProjectionImportService().import_to_canvas(layer.scene_3d, canvas, request)
+        except _ProjectionFaceLimitExceeded:
+            raise McpStructuredError(
+                ReasonCode.CAPABILITY_UNAVAILABLE,
+                _PROJECTION_FACE_LIMIT_MESSAGE,
+                details={"reason": "software_projection_face_limit"},
+            ) from None
         return {
             "appliedToCanvas": result.submitted,
             "layerId": target.id,

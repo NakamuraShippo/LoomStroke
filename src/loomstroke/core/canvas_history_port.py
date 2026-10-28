@@ -5,19 +5,21 @@ in and out of the canvas as an owned bundle.  Ownership transfer is an
 O(1) move of the deque objects — image patches are never deep-copied.
 Bundles are runtime-only and are never persisted to ``.lstroke``.
 
-The page-switch flow does not use this port yet; ``PageServiceImpl``
-still clears history on every switch.  Later CT-05 phases wire the
-detach/attach pair into page switching to retain per-page history.
+``PageServiceImpl`` uses this port to retain each page's history. Standard
+switches prepare their source before the private prepared move; the original
+detach entry keeps its close-before-move contract for existing callers.
 """
 
 from __future__ import annotations
 
 import logging
 from collections import deque
-from dataclasses import dataclass
+from dataclasses import dataclass, field
+from inspect import getattr_static
 from typing import Any
 
 from loomstroke.core.canvas_history_entries import _HistoryGroup
+from loomstroke.core.canvas_history_restore_state import HistoryRestoreOwner
 
 logger = logging.getLogger(__name__)
 
@@ -38,6 +40,7 @@ class PageHistoryBundle:
     page_id: str
     undo_groups: deque[_HistoryGroup]
     redo_groups: deque[_HistoryGroup]
+    restore_owner: HistoryRestoreOwner = field(default_factory=HistoryRestoreOwner)
 
 
 class CanvasHistoryPortService:
@@ -56,6 +59,13 @@ class CanvasHistoryPortService:
         if policy != CLOSE_POLICY_COMMIT:
             raise ValueError(f"unsupported close policy: {policy!r}")
         canvas = self._canvas
+        from .gradient_preview_boundary import close_gradient_preview_before_edit  # noqa: PLC0415
+        from .layer_opacity_preview_boundary import _close_opacity_before_edit  # noqa: PLC0415
+
+        if not close_gradient_preview_before_edit(canvas):
+            return False
+        if not _close_opacity_before_edit(canvas):
+            return False
         filter_pen = getattr(
             canvas, "_filter_pen_service", getattr(canvas, "_effect_pen_service", None)
         )
@@ -77,13 +87,31 @@ class CanvasHistoryPortService:
         so no recorded edit is lost.  The canvas is left with fresh empty
         stacks (undo keeps the configured ``history_limit`` bound).
         """
+        closed = self.close_pending_group(CLOSE_POLICY_COMMIT)
+        if (
+            closed is False
+            and getattr_static(self, "close_pending_group") is _DEFAULT_CLOSE_PENDING
+        ):
+            raise RuntimeError("Pending preview edit could not be closed before history detach")
+        return self._move_history(page_id)
+
+    def _detach_prepared_history(self, page_id: str) -> PageHistoryBundle:
+        """Move already prepared stacks without invoking close a second time."""
         canvas = self._canvas
-        self.close_pending_group(CLOSE_POLICY_COMMIT)
+        if canvas._in_transaction or canvas._active_history_group is not None:
+            raise RuntimeError("prepared history detach refused: history is still pending")
+        return self._move_history(page_id)
+
+    def _move_history(self, page_id: str) -> PageHistoryBundle:
+        canvas = self._canvas
         bundle = PageHistoryBundle(
             page_id=str(page_id),
             undo_groups=canvas._undo_stack,
             redo_groups=canvas._redo_stack,
+            restore_owner=canvas._history()._restore_owner,
         )
+        canvas._history()._restore_owner = HistoryRestoreOwner()
+        canvas._history()._restore_generation += 1
         canvas._undo_stack = deque(maxlen=canvas._history_limit)
         canvas._redo_stack = deque()
         canvas._active_history_group = None
@@ -106,7 +134,12 @@ class CanvasHistoryPortService:
             )
         canvas._undo_stack = bundle.undo_groups
         canvas._redo_stack = bundle.redo_groups
+        canvas._history()._restore_owner = bundle.restore_owner
+        canvas._history()._restore_generation += 1
         canvas._emit_history_changed()
 
+
+_DEFAULT_PORT_DETACH = CanvasHistoryPortService.detach_history
+_DEFAULT_CLOSE_PENDING = CanvasHistoryPortService.close_pending_group
 
 __all__ = ["CLOSE_POLICY_COMMIT", "CanvasHistoryPortService", "PageHistoryBundle"]

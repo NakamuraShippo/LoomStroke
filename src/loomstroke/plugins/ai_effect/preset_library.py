@@ -34,8 +34,23 @@ from pathlib import Path
 from loomstroke.plugins.ai_effect.lsfx_io import LsfxReadError, read_lsfx
 from loomstroke.plugins.ai_effect.manifest_validator import validate_manifest
 from loomstroke.plugins.ai_effect.preset import AIEffectPreset
+from loomstroke.plugins.ai_effect.preset_import_commit import (
+    _PresetImportRescueError,
+    commit_regular_import,
+    commit_retiring_import,
+)
+from loomstroke.plugins.ai_effect.preset_import_identity import (
+    find_installed_uuid,
+    inspect_import_target,
+    is_generated_backup,
+    ordered_preset_paths,
+    paths_refer_to_same_file,
+    read_validated_preset,
+    refreshed_self_sync_index,
+)
 
 logger = logging.getLogger(__name__)
+_paths_refer_to_same_file = paths_refer_to_same_file
 
 
 class PresetNotFoundError(LookupError):
@@ -43,8 +58,7 @@ class PresetNotFoundError(LookupError):
 
 
 class DuplicatePresetError(ValueError):
-    """Raised when importing a preset whose preset_id already exists AND the
-    caller did not opt into overwrite."""
+    """A UUID needs overwrite permission, or another UUID owns the target path."""
 
 
 class AIEffectPresetLibrary:
@@ -163,7 +177,7 @@ class AIEffectPresetLibrary:
             logger.debug("User presets dir does not exist: %s", self._user_dir)
             return 0
 
-        for lsfx_path in sorted(self._user_dir.glob("*.lsfx")):
+        for lsfx_path in ordered_preset_paths(self._user_dir):
             try:
                 preset = read_lsfx(lsfx_path, source="user")
             except (LsfxReadError, FileNotFoundError, OSError) as exc:
@@ -245,7 +259,8 @@ class AIEffectPresetLibrary:
             overwrite: If True, a preset_id collision replaces the existing
                 entry (the old file is preserved as
                 ``{name}.bak-{timestamp}.lsfx``). If False, collision raises
-                :class:`DuplicatePresetError`.
+                :class:`DuplicatePresetError`. A different UUID at the physical
+                destination is never implicitly overwritten.
 
         Returns:
             The newly-registered AIEffectPreset.
@@ -254,15 +269,11 @@ class AIEffectPresetLibrary:
             LsfxReadError: Source file unreadable or invalid.
             PresetValidationResult failure → LsfxReadError reraised
                 with details (manifest rejected).
-            DuplicatePresetError: Collision without ``overwrite=True``.
+            DuplicatePresetError: UUID collision without ``overwrite=True``, or
+                a different UUID already owns the physical destination.
         """
         source = Path(source_path)
-        preset = read_lsfx(source, source="imported")
-        result = validate_manifest(preset.manifest)
-        if not result.ok:
-            raise LsfxReadError(
-                f"Preset manifest invalid: reason={result.reason} detail={result.detail}"
-            )
+        preset = read_validated_preset(source, source="imported")
 
         existing = self._presets.get(preset.preset_id)
         if existing is not None and not overwrite:
@@ -271,7 +282,6 @@ class AIEffectPresetLibrary:
                 f"(existing={existing.lsfx_path}, new={source})"
             )
 
-        self._user_dir.mkdir(parents=True, exist_ok=True)
         target = self._user_dir / source.name
 
         # Self-sync short-circuit (Phase 7-g): when the Editor has just written
@@ -282,8 +292,59 @@ class AIEffectPresetLibrary:
         # export. Skip the file ops entirely and just refresh the in-memory
         # entry from the file already at ``target``.
         if _paths_refer_to_same_file(source, target):
-            preset = read_lsfx(target, source="user")
-            self._presets[preset.preset_id] = preset
+            preset = read_validated_preset(target)
+            self._presets = refreshed_self_sync_index(self._presets, preset, target)
+            return preset
+
+        occupant = inspect_import_target(target)
+        if occupant is not None and occupant.preset_id != preset.preset_id:
+            raise DuplicatePresetError("Import destination belongs to a different preset UUID")
+        existing = find_installed_uuid(self._presets, self._user_dir, preset.preset_id, occupant)
+        if existing is not None and not overwrite:
+            raise DuplicatePresetError(
+                f"Preset {preset.preset_id!r} already installed "
+                f"(existing={existing.lsfx_path}, new={source})"
+            )
+
+        self._user_dir.mkdir(parents=True, exist_ok=True)
+        if not is_generated_backup(target) and (
+            existing is None
+            or (
+                existing.lsfx_path is not None
+                and _paths_refer_to_same_file(existing.lsfx_path, target)
+            )
+        ):
+            preset, candidate_index = commit_regular_import(
+                source,
+                target,
+                preset,
+                existing,
+                self._presets,
+                backup_timestamp=_backup_timestamp() if existing is not None else None,
+            )
+            self._presets = candidate_index
+            return preset
+
+        if (
+            occupant is None
+            and not is_generated_backup(target)
+            and existing is not None
+            and existing.lsfx_path is not None
+            and not is_generated_backup(existing.lsfx_path)
+        ):
+            try:
+                preset, candidate_index = commit_retiring_import(
+                    source,
+                    target,
+                    preset,
+                    existing,
+                    self._presets,
+                    backup_timestamp=_backup_timestamp(),
+                )
+            except _PresetImportRescueError as exc:
+                self._presets = exc.rescue_index
+                raise
+            self._presets = candidate_index
             return preset
 
         if (
@@ -357,19 +418,3 @@ class AIEffectPresetLibrary:
 def _backup_timestamp() -> str:
     """UTC timestamp suitable for backup file names (``20260424T103015Z``)."""
     return datetime.now(UTC).strftime("%Y%m%dT%H%M%SZ")
-
-
-def _paths_refer_to_same_file(a: Path, b: Path) -> bool:
-    """Return True when ``a`` and ``b`` identify the same file on disk.
-
-    Uses :meth:`Path.resolve` so symlinks, ``..`` traversals, and case
-    differences on case-insensitive filesystems all collapse to the same
-    identity. Falls back to string equality when ``resolve`` raises
-    (missing target on Windows with strict=True is not an issue in
-    Python 3.11 default, but OSError can still surface for broken
-    symlinks).
-    """
-    try:
-        return a.resolve() == b.resolve()
-    except OSError:
-        return str(a) == str(b)

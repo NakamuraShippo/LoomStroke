@@ -10,9 +10,9 @@ the drop point (``ComicToolsPlugin.place_asset``).
 from __future__ import annotations
 
 import logging
-from typing import TYPE_CHECKING
+from typing import TYPE_CHECKING, Any
 
-from PySide6.QtCore import QByteArray, QPoint, QSize, Qt
+from PySide6.QtCore import QByteArray, QEvent, QPoint, QSize, Qt
 from PySide6.QtGui import QDrag, QIcon, QPixmap
 from PySide6.QtWidgets import (
     QHBoxLayout,
@@ -27,7 +27,11 @@ from PySide6.QtWidgets import (
     QWidget,
 )
 
+from loomstroke.ui.comic_assets_feedback_strings import LOAD_FAILED
+from loomstroke.ui.translations import translated_literal_domain
+
 from .comic_assets import ASSET_MIME, CATEGORY_BALLOON, CATEGORY_LABELS, ComicAsset, drop_payload
+from .comic_assets_listing import read_assets_for_panel, unavailable_listing
 
 if TYPE_CHECKING:
     from .tool import ComicToolsPlugin
@@ -83,15 +87,12 @@ class ComicAssetsPanelWidget(QWidget):
         self.refresh()
 
     # ── tabs ──────────────────────────────────────────────────────────
+    def _resolve_asset_store(self) -> Any:
+        store = self._tool.asset_store
+        return self._tool._asset_store() if store is None else store
+
     def _build_tabs(self) -> None:
-        categories = list(CATEGORY_LABELS)
-        try:
-            for category in self._tool.asset_store.categories():
-                if category not in categories:
-                    categories.append(category)
-        except Exception:
-            logger.debug("asset categories listing failed", exc_info=True)
-        for category in categories:
+        for category in CATEGORY_LABELS:
             self._add_category_tab(category)
 
     def _add_category_tab(self, category: str) -> None:
@@ -125,15 +126,25 @@ class ComicAssetsPanelWidget(QWidget):
 
     # ── data ──────────────────────────────────────────────────────────
     def refresh(self) -> None:
+        previously_failed = getattr(self, "_asset_load_failed", False)
+        try:
+            result = read_assets_for_panel(self._resolve_asset_store())
+        except Exception:
+            logger.debug("Comic asset store could not be initialized")
+            result = unavailable_listing()
+        for category in result.categories:
+            self._add_category_tab(category)
+        failed = set(result.failed_categories)
+        if result.root_failed:
+            failed.update(self.lists)
+        # Publish availability before clear() can dispatch an old item's signal.
+        self._asset_failed_categories = frozenset(failed)
+        self._asset_load_failed = result.root_failed or bool(failed)
         for category, listing in self.lists.items():
             current = listing.currentItem()
             current_id = current.data(Qt.ItemDataRole.UserRole) if current is not None else None
             listing.clear()
-            try:
-                assets = self._tool.asset_store.list(category)
-            except Exception:
-                logger.debug("asset listing failed", exc_info=True)
-                assets = []
+            assets = () if category in failed else result.assets.get(category, ())
             for asset in assets:
                 item = QListWidgetItem(asset.name)
                 item.setData(Qt.ItemDataRole.UserRole, asset.asset_id)
@@ -144,6 +155,32 @@ class ComicAssetsPanelWidget(QWidget):
                 listing.addItem(item)
                 if current_id is not None and asset.asset_id == current_id:
                     listing.setCurrentItem(item)
+        self._refresh_asset_load_notice(clear=previously_failed)
+
+    def _refresh_asset_load_notice(self, *, clear: bool = False) -> None:
+        label = getattr(self, "status_label", None)
+        if label is None:  # Qt can deliver language events during construction.
+            return
+        if getattr(self, "_asset_load_failed", False):
+            label.setText(
+                translated_literal_domain("ComicAssetsPanel", LOAD_FAILED, use_fallback=True)
+            )
+        elif clear:
+            label.setText("")
+
+    def _asset_category_available(self, category: str) -> bool:
+        return category not in getattr(self, "_asset_failed_categories", ())
+
+    def _set_asset_action_status(self, message: str) -> None:
+        if getattr(self, "_asset_load_failed", False):
+            self._refresh_asset_load_notice()
+        else:
+            self.status_label.setText(message)
+
+    def changeEvent(self, event: QEvent) -> None:  # noqa: N802 - Qt override
+        super().changeEvent(event)
+        if event.type() == QEvent.Type.LanguageChange:
+            self._refresh_asset_load_notice()
 
     def _current(self, category: str) -> tuple[AssetListWidget, str | None]:
         listing = self.lists[category]
@@ -155,42 +192,53 @@ class ComicAssetsPanelWidget(QWidget):
     def _register_selected_balloon(self) -> None:
         asset: ComicAsset | None = self._tool.register_selected_balloon_as_asset()
         if asset is None:
-            self.status_label.setText("登録できません: Comic パネルでフキダシを選択してください")
+            self._set_asset_action_status(
+                "登録できません: Comic パネルでフキダシを選択してください"
+            )
             return
         self.refresh()
-        self.status_label.setText(f"登録しました: {asset.name}")
+        self._set_asset_action_status(f"登録しました: {asset.name}")
         self.tabs.setCurrentIndex(list(self.lists).index(asset.category))
 
     def _rename_current(self, category: str) -> None:
+        if not self._asset_category_available(category):
+            return
         listing, asset_id = self._current(category)
         if asset_id is None:
             return
         current_name = listing.currentItem().text()
         name, ok = QInputDialog.getText(self, "名前変更", "素材名:", text=current_name)
-        if not ok or not name.strip():
+        if not ok or not name.strip() or not self._asset_category_available(category):
             return
         self._tool.asset_store.rename(category, asset_id, name.strip())
         self.refresh()
 
     def _delete_current(self, category: str) -> None:
+        if not self._asset_category_available(category):
+            return
         listing, asset_id = self._current(category)
         if asset_id is None:
             return
         name = listing.currentItem().text()
         answer = QMessageBox.question(self, "素材の削除", f"「{name}」を削除しますか?")
-        if answer != QMessageBox.StandardButton.Yes:
+        if answer != QMessageBox.StandardButton.Yes or not self._asset_category_available(category):
             return
         self._tool.asset_store.delete(category, asset_id)
         self.refresh()
 
     def _place_at_center(self, item: QListWidgetItem) -> None:
-        listing = item.listWidget()
-        category = getattr(listing, "category", CATEGORY_BALLOON)
-        asset_id = item.data(Qt.ItemDataRole.UserRole)
+        try:
+            listing = item.listWidget()
+            category = getattr(listing, "category", CATEGORY_BALLOON)
+            asset_id = item.data(Qt.ItemDataRole.UserRole)
+        except RuntimeError:  # A queued callback can outlive a cleared Qt item.
+            return
+        if not self._asset_category_available(category):
+            return
         if not isinstance(asset_id, str):
             return
         balloon_id = self._tool.place_asset(category, asset_id, None)
-        self.status_label.setText(
+        self._set_asset_action_status(
             "ページ中央に配置しました" if balloon_id else "配置できませんでした (キャンバスなし)"
         )
 

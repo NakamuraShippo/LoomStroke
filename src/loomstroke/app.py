@@ -656,37 +656,12 @@ class LoomStrokeApp:
             raise
 
     def _on_recovery_available(self, recoveries: list[Any]) -> None:
-        """Show recovery dialog when autosave files from a previous session are found."""
-        from .io.autosave import RecoveryInfo  # noqa: PLC0415
-        from .ui.dialogs.recovery_dialog import RecoveryDialog  # noqa: PLC0415
+        """Show recovery choices while retaining failed or in-use candidates."""
+        from .ui.recovery_workflow import handle_recovery_dialog  # noqa: PLC0415
 
-        valid = [r for r in recoveries if isinstance(r, RecoveryInfo)]
-        if not valid:
-            return
-
-        parent = self.main_window if self.main_window else None
-        dialog = RecoveryDialog(valid, parent=parent)
-        if dialog.exec() == RecoveryDialog.DialogCode.Accepted:
-            selected = dialog.selected_recovery
-            if selected and hasattr(self, "_autosave_manager"):
-                success = self._autosave_manager.recover(selected)
-                if success:
-                    marker = getattr(
-                        self.main_window,
-                        "mark_document_recovered_from_autosave",
-                        None,
-                    )
-                    if callable(marker):
-                        marker(
-                            original_path=selected.original_path,
-                            recovery_path=selected.file_path,
-                        )
-                    logger.info("Document recovered from autosave")
-                else:
-                    logger.warning("Recovery failed")
-                self._autosave_manager.cleanup_all_old_sessions()
-        elif hasattr(self, "_autosave_manager"):
-            self._autosave_manager.cleanup_all_old_sessions()
+        handle_recovery_dialog(
+            recoveries, manager=getattr(self, "_autosave_manager", None), window=self.main_window
+        )
 
     async def cleanup(self) -> None:  # noqa: PLR0912
         """Clean up application resources."""
@@ -800,6 +775,9 @@ class LoomStrokeApp:
 
         self.app.aboutToQuit.connect(on_quit)
         return await quit_future
+
+
+_DEFAULT_AI_EFFECT_OUTPUT_APPLICATION = LoomStrokeApp._apply_ai_effect_outputs
 
 
 def main() -> int:

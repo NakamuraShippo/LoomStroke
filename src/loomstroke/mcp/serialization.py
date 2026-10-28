@@ -4,7 +4,7 @@ from __future__ import annotations
 
 import base64
 import json
-from dataclasses import asdict, is_dataclass
+from dataclasses import asdict, is_dataclass, replace
 from datetime import date, datetime
 from enum import Enum
 from io import BytesIO
@@ -19,6 +19,7 @@ from PySide6.QtGui import QColor, QImage
 from loomstroke.ui.canvas.render_scene import RenderLayerSnapshot, RenderSceneSnapshot
 
 from .safety import scrub_secrets
+from .snapshot_layer_payloads import layer_payload_changes, scene_payload_changes
 
 
 def to_jsonable(value: Any) -> Any:  # noqa: PLR0911, PLR0912
@@ -131,64 +132,30 @@ def copy_qimage(image: QImage | None) -> QImage | None:
 
 
 def detach_layer_snapshot(layer: RenderLayerSnapshot) -> RenderLayerSnapshot:
-    detached = RenderLayerSnapshot(
-        id=layer.id,
-        name=layer.name,
-        visible=layer.visible,
-        opacity=layer.opacity,
-        blend_mode=layer.blend_mode,
-        texture_version=layer.texture_version,
-        transform_version=layer.transform_version,
-        image=copy_qimage(layer.image),
-        offset_x=layer.offset_x,
-        offset_y=layer.offset_y,
-        transform=layer.transform,
-        _preview_transform=layer._preview_transform,
-        _preview_transform_version=layer._preview_transform_version,
-        locked=layer.locked,
-        alpha_lock=layer.alpha_lock,
-        layer_type=layer.layer_type,
-        vector_kind=layer.vector_kind,
-        vector_objects=list(layer.vector_objects),
-        parent_id=layer.parent_id,
-        clipping=layer.clipping,
-        layer_mask=copy_qimage(layer.layer_mask),
-        mask_enabled=layer.mask_enabled,
-        mask_edit_mode=layer.mask_edit_mode,
-        effect_type=layer.filter_type,
-        effect_params=dict(layer.filter_params),
-        effect_mask=copy_qimage(layer.filter_mask),
-        effect_mask_texture_version=layer.filter_mask_texture_version,
-        ai_effect=layer.ai_effect,
-        origin=layer.origin,
-        vector_render_layer=layer.vector_render_layer,
-        vector_direct_ready=layer.vector_direct_ready,
-        vector_raster_origin=layer.vector_raster_origin,
-        vector_raster_scale=layer.vector_raster_scale,
-    )
-    detached.children = [detach_layer_snapshot(child) for child in layer.children]
+    return _detach_layer(layer, {})
+
+
+def _detach_layer(layer, memo):
+    if id(layer) in memo:
+        return memo[id(layer)]
+    detached = replace(layer, children=[], **layer_payload_changes(layer, memo))
+    memo[id(layer)] = detached
+    detached.children = [_detach_layer(child, memo) for child in layer.children]
     return detached
 
 
 def detach_scene_snapshot(scene: RenderSceneSnapshot) -> RenderSceneSnapshot:
-    layer_map: dict[str, RenderLayerSnapshot] = {}
-
-    def register(layer: RenderLayerSnapshot) -> RenderLayerSnapshot:
-        cloned = detach_layer_snapshot(layer)
-        layer_map[layer.id] = cloned
-        return cloned
-
-    layers = tuple(register(layer) for layer in scene.layers)
-    flat_layers = tuple(layer_map.get(layer.id) or register(layer) for layer in scene.flat_layers)
-    return RenderSceneSnapshot(
-        canvas_state=scene.canvas_state,
-        layers=layers,
-        flat_layers=flat_layers,
-        parent_ids=tuple(scene.parent_ids),
-        active_layer_id=scene.active_layer_id,
-        active_flat_index=scene.active_flat_index,
-        selection=scene.selection,
-        vector=scene.vector,
+    memo = {}
+    return replace(
+        scene,
+        layers=tuple(_detach_layer(layer, memo) for layer in scene.layers),
+        flat_layers=tuple(_detach_layer(layer, memo) for layer in scene.flat_layers),
+        frame_preview_source_layers=(
+            tuple(_detach_layer(layer, memo) for layer in scene.frame_preview_source_layers)
+            if scene.frame_preview_source_layers is not None
+            else None
+        ),
+        **scene_payload_changes(scene, memo),
     )
 
 

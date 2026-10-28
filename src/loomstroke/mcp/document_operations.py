@@ -16,6 +16,7 @@ from ..core.document_service import DocumentServiceImpl
 from ..core.document_snapshot_builder import DocumentSnapshotBuilder
 from ..core.event_bus import EventBus
 from ..core.events import Events
+from ..core.history_failure_reporting import history_failure_event_is_current
 from ..core.page_service import PageServiceImpl
 from ..host_api import LoadOptions, SaveOptions
 from ..io.file_io import FileIO
@@ -182,6 +183,8 @@ class HeadlessMcpDocumentController:
         return self.state()
 
     def _modified(self, _: Any) -> None:
+        if not history_failure_event_is_current(_):
+            return
         self._dirty = True
 
     def _created(self, _: Any) -> None:

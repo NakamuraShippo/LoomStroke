@@ -11,6 +11,7 @@ import time
 from collections.abc import Callable, Collection, Iterator, Mapping, Sequence
 from contextlib import contextmanager
 from dataclasses import dataclass
+from pathlib import Path
 from typing import Any, cast
 from uuid import uuid4
 
@@ -50,10 +51,20 @@ from .document_history_router import (
 )
 from .document_history_sequence import DocumentHistorySequence
 from .document_history_state_notifier import DocumentHistoryStateNotifier
+from .document_save_canvas import apply_save_canvas, select_document_canvas
 from .document_snapshot_builder import DocumentSnapshotBuilder
 from .events import DocumentChangeEvent, Events, HistoryResetEvent, build_error_payload
+from .history_failure_reporting import install_history_failure_reporter
 from .layer import Layer
 from .native_cmyk.page_initializer import NativeCmykPageInitializer
+from .page_canvas_geometry import _install_page_canvas_geometry
+from .page_canvas_ownership import current_page_canvas_spec, merge_page_canvas
+from .page_command_completion import (
+    _capture_page_completion_delivery,
+    _public_page_switch_completion,
+    _refuse_provisional_page_navigation,
+    _stage_page_completion,
+)
 from .page_command_service import PageCommandService
 from .page_commands import (
     AddPageCommand,
@@ -68,7 +79,13 @@ from .page_commands import (
     SetMastersCommand,
     SetPageBookAttributesCommand,
 )
+from .page_delete_transaction import _delete_page_checked
+from .page_delete_undo import _restore_deleted_page_checked
 from .page_history_coordinator import PageHistoryCoordinator
+from .page_mutation_preflight import PageMutationPreflight
+from .page_residency import PageResidencyGuard, PageResidencyLease
+from .page_switch_request import _request_page_switch
+from .page_switch_transaction import _supports_page_recovery, _switch_with_recovery
 from .page_template_manager import PageTemplateManager
 from .page_templates import PageTemplateStore
 
@@ -206,11 +223,14 @@ class PageServiceImpl(PageService):
         self._masters_metadata_restore_snapshot: Callable[[Any], bool] | None = None
         # CT-08 V2: single-page content loader (persistence binds it).
         self._page_hydration_loader: Callable[[str], PageSnapshot | None] | None = None
+        self._page_hydration_source: Path | None = None
+        self._page_residency = PageResidencyGuard()
         self._page_access_counter: int = 0
         from .japanese_text.document_story import DocumentStoryService  # noqa: PLC0415
 
         self.document_stories = DocumentStoryService(self)
         canvas._document_story_service = self.document_stories
+        self._history_failure_reporter = install_history_failure_reporter(canvas, event_bus, self)
 
     # ------------------------------------------------------------------
     # Public API (HostAPI)
@@ -281,7 +301,10 @@ class PageServiceImpl(PageService):
     # ------------------------------------------------------------------
     # CT-08 V2: page content hydration.
     def _bind_page_hydration_port(
-        self, loader: Callable[[str], PageSnapshot | None] | None
+        self,
+        loader: Callable[[str], PageSnapshot | None] | None,
+        *,
+        source: Path | None = None,
     ) -> None:
         """Bind (or unbind with ``None``) the single-page content loader.
 
@@ -289,6 +312,22 @@ class PageServiceImpl(PageService):
         token; this service only asks for "the content of page X".
         """
         self._page_hydration_loader = loader
+        self._page_hydration_source = (
+            Path(source).resolve() if source is not None and loader is not None else None
+        )
+
+    def _hold_page_residency(self) -> PageResidencyLease:
+        return self._page_residency.acquire()
+
+    def _reset_page_residency(self) -> None:
+        self._page_residency = PageResidencyGuard()
+
+    def _recovery_sources_in_use(self) -> set[Path] | None:
+        if self._page_hydration_loader is None:
+            return set()
+        if self._page_hydration_source is None:
+            return None
+        return {self._page_hydration_source}
 
     def _ensure_page_hydrated(self, state: _PageState) -> bool:
         """Fill the page's layers from the source archive on first demand.
@@ -328,7 +367,7 @@ class PageServiceImpl(PageService):
         when no hydration port is bound (the content would be
         unrecoverable).  Returns the number of pages evicted.
         """
-        if self._page_hydration_loader is None:
+        if not self._page_residency.eviction_allowed or self._page_hydration_loader is None:
             return 0
         candidates = [
             state
@@ -377,65 +416,10 @@ class PageServiceImpl(PageService):
         self._persist_active_page()
 
     def set_active_page(self, page_id: PageId) -> None:
-        self._sync_document_canvas_with_live()
-        state = self._find_page_state(page_id)
-        if state is None:
-            self._emit_page_op_failed("set_active", page_id, "page not found")
+        if _refuse_provisional_page_navigation(self, page_id):
             return
-        if self._active_page_id == page_id:
-            return
-        # CT-08 V2: the incoming page must be real content before it is
-        # applied to the canvas (synchronous hydrate; async is V3).  A
-        # failed hydrate refuses the switch — the current page stays, and
-        # the failure is announced instead of showing an empty canvas
-        # (spec 08 §6.2 / V2c).
-        if not self._ensure_page_hydrated(state):
-            self._emit_page_op_failed("set_active", page_id, "page content could not be loaded")
-            return
-        outgoing_id = self._active_page_id
-        per_page_history = self._page_history.supports_page_history()
-        # CT-05 H5b: the whole switch — detach, snapshot persist/apply,
-        # attach, active-page change, trim — is one notifier batch so the
-        # unified history listener runs once at the end and never observes
-        # the detached/empty intermediate canvas state.
-        with self._history_state_notifier.batch():
-            self._emit_event(
-                Events.ACTIVE_PAGE_CHANGING,
-                {"page_id": page_id, "previous_page_id": outgoing_id},
-            )
-            if per_page_history:
-                # CT-05 H2: commit any pending stroke (H1 detach contract) and
-                # move the outgoing page's undo/redo stacks to the coordinator.
-                # History of a page that no longer exists (delete flow) is
-                # discarded instead of leaking into the next page.
-                keep = bool(outgoing_id) and self._find_page_state(outgoing_id or "") is not None
-                self._page_history.detach_active_history(outgoing_id, keep=keep)
-            self._persist_active_page()
-            self._active_page_id = page_id
-            try:
-                self._apply_page_to_canvas(state.page)
-                if per_page_history:
-                    # Attach must run after the canvas layer swap: replace_layers
-                    # clears the (already empty) canvas history internally.
-                    self._page_history.attach_history_for(page_id)
-                else:
-                    self._reset_history_state(reason="page_switch")
-            except Exception as exc:
-                logger.exception("Failed to apply page %s: %s", page_id, exc)
-                self._emit_page_op_failed("set_active", page_id, str(exc))
-                return
-            self._emit_active_page_changed(page_id)
-            # CT-05 H4d2: the switch is fully settled (outgoing history
-            # detached, snapshots persisted/applied, target history attached,
-            # active page final) — a newly inactive bundle may now exceed the
-            # document-wide budget.  Requests coalesce in the scheduler.
-            self._book_history.request_memory_trim()
-            # CT-08 V2b: with the switch settled, clean far-away pages can
-            # go back to placeholders (dirty pages are never touched).
-            self.evict_pages_to_budget()
-            # Even when both pages' counts match, the active page and the
-            # top candidates changed — the unified dedup key catches it.
-            self._history_state_notifier.mark_changed()
+        with _public_page_switch_completion():
+            _request_page_switch(self, page_id, recover=_switch_with_recovery)
 
     def add_page(self, *, after_page_id: PageId | None = None) -> PageId:
         return self.add_page_from_template(
@@ -543,7 +527,13 @@ class PageServiceImpl(PageService):
         if state is None:
             self._emit_page_op_failed("save_template", page_id, "page not found")
             return None
-        self._ensure_page_hydrated(state)
+        preflight = PageMutationPreflight(self, (page_id,))
+        if not preflight.hydrate():
+            self._emit_page_op_failed(
+                "save_template", page_id, "page could not be loaded or changed"
+            )
+            return None
+        state = preflight.targets[0][1]
 
         try:
             normalized_name = self._template_manager.validate_template_name(name)
@@ -551,21 +541,27 @@ class PageServiceImpl(PageService):
             self._emit_page_op_failed("save_template", page_id, str(exc))
             return None
 
-        if self._active_page_id == page_id:
-            self._persist_active_page()
-            state = self._find_page_state(page_id)
-            if state is None:
-                self._emit_page_op_failed("save_template", page_id, "page not found")
-                return None
-
-        view_state = None
-        if options is not None and getattr(options, "include_guides", False):
-            view_state = self.get_page_view_state(page_id)
         try:
+            if self._active_page_id == page_id:
+                self._persist_active_page(raise_on_error=True)
+            if not preflight.is_ready():
+                self._emit_page_op_failed(
+                    "save_template", page_id, "source page changed or is unavailable"
+                )
+                return None
+            view_state = None
+            if options is not None and getattr(options, "include_guides", False):
+                view_state = self.get_page_view_state(page_id)
+            canvas_spec = self._current_canvas_spec(state.page)
+            if not preflight.is_ready():
+                self._emit_page_op_failed(
+                    "save_template", page_id, "source page changed or is unavailable"
+                )
+                return None
             saved = self._template_manager.save_page_as_template(
                 state.page,
                 normalized_name,
-                canvas_spec=self._current_canvas_spec(state.page),
+                canvas_spec=canvas_spec,
                 options=options,
                 page_view_state=view_state,
             )
@@ -617,13 +613,17 @@ class PageServiceImpl(PageService):
         self._ensure_page_hydrated(state)
         return self._template_manager.estimate_raster_capture_bytes(state.page)
 
-    def duplicate_page(self, page_id: PageId) -> PageId:
+    def duplicate_page(self, page_id: PageId) -> PageId:  # noqa: PLR0911
         self._sync_document_canvas_with_live()
         state = self._find_page_state(page_id)
         if state is None:
             self._emit_page_op_failed("duplicate", page_id, "page not found")
             return page_id
-        self._ensure_page_hydrated(state)
+        preflight = PageMutationPreflight(self, (page_id,))
+        if not preflight.hydrate():
+            self._emit_page_op_failed("duplicate", page_id, "page could not be loaded or changed")
+            return page_id
+        state = preflight.targets[0][1]
         if self._active_page_id == page_id:
             # The stored snapshot goes stale while its page is active: close
             # any pending stroke through the H1 history port, then persist
@@ -632,14 +632,31 @@ class PageServiceImpl(PageService):
             close_pending = getattr(self._canvas, "_history_close_pending_group", None)
             if callable(close_pending):
                 try:
-                    close_pending()
+                    if close_pending() is False:
+                        self._emit_page_op_failed(
+                            "duplicate", page_id, "pending stroke could not be closed"
+                        )
+                        return page_id
                 except Exception as exc:
                     logger.exception(
                         "Failed to close pending stroke before duplicating %s", page_id
                     )
                     self._emit_page_op_failed("duplicate", page_id, str(exc))
                     return page_id
-            self._persist_active_page()
+            if not preflight.is_ready():
+                self._emit_page_op_failed(
+                    "duplicate", page_id, "source page changed or is unavailable"
+                )
+                return page_id
+            try:
+                self._persist_active_page(raise_on_error=True)
+            except Exception as exc:
+                logger.exception("Failed to capture source before duplicating %s", page_id)
+                self._emit_page_op_failed("duplicate", page_id, str(exc))
+                return page_id
+        if not preflight.is_ready():
+            self._emit_page_op_failed("duplicate", page_id, "source page changed or is unavailable")
+            return page_id
         source = state.page
         try:
             # Everything non-deterministic is fixed exactly once here: page
@@ -665,6 +682,9 @@ class PageServiceImpl(PageService):
             logger.exception("Failed to clone page %s: %s", page_id, exc)
             self._emit_page_op_failed("duplicate", page_id, str(exc))
             return page_id
+        if not preflight.is_ready():
+            self._emit_page_op_failed("duplicate", page_id, "source page changed or is unavailable")
+            return page_id
         command = DuplicatePageCommand(
             source_page_id=page_id,
             page=new_page,
@@ -688,9 +708,9 @@ class PageServiceImpl(PageService):
             return
         # CT-08 V2: undo of a delete restores the captured snapshot, so an
         # unhydrated page must become real content before the capture.
-        state = self._find_page_state(page_id)
-        if state is not None:
-            self._ensure_page_hydrated(state)
+        if not PageMutationPreflight(self, (page_id,)).hydrate():
+            self._emit_page_op_failed("delete", page_id, "page could not be loaded or changed")
+            return
         # CT-05 H4b: the command's apply() captures the page's current
         # runtime state (snapshot, dirty, anchors, thumbnail bytes, content
         # history bundle) and removes it; undo restores everything.
@@ -1020,11 +1040,21 @@ class PageServiceImpl(PageService):
         active_layers: Sequence[LayerSnapshot],
         metadata: DocumentMetadata,
     ) -> tuple[list[PageSnapshot], str]:
-        self._document_canvas = self._host_canvas_spec_from_metadata(metadata)
+        page_set = self._pages
+        active_before = self._active_page_id
+        page_order = tuple(map(id, page_set))
         # CT-08 V2: a save must contain every page's real content
         # (incremental unchanged-member copy is V5).
-        for state in self._pages:
-            self._ensure_page_hydrated(state)
+        for state in tuple(page_set):
+            if not self._ensure_page_hydrated(state):
+                raise OSError(f"Failed to load page {state.page.id} for save")
+            if self._pages is not page_set or self._active_page_id != active_before:
+                raise OSError("The document or active page changed while preparing the save.")
+        if tuple(map(id, self._pages)) != page_order:
+            raise OSError("The page list changed while preparing the save.")
+        self._sync_document_canvas_with_live()
+        canvas_spec = self._document_canvas_for_save()
+        apply_save_canvas(metadata, canvas_spec)
         if not self._pages:
             page = PageSnapshot(
                 id="p_0001",
@@ -1033,7 +1063,13 @@ class PageServiceImpl(PageService):
                 layers=list(active_layers),
                 canvas=None,
             )
-            self._set_pages([page], active_page_id=page.id, apply_active=False, dirty=True)
+            self._set_pages(
+                [page],
+                active_page_id=page.id,
+                apply_active=False,
+                dirty=True,
+                document_canvas=canvas_spec,
+            )
             return [page], page.id
 
         active_id = self.get_active_page_id()
@@ -1171,6 +1207,10 @@ class PageServiceImpl(PageService):
         if callable(set_callback):
             set_callback(self._history_state_notifier.mark_changed if listener else None)
 
+    def _bind_history_failure_revision_source(self, capture: Callable[[], tuple[int, int]]) -> None:
+        if self._history_failure_reporter is not None:
+            self._history_failure_reporter.revision_source = capture
+
     # ------------------------------------------------------------------
     # Book-layout metadata port (CT-06 Phase B3-c2a).  ``PageServiceImpl``
     # never imports ``DocumentMetadataService``/``DocumentServiceImpl`` --
@@ -1260,15 +1300,14 @@ class PageServiceImpl(PageService):
         so the change is visible immediately and never overwrites live
         edits.
         """
-        state = self._find_page_state(page_id)
-        if state is None:
+        preflight = PageMutationPreflight(self, (page_id,))
+        if not preflight.hydrate():
             return False
-        self._ensure_page_hydrated(state)
+        state = preflight.targets[0][1]
         is_active = self._active_page_id == page_id
         if is_active:
             self.persist_active_page()
-            state = self._find_page_state(page_id)
-            if state is None:
+            if not preflight.is_ready() or self._active_page_id != page_id:
                 return False
         layers = state.page.layers
         if remove_layer is not None:
@@ -1307,6 +1346,7 @@ class PageServiceImpl(PageService):
         """
         from uuid import uuid4  # noqa: PLC0415
 
+        from .master_instance_preparation import _master_facade_preparation  # noqa: PLC0415
         from .master_page_apply import (  # noqa: PLC0415
             build_master_instance_layer,
             find_master_instance,
@@ -1317,16 +1357,21 @@ class PageServiceImpl(PageService):
         if master is None:
             logger.warning("apply_master_to_pages: malformed master payload")
             return False
-        if self._active_page_id in set(page_ids):
-            self.persist_active_page()
+        preparation = _master_facade_preparation(self, page_ids)
+        if preparation is not None:
+            if not preparation.run():
+                return False
+            preflight = preparation.scope
+        else:
+            preflight = PageMutationPreflight(self, page_ids)
+            if self._active_page_id in set(page_ids):
+                self.persist_active_page()
+            if not preflight.hydrate():
+                logger.warning("apply_master_to_pages: page unavailable or document changed")
+                return False
 
         transitions: list[MasterInstanceTransition] = []
-        for page_id in page_ids:
-            state = self._find_page_state(page_id)
-            if state is None:
-                logger.warning("apply_master_to_pages: page not found: %s", page_id)
-                return False
-            self._ensure_page_hydrated(state)
+        for page_id, state in preflight.targets:
             existing = find_master_instance(state.page.layers, master.id)
             slot_id = existing[2].slot_id if existing is not None else uuid4().hex
             canvas_spec = self._current_canvas_spec(state.page)
@@ -1349,11 +1394,18 @@ class PageServiceImpl(PageService):
                     after_index=after_index,
                 )
             )
+        if not preflight.is_ready() or (preparation is not None and not preparation.current()):
+            logger.warning("apply_master_to_pages: target ownership changed during preflight")
+            if preparation is not None:
+                preparation.report("master target changed while building instances")
+            return False
         command = ApplyMasterInstancesCommand(transitions=tuple(transitions))
+        command._requires_checked_master = preparation is not None
         if not self._book_history.execute(command):
             return False
-        self._emit_document_changed("pages.master_instances_changed")
-        self._emit_pages_changed()
+        if not command._requires_checked_master:
+            self._emit_document_changed("pages.master_instances_changed")
+            self._emit_pages_changed()
         return True
 
     def unlink_master_instance(self, page_id: PageId, master_id: str) -> bool:
@@ -1362,20 +1414,26 @@ class PageServiceImpl(PageService):
         The marker goes away and the lock opens; the content stays
         (spec 07 §6.3).  One history entry.
         """
+        from .master_instance_preparation import _master_facade_preparation  # noqa: PLC0415
         from .master_page_apply import (  # noqa: PLC0415
             find_master_instance,
             unlinked_instance_layer,
         )
 
-        state = self._find_page_state(page_id)
+        preparation = _master_facade_preparation(self, (page_id,))
+        if preparation is not None:
+            if not preparation.run():
+                return False
+            state = preparation.scope.targets[0][1]
+        else:
+            state = self._find_page_state(page_id)
+            if state is not None:
+                self._ensure_page_hydrated(state)
+                if self._active_page_id == page_id:
+                    self.persist_active_page()
+                    state = self._find_page_state(page_id)
         if state is None:
             return False
-        self._ensure_page_hydrated(state)
-        if self._active_page_id == page_id:
-            self.persist_active_page()
-            state = self._find_page_state(page_id)
-            if state is None:
-                return False
         existing = find_master_instance(state.page.layers, master_id)
         if existing is None:
             return False
@@ -1391,10 +1449,15 @@ class PageServiceImpl(PageService):
                 ),
             )
         )
+        if preparation is not None and not preparation.current():
+            preparation.report("master target changed while unlinking instance")
+            return False
+        command._requires_checked_master = preparation is not None
         if not self._book_history.execute(command):
             return False
-        self._emit_document_changed("pages.master_instances_changed")
-        self._emit_pages_changed()
+        if not command._requires_checked_master:
+            self._emit_document_changed("pages.master_instances_changed")
+            self._emit_pages_changed()
         return True
 
     def _apply_book_layout_transition(self, updates: Mapping[str, Any]) -> Any | None:
@@ -1730,6 +1793,9 @@ class PageServiceImpl(PageService):
         edits included).  Nothing is deep-copied: the ``PageSnapshot``,
         thumbnail bytes, and content history bundle move into the command.
         """
+        checked = _delete_page_checked(self, command)
+        if checked is not None:
+            return checked
         page_id = command.page_id
         if len(self._pages) <= 1:
             self._emit_page_op_failed("delete", page_id, "cannot delete last page")
@@ -1781,6 +1847,9 @@ class PageServiceImpl(PageService):
         coordinator; re-activating the page attaches it through the
         normal page-switch path.
         """
+        checked = _restore_deleted_page_checked(self, command)
+        if checked is not None:
+            return checked
         page_id = command.page_id
         page = command.page
         if page is None:
@@ -1918,6 +1987,8 @@ class PageServiceImpl(PageService):
         with self._history_state_notifier.batch():
             if document_canvas is not None:
                 self._document_canvas = document_canvas
+            self._reset_page_residency()
+            self._bind_page_hydration_port(None)
             self._page_history.clear_all(reason="set_pages")
             self._book_history.clear(reason="set_pages")
             self._pages = [_PageState(page=page, dirty=dirty) for page in list(pages)]
@@ -2051,6 +2122,8 @@ class PageServiceImpl(PageService):
                 lighting_3d=copy.deepcopy(layer.lighting_3d),
                 display_mode_3d=layer.display_mode_3d,
                 gen_3d=copy.deepcopy(layer.gen_3d),
+                # The snapshot is immutable; applying it copies the live ink/alpha buffers.
+                native_cmyk=layer.native_cmyk if not blank else None,
             )
 
         return [clone_layer(layer) for layer in layers]
@@ -2081,11 +2154,9 @@ class PageServiceImpl(PageService):
     def _current_canvas_spec(self, page: PageSnapshot | None) -> HostCanvasSpec:
         """Spec of a page *as it stands now*, for reporting and authoring.
 
-        The active page **is** the live canvas, and resizing that canvas
-        (Image > Canvas Size, rotate 90 degrees, DPI) never notifies this
-        service -- so the stored document spec goes stale the moment the
-        user resizes, and a page added or a template saved afterwards would
-        come out at the pre-resize size.
+        The active page is the live canvas. Geometry events mark content dirty
+        but do not synchronize its canvas spec; direct DPI updates emit no
+        event. Reporting and authoring share the same ownership calculation.
 
         Deliberately *not* used by the page-apply path: when a page is being
         loaded into the canvas the document's spec is the authority, and the
@@ -2093,7 +2164,11 @@ class PageServiceImpl(PageService):
         """
 
         if page is not None and page.canvas:
-            return self._resolve_canvas_spec(page)
+            return current_page_canvas_spec(
+                page.canvas,
+                self._live_canvas_spec() if page.id == self._active_page_id else None,
+                simple_canvas=isinstance(self._canvas, SimpleCanvasService),
+            )
         if page is None or (self._active_page_id and page.id == self._active_page_id):
             live = self._live_canvas_spec()
             if live is not None:
@@ -2101,15 +2176,10 @@ class PageServiceImpl(PageService):
         return self._resolve_canvas_spec(page)
 
     def _sync_document_canvas_with_live(self) -> None:
-        """Adopt the live canvas geometry as the document's canvas.
+        """Synchronize live geometry with its page or document owner.
 
-        Nothing tells this service when the canvas is resized: Image >
-        Canvas Size, rotate 90 degrees and the DPI dialog all call
-        ``update_canvas_config()`` directly, and that emits no event.  So
-        ``_document_canvas`` -- the spec every page without its own
-        override resolves to -- silently keeps the pre-resize geometry, and
-        a page added afterwards is created at the old size (and shrinks the
-        canvas back the moment it is applied).
+        Page-local overrides never become the document default. A page that
+        inherits the default still synchronizes explicit resize/DPI changes.
 
         Called from the authoring entry points only.  Never from the
         load/apply path: there the incoming document is the authority and
@@ -2119,8 +2189,23 @@ class PageServiceImpl(PageService):
         if not self._pages:
             return
         live = self._live_canvas_spec()
-        if live is not None:
+        active = self._find_page_state(self._active_page_id or "")
+        if active is not None and active.page.canvas is not None:
+            active.page.canvas = merge_page_canvas(
+                active.page.canvas,
+                live,
+                simple_canvas=isinstance(self._canvas, SimpleCanvasService),
+            )
+        elif live is not None:
             self._document_canvas = live
+
+    def _document_canvas_for_save(self) -> HostCanvasSpec:
+        active = self._find_page_state(self._active_page_id or "")
+        return select_document_canvas(
+            self._document_canvas,
+            active.page.canvas if active is not None else None,
+            self._live_canvas_spec(),
+        )
 
     def _live_canvas_spec(self) -> HostCanvasSpec | None:
         """Canvas geometry as the canvas itself reports it, if it can."""
@@ -2264,7 +2349,12 @@ class PageServiceImpl(PageService):
         else:
             raise RuntimeError("Unsupported canvas implementation")
 
-    def _persist_active_page(self, *, raise_on_error: bool = False) -> None:
+    def _persist_active_page(
+        self,
+        *,
+        raise_on_error: bool = False,
+        scope_guard: Callable[[], bool] | None = None,
+    ) -> None:
         active_id = self._active_page_id
         if not active_id:
             return
@@ -2276,8 +2366,12 @@ class PageServiceImpl(PageService):
         )
         if filter_pen is not None:
             filter_pen.finalize()
+        if scope_guard is not None and not scope_guard():
+            return
         try:
-            state.page.layers = self._capture_layers()
+            layers = self._capture_layers()
+            if scope_guard is None or scope_guard():
+                state.page.layers = layers
         except Exception as exc:
             if raise_on_error:
                 raise
@@ -2290,27 +2384,19 @@ class PageServiceImpl(PageService):
         canvas_spec: HostCanvasSpec,
         prepared_layers: list[Any] | None = None,
     ) -> None:
-        # Convert first when the caller has not already done so: the resize and
-        # background writes below are mutations, and a conversion failure after
+        # Convert first when the caller has not already done so: the geometry
+        # writes below are mutations, and a conversion failure after
         # them leaves the canvas with the new geometry and the old pixels.
         q_layers = (
             list(prepared_layers)
             if prepared_layers is not None
             else self._snapshots_to_layers(layers, canvas_spec)
         )
-        canvas.update_canvas_config(
-            width=canvas_spec.width,
-            height=canvas_spec.height,
-            dpi=int(canvas_spec.dpi[0]),
-        )
-        background_color = canvas_spec.background_color
-        canvas._background = QColor(
-            background_color[0],
-            background_color[1],
-            background_color[2],
-            background_color[3],
-        )
-        canvas.replace_layers(q_layers)
+        _install_page_canvas_geometry(canvas, canvas_spec)
+        if not q_layers and _supports_page_recovery(canvas):
+            canvas._replace_layers_for_page(q_layers)
+        else:
+            canvas.replace_layers(q_layers)
 
     def _snapshots_to_layers(
         self,
@@ -2467,17 +2553,29 @@ class PageServiceImpl(PageService):
                 logger.debug("history_clear failed: %s", exc)
 
     def _emit_document_changed(self, change_type: str) -> None:
+        if _stage_page_completion(self, "_emit_document_changed", change_type):
+            return
+        delivery = _capture_page_completion_delivery(self)
         if change_type in {"pages.add", "pages.delete", "pages.duplicate"}:
             self.document_stories.refresh_geometry()
+        if delivery is not None and not delivery.is_current():
+            return
         payload = DocumentChangeEvent(change_type=change_type)
         self._emit_event(Events.DOC_CHANGED, payload)
 
     def _emit_pages_changed(self) -> None:
+        if _stage_page_completion(self, "_emit_pages_changed"):
+            return
+        delivery = _capture_page_completion_delivery(self)
         payload = {"pages": list(self.list_pages())}
         self._emit_event(Events.PAGES_CHANGED, payload)
+        if delivery is not None and not delivery.is_current():
+            return
         self._emit_cached_page_thumbnails()
 
     def _emit_page_thumbnail_updated(self, page_id: str, thumbnail_png: bytes) -> None:
+        if _stage_page_completion(self, "_emit_page_thumbnail_updated", page_id, thumbnail_png):
+            return
         payload = {
             "page_id": page_id,
             "thumbnail_png": thumbnail_png,
@@ -2486,7 +2584,10 @@ class PageServiceImpl(PageService):
         self._emit_event(Events.PAGE_THUMBNAIL_UPDATED, payload)
 
     def _emit_cached_page_thumbnails(self) -> None:
-        for state in self._pages:
+        delivery = _capture_page_completion_delivery(self)
+        for state in tuple(self._pages):
+            if delivery is not None and not delivery.is_current():
+                break
             thumbnail_png = self._page_thumbnail_pngs.get(state.page.id)
             if thumbnail_png:
                 self._emit_page_thumbnail_updated(state.page.id, thumbnail_png)
@@ -2501,13 +2602,19 @@ class PageServiceImpl(PageService):
         return f"{PAGES_DIR}/{page_id}/{PAGE_THUMBNAIL_NAME}"
 
     def _emit_active_page_changed(self, page_id: str) -> None:
+        if _stage_page_completion(self, "_emit_active_page_changed", page_id):
+            return
         self._emit_event(Events.ACTIVE_PAGE_CHANGED, {"page_id": page_id})
 
     def _emit_page_dirty_changed(self, page_id: str, dirty: bool) -> None:
+        if _stage_page_completion(self, "_emit_page_dirty_changed", page_id, dirty):
+            return
         payload = {"page_id": page_id, "dirty": bool(dirty)}
         self._emit_event(Events.PAGE_DIRTY_CHANGED, payload)
 
     def _emit_page_op_failed(self, op: str, page_id: str, error: str) -> None:
+        if _stage_page_completion(self, "_emit_page_op_failed", op, page_id, error, failure=True):
+            return
         error_lower = error.lower()
         if "page not found" in error_lower:
             reason_code = "page_not_found"
@@ -2572,5 +2679,11 @@ class PageServiceImpl(PageService):
             state.dirty = True
             self._emit_page_dirty_changed(active_id, True)
 
+
+_DEFAULT_PAGE_PERSIST = PageServiceImpl._persist_active_page
+_DEFAULT_PAGE_PUBLIC_PERSIST = PageServiceImpl.persist_active_page
+_DEFAULT_PAGE_SET_ACTIVE = PageServiceImpl.set_active_page
+_DEFAULT_PAGE_APPLY = PageServiceImpl._apply_page_to_canvas
+_DEFAULT_MASTER_INSTANCE_SET = PageServiceImpl._set_master_instance_layer
 
 __all__ = ["PageServiceImpl"]

@@ -24,6 +24,7 @@ from PySide6.QtGui import QImage
 from loomstroke.platform.user_dirs import default_user_root
 
 from .generation_capabilities import generation_submitter_capabilities
+from .production_record_io import read_checked_records
 
 PCT_TOOL_SCHEMA_VERSION = "pct.tool.v1"
 PCT_STORE_SCHEMA_VERSION = "pct.store.v1"
@@ -171,6 +172,18 @@ class ProductionControlStore:
         self.ensure()
         self._write_json_list(self.root / f"{name}.json", [dict(item) for item in records])
 
+    def _read_records_checked(self, name: str) -> list[dict[str, Any]]:
+        self.ensure()
+        return read_checked_records(self.root / f"{name}.json")
+
+    def _read_bible_entries_checked(self, scope: str) -> list[dict[str, Any]]:
+        normalized = _normalize_bible_scope(scope)
+        return read_checked_records(
+            self._bible_path(normalized),
+            container_key="entries" if normalized == "project" else None,
+            jsonl=normalized != "project",
+        )
+
     def upsert_records(
         self,
         name: str,
@@ -228,18 +241,11 @@ class ProductionControlStore:
     def add_bible_entry(self, entry: Mapping[str, Any]) -> dict[str, Any]:
         record = dict(entry)
         scope = _normalize_bible_scope(str(record.get("scope") or "project"))
-        path = self._bible_path(scope)
         entries = self.list_bible_entries(scope)
         entries = [item for item in entries if item.get("entryId") != record.get("entryId")]
         entries.append(record)
         entries.sort(key=lambda item: str(item.get("entryId") or ""))
-        if scope == "project":
-            self._write_json(
-                path,
-                {"schemaVersion": "pct.bible.v1", "scope": scope, "entries": entries},
-            )
-        else:
-            self._write_jsonl(path, entries)
+        self._write_bible_entries(scope, entries)
         return record
 
     def remove_bible_entry(self, scope: str, entry_id: str) -> bool:
@@ -248,15 +254,19 @@ class ProductionControlStore:
         remaining = [entry for entry in entries if str(entry.get("entryId") or "") != entry_id]
         if len(remaining) == len(entries):
             return False
+        self._write_bible_entries(normalized, remaining)
+        return True
+
+    def _write_bible_entries(self, scope: str, entries: Sequence[Mapping[str, Any]]) -> None:
+        normalized = _normalize_bible_scope(scope)
         path = self._bible_path(normalized)
         if normalized == "project":
             self._write_json(
                 path,
-                {"schemaVersion": "pct.bible.v1", "scope": normalized, "entries": remaining},
+                {"schemaVersion": "pct.bible.v1", "scope": normalized, "entries": entries},
             )
         else:
-            self._write_jsonl(path, remaining)
-        return True
+            self._write_jsonl(path, entries)
 
     def write_qa_report(self, artifact_id: str, report: Mapping[str, Any]) -> None:
         self.ensure()

@@ -9,6 +9,7 @@ import numpy as np
 from numpy.typing import NDArray
 
 from .commands import SELECTION_MASK_LAYER_ID, BlendMode, Command
+from .document_capture_guard import DocumentCaptureGuardMixin, notify_document_capture_committed
 from .layer import Layer
 
 Float32Array: TypeAlias = NDArray[np.float32]
@@ -96,7 +97,7 @@ class CanvasDocument:
     layers: tuple[tuple[str, str, bool, float], ...]
 
 
-class Canvas:
+class Canvas(DocumentCaptureGuardMixin):
     """Compatibility canvas implementing the legacy API surface."""
 
     def __init__(
@@ -288,6 +289,7 @@ class Canvas:
             return False
         self._dirty = True
         self._invalidate_composite()
+        notify_document_capture_committed(cmd)
         return True
 
     def begin_transaction(self, label: str | None = None) -> None:
@@ -645,3 +647,6 @@ class Canvas:
 
     def _invalidate_composite(self) -> None:
         self._composite_cache = None
+
+
+_DEFAULT_LEGACY_HISTORY_CLEAR = Canvas.history_clear

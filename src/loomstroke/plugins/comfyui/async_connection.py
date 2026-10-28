@@ -22,6 +22,7 @@ from PySide6.QtCore import QObject, Signal
 
 from ...platform import AsyncManager
 from ...platform.settings_schema import DEFAULT_COMFYUI_URL
+from .progress_router import _ProgressCapacity, _ProgressRouter, _ProgressRoutingError
 
 logger = logging.getLogger(__name__)
 
@@ -81,6 +82,8 @@ class AsyncComfyUIConnection(QObject):
         # WebSocket task
         self._ws_task: asyncio.Task | None = None
         self._message_queue: asyncio.Queue[Any] | None = None
+        self._progress_capacity = _ProgressCapacity()
+        self._progress_router = _ProgressRouter(self._progress_capacity)
 
         # Set to True by ``disconnect()`` so that ``_handle_messages()`` can
         # distinguish an explicit teardown from an unexpected server drop
@@ -125,7 +128,8 @@ class AsyncComfyUIConnection(QObject):
             # Connect WebSocket
             ws_url = f"{self.base_url.replace('http', 'ws')}/ws?clientId={self.client_id}"
             self.ws = await self.async_manager.websocket_connect(ws_url)
-            self._message_queue = asyncio.Queue(maxsize=4096)
+            self._get_progress_router().seal()
+            self._progress_router = _ProgressRouter(self._progress_capacity)
 
             # Start message handler
             self._ws_task = asyncio.create_task(self._handle_messages())
@@ -151,6 +155,7 @@ class AsyncComfyUIConnection(QObject):
         # does not treat the WSMsgType.CLOSED that follows as an unexpected
         # drop. Pre-release audit §12-N (2026-04-11).
         self._intentional_disconnect = True
+        self._get_progress_router().seal()
 
         if self._ws_task:
             self._ws_task.cancel()
@@ -171,18 +176,22 @@ class AsyncComfyUIConnection(QObject):
         """Handle incoming WebSocket messages."""
         if not self.ws:
             return
+        websocket = self.ws
+        router = self._get_progress_router()
 
         try:
-            async for msg in self.ws:
+            async for msg in websocket:
+                if self.ws is not websocket or vars(self).get("_progress_router") is not router:
+                    break
                 if msg.type == aiohttp.WSMsgType.TEXT:
                     try:
                         data = json.loads(msg.data)
-                        self._broadcast_ws_message(data)
+                        router.dispatch(data, self._extract_prompt_id(data))
                         self._process_message(data)
                     except json.JSONDecodeError as e:
                         logger.error(f"Failed to parse WebSocket message: {e}")
                 elif msg.type == aiohttp.WSMsgType.ERROR:
-                    error_msg = f"WebSocket error: {self.ws.exception()}"
+                    error_msg = f"WebSocket error: {websocket.exception()}"
                     logger.error(error_msg)
                     self.error_occurred.emit(error_msg)
                     # Mark connection as closed and notify listeners.
@@ -203,16 +212,19 @@ class AsyncComfyUIConnection(QObject):
             logger.debug("WebSocket handler cancelled")
             raise
         except Exception as e:
-            logger.error(f"Error in message handler: {e}")
-            self.error_occurred.emit(str(e))
-            self.status.connected = False
-            self._notify_unexpected_disconnect(f"WebSocket handler error: {e}")
+            if self.ws is websocket and vars(self).get("_progress_router") is router:
+                logger.error(f"Error in message handler: {e}")
+                self.error_occurred.emit(str(e))
+                self.status.connected = False
+                self._notify_unexpected_disconnect(f"WebSocket handler error: {e}")
         finally:
             # Ensure connection state is updated
-            if self.ws and not self.ws.closed:
-                await self.ws.close()
-            self.ws = None
-            self.status.connected = False
+            router.seal()
+            if not websocket.closed:
+                await websocket.close()
+            if self.ws is websocket and vars(self).get("_progress_router") is router:
+                self.ws = None
+                self.status.connected = False
 
     def _notify_unexpected_disconnect(self, reason: str) -> None:
         """Emit disconnect signals for a server-initiated / error-induced drop.
@@ -237,20 +249,19 @@ class AsyncComfyUIConnection(QObject):
         self.disconnected.emit()
 
     def _broadcast_ws_message(self, message: dict[str, Any]) -> None:
-        """Push message into queue for stream consumers."""
-        queue = self._message_queue
-        if queue is None:
-            return
-        try:
-            queue.put_nowait(message)
-        except asyncio.QueueFull:
-            # Drop oldest entry when queue is full.
-            try:
-                queue.get_nowait()
-            except asyncio.QueueEmpty:
-                return
-            with contextlib.suppress(asyncio.QueueFull):
-                queue.put_nowait(message)
+        """Route progress without consuming another prompt's messages."""
+        self._get_progress_router().dispatch(message, self._extract_prompt_id(message))
+
+    def _get_progress_router(self) -> _ProgressRouter:
+        """Initialize only Python state for compatible lightweight instances."""
+        stored = vars(self)
+        router = stored.get("_progress_router")
+        if router is None:
+            capacity = stored.setdefault("_progress_capacity", _ProgressCapacity())
+            router = _ProgressRouter(capacity)
+            self._progress_router = router
+        self._message_queue = None
+        return router
 
     @staticmethod
     def _extract_prompt_id(data: dict[str, Any]) -> str | None:
@@ -328,6 +339,8 @@ class AsyncComfyUIConnection(QObject):
         Raises:
             aiohttp.ClientError: On request failure
         """
+        router = self._get_progress_router()
+        ticket = router.reserve()
         try:
             url = f"{self.base_url}/prompt"
 
@@ -340,6 +353,8 @@ class AsyncComfyUIConnection(QObject):
                         # Add timeout for reading response
                         data = await asyncio.wait_for(response.json(), timeout=5.0)
                         prompt_id = data.get("prompt_id", "")
+                        if isinstance(prompt_id, str) and prompt_id:
+                            router.claim(ticket, prompt_id)
                         logger.info(f"Queued prompt: {prompt_id}")
                         return prompt_id
                     except TimeoutError as exc:
@@ -362,6 +377,8 @@ class AsyncComfyUIConnection(QObject):
         except Exception as e:
             logger.error(f"Failed to queue prompt: {e}")
             raise
+        finally:
+            router.abandon(ticket)
 
     async def get_history(self, prompt_id: str) -> dict[str, Any]:
         """
@@ -634,29 +651,14 @@ class AsyncComfyUIConnection(QObject):
             logger.warning(f"WebSocket not connected for streaming job {job_id}")
             return
 
-        if self._message_queue is None:
-            self._message_queue = asyncio.Queue(maxsize=4096)
-        message_queue = self._message_queue
-
+        messages = self._get_progress_router().messages(job_id)
         try:
-            while True:
-                if not self.status.connected and message_queue.empty():
-                    break
-
-                try:
-                    message = await asyncio.wait_for(message_queue.get(), timeout=0.25)
-                except TimeoutError:
-                    continue
-
+            async for message in messages:
                 if not isinstance(message, dict):
                     continue
 
                 msg_type = message.get("type")
                 if not isinstance(msg_type, str):
-                    continue
-
-                prompt_id = self._extract_prompt_id(message)
-                if prompt_id is not None and prompt_id != job_id:
                     continue
 
                 if msg_type == "progress":
@@ -694,8 +696,12 @@ class AsyncComfyUIConnection(QObject):
 
             if not self.status.connected:
                 logger.warning(f"WebSocket closed during progress streaming for {job_id}")
+        except _ProgressRoutingError:
+            raise
         except Exception as e:
             logger.error(f"Error streaming progress for {job_id}: {e}")
+        finally:
+            await messages.aclose()
 
     def is_connected(self) -> bool:
         """Check if connected."""

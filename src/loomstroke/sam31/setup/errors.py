@@ -42,7 +42,7 @@ ACTIONS: dict[str, str] = {
     ),
     SAM31_INSTALL_FAILED: (
         "Installing the sam3 package failed; check the setup log."
-        " For offline setup place the repository under runtime/sam3-src."
+        " Installing from runtime/sam3-src also requires permission for missing dependencies."
     ),
     COMPATIBILITY_UNSUPPORTED: (
         "The installed sam3 version is not recognized by the compatibility"
@@ -53,9 +53,9 @@ ACTIONS: dict[str, str] = {
     MODEL_LOAD_FAILED: "Loading the SAM 3.1 model failed; see the worker log.",
     OOM: "The GPU ran out of memory; close other GPU applications and retry.",
     NETWORK_CONSENT_REQUIRED: (
-        "Setup needs to download PyTorch and the sam3 package. Allow"
-        " external services in Preferences > Privacy, or place the packages"
-        " under runtime/sam3-src for offline setup."
+        "Allow external services in Preferences > Privacy before installing"
+        " missing packages, or prepare all runtime dependencies in advance"
+        " to use Setup offline. A local sam3 source copy alone is insufficient."
     ),
     CANCELLED: "Setup was cancelled.",
 }

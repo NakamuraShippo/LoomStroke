@@ -13,6 +13,11 @@ from ...core.commands import (
 from ...core.geometry import Affine2D
 from ...core.selection_clipboard import SelectionPayload
 from ...host_api import StrokePoint
+from ..common.document_capture_guard import (
+    DocumentCaptureLease,
+    begin_document_capture_edit,
+    release_document_capture_edit,
+)
 
 if TYPE_CHECKING:
     from .rect_tool import BasicSelectionRectTool
@@ -61,6 +66,7 @@ class RasterTransformSession:
     base_mask: Any | None = None
     base_bounds: Any | None = None
     base_full_bounds: Any | None = None
+    capture_lease: DocumentCaptureLease | None = None
 
 
 class RasterSelectionController:
@@ -77,6 +83,17 @@ class RasterSelectionController:
         self.state.base_full_bounds = None
         self.state.drag_mode = "create"
         self.state.drag_offset = (0.0, 0.0)
+
+    def begin_content_preview(self, canvas: Any) -> None:
+        self.transform.capture_lease = begin_document_capture_edit(
+            canvas, self.transform.capture_lease
+        )
+
+    def finish_content_preview(self) -> bool:
+        if not release_document_capture_edit(self.transform.capture_lease):
+            return False
+        self.transform.capture_lease = None
+        return True
 
     def on_pointer_down(  # noqa: PLR0912
         self,

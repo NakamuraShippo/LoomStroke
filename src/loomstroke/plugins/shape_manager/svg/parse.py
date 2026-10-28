@@ -10,11 +10,14 @@ from defusedxml.ElementTree import fromstring as _safe_fromstring
 
 from ...vector_tools.common import Anchor, VectorPath, VectorStyle
 from ..model.shape_record import ShapeTemplate
+from .path_validation import tokenize_path_data, validate_path_commands
+from .point_budget import SvgPointBudget, iter_point_pairs
 
 logger = logging.getLogger(__name__)
 
 _COMMAND_RE = re.compile(r"[MmLlHhVvCcQqAaZz]|[+-]?(?:\d+\.\d*|\.\d+|\d+)(?:[eE][+-]?\d+)?")
 _MAX_PATH_COMMANDS = 4096
+_MAX_SVG_ANCHORS = 65_536
 _MAX_ABS_COORDINATE = 1_000_000.0
 _TEXT_META_KEY = "text_tool"
 _SVG_TEXT_META_KEY = "svg_text"
@@ -34,11 +37,13 @@ def parse_svg(svg_text: str) -> ShapeTemplate:
     text_entries: list[dict[str, object]] = []
     opacity_entries: list[dict[str, object]] = []
     style_holder: list[VectorStyle | None] = [None]
+    budget = SvgPointBudget(_MAX_SVG_ANCHORS)
     _parse_children(
         root,
         {},
         _identity_matrix(),
         paths,
+        budget=budget,
         path_roles=path_roles,
         text_entries=text_entries,
         opacity_entries=opacity_entries,
@@ -67,6 +72,7 @@ def _parse_children(
     parent_transform: tuple[float, float, float, float, float, float],
     out_paths: list[VectorPath],
     *,
+    budget: SvgPointBudget,
     path_roles: list[str],
     text_entries: list[dict[str, object]],
     opacity_entries: list[dict[str, object]],
@@ -85,6 +91,7 @@ def _parse_children(
                 style,
                 transform,
                 out_paths,
+                budget=budget,
                 path_roles=path_roles,
                 text_entries=text_entries,
                 opacity_entries=opacity_entries,
@@ -100,7 +107,7 @@ def _parse_children(
             continue
         transform = _combine_transform(parent_transform, _parse_transform(child.get("transform")))
         if tag == "text":
-            text_path, text_entry = _parse_text_element(child, style, transform)
+            text_path, text_entry = _parse_text_element(child, style, transform, budget)
             if text_path is not None and text_entry is not None:
                 path_index = len(out_paths)
                 text_entry["path_index"] = path_index
@@ -114,7 +121,7 @@ def _parse_children(
                     )
                 text_entries.append(text_entry)
             continue
-        element_paths = _parse_shape(tag, child, transform)
+        element_paths = _parse_shape(tag, child, transform, budget)
         if element_paths:
             start_index = len(out_paths)
             out_paths.extend(element_paths)
@@ -133,28 +140,30 @@ def _parse_shape(  # noqa: PLR0911
     tag: str,
     elem: ET.Element,
     transform: tuple[float, float, float, float, float, float],
+    budget: SvgPointBudget,
 ) -> list[VectorPath]:
     if tag == "path":
         data = elem.get("d", "")
         if not data:
             return []
-        return _parse_path_data(data, transform)
+        return _parse_path_data(data, transform, budget)
     if tag == "rect":
-        return _rect_to_path(elem, transform)
+        return _rect_to_path(elem, transform, budget)
     if tag == "circle":
-        return _circle_to_path(elem, transform)
+        return _circle_to_path(elem, transform, budget)
     if tag == "ellipse":
-        return _ellipse_to_path(elem, transform)
+        return _ellipse_to_path(elem, transform, budget)
     if tag == "line":
-        return _line_to_path(elem, transform)
+        return _line_to_path(elem, transform, budget)
     if tag in {"polygon", "polyline"}:
-        return _poly_to_path(elem, transform, closed=(tag == "polygon"))
+        return _poly_to_path(elem, transform, budget, closed=(tag == "polygon"))
     return []
 
 
 def _rect_to_path(
     elem: ET.Element,
     transform: tuple[float, float, float, float, float, float],
+    budget: SvgPointBudget,
 ) -> list[VectorPath]:
     x = _parse_svg_number(elem.get("x"), default=0.0)
     y = _parse_svg_number(elem.get("y"), default=0.0)
@@ -162,6 +171,7 @@ def _rect_to_path(
     h = _parse_svg_number(elem.get("height"), default=0.0)
     if w <= 0 or h <= 0:
         return []
+    budget.consume(4)
     anchors = [
         Anchor(pos=(x, y), kind="corner"),
         Anchor(pos=(x + w, y), kind="corner"),
@@ -175,17 +185,20 @@ def _rect_to_path(
 def _circle_to_path(
     elem: ET.Element,
     transform: tuple[float, float, float, float, float, float],
+    budget: SvgPointBudget,
 ) -> list[VectorPath]:
     cx = _parse_svg_number(elem.get("cx"), default=0.0)
     cy = _parse_svg_number(elem.get("cy"), default=0.0)
     r = _parse_svg_number(elem.get("r"), default=0.0)
     if r <= 0:
         return []
-    return [_ellipse_path(cx, cy, r, r, transform)]
+    return [_ellipse_path(cx, cy, r, r, transform, budget)]
 
 
 def _ellipse_to_path(
-    elem: ET.Element, transform: tuple[float, float, float, float, float, float]
+    elem: ET.Element,
+    transform: tuple[float, float, float, float, float, float],
+    budget: SvgPointBudget,
 ) -> list[VectorPath]:
     cx = _parse_svg_number(elem.get("cx"), default=0.0)
     cy = _parse_svg_number(elem.get("cy"), default=0.0)
@@ -193,7 +206,7 @@ def _ellipse_to_path(
     ry = _parse_svg_number(elem.get("ry"), default=0.0)
     if rx <= 0 or ry <= 0:
         return []
-    return [_ellipse_path(cx, cy, rx, ry, transform)]
+    return [_ellipse_path(cx, cy, rx, ry, transform, budget)]
 
 
 def _ellipse_path(
@@ -202,10 +215,12 @@ def _ellipse_path(
     rx: float,
     ry: float,
     transform: tuple[float, float, float, float, float, float],
+    budget: SvgPointBudget,
 ) -> VectorPath:
     kappa = 0.5522847498307936
     kx = rx * kappa
     ky = ry * kappa
+    budget.consume(4)
     anchors = [
         Anchor(pos=(cx + rx, cy), kind="smooth", h_in=(0.0, -ky), h_out=(0.0, ky)),
         Anchor(pos=(cx, cy + ry), kind="smooth", h_in=(kx, 0.0), h_out=(-kx, 0.0)),
@@ -219,6 +234,7 @@ def _ellipse_path(
 def _line_to_path(
     elem: ET.Element,
     transform: tuple[float, float, float, float, float, float],
+    budget: SvgPointBudget,
 ) -> list[VectorPath]:
     x1 = _parse_svg_number(elem.get("x1"), default=0.0)
     y1 = _parse_svg_number(elem.get("y1"), default=0.0)
@@ -226,6 +242,7 @@ def _line_to_path(
     y2 = _parse_svg_number(elem.get("y2"), default=0.0)
     if x1 == x2 and y1 == y2:
         return []
+    budget.consume(2)
     path = VectorPath(
         anchors=[
             Anchor(pos=(x1, y1), kind="corner"),
@@ -239,15 +256,21 @@ def _line_to_path(
 def _poly_to_path(
     elem: ET.Element,
     transform: tuple[float, float, float, float, float, float],
+    budget: SvgPointBudget,
     *,
     closed: bool,
 ) -> list[VectorPath]:
     raw = elem.get("points", "")
-    values = _parse_floats(raw)
-    if len(values) < 4:
+    pairs = iter_point_pairs(raw, _COMMAND_RE, _parse_svg_number)
+    first = next(pairs, None)
+    second = next(pairs, None)
+    if first is None or second is None:
         return []
-    points = [(values[i], values[i + 1]) for i in range(0, len(values) - 1, 2)]
-    anchors = [Anchor(pos=pt, kind="corner") for pt in points]
+    budget.consume(2)
+    anchors = [Anchor(pos=first, kind="corner"), Anchor(pos=second, kind="corner")]
+    for point in pairs:
+        budget.consume()
+        anchors.append(Anchor(pos=point, kind="corner"))
     path = VectorPath(anchors=anchors, closed=closed)
     return [_apply_transform_to_path(path, transform)]
 
@@ -256,6 +279,7 @@ def _parse_text_element(
     elem: ET.Element,
     style: Mapping[str, str],
     transform: tuple[float, float, float, float, float, float],
+    budget: SvgPointBudget,
 ) -> tuple[VectorPath | None, dict[str, object] | None]:
     content = _extract_text_content(elem)
     if not content:
@@ -270,6 +294,7 @@ def _parse_text_element(
     width = max(1.0, max_line_len * font_size * _TEXT_WIDTH_FACTOR)
     height = max(font_size, len(lines) * font_size * 1.2)
     top = y - font_size
+    budget.consume(4)
     frame_path = _rect_path_from_bounds(x, top, width, height)
     transformed = _apply_transform_to_path(frame_path, transform)
     color = _text_color_rgba(style)
@@ -385,14 +410,17 @@ def _text_tool_payload_from_svg_text(entry: Mapping[str, object]) -> dict[str, o
 
 
 def _parse_path_data(  # noqa: PLR0912, PLR0915
-    data: str, transform: tuple[float, float, float, float, float, float]
+    data: str,
+    transform: tuple[float, float, float, float, float, float],
+    budget: SvgPointBudget,
 ) -> list[VectorPath]:
-    tokens = _COMMAND_RE.findall(data)
+    tokens = tokenize_path_data(data, _COMMAND_RE)
     if not tokens:
         return []
     command_count = sum(1 for token in tokens if token.isalpha())
     if command_count > _MAX_PATH_COMMANDS:
         raise ValueError("SVG path exceeds supported command count")
+    validate_path_commands(tokens)
     paths: list[VectorPath] = []
     anchors: list[Anchor] = []
     cmd = None
@@ -407,6 +435,7 @@ def _parse_path_data(  # noqa: PLR0912, PLR0915
         anchors = []
 
     def _add_anchor(point: tuple[float, float]) -> None:
+        budget.consume()
         anchors.append(Anchor(pos=point, kind="corner"))
 
     def _update_last(h_out: tuple[float, float] | None = None) -> None:
@@ -420,7 +449,13 @@ def _parse_path_data(  # noqa: PLR0912, PLR0915
             h_out=h_out if h_out is not None else last.h_out,
         )
 
-    def _append_curve_end(point: tuple[float, float], h_in: tuple[float, float] | None) -> None:
+    def _append_curve_end(
+        point: tuple[float, float],
+        h_in: tuple[float, float] | None,
+        h_out: tuple[float, float],
+    ) -> None:
+        budget.consume()
+        _update_last(h_out=h_out)
         anchors.append(
             Anchor(
                 pos=point,
@@ -443,7 +478,7 @@ def _parse_path_data(  # noqa: PLR0912, PLR0915
                 current = start
             continue
         if cmd is None:
-            break
+            raise ValueError("SVG path values require a command")
 
         if cmd in ("M", "m"):
             x = _parse_svg_number(tokens[i])
@@ -514,8 +549,7 @@ def _parse_path_data(  # noqa: PLR0912, PLR0915
             p3 = (x, y)
             h_out = (p1[0] - p0[0], p1[1] - p0[1])
             h_in = (p2[0] - p3[0], p2[1] - p3[1])
-            _update_last(h_out=h_out)
-            _append_curve_end(p3, h_in=h_in)
+            _append_curve_end(p3, h_in=h_in, h_out=h_out)
             current = p3
             continue
 
@@ -537,15 +571,14 @@ def _parse_path_data(  # noqa: PLR0912, PLR0915
             c2 = (p2[0] + (q1[0] - p2[0]) * 2.0 / 3.0, p2[1] + (q1[1] - p2[1]) * 2.0 / 3.0)
             h_out = (c1[0] - p0[0], c1[1] - p0[1])
             h_in = (c2[0] - p2[0], c2[1] - p2[1])
-            _update_last(h_out=h_out)
-            _append_curve_end(p2, h_in=h_in)
+            _append_curve_end(p2, h_in=h_in, h_out=h_out)
             current = p2
             continue
 
         if cmd in ("A", "a"):
             # Arc not supported; degrade to line-to end point.
             if i + 6 >= len(tokens):
-                break
+                raise ValueError("SVG path command has incomplete arguments")
             _ = _parse_svg_number(tokens[i])
             _ = _parse_svg_number(tokens[i + 1])
             _ = _parse_svg_number(tokens[i + 2])
@@ -562,6 +595,8 @@ def _parse_path_data(  # noqa: PLR0912, PLR0915
             current = point
             logger.info("Arc command ignored during SVG import")
             continue
+
+        raise ValueError("SVG path values require a command")
 
     if anchors:
         # Treat path as closed if it visually returns to the start (Z was absent

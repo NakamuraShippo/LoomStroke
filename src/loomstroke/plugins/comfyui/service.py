@@ -35,6 +35,15 @@ from loomstroke.plugins.sdk.base import (
 )
 
 from .async_connection import AsyncComfyUIConnection as ComfyUIConnection
+from .job_cancellation import _JobTaskCleanup
+from .job_connection import (
+    _cancel_job,
+    _get_job_result,
+    _job_connection,
+    _JobConnection,
+    _JobConnectionError,
+    _stream_progress,
+)
 
 logger = logging.getLogger(__name__)
 
@@ -274,35 +283,8 @@ class ComfyUIService(AIServicePlugin):
 
         await self.initialize()
 
-        # Connect to WebSocket for updates
-        prompt_id = self._resolve_prompt_id(job_id)
-        async for update in self._connection.stream_progress(prompt_id):
-            if update["type"] == "progress":
-                yield ProgressEvent(
-                    job_id=job_id,
-                    step=update.get("value", 0),
-                    total=update.get("max", 100),
-                    message=update.get("message"),
-                    preview_png=update.get("preview"),
-                )
-            elif update["type"] in {
-                "executed",
-                "complete",
-                "execution_success",
-                "execution_complete",
-            }:
-                # Job completed, get result
-                result = await self._connection.get_result(prompt_id)
-                if result:
-                    preview_bytes = await self._extract_history_result_image(result)
-                    yield ProgressEvent(
-                        job_id=job_id,
-                        step=100,
-                        total=100,
-                        message="Complete",
-                        preview_png=preview_bytes,
-                    )
-                break
+        async for event in _stream_progress(self, job_id):
+            yield event
 
     async def cancel(self, job_id: str) -> bool:
         """Cancel a running job.
@@ -313,34 +295,7 @@ class ComfyUIService(AIServicePlugin):
         Returns:
             True if cancelled successfully
         """
-        if not ensure_network_services_consent(self._settings, service_name="ComfyUI"):
-            return False
-
-        await self.initialize()
-
-        # Cancel via API
-        await self._connection.interrupt()
-
-        # Cancel streaming task
-        cancelled = False
-        if job_id in self._active_jobs:
-            self._active_jobs[job_id].cancel()
-            del self._active_jobs[job_id]
-            cancelled = True
-
-        # Emit cancellation event
-        if self._event_bus:
-            self._event_bus.emit(
-                Events.AI_JOB_CANCELLED,
-                JobResultEvent(
-                    job_id=job_id,
-                    success=False,
-                    error="Job cancelled by user",
-                    result=None,
-                ),
-            )
-
-        return cancelled
+        return await _cancel_job(self, job_id)
 
     async def result(self, job_id: str) -> JobResult:
         """Get the final result of a completed job.
@@ -393,18 +348,11 @@ class ComfyUIService(AIServicePlugin):
 
         await self.initialize()
 
-        result = await self._connection.get_result(self._resolve_prompt_id(job_id))
-        if result:
-            output = await self._extract_history_result_image(result)
-            return JobResult(
-                job_id=job_id,
-                success=True,
-                output=output,
-                metadata=result.get("metadata", {}),
-            )
-        return None
+        return await _get_job_result(self, job_id)
 
-    async def _extract_history_result_image(self, result: dict[str, Any]) -> bytes | None:
+    async def _extract_history_result_image(
+        self, result: dict[str, Any], *, _job: _JobConnection | None = None
+    ) -> bytes | None:
         """Extract generated image bytes from ComfyUI history result.
 
         Args:
@@ -413,7 +361,7 @@ class ComfyUIService(AIServicePlugin):
         Returns:
             Image bytes if available, otherwise None.
         """
-        if not self._connection:
+        if not _job_connection(self, _job):
             return None
 
         outputs = result.get("outputs")
@@ -485,11 +433,13 @@ class ComfyUIService(AIServicePlugin):
 
         filename, subfolder, folder_type = candidate
         try:
-            return await self._connection.get_image(
+            return await _job_connection(self, _job).get_image(
                 filename=filename,
                 subfolder=subfolder,
                 folder_type=folder_type,
             )
+        except _JobConnectionError:
+            raise
         except Exception as exc:
             logger.error("Failed to fetch result image from history entry: %s", exc)
             return None
@@ -659,6 +609,7 @@ class ComfyUIService(AIServicePlugin):
             job_id: Job ID
             prompt_id: ComfyUI prompt ID
         """
+        cleanup = _JobTaskCleanup.capture(self, job_id)
         try:
             async for event in self.stream(job_id):
                 if self._event_bus:
@@ -711,7 +662,7 @@ class ComfyUIService(AIServicePlugin):
                 )
         finally:
             # Clean up
-            self._cleanup_job_tracking(job_id)
+            cleanup.finish_stream()
 
     async def cleanup(self) -> None:
         """Clean up resources."""
@@ -724,3 +675,20 @@ class ComfyUIService(AIServicePlugin):
         if self._connection:
             await self._connection.disconnect()
             self._connection = None
+
+
+_JOB_CONNECTION_DEFAULTS = {
+    name: getattr(ComfyUIService, name)
+    for name in (
+        "initialize",
+        "connect",
+        "stream",
+        "cancel",
+        "get_result",
+        "_extract_history_result_image",
+        "_resolve_prompt_id",
+        "_cleanup_job_tracking",
+    )
+}
+
+_JOB_TRACKING_CLEANUP_DEFAULT = ComfyUIService._cleanup_job_tracking

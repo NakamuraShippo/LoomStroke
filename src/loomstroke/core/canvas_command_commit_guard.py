@@ -15,6 +15,7 @@ class CanvasCommandCommitGuard:
 
     def __init__(self, canvas: Any) -> None:
         self.canvas = canvas
+        self.restore_owner = canvas._history()._restore_owner
         self.undo = (canvas._undo_stack, list(canvas._undo_stack))
         self.redo = (canvas._redo_stack, list(canvas._redo_stack))
         self.group = canvas._active_history_group
@@ -66,6 +67,8 @@ class CanvasCommandCommitGuard:
         canvas = self.canvas
         canvas._undo_stack = self._restore_stack(self.undo)
         canvas._redo_stack = self._restore_stack(self.redo)
+        canvas._history()._restore_owner = self.restore_owner
+        canvas._history()._restore_generation += 1
         canvas._active_history_group = self.group
         if self.group is not None:
             self.group.entries[:] = self.group_entries

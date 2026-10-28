@@ -27,6 +27,7 @@ from PySide6.QtWidgets import (
     QVBoxLayout,
     QWidget,
 )
+from shiboken6 import isValid
 
 from loomstroke.core.book_layout_service import BookLayoutService
 from loomstroke.core.book_spread_layout import (
@@ -40,6 +41,13 @@ from loomstroke.core.folio_resolver import resolve_folios
 from loomstroke.host_api import HostAPI, PageSummary, PageTemplateSummary
 from loomstroke.plugins.page_panel.empty_slot_insert_controller import (
     EmptySlotInsertController,
+)
+from loomstroke.plugins.page_panel.operation_failure_notice import (
+    PageOperationFailureNotice,
+    dismiss_page_failure_notice,
+    install_page_failure_notice,
+    page_failure_checkpoint,
+    request_widget_page_failure,
 )
 from loomstroke.plugins.page_panel.page_activation_controller import (
     PageActivationController,
@@ -1138,10 +1146,11 @@ class PagePanelWidget(QWidget):
 
         save_template = getattr(self._page_service, "save_page_as_template", None)
         if not callable(save_template):
-            QMessageBox.warning(
+            request_widget_page_failure(
                 self,
                 self._ts("Page Operation Failed"),
                 self._ts("save_template failed: feature not supported"),
+                self._ts,
             )
             return
 
@@ -1157,15 +1166,19 @@ class PagePanelWidget(QWidget):
         if not normalized_name:
             return
 
+        failure_before = page_failure_checkpoint(self, self._ts)
         template_id = save_template(page_id, normalized_name, options=dialog.capture_options())
         if not isinstance(template_id, str) or not template_id:
             # A silent no-op here hid a real save crash (vector pages,
             # 2026-08-03) — failures must be visible.
-            QMessageBox.warning(
-                self,
-                self._ts("Save Page Template"),
-                self._ts("The template could not be saved. See the log for details."),
-            )
+            if failure_before is not None:
+                request_widget_page_failure(
+                    self,
+                    self._ts("Save Page Template"),
+                    self._ts("The template could not be saved. See the log for details."),
+                    self._ts,
+                    checkpoint=failure_before,
+                )
             return
 
         # Saving a template does not select it: it only adds it to the menu.
@@ -1260,6 +1273,7 @@ class PagePanelPlugin(UIPanelPlugin):
         self._panel: PagePanelWidget | None = None
         self._subscriptions: list[tuple[str, Any]] = []
         self._event_handlers: list[Any] = []
+        self._failure_notice: PageOperationFailureNotice | None = None
 
     def descriptor(self) -> PanelDescriptor:
         return PanelDescriptor(
@@ -1278,7 +1292,8 @@ class PagePanelPlugin(UIPanelPlugin):
 
     def deactivate(self) -> None:
         self._unsubscribe_events()
-        if self._panel is not None:
+        dismiss_page_failure_notice(self)
+        if self._panel is not None and isValid(self._panel):
             # The canvas follows this panel's view mode; leaving it in Spread
             # after the panel is gone would strand the viewport with no way
             # back (CT-06 B4-c4).
@@ -1292,6 +1307,7 @@ class PagePanelPlugin(UIPanelPlugin):
             raise RuntimeError("Host API not set")
         if self._panel is None:
             self._panel = PagePanelWidget(self._host, parent=parent)
+        install_page_failure_notice(self, _plugin_ts)
         return self._panel
 
     def _subscribe_events(self) -> None:
@@ -1411,11 +1427,9 @@ class PagePanelPlugin(UIPanelPlugin):
             return
         op = payload.get("op", "operation")
         error = payload.get("error", "Unknown error")
-        QMessageBox.warning(
-            self._panel,
-            self._ts("Page Operation Failed"),
-            f"{op} failed: {error}",
-        )
+        notice = install_page_failure_notice(self, _plugin_ts)
+        if notice is not None:
+            notice.request(f"{op} failed: {error}")
 
 
 def create_plugin() -> PagePanelPlugin:

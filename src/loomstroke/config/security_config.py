@@ -10,6 +10,14 @@ import sys
 from pathlib import Path
 from typing import Any, cast
 
+from .legacy_credential_migration import (
+    migrate_legacy_credentials,
+    preserve_legacy_credentials,
+    primary_credential_was_absent,
+    remove_legacy_credential,
+    store_legacy_credential,
+)
+
 try:
     from cryptography.fernet import Fernet
     from cryptography.hazmat.primitives import hashes
@@ -34,7 +42,7 @@ def _file_credential_fallback_allowed() -> bool:
     }
 
 
-def _restrict_file_acl(filepath: Path) -> None:
+def _restrict_file_acl(filepath: Path, *, strict: bool = False) -> None:
     """Restrict file permissions to the current user only (cross-platform)."""
     if sys.platform != "win32":
         os.chmod(filepath, 0o600)
@@ -42,13 +50,21 @@ def _restrict_file_acl(filepath: Path) -> None:
         try:
             import subprocess  # noqa: PLC0415
 
-            subprocess.run(  # noqa: S603
+            outcome = subprocess.run(  # noqa: S603
                 ["icacls", str(filepath), "/inheritance:r", "/grant:r", f"{os.getlogin()}:F"],
                 capture_output=True,
                 check=False,
             )
+            if outcome.returncode != 0:
+                raise OSError("Credential file permissions were not restricted")
         except Exception:
+            if strict:
+                raise OSError("Credential file permissions were not restricted") from None
             logger.warning("Failed to set Windows ACL on %s", filepath)
+
+
+def _restrict_legacy_rewrite_acl(filepath: Path) -> None:
+    _restrict_file_acl(filepath, strict=True)
 
 
 class SecurityConfig:
@@ -75,6 +91,7 @@ class SecurityConfig:
         """
         self.app_name = app_name
         self._fernet: Fernet | None = None
+        self._legacy_key_origin = "unpersisted"
         self._keyring_backend: Any | None = None
 
         # Probe the OS keyring first.
@@ -104,15 +121,13 @@ class SecurityConfig:
 
         if self._keyring_backend:
             key = self._load_existing_key()
-            if key:
-                self._fernet = Fernet(key)
+            if key and self._try_legacy_key(key):
                 logger.info("Encryption initialized (loaded legacy key for migration)")
             return
 
         if not _file_credential_fallback_allowed():
             key = self._load_existing_key()
-            if key:
-                self._fernet = Fernet(key)
+            if key and self._try_legacy_key(key):
                 logger.info("Encryption initialized (loaded legacy key for cleanup)")
             else:
                 logger.info("Encryption file fallback disabled (OS keyring required)")
@@ -120,11 +135,18 @@ class SecurityConfig:
 
         # Explicit opt-in only — fall back to the encrypted-file path.
         key = self._get_or_create_key()
-        if key:
-            self._fernet = Fernet(key)
+        if key and self._try_legacy_key(key):
             logger.warning("Encryption initialized (explicit file credential fallback)")
         else:
             logger.warning("Encryption not available")
+
+    def _try_legacy_key(self, key: bytes) -> bool:
+        try:
+            self._fernet = Fernet(key) if Fernet is not None else None
+        except Exception:
+            logger.warning("Legacy encryption key could not be loaded")
+            self._fernet = None
+        return self._fernet is not None
 
     def _load_existing_key(self) -> bytes | None:
         """Return the on-disk Fernet key if present, else ``None``.
@@ -137,14 +159,18 @@ class SecurityConfig:
         env_key = os.environ.get("LOOMSTROKE_KEY")
         if env_key:
             try:
-                return base64.urlsafe_b64decode(env_key.encode())
+                key = base64.urlsafe_b64decode(env_key.encode())
+                self._legacy_key_origin = "environment"
+                return key
             except Exception:
                 logger.warning("Invalid encryption key in environment")
         key_file = self._get_key_file_path()
         if key_file.exists():
             try:
                 with open(key_file, "rb") as f:
-                    return f.read()
+                    key = f.read()
+                self._legacy_key_origin = "disk"
+                return key
             except OSError as e:
                 logger.error(f"Failed to read key file: {e}")
         return None
@@ -163,7 +189,9 @@ class SecurityConfig:
         env_key = os.environ.get("LOOMSTROKE_KEY")
         if env_key:
             try:
-                return base64.urlsafe_b64decode(env_key.encode())
+                key = base64.urlsafe_b64decode(env_key.encode())
+                self._legacy_key_origin = "environment"
+                return key
             except Exception:
                 logger.warning("Invalid encryption key in environment")
 
@@ -172,7 +200,9 @@ class SecurityConfig:
         if key_file.exists():
             try:
                 with open(key_file, "rb") as f:
-                    return f.read()
+                    key = f.read()
+                self._legacy_key_origin = "disk"
+                return key
             except OSError as e:
                 logger.error(f"Failed to read key file: {e}")
 
@@ -188,11 +218,13 @@ class SecurityConfig:
             _restrict_file_acl(key_file)
 
             logger.info("New encryption key created")
+            self._legacy_key_origin = "disk"
             return key
 
         except OSError as e:
             logger.error(f"Failed to save key file: {e}")
             # Return key anyway for session use
+            self._legacy_key_origin = "unpersisted"
             return key
 
     def _get_key_file_path(self) -> Path:
@@ -350,23 +382,18 @@ class SecurityConfig:
                 keyring.set_password(f"{self.app_name}.{service}", username, password)
                 logger.info(f"Credential stored for {service}")
                 stored_in_keyring = True
-            except Exception as e:
-                logger.error(f"Failed to store credential in keyring: {e}")
+            except Exception:
+                logger.error("Failed to store credential in keyring")
 
         if stored_in_keyring:
             # Keyring (DPAPI / Keychain / Secret Service) now owns the
             # value; remove any stale Fernet fallback entry so the same
             # secret is not also reachable via the co-located .key file.
-            if self._fernet:
-                try:
+            try:
+                if self._get_credential_file_path().exists():
                     self._delete_credential_fallback(service, username)
-                except Exception as exc:
-                    logger.debug(
-                        "Failed to purge stale Fernet fallback for %s/%s: %s",
-                        service,
-                        username,
-                        exc,
-                    )
+            except Exception:
+                preserve_legacy_credentials(self.app_name, "cleanup_failed")
             return True
 
         if _file_credential_fallback_allowed() and self._fernet:
@@ -490,22 +517,38 @@ class SecurityConfig:
         Returns:
             True if successful
         """
-        deleted_in_keyring = False
+        # Do not clear the primary value if its legacy copy could later be
+        # migrated back. An unknown/failed cleanup leaves both stores intact.
+        fallback_deleted = False
+        try:
+            if self._get_credential_file_path().exists():
+                fallback_deleted = self._delete_credential_fallback(service, username)
+                if not fallback_deleted:
+                    return False
+        except Exception:
+            preserve_legacy_credentials(self.app_name, "cleanup_failed")
+            return False
         if self._keyring_backend:
+            keyring_module: Any = None
             try:
-                import keyring  # noqa: PLC0415
+                import keyring as keyring_module  # noqa: PLC0415
 
-                keyring.delete_password(f"{self.app_name}.{service}", username)
+                keyring_module.delete_password(f"{self.app_name}.{service}", username)
                 logger.info(f"Credential deleted for {service}")
-                deleted_in_keyring = True
-            except Exception as e:
-                logger.error(f"Failed to delete credential from keyring: {e}")
+                return True
+            except Exception as error:
+                if primary_credential_was_absent(
+                    keyring_module, error, f"{self.app_name}.{service}", username
+                ):
+                    return True
+                preserve_legacy_credentials(self.app_name, "keyring_write_failed")
+                return False
 
-        if not self._fernet:
-            return deleted_in_keyring
-
-        fallback_deleted = self._delete_credential_fallback(service, username)
-        return fallback_deleted or deleted_in_keyring
+        return (
+            self._delete_credential_fallback(service, username)
+            if self._fernet
+            else fallback_deleted
+        )
 
     # Fallback Methods
 
@@ -522,40 +565,12 @@ class SecurityConfig:
         """
         if not self._fernet:
             return False
-
-        try:
-            cred_file = self._get_credential_file_path()
-
-            # Load existing credentials
-            credentials = {}
-            if cred_file.exists():
-                with open(cred_file) as f:
-                    encrypted = f.read()
-                    if encrypted:
-                        credentials = self.decrypt_dict(encrypted)
-
-            # Add new credential
-            if service not in credentials:
-                credentials[service] = {}
-            credentials[service][username] = password
-
-            # Save encrypted
-            new_encrypted = self.encrypt_dict(credentials)
-            if new_encrypted is None:
-                logger.error("Cannot store credential: encryption unavailable")
-                return False
-            cred_file.parent.mkdir(parents=True, exist_ok=True)
-            with open(cred_file, "w") as f:
-                f.write(new_encrypted)
-
-            _restrict_file_acl(cred_file)
-
+        success = store_legacy_credential(
+            self, service, username, password, restrict_file_acl=_restrict_legacy_rewrite_acl
+        )
+        if success:
             self._cleanup_legacy_plaintext_files()
-            return True
-
-        except Exception as e:
-            logger.error(f"Failed to store credential (fallback): {e}")
-            return False
+        return success
 
     def _cleanup_legacy_plaintext_files(self) -> None:
         """Remove legacy plaintext credential files if they exist.
@@ -653,44 +668,9 @@ class SecurityConfig:
         Returns:
             True if successful
         """
-        if not self._fernet:
-            return False
-
-        try:
-            cred_file = self._get_credential_file_path()
-            if not cred_file.exists():
-                return True
-
-            with open(cred_file) as f:
-                encrypted = f.read()
-                if not encrypted:
-                    return True
-
-            credentials = self.decrypt_dict(encrypted)
-
-            # Remove credential
-            if service in credentials and username in credentials[service]:
-                del credentials[service][username]
-                if not credentials[service]:
-                    del credentials[service]
-
-            # Save updated
-            if credentials:
-                reencrypted = self.encrypt_dict(credentials)
-                if reencrypted is None:
-                    logger.error("Cannot update credential file: encryption unavailable")
-                    return False
-                with open(cred_file, "w") as f:
-                    f.write(reencrypted)
-            else:
-                # Delete file if empty
-                cred_file.unlink()
-
-            return True
-
-        except Exception as e:
-            logger.error(f"Failed to delete credential (fallback): {e}")
-            return False
+        return remove_legacy_credential(
+            self, service, username, restrict_file_acl=_restrict_legacy_rewrite_acl
+        )
 
     def _get_credential_file_path(self) -> Path:
         """Get path to credential file.
@@ -702,92 +682,12 @@ class SecurityConfig:
         return key_file.parent / ".credentials"
 
     def purge_local_fallback_if_keyring_active(self) -> bool:
-        """Migrate any encrypted-fallback credentials into keyring,
-        then delete the on-disk Fernet key + ciphertext.
+        """Delete legacy material only after every entry is verified in keyring.
 
-        Phase 8a security follow-up (2026-04-29): the encrypted
-        fallback file lives next to its Fernet key on disk, which
-        means a same-user process can decrypt every credential in
-        it. When the keyring backend is available there is no reason
-        to keep that vulnerability around — we lift any entries that
-        are NOT already in keyring, write them to keyring, and then
-        delete both ``.credentials`` and the ``.key`` files outright.
-
-        Returns ``True`` when files were removed, ``False`` when no
-        action was needed (no keyring backend, or no fallback files
-        present). Never raises — failures are logged at debug level
-        because this runs at startup and must not block the app.
+        Returns the historical 'any file removed' bool. Failed migration or
+        cleanup is preserved for retry and reported without credential data.
         """
-        if not self._keyring_backend:
-            return False
-
-        cred_file = self._get_credential_file_path()
-        key_file = self._get_key_file_path()
-        if not cred_file.exists() and not key_file.exists():
-            return False
-
-        if cred_file.exists() and self._fernet:
-            self._lift_fallback_entries_to_keyring(cred_file)
-
-        removed = self._unlink_fallback_files(cred_file, key_file)
-        self._fernet = None
-        if removed:
-            logger.info("Purged encrypted credential fallback files (keyring is primary)")
-        return removed
-
-    def _lift_fallback_entries_to_keyring(self, cred_file: Path) -> None:
-        """Move ``.credentials`` entries into keyring (skip ones already there)."""
-        try:
-            with open(cred_file, encoding="utf-8") as fh:
-                encrypted = fh.read()
-            credentials = self.decrypt_dict(encrypted) if encrypted else {}
-        except Exception as exc:
-            logger.debug("Could not parse fallback credentials for migration: %s", exc)
-            return
-        try:
-            import keyring  # noqa: PLC0415
-        except Exception as exc:
-            logger.debug("Keyring import failed during migration: %s", exc)
-            return
-        for service, users in credentials.items():
-            if not isinstance(users, dict):
-                continue
-            for username, value in users.items():
-                if not value:
-                    continue
-                self._migrate_one_to_keyring(keyring, service, username, value)
-
-    def _migrate_one_to_keyring(
-        self,
-        keyring_module: Any,
-        service: str,
-        username: str,
-        value: str,
-    ) -> None:
-        """Write a single fallback entry to keyring if not already present."""
-        try:
-            existing = keyring_module.get_password(f"{self.app_name}.{service}", username)
-        except Exception as exc:
-            logger.debug("Keyring lookup failed for %s/%s: %s", service, username, exc)
-            return
-        if existing:
-            return
-        try:
-            keyring_module.set_password(f"{self.app_name}.{service}", username, value)
-        except Exception as exc:
-            logger.debug("Failed to migrate %s/%s to keyring: %s", service, username, exc)
-
-    def _unlink_fallback_files(self, *paths: Path) -> bool:
-        """Delete each fallback file. Returns ``True`` if any was removed."""
-        removed = False
-        for path in paths:
-            try:
-                if path.exists():
-                    path.unlink()
-                    removed = True
-            except OSError as exc:
-                logger.debug("Failed to remove %s: %s", path, exc)
-        return removed
+        return migrate_legacy_credentials(self)
 
     # Security Validation
 

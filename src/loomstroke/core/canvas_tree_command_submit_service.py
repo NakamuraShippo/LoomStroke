@@ -4,6 +4,8 @@ from __future__ import annotations
 
 from typing import Any
 
+from .layer_mask_submit import _submit_mask_command
+
 
 class CanvasTreeCommandSubmitService:
     """Submit tree commands while preserving deferred recompose ordering."""
@@ -12,6 +14,9 @@ class CanvasTreeCommandSubmitService:
         self._owner = owner
 
     def submit(self, cmd: Any) -> bool:
+        mask_result = _submit_mask_command(self._owner, cmd)
+        if mask_result is not None:
+            return mask_result
         self._owner.defer_recompose()
         try:
             success = bool(cmd.apply(self._owner))

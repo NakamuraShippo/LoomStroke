@@ -2,6 +2,40 @@
 
 from copy import deepcopy
 
+from .page_mutation_preflight import PageMutationPreflight
+
+
+class _VectorBatchSuperseded(ValueError):
+    """The original document or page state no longer owns this batch."""
+
+    def __init__(self):
+        super().__init__("The document changed during the vector update.")
+
+
+def _vector_batch_scope(pages, page_ids):
+    # Missing original targets still use the existing full-key validation.
+    # They must not be mistaken for a document replacement.
+    existing = {state.page.id for state in pages._pages}
+    return PageMutationPreflight(
+        pages, tuple(page_id for page_id in page_ids if page_id in existing)
+    )
+
+
+def _require_vector_scope(scope):
+    if not scope.is_current():
+        raise _VectorBatchSuperseded()
+
+
+def _call_vector_scope(scope, callback, *args, **kwargs):
+    _require_vector_scope(scope)
+    try:
+        result = callback(*args, **kwargs)
+    except Exception:
+        _require_vector_scope(scope)
+        raise
+    _require_vector_scope(scope)
+    return result
+
 
 def vector_entries(pages, *, page_ids=None):
     """Read current objects without switching the visible page or its history."""
@@ -35,7 +69,19 @@ def replace_vector_objects(pages, replacements, *, allow_locked=False):
     """Validate the entire batch before changing any object, then rollback on failure."""
     if not replacements:
         return {}
-    entries = vector_entries(pages, page_ids={key[0] for key in replacements})
+    lease = pages._hold_page_residency()
+    try:
+        return _replace_resident_vector_objects(pages, replacements, allow_locked=allow_locked)
+    finally:
+        # The lease belongs to the original document's guard. A callback
+        # loading another document cannot make this release its new token.
+        lease.release()
+
+
+def _replace_resident_vector_objects(pages, replacements, *, allow_locked):
+    page_ids = {key[0] for key in replacements}
+    scope = _vector_batch_scope(pages, page_ids)
+    entries = _call_vector_scope(scope, vector_entries, pages, page_ids=page_ids)
     previous = {}
     for key, obj in replacements.items():
         entry = entries.get(key)
@@ -47,22 +93,29 @@ def replace_vector_objects(pages, replacements, *, allow_locked=False):
     changed = []
     try:
         for key, obj in replacements.items():
+            _require_vector_scope(scope)
             _replace(pages, key, entries[key], obj)
+            _require_vector_scope(scope)
             changed.append(key)
     except Exception:
+        # A replacement callback may have opened another document, even if
+        # it subsequently raises. Never run old inverse edits on its live ids.
+        _require_vector_scope(scope)
         for key in reversed(changed):
             _replace(pages, key, entries[key], previous[key])
+            _require_vector_scope(scope)
         if any(key[0] == pages.get_active_page_id() for key in changed):
-            pages._canvas._recompose()
+            _call_vector_scope(scope, pages._canvas._recompose)
         raise
-    for page_id in {key[0] for key in replacements}:
+    for page_id in page_ids:
+        _require_vector_scope(scope)
         state = pages._find_page_state(page_id)
         state.dirty = True
-        pages._emit_page_dirty_changed(page_id, True)
+        _call_vector_scope(scope, pages._emit_page_dirty_changed, page_id, True)
     if replacements:
         if any(key[0] == pages.get_active_page_id() for key in replacements):
-            pages._canvas._recompose()
-        pages._emit_document_changed("text.styles_changed")
+            _call_vector_scope(scope, pages._canvas._recompose)
+        _call_vector_scope(scope, pages._emit_document_changed, "text.styles_changed")
     return previous
 
 

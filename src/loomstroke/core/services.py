@@ -203,6 +203,8 @@ class MinimalHistoryService:
         self._page_context_resolver = page_context_resolver
         self._last_state: Any | None = None
         self._history_reset_token: Any | None = None
+        self._history_reset_handler = self._handle_history_reset_event
+        self._document_created_handler = self._handle_document_created_event
         if canvas is not None:
             self.attach_canvas(canvas)
         else:
@@ -402,8 +404,15 @@ class MinimalHistoryService:
         if callable(subscribe):
             self._history_reset_token = subscribe(
                 Events.DOC_HISTORY_RESET,
-                self._handle_history_reset_event,
+                self._history_reset_handler,
             )
+            if self._router is None:
+                self._document_created_token = subscribe(
+                    Events.DOC_CREATED, self._document_created_handler
+                )
+
+    def _handle_document_created_event(self, _payload: Any) -> None:
+        self._emit_state()
 
     def _handle_history_reset_event(self, payload: Any) -> None:
         # Force next snapshot to propagate by clearing cached state.
@@ -711,3 +720,11 @@ class MinimalUIService:
     def layout_snapshot(self, *, include_panels: bool = True) -> Any:
         """Capture a UI layout snapshot (minimal stub; returns None)."""
         return None
+
+
+# Optional implementation hints, not required attributes of UIService providers.
+# Copying a function's attributes to a wrapper does not mark the wrapper itself.
+MinimalUIService.show_message.__dict__["_loomstroke_log_only_ui"] = MinimalUIService.show_message
+MinimalUIService.show_notification.__dict__["_loomstroke_log_only_ui"] = (
+    MinimalUIService.show_notification
+)

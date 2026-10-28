@@ -71,6 +71,7 @@ from ..translations import (
     translate_with_fallback,
     translated_literal_domain,
 )
+from ..widget_event_subscriptions import WidgetEventSubscriptions
 
 logger = logging.getLogger(__name__)
 
@@ -450,8 +451,11 @@ class ToolToolbar(QWidget):
         self._layout_is_horizontal: bool | None = None
         self._forced_horizontal: bool | None = None
         self._event_bus = get_extended_event_bus()
-        self._event_handlers: list[Any] = []
-        self._event_tokens: list[Any] = []
+        self._event_subscriptions = WidgetEventSubscriptions(self)
+        self._event_handlers, self._event_tokens = (
+            self._event_subscriptions.handlers,
+            self._event_subscriptions.tokens,
+        )
         self._placeholder_state = "no_tools"
 
         self._setup_ui()
@@ -615,9 +619,9 @@ class ToolToolbar(QWidget):
         self.content_changed.emit()
 
     def _subscribe_events(self) -> None:
-        handler = self._on_language_changed
-        self._event_handlers.append(handler)
-        self._event_tokens.append(self._event_bus.on(Events.LANGUAGE_CHANGED, handler))
+        self._event_subscriptions.subscribe(
+            self._event_bus, Events.LANGUAGE_CHANGED, self._on_language_changed
+        )
 
     def _on_language_changed(self, _payload: Any) -> None:
         self.refresh_translations()
@@ -1131,8 +1135,11 @@ class ToolPropertiesPanel(QWidget):
         self._bar_action_items: list[QWidget] = []
         self._event_bus = get_extended_event_bus()
         self._translation_binder = TranslationBinder(self.tr)
-        self._event_handlers: list[Any] = []
-        self._event_tokens: list[Any] = []
+        self._event_subscriptions = WidgetEventSubscriptions(self)
+        self._event_handlers, self._event_tokens = (
+            self._event_subscriptions.handlers,
+            self._event_subscriptions.tokens,
+        )
         self._pending_display_tool_id: str | None = None
         self._display_debounce_timer = self._make_debounce_timer()
 
@@ -1355,9 +1362,9 @@ class ToolPropertiesPanel(QWidget):
             self._bar_items = [self._preset_container, self.placeholder]
 
     def _subscribe_events(self) -> None:
-        handler = self._on_language_changed
-        self._event_handlers.append(handler)
-        self._event_tokens.append(self._event_bus.on(Events.LANGUAGE_CHANGED, handler))
+        self._event_subscriptions.subscribe(
+            self._event_bus, Events.LANGUAGE_CHANGED, self._on_language_changed
+        )
 
     def _on_language_changed(self, _payload: Any) -> None:
         self.refresh_translations()
@@ -2054,6 +2061,13 @@ class ToolPropertiesPanel(QWidget):
         self._preset_controller.apply_selected(preset_name)
 
     def _collect_current_settings(self) -> dict[str, Any]:
+        if (
+            self.tool_manager is not None
+            and self._current_tool_id
+            and hasattr(self.tool_manager, "get_tool_settings")
+        ):
+            return dict(self.tool_manager.get_tool_settings(self._current_tool_id))
+        # Lightweight hosts without the snapshot API keep their legacy reader path.
         return {key: binding.reader() for key, binding in self._property_bindings.items()}
 
     def _on_save_preset(self) -> None:

@@ -16,6 +16,8 @@ from loomstroke.plugins.comic_tools.raster_parts import find_part_layer, part_la
 from loomstroke.plugins.comic_tools.service import ComicPageController
 from loomstroke.plugins.vector_tools.common import copy_vector_object
 
+from .live_capture import MoveLiveCapture
+
 logger = logging.getLogger(__name__)
 
 
@@ -38,6 +40,7 @@ class ComicBalloonMove:
         self.tool = tool
         self.controller = ComicPageController()
         self.drag: _Drag | None = None
+        self._capture = MoveLiveCapture()
 
     def _page_id(self):
         pages = getattr(self.tool.host_api, "pages", None)
@@ -117,6 +120,8 @@ class ComicBalloonMove:
         if any(not self._layer_available(canvas, layer) for layer, _ in originals) or (
             part is not None and not self._layer_available(canvas, part, require_visible=True)
         ):
+            return True
+        if not self._capture.begin(canvas, [layer for layer, _ in originals]):
             return True
         self.drag = _Drag(
             canvas,
@@ -207,6 +212,7 @@ class ComicBalloonMove:
             drag.part._preview_transform_version += 1
         if getattr(self.tool.host_api, "canvas", None) is drag.canvas:
             self._notify(drag)
+        return self._capture.finish_restore()
 
     def finish(self, pt):
         drag = self.drag
@@ -214,7 +220,8 @@ class ComicBalloonMove:
             return
         valid = self._valid(drag)
         dx, dy = self._delta(pt, drag)
-        self._restore(drag)
+        if not self._restore(drag):
+            return
         self.drag = None
         is_click = not (dx or dy) and (
             self.tool._distance_from_start(pt) <= self.tool._click_distance_threshold_px
@@ -254,6 +261,5 @@ class ComicBalloonMove:
         tool._last_click_vec_id = balloon_id
 
     def cancel(self):
-        if self.drag is not None:
-            self._restore(self.drag)
+        if self.drag is not None and self._restore(self.drag):
             self.drag = None

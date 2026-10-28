@@ -141,32 +141,30 @@ class RasterRigProtoSession:
         return True
 
     def _debug_dump(self) -> None:
-        """Diagnostic snapshot of the registered junction (runtime debug
-        artifacts only, written to the system temp dir)."""
+        """Keep junction diagnostics only after an explicit image opt-in."""
+        from loomstroke.platform.image_diagnostics import write_image_diagnostic  # noqa: PLC0415
 
-        try:
+        def build_payloads() -> tuple[bytes | None, bytes]:
             import json  # noqa: PLC0415
-            import tempfile  # noqa: PLC0415
-            from pathlib import Path  # noqa: PLC0415
+            from io import BytesIO  # noqa: PLC0415
 
             from PIL import Image  # noqa: PLC0415
 
-            out = Path(tempfile.gettempdir()) / "loomstroke_rig_proto"
-            out.mkdir(exist_ok=True)
             patch = self.preview_patch()
+            png = None
             if patch is not None:
                 _rect, rgba = patch
-                Image.fromarray(rgba).save(out / "preview_patch.png")
+                stream = BytesIO()
+                Image.fromarray(rgba).save(stream, format="PNG")
+                png = stream.getvalue()
             info = self.proposal_summary()
             info["inset_px"] = self.inset_px
             info["recipe"] = self.composer.recipe.to_dict()
             info["fill_rgb"] = getattr(self.composer, "fill_rgb", None)
             info["stroke_info"] = getattr(self.composer, "stroke_info", None)
-            (out / "session.json").write_text(
-                json.dumps(info, indent=2, default=str), encoding="utf-8"
-            )
-        except Exception:  # pragma: no cover - diagnostics only
-            logger.debug("rig proto debug dump failed", exc_info=True)
+            return png, json.dumps(info, indent=2, default=str).encode("utf-8")
+
+        write_image_diagnostic("rig", build_payloads)
 
     def proposal_summary(self) -> dict[str, Any]:
         """Registration facts shown for confirmation (step 3 of the flow)."""

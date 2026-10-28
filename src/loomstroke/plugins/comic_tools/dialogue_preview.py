@@ -4,6 +4,7 @@ from dataclasses import asdict
 
 from .service import text_props_from_object
 from .text_frames import build_balloon_text_object
+from .text_update import update_existing_balloon_text
 
 
 class DialoguePreview:
@@ -36,13 +37,13 @@ class DialoguePreview:
         ):
             self.close()
             return
-        props = asdict(text_props_from_object(obj))
-        props["text"] = text
-        self.object = build_balloon_text_object(
-            state.balloons[self.edit.balloon_id],
-            **props,
-            previous_meta=getattr(obj, "meta", None),
-        )
+        record = state.balloons[self.edit.balloon_id]
+        if obj is not None:
+            self.object = update_existing_balloon_text(obj, record, text, previous_record=record)
+        else:
+            props = asdict(text_props_from_object(obj))
+            props["text"] = text
+            self.object = build_balloon_text_object(record, **props, previous_meta=None)
         # Same runtime-only HostAPI.canvas convention as the inline text tool.
         self.canvas._vector_preview = self.object
         self.canvas._vector_preview_layer_id = state.text_layer_id

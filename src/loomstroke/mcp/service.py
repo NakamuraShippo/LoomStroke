@@ -1074,6 +1074,7 @@ class LoomStrokeMcpService:
     async def create_comic_changeset(self, arguments: Mapping[str, Any]) -> dict[str, Any]:
         from .comic_changeset import build_comic_changeset_operations  # noqa: PLC0415
         from .comic_plan import validate_comic_page_plan  # noqa: PLC0415
+        from .production_changeset_creation import _create_changeset  # noqa: PLC0415
 
         plan = arguments.get("plan")
         if not isinstance(plan, Mapping):
@@ -1114,16 +1115,12 @@ class LoomStrokeMcpService:
             "schemaVersion": "mcp.comic_changeset.v1",
             "summary": build["summary"],
         }
-        await self._require_pct_confirmation(
-            "loomstroke_create_comic_changeset",
+        return await _create_changeset(
+            self,
             changeset,
-            hard=True,
-        )
-        self._production_store.add_changeset(changeset)
-        return pct.pct_response(
-            {"changeset": changeset, "summary": build["summary"]},
+            confirmation_name="loomstroke_create_comic_changeset",
+            summary=build["summary"],
             warnings=build["warnings"],
-            requires_confirmation=True,
         )
 
     def list_documents(self) -> list[dict[str, Any]]:
@@ -2310,16 +2307,28 @@ class LoomStrokeMcpService:
                 "Job is already terminal.",
                 details={"jobId": job_id, "status": job.status},
             )
+        task = self._job_tasks.get(job_id)
         await self.safety.require_confirmation(
             "loomstroke_cancel_job",
             {"jobId": job_id, "status": job.status},
         )
+        same_target = self._jobs.get(job_id) is job and self._job_tasks.get(job_id) is task
+        terminal = job.status in self._TERMINAL_JOB_STATUSES
+        if not same_target or terminal or (task is not None and task.done()):
+            raise McpStructuredError(
+                ReasonCode.CONFLICT,
+                (
+                    "Job is already terminal."
+                    if same_target and terminal
+                    else "Job could not be cancelled."
+                ),
+                details={"jobId": job_id, "status": job.status},
+            )
         cancelled = False
         if job.cancel is not None:
             cancelled = bool(job.cancel())
         elif self._generation_canceller is not None and job.related_layer_id:
             cancelled = bool(self._generation_canceller(job.related_layer_id))
-        task = self._job_tasks.get(job_id)
         if task is not None and not task.done():
             task.cancel()
             cancelled = True
@@ -3674,6 +3683,8 @@ class LoomStrokeMcpService:
         return pct.pct_response({"entry": entry}, requires_confirmation=True)
 
     async def create_changeset(self, arguments: Mapping[str, Any]) -> dict[str, Any]:
+        from .production_changeset_creation import _create_changeset  # noqa: PLC0415
+
         changeset = pct.create_changeset_record(arguments)
         if not changeset.get("operations"):
             return pct.pct_response(
@@ -3681,15 +3692,24 @@ class LoomStrokeMcpService:
                 blocked=True,
                 blocked_reasons=["changeset_operations_required"],
             )
-        await self._require_pct_confirmation("loomstroke_create_changeset", changeset, hard=True)
-        self._production_store.add_changeset(changeset)
-        return pct.pct_response({"changeset": changeset}, requires_confirmation=True)
+        return await _create_changeset(
+            self, changeset, confirmation_name="loomstroke_create_changeset"
+        )
 
     async def apply_changeset(self, arguments: Mapping[str, Any]) -> dict[str, Any]:
+        from .production_changeset_creation import _blocked_applied_comic  # noqa: PLC0415
+        from .production_changeset_state import ChangesetState  # noqa: PLC0415
+        from .production_record_commit import commit_records, reject_pending_apply  # noqa: PLC0415
+
         changeset_id = self._required_str(arguments, "changesetId")
-        changeset = self._production_store.get_record("changesets", "changesetId", changeset_id)
-        if changeset is None:
+        state = ChangesetState.capture(self, changeset_id)
+        if state is None:
             raise self._not_found("changeset", changeset_id)
+        changeset = state.snapshot()
+        reject_pending_apply(changeset)
+        blocked = _blocked_applied_comic(self, changeset)
+        if blocked is not None:
+            return blocked
         unsupported = self._unsupported_changeset_operations(changeset.get("operations"))
         if unsupported:
             return pct.pct_response(
@@ -3706,29 +3726,42 @@ class LoomStrokeMcpService:
                 blocked=True,
                 blocked_reasons=["canvas_service_unavailable"],
             )
-        await self._require_pct_confirmation("loomstroke_apply_changeset", changeset, hard=True)
+        await self._require_pct_confirmation(
+            "loomstroke_apply_changeset", state.snapshot(), hard=True
+        )
+        state.ensure_current()
         if self._has_comic_changeset_operations(
             changeset.get("operations")
         ) and known_document_closed(self):
             raise McpStructuredError(
                 ReasonCode.CAPABILITY_UNAVAILABLE, "No editable document is open."
             )
+        record_result = commit_records(self, state, changeset, restore=False)
+        if record_result is not None:
+            return record_result
         applied = self._apply_pct_changeset_operations(changeset)
         changeset["status"] = "applied"
         changeset["appliedAt"] = datetime.now(UTC).isoformat()
         changeset["updatedAt"] = changeset["appliedAt"]
         changeset["appliedRecords"] = applied
-        self._production_store.update_changeset(changeset)
+        changeset = state.write(changeset)
         return pct.pct_response(
             {"changeset": changeset, "appliedRecords": applied},
             requires_confirmation=True,
         )
 
     async def rollback_changeset(self, arguments: Mapping[str, Any]) -> dict[str, Any]:
+        from .production_changeset_state import ChangesetState  # noqa: PLC0415
+        from .production_record_commit import commit_records, recover_records  # noqa: PLC0415
+
         changeset_id = self._required_str(arguments, "changesetId")
-        changeset = self._production_store.get_record("changesets", "changesetId", changeset_id)
-        if changeset is None:
+        state = ChangesetState.capture(self, changeset_id)
+        if state is None:
             raise self._not_found("changeset", changeset_id)
+        changeset = state.snapshot()
+        recovered = await recover_records(self, state)
+        if recovered is not None:
+            return recovered
         if str(changeset.get("status") or "") != "applied":
             return pct.pct_response(
                 {"changeset": changeset},
@@ -3741,12 +3774,18 @@ class LoomStrokeMcpService:
                 blocked=True,
                 blocked_reasons=["comic_changeset_rollback_via_canvas_undo"],
             )
-        await self._require_pct_confirmation("loomstroke_rollback_changeset", changeset, hard=True)
+        await self._require_pct_confirmation(
+            "loomstroke_rollback_changeset", state.snapshot(), hard=True
+        )
+        state.ensure_current()
+        record_result = commit_records(self, state, changeset, restore=True)
+        if record_result is not None:
+            return record_result
         rolled_back = self._rollback_pct_changeset_records(changeset)
         changeset["status"] = "rolled_back"
         changeset["rolledBackAt"] = datetime.now(UTC).isoformat()
         changeset["updatedAt"] = changeset["rolledBackAt"]
-        self._production_store.update_changeset(changeset)
+        changeset = state.write(changeset)
         return pct.pct_response(
             {"changeset": changeset, "rolledBackRecords": rolled_back},
             requires_confirmation=True,
@@ -3964,6 +4003,8 @@ class LoomStrokeMcpService:
         )
 
     def _apply_pct_changeset_operations(self, changeset: Mapping[str, Any]) -> list[dict[str, Any]]:
+        from .production_record_changeset import apply_record_operations  # noqa: PLC0415
+
         applied: list[dict[str, Any]] = []
         operations = changeset.get("operations")
         operation_list = operations if isinstance(operations, list) else []
@@ -3974,40 +4015,7 @@ class LoomStrokeMcpService:
         ]
         if comic_operations:
             applied.append(self._apply_comic_changeset_operations(comic_operations, changeset))
-        for operation in operation_list:
-            if not isinstance(operation, Mapping):
-                continue
-            kind = str(operation.get("kind") or operation.get("op") or "")
-            if self._has_comic_changeset_operations([operation]):
-                continue
-            payload = (
-                operation.get("arguments")
-                if isinstance(operation.get("arguments"), Mapping)
-                else operation
-            )
-            if kind == "mark_artifact_decision":
-                decision = pct.create_decision_record(cast(Mapping[str, Any], payload))
-                self._production_store.add_decision(decision)
-                applied.append(
-                    {
-                        "kind": kind,
-                        "recordType": "decision",
-                        "recordId": decision["decisionId"],
-                    }
-                )
-            elif kind == "add_bible_rule":
-                entry = pct.create_bible_entry(cast(Mapping[str, Any], payload))
-                self._production_store.add_bible_entry(entry)
-                applied.append(
-                    {
-                        "kind": kind,
-                        "recordType": "bible_entry",
-                        "recordId": entry["entryId"],
-                        "scope": entry["scope"],
-                    }
-                )
-            elif kind == "noop":
-                applied.append({"kind": kind, "recordType": "noop", "recordId": None})
+        applied.extend(apply_record_operations(self._production_store, operation_list))
         return applied
 
     def _apply_comic_changeset_operations(
@@ -4048,25 +4056,9 @@ class LoomStrokeMcpService:
         }
 
     def _rollback_pct_changeset_records(self, changeset: Mapping[str, Any]) -> list[dict[str, Any]]:
-        rolled_back: list[dict[str, Any]] = []
-        applied_records = changeset.get("appliedRecords")
-        for record in applied_records if isinstance(applied_records, list) else []:
-            if not isinstance(record, Mapping):
-                continue
-            record_type = str(record.get("recordType") or "")
-            record_id = str(record.get("recordId") or "")
-            if record_type == "decision":
-                decisions = [
-                    item
-                    for item in self._production_store.read_records("decisions")
-                    if str(item.get("decisionId") or "") != record_id
-                ]
-                self._production_store.write_records("decisions", decisions)
-                rolled_back.append(dict(record))
-            elif record_type == "bible_entry":
-                scope = str(record.get("scope") or "project")
-                if self._production_store.remove_bible_entry(scope, record_id):
-                    rolled_back.append(dict(record))
+        from .production_record_changeset import rollback_record_operations  # noqa: PLC0415
+
+        return rollback_record_operations(self._production_store, changeset.get("appliedRecords"))
 
     def _has_scene_source(self) -> bool:
         return (

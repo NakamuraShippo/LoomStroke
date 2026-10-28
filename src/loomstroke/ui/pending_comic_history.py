@@ -8,6 +8,7 @@ from typing import Any
 from PySide6.QtWidgets import QWidget
 from shiboken6 import isValid
 
+from .history_failure_feedback import request_history
 from .pending_comic_shortcuts import PendingComicShortcutFilter
 
 logger = logging.getLogger(__name__)
@@ -75,7 +76,7 @@ class PendingComicHistory:
             if committed:
                 history = self._window._host_api.history
                 for direction in requests:
-                    if not getattr(history, direction)():
+                    if not request_history(self._window, history, direction):
                         break
         except Exception:
             logger.exception("Deferred comic history request failed")

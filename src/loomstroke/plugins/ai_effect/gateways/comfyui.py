@@ -66,9 +66,19 @@ from loomstroke.plugins.ai_effect.gateway_protocol import (
     ValidationResult,
     WorkflowLoadResult,
 )
+from loomstroke.plugins.ai_effect.gateways.comfyui_handle_cancellation import (
+    _cancel_handle_progress,
+)
 from loomstroke.plugins.ai_effect.gateways.comfyui_history import history_completion
+from loomstroke.plugins.comfyui.job_connection import (
+    _cancel_job,
+    _capture_job_connection,
+    _JobConnection,
+    _JobConnectionError,
+)
 from loomstroke.plugins.comfyui.object_info_spec import combo_choices, is_combo_head
 from loomstroke.plugins.comfyui.session_target import active_url, bind_service, confirm
+from loomstroke.plugins.common.comfyui_history import _PendingHistoryEvent
 
 logger = logging.getLogger(__name__)
 
@@ -101,10 +111,12 @@ class _ServiceBackedJobHandle(JobHandle):
         prompt_id: str,
         output_node_ids: list[str],
         output_internal_ids: dict[str, str],
+        _job: _JobConnection | None = None,
     ) -> None:
         self.job_id = prompt_id
         self.request_id = request.request_id
         self._service = service
+        self._job = _job
         self._request = request
         self._output_node_ids = list(output_node_ids)
         self._output_internal_ids = dict(output_internal_ids)
@@ -207,6 +219,9 @@ class _ServiceBackedJobHandle(JobHandle):
                 self.job_id,
             )
             return
+        if isinstance(event, _PendingHistoryEvent):
+            self._start_history_poll()
+            return
         step = int(getattr(event, "step", 0) or 0)
         total = int(getattr(event, "total", 0) or 0)
         progress = (step / total) if total > 0 else None
@@ -256,20 +271,17 @@ class _ServiceBackedJobHandle(JobHandle):
             return
         if result_data is not None and self._accept_history(result_data):
             return
-        # Premature-completion recovery path (absent or still-running history).
-        # ``ExtendedComfyUIService._stream_job``
-        # decides a job is done on the first progress event whose
-        # ``step >= total`` — a heuristic that trips on intermediate node
-        # progress (e.g. KSampler's final step) before ComfyUI's
-        # ``/history/{prompt_id}`` endpoint is populated. When that happens
-        # the event we just received carries ``success=True`` but
-        # ``result_data=None`` (observed in dog-food: ``has_data=False``
-        # immediately followed by ComfyUI's "Execution completed" ~300 ms
-        # later). Fall back to polling ``/history`` ourselves before we
-        # signal ``done`` so the ``wait()`` side sees populated data.
-        if self._poll_task is not None:
-            # Already polling from an earlier premature result event —
-            # don't stack tasks.
+        # Legacy services may still publish premature success; share the same
+        # fallback as the standard stream's private history-readiness hint.
+        self._start_history_poll()
+
+    def _start_history_poll(self) -> None:
+        if (
+            self._poll_task is not None
+            or self._cancelled
+            or self._terminal_error is not None
+            or self._result_data is not None
+        ):
             return
         logger.info(
             "_ServiceBackedJobHandle: premature completion for %s — "
@@ -291,7 +303,7 @@ class _ServiceBackedJobHandle(JobHandle):
             )
             self._progress_queue.put_nowait(ProgressEvent(kind="error"))
 
-    async def _poll_history_until_ready(
+    async def _poll_history_until_ready(  # noqa: PLR0911 - cancellation guards precede terminals
         self, *, timeout: float = 60.0, interval: float = 0.3
     ) -> None:
         """Poll ``connection.get_result(prompt_id)`` until history is terminal.
@@ -302,6 +314,8 @@ class _ServiceBackedJobHandle(JobHandle):
         treated as "try again" since ComfyUI's history endpoint may
         briefly 404 between "job finished" and "history persisted".
         """
+        if self._cancelled:
+            return
         connection = self._get_connection()
         if connection is None:
             self._terminal_error = AIError(
@@ -319,7 +333,19 @@ class _ServiceBackedJobHandle(JobHandle):
                 return
             attempts += 1
             try:
+                if self._job is not None:
+                    connection = self._job.require()
                 history = await connection.get_result(self.job_id)
+            except _JobConnectionError:
+                if self._cancelled:
+                    return
+                self._terminal_error = AIError(
+                    class_=ErrorClass.CONNECTION,
+                    title="ComfyUI connection unavailable for history poll",
+                    raw={"job_id": self.job_id},
+                )
+                self._progress_queue.put_nowait(ProgressEvent(kind="error"))
+                return
             except Exception as exc:  # noqa: BLE001 - tolerate transient failures
                 logger.debug(
                     "_ServiceBackedJobHandle: history poll attempt %d raised: %s",
@@ -327,6 +353,8 @@ class _ServiceBackedJobHandle(JobHandle):
                     exc,
                 )
                 history = None
+            if self._cancelled:
+                return
             if history and self._accept_history(history):
                 logger.info(
                     "_ServiceBackedJobHandle: history terminal for %s after %d poll(s)",
@@ -338,6 +366,8 @@ class _ServiceBackedJobHandle(JobHandle):
                 await asyncio.sleep(interval)
             except asyncio.CancelledError:
                 return
+        if self._cancelled:
+            return
         logger.warning(
             "_ServiceBackedJobHandle: history poll timed out for %s after %d attempts",
             self.job_id,
@@ -362,7 +392,8 @@ class _ServiceBackedJobHandle(JobHandle):
         if kind == "error":
             self._terminal_error = error
         elif kind == "cancelled":
-            self._cancelled = True
+            _cancel_handle_progress(self)
+            return True
         else:
             self._result_data = history
         self._progress_queue.put_nowait(ProgressEvent(kind=kind))
@@ -371,8 +402,7 @@ class _ServiceBackedJobHandle(JobHandle):
     def _on_cancelled(self, event: Any) -> None:
         if getattr(event, "job_id", "") != self.job_id:
             return
-        self._cancelled = True
-        self._progress_queue.put_nowait(ProgressEvent(kind="cancelled"))
+        _cancel_handle_progress(self)
 
     # ------------------------------------------------------------------
     # JobHandle interface
@@ -500,10 +530,24 @@ class _ServiceBackedJobHandle(JobHandle):
             for f in files:
                 total_files += 1
                 try:
+                    if self._job is not None:
+                        connection = self._job.require()
                     png_bytes = await connection.get_image(
                         filename=f["filename"],
                         subfolder=f.get("subfolder", ""),
                         folder_type=f.get("type", "output"),
+                    )
+                except _JobConnectionError:
+                    return JobResult(
+                        status="failed",
+                        output_images=[],
+                        duration_sec=0.0,
+                        error=AIError(
+                            class_=ErrorClass.CONNECTION,
+                            title="ComfyUI connection unavailable for output fetch",
+                            raw={"job_id": self.job_id},
+                        ),
+                        output_models=model_outputs,
                     )
                 except (OSError, TimeoutError, KeyError) as exc:
                     logger.warning(
@@ -566,15 +610,12 @@ class _ServiceBackedJobHandle(JobHandle):
         )
 
     async def cancel(self) -> None:
-        if self._cancelled:
+        if not _cancel_handle_progress(self):
             return
-        self._cancelled = True
-        # Abort an in-flight /history poll so we don't keep hitting the
-        # backend after the user cancelled.
-        poll_task = self._poll_task
-        if poll_task is not None and not poll_task.done():
-            poll_task.cancel()
         try:
+            if self._job is not None:
+                await _cancel_job(self._service, self.job_id, self._job)
+                return
             cancel_fn = getattr(self._service, "cancel", None)
             if callable(cancel_fn):
                 maybe = cancel_fn(self.job_id)
@@ -588,6 +629,11 @@ class _ServiceBackedJobHandle(JobHandle):
             logger.warning("ComfyUI cancel failed: %s", exc)
 
     def _get_connection(self) -> Any:
+        if self._job is not None:
+            try:
+                return self._job.require()
+            except _JobConnectionError:
+                return None
         return getattr(self._service, "_connection", None)
 
     async def _import_3d_model_outputs(self, model_outputs: list[OutputModel]) -> int:
@@ -615,7 +661,11 @@ class _ServiceBackedJobHandle(JobHandle):
             )
         if not targets:
             return 0
-        imported = await apply_3d(self.job_id, history_outputs, targets)
+        if self._job is None:
+            imported = await apply_3d(self.job_id, history_outputs, targets)
+        else:
+            self._job.require()
+            imported = await apply_3d(self.job_id, history_outputs, targets, _job=self._job)
         try:
             return int(imported)
         except (TypeError, ValueError):
@@ -1142,6 +1192,9 @@ class ComfyUIGateway(AIGateway):
                     ),
                 )
             )
+        job = _capture_job_connection(self._service, connection)
+        if job is not None:
+            job._gateway_history_owner = True
         # Establish the WebSocket when not already connected — otherwise
         # the service's _stream_job cannot deliver AI_JOB_PROGRESS events
         # and the AI Effect handle would hang forever. Mirrors what the
@@ -1151,7 +1204,10 @@ class ComfyUIGateway(AIGateway):
             already_connected = bool(is_connected_fn()) if callable(is_connected_fn) else False
             if not already_connected:
                 connect_fn = getattr(self._service, "connect", None)
-                if callable(connect_fn):
+                if job is not None:
+                    await job.require().connect()
+                    job.require()
+                elif callable(connect_fn):
                     await connect_fn()
                 else:
                     # Fall back to the connection's own connect if the
@@ -1208,12 +1264,13 @@ class ComfyUIGateway(AIGateway):
                 # then either reject the path during VALIDATE_INPUTS or
                 # fall back to a stale default — neither of which shows
                 # the author's selected layer content in the output.
-                uploaded_filename = await connection.upload_image_bytes(
+                upload_connection = job.require() if job is not None else connection
+                uploaded_filename = await upload_connection.upload_image_bytes(
                     slot_image.png_bytes,
                     upload_name,
                     subfolder="",
                 )
-            except (OSError, TimeoutError) as exc:
+            except (_JobConnectionError, OSError, TimeoutError) as exc:
                 raise AIGatewayError(
                     AIError(
                         class_=ErrorClass.CONNECTION,
@@ -1232,14 +1289,8 @@ class ComfyUIGateway(AIGateway):
                 node_id,
                 input_key,
             )
-            # Snapshot the actual PNG that left LoomStroke into the
-            # user-visible logs directory so dogfood can verify by eye
-            # what ComfyUI actually received. Common reason "input not
-            # applied" survives the technical fixes: the slot ends up
-            # bound to a layer that is empty / hidden / off-canvas, and
-            # we send a near-blank image — the only way to catch that
-            # without an actual canvas screenshot is to inspect the
-            # serialised PNG directly.
+            # Preserve the actual uploaded bytes for explicit image
+            # diagnostics only. Ordinary generation creates no local copy.
             _snapshot_slot_png_for_diagnosis(internal_id, slot_image.png_bytes)
             slot_overrides[(node_id, input_key)] = (internal_id, uploaded_filename)
 
@@ -1324,7 +1375,11 @@ class ComfyUIGateway(AIGateway):
         # ``queue_prompt`` fall back to ``self.client_id`` so the
         # WebSocket subscription receives the events.
         try:
-            prompt_id = await self._service.submit_workflow(workflow_model)
+            if job is None:
+                prompt_id = await self._service.submit_workflow(workflow_model)
+            else:
+                job.require()
+                prompt_id = await self._service._submit_workflow_for_job(workflow_model, job)
         except (RuntimeError, ValueError) as exc:
             raise AIGatewayError(
                 AIError(
@@ -1370,6 +1425,7 @@ class ComfyUIGateway(AIGateway):
             prompt_id=prompt_id,
             output_node_ids=list(output_internal_ids.keys()),
             output_internal_ids=output_internal_ids,
+            _job=job,
         )
 
     async def dispose(self) -> None:
@@ -1684,36 +1740,14 @@ def _default_from_input_spec(input_spec: Any) -> Any:
 
 
 def _snapshot_slot_png_for_diagnosis(internal_id: str, png_bytes: bytes) -> None:
-    """Write the slot's PNG to ``user_data/logs/ai_effect_slots/`` for triage.
-
-    Each generation overwrites ``slot_<internal_id>.png``. Lets dogfood
-    open the file and visually confirm what LoomStroke actually shipped
-    to ComfyUI — the only way to distinguish "the upload was correct
-    but ComfyUI ignored it" from "we shipped a near-blank image" without
-    standing up a debugger.
-
-    Failures are swallowed: a missing user_data root or a read-only
-    disk must not block generation. This is diagnostic-only.
-    """
+    """Keep uploaded PNG bytes only for the dedicated diagnostic opt-in."""
+    del internal_id  # Preserve the private call shape without identifying the file by user data.
     try:
-        from loomstroke.platform.user_dirs import default_user_root  # noqa: PLC0415
+        from loomstroke.platform.image_diagnostics import write_image_diagnostic  # noqa: PLC0415
 
-        slots_dir = default_user_root() / "logs" / "ai_effect_slots"
-        slots_dir.mkdir(parents=True, exist_ok=True)
-        # Sanitise the internal_id to filesystem-safe — same rule as
-        # the editor's filename sanitiser, but inlined to avoid a
-        # cross-package import for a one-line diagnostic.
-        safe_id = "".join(c if c.isalnum() or c in "-_." else "_" for c in internal_id) or "slot"
-        out_path = slots_dir / f"slot_{safe_id}.png"
-        out_path.write_bytes(png_bytes)
-        logger.info(
-            "ComfyUIGateway.submit: slot %s payload mirrored to %s "
-            "(open this file to verify the content LoomStroke sent to ComfyUI)",
-            internal_id,
-            out_path,
-        )
+        write_image_diagnostic("comfy_slots", lambda: (png_bytes, None))
     except Exception:  # noqa: BLE001 - diagnostic only, never fatal
-        logger.debug("Slot snapshot write failed for %s", internal_id, exc_info=True)
+        logger.debug("Slot image diagnostic skipped")
 
 
 def _resolve_output_candidate_ref(

@@ -7,6 +7,7 @@ dirty state (spec 07 §9).
 
 from __future__ import annotations
 
+import logging
 from typing import Any
 
 from PySide6.QtCore import Qt
@@ -30,6 +31,8 @@ from PySide6.QtWidgets import (
 from loomstroke.core.page_templates import TemplateCaptureOptions
 from loomstroke.core.template_raster_codec import TemplateRasterCodec
 from loomstroke.ui.translations import translated_literal_domain
+
+logger = logging.getLogger(__name__)
 
 
 def _ts(text: str) -> str:
@@ -221,8 +224,7 @@ class TemplateManagerDialog(QDialog):
         if not ok or not name.strip():
             return
         rename = getattr(self._page_service, "rename_page_template", None)
-        if callable(rename) and rename(template_id, name.strip()):
-            self.refresh()
+        self._run_library_operation(rename, template_id, name.strip())
 
     def _on_category(self) -> None:
         template_id = self._selected_id()
@@ -234,16 +236,14 @@ class TemplateManagerDialog(QDialog):
         if not ok or not category.strip():
             return
         set_category = getattr(self._page_service, "set_page_template_category", None)
-        if callable(set_category) and set_category(template_id, category.strip()):
-            self.refresh()
+        self._run_library_operation(set_category, template_id, category.strip())
 
     def _on_duplicate(self) -> None:
         template_id = self._selected_id()
         if template_id is None:
             return
         duplicate = getattr(self._page_service, "duplicate_page_template", None)
-        if callable(duplicate) and duplicate(template_id):
-            self.refresh()
+        self._run_library_operation(duplicate, template_id)
 
     def _on_delete(self) -> None:
         template_id = self._selected_id()
@@ -257,5 +257,19 @@ class TemplateManagerDialog(QDialog):
         if answer != QMessageBox.StandardButton.Yes:
             return
         delete = getattr(self._page_service, "delete_page_template", None)
-        if callable(delete) and delete(template_id):
+        self._run_library_operation(delete, template_id)
+
+    def _run_library_operation(self, operation: Any, *args: Any) -> None:
+        try:
+            succeeded = callable(operation) and bool(operation(*args))
+        except Exception:
+            logger.warning("Template library operation did not complete")
+            succeeded = False
+        if succeeded:
             self.refresh()
+        else:
+            QMessageBox.warning(
+                self,
+                _ts("Manage Templates"),
+                _ts("The template could not be saved. See the log for details."),
+            )

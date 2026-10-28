@@ -50,6 +50,7 @@ from .book_spread_layout import BookLayout
 from .canvas import Canvas as LegacyCanvas
 from .canvas_service_simple import SimpleCanvasService, _Layer
 from .commands import BlendMode
+from .document_capture_guard import is_document_capture_blocked
 from .document_close_service import DocumentCloseService
 from .document_metadata_service import DocumentMetadataService, _CanvasMetadata, _DocumentState
 from .document_persistence_service import DocumentPersistenceService
@@ -62,6 +63,10 @@ from .document_snapshot_builder import DocumentSnapshotBuilder
 from .events import (
     Events,
     HistoryResetEvent,
+)
+from .history_failure_reporting import (
+    bind_document_history_failure_source,
+    history_failure_event_is_current,
 )
 from .layer import Layer
 from .layout_serialization import payload_to_snapshot, snapshot_to_payload
@@ -118,6 +123,9 @@ class DocumentServiceImpl(DocumentServiceBase):
             subscribe(Events.DOC_CREATED, self._handler_revision_reset)
             subscribe(Events.DOC_LOADED, self._handler_revision_reset)
             subscribe(Events.DOC_CLOSED, self._handler_revision_reset)
+        bind_document_history_failure_source(
+            canvas, event_bus, page_service, self._capture_document_revision
+        )
 
     @property
     def _layer_io(self) -> LayerIO:
@@ -171,10 +179,31 @@ class DocumentServiceImpl(DocumentServiceBase):
     # Document revision facade (SAVE-ASYNC-REV-01)
 
     def _on_revision_document_modified(self, _payload: Any) -> None:
+        if not history_failure_event_is_current(_payload):
+            return
         self._revision_tracker.mark_modified()
 
     def _on_revision_document_reset(self, _payload: Any) -> None:
         self._revision_tracker.reset_document()
+        reset_residency = getattr(self._page_service, "_reset_page_residency", None)
+        if callable(reset_residency):
+            reset_residency()
+        reset = getattr(self._canvas, "_reset_document_capture_gate", None)
+        if callable(reset):
+            reset()
+        self._persistence_service.reset_deferred_autosave()
+
+    def _document_capture_blocked(self) -> bool:
+        return is_document_capture_blocked(self._canvas)
+
+    def _recovery_sources_in_use(self) -> set[Path] | None:
+        if self._page_service is None:
+            return set()
+        query = getattr(self._page_service, "_recovery_sources_in_use", None)
+        return query() if callable(query) else None
+
+    def _consume_deferred_autosave(self, path: str | Path) -> bool:
+        return self._persistence_service.consume_deferred_autosave(path)
 
     def _capture_document_revision(self) -> DocumentRevisionToken:
         """Freeze the revision state a just-built snapshot covers."""
@@ -394,6 +423,18 @@ class DocumentServiceImpl(DocumentServiceBase):
                 )
         lid = self.import_layer(psd_path)
         return [lid] if lid else None
+
+    def _prepare_image_document(self, path: str | Path, *, layered: bool = False) -> Any:
+        from .image_document_preparation import prepare_image_document  # noqa: PLC0415
+
+        return prepare_image_document(self, Path(path), layered=layered)
+
+    def _commit_image_document(
+        self, prepared: Any, *, on_committed: Callable[[], None] | None = None
+    ) -> bool:
+        from .image_document_commit import commit_image_document  # noqa: PLC0415
+
+        return commit_image_document(self, prepared, on_committed=on_committed)
 
     # ------------------------------------------------------------------
 
@@ -994,5 +1035,7 @@ class DocumentServiceImpl(DocumentServiceBase):
 
         return "Imported Layer"
 
+
+_DEFAULT_IMPORT_LAYER = DocumentServiceImpl.import_layer
 
 __all__ = ["DocumentServiceImpl"]

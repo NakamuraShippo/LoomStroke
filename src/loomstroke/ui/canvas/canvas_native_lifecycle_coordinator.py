@@ -36,6 +36,10 @@ def _flush_desktop_composition() -> bool:
     return True
 
 
+class _NativeProbeCancelled(Exception):
+    """Unwind a probe before releasing a presenter invalidated by nested events."""
+
+
 class NativeVisualProbeCoordinator:
     """Coordinate native visual probe scheduling, retries, and fallback."""
 
@@ -61,13 +65,26 @@ class NativeVisualProbeCoordinator:
         self._capture_attempts = capture_attempts
         self._capture_settle_seconds = capture_settle_seconds
         self._smoke_clear_rgba = smoke_clear_rgba
+        self._cancelled = False
 
     def reset_state(self) -> None:
+        self._cancelled = False
         self._host._native_visual_probe_passed = False
         self._host._native_visual_probe_pending = False
         self._host._native_visual_probe_running = False
         self._host._native_visual_probe_retry_count = 0
         self._host._native_scene_presented_after_probe = False
+
+    def cancel(self) -> None:
+        self._cancelled = True
+
+    def _check_cancelled(self) -> None:
+        if self._cancelled:
+            raise _NativeProbeCancelled
+
+    def _process_probe_events(self) -> None:
+        QApplication.processEvents()
+        self._check_cancelled()
 
     def schedule(self) -> None:
         if not self._host.native_surface_active:
@@ -170,7 +187,7 @@ class NativeVisualProbeCoordinator:
                 # Prefer HWND capture while the Qt overlay remains visible so
                 # the smoke frame does not flash through during document setup.
                 self._host._overlay_surface.raise_()
-                QApplication.processEvents()
+                self._process_probe_events()
                 reason = self.run_probe_without_overlay(
                     presenter,
                     capture_attempts=1,
@@ -182,7 +199,7 @@ class NativeVisualProbeCoordinator:
             if overlay_was_visible:
                 self._host._overlay_surface.hide()
             hidden_chrome = self.hide_overlapping_top_level_chrome_for_probe()
-            QApplication.processEvents()
+            self._process_probe_events()
             return self.run_probe_without_overlay(presenter)
         finally:
             self._host._native_visual_probe_running = False
@@ -190,6 +207,7 @@ class NativeVisualProbeCoordinator:
             if (
                 overlay_was_visible
                 and self._host.native_surface_active
+                and getattr(self._host, "isVisible", lambda: True)()
                 and _is_qt_object_valid(self._host._overlay_surface)
             ):
                 self._host._overlay_surface.show()
@@ -205,8 +223,9 @@ class NativeVisualProbeCoordinator:
         capture: QImage | None = None
         attempts = self._capture_attempts if capture_attempts is None else max(1, capture_attempts)
         for attempt in range(attempts):
+            self._check_cancelled()
             if attempt > 0:
-                QApplication.processEvents()
+                self._process_probe_events()
             try:
                 presenter.present_smoke_frame()
             except self._present_error_types as exc:
@@ -218,15 +237,15 @@ class NativeVisualProbeCoordinator:
                     capture_supported=False,
                 )
                 return reason
-            QApplication.processEvents()
+            self._process_probe_events()
             flush_native_surface = getattr(self._host, "_flush_native_surface_window", None)
             if callable(flush_native_surface):
                 flush_native_surface()
-                QApplication.processEvents()
+                self._process_probe_events()
             composition_flushed = _flush_desktop_composition()
             if attempt > 0 and not composition_flushed:
                 time.sleep(self._capture_settle_seconds)
-                QApplication.processEvents()
+                self._process_probe_events()
             capture = self._host._capture_native_surface_image()
             window_capture = self._host._capture_native_surface_window_image()
             obscured = native_surface_obscured(getattr(self._host, "_native_surface", None))
@@ -414,14 +433,22 @@ class NativeVisualProbeCoordinator:
         screen_at = getattr(QApplication, "screenAt", None)
         if callable(screen_at):
             screen = screen_at(top_left)
-            if screen is not None:
+            if self._screen_can_capture(screen):
                 return screen
         handle = self._host._native_surface.windowHandle()
         if handle is not None:
             screen = handle.screen()
-            if screen is not None:
+            if self._screen_can_capture(screen):
                 return screen
-        return QApplication.primaryScreen()
+        screen = QApplication.primaryScreen()
+        return screen if self._screen_can_capture(screen) else None
+
+    @staticmethod
+    def _screen_can_capture(screen: Any) -> bool:
+        # PySide can return a cached QObject wrapper for a QScreen pointer.
+        # It is non-null but has no screen API. Reacquire through the other
+        # existing providers instead of aborting the startup visual probe.
+        return _is_qt_object_valid(screen) and callable(getattr(screen, "grabWindow", None))
 
     def _image_matches_native_smoke_frame(self, image: QImage) -> bool:
         return self.image_matches_native_smoke_frame(image, self._smoke_clear_rgba)
@@ -495,6 +522,8 @@ class CanvasViewportNativeLifecycleCoordinator:
         self._backend_error_type = backend_error_type
         self._not_ready_reason = not_ready_reason
         self._transient_mismatch_reason = transient_mismatch_reason
+        self._probe_depth = 0
+        self._release_pending = False
         self._visual_probe = NativeVisualProbeCoordinator(
             host,
             timer_single_shot=timer_single_shot,
@@ -530,6 +559,13 @@ class CanvasViewportNativeLifecycleCoordinator:
         return self._host._native_presenter
 
     def release_presenter(self) -> None:
+        if self._probe_depth:
+            # Qt events dispatched by the visual probe may hide, close, or
+            # change the surface. Its stack still owns the old presenter.
+            self._release_pending = True
+            self._visual_probe.cancel()
+            return
+        self._release_pending = False
         self._visual_probe.reset_state()
         self._host._native_overlay_flat_layers = ()
         self._host._native_present_pending = False
@@ -575,10 +611,25 @@ class CanvasViewportNativeLifecycleCoordinator:
         self._visual_probe.run_deferred()
 
     def run_visual_probe(self, presenter: Any) -> str | None:
-        return self._visual_probe.run_probe_body(presenter)
+        return self._run_probe(self._visual_probe.run_probe_body, presenter)
 
     def run_visual_probe_without_overlay(self, presenter: Any) -> str | None:
-        return self._visual_probe.run_probe_without_overlay(presenter)
+        return self._run_probe(self._visual_probe.run_probe_without_overlay, presenter)
+
+    def _run_probe(self, probe: Callable[[Any], str | None], presenter: Any) -> str | None:
+        self._probe_depth += 1
+        try:
+            reason = probe(presenter)
+        except _NativeProbeCancelled:
+            reason = self._not_ready_reason
+        finally:
+            self._probe_depth -= 1
+            invalidated = self._release_pending
+            if not self._probe_depth and invalidated:
+                self.release_presenter()
+        # A lifecycle event in chrome restoration also invalidates an otherwise
+        # successful probe. Never let callers render with that old presenter.
+        return self._not_ready_reason if invalidated else reason
 
     def record_visual_probe(
         self,

@@ -23,10 +23,15 @@ estimate covers real history only.
 from __future__ import annotations
 
 import logging
-from typing import Any
+from inspect import getattr_static
+from typing import Any, cast
 
 from loomstroke.core.canvas_history_entries import _HistoryGroup
-from loomstroke.core.canvas_history_port import PageHistoryBundle
+from loomstroke.core.canvas_history_port import (
+    _DEFAULT_PORT_DETACH,
+    CanvasHistoryPortService,
+    PageHistoryBundle,
+)
 from loomstroke.core.page_history_memory import estimate_page_history_bundle_bytes
 
 logger = logging.getLogger(__name__)
@@ -57,7 +62,7 @@ class PageHistoryCoordinator:
         page then starts with the same empty history as a first visit,
         and the memory-budget bookkeeping never carries dead entries.
         """
-        if not bundle.undo_groups and not bundle.redo_groups:
+        if not bundle.undo_groups and not bundle.redo_groups and not bundle.restore_owner.blocked:
             return False
         self._bundles[bundle.page_id] = bundle
         self._ordinals[bundle.page_id] = self._next_ordinal
@@ -77,6 +82,38 @@ class PageHistoryCoordinator:
         bundle = self._canvas._history_detach_bundle(str(page_id) if page_id else "")
         if keep and page_id:
             self._store_bundle(bundle)
+
+    def _supports_prepared_detach(self) -> bool:
+        """Do not bypass old instance, subclass, or class-level hook contracts."""
+        # Runtime imports avoid pulling accessor collaborators into the
+        # coordinator's import graph before the canvas class is initialized.
+        from .canvas_service_simple_accessors import (  # noqa: PLC0415
+            _DEFAULT_HISTORY_PORT_ACCESSOR,
+        )
+        from .canvas_service_simple_history_api import (  # noqa: PLC0415
+            _DEFAULT_CANVAS_DETACH_BUNDLE,
+        )
+
+        canvas = self._canvas
+        if (
+            getattr_static(self, "detach_active_history", None) is not _DEFAULT_COORDINATOR_DETACH
+            or getattr_static(canvas, "_history_detach_bundle", None)
+            is not _DEFAULT_CANVAS_DETACH_BUNDLE
+            or getattr_static(canvas, "_history_port", None) is not _DEFAULT_HISTORY_PORT_ACCESSOR
+        ):
+            return False
+        port = canvas._history_port()
+        return (
+            type(port) is CanvasHistoryPortService
+            and port._canvas is canvas
+            and getattr_static(port, "detach_history", None) is _DEFAULT_PORT_DETACH
+        )
+
+    def _detach_prepared_active_history(self, page_id: str, *, keep: bool) -> PageHistoryBundle:
+        bundle = self._canvas._history_detach_prepared_bundle(page_id)
+        if keep:
+            self._store_bundle(bundle)
+        return cast(PageHistoryBundle, bundle)
 
     def attach_history_for(self, page_id: str) -> None:
         """Attach the stored bundle for ``page_id``; first visits stay empty.
@@ -128,7 +165,11 @@ class PageHistoryCoordinator:
             return None
         if is_active:
             bundle = self._canvas._history_detach_bundle(str(page_id))
-            if not bundle.undo_groups and not bundle.redo_groups:
+            if (
+                not bundle.undo_groups
+                and not bundle.redo_groups
+                and not bundle.restore_owner.blocked
+            ):
                 return None
             return bundle  # type: ignore[no-any-return]
         self._ordinals.pop(page_id, None)
@@ -193,9 +234,14 @@ class PageHistoryCoordinator:
         tops: list[tuple[str, _HistoryGroup]] = []
         for page_id, bundle in self._bundles.items():
             stack = bundle.redo_groups if redo else bundle.undo_groups
-            if stack:
-                tops.append((page_id, stack[-1]))
+            group = bundle.restore_owner.peek(stack, redo=redo)
+            if group is not None:
+                tops.append((page_id, group))
         return tops
+
+    def is_history_restore_blocked(self, page_id: str) -> bool:
+        bundle = self._bundles.get(page_id)
+        return bundle is not None and bundle.restore_owner.blocked
 
     def inactive_group_counts(self) -> tuple[int, int]:
         """Return ``(undo_groups, redo_groups)`` totals across bundles."""
@@ -219,7 +265,7 @@ class PageHistoryCoordinator:
             bundle = self._bundles[page_id]
             dropped += len(bundle.redo_groups)
             bundle.redo_groups.clear()
-            if not bundle.undo_groups:
+            if not bundle.undo_groups and not bundle.restore_owner.blocked:
                 self._bundles.pop(page_id, None)
                 self._ordinals.pop(page_id, None)
         return dropped
@@ -244,12 +290,16 @@ class PageHistoryCoordinator:
                 del self._ordinals[page_id]
                 continue
             if not bundle.undo_groups:
-                if not bundle.redo_groups:
+                if not bundle.redo_groups and not bundle.restore_owner.blocked:
                     self._bundles.pop(page_id, None)
                     self._ordinals.pop(page_id, None)
                 continue  # redo-only bundles are protected
             group = bundle.undo_groups.popleft()
-            if not bundle.undo_groups and not bundle.redo_groups:
+            if (
+                not bundle.undo_groups
+                and not bundle.redo_groups
+                and not bundle.restore_owner.blocked
+            ):
                 self._bundles.pop(page_id, None)
                 self._ordinals.pop(page_id, None)
             logger.debug(
@@ -268,5 +318,7 @@ class PageHistoryCoordinator:
         self._ordinals.clear()
         self._next_ordinal = 0
 
+
+_DEFAULT_COORDINATOR_DETACH = PageHistoryCoordinator.detach_active_history
 
 __all__ = ["PageHistoryCoordinator"]

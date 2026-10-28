@@ -22,14 +22,14 @@ from ...plugins.sdk.tool import (
     ToolMetadata,
     ToolSettings,
 )
+from ..common.document_capture_guard import (
+    DocumentCaptureLease,
+)
 from ..common.tool_icons import resolve_tool_icon_path
 from .gradient_command import (
     GRADIENT_LINEAR,
     GRADIENT_RADIAL,
-    GradientCommand,
     GradientStops,
-    _get_target_array,
-    _render_gradient,
 )
 
 logger = logging.getLogger(__name__)
@@ -146,6 +146,10 @@ class BasicGradientPlugin:
         # Live-preview backup (original layer buffer before gradient applied)
         self._preview_backup: np.ndarray | None = None
         self._preview_layer_id: str | None = None
+        self._preview_capture_lease: DocumentCaptureLease | None = None
+        from .gradient_preview_controller import GradientPreviewController  # noqa: PLC0415
+
+        self._preview_controller = GradientPreviewController(self)
 
         self.metadata = PluginMetadata(
             id="loomstroke.basic_gradient",
@@ -304,7 +308,9 @@ class BasicGradientPlugin:
             self._line_end = (px, py)
             self._state = _DRAGGING
             self._install_overlay()
-            self._take_preview_backup()
+            if not self._take_preview_backup():
+                self._reset_to_idle()
+                return
 
         elif self._state == _EDITING:
             hit = self._hit_test_marker(px, py)
@@ -572,34 +578,11 @@ class BasicGradientPlugin:
     # ------------------------------------------------------------------
     # Apply / cancel
     def _apply_gradient(self) -> None:
-        if self._line_start and self._line_end and self.host_api:
-            x0, y0 = self._line_start
-            x1, y1 = self._line_end
-            ca = _rgba_f_to_255(self.color_a)
-            cb = _rgba_f_to_255(self.color_b)
-            command = GradientCommand(
-                self._active_layer_id(),
-                x0,
-                y0,
-                x1,
-                y1,
-                ca,
-                cb,
-                gradient_type=self.gradient_type,
-                dither=self.dither,
-                stops=self._build_stops_255(),
-            )
-            # Buffer already contains the gradient from preview;
-            # inject backup so apply() is a no-op but undo works.
-            if self._preview_backup is not None:
-                command.set_pre_applied(self._preview_backup)
-            self._pending_commands.append(command)
-        self._preview_backup = None
-        self._preview_layer_id = None
-        self._reset_to_idle()
+        self._preview_controller.apply()
 
     def _cancel_editing(self) -> None:
-        self._restore_preview_backup()
+        if not self._restore_preview_backup():
+            return
         self._reset_to_idle()
 
     def _reset_to_idle(self, *, keep_preview: bool = False) -> None:
@@ -627,77 +610,7 @@ class BasicGradientPlugin:
         self._update_preview(x0, y0, x1, y1)
 
     def _update_preview(self, x0: float, y0: float, x1: float, y1: float) -> None:
-        if self._preview_backup is None:
-            return
-        layer, target = self._resolve_preview_layer()
-        if layer is None or target is None:
-            return
-
-        from ...core.commands import _is_qimage_layer, _layer_transform  # noqa: PLC0415
-
-        # Restore original pixels so each preview is computed from scratch
-        target[:] = self._preview_backup
-
-        height, width = target.shape[:2]
-        mapping = _layer_transform(layer).to_affine()
-        if mapping.inverse() is None:
-            return
-        ca, cb = _rgba_f_to_255(self.color_a), _rgba_f_to_255(self.color_b)
-        gradient = _render_gradient(
-            width,
-            height,
-            x0,
-            y0,
-            x1,
-            y1,
-            ca,
-            cb,
-            self.gradient_type,
-            self.dither,
-            stops=self._build_stops_255(),
-            pixel_transform=mapping,
-        )
-
-        # Source-Over composite (same logic as GradientCommand.apply)
-        is_qimage = _is_qimage_layer(layer)
-        if is_qimage:
-            r, g, b = gradient[:, :, 0], gradient[:, :, 1], gradient[:, :, 2]
-            a = gradient[:, :, 3] / 255.0
-            src_b = (b * a).astype(np.uint8)
-            src_g = (g * a).astype(np.uint8)
-            src_r = (r * a).astype(np.uint8)
-            dst_a = target[:, :, 3].astype(np.float32) / 255.0
-            out_a = a + dst_a * (1.0 - a)
-            for ch_src, ch_idx in [(src_b, 0), (src_g, 1), (src_r, 2)]:
-                dst_ch = target[:, :, ch_idx].astype(np.float32)
-                target[:, :, ch_idx] = np.clip(ch_src + dst_ch * (1.0 - a), 0.0, 255.0).astype(
-                    np.uint8
-                )
-            target[:, :, 3] = np.clip(out_a * 255.0, 0.0, 255.0).astype(np.uint8)
-        else:
-            src_a = gradient[:, :, 3] / 255.0
-            dst_a = target[:, :, 3] / 255.0
-            out_a = src_a + dst_a * (1.0 - src_a)
-            for ch in range(3):
-                safe_a = np.where(out_a > 0, out_a, 1.0)
-                target[:, :, ch] = np.where(
-                    out_a > 0,
-                    (gradient[:, :, ch] * src_a + target[:, :, ch] * dst_a * (1.0 - src_a))
-                    / safe_a,
-                    0.0,
-                )
-            target[:, :, 3] = out_a * 255.0
-
-        # Notify GPU pipeline
-        tv = getattr(layer, "texture_version", None)
-        if tv is not None:
-            layer.texture_version = tv + 1
-        if hasattr(layer, "mark_dirty"):
-            with contextlib.suppress(Exception):
-                layer.mark_dirty(0, 0, width, height)
-        canvas = getattr(self.host_api, "canvas", None) if self.host_api else None
-        if canvas is not None:
-            canvas._recompose()  # noqa: SLF001
+        self._preview_controller.update(x0, y0, x1, y1)
 
     def _install_overlay(self) -> None:
         widget = self._get_canvas_widget()
@@ -715,48 +628,13 @@ class BasicGradientPlugin:
     # Layer-buffer preview helpers
 
     def _resolve_preview_layer(self) -> tuple[Any, np.ndarray | None]:
-        """Return (layer, numpy_buffer) for the preview target layer."""
-        if not self.host_api or self._preview_layer_id is None:
-            return None, None
-        canvas = getattr(self.host_api, "canvas", None)
-        if canvas is None:
-            return None, None
-        from ...core.commands import _resolve_target_layer  # noqa: PLC0415
+        return self._preview_controller.resolve()
 
-        layer = _resolve_target_layer(canvas, self._preview_layer_id)
-        if layer is None:
-            return None, None
-        target = _get_target_array(layer)
-        return layer, target
+    def _take_preview_backup(self) -> bool:
+        return self._preview_controller.take()
 
-    def _take_preview_backup(self) -> None:
-        """Snapshot the active layer buffer before gradient preview."""
-        self._preview_layer_id = self._active_layer_id()
-        _layer, target = self._resolve_preview_layer()
-        if target is not None:
-            self._preview_backup = target.copy()
-        else:
-            self._preview_backup = None
-
-    def _restore_preview_backup(self) -> None:
-        """Restore original layer buffer and trigger recompose."""
-        if self._preview_backup is None:
-            return
-        layer, target = self._resolve_preview_layer()
-        if layer is not None and target is not None:
-            target[:] = self._preview_backup
-            tv = getattr(layer, "texture_version", None)
-            if tv is not None:
-                layer.texture_version = tv + 1
-            if hasattr(layer, "mark_dirty"):
-                h, w = target.shape[:2]
-                with contextlib.suppress(Exception):
-                    layer.mark_dirty(0, 0, w, h)
-            canvas = getattr(self.host_api, "canvas", None) if self.host_api else None
-            if canvas is not None:
-                canvas._recompose()  # noqa: SLF001
-        self._preview_backup = None
-        self._preview_layer_id = None
+    def _restore_preview_backup(self) -> bool:
+        return self._preview_controller.cancel()
 
     # ------------------------------------------------------------------
     # Overlay painting

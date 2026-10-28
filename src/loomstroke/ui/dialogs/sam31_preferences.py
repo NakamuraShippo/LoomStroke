@@ -245,9 +245,10 @@ class Sam31PreferencesSection(QGroupBox):
             if result.ok:
                 self.log_output.appendPlainText(self._ts("SAM 3.1 Ready"))
             else:
-                self.log_output.appendPlainText(f"[{result.error_code}] {result.error_message}")
+                message = self._ts(result.error_message)
+                self.log_output.appendPlainText(f"[{result.error_code}] {message}")
                 if result.error_action:
-                    self.log_output.appendPlainText(result.error_action)
+                    self.log_output.appendPlainText(self._ts(result.error_action))
         elif isinstance(result, dict) and result.get("error"):
             self.log_output.appendPlainText(f"[{result.get('errorCode')}] {result['error']}")
         self.refresh_status()

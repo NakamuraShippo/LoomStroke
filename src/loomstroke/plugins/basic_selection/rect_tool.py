@@ -619,6 +619,8 @@ class BasicSelectionRectTool:
     def disable(self) -> None:
         self._selection_overlay.clear()
         self._cancel_transform_session()
+        if self._vector_drag_mode in {"move", "scale", "rotate"}:
+            self._cancel_vector_transform()
         self._restore_base_selection(recompose=True)
         self._reset_state()
         self._pending_commands.clear()
@@ -630,6 +632,8 @@ class BasicSelectionRectTool:
     def deactivate(self) -> None:
         self._selection_overlay.clear()
         self._cancel_transform_session()
+        if self._vector_drag_mode in {"move", "scale", "rotate"}:
+            self._cancel_vector_transform()
         self._restore_base_selection(recompose=True)
         self._reset_state()
         self.host_api = None
@@ -1864,6 +1868,11 @@ class BasicSelectionRectTool:
             valid_items.append(item)
         if not originals:
             return False
+        try:
+            self._vector_controller.begin_content_preview(canvas)
+        except Exception:
+            logger.exception("Vector selection could not acquire its document capture guard")
+            return False
         self._vector_drag_mode = mode
         self._vector_drag_items = valid_items
         self._vector_drag_originals = originals
@@ -1960,7 +1969,8 @@ class BasicSelectionRectTool:
             for vec_id, layer_id, original in self._vector_drag_originals
         ]
 
-        self._restore_vector_drag_originals()
+        if not self._restore_vector_drag_originals():
+            return
 
         if changed:
             begin_tx = getattr(canvas, "begin_transaction", None)
@@ -2034,7 +2044,8 @@ class BasicSelectionRectTool:
         return True
 
     def _cancel_vector_transform(self) -> None:
-        self._restore_vector_drag_originals()
+        if not self._restore_vector_drag_originals():
+            return
         self._finish_pointer()
 
     def _vector_transform_key(self, pt: StrokePoint) -> tuple[float, float]:
@@ -2131,19 +2142,22 @@ class BasicSelectionRectTool:
                 )
         return bounds
 
-    def _restore_vector_drag_originals(self) -> None:
+    def _restore_vector_drag_originals(self) -> bool:
         if not self._vector_drag_originals or not self.host_api:
-            return
+            return self._vector_controller.state.capture_lease is None
         canvas = getattr(self.host_api, "canvas", None)
         if canvas is None:
-            return
+            return False
+        restored = True
         replacer = getattr(canvas, "replace_vector_object", None)
         if callable(replacer):
             for vec_id, layer_id, original in self._vector_drag_originals:
                 try:
-                    replacer(vec_id, original, layer_id=layer_id, recompose=False)
+                    result = replacer(vec_id, original, layer_id=layer_id, recompose=False)
+                    restored = restored and result is not None and result is not False
                 except Exception:
-                    continue
+                    logger.exception("Vector selection preview restoration failed")
+                    restored = False
         else:
             store = getattr(canvas, "_vector_objects", None)
             if isinstance(store, list):
@@ -2151,13 +2165,17 @@ class BasicSelectionRectTool:
                 for vec_id, _layer_id, original in self._vector_drag_originals:
                     idx = id_to_index.get(vec_id)
                     if idx is None:
+                        restored = False
                         continue
                     store[idx] = original
+            else:
+                restored = False
         if self._vector_drag_bounds is not None:
             selection = getattr(canvas, "_vector_selection", None)
             if isinstance(selection, dict) and selection.get("items"):
                 selection["transform_bounds"] = self._vector_drag_bounds
         self._notify_vector_overlay_changed(canvas)
+        return restored and self._vector_controller.finish_content_preview()
 
     def _translate_vector_object(self, obj: VectorObject, dx: float, dy: float) -> VectorObject:
         paths: list[VectorPath] = []
@@ -2245,8 +2263,16 @@ class BasicSelectionRectTool:
         canvas = getattr(self.host_api, "canvas", None)
         if canvas is None:
             return False
+        try:
+            self._raster_controller.begin_content_preview(canvas)
+        except Exception:
+            logger.exception("Selection preview could not acquire its document capture guard")
+            return False
         cmd = CutSelectionCommand(None)
         if not cmd.apply(canvas):
+            # Cut's ordinary False paths reject before changing content.
+            # Exceptions retain the lease because mutation is then unknown.
+            self._raster_controller.finish_content_preview()
             return False
         if cmd.payload is not None:
             self._transform_payload = cmd.payload
@@ -2255,17 +2281,21 @@ class BasicSelectionRectTool:
         self._recompose_canvas()
         return True
 
-    def _restore_preview_cut(self) -> None:
+    def _restore_preview_cut(self) -> bool:
         if not self.host_api or not self._transform_cut_command:
-            return
+            return self._raster_controller.transform.capture_lease is None
         canvas = getattr(self.host_api, "canvas", None)
         if canvas is None:
-            return
+            return False
         cmd = self._transform_cut_command
-        cmd.revert(canvas)
+        if not cmd.revert(canvas):
+            return False
         self._bump_preview_cut_texture_version(cmd)
-        self._transform_cut_command = None
         self._recompose_canvas()
+        if not self._raster_controller.finish_content_preview():
+            return False
+        self._transform_cut_command = None
+        return True
 
     def _bump_preview_cut_texture_version(self, cmd: CutSelectionCommand) -> None:
         layer = getattr(cmd, "_layer_ref", None)
@@ -2355,7 +2385,8 @@ class BasicSelectionRectTool:
 
         duplicate = bool(alt)
         if duplicate and self._transform_cut_command is not None:
-            self._restore_preview_cut()
+            if not self._restore_preview_cut():
+                return False
         elif (
             not duplicate and self._transform_cut_command is None and not self._apply_preview_cut()
         ):
@@ -2514,7 +2545,8 @@ class BasicSelectionRectTool:
         if not self._transform_active:
             return
         if self._transform_cut_command is not None:
-            self._restore_preview_cut()
+            if not self._restore_preview_cut():
+                return
         else:
             self._restore_transform_base_selection()
         self._clear_transform_preview()
@@ -2530,7 +2562,8 @@ class BasicSelectionRectTool:
         if not self._transform_active or not self._transform_payload or not self._transform_matrix:
             return None
         if self._transform_cut_command is not None:
-            self._restore_preview_cut()
+            if not self._restore_preview_cut():
+                return None
         else:
             self._restore_transform_base_selection()
         self._clear_transform_preview()

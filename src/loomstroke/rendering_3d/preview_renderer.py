@@ -337,3 +337,6 @@ def _normalize_max_faces(value: int | None) -> int | None:
     if max_faces <= 0:
         return None
     return max_faces
+
+
+_DEFAULT_SOFTWARE_RENDER = SoftwarePreviewRenderer.render

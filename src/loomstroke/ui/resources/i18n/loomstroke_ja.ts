@@ -251,6 +251,14 @@
         <translation>ベーシックペン</translation>
     </message>
     <message>
+        <source>The brush tip could not be created.</source>
+        <translation>ブラシ先端を作成できませんでした。</translation>
+    </message>
+    <message>
+        <source>Basic Pen could not be activated because its brush data could not be prepared.</source>
+        <translation>ブラシデータを準備できなかったため、ベーシックペンを有効にできませんでした。</translation>
+    </message>
+    <message>
         <source>Tools</source>
         <translation>ツール</translation>
     </message>
@@ -1627,6 +1635,14 @@
         <translation>保存に失敗しました</translation>
     </message>
     <message>
+        <source>Finish or cancel the current edit before saving.</source>
+        <translation>現在の編集を確定または取り消してから保存してください。</translation>
+    </message>
+    <message>
+        <source>Undo/Redo could not be completed. Check the document before continuing.</source>
+        <translation>元に戻す/やり直すを完了できませんでした。続ける前に原稿の状態を確認してください。</translation>
+    </message>
+    <message>
         <source>Unable to save document: {path}
 {error}</source>
         <translation>ドキュメントを保存できません: {path}
@@ -2340,6 +2356,18 @@ Type: {type}</source>
 </context>
 <context>
     <name>PreferencesDialog</name>
+    <message>
+        <source>installing missing SAM 3.1 packages requires external services; a local source copy does not supply runtime or build dependencies</source>
+        <translation>不足しているSAM 3.1パッケージの導入には外部サービスの許可が必要です。ソースだけでは実行時・ビルド時の依存は揃いません。</translation>
+    </message>
+    <message>
+        <source>Allow external services in Preferences &gt; Privacy before installing missing packages, or prepare all runtime dependencies in advance to use Setup offline. A local sam3 source copy alone is insufficient.</source>
+        <translation>不足パッケージを導入する前に、設定のプライバシーで外部サービスを許可してください。オフラインで使う場合は必要な実行環境をすべて事前に準備してください。sam3のソースだけでは不十分です。</translation>
+    </message>
+    <message>
+        <source>Installing the sam3 package failed; check the setup log. Installing from runtime/sam3-src also requires permission for missing dependencies.</source>
+        <translation>sam3パッケージの導入に失敗しました。セットアップログを確認してください。runtime/sam3-srcからの導入でも、不足している依存の取得には許可が必要です。</translation>
+    </message>
     <message>
         <source>Performance</source>
         <translation>パフォーマンス</translation>
@@ -3171,6 +3199,10 @@ Type: {type}</source>
     <message>
         <source>Shape Manager</source>
         <translation>シェイプマネージャー</translation>
+    </message>
+    <message>
+        <source>The shape library could not be loaded. Library changes cannot be saved.</source>
+        <translation>図形ライブラリを読み込めませんでした。ライブラリへの変更は保存できません。</translation>
     </message>
     <message>
         <source>Manage manga shapes, balloons, and frames.</source>
@@ -8483,6 +8515,58 @@ Use "Edit Filters" to add.</source>
     <message>
         <source>Could not create the document. Check the CMYK profile and canvas size.</source>
         <translation>文書を作成できませんでした。CMYKプロファイルとキャンバスサイズを確認してください。</translation>
+    </message>
+</context>
+<context>
+    <name>CredentialMigrationNotice</name>
+    <message>
+        <source>API key migration needs attention</source>
+        <translation>APIキーの移行を確認してください</translation>
+    </message>
+    <message>
+        <source>Some older API key data could not be migrated to the system keyring. The old data has been kept for recovery. Check your API key settings and restart the app to try again.</source>
+        <translation>以前のAPIキーデータの一部をシステムのキーリングへ移行できませんでした。復旧できるように古いデータを保持しています。APIキーの設定を確認し、アプリを再起動して再試行してください。</translation>
+    </message>
+    <message>
+        <source>Older API key data differs from the system keyring. Neither copy was replaced, and the old data has been kept for recovery. Review your API key settings before restarting to try again.</source>
+        <translation>以前のAPIキーデータとシステムのキーリングの内容が異なります。どちらも置き換えず、復旧できるように古いデータを保持しています。APIキーの設定を確認してから、再起動して再試行してください。</translation>
+    </message>
+    <message>
+        <source>Cleanup of older API key data could not be completed. The remaining files were kept. Review your API key settings before restarting the app to retry.</source>
+        <translation>以前のAPIキーデータの整理を完了できませんでした。残ったファイルは保持しています。APIキーの設定を確認してからアプリを再起動し、再試行してください。</translation>
+    </message>
+</context>
+<context>
+    <name>PalettePersistenceNotice</name>
+    <message>
+        <source>Palette</source>
+        <translation>パレット</translation>
+    </message>
+    <message>
+        <source>The palette file could not be loaded. It has not been overwritten.</source>
+        <translation>パレットファイルを読み込めませんでした。ファイルは上書きしていません。</translation>
+    </message>
+    <message>
+        <source>The palette could not be saved. Your last confirmed palette is still active.</source>
+        <translation>パレットを保存できませんでした。最後に確定したパレットを引き続き使用します。</translation>
+    </message>
+    <message>
+        <source>The palette file was saved, but its location setting could not be updated. The saved palette remains active in this session.</source>
+        <translation>パレットファイルは保存されましたが、保存先設定を更新できませんでした。現在のセッションでは保存済みのパレットを使用します。</translation>
+    </message>
+</context>
+<context>
+    <name>ComicAssetsPanel</name>
+    <message>
+        <source>Comic assets could not be loaded. Reload to try again.</source>
+        <translation>漫画素材を読み込めませんでした。再読込してやり直してください。</translation>
+    </message>
+</context>
+<context>
+    <name>ThreeDGeneratedPreviewPanel</name>
+    <message>
+        <source>Projection was not imported because this scene exceeds the current software rendering limit.</source>
+        <translation>このシーンは現在のソフトウェア描画の対応範囲を超えているため、投影を取り込めませんでした。</translation>
     </message>
 </context>
 </TS>

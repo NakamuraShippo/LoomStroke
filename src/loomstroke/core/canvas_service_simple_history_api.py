@@ -18,6 +18,11 @@ from loomstroke.core.canvas_history_entries import (
     _HistoryGroup,
     _HistoryPatch,
 )
+from loomstroke.core.canvas_history_entry_outcome import (
+    EntryRestoreOutcome,
+    legacy_restore_outcome,
+    uses_default_restore_method,
+)
 from loomstroke.core.canvas_history_port import CLOSE_POLICY_COMMIT, PageHistoryBundle
 from loomstroke.core.commands import (
     Command,
@@ -83,7 +88,7 @@ class CanvasServiceHistoryApiMixin(_CanvasServiceHistoryApiBase):
         adapter = getattr(self, "_history_adapter", None)
         if adapter is not None:
             return cast("bool", adapter.can_undo())
-        return bool(self._undo_stack)
+        return bool(self._undo_stack) and not self._history_restore_blocked()
 
     def history_can_redo(self) -> bool:
         """Return True when redo stack has entries."""
@@ -91,7 +96,7 @@ class CanvasServiceHistoryApiMixin(_CanvasServiceHistoryApiBase):
         adapter = getattr(self, "_history_adapter", None)
         if adapter is not None:
             return cast("bool", adapter.can_redo())
-        return bool(self._redo_stack)
+        return bool(self._redo_stack) and not self._history_restore_blocked()
 
     def history_undo(self) -> bool:
         """Undo the most recent history group."""
@@ -196,15 +201,25 @@ class CanvasServiceHistoryApiMixin(_CanvasServiceHistoryApiBase):
         Never commits a pending transaction, never emits events, never
         claims a sequence (CT-05 H5a router surface).
         """
-        return self._undo_stack[-1] if self._undo_stack else None
+        return self._history()._peek_group(redo=False)
 
     def _history_peek_redo_group(self) -> _HistoryGroup | None:
         """Return the next-redo group (stack top) without mutating state."""
-        return self._redo_stack[-1] if self._redo_stack else None
+        return self._history()._peek_group(redo=True)
+
+    def _history_restore_blocked(self) -> bool:
+        return self._history()._restore_blocked()
+
+    def _history_set_failure_scope_factory(self, factory: Callable[[Any], Any] | None) -> None:
+        self._history()._failure_scope_factory = factory
 
     def _history_detach_bundle(self, page_id: str) -> PageHistoryBundle:
         """Move ownership of the undo/redo stacks into a per-page bundle."""
         return self._history_port().detach_history(page_id)
+
+    def _history_detach_prepared_bundle(self, page_id: str) -> PageHistoryBundle:
+        """Move stacks whose pending work and source snapshot were prepared."""
+        return self._history_port()._detach_prepared_history(page_id)
 
     def _history_attach_bundle(self, bundle: PageHistoryBundle) -> None:
         """Hand a previously detached per-page bundle back to the canvas."""
@@ -229,11 +244,18 @@ class CanvasServiceHistoryApiMixin(_CanvasServiceHistoryApiBase):
     def _push_history_group(self, group: _HistoryGroup) -> None:
         self._history().push_group(group)
 
-    def _restore_entry(self, entry: HistoryEntry, *, use_after: bool) -> None:
-        self._history().restore_entry(entry, use_after=use_after)
+    def _restore_entry(self, entry: HistoryEntry, *, use_after: bool) -> bool:
+        return self._history().restore_entry(entry, use_after=use_after)
 
-    def _restore_command(self, command: Command, *, use_after: bool) -> None:
-        self._history().restore_command(command, use_after=use_after)
+    def _restore_entry_outcome(
+        self, entry: HistoryEntry, *, use_after: bool
+    ) -> EntryRestoreOutcome:
+        if not uses_default_restore_method(self._restore_entry, _DEFAULT_CANVAS_RESTORE_ENTRY):
+            return legacy_restore_outcome(self._restore_entry(entry, use_after=use_after))
+        return self._history()._restore_entry_outcome(entry, use_after=use_after)
+
+    def _restore_command(self, command: Command, *, use_after: bool) -> bool:
+        return self._history().restore_command(command, use_after=use_after)
 
     def _save_flood_fill_alpha_for_history_redo(
         self,
@@ -246,3 +268,7 @@ class CanvasServiceHistoryApiMixin(_CanvasServiceHistoryApiBase):
 
     def _restore_patch(self, patch: _HistoryPatch, *, use_after: bool) -> None:
         self._history().restore_patch(patch, use_after=use_after)
+
+
+_DEFAULT_CANVAS_RESTORE_ENTRY = CanvasServiceHistoryApiMixin._restore_entry
+_DEFAULT_CANVAS_DETACH_BUNDLE = CanvasServiceHistoryApiMixin._history_detach_bundle

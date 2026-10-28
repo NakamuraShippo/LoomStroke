@@ -21,6 +21,7 @@ from typing import Any, cast
 from PySide6.QtCore import QObject, Signal
 
 from .settings_env import EnvironmentSettings
+from .settings_log_redaction import redact_setting_value
 from .settings_schema import (
     DEFAULT_COMFYUI_URL,
     DEFAULT_COMFYUI_WS,
@@ -37,18 +38,6 @@ from .user_dirs import default_layout_directory, default_user_root
 logger = logging.getLogger(__name__)
 
 PROTECTED_SETTINGS = frozenset({"plugins/trusted_keys"})
-_SENSITIVE_KEY_PARTS = frozenset(
-    {
-        "api_key",
-        "apikey",
-        "auth_token",
-        "credential",
-        "password",
-        "secret",
-        "session_token",
-        "token",
-    }
-)
 _MENU_DEFAULT_PROFILE_KEY = "ui/menus/default_profile"
 _MENU_DEFAULT_PROFILE_VERSION = "view_layer_filter_v1"
 _DIRECT_VECTOR_KEY = "performance/direct_vector_rendering_enabled"
@@ -328,7 +317,7 @@ class SettingsManager(QObject):
         env_key = EnvironmentSettings.get_env_key(key)
         if env_key in os.environ:
             env_value = EnvironmentSettings.get_value(key, default_value)
-            return self._coerce_value(env_value, default)
+            return self._coerce_value(env_value, default, setting_path=key)
 
         if not self.settings.contains(key):
             return default
@@ -342,7 +331,7 @@ class SettingsManager(QObject):
                 return default
             return cast(SettingsValue, parsed) if isinstance(parsed, dict) else default
 
-        coerced = self._coerce_value(raw_value, default)
+        coerced = self._coerce_value(raw_value, default, setting_path=key)
         if isinstance(default, dict) and not isinstance(coerced, dict):
             return default
         return coerced
@@ -351,6 +340,8 @@ class SettingsManager(QObject):
         self,
         raw: SettingsValue | None,
         default: SettingsValue | None,
+        *,
+        setting_path: str = "",
     ) -> SettingsValue | None:
         if raw is None:
             return default
@@ -371,7 +362,9 @@ class SettingsManager(QObject):
                 try:
                     return int(raw)
                 except ValueError:
-                    logger.warning("Failed to coerce %s to int", raw)
+                    logger.warning(
+                        "Failed to coerce %s to int", _redact_setting_value(setting_path, raw)
+                    )
             return default
 
         if isinstance(default, float):
@@ -381,7 +374,9 @@ class SettingsManager(QObject):
                 try:
                     return float(raw)
                 except ValueError:
-                    logger.warning("Failed to coerce %s to float", raw)
+                    logger.warning(
+                        "Failed to coerce %s to float", _redact_setting_value(setting_path, raw)
+                    )
             return default
 
         if isinstance(default, dict):
@@ -623,9 +618,19 @@ class SettingsManager(QObject):
             try:
                 return int(value)
             except ValueError:
-                logger.warning(f"Invalid int value for {key}: {value}, using default: {default}")
+                logger.warning(
+                    "Invalid int value for %s: %s, using default: %s",
+                    key,
+                    _redact_setting_value(key, value),
+                    _redact_setting_value(key, default),
+                )
                 return default
-        logger.warning(f"Invalid int value for {key}: {value}, using default: {default}")
+        logger.warning(
+            "Invalid int value for %s: %s, using default: %s",
+            key,
+            _redact_setting_value(key, value),
+            _redact_setting_value(key, default),
+        )
         return default
 
     def get_bool(self, key: str, default: bool = False) -> bool:
@@ -664,9 +669,19 @@ class SettingsManager(QObject):
             try:
                 return float(value)
             except ValueError:
-                logger.warning(f"Invalid float value for {key}: {value}, using default: {default}")
+                logger.warning(
+                    "Invalid float value for %s: %s, using default: %s",
+                    key,
+                    _redact_setting_value(key, value),
+                    _redact_setting_value(key, default),
+                )
                 return default
-        logger.warning(f"Invalid float value for {key}: {value}, using default: {default}")
+        logger.warning(
+            "Invalid float value for %s: %s, using default: %s",
+            key,
+            _redact_setting_value(key, value),
+            _redact_setting_value(key, default),
+        )
         return default
 
     def get_str(self, key: str, default: str = "") -> str:
@@ -710,7 +725,12 @@ class SettingsManager(QObject):
         """
         is_valid, error_msg = self.validate(key, value)
         if not is_valid:
-            logger.error(f"Validation failed for {key}={value}: {error_msg}")
+            logger.error(
+                "Validation failed for %s=%s: %s",
+                key,
+                _redact_setting_value(key, value),
+                _redact_setting_value(key, error_msg),
+            )
             return False
 
         self.set(key, value)
@@ -864,7 +884,4 @@ def get_settings_manager() -> SettingsManager:
 
 
 def _redact_setting_value(key: str, value: Any) -> Any:
-    normalized = key.lower().replace("-", "_")
-    if any(part in normalized for part in _SENSITIVE_KEY_PARTS):
-        return "<redacted>" if value else ""
-    return value
+    return redact_setting_value(key, value)

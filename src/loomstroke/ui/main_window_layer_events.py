@@ -44,14 +44,15 @@ class MainWindowLayerEventCoordinator:
 
     def on_layer_opacity_changed(self, index: int, opacity: float) -> None:
         """Handle layer opacity change from panel."""
+        from .panels.layer_opacity_controller import _apply_opacity_signal  # noqa: PLC0415
+
         canvas = self._canvas()
         if canvas is None:
             return
         layer = self._layer_from_ui_index(canvas, index)
         if layer is None:
             return
-        canvas_any = cast(Any, canvas)
-        canvas_any.set_layer_opacity(layer.id, opacity)
+        _apply_opacity_signal(self._window, layer.id, opacity)
         logger.debug("Set layer %s opacity to %s", layer.id, opacity)
 
     def on_layer_selected(self, index: int) -> None:
@@ -92,11 +93,12 @@ class MainWindowLayerEventCoordinator:
             canvas_any.set_layer_alpha_locked(layer_id, alpha_locked)
 
     def on_layer_opacity_changed_by_id(self, layer_id: str, opacity: float) -> None:
+        from .panels.layer_opacity_controller import _apply_opacity_signal  # noqa: PLC0415
+
         canvas = self._canvas()
         if canvas is None:
             return
-        canvas_any = cast(Any, canvas)
-        canvas_any.set_layer_opacity(layer_id, opacity)
+        _apply_opacity_signal(self._window, layer_id, opacity)
         logger.debug("Set layer %s opacity to %s", layer_id, opacity)
 
     def on_layer_selected_by_id(self, layer_id: str) -> None:
@@ -300,35 +302,11 @@ class MainWindowLayerEventCoordinator:
 
     def on_layer_blend_mode_changed(self, payload: Mapping[str, Any]) -> None:
         """Handle layer blend mode change from layer panel."""
-        mode = payload.get("mode")
-        layer_id = payload.get("layer_id")
-        ui_index = payload.get("index")
-
-        if mode is None:
-            logger.warning("Invalid blend mode change payload: %s", payload)
-            return
+        from .panels.layer_blend_request import _apply_panel_blend_request  # noqa: PLC0415
 
         canvas = self._canvas()
-        if canvas is None:
-            logger.warning("Canvas service not available for blend mode change")
-            return
-
-        if layer_id is not None:
-            if hasattr(canvas, "set_layer_blend_mode"):
-                canvas.set_layer_blend_mode(layer_id, mode)
-                logger.debug("Set layer %s blend mode to %s", layer_id, mode)
-            return
-
-        layers = getattr(canvas, "_layers", [])
-        if ui_index is not None and 0 <= ui_index < len(layers):
-            canvas_index = len(layers) - 1 - ui_index
-            if 0 <= canvas_index < len(layers):
-                layer = layers[canvas_index]
-                if hasattr(canvas, "set_layer_blend_mode"):
-                    canvas.set_layer_blend_mode(layer.id, mode)
-                    logger.debug("Set layer %s blend mode to %s", layer.id, mode)
-        else:
-            logger.warning("Invalid UI index %s for blend mode change", ui_index)
+        if canvas is not None:
+            _apply_panel_blend_request(canvas, payload)
 
     def _canvas(self) -> Any | None:
         host_api = getattr(self._window, "_host_api", None)

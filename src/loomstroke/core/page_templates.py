@@ -2,8 +2,11 @@
 
 from __future__ import annotations
 
+import copy
 import json
 import logging
+import math
+import os
 import re
 from collections.abc import Mapping, Sequence
 from dataclasses import dataclass, replace
@@ -12,6 +15,7 @@ from typing import Any
 
 from ..host_api import CanvasSpec as HostCanvasSpec
 from ..host_api import PageTemplateSummary
+from ..io.atomic_export_writer import write_atomically
 from ..platform.user_dirs import default_user_root
 from .template_raster_codec import TemplateRasterCodec
 
@@ -81,7 +85,7 @@ class PageTemplateStore:
     ) -> None:
         self._template_file = template_file or self.default_template_file()
         self._payload_override = payload_override
-        self._templates: dict[str, PageTemplate] = {}
+        self._templates: dict[str, PageTemplate] = {tpl.id: tpl for tpl in _builtin_templates()}
         self.reload()
 
     @staticmethod
@@ -96,21 +100,22 @@ class PageTemplateStore:
     def reload(self) -> None:
         """Reload templates from disk and refresh in-memory cache."""
 
-        templates: dict[str, PageTemplate] = {tpl.id: tpl for tpl in _builtin_templates()}
-        for template in self._load_user_templates():
-            if template.id in templates:
-                logger.warning(
-                    "Ignoring user template id '%s' because it conflicts with existing template",
-                    template.id,
-                )
-                continue
-            templates[template.id] = template
+        try:
+            payload = (
+                self._load_user_payload_for_write()
+                if self._payload_override is None
+                else copy.deepcopy(self._payload_override)
+            )
+            templates = self._templates_from_payload(payload)
+        except Exception:
+            logger.warning("Page template reload failed; the confirmed library remains active")
+            return
         self._templates = templates
 
     def list_templates(self) -> Sequence[PageTemplate]:
         """Return all available templates."""
 
-        return tuple(self._templates.values())
+        return tuple(copy.deepcopy(template) for template in self._templates.values())
 
     def list_summaries(self) -> Sequence[PageTemplateSummary]:
         """Return lightweight summaries suitable for UI rendering."""
@@ -129,7 +134,7 @@ class PageTemplateStore:
     def get(self, template_id: str) -> PageTemplate | None:
         """Return a template by id."""
 
-        return self._templates.get(template_id)
+        return copy.deepcopy(self._templates.get(template_id))
 
     def save_user_template(
         self,
@@ -142,45 +147,22 @@ class PageTemplateStore:
         if self._payload_override is not None:
             raise RuntimeError("payload_override mode is read-only")
 
-        normalized = _normalize_user_template(template)
+        normalized = _normalize_user_template(copy.deepcopy(template))
         if normalized.id in _builtin_template_ids():
             raise ValueError(f"template id is reserved: {normalized.id}")
 
         payload = self._load_user_payload_for_write()
-        raw_templates = payload.get("templates")
-        existing_entries: list[dict[str, Any]] = []
-        if isinstance(raw_templates, list):
-            for entry in raw_templates:
-                if isinstance(entry, Mapping):
-                    existing_entries.append(dict(entry))
-
-        filtered: list[dict[str, Any]] = []
-        for entry in existing_entries:
-            entry_id = str(entry.get("id", "")).strip()
-            if entry_id != normalized.id:
+        filtered: list[Any] = []
+        for entry in payload.get("templates", []):
+            if not isinstance(entry, Mapping) or str(entry.get("id", "")).strip() != normalized.id:
                 filtered.append(entry)
                 continue
             if not overwrite:
                 raise ValueError(f"template already exists: {normalized.id}")
 
         filtered.append(_template_to_payload(normalized))
-        version_raw = payload.get("version", 1)
-        try:
-            version = max(1, int(version_raw))
-        except Exception:
-            version = 1
-        payload_to_write: dict[str, Any] = {
-            "version": version,
-            "templates": filtered,
-        }
-
-        path = self._template_file
-        path.parent.mkdir(parents=True, exist_ok=True)
-        path.write_text(
-            json.dumps(payload_to_write, ensure_ascii=False, indent=2) + "\n",
-            encoding="utf-8",
-        )
-        self.reload()
+        payload["templates"] = filtered
+        self._write_user_payload(payload, expected_id=normalized.id)
         saved = self.get(normalized.id)
         if saved is None:
             raise RuntimeError(f"failed to reload saved template: {normalized.id}")
@@ -196,9 +178,12 @@ class PageTemplateStore:
         if template_id in _builtin_template_ids():
             raise ValueError(f"built-in templates cannot be deleted: {template_id}")
         payload = self._load_user_payload_for_write()
-        raw_templates = payload.get("templates")
-        entries = [entry for entry in raw_templates or [] if isinstance(entry, Mapping)]
-        kept = [entry for entry in entries if str(entry.get("id", "")).strip() != template_id]
+        entries = payload.get("templates", [])
+        kept = [
+            entry
+            for entry in entries
+            if not isinstance(entry, Mapping) or str(entry.get("id", "")).strip() != template_id
+        ]
         if len(kept) == len(entries):
             return False
         payload["templates"] = kept
@@ -256,61 +241,68 @@ class PageTemplateStore:
             counter += 1
         return candidate
 
-    def _write_user_payload(self, payload: dict[str, Any]) -> None:
+    def _write_user_payload(
+        self, payload: dict[str, Any], *, expected_id: str | None = None
+    ) -> None:
+        """Validate a candidate before replacing disk and confirming its cache."""
         version_raw = payload.get("version", 1)
         try:
             version = max(1, int(version_raw))
         except Exception:
             version = 1
-        path = self._template_file
-        path.parent.mkdir(parents=True, exist_ok=True)
-        path.write_text(
+        encoded = (
             json.dumps(
                 {"version": version, "templates": payload.get("templates", [])},
                 ensure_ascii=False,
                 indent=2,
             )
-            + "\n",
-            encoding="utf-8",
+            + "\n"
         )
-        self.reload()
+        expected = json.loads(encoded)
+        verified: dict[str, PageTemplate] | None = None
+
+        def encode(temporary: Path) -> None:
+            nonlocal verified
+            with temporary.open("w", encoding="utf-8") as handle:
+                if handle.write(encoded) != len(encoded):
+                    raise OSError("Page template write did not complete")
+                handle.flush()
+                os.fsync(handle.fileno())
+            payload_readback = json.loads(temporary.read_text(encoding="utf-8"))
+            if not _same_wire_value(payload_readback, expected):
+                raise OSError("Page template readback did not match the candidate")
+            verified = self._templates_from_payload(payload_readback)
+            if expected_id is not None and expected_id not in verified:
+                raise RuntimeError(f"failed to reload saved template: {expected_id}")
+
+        write_atomically(self._template_file, encode)
+        if verified is None:
+            raise RuntimeError("Page template candidate was not verified")
+        self._templates = verified
 
     def _load_user_payload_for_write(self) -> dict[str, Any]:
         path = self._template_file
-        if not path.exists():
-            return {"version": 1, "templates": []}
         try:
-            payload = json.loads(path.read_text(encoding="utf-8"))
-        except (OSError, ValueError) as exc:
-            logger.warning("Failed to read page templates for write from %s: %s", path, exc)
+            text = path.read_text(encoding="utf-8")
+        except FileNotFoundError:
             return {"version": 1, "templates": []}
+        payload = json.loads(text)
         if not isinstance(payload, Mapping):
-            return {"version": 1, "templates": []}
+            raise ValueError("Template payload must contain a JSON object")
+        if "templates" in payload and not isinstance(payload["templates"], list):
+            raise ValueError("Template payload templates must be a list")
         return dict(payload)
 
-    def _load_user_templates(self) -> list[PageTemplate]:
-        if self._payload_override is None:
-            path = self._template_file
-            if not path.exists():
-                return []
-
-            try:
-                payload = json.loads(path.read_text(encoding="utf-8"))
-            except (OSError, ValueError) as exc:
-                logger.warning("Failed to read page templates from %s: %s", path, exc)
-                return []
-        else:
-            payload = self._payload_override
-
+    def _templates_from_payload(self, payload: Mapping[str, Any]) -> dict[str, PageTemplate]:
+        templates: dict[str, PageTemplate] = {tpl.id: tpl for tpl in _builtin_templates()}
         if not isinstance(payload, Mapping):
             logger.warning("Template payload must contain a JSON object")
-            return []
+            return templates
 
         raw_templates = payload.get("templates")
         if not isinstance(raw_templates, list):
-            return []
+            return templates
 
-        parsed: list[PageTemplate] = []
         for idx, entry in enumerate(raw_templates):
             if not isinstance(entry, Mapping):
                 logger.warning("Skipping non-object template entry at index %s", idx)
@@ -318,8 +310,36 @@ class PageTemplateStore:
             template = _template_from_payload(entry, source="user", index=idx)
             if template is None:
                 continue
-            parsed.append(template)
-        return parsed
+            if template.id in templates:
+                logger.warning(
+                    "Ignoring user template id '%s' because it conflicts with existing template",
+                    template.id,
+                )
+                continue
+            templates[template.id] = template
+        return templates
+
+
+def _same_wire_value(left: Any, right: Any) -> bool:
+    """Compare decoded JSON while retaining legacy nonfinite number support."""
+    if isinstance(left, dict) and isinstance(right, dict):
+        return left.keys() == right.keys() and all(
+            _same_wire_value(left[key], right[key]) for key in left
+        )
+    if isinstance(left, list) and isinstance(right, list):
+        return len(left) == len(right) and all(
+            _same_wire_value(a, b) for a, b in zip(left, right, strict=True)
+        )
+    if (
+        isinstance(left, float)
+        and isinstance(right, float)
+        and math.isnan(left)
+        and math.isnan(right)
+    ):
+        return True
+    if isinstance(left, bool) != isinstance(right, bool):
+        return False
+    return bool(left == right)
 
 
 def _builtin_templates() -> tuple[PageTemplate, ...]:

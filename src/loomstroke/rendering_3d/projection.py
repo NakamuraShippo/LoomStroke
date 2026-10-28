@@ -4,6 +4,7 @@ from __future__ import annotations
 
 import contextlib
 from dataclasses import dataclass, field
+from inspect import getattr_static
 from typing import Any, cast
 
 import numpy as np
@@ -14,7 +15,22 @@ from loomstroke.core.commands import ApplyImageCommand
 
 from .cameras import OrbitCameraState
 from .display_modes import PreviewDisplayMode
-from .preview_renderer import PreviewRenderResult, SoftwarePreviewRenderer
+from .preview_renderer import _DEFAULT_SOFTWARE_RENDER, PreviewRenderResult, SoftwarePreviewRenderer
+
+# Adopt the current software face-processing range for formal projections.
+# This admission policy is independent of future preview sampling changes;
+# it is not a vertex, pixel, memory, time or cancellation budget.
+_FORMAL_SOFTWARE_FACE_LIMIT = 25_000
+_PROJECTION_FACE_LIMIT_MESSAGE = (
+    "Projection was not imported because this scene exceeds the current software rendering limit."
+)
+
+
+class _ProjectionFaceLimitExceeded(ValueError):
+    """Refuse an incomplete formal projection before allocating render output."""
+
+    def __init__(self) -> None:
+        super().__init__(_PROJECTION_FACE_LIMIT_MESSAGE)
 
 
 @dataclass(frozen=True, slots=True)
@@ -50,13 +66,25 @@ class ProjectionImportService:
         scene: Scene3DDocument,
         request: ProjectionImportRequest,
     ) -> tuple[ApplyImageCommand, PreviewRenderResult]:
-        preview = self._renderer.render(
-            scene,
-            width=request.width,
-            height=request.height,
-            camera=request.camera,
-            display_mode=request.display_mode,
-        )
+        options: dict[str, Any] = {
+            "width": request.width,
+            "height": request.height,
+            "camera": request.camera,
+            "display_mode": request.display_mode,
+        }
+        if getattr_static(self._renderer, "render", None) is _DEFAULT_SOFTWARE_RENDER:
+            faces = sum(
+                int(primitive.indices.size // 3)
+                for mesh in scene.meshes
+                for primitive in mesh.primitives
+                if primitive.indices.size >= 3
+            )
+            if faces > _FORMAL_SOFTWARE_FACE_LIMIT:
+                raise _ProjectionFaceLimitExceeded()
+            options["max_faces"] = None
+        # Unknown injected renderers retain their existing call shape. The
+        # complete-face guarantee above is limited to the standard renderer.
+        preview = self._renderer.render(scene, **options)
         metadata = {
             "source": "3d_projection",
             "scene_id": scene.id,

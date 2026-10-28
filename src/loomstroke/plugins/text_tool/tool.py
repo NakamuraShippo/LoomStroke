@@ -86,50 +86,9 @@ from .transform_controller import (
 )
 from .transform_controller import TextTransformState as _TransformState  # noqa: E402
 from .typography_controller import apply_typography, session_typography
+from .vector_delete_command import _VectorDeleteCommand
 
 logger = logging.getLogger(__name__)
-
-
-class _VectorDeleteCommand:
-    """Undoable delete: apply()=remove, revert()=re-insert."""
-
-    def __init__(self, vector_object: VectorObject, *, layer_id: str) -> None:
-        self.vector_object = vector_object
-        self.layer_id = layer_id
-        self._insert_index: int | None = None
-
-    def apply(self, canvas: Any) -> bool:
-        layers = getattr(canvas, "_layers", None) or []
-        for layer in layers:
-            if getattr(layer, "id", None) != self.layer_id:
-                continue
-            vec_objects = getattr(layer, "vector_objects", None) or []
-            for i, v in enumerate(vec_objects):
-                if getattr(v, "id", None) == self.vector_object.id:
-                    self._insert_index = i
-                    remove_fn = getattr(canvas, "remove_vector_object", None)
-                    if callable(remove_fn):
-                        return bool(
-                            remove_fn(
-                                self.layer_id,
-                                i,
-                                recompose=True,
-                                vec_id=self.vector_object.id,
-                            )
-                        )
-                    return False
-        return False
-
-    def revert(self, canvas: Any) -> bool:
-        add_fn = getattr(canvas, "add_vector_object", None)
-        if callable(add_fn):
-            result = add_fn(
-                self.vector_object,
-                layer_id=self.layer_id,
-                recompose=True,
-            )
-            return result is not None
-        return False
 
 
 def _ts(text: str) -> str:

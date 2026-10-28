@@ -28,6 +28,7 @@ from .comic_metadata_codec import merge_book_metadata as _codec_merge_book_metad
 from .comic_metadata_codec import merge_masters_metadata as _codec_merge_masters_metadata
 from .comic_metadata_codec import read_book_metadata as _codec_read_book_metadata
 from .comic_metadata_codec import read_masters_metadata as _codec_read_masters_metadata
+from .document_save_canvas import has_save_canvas_owner, select_save_metadata
 from .events import DocumentChangeEvent, Events
 
 if TYPE_CHECKING:
@@ -129,6 +130,7 @@ class DocumentMetadataService:
         elif self._document_state is not None:
             metadata = self.merge_loaded_metadata(metadata, self._document_state.metadata, opts)
 
+        metadata = select_save_metadata(metadata, owner._page_service)  # noqa: SLF001
         metadata.ui_layout = owner._serialize_ui_layout(opts)  # noqa: SLF001
         metadata.ensure_timestamps()
         return metadata
@@ -140,9 +142,10 @@ class DocumentMetadataService:
     ) -> tuple[list[PageSnapshot], str]:
         owner = self._owner
         if owner._page_service is not None:  # noqa: SLF001
-            owner._page_service.set_document_canvas(
-                self.host_canvas_spec_from_metadata(metadata)
-            )  # noqa: SLF001
+            if not has_save_canvas_owner(owner._page_service):  # noqa: SLF001
+                owner._page_service.set_document_canvas(
+                    self.host_canvas_spec_from_metadata(metadata)
+                )  # noqa: SLF001
             return owner._page_service.build_pages_for_save(layers, metadata)  # noqa: SLF001
 
         return self.build_pages_for_save(layers, metadata)
@@ -154,7 +157,12 @@ class DocumentMetadataService:
         active_page_id: str | None,
     ) -> None:
         owner = self._owner
+        token = owner._capture_document_revision()  # noqa: SLF001
         owner._reset_history_state(reason="save")  # noqa: SLF001
+        if not owner._classify_document_revision(token).covers_latest:  # noqa: SLF001
+            # History-reset listeners may edit or replace the document.
+            # Never confirm their new state with the previous save's metadata.
+            return
 
         if owner._page_service is not None:  # noqa: SLF001
             self._loaded_metadata = metadata

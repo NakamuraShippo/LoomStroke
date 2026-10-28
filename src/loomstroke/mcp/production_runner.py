@@ -450,7 +450,7 @@ async def _execute_runner_job(service: Any, job_id: str) -> None:  # noqa: PLR09
         )
         mcp_job.touch()
     except asyncio.CancelledError:
-        _update_job_status(store, mcp_job, job, "canceled", progress=None)
+        _update_job_status(store, mcp_job, job, "cancelled", progress=None)
         raise
     except Exception as exc:  # pragma: no cover - defensive metadata failure path
         job.update(

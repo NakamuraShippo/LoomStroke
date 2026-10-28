@@ -8,7 +8,9 @@ from dataclasses import dataclass
 from PySide6.QtCore import QCoreApplication
 
 from .channels_translations import CHANNELS_JA
+from .comic_assets_feedback_strings import COMIC_ASSETS_FEEDBACK_JA
 from .comic_frame_translations import FRAME_JA
+from .credential_migration_translations import CREDENTIAL_MIGRATION_JA
 from .filter_pen_translations import FILTER_PEN_JA
 from .filter_translations import (
     DIRECT_FILTER_JA,
@@ -23,6 +25,7 @@ from .native_cmyk_translations import NATIVE_CMYK_JA
 from .native_comfy_translations import NATIVE_COMFY_JA
 from .new_document_color_translations import NEW_DOCUMENT_COLOR_JA
 from .painting_tool_translations import PAINTING_TOOL_JA
+from .palette_feedback_strings import PALETTE_FEEDBACK_JA
 from .panel_locale_fallbacks import NON_JA_PANEL_FALLBACK_TRANSLATIONS
 from .path_text_translations import PATH_TEXT_JA
 from .pen_preset_translations import PEN_PRESET_JA
@@ -33,6 +36,14 @@ from .tool_locale_fallbacks import NON_JA_TOOL_FALLBACK_TRANSLATIONS
 TranslatorFn = Callable[[str], str]
 
 _JA_FALLBACK_TRANSLATIONS: dict[str, dict[str, str]] = {
+    "ThreeDGeneratedPreviewPanel": {
+        "Projection was not imported because this scene exceeds the current software rendering limit.": (
+            "このシーンは現在のソフトウェア描画の対応範囲を超えているため、投影を取り込めませんでした。"
+        ),
+    },
+    "ComicAssetsPanel": COMIC_ASSETS_FEEDBACK_JA,
+    "PalettePersistenceNotice": PALETTE_FEEDBACK_JA,
+    "CredentialMigrationNotice": CREDENTIAL_MIGRATION_JA,
     "PathText": PATH_TEXT_JA,
     "DirectFilter": DIRECT_FILTER_JA,
     "ComicPanelFrames": FRAME_JA,
@@ -144,6 +155,8 @@ _JA_FALLBACK_TRANSLATIONS: dict[str, dict[str, str]] = {
     },
     "MainWindow": {
         "LoomStroke v0.1.0": "LoomStroke v0.1.0",
+        "Finish or cancel the current edit before saving.": "現在の編集を確定または取り消してから保存してください。",
+        "Undo/Redo could not be completed. Check the document before continuing.": "元に戻す/やり直すを完了できませんでした。続ける前に原稿の状態を確認してください。",
         "&File": "ファイル(&F)",
         "&Edit": "編集(&E)",
         "&Image": "画像(&I)",
@@ -343,6 +356,8 @@ _JA_FALLBACK_TRANSLATIONS: dict[str, dict[str, str]] = {
         "RecontourSmoothness (next stroke)": "RecontourSmoothness (次のストロークから適用)",
         "Recontour could not edit this stroke. The raster stroke was preserved.": "Recontourでこの線を編集できませんでした。元のラスターストロークは保持されています。",
         "Basic Pen": "ベーシックペン",
+        "The brush tip could not be created.": "ブラシ先端を作成できませんでした。",
+        "Basic Pen could not be activated because its brush data could not be prepared.": "ブラシデータを準備できなかったため、ベーシックペンを有効にできませんでした。",
         "Activate Basic Pen": "ベーシックペンを有効化",
         "Alternate brush binding": "代替ブラシバインド",
         "Brushes": "ブラシ",
@@ -418,6 +433,19 @@ _JA_FALLBACK_TRANSLATIONS: dict[str, dict[str, str]] = {
         "Conflicts with: {labels}": "競合対象: {labels}",
     },
     "PreferencesDialog": {
+        (
+            "installing missing SAM 3.1 packages requires external services;"
+            " a local source copy does not supply runtime or build dependencies"
+        ): "不足しているSAM 3.1パッケージの導入には外部サービスの許可が必要です。ソースだけでは実行時・ビルド時の依存は揃いません。",
+        (
+            "Allow external services in Preferences > Privacy before installing"
+            " missing packages, or prepare all runtime dependencies in advance"
+            " to use Setup offline. A local sam3 source copy alone is insufficient."
+        ): "不足パッケージを導入する前に、設定のプライバシーで外部サービスを許可してください。オフラインで使う場合は必要な実行環境をすべて事前に準備してください。sam3のソースだけでは不十分です。",
+        (
+            "Installing the sam3 package failed; check the setup log."
+            " Installing from runtime/sam3-src also requires permission for missing dependencies."
+        ): "sam3パッケージの導入に失敗しました。セットアップログを確認してください。runtime/sam3-srcからの導入でも、不足している依存の取得には許可が必要です。",
         "OK": "OK",
         "Cancel": "キャンセル",
         "Apply": "適用",
@@ -1330,6 +1358,9 @@ _JA_FALLBACK_TRANSLATIONS["TextFontPanel"].update({"Font": "フォント"})
 _JA_FALLBACK_TRANSLATIONS["ShapeManagerPlugin"].update(
     {
         "Shape Manager": "シェイプマネージャー",
+        "The shape library could not be loaded. Library changes cannot be saved.": (
+            "図形ライブラリを読み込めませんでした。ライブラリへの変更は保存できません。"
+        ),
         "Manage manga shapes, balloons, and frames.": (
             "マンガの図形・フキダシ・コマを管理します。"
         ),

@@ -543,3 +543,6 @@ class CanvasServiceAccessorsMixin:
             )
             self._vector_command_submit_service = service
         return service
+
+
+_DEFAULT_HISTORY_PORT_ACCESSOR = CanvasServiceAccessorsMixin._history_port

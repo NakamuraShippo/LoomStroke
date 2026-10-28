@@ -13,7 +13,23 @@ from typing import Any
 from PySide6.QtCore import QRect
 from PySide6.QtGui import QPainter
 
+from loomstroke.core.canvas_history_clear_continuation import (
+    _HistoryClearContinuation,
+    _HistoryClearSuperseded,
+)
+from loomstroke.core.canvas_history_entry_outcome import (
+    EntryRestoreOutcome,
+    legacy_restore_outcome,
+    uses_default_restore_method,
+)
+from loomstroke.core.canvas_history_group_restore import restore_history_group
+from loomstroke.core.canvas_history_restore_state import HistoryRestoreOwner
 from loomstroke.core.channels.channel_command_policy import ChannelCommandPolicy
+from loomstroke.core.gradient_preview_boundary import (
+    close_gradient_preview_before_edit,
+    dispatch_with_gradient_preview,
+)
+from loomstroke.core.layer_opacity_preview_boundary import _close_opacity_before_edit
 from loomstroke.core.native_cmyk.command_dispatcher import NativeCmykCommandDispatcher
 
 logger = logging.getLogger(__name__)
@@ -26,6 +42,13 @@ class CanvasCommandDispatcher:
         self._canvas = canvas
 
     def submit(self, cmd: Any, *, merge_key: str | None = None) -> bool:
+        return dispatch_with_gradient_preview(
+            self._canvas, cmd, lambda: self._submit_original(cmd, merge_key=merge_key)
+        )
+
+    def _submit_original(self, cmd: Any, *, merge_key: str | None = None) -> bool:
+        if not _close_opacity_before_edit(self._canvas, cmd):
+            return False
         native_result = NativeCmykCommandDispatcher.submit(self._canvas, cmd)
         if native_result is not None:
             return native_result
@@ -44,12 +67,16 @@ class HistoryAdapter:
         self._canvas = canvas
 
     def can_undo(self) -> bool:
-        return bool(self._canvas._undo_stack)
+        return bool(self._canvas._undo_stack) and not self._canvas._history()._restore_blocked()
 
     def can_redo(self) -> bool:
-        return bool(self._canvas._redo_stack)
+        return bool(self._canvas._redo_stack) and not self._canvas._history()._restore_blocked()
 
     def undo(self) -> bool:
+        if not close_gradient_preview_before_edit(self._canvas):
+            return False
+        if not _close_opacity_before_edit(self._canvas):
+            return False
         filter_pen = getattr(
             self._canvas, "_filter_pen_service", getattr(self._canvas, "_effect_pen_service", None)
         )
@@ -58,6 +85,10 @@ class HistoryAdapter:
         return bool(self._canvas._history_undo_direct())
 
     def redo(self) -> bool:
+        if not close_gradient_preview_before_edit(self._canvas):
+            return False
+        if not _close_opacity_before_edit(self._canvas):
+            return False
         filter_pen = getattr(
             self._canvas, "_filter_pen_service", getattr(self._canvas, "_effect_pen_service", None)
         )
@@ -72,11 +103,22 @@ class HistoryAdapter:
         return len(self._canvas._redo_stack)
 
     def clear(self) -> None:
+        if not close_gradient_preview_before_edit(self._canvas):
+            raise _HistoryClearSuperseded(
+                "Gradient preview could not be restored before history clear"
+            )
+        if not _close_opacity_before_edit(self._canvas):
+            raise _HistoryClearSuperseded(
+                "Opacity preview could not be restored before history clear"
+            )
+        continuation = _HistoryClearContinuation(self._canvas)
         filter_pen = getattr(
             self._canvas, "_filter_pen_service", getattr(self._canvas, "_effect_pen_service", None)
         )
         if filter_pen is not None:
             filter_pen.finalize()
+        if not continuation.is_current():
+            raise _HistoryClearSuperseded("History clear superseded by a different runtime owner")
         self._canvas._history_clear_direct()
 
 
@@ -103,7 +145,8 @@ class CanvasHistoryBookkeepingService:
         redo_count = len(self._canvas._redo_stack)
         length = undo_count + redo_count
         cursor = undo_count
-        return bool(undo_count), bool(redo_count), length, cursor
+        available = not self._canvas._history()._restore_blocked()
+        return bool(undo_count) and available, bool(redo_count) and available, length, cursor
 
     def emit_changed(self) -> None:
         # CT-05 H5b: with the unified-history callback connected
@@ -421,51 +464,78 @@ class CanvasHistoryRestoreService:
             pattern_fill_command_type=pattern_fill_command_type,
         )
 
-    def restore_entry(self, entry: Any, *, use_after: bool) -> None:
-        if isinstance(entry, self._history_patch_type):
-            self.restore_patch(entry, use_after=use_after)
-            return
-        if isinstance(entry, self._resize_entry_type):
-            snapshot = entry.after if use_after else entry.before
-            self._canvas._restore_resize_snapshot(snapshot)
-            return
-        if isinstance(entry, self._merge_entry_type):
-            self._canvas._restore_merge(entry, use_after=use_after)
-            return
-        if isinstance(entry, self._merge_visible_entry_type):
-            self._canvas._restore_merge_visible(entry, use_after=use_after)
-            return
-        if isinstance(entry, self._flatten_all_entry_type):
-            if use_after:
-                self._canvas._do_flatten_all_forward(entry)
+    def restore_entry(self, entry: Any, *, use_after: bool) -> bool:
+        return self._restore_entry_outcome(entry, use_after=use_after).restored
+
+    def _restore_entry_outcome(self, entry: Any, *, use_after: bool) -> EntryRestoreOutcome:
+        try:
+            if isinstance(entry, self._history_patch_type):
+                self.restore_patch(entry, use_after=use_after)
+            elif isinstance(entry, self._resize_entry_type):
+                snapshot = entry.after if use_after else entry.before
+                self._canvas._restore_resize_snapshot(snapshot)
+            elif isinstance(entry, self._merge_entry_type):
+                self._canvas._restore_merge(entry, use_after=use_after)
+            elif isinstance(entry, self._merge_visible_entry_type):
+                self._canvas._restore_merge_visible(entry, use_after=use_after)
+            elif isinstance(entry, self._flatten_all_entry_type):
+                if use_after:
+                    self._canvas._do_flatten_all_forward(entry)
+                else:
+                    self._canvas._do_flatten_all_undo(entry)
+            elif isinstance(entry, self._history_command_type):
+                if not uses_default_restore_method(self.restore_command, _DEFAULT_RESTORE_COMMAND):
+                    return legacy_restore_outcome(
+                        self.restore_command(entry.command, use_after=use_after)
+                    )
+                return self._restore_command_outcome(entry.command, use_after=use_after)
             else:
-                self._canvas._do_flatten_all_undo(entry)
-            return
-        if isinstance(entry, self._history_command_type):
-            self.restore_command(entry.command, use_after=use_after)
+                return EntryRestoreOutcome(False)
+            # These legacy image restoration helpers intentionally return None.
+            return EntryRestoreOutcome(True)
+        except Exception as exc:
+            logger.warning("History entry restore failed: %s", exc)
+            return EntryRestoreOutcome(False)
 
-    def restore_command(self, command: Any, *, use_after: bool) -> None:
-        saved_alpha: Any | None = None
-        alpha_layer: Any | None = None
-        if use_after:
-            saved_alpha, alpha_layer = self._flood_fill_restore.save_alpha_for_redo(command)
+    def restore_command(self, command: Any, *, use_after: bool) -> bool:
+        return self._restore_command_outcome(command, use_after=use_after).restored
 
-        success = self._run_history_command(command, use_after=use_after)
-        if not success:
-            return
-        self._flood_fill_restore.restore_saved_alpha(saved_alpha, alpha_layer)
-        self._flood_fill_restore.refresh_history_restore(command)
-        self._bump_vector_command_texture_versions(command)
-        self._publish_visibility_restore(command)
+    def _restore_command_outcome(self, command: Any, *, use_after: bool) -> EntryRestoreOutcome:
+        primary_confirmed = False
+        try:
+            saved_alpha: Any | None = None
+            alpha_layer: Any | None = None
+            if use_after:
+                saved_alpha, alpha_layer = self._flood_fill_restore.save_alpha_for_redo(command)
+
+            if uses_default_restore_method(self._run_history_command, _DEFAULT_RUN_HISTORY_COMMAND):
+                primary = self._execute_history_command(command, use_after=use_after)
+            else:
+                primary = legacy_restore_outcome(
+                    self._run_history_command(command, use_after=use_after)
+                )
+            if not primary.restored:
+                return primary
+            primary_confirmed = primary.primary_confirmed
+            self._flood_fill_restore.restore_saved_alpha(saved_alpha, alpha_layer)
+            self._flood_fill_restore.refresh_history_restore(command)
+            self._bump_vector_command_texture_versions(command)
+            self._publish_visibility_restore(command)
+            return EntryRestoreOutcome(True, primary_confirmed)
+        except Exception as exc:
+            logger.warning("History command restore failed: %s", exc)
+            return EntryRestoreOutcome(False, primary_confirmed)
 
     def _run_history_command(self, command: Any, *, use_after: bool) -> bool:
+        return self._execute_history_command(command, use_after=use_after).restored
+
+    def _execute_history_command(self, command: Any, *, use_after: bool) -> EntryRestoreOutcome:
         try:
-            if use_after:
-                return bool(command.apply(self._canvas))
-            return bool(command.revert(self._canvas))
+            raw = command.apply(self._canvas) if use_after else command.revert(self._canvas)
+            return EntryRestoreOutcome(bool(raw), raw is True)
         except Exception as exc:  # pragma: no cover - defensive
             logger.warning("History command failed: %s", exc)
-            return False
+            return EntryRestoreOutcome(False)
 
     def _bump_vector_command_texture_versions(self, command: Any) -> None:
         if self._canvas._is_vector_command(command):
@@ -528,6 +598,13 @@ class CanvasHistoryRestoreService:
         self._canvas._emit_layer_content_changed(layer, patch.rect, patch.metadata)
 
 
+# Keep definition-time identities: replacing a declaring class method is also
+# an existing hook, rather than a new definition of the standard boundary.
+_DEFAULT_RESTORE_ENTRY = CanvasHistoryRestoreService.restore_entry
+_DEFAULT_RESTORE_COMMAND = CanvasHistoryRestoreService.restore_command
+_DEFAULT_RUN_HISTORY_COMMAND = CanvasHistoryRestoreService._run_history_command
+
+
 class CanvasHistoryService:
     """Facade for history helpers retained behind the canvas facade."""
 
@@ -550,6 +627,10 @@ class CanvasHistoryService:
         events: Any,
     ) -> None:
         self._canvas = canvas
+        self._restore_in_progress = False
+        self._restore_owner = HistoryRestoreOwner()
+        self._restore_generation = 0
+        self._failure_scope_factory: Callable[[Any], Any] | None = None
         self._bookkeeping = CanvasHistoryBookkeepingService(
             canvas,
             history_group_type=history_group_type,
@@ -584,47 +665,85 @@ class CanvasHistoryService:
         self._bookkeeping.emit_changed()
 
     def clear_direct(self) -> None:
+        self._restore_owner = HistoryRestoreOwner()
+        self._restore_generation += 1
         self._bookkeeping.clear_direct()
 
+    def _restore_blocked(self) -> bool:
+        return self._restore_owner.blocked
+
+    def _peek_group(self, *, redo: bool) -> Any | None:
+        stack = self._canvas._redo_stack if redo else self._canvas._undo_stack
+        return self._restore_owner.peek(stack, redo=redo)
+
     def _undo_direct(self) -> bool:
-        canvas = self._canvas
-        if canvas._active_history_group and canvas._active_history_group.entries:
-            canvas._push_history_group(canvas._active_history_group)
-            canvas._active_history_group = None
-
-        if not canvas._undo_stack:
+        if self._restore_in_progress or self._restore_blocked():
             return False
-
-        group = canvas._undo_stack.pop()
-        canvas.defer_recompose()
+        self._restore_in_progress = True
+        capture_owner = (
+            self._restore_owner if type(self._restore_owner) is HistoryRestoreOwner else None
+        )
+        previous_capture = (
+            capture_owner._capture_in_progress if capture_owner is not None else False
+        )
+        if capture_owner is not None:
+            capture_owner._capture_in_progress = True
         try:
-            for entry in reversed(group.entries):
-                canvas._restore_entry(entry, use_after=False)
+            canvas = self._canvas
+            if canvas._active_history_group and canvas._active_history_group.entries:
+                canvas._push_history_group(canvas._active_history_group)
+                canvas._active_history_group = None
+            return self._restore_group(use_after=False)
+        except Exception as exc:
+            logger.warning("History undo failed: %s", exc)
+            return False
         finally:
-            canvas.resume_recompose()
-        canvas._redo_stack.append(group)
-        canvas._invalidate_layer_cache()
-        canvas._recompose()
-        canvas._emit_history_changed()
-        return True
+            if capture_owner is not None:
+                capture_owner._capture_in_progress = previous_capture
+            self._restore_in_progress = False
 
     def _redo_direct(self) -> bool:
-        canvas = self._canvas
-        if not canvas._redo_stack:
+        if self._restore_in_progress or self._restore_blocked():
             return False
-
-        group = canvas._redo_stack.pop()
-        canvas.defer_recompose()
+        self._restore_in_progress = True
+        capture_owner = (
+            self._restore_owner if type(self._restore_owner) is HistoryRestoreOwner else None
+        )
+        previous_capture = (
+            capture_owner._capture_in_progress if capture_owner is not None else False
+        )
+        if capture_owner is not None:
+            capture_owner._capture_in_progress = True
         try:
-            for entry in group.entries:
-                canvas._restore_entry(entry, use_after=True)
+            return self._restore_group(use_after=True)
+        except Exception as exc:
+            logger.warning("History redo failed: %s", exc)
+            return False
         finally:
-            canvas.resume_recompose()
-        canvas._undo_stack.append(group)
-        canvas._invalidate_layer_cache()
-        canvas._recompose()
-        canvas._emit_history_changed()
-        return True
+            if capture_owner is not None:
+                capture_owner._capture_in_progress = previous_capture
+            self._restore_in_progress = False
+
+    def _restore_group(self, *, use_after: bool) -> bool:
+        document = getattr(self._canvas, "_doc", None)
+        owner = self._restore_owner
+        scope = self._failure_scope_factory(owner) if self._failure_scope_factory else None
+        outcome = restore_history_group(self._canvas, self, use_after=use_after)
+        if outcome.reason is not None:
+            notify = (
+                scope is None
+                and self._restore_owner is owner
+                and getattr(self._canvas, "_doc", None) is document
+            )
+            try:
+                if scope is not None:
+                    notify = scope.report(outcome)
+            except Exception as exc:
+                logger.warning("History failure reporting failed (%s)", type(exc).__name__)
+            finally:
+                if notify:
+                    self.emit_changed()
+        return outcome.committed
 
     def record_patch(self, label: str, patch: Any) -> None:
         self._bookkeeping.record_patch(label, patch)
@@ -644,11 +763,18 @@ class CanvasHistoryService:
     def flush_deferred_paint(self) -> None:
         self._transaction.flush_deferred_paint()
 
-    def restore_entry(self, entry: Any, *, use_after: bool) -> None:
-        self._restore.restore_entry(entry, use_after=use_after)
+    def restore_entry(self, entry: Any, *, use_after: bool) -> bool:
+        return self._restore.restore_entry(entry, use_after=use_after)
 
-    def restore_command(self, command: Any, *, use_after: bool) -> None:
-        self._restore.restore_command(command, use_after=use_after)
+    def _restore_entry_outcome(self, entry: Any, *, use_after: bool) -> EntryRestoreOutcome:
+        if not uses_default_restore_method(self.restore_entry, _DEFAULT_HISTORY_RESTORE_ENTRY):
+            return legacy_restore_outcome(self.restore_entry(entry, use_after=use_after))
+        if not uses_default_restore_method(self._restore.restore_entry, _DEFAULT_RESTORE_ENTRY):
+            return legacy_restore_outcome(self._restore.restore_entry(entry, use_after=use_after))
+        return self._restore._restore_entry_outcome(entry, use_after=use_after)
+
+    def restore_command(self, command: Any, *, use_after: bool) -> bool:
+        return self._restore.restore_command(command, use_after=use_after)
 
     def save_flood_fill_alpha_for_history_redo(self, command: Any) -> tuple[Any | None, Any | None]:
         return self._restore.save_flood_fill_alpha_for_history_redo(command)
@@ -658,3 +784,6 @@ class CanvasHistoryService:
 
     def restore_patch(self, patch: Any, *, use_after: bool) -> None:
         self._restore.restore_patch(patch, use_after=use_after)
+
+
+_DEFAULT_HISTORY_RESTORE_ENTRY = CanvasHistoryService.restore_entry

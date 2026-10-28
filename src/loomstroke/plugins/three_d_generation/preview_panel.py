@@ -34,6 +34,10 @@ from loomstroke.rendering_3d import (
     ProjectionImportService,
     SoftwarePreviewRenderer,
 )
+from loomstroke.rendering_3d.projection import (
+    _PROJECTION_FACE_LIMIT_MESSAGE,
+    _ProjectionFaceLimitExceeded,
+)
 
 logger = logging.getLogger(__name__)
 
@@ -166,6 +170,14 @@ class Generated3DPreviewWidget(QWidget):
                 ),
             )
             return result.submitted
+        except _ProjectionFaceLimitExceeded:
+            show = getattr(getattr(self._host, "ui", None), "show_message", None)
+            if callable(show):
+                try:
+                    show(_ts(_PROJECTION_FACE_LIMIT_MESSAGE))
+                except Exception:
+                    logger.warning("3D projection refusal notice could not be displayed")
+            return False
         except Exception:
             logger.warning("3D projection import failed", exc_info=True)
             return False

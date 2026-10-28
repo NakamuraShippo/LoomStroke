@@ -13,6 +13,7 @@ import os
 from collections.abc import Mapping
 from typing import cast
 
+from .settings_log_redaction import redact_setting_value
 from .settings_schema import (
     DEFAULT_COMFYUI_HOST,
     DEFAULT_COMFYUI_PORT,
@@ -81,7 +82,9 @@ class EnvironmentSettings:
         if value is None:
             return default
 
-        logger.debug("Using environment override: %s=%s", env_key, value)
+        logger.debug(
+            "Using environment override: %s=%s", env_key, redact_setting_value(env_key, value)
+        )
 
         converted = cls._convert_value(value, template, setting_path=setting_path)
         if converted is None:
@@ -110,7 +113,7 @@ class EnvironmentSettings:
         # Check legacy environment variables
         url = os.environ.get("COMFYUI_URL")
         if url:
-            logger.debug(f"Using legacy COMFYUI_URL: {url}")
+            logger.debug("Using legacy COMFYUI_URL: %s", redact_setting_value("COMFYUI_URL", url))
             return url
 
         # Construct from host and port
@@ -120,12 +123,15 @@ class EnvironmentSettings:
         try:
             port = int(port_str)
         except ValueError:
-            logger.warning(f"Invalid COMFYUI_PORT: {port_str}, using default")
+            logger.warning(
+                "Invalid COMFYUI_PORT: %s, using default",
+                redact_setting_value("COMFYUI_PORT", port_str),
+            )
             port = DEFAULT_COMFYUI_PORT
 
         if host != DEFAULT_COMFYUI_HOST or port != DEFAULT_COMFYUI_PORT:
             url = f"http://{host}:{port}"
-            logger.debug(f"Constructed URL from env: {url}")
+            logger.debug("Constructed URL from env: %s", redact_setting_value("COMFYUI_URL", url))
             return url
 
         # Return default
@@ -149,7 +155,9 @@ class EnvironmentSettings:
         if http_url != DEFAULT_COMFYUI_URL:
             # Convert http to ws
             ws_url = http_url.replace("http://", "ws://").replace("https://", "wss://")
-            logger.debug(f"Derived WebSocket URL: {ws_url}")
+            logger.debug(
+                "Derived WebSocket URL: %s", redact_setting_value("connection/ws_url", ws_url)
+            )
             return ws_url
 
         # Return default
@@ -179,7 +187,11 @@ class EnvironmentSettings:
                 continue
             if default_value is None or env_value != default_value:
                 result[setting_path] = env_value
-                logger.info("Environment override applied: %s=%s", env_key, env_value)
+                logger.info(
+                    "Environment override applied: %s=%s",
+                    env_key,
+                    redact_setting_value(env_key, env_value),
+                )
 
         # Special handling for ComfyUI URLs
         result["connection/base_url"] = cls.get_comfyui_url()
@@ -206,12 +218,7 @@ class EnvironmentSettings:
         if env_vars:
             logger.info("Environment variables detected:")
             for key, value in sorted(env_vars.items()):
-                # Mask sensitive values
-                if "KEY" in key or "SECRET" in key or "PASSWORD" in key:
-                    masked_value = "*" * min(len(value), 8)
-                else:
-                    masked_value = value
-                logger.info("  %s=%s", key, masked_value)
+                logger.info("  %s=%s", key, redact_setting_value(key, value))
         else:
             logger.debug("No LoomStroke environment variables found")
 
@@ -261,7 +268,7 @@ class EnvironmentSettings:
             logger.warning(
                 "Invalid int override for %s: %s",
                 setting_path or "unknown",
-                raw_value,
+                redact_setting_value(setting_path or "", raw_value),
             )
             return template
 
@@ -277,7 +284,7 @@ class EnvironmentSettings:
             logger.warning(
                 "Invalid float override for %s: %s",
                 setting_path or "unknown",
-                raw_value,
+                redact_setting_value(setting_path or "", raw_value),
             )
             return template
 
@@ -293,7 +300,7 @@ class EnvironmentSettings:
             logger.warning(
                 "Invalid JSON override for %s: %s",
                 setting_path or type(template).__name__,
-                raw_value,
+                redact_setting_value(setting_path or "", raw_value),
             )
             return template
         return cast(SettingsValue, loaded)

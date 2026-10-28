@@ -3,7 +3,8 @@
 from __future__ import annotations
 
 import asyncio
-import json
+import logging
+from copy import deepcopy
 from dataclasses import dataclass
 from enum import StrEnum
 from pathlib import Path
@@ -16,7 +17,15 @@ from loomstroke.plugins.color_manager.color_models import (
     ColorPalette,
     PaletteSwatch,
 )
-from loomstroke.plugins.color_manager.errors import PaletteExportError, PaletteImportError
+from loomstroke.plugins.color_manager.errors import (
+    PaletteExportError,
+    PaletteImportError,
+    PaletteSettingsUpdateError,
+)
+
+from .palette_persistence import read_palette_document, write_palette_document
+
+logger = logging.getLogger(__name__)
 
 
 class PaletteFormat(StrEnum):
@@ -54,62 +63,56 @@ class ColorPaletteRepository:
         self._loop = loop
         self._palettes: dict[str, ColorPalette] = {}
         self._lock = asyncio.Lock()
+        self._loaded = False
+        self._load_failed = False
+        self._settings_warning = False
         default_path = get_cache_root() / "palettes.json"
         self._storage_path = self._settings.get_path("color/palette_path", default_path)
         self._storage_path.parent.mkdir(parents=True, exist_ok=True)
 
     async def load(self) -> None:
-        should_save_default = False
         async with self._lock:
-            if not self._storage_path.exists():
-                self._palettes = {DEFAULT_PALETTE_ID: _build_default_palette()}
-                should_save_default = True
-            else:
-                data = await asyncio.to_thread(self._storage_path.read_text, encoding="utf-8")
-                try:
-                    payload = json.loads(data)
-                except json.JSONDecodeError as exc:
-                    raise PaletteImportError(f"Invalid palette file: {exc}") from exc
-                palettes = [ColorPalette.from_dict(item) for item in payload.get("palettes", [])]
-                if not palettes:
-                    palettes = [_build_default_palette()]
-                self._palettes = {palette.id: palette for palette in palettes}
-        if should_save_default:
-            await self.save()
+            self._loaded = False
+            self._load_failed = True
+            if not self._source_exists():
+                await self._persist_locked({DEFAULT_PALETTE_ID: _build_default_palette()})
+                return
+            candidate = await asyncio.to_thread(read_palette_document, self._storage_path)
+            self._palettes = candidate or {DEFAULT_PALETTE_ID: _build_default_palette()}
+            self._loaded = True
+            self._load_failed = False
 
     async def save(self) -> None:
         async with self._lock:
-            payload = {"palettes": [palette.to_dict() for palette in self._palettes.values()]}
-            await asyncio.to_thread(
-                self._storage_path.write_text,
-                json.dumps(payload, indent=2),
-                encoding="utf-8",
-            )
-            self._settings.set_path("color/palette_path", self._storage_path)
+            self._require_writable()
+            await self._persist_locked(deepcopy(self._palettes))
 
     async def list_palettes(self) -> list[ColorPalette]:
         async with self._lock:
-            return list(self._palettes.values())
+            return deepcopy(list(self._palettes.values()))
 
     async def get_palette(self, palette_id: str) -> ColorPalette | None:
         async with self._lock:
-            return self._palettes.get(palette_id)
+            return deepcopy(self._palettes.get(palette_id))
 
     async def upsert_palette(self, palette: ColorPalette) -> None:
+        incoming = deepcopy(palette)
         async with self._lock:
-            self._palettes[palette.id] = palette
-        await self.save()
+            self._require_writable()
+            candidate = deepcopy(self._palettes)
+            candidate[incoming.id] = incoming
+            await self._persist_locked(candidate)
 
     async def delete_palette(self, palette_id: str) -> None:
         async with self._lock:
-            self._palettes.pop(palette_id, None)
-        await self.save()
+            self._require_writable()
+            candidate = deepcopy(self._palettes)
+            candidate.pop(palette_id, None)
+            await self._persist_locked(candidate)
 
     async def import_file(self, path: Path, *, fmt: PaletteFormat) -> list[ColorPalette]:
         if fmt is PaletteFormat.JSON:
-            data = await asyncio.to_thread(path.read_text, encoding="utf-8")
-            payload = json.loads(data)
-            palettes = [ColorPalette.from_dict(item) for item in payload.get("palettes", [])]
+            palettes = list((await asyncio.to_thread(read_palette_document, path)).values())
             if not palettes:
                 raise PaletteImportError("No palettes found in JSON payload")
             return palettes
@@ -118,14 +121,93 @@ class ColorPaletteRepository:
     async def export_palette(
         self, palette_id: str, dest: Path, *, fmt: PaletteFormat = PaletteFormat.JSON
     ) -> None:
-        palette = await self.get_palette(palette_id)
-        if palette is None:
-            raise PaletteExportError(f"Palette {palette_id} not found")
-        if fmt is PaletteFormat.JSON:
-            payload = {"palettes": [palette.to_dict()]}
-            await asyncio.to_thread(dest.write_text, json.dumps(payload, indent=2), "utf-8")
-            return
-        raise PaletteExportError(f"Format {fmt} is not implemented yet")
+        async with self._lock:
+            self._reject_store_export(Path(dest))
+            palette = self._palettes.get(palette_id)
+            if palette is None:
+                raise PaletteExportError(f"Palette {palette_id} not found")
+            if fmt is not PaletteFormat.JSON:
+                raise PaletteExportError(f"Format {fmt} is not implemented yet")
+            payload = {"palettes": [deepcopy(palette).to_dict()]}
+            _verified, cancellation = await self._write_locked(Path(dest), payload)
+            if cancellation is not None:
+                raise cancellation
+
+    def has_settings_warning(self) -> bool:
+        return self._settings_warning
+
+    def take_settings_warning(self) -> bool:
+        pending = self._settings_warning
+        self._settings_warning = False
+        return pending
+
+    def _source_exists(self) -> bool:
+        try:
+            self._storage_path.lstat()
+        except FileNotFoundError:
+            return False
+        except OSError as error:
+            raise PaletteImportError(
+                "The palette file could not be checked before saving."
+            ) from error
+        return True
+
+    def _require_writable(self) -> None:
+        if self._load_failed or (not self._loaded and self._source_exists()):
+            raise PaletteImportError("Load the existing palette file successfully before saving.")
+
+    def _reject_store_export(self, destination: Path) -> None:
+        try:
+            alias = destination.resolve() == self._storage_path.resolve()
+            if not alias and destination.exists() and self._source_exists():
+                alias = destination.samefile(self._storage_path)
+        except (OSError, RuntimeError, ValueError) as error:
+            raise PaletteExportError(
+                "The palette export destination could not be verified."
+            ) from error
+        if alias:
+            raise PaletteExportError("A single-palette export cannot replace the palette store.")
+
+    async def _write_locked(
+        self, destination: Path, payload: dict[str, Any]
+    ) -> tuple[dict[str, ColorPalette], asyncio.CancelledError | None]:
+        worker = asyncio.create_task(
+            asyncio.to_thread(write_palette_document, destination, payload)
+        )
+        cancellation = None
+        while not worker.done():
+            try:
+                await asyncio.shield(worker)
+            except asyncio.CancelledError as error:
+                cancellation = error
+            except Exception:
+                break
+        try:
+            verified = worker.result()
+        except Exception:
+            if cancellation is not None:
+                logger.warning("Cancelled palette writer failed; previous palette remains active")
+                raise cancellation from None
+            raise
+        return verified, cancellation
+
+    async def _persist_locked(self, candidate: dict[str, ColorPalette]) -> None:
+        payload = {"palettes": [palette.to_dict() for palette in candidate.values()]}
+        verified, cancellation = await self._write_locked(self._storage_path, payload)
+        self._palettes = verified
+        self._loaded = True
+        self._load_failed = False
+        settings_failed = False
+        try:
+            self._settings.set_path("color/palette_path", self._storage_path)
+        except Exception:
+            settings_failed = True
+            logger.warning("Palette location setting failed after the file was saved")
+        self._settings_warning = settings_failed
+        if cancellation is not None:
+            raise cancellation
+        if settings_failed:
+            raise PaletteSettingsUpdateError()
 
 
 def _build_default_palette() -> ColorPalette:

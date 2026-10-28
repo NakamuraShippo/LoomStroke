@@ -24,8 +24,11 @@ class PsdDocumentReader:
     def read(self, path: Path) -> PsdDocumentData:
         from psd_tools import PSDImage  # noqa: PLC0415
 
+        return self.read_opened(path, PSDImage.open(path))
+
+    def read_opened(self, path: Path, psd) -> PsdDocumentData:
+        """Prepare a hierarchy from the same parsed source used by appearance fallback."""
         self._count, self._pixels = 0, 0
-        psd = PSDImage.open(path)
         self._check(path, psd.width, psd.height)
         self._width, self._height = psd.width, psd.height
         return PsdDocumentData(

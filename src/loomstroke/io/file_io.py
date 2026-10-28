@@ -577,6 +577,16 @@ class FileIO(QObject):
 
         try:
             psd = PSDImage.open(path)
+        except Exception as e:
+            error_msg = f"Failed to read PSD {path}: {e}"
+            logger.error(error_msg)
+            self.error_occurred.emit("read", error_msg)
+            return None
+        return self._read_opened_psd(path, psd)
+
+    def _read_opened_psd(self, path: Path, psd: Any) -> tuple[NDArray[Any], ImageMetadata] | None:
+        """Read a composite from an already parsed PSD without reopening its source."""
+        try:
             self._validate_import_image(path, int(psd.width), int(psd.height))
             composite = psd.composite()
             if composite is None:

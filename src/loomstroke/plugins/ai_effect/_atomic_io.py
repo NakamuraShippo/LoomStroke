@@ -60,18 +60,21 @@ def atomic_write_text(path: Path, writer: Callable[[Any], None]) -> None:
         raise
 
 
-def atomic_write_binary(path: Path, writer: Callable[[Path], None]) -> None:
+def atomic_write_binary(
+    path: Path, writer: Callable[[Path], None], *, _temp_suffix: str | None = None
+) -> None:
     """Atomic binary-mode write where the writer takes the temp path directly.
 
     Used for producers that need to open the file themselves (e.g.
     ``zipfile.ZipFile(tmp_path, "w", ...)``). The writer is responsible for
     opening and closing the file; this helper only handles the temp-file
-    lifecycle, fsync, and rename.
+    lifecycle, fsync, and rename. The private suffix override keeps checked
+    import stages outside the library's ``*.lsfx`` scan; the default is unchanged.
     """
     path.parent.mkdir(parents=True, exist_ok=True)
     tmp_fd, tmp_path_str = tempfile.mkstemp(
         prefix=path.stem + ".tmp.",
-        suffix=path.suffix,
+        suffix=path.suffix if _temp_suffix is None else _temp_suffix,
         dir=str(path.parent),
     )
     os.close(tmp_fd)

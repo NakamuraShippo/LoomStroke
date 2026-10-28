@@ -11,6 +11,7 @@ from ..sdk import ToolDescriptor
 from ..sdk.base import PluginBase
 from . import pen_tool as facade
 from .pen_settings import PenSettings
+from .pen_startup_feedback import clear_startup_feedback, show_startup_failure
 from .pen_tool import (
     PLUGIN_METADATA,
     ABRImporter,
@@ -32,6 +33,8 @@ from .pen_tool import (
     shutil,
     uuid,
 )
+from .selection_tip_creation import commit_selection_tip
+from .selection_tip_feedback import clear_selection_tip_feedback, show_selection_tip_failure
 
 
 class BasicPenPlugin(PluginBase):
@@ -63,6 +66,9 @@ class BasicPenPlugin(PluginBase):
 
         self._panel_retry_attempts = 0
 
+        self._startup_feedback = None
+        self._selection_tip_feedback = None
+
         logger.info("BasicPenPlugin initialized")
 
     def descriptor(self) -> ToolDescriptor:
@@ -73,6 +79,15 @@ class BasicPenPlugin(PluginBase):
     def activate(self, host_api) -> None:
         """Activate plugin and underlying tool."""
 
+        try:
+            self._store.ensure_dirs()
+            self._store.load_db()
+            self._store.load_settings()
+            self._store.ensure_default_swatch()
+        except Exception:
+            show_startup_failure(self, host_api)
+            raise
+
         super().activate(host_api)
 
         self.pen_tool.activate(host_api)
@@ -82,10 +97,6 @@ class BasicPenPlugin(PluginBase):
         if callable(register_tool):
 
             register_tool(self.pen_tool)
-
-        self._store.ensure_dirs()
-
-        self._store.ensure_default_swatch()
 
         self._import_existing_abrs(force_extract=False)
 
@@ -104,6 +115,8 @@ class BasicPenPlugin(PluginBase):
         if self._pen_presets is not None:
             self._pen_presets.restore_tip()
             self._pen_presets.bind()
+
+        clear_startup_feedback(self)
 
     def _reapply_saved_tool_settings(self) -> None:
         """Load persisted tool settings and push them to the UI.
@@ -161,6 +174,10 @@ class BasicPenPlugin(PluginBase):
 
     def deactivate(self) -> None:
         """Deactivate plugin and tool."""
+
+        clear_startup_feedback(self)
+
+        clear_selection_tip_feedback(self)
 
         if self._pen_presets is not None:
             self._pen_presets.unbind()
@@ -709,10 +726,6 @@ class BasicPenPlugin(PluginBase):
 
         filename = f"tip_{swatch_id}.png"
 
-        abs_path = self._store.brush_tips_dir / filename
-
-        image.save(str(abs_path))
-
         swatch = {
             "id": swatch_id,
             "label": f"{_ts('Tip')} {swatch_id[-4:]}",
@@ -725,8 +738,14 @@ class BasicPenPlugin(PluginBase):
             },
         }
 
-        self._store.add_swatch(swatch)
+        try:
+            commit_selection_tip(self._store, image, filename, swatch)
+        except Exception:
+            logger.warning("basic_pen: selection tip creation failed")
+            show_selection_tip_failure(self, _ts)
+            return
 
+        clear_selection_tip_feedback(self)
         self._refresh_panel()
 
         self._apply_swatch(swatch_id, update_panel=True)
@@ -832,39 +851,20 @@ class BasicPenPlugin(PluginBase):
 
             filename = f"tip_{swatch_id}.png"
 
-            abs_path = self._store.brush_tips_dir / filename
-
             try:
-
-                if not image.save(str(abs_path)):
-
-                    skipped += 1
-
-                    continue
-
-            except Exception:
-
-                skipped += 1
-
-                continue
-
-            label = Path(file_path).stem or f"{_ts('Tip')} {swatch_id[-4:]}"
-
-            swatch = {
-                "id": swatch_id,
-                "label": label,
-                "tip_path": self._store.tip_path_relative(filename),
-                "params": self.pen_tool.get_params(),
-                "meta": {
-                    "source": "import",
-                    "created_at": _now_iso(),
-                    "hardness_mode": "texture",
-                },
-            }
-
-            try:
-
-                self._store.add_swatch(swatch)
+                label = Path(file_path).stem or f"{_ts('Tip')} {swatch_id[-4:]}"
+                swatch = {
+                    "id": swatch_id,
+                    "label": label,
+                    "tip_path": self._store.tip_path_relative(filename),
+                    "params": self.pen_tool.get_params(),
+                    "meta": {
+                        "source": "import",
+                        "created_at": _now_iso(),
+                        "hardness_mode": "texture",
+                    },
+                }
+                commit_selection_tip(self._store, image, filename, swatch)
 
             except Exception:
 

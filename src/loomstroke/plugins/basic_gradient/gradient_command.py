@@ -18,7 +18,9 @@ from ...core.commands import (
     _qimage_to_numpy_view,
     _resolve_target_layer,
 )
+from ...core.commands_layer_lookup import find_layer
 from ...core.geometry import Affine2D
+from ..common.document_capture_guard import DocumentCaptureLease, release_document_capture_edit
 
 # Gradient types
 GRADIENT_LINEAR = "linear"
@@ -149,6 +151,29 @@ class GradientCommand(Command):
         self._dither = dither
         self._stops = stops
         self._backup: np.ndarray | None = None
+        self._document_capture_lease: DocumentCaptureLease | None = None
+        self._gradient_preview_owner: Any | None = None
+        self._gradient_preview_aborted = False
+        self._gradient_preview_pinned = False
+
+    def _bind_gradient_preview_owner(self, owner: Any) -> None:
+        self._gradient_preview_owner = owner
+        self._gradient_preview_pinned = True
+
+    def _target_layer(self, canvas: Any) -> Any:
+        if self._gradient_preview_pinned:
+            return find_layer(canvas, self._layer_id) if self._layer_id is not None else None
+        return _resolve_target_layer(canvas, self._layer_id)
+
+    def _set_document_capture_lease(self, lease: DocumentCaptureLease | None) -> None:
+        self._document_capture_lease = lease
+
+    def _on_document_capture_committed(self) -> None:
+        if self._gradient_preview_owner is not None:
+            self._gradient_preview_owner.acknowledge()
+            return
+        if release_document_capture_edit(self._document_capture_lease):
+            self._document_capture_lease = None
 
     def set_pre_applied(self, backup: np.ndarray) -> None:
         """Mark this command as already applied during preview.
@@ -162,10 +187,15 @@ class GradientCommand(Command):
         self._dirty_region = DirtyRegion(0, 0, w, h)
 
     def apply(self, canvas: Any) -> bool:
+        if self._gradient_preview_aborted or (
+            self._gradient_preview_owner is not None
+            and not self._gradient_preview_owner.can_edit(canvas)
+        ):
+            return False
         if self._executed:
             return True  # Already applied during preview
 
-        layer = _resolve_target_layer(canvas, self._layer_id)
+        layer = self._target_layer(canvas)
         if layer is None or not _layer_allows_edit(layer):
             return False
 
@@ -246,9 +276,14 @@ class GradientCommand(Command):
         return True
 
     def revert(self, canvas: Any) -> bool:
+        if self._gradient_preview_owner is not None:
+            if not self._gradient_preview_owner.cancel():
+                return False
+            self._executed = False
+            return True
         if not self._executed or self._backup is None:
             return False
-        layer = _resolve_target_layer(canvas, self._layer_id)
+        layer = self._target_layer(canvas)
         if layer is None:
             return False
         target = _get_target_array(layer)
@@ -266,6 +301,7 @@ class GradientCommand(Command):
             layer.texture_version = tv + 1
 
         self._executed = False
+        self._on_document_capture_committed()
         return True
 
 

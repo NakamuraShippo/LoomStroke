@@ -7,6 +7,7 @@ from typing import Any
 
 from PySide6.QtWidgets import QMainWindow, QMessageBox, QWidget
 
+from .credential_migration_notice import install_credential_migration_notice
 from .main_window_tool_plugin_bootstrap import MainWindowToolPluginBootstrapCoordinator
 
 logger = logging.getLogger(__name__)
@@ -70,6 +71,7 @@ class MainWindowAppIntegrationCoordinator:
         window = self._window
         try:
             await window._async_manager.async_initialize()
+            install_credential_migration_notice(window)
             window.window_ready.emit()
             logger.info("Async initialization complete")
         except Exception as exc:

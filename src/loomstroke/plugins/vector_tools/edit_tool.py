@@ -5,6 +5,7 @@ import math
 from collections.abc import Iterable, Mapping, Sequence
 from typing import TYPE_CHECKING
 
+from . import edit_style_update
 from .cubic_hit_test import CubicHitTest
 from .edit_anchor_selection import _AnchorSelection
 from .edit_selection import _Selection
@@ -13,7 +14,6 @@ from .vector_width_editor import VectorWidthEditor
 if TYPE_CHECKING:
     from PySide6.QtCore import QRect
 
-from ...core.native_cmyk.vector_paints import without_paint
 from ...host_api import StrokePoint as HostStrokePoint
 from ..common.vector_hit_test_geometry import VectorHitTestGeometry
 from ..sdk import PropertySpec, PropertyType, ToolDescriptor, ToolMetadata
@@ -27,7 +27,6 @@ from .common import (
     VectorObject,
     VectorPath,
     VectorReplaceCommand,
-    VectorStyle,
     copy_vector_object,
     ensure_vector_element_ids,
     make_vector_object,
@@ -40,6 +39,10 @@ from .parametric_shapes import (
 )
 
 logger = logging.getLogger(__name__)
+
+# Retain the former module-level imports after extracting style updates.
+VectorStyle = edit_style_update.VectorStyle
+without_paint = edit_style_update.without_paint
 
 _add_anchor_cursor = None
 _delete_anchor_cursor = None
@@ -580,28 +583,7 @@ class VectorPathEditTool:
         return {**self._style_settings, "edit_width_on_canvas": self._width_editor.enabled}
 
     def set_settings(self, settings: dict[str, object]) -> None:
-        settings = dict(settings or {})
-        if "edit_width_on_canvas" in settings:
-            self._width_editor.set_enabled(bool(settings.pop("edit_width_on_canvas")))
-        self._hydrate_selection_from_canvas()
-        merged: dict[str, object] = dict(self._style_settings)
-        merged.update(settings or {})
-        stroke = normalize_rgb(merged.get("stroke_color")) or (0, 0, 0)
-        merged["stroke_color"] = stroke
-        merged["fill_color"] = normalize_rgb(merged.get("fill_color"))
-        if bool(merged.get("fill_enabled")) and merged.get("fill_color") is None:
-            merged["fill_color"] = (0, 0, 0)
-        if merged.get("fill_color") is None:
-            merged["fill_enabled"] = False
-        if merged == self._style_settings:
-            return
-        clear_roles = tuple(
-            role
-            for role in ("stroke", "fill")
-            if merged.get(f"{role}_color") != self._style_settings.get(f"{role}_color")
-        )
-        self._style_settings = merged
-        self._apply_style_settings_to_selection(clear_roles=clear_roles)
+        edit_style_update.set_style_settings(self, settings)
 
     def set_setting(self, key: str, value: object) -> None:
         if key == "edit_width_on_canvas":
@@ -610,91 +592,10 @@ class VectorPathEditTool:
         self._set_style_setting(key, value)
 
     def _set_style_setting(self, key: str, value: object) -> None:
-        if key not in self._style_settings:
-            return
-        self._hydrate_selection_from_canvas()
-        before = dict(self._style_settings)
-        if key == "stroke_color":
-            normalized = normalize_rgb(value)
-            if normalized is not None:
-                self._style_settings["stroke_color"] = normalized
-        elif key == "fill_color":
-            normalized = normalize_rgb(value)
-            self._style_settings["fill_color"] = normalized
-            if normalized is None:
-                self._style_settings["fill_enabled"] = False
-            else:
-                self._style_settings["fill_enabled"] = True
-        elif key == "fill_enabled":
-            self._style_settings["fill_enabled"] = bool(value)
-            if (
-                self._style_settings["fill_enabled"]
-                and self._style_settings.get("fill_color") is None
-            ):
-                self._style_settings["fill_color"] = (0, 0, 0)
-        elif key == "stroke_width":
-            try:
-                self._style_settings["stroke_width"] = max(0.1, min(128.0, float(value)))
-            except (TypeError, ValueError):
-                return
-        else:
-            self._style_settings[key] = value
-        if self._style_settings == before:
-            return
-        self._apply_style_settings_to_selection(
-            clear_roles=(key.removesuffix("_color"),) if key.endswith("_color") else ()
-        )
+        edit_style_update.set_style_setting(self, key, value)
 
     def _apply_style_settings_to_selection(self, *, clear_roles: tuple[str, ...] = ()) -> None:
-        if not self._selected:
-            self._hydrate_selection_from_canvas()
-        if not self._selected:
-            return
-        obj = self._current_selection_object()
-        if obj is None:
-            return
-        style = getattr(obj, "style", None)
-        stroke_width = float(self._style_settings.get("stroke_width") or 2.0)
-        style_updated = VectorStyle(
-            stroke_color=tuple(self._style_settings.get("stroke_color") or (0, 0, 0)),
-            stroke_width=stroke_width,
-            fill_enabled=bool(
-                self._style_settings.get("fill_enabled")
-                and self._style_settings.get("fill_color") is not None
-            ),
-            fill_color=self._style_settings.get("fill_color"),
-            join=getattr(style, "join", "miter") if style else "miter",
-            cap=getattr(style, "cap", "butt") if style else "butt",
-            dash=getattr(style, "dash", ()),
-            miter_limit=getattr(style, "miter_limit", 4.0) if style else 4.0,
-        )
-        meta = dict(getattr(obj, "meta", {}) or {})
-        for role in clear_roles:
-            meta = without_paint(meta, role)
-        new_obj = type(obj)(
-            id=getattr(obj, "id", None),
-            paths=list(getattr(obj, "paths", []) or []),
-            style=style_updated,
-            meta=meta,
-            preview=getattr(obj, "preview", False),
-        )
-        cmd = VectorReplaceCommand(self._selected.vec_id, new_obj, layer_id=self._selected.layer_id)
-        try:
-            success = self.host_api.canvas.submit(cmd, merge_key=None) if self.host_api else False
-        except Exception:
-            success = False
-        if not success:
-            self._pending_commands.append(cmd)
-        self._editing_object = copy_vector_object(new_obj)
-        self._update_canvas_selection(
-            self._selected.vec_id,
-            self._selected.path_idx,
-            self._selected.anchor_idx,
-            self._selected.layer_id,
-            preview=False,
-            transform_bounds=self._compute_bbox(new_obj),
-            mode=None,
-        )
+        edit_style_update.apply_style_settings_to_selection(self, clear_roles=clear_roles)
 
     def _update_style_settings_from_object(self, obj: object) -> None:
         style = getattr(obj, "style", None)
@@ -1267,6 +1168,7 @@ class VectorPathEditTool:
         preview: bool = False,
         transform_bounds: tuple[float, float, float, float] | None = None,
         mode: str | None = None,
+        notify: bool = True,
     ) -> None:
         if transform_bounds is None:
             transform_bounds = self._compute_bbox(self._current_selection_object())
@@ -1307,9 +1209,9 @@ class VectorPathEditTool:
                         else self._current_selection_object()
                     )
                     self._selected_object_cache = cached
-                if hasattr(canvas, "notify_vector_preview_changed"):
+                if notify and hasattr(canvas, "notify_vector_preview_changed"):
                     canvas.notify_vector_preview_changed()
-                elif hasattr(canvas, "_recompose"):
+                elif notify and hasattr(canvas, "_recompose"):
                     canvas._recompose()
             except Exception:
                 logger.debug("VectorPathEditTool selection update failed", exc_info=True)
@@ -2869,7 +2771,7 @@ class VectorPathEditTool:
             return preview_obj
         return None
 
-    def _hydrate_selection_from_canvas(self) -> None:
+    def _hydrate_selection_from_canvas(self, *, committed: bool = False) -> None:
         """Build local selection state from canvas selection if available."""
         canvas = getattr(self.host_api, "canvas", None)
         selection = getattr(canvas, "_vector_selection", None)
@@ -2900,7 +2802,11 @@ class VectorPathEditTool:
         if not vec_id:
             return
         self._selected = _Selection(vec_id, path_idx, anchor_idx, layer_id, None)
-        obj = self._current_selection_object()
+        obj = (
+            edit_style_update.committed_selection_object(self)
+            if committed
+            else self._current_selection_object()
+        )
         if obj:
             path_idx, anchor_idx = self._resolve_selection_indices_from_ids(
                 obj,

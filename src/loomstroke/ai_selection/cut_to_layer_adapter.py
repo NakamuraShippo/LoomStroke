@@ -75,43 +75,18 @@ def build_extract_to_new_layer_command(
         canvas_height=canvas_height,
     )
 
-    from loomstroke.core.commands import AddLayerCommand  # noqa: PLC0415
+    from .extracted_layer_command import _Sam3ExtractToNewLayerCommand  # noqa: PLC0415
 
     command_layer_name = str(layer_name or "").strip() or _default_extract_layer_name(extract_mode)
 
-    class _Sam3ExtractToNewLayerCommand(AddLayerCommand):
-        def __init__(self) -> None:
-            super().__init__(command_layer_name, layer_type="raster")
-            self._created_layer_id: str | None = None
-
-        @property
-        def created_layer_id(self) -> str | None:
-            return self._created_layer_id
-
-        def apply(self, canvas: object) -> bool:
-            new_layer_id = _apply_extract_to_new_layer(
-                canvas,
-                source_layer_id=target_source_layer_id,
-                mask_image=mask_image,
-                mode=extract_mode,
-                layer_name=command_layer_name,
-            )
-            if new_layer_id is None:
-                return False
-            self._layer_id = new_layer_id
-            self._created_layer_id = new_layer_id
-            return True
-
-        def revert(self, canvas: object) -> bool:
-            if self._created_layer_id is None:
-                return False
-            removed = _remove_layer(canvas, self._created_layer_id)
-            if removed:
-                self._created_layer_id = None
-                self._layer_id = None
-            return removed
-
-    return _Sam3ExtractToNewLayerCommand()
+    return _Sam3ExtractToNewLayerCommand(
+        command_layer_name,
+        target_source_layer_id,
+        mask_image,
+        extract_mode,
+        image_builder=build_masked_layer_image,
+        legacy_apply=_apply_extract_to_new_layer,
+    )
 
 
 def _require_source_layer_id(source_layer_id: str) -> str:

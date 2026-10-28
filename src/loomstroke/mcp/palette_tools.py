@@ -2,17 +2,24 @@
 
 from __future__ import annotations
 
+import logging
 from collections.abc import Mapping
 from copy import deepcopy
 from typing import Any
 
+from PySide6.QtCore import QObject
+from shiboken6 import isValid
+
 from loomstroke.plugins.color_manager.color_models import ColorPalette
+from loomstroke.plugins.color_manager.errors import PaletteSettingsUpdateError
 from loomstroke.plugins.color_manager.palette_repository import PaletteFormat
 
 from .brush_tools import _schema
 from .editing_common import edit_operation, invalid
 from .extension_services import get_services, require_service
 from .types import McpStructuredError, McpToolSpec, ReasonCode
+
+logger = logging.getLogger(__name__)
 
 _ACTIONS = [
     "list",
@@ -83,16 +90,42 @@ def _validate_palette(payload: Mapping[str, Any]) -> ColorPalette:
     return ColorPalette.from_dict(dict(payload))
 
 
-async def _refresh(service: Any, repository: Any) -> None:
-    panel = get_services(service).get("color_panel")
-    if panel is not None:
-        panel.set_palettes(await repository.list_palettes())
+async def _refresh(service: Any, repository: Any, panel: Any) -> None:
+    def current() -> bool:
+        services = get_services(service)
+        return (
+            panel is not None
+            and services.get("palette_repository") is repository
+            and services.get("color_panel") is panel
+            and (not isinstance(panel, QObject) or isValid(panel))
+        )
+
+    if current():
+        palettes = await repository.list_palettes()
+        if current():
+            panel.set_palettes(palettes)
 
 
-async def dispatch(  # noqa: PLR0912, PLR0915 - explicit repository action dispatch
-    service: Any, name: str, arguments: Mapping[str, Any]
-) -> dict[str, Any]:
+async def dispatch(service: Any, name: str, arguments: Mapping[str, Any]) -> dict[str, Any]:
     repository = require_service(service, "palette_repository")
+    panel = get_services(service).get("color_panel")
+    try:
+        return await _dispatch_palette(service, name, arguments, repository, panel)
+    except PaletteSettingsUpdateError:
+        try:
+            await _refresh(service, repository, panel)
+        except Exception:
+            logger.warning("Saved palette view could not be refreshed")
+        raise McpStructuredError(
+            ReasonCode.BACKEND_FAILED,
+            "The palette file was saved, but its location setting could not be updated.",
+            details={"file_committed": True, "settings_updated": False},
+        ) from None
+
+
+async def _dispatch_palette(  # noqa: PLR0912, PLR0915 - explicit repository action dispatch
+    service: Any, name: str, arguments: Mapping[str, Any], repository: Any, panel: Any
+) -> dict[str, Any]:
     action = arguments["action"]
     if action == "list":
         return {"palettes": [palette.to_dict() for palette in await repository.list_palettes()]}
@@ -169,5 +202,5 @@ async def dispatch(  # noqa: PLR0912, PLR0915 - explicit repository action dispa
                         raise invalid("Order must contain every swatch ID exactly once.")
                     payload["swatches"] = sorted(swatches, key=lambda item: order.index(item["id"]))
                 await repository.upsert_palette(_validate_palette(payload))
-        await _refresh(service, repository)
+        await _refresh(service, repository, panel)
         return {"status": "completed", "action": action, "path": str(path) if path else None}

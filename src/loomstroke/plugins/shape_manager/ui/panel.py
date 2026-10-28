@@ -60,14 +60,22 @@ from loomstroke.plugins.vector_tools.parametric_shapes import (
 )
 from loomstroke.ui._dock_safe import is_valid
 
-from ..model.shape_index import ShapeIndex
+from ..model.shape_index import ShapeIndex, _require_no_load_failure
 from ..model.shape_record import ShapeRecord, ShapeTemplate
 from ..ops.bbox import compute_object_bbox, merge_bboxes
+from ..ops.delete_shape_assets import delete_shape_record
+from ..ops.persist_shape_assets import persist_shape_assets
 from ..ops.selection_ops import scale_object, translate_object
 from ..svg.parse import parse_svg
 from ..svg.render_thumb import render_svg_thumbnail
 from ..svg.sanitize import sanitize_svg
 from .dnd import MIME_TYPE, build_payload, parse_payload
+from .library_load_feedback import (
+    capture_library_load_issue,
+    refresh_library_load_feedback,
+    request_library_load_feedback,
+    retire_library_load_feedback,
+)
 
 logger = logging.getLogger(__name__)
 
@@ -140,6 +148,8 @@ class ShapeManagerPanel(QWidget):
         self._data_root = plugin_data_dir(PLUGIN_ID)
         self._index = ShapeIndex(self._data_root / INDEX_FILENAME)
         self._index.load()
+        self._initial_library_load_issue = capture_library_load_issue(self)
+        self._library_load_feedback = None
 
         self._category_combo = QComboBox(self)
         self._tag_combo = QComboBox(self)
@@ -197,8 +207,10 @@ class ShapeManagerPanel(QWidget):
         self._settings = host_api.settings
         self._apply_settings()
         self._subscribe_drop_event()
+        request_library_load_feedback(self)
 
     def detach_host(self) -> None:
+        retire_library_load_feedback(self)
         self._unsubscribe_drop_event()
         self._host = None
         self._settings = None
@@ -515,6 +527,8 @@ class ShapeManagerPanel(QWidget):
             return
         self._retranslate_ui()
 
+        refresh_library_load_feedback(self)
+
     def _subscribe_language_event(self) -> None:
         if self._language_event_token is not None:
             return
@@ -549,6 +563,7 @@ class ShapeManagerPanel(QWidget):
             self.refresh_translations()
 
     def _on_destroyed(self, _obj: object | None = None) -> None:
+        retire_library_load_feedback(self, final=True)
         self._unsubscribe_language_event()
         self._unsubscribe_drop_event()
 
@@ -1085,46 +1100,30 @@ class ShapeManagerPanel(QWidget):
     def _persist_shape(
         self, name: str, sanitized_svg: str, template: ShapeTemplate, *, tags: tuple[str, ...]
     ) -> ShapeRecord:
+        index = getattr(self, "_index", None)
+        if issubclass(type(index), ShapeIndex):
+            _require_no_load_failure(index)
         shape_id = str(uuid.uuid4())
-        shape_dir = self._data_root / "shapes" / shape_id
-        shape_dir.mkdir(parents=True, exist_ok=True)
-
-        svg_path = shape_dir / "shape.svg"
-        template_path = shape_dir / "template.json"
-        thumb_path = shape_dir / "thumb.png"
-
-        svg_path.write_text(sanitized_svg, encoding="utf-8")
-        template_path.write_text(
-            json.dumps(template.to_dict(), ensure_ascii=False, indent=2), encoding="utf-8"
-        )
-
-        thumb = render_svg_thumbnail(sanitized_svg, size=128)
-        if thumb is not None and not thumb.isNull():
-            thumb.save(str(thumb_path), "PNG")
-
-        now = datetime.now(UTC).isoformat()
-        default_size = self._get_int_setting("plugins/shape_manager/insert/default_size_px", 320)
-        return ShapeRecord(
+        return persist_shape_assets(
+            root=self._data_root,
             shape_id=shape_id,
             name=name or self._ts("Shape"),
             category=DEFAULT_CATEGORY,
             tags=tags,
-            created_at_iso=now,
-            updated_at_iso=now,
-            svg_path=str(svg_path.relative_to(self._data_root)),
-            template_path=str(template_path.relative_to(self._data_root)),
-            thumb_path=str(thumb_path.relative_to(self._data_root)),
-            default_insert_policy="default_size",
-            default_size_px=default_size,
+            svg_text=sanitized_svg,
+            template=template,
+            render_thumbnail=render_svg_thumbnail,
+            timestamp=datetime.now(UTC).isoformat(),
+            default_size=self._get_int_setting("plugins/shape_manager/insert/default_size_px", 320),
         )
 
     def _persist_shape_from_vector(
         self, name: str, obj: VectorObject, *, category: str, tags: tuple[str, ...]
     ) -> ShapeRecord:
+        index = getattr(self, "_index", None)
+        if issubclass(type(index), ShapeIndex):
+            _require_no_load_failure(index)
         shape_id = str(uuid.uuid4())
-        shape_dir = self._data_root / "shapes" / shape_id
-        shape_dir.mkdir(parents=True, exist_ok=True)
-
         bbox = compute_object_bbox(obj)
         if bbox is None:
             raise ValueError("Vector object has no bounds")
@@ -1143,40 +1142,26 @@ class ShapeManagerPanel(QWidget):
         )
 
         svg_text = _vector_object_to_svg(obj, bbox)
-        svg_path = shape_dir / "shape.svg"
-        template_path = shape_dir / "template.json"
-        thumb_path = shape_dir / "thumb.png"
-
-        svg_path.write_text(svg_text, encoding="utf-8")
-        template_path.write_text(
-            json.dumps(template.to_dict(), ensure_ascii=False, indent=2), encoding="utf-8"
-        )
-
-        thumb = render_svg_thumbnail(svg_text, size=128)
-        if thumb is not None and not thumb.isNull():
-            thumb.save(str(thumb_path), "PNG")
-
-        now = datetime.now(UTC).isoformat()
-        default_size = self._get_int_setting("plugins/shape_manager/insert/default_size_px", 320)
-
-        return ShapeRecord(
+        return persist_shape_assets(
+            root=self._data_root,
             shape_id=shape_id,
             name=name or self._ts("Shape"),
             category=category or DEFAULT_CATEGORY,
             tags=tags,
-            created_at_iso=now,
-            updated_at_iso=now,
-            svg_path=str(svg_path.relative_to(self._data_root)),
-            template_path=str(template_path.relative_to(self._data_root)),
-            thumb_path=str(thumb_path.relative_to(self._data_root)),
-            default_insert_policy="default_size",
-            default_size_px=default_size,
+            svg_text=svg_text,
+            template=template,
+            render_thumbnail=render_svg_thumbnail,
+            timestamp=datetime.now(UTC).isoformat(),
+            default_size=self._get_int_setting("plugins/shape_manager/insert/default_size_px", 320),
         )
 
     def _edit_tags(self, shape_id: str) -> None:
-        record = self._index.get(shape_id)
+        index = self._index
+        record = index.get(shape_id)
         if record is None:
             return
+        if issubclass(type(index), ShapeIndex):
+            _require_no_load_failure(index)
         tags = self._prompt_tags(title=self._ts("Edit Tags"), initial=record.tags)
         if tags is None:
             return
@@ -1194,7 +1179,8 @@ class ShapeManagerPanel(QWidget):
         if not shape_id:
             self._notify(self._ts("Select a shape to delete."))
             return
-        record = self._index.get(shape_id)
+        index, root = self._index, self._data_root
+        record = index.get(shape_id)
         if record is None:
             return
         box = QMessageBox(self)
@@ -1205,9 +1191,10 @@ class ShapeManagerPanel(QWidget):
         result = box.exec()
         if result != QMessageBox.StandardButton.Ok:
             return
-        shape_dir = self._data_root / "shapes" / record.shape_id
-        shutil.rmtree(shape_dir, ignore_errors=True)
-        self._index.remove(shape_id)
+        if self._index is not index or self._data_root != root:
+            return
+        if not delete_shape_record(index, shape_id, record, root):
+            return
         self._refresh_categories()
         self._refresh_list()
 
@@ -1226,9 +1213,12 @@ class ShapeManagerPanel(QWidget):
         return _parse_tags(text)
 
     def _rename_shape(self, shape_id: str) -> None:
-        record = self._index.get(shape_id)
+        index = self._index
+        record = index.get(shape_id)
         if record is None:
             return
+        if issubclass(type(index), ShapeIndex):
+            _require_no_load_failure(index)
         new_name, ok = QInputDialog.getText(
             self,
             self._ts("Rename Shape"),
@@ -1242,9 +1232,12 @@ class ShapeManagerPanel(QWidget):
         self._refresh_list()
 
     def _duplicate_shape(self, shape_id: str) -> None:
-        record = self._index.get(shape_id)
+        index = self._index
+        record = index.get(shape_id)
         if record is None:
             return
+        if issubclass(type(index), ShapeIndex):
+            _require_no_load_failure(index)
         src_dir = self._data_root / "shapes" / record.shape_id
         new_id = str(uuid.uuid4())
         dst_dir = self._data_root / "shapes" / new_id
@@ -1268,7 +1261,8 @@ class ShapeManagerPanel(QWidget):
         self._refresh_list()
 
     def _delete_shape(self, shape_id: str) -> None:
-        record = self._index.get(shape_id)
+        index, root = self._index, self._data_root
+        record = index.get(shape_id)
         if record is None:
             return
         result = QMessageBox.question(
@@ -1279,9 +1273,10 @@ class ShapeManagerPanel(QWidget):
         )
         if result != QMessageBox.StandardButton.Yes:
             return
-        shape_dir = self._data_root / "shapes" / record.shape_id
-        shutil.rmtree(shape_dir, ignore_errors=True)
-        self._index.remove(shape_id)
+        if self._index is not index or self._data_root != root:
+            return
+        if not delete_shape_record(index, shape_id, record, root):
+            return
         self._refresh_categories()
         self._refresh_list()
 

@@ -6,6 +6,7 @@ import logging
 import os
 import time
 from collections.abc import Callable, Mapping, Sequence
+from inspect import getattr_static
 from pathlib import Path
 from typing import TYPE_CHECKING, Any, TypeAlias, cast
 
@@ -485,7 +486,23 @@ class CanvasServiceLayerApiMixin(_CanvasServiceLayerApiBase):
         layers recovered from disk. The method copies layer state so that the
         caller retains ownership of the provided objects.
         """
-        self._layer_tree().replace_layers(layers)
+        self._replace_layer_stack(layers, clear_history=True)
+
+    def _replace_layers_for_history(self, layers: Sequence[_Layer]) -> None:
+        """Install owned tree objects, keeping Command references and the timeline."""
+        self._replace_layer_stack(layers, clear_history=False)
+
+    def _replace_layers_for_page(self, layers: Sequence[_Layer]) -> None:
+        """Install a page-owned tree, including an intentionally empty page."""
+        self._replace_layer_stack(layers, clear_history=True, allow_empty=True)
+
+    def _replace_layer_stack(
+        self, layers: Sequence[_Layer], *, clear_history: bool, allow_empty: bool = False
+    ) -> None:
+        if allow_empty:
+            self._layer_tree()._replace_page_layers(layers)
+        else:
+            self._layer_tree().replace_layers(layers, clear_history=clear_history)
         channels = getattr(self, "_channels_service", None)
         if channels is not None:
             channels.reset()
@@ -620,6 +637,14 @@ class CanvasServiceLayerApiMixin(_CanvasServiceLayerApiBase):
         """
         return self._layer_tree().remove_layer_by_index(index)
 
+    def _remove_created_layer_for_history(self, layer: _Layer) -> bool:
+        """Undo only a Command-owned payload, preserving older tree backends."""
+        tree = self._layer_tree()
+        remove_owned = getattr_static(tree, "_remove_created_layer_for_history", None)
+        if callable(remove_owned):
+            return bool(tree._remove_created_layer_for_history(layer))
+        return bool(tree.remove_layer(layer.id))
+
     def move_layer(self, from_index: int, to_index: int) -> bool:
         """Move a layer to a new stack position."""
         return self._layer_tree().move_layer(from_index, to_index)
@@ -665,3 +690,24 @@ class CanvasServiceLayerApiMixin(_CanvasServiceLayerApiBase):
     def load_mask_as_selection(self, layer_id: str) -> bool:
         """Load a mask layer's alpha channel as the current selection."""
         return self._mask_layer().load_mask_as_selection(layer_id)
+
+
+_DEFAULT_REPLACE_LAYERS = CanvasServiceLayerApiMixin.replace_layers
+_DEFAULT_REMOVE_LAYER = CanvasServiceLayerApiMixin.remove_layer
+_DEFAULT_PLACEMENT_HOOKS = {
+    name: getattr(CanvasServiceLayerApiMixin, name)
+    for name in ("add_layer", "move_layer", "set_active_layer")
+}
+_DEFAULT_BLEND_LAYER_HOOKS = {
+    name: getattr(CanvasServiceLayerApiMixin, name)
+    for name in ("set_layer_blend_mode", "get_layer_info")
+}
+_DEFAULT_OPACITY_LAYER_HOOKS = {
+    name: getattr(CanvasServiceLayerApiMixin, name)
+    for name in ("set_layer_opacity", "get_layer_info")
+}
+_DEFAULT_MASK_LAYER_HOOKS = {
+    name: getattr(CanvasServiceLayerApiMixin, name)
+    for name in ("add_layer_mask", "remove_layer_mask")
+}
+_DEFAULT_SELECTION_TO_LAYER_MASK = CanvasServiceLayerApiMixin.selection_to_layer_mask

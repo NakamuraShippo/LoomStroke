@@ -21,12 +21,13 @@ from PySide6.QtWidgets import QMessageBox, QProgressDialog, QWidget
 from ..core.batch_export_item_result import BatchExportItemResult
 from ..core.batch_export_result import BatchExportResult
 from ..core.export_collision_policy import ExportCollisionPolicy
-from ..core.export_naming import NamingContext, render_export_names
+from ..core.export_naming import NamingContext, detect_collisions, render_export_names
 from ..core.webtoon.fixed_height_slicer import FixedHeightSlicer
 from ..core.webtoon.stream_stripe_composer import StreamStripeComposer
 from ..core.webtoon.vertical_stream_resolver import VerticalStreamResolver
 from ..core.webtoon.webtoon_export_coordinator import WebtoonExportCoordinator
 from ..core.webtoon.webtoon_manifest_writer import WebtoonManifestWriter
+from ..io.export_contract import ExportIssue
 from ..io.layer_io import DocumentMetadata
 from .dialogs.export_webtoon_dialog import ExportWebtoonPlan
 from .offscreen_page_renderer import OffscreenPageRenderer
@@ -68,6 +69,21 @@ def run_webtoon_export(
     )
     file_names = _file_names(plan, slices, stream)
     planned = [Path(destination_dir) / name for name in file_names]
+    collisions = detect_collisions(file_names)
+    if collisions:
+        message = translate_with_fallback(
+            "ExportPagesDialog",
+            "The template produces duplicate file names (e.g. {name}).",
+        ).format(name=collisions[0])
+        issue = ExportIssue(code="export_failed", message=message, severity="error")
+        failed = BatchExportResult(
+            tuple(
+                BatchExportItemResult(f"slice_{s.index + 1}", d, "failed", (issue,))
+                for s, d in zip(slices, planned, strict=True)
+            )
+        )
+        message_box.warning(parent, _ts("Export Webtoon"), message)
+        return _as_dict(failed, (), None, stream, slices)
     destinations = _resolve_destinations(parent, plan.collision_policy, planned, message_box)
     if destinations is None:
         cancelled = BatchExportResult(

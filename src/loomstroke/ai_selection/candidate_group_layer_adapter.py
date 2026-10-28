@@ -3,7 +3,7 @@
 from __future__ import annotations
 
 from collections.abc import Mapping, Sequence
-from typing import TYPE_CHECKING, Any
+from typing import TYPE_CHECKING
 
 from .assets import Sam3AssetStore
 from .cut_to_layer_adapter import (
@@ -50,79 +50,11 @@ def build_candidate_group_to_layer_group_command(
         for index, item in enumerate(items, start=1)
     ]
 
-    from loomstroke.core.commands import AddLayerCommand  # noqa: PLC0415
+    from .candidate_group_command import _Sam3CandidateGroupToLayerGroupCommand  # noqa: PLC0415
 
     command_group_name = str(group_name or "").strip() or "SAM3 Candidates"
 
-    class _Sam3CandidateGroupToLayerGroupCommand(AddLayerCommand):
-        def __init__(self) -> None:
-            super().__init__(command_group_name, layer_type="group")
-            self._extract_commands = list(extract_commands)
-            self._created_layer_ids: tuple[str, ...] = ()
-            self._created_group_layer_id: str | None = None
-
-        @property
-        def created_layer_ids(self) -> tuple[str, ...]:
-            return self._created_layer_ids
-
-        @property
-        def created_group_layer_id(self) -> str | None:
-            return self._created_group_layer_id
-
-        def apply(self, canvas: object) -> bool:
-            applied_commands: list[Any] = []
-            created_layer_ids: list[str] = []
-            for command in self._extract_commands:
-                if not command.apply(canvas):
-                    _rollback_extract_commands(canvas, applied_commands)
-                    self._clear_created_state()
-                    return False
-                created_layer_id = _command_created_layer_id(command)
-                if created_layer_id is None:
-                    _rollback_extract_commands(canvas, [*applied_commands, command])
-                    self._clear_created_state()
-                    return False
-                applied_commands.append(command)
-                created_layer_ids.append(created_layer_id)
-
-            group_layers = getattr(canvas, "group_layers", None)
-            if not callable(group_layers):
-                _rollback_extract_commands(canvas, applied_commands)
-                self._clear_created_state()
-                return False
-            group_layer_id = str(group_layers(created_layer_ids, command_group_name) or "").strip()
-            if not group_layer_id:
-                _rollback_extract_commands(canvas, applied_commands)
-                self._clear_created_state()
-                return False
-
-            self._created_layer_ids = tuple(created_layer_ids)
-            self._created_group_layer_id = group_layer_id
-            self._layer_id = group_layer_id
-            return True
-
-        def revert(self, canvas: object) -> bool:
-            if self._created_group_layer_id is None or not self._created_layer_ids:
-                return False
-
-            ungroup_layer = getattr(canvas, "ungroup_layer", None)
-            if not callable(ungroup_layer):
-                return False
-            if not bool(ungroup_layer(self._created_group_layer_id)):
-                return False
-
-            for command in reversed(self._extract_commands):
-                if not command.revert(canvas):
-                    return False
-            self._clear_created_state()
-            return True
-
-        def _clear_created_state(self) -> None:
-            self._created_layer_ids = ()
-            self._created_group_layer_id = None
-            self._layer_id = None
-
-    return _Sam3CandidateGroupToLayerGroupCommand()
+    return _Sam3CandidateGroupToLayerGroupCommand(command_group_name, extract_commands)
 
 
 def _candidate_items(candidates: Sequence[object]) -> tuple[dict[str, str], ...]:

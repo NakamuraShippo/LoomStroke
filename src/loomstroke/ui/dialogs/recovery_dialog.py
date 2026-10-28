@@ -33,6 +33,7 @@ class RecoveryDialog(QDialog):
         super().__init__(parent)
         self._recoveries = recoveries
         self._selected: RecoveryInfo | None = None
+        self._discard_requested = False
         self._build_ui()
 
     def _build_ui(self) -> None:
@@ -69,11 +70,12 @@ class RecoveryDialog(QDialog):
         buttons.accepted.connect(self.accept)
         buttons.rejected.connect(self.reject)
         # DestructiveRole doesn't auto-connect; wire manually
-        self._btn_discard.clicked.connect(self.reject)
+        self._btn_discard.clicked.connect(self._discard)
 
         layout.addWidget(buttons)
 
     def accept(self) -> None:
+        self._discard_requested = False
         current = self._list.currentItem()
         if current is not None:
             self._selected = current.data(Qt.ItemDataRole.UserRole)
@@ -83,3 +85,11 @@ class RecoveryDialog(QDialog):
     def selected_recovery(self) -> RecoveryInfo | None:
         """Return the RecoveryInfo chosen by the user, or None if discarded."""
         return self._selected
+
+    @property
+    def discard_requested(self) -> bool:
+        return self._discard_requested
+
+    def _discard(self) -> None:
+        self._discard_requested = True
+        self.reject()

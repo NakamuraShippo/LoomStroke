@@ -639,6 +639,7 @@ def _shutdown_for(window: Any) -> MainWindowShutdownCoordinator:
     if not isinstance(coordinator, MainWindowShutdownCoordinator):
         coordinator = MainWindowShutdownCoordinator(
             window,
+            document_workflow=lambda: _document_workflow_for(window),
             message_box=lambda: QMessageBox,
             application_instance=QCoreApplication.instance,
             dock_widget_type=lambda: QDockWidget,

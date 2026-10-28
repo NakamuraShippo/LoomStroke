@@ -286,8 +286,25 @@ class MainWindowLayerActionsCoordinator:
             return
         layer_id = getattr(active, "id", None)
         if layer_id:
-            fn(layer_id)
-            self.refresh_layer_panel()
+            from loomstroke.core.layer_mask_selection_action import (  # noqa: PLC0415
+                _selection_mask_action,
+            )
+
+            host = getattr(self._window, "_host_api", None)
+
+            def current() -> bool:
+                return (
+                    getattr(self._window, "_host_api", None) is host
+                    and self._canvas() is canvas
+                    and getattr(self._window, "_host_api", None) is host
+                )
+
+            refresh = _selection_mask_action(canvas, layer_id, caller_current=current)
+            if refresh is None:
+                fn(layer_id)
+                self.refresh_layer_panel()
+            elif refresh and current():
+                self.refresh_layer_panel()
 
     def on_layer_flatten_all(self) -> None:
         """Flatten all layers into one."""

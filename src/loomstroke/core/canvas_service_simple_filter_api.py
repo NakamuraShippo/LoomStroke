@@ -363,3 +363,7 @@ class CanvasServiceFilterApiMixin(_CanvasServiceFilterApiBase):
 
 CanvasServiceEffectApiMixin = CanvasServiceFilterApiMixin
 _CanvasServiceEffectApiBase = _CanvasServiceFilterApiBase
+
+_DEFAULT_AI_RESULT_HOOKS = {
+    "set_ai_effect_layer_image": CanvasServiceFilterApiMixin.set_ai_effect_layer_image,
+}

@@ -65,12 +65,19 @@ class PsdImportCommand(AddLayerCommand):
         if self.before is None:
             self.before = list(canvas._layers)
             self.active_before = canvas.current_layer().id
-        canvas.replace_layers([*self.before, *self.layers])
+        self._replace_layers(canvas, [*self.before, *self.layers])
         canvas.set_active_layer(self.created_ids[-1])
         return True
 
     def revert(self, canvas) -> bool:
-        canvas.replace_layers(self.before)
+        self._replace_layers(canvas, self.before)
         if self.active_before:
             canvas.set_active_layer(self.active_before)
         return True
+
+    @staticmethod
+    def _replace_layers(canvas, layers) -> None:
+        replace = getattr(canvas, "_replace_layers_for_history", None)
+        if not callable(replace):
+            replace = canvas.replace_layers
+        replace(layers)

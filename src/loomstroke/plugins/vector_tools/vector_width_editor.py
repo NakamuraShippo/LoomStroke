@@ -9,6 +9,7 @@ from dataclasses import dataclass
 from typing import Any
 
 from loomstroke.core.events import Events
+from loomstroke.core.history_failure_reporting import history_failure_event_is_current
 from loomstroke.core.vector_correction import StrokeProfile
 
 from ..common.vector_hit_test_geometry import VectorHitTestGeometry
@@ -62,6 +63,8 @@ class VectorWidthEditor:
         self.hover()
 
     def _changed(self, _payload: Any) -> None:
+        if not history_failure_event_is_current(_payload):
+            return
         self.cancel()
 
     def _context(self) -> tuple:

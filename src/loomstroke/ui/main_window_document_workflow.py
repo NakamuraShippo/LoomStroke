@@ -19,6 +19,7 @@ from shiboken6 import isValid
 from ..core.book_layout_service import BookLayoutService
 from ..core.events import Events
 from ..core.folio_resolver import resolve_folios
+from ..core.history_failure_reporting import history_failure_event_is_current
 from ..core.save_outcome_claim import (
     UNMATCHABLE_CLAIM,
     PendingSaveOutcomeClaim,
@@ -33,6 +34,9 @@ from ..io.raster_export import export_raster
 from .dialogs.export_pages_dialog import ExportPagesContext, ExportPagesDialog
 from .export_pages_runner import run_export_pages
 from .main_window_document_close import close_document_session
+from .main_window_document_guard import DocumentReplacementGuard, guard_document_replacement
+from .main_window_image_open import open_image_document
+from .main_window_save_feedback import ManualSaveFeedback
 from .new_document_canvas_reset import reset_new_document_canvas
 from .startpage_models import StartPageCanvasSpec
 from .translations import translate_with_fallback
@@ -77,6 +81,8 @@ class MainWindowDocumentWorkflowCoordinator:
         #              applied; it owns path/dirty/close permission.
         self._last_manual_save_outcome: dict[str, Any] | None = None
         self._pending_save_claim: PendingSaveOutcomeClaim | None = None
+        self._active_manual_save_feedback: ManualSaveFeedback | None = None
+        self._replacement_guard = DocumentReplacementGuard(self, window, message_box)
 
     def initialize_close_save_state(self) -> None:
         """Initialize close/save async guard state owned by document workflow."""
@@ -184,6 +190,7 @@ class MainWindowDocumentWorkflowCoordinator:
         except Exception:
             logger.debug("Failed to persist StartPage recent files", exc_info=True)
 
+    @guard_document_replacement(False)
     def open_path(self, path: str, *, emit_event: bool = True) -> bool:
         resolved = Path(path)
         suffix = resolved.suffix.lower().lstrip(".")
@@ -215,123 +222,12 @@ class MainWindowDocumentWorkflowCoordinator:
             self._window._last_file_dir = str(Path(path).parent)
 
     def open_psd_as_document(self, path: Path) -> bool:
-        """Open a PSD file as a new document."""
-        from loomstroke.io.file_io import FileIO  # noqa: PLC0415
-
-        service = self._window._get_document_service()
-        file_io = getattr(service, "_file_io", None) if service else None
-        if not isinstance(file_io, FileIO):
-            return False
-
-        layers_data = file_io.read_psd_layers(path)
-        if not layers_data:
-            return bool(self._window._open_image_as_document(path))
-
-        try:
-            from psd_tools import PSDImage  # noqa: PLC0415
-
-            psd = PSDImage.open(path)
-            psd_w, psd_h = psd.width, psd.height
-        except Exception:
-            logger.debug("_open_psd_as_document: suppressed exception", exc_info=True)
-            psd_w = max(ox + data.shape[1] for _, data, ox, _, _, _, _ in layers_data)
-            psd_h = max(oy + data.shape[0] for _, data, _, oy, _, _, _ in layers_data)
-
-        canvas = self._window.host.canvas if self._window.host else None
-        if canvas is None:
-            return False
-        reset = getattr(canvas, "reset_document", None)
-        if callable(reset):
-            reset(width=psd_w, height=psd_h, background=QColor(255, 255, 255, 0))
-        if service is not None:
-            reset_state = getattr(service, "reset_document_state", None)
-            if callable(reset_state):
-                try:
-                    reset_state()
-                except Exception:
-                    logger.debug("Failed to reset document state", exc_info=True)
-
-        default_layers = getattr(canvas, "_layers", [])
-        if default_layers:
-            for layer in list(default_layers):
-                with suppress(Exception):
-                    canvas.remove_layer(layer.id)
-
-        psd_importer = getattr(service, "import_psd_layers", None)
-        if callable(psd_importer):
-            try:
-                psd_importer(str(path))
-            except Exception as exc:
-                logger.exception("Failed to open PSD: %s", exc)
-                self._message_box().critical(
-                    self._window,
-                    self._window._ts("Open Failed"),
-                    str(exc),
-                )
-                return False
-
-        self._window._document_path = None
-        self._window._document_dirty = False
-        self._window._update_window_title()
-        self._window._set_document_present(True)
-        self._emit_document_created(
-            {
-                "width": int(psd_w),
-                "height": int(psd_h),
-                "source": "psd_import",
-                "path": str(path),
-            }
-        )
-        self._window.statusBar().showMessage(f"Opened {path.name}", 3000)
-        return True
+        """Prepare the complete PSD before replacing the current document."""
+        return open_image_document(self, path, layered=True)
 
     def open_image_as_document(self, path: Path) -> bool:
-        """Open an image file as a new document."""
-        service = self._window._get_document_service()
-        if service is None:
-            return False
-
-        file_data = None
-        file_io = getattr(service, "_file_io", None)
-        if file_io is not None:
-            file_data = file_io.read(path)
-        if file_data is None:
-            return False
-
-        image, _meta = file_data
-        img_h, img_w = image.shape[:2]
-
-        canvas = self._window.host.canvas if self._window.host else None
-        if canvas is None:
-            return False
-        reset = getattr(canvas, "reset_document", None)
-        if callable(reset):
-            reset(width=img_w, height=img_h, background=QColor(255, 255, 255, 0))
-        reset_state = getattr(service, "reset_document_state", None)
-        if callable(reset_state):
-            try:
-                reset_state()
-            except Exception:
-                logger.debug("Failed to reset document state", exc_info=True)
-
-        importer = getattr(service, "import_layer", None)
-        if callable(importer):
-            importer(str(path))
-
-        self._window._document_path = None
-        self._window._document_dirty = False
-        self._window._update_window_title()
-        self._window._set_document_present(True)
-        self._emit_document_created(
-            {
-                "width": int(img_w),
-                "height": int(img_h),
-                "source": "image_import",
-                "path": str(path),
-            }
-        )
-        self._window.statusBar().showMessage(f"Opened {path.name}", 3000)
-        return True
+        """Prepare the decoded image before replacing the current document."""
+        return open_image_document(self, path, layered=False)
 
     def import_image_file(self, path: Path) -> bool:  # noqa: PLR0911
         """Import an image as a new layer."""
@@ -389,6 +285,7 @@ class MainWindowDocumentWorkflowCoordinator:
     def open_recent_file(self, path: str) -> None:
         self._window._open_path(path)
 
+    @guard_document_replacement(None)
     def apply_new_document(self, spec: StartPageCanvasSpec) -> None:
         width = int(spec.width_px)
         height = int(spec.height_px)
@@ -459,6 +356,7 @@ class MainWindowDocumentWorkflowCoordinator:
         if callable(emitter):
             emitter(Events.DOC_CREATED, payload)
 
+    @guard_document_replacement(None)
     def close_document(self) -> None:
         if not self._window._has_document:
             return
@@ -692,8 +590,12 @@ class MainWindowDocumentWorkflowCoordinator:
                 self._window._ts("Document service is not ready."),
             )
             return False
+        started_state = self._replacement_guard.capture_state()
         self._last_manual_save_outcome = None
         self._pending_save_claim = None
+        feedback = ManualSaveFeedback(target)
+        previous_feedback = self._active_manual_save_feedback
+        self._active_manual_save_feedback = feedback
         try:
             saved = bool(service.save(str(target), SaveOptions()))
         except Exception as exc:  # pragma: no cover - dialog fallback
@@ -707,12 +609,15 @@ class MainWindowDocumentWorkflowCoordinator:
                 ),
             )
             return False
+        finally:
+            self._active_manual_save_feedback = previous_feedback
         if not saved:
-            self._message_box().critical(
-                self._window,
-                self._window._ts("Save Failed"),
-                self._window._ts("Failed to write {path}").format(path=target),
-            )
+            if not feedback.deferred_notice_shown:
+                self._message_box().critical(
+                    self._window,
+                    self._window._ts("Save Failed"),
+                    self._window._ts("Failed to write {path}").format(path=target),
+                )
             return False
         # SAVE-ASYNC-REV-01: the event handlers are the single owner of
         # path/dirty updates.  The legacy direct update runs only in the
@@ -724,7 +629,7 @@ class MainWindowDocumentWorkflowCoordinator:
                     "Manual save finished with a pending outcome claim but no "
                     "valid DOC_SAVE_OUTCOME; keeping dirty state (fail-closed)"
                 )
-            else:
+            elif self._replacement_guard.capture_state() == started_state:
                 self._window._document_path = target
                 self._window._document_dirty = False
                 self._window._update_window_title()
@@ -766,6 +671,9 @@ class MainWindowDocumentWorkflowCoordinator:
         service: DocumentService,
         target: Path,
     ) -> bool:
+        feedback = ManualSaveFeedback(target)
+        previous_feedback = self._active_manual_save_feedback
+        self._active_manual_save_feedback = feedback
         try:
             try:
                 saved = bool(await service.save_async(str(target), SaveOptions()))
@@ -782,11 +690,12 @@ class MainWindowDocumentWorkflowCoordinator:
                 self._window.statusBar().clearMessage()
                 return False
             if not saved:
-                self._message_box().critical(
-                    self._window,
-                    self._window._ts("Save Failed"),
-                    self._window._ts("Failed to write {path}").format(path=target),
-                )
+                if not feedback.deferred_notice_shown:
+                    self._message_box().critical(
+                        self._window,
+                        self._window._ts("Save Failed"),
+                        self._window._ts("Failed to write {path}").format(path=target),
+                    )
                 self._window.statusBar().clearMessage()
                 return False
             # SAVE-ASYNC-REV-01: a True result only means the archive was
@@ -809,6 +718,7 @@ class MainWindowDocumentWorkflowCoordinator:
                     self._window.statusBar().showMessage(f"Saved {target.name}", 3000)
             return True
         finally:
+            self._active_manual_save_feedback = previous_feedback
             self._window._save_async_in_flight = False
 
     def try_start_close_save_async(self, target: Path) -> bool:
@@ -1313,6 +1223,9 @@ class MainWindowDocumentWorkflowCoordinator:
         return None
 
     def on_document_changed_event(self, event: Any) -> None:
+        if not history_failure_event_is_current(event):
+            return
+        self._replacement_guard.document_changed()
         self._window._document_dirty = True
         self._window._update_window_title()
         self._window.statusBar().showMessage("Document modified", 2000)
@@ -1427,6 +1340,7 @@ class MainWindowDocumentWorkflowCoordinator:
             "same_document": same_document,
             "covers_latest": covers_latest,
         }
+        self._replacement_guard.note_save_outcome()
         if not same_document:
             # A completion for a PREVIOUS document: never retarget the
             # current document's path/dirty/title.
@@ -1458,6 +1372,7 @@ class MainWindowDocumentWorkflowCoordinator:
             )
 
     def on_document_loaded_event(self, payload: Any) -> None:
+        self._replacement_guard.document_replaced()
         path = self._window._extract_document_path(payload)
         if path:
             self._window._document_path = path
@@ -1468,6 +1383,7 @@ class MainWindowDocumentWorkflowCoordinator:
         self._window._set_document_present(True)
 
     def on_document_created_event(self, payload: Any) -> None:
+        self._replacement_guard.document_replaced()
         self._window._document_path = None
         self._window._document_dirty = False
         self._window._update_window_title()
@@ -1479,6 +1395,7 @@ class MainWindowDocumentWorkflowCoordinator:
                 self._window.statusBar().showMessage(f"New document {width}x{height}", 2000)
 
     def on_document_closed_event(self, _: Any) -> None:
+        self._replacement_guard.document_replaced()
         if self._window._has_document:
             close_document_session(self._window)
         self._last_manual_save_outcome = None
@@ -1492,6 +1409,20 @@ class MainWindowDocumentWorkflowCoordinator:
         if getattr(self._window, "_mcp_document_operation_in_flight", False):
             return
         path = self._window._extract_document_path(payload)
+        if isinstance(payload, Mapping) and payload.get("reason_code") == "document_edit_pending":
+            if payload.get("autosave") is True:
+                return
+            feedback = self._active_manual_save_feedback
+            if feedback is not None and feedback.matches_path(path):
+                if feedback.deferred_notice_shown:
+                    return
+                feedback.deferred_notice_shown = True
+            self._message_box().warning(
+                self._window,
+                self._window._ts("Save Failed"),
+                self._window._ts("Finish or cancel the current edit before saving."),
+            )
+            return
         error = getattr(payload, "error", None)
         if isinstance(payload, Mapping):
             error = payload.get("error", error)

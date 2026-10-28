@@ -40,7 +40,7 @@ class ExportCollisionPolicy:
 
     def resolve(self, destinations: Sequence[Path], policy: str) -> list[CollisionDecision]:
         mode = self.normalize(policy)
-        taken = {str(path).lower() for path in destinations}
+        taken = {str(path).casefold() for path in destinations}
         decisions: list[CollisionDecision] = []
         for destination in destinations:
             existed = bool(self._exists(destination))
@@ -51,7 +51,7 @@ class ExportCollisionPolicy:
                 decisions.append(CollisionDecision(None, existed))
                 continue
             renamed = self._free_suffix(destination, taken)
-            taken.add(str(renamed).lower())
+            taken.add(str(renamed).casefold())
             decisions.append(CollisionDecision(renamed, existed, renamed=True))
         return decisions
 
@@ -60,7 +60,7 @@ class ExportCollisionPolicy:
             candidate = destination.with_name(
                 f"{destination.stem}_{number:03d}{destination.suffix}"
             )
-            key = str(candidate).lower()
+            key = str(candidate).casefold()
             if key not in taken and not self._exists(candidate):
                 return candidate
         raise RuntimeError(f"no free suffix for {destination.name}")

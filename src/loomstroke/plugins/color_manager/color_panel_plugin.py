@@ -16,6 +16,12 @@ from loomstroke.ui.translations import translated_literal_domain
 
 from .color_context_controller import ColorContextController
 from .color_models import DEFAULT_PALETTE_ID, ColorPalette, PaletteSwatch
+from .palette_feedback import (
+    PaletteTaskTarget,
+    dismiss_palette_feedback,
+    install_palette_feedback,
+    run_palette_task,
+)
 from .palette_repository import ColorPaletteRepository
 from .widgets import ColorPanel
 
@@ -46,6 +52,7 @@ class ColorPanelPlugin(UIPanelPlugin):
         self._loop: asyncio.AbstractEventLoop | None = None
         self._color_subscription: object | None = None
         self._color_context: ColorContextController | None = None
+        self._palette_tasks: set[asyncio.Task] = set()
 
     def descriptor(self) -> PanelDescriptor:
         return PanelDescriptor(
@@ -71,6 +78,9 @@ class ColorPanelPlugin(UIPanelPlugin):
         self._subscribe_color()
 
     def deactivate(self) -> None:
+        dismiss_palette_feedback(self._panel)
+        for task in tuple(self._palette_tasks):
+            task.cancel()
         if self._color_context is not None:
             self._color_context.dispose()
             self._color_context = None
@@ -85,6 +95,7 @@ class ColorPanelPlugin(UIPanelPlugin):
     def create_widget(self, parent: QWidget | None = None) -> QWidget:
         if self._panel is None:
             self._panel = ColorPanel(parent)
+            install_palette_feedback(self._panel)
             self._panel.colorCommitted.connect(self._on_color_committed)
             self._panel.colorSelected.connect(self._on_color_preview)
             self._panel.paletteRequested.connect(self._on_palette_request)
@@ -138,20 +149,31 @@ class ColorPanelPlugin(UIPanelPlugin):
     # --- Repository interactions -------------------------------------------
 
     async def _load_palettes(self) -> None:
-        if not self._repository:
+        target = PaletteTaskTarget.capture(self)
+        repository = target.repository
+        if repository is None:
             return
-        await self._repository.load()
-        palettes = await self._repository.list_palettes()
+        await repository.load()
+        if not target.is_current():
+            return
+        palettes = await repository.list_palettes()
+        if not target.is_current():
+            return
         if not palettes:
             palettes = [self._default_palette()]
-        if self._panel:
-            self._panel.set_palettes(palettes)
+        target.panel.set_palettes(palettes)
 
     async def _add_swatch(self, descriptor: ColorDescriptor) -> None:
-        if not self._repository:
+        target = PaletteTaskTarget.capture(self)
+        repository = target.repository
+        if repository is None:
             return
-        await self._repository.load()
-        palettes = await self._repository.list_palettes()
+        await repository.load()
+        if not target.is_current():
+            return
+        palettes = await repository.list_palettes()
+        if not target.is_current():
+            return
         palette = palettes[0] if palettes else self._default_palette()
         swatch = PaletteSwatch(
             id=f"swatch_{uuid.uuid4().hex[:8]}",
@@ -159,16 +181,24 @@ class ColorPanelPlugin(UIPanelPlugin):
             color=descriptor,
         )
         palette.add_swatch(swatch)
-        await self._repository.upsert_palette(palette)
-        updated = await self._repository.list_palettes()
-        if self._panel:
-            self._panel.set_palettes(updated)
+        await repository.upsert_palette(palette)
+        if not target.is_current():
+            return
+        updated = await repository.list_palettes()
+        if target.is_current():
+            target.panel.set_palettes(updated)
 
     async def _remove_swatch(self, swatch_id: str) -> None:
-        if not self._repository:
+        target = PaletteTaskTarget.capture(self)
+        repository = target.repository
+        if repository is None:
             return
-        await self._repository.load()
-        palettes = await self._repository.list_palettes()
+        await repository.load()
+        if not target.is_current():
+            return
+        palettes = await repository.list_palettes()
+        if not target.is_current():
+            return
         if not palettes:
             return
         palette = palettes[0]
@@ -176,10 +206,12 @@ class ColorPanelPlugin(UIPanelPlugin):
             palette.remove_swatch(swatch_id)
         except KeyError:
             return
-        await self._repository.upsert_palette(palette)
-        updated = await self._repository.list_palettes()
-        if self._panel:
-            self._panel.set_palettes(updated)
+        await repository.upsert_palette(palette)
+        if not target.is_current():
+            return
+        updated = await repository.list_palettes()
+        if target.is_current():
+            target.panel.set_palettes(updated)
 
     # --- Color subscriptions -------------------------------------------------
 
@@ -206,14 +238,24 @@ class ColorPanelPlugin(UIPanelPlugin):
     # --- Helpers ------------------------------------------------------------
 
     def _schedule_task(self, coro):
+        target = PaletteTaskTarget.capture(self)
+        install_palette_feedback(target.panel)
         try:
             loop = self._loop or asyncio.get_event_loop()
         except RuntimeError:
             loop = None
         if loop and loop.is_running():
-            loop.create_task(coro)
+            task = loop.create_task(run_palette_task(target, coro))
+            self._palette_tasks.add(task)
+
+            def finished(completed):
+                self._palette_tasks.discard(completed)
+                coro.close()
+
+            task.add_done_callback(finished)
+            return task
         else:
-            asyncio.run(coro)
+            return asyncio.run(run_palette_task(target, coro))
 
     def _default_palette(self) -> ColorPalette:
         palette = ColorPalette(id=DEFAULT_PALETTE_ID, name="Default")

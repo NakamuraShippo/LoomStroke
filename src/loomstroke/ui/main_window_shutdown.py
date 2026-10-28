@@ -13,6 +13,7 @@ class MainWindowShutdownCoordinator:
         self,
         window: Any,
         *,
+        document_workflow: Callable[[], Any],
         message_box: Callable[[], Any],
         application_instance: Callable[[], Any],
         dock_widget_type: Callable[[], Any],
@@ -20,6 +21,8 @@ class MainWindowShutdownCoordinator:
         log_close: Callable[[], None],
     ) -> None:
         self._window = window
+        self._document_workflow = document_workflow
+        self._close_event_active = False
         self._message_box = message_box
         self._application_instance = application_instance
         self._dock_widget_type = dock_widget_type
@@ -33,17 +36,33 @@ class MainWindowShutdownCoordinator:
         base_close_event: Callable[[Any], None],
     ) -> None:
         """Handle MainWindow closeEvent while preserving existing ordering."""
-        if self._handle_unsaved_changes(event):
+        if self._close_event_active:
+            event.ignore()
             return
-        self._run_shutdown_cleanup(event, base_close_event=base_close_event)
+        self._close_event_active = True
+        try:
+            if self._handle_unsaved_changes(event):
+                return
+            self._run_shutdown_cleanup(event, base_close_event=base_close_event)
+        finally:
+            self._close_event_active = False
 
     def _handle_unsaved_changes(self, event: Any) -> bool:
         window = self._window
-        if getattr(window, "_closing_in_progress", False) or not getattr(
-            window, "_document_dirty", False
-        ):
+        if getattr(window, "_closing_in_progress", False):
             return False
+        guard = self._document_workflow()._replacement_guard
+        if guard._active or guard._save_in_flight():
+            event.ignore()
+            return True
+        if not getattr(window, "_document_dirty", False) and not guard._capture_blocked():
+            return False
+        return self._confirm_document_close(event, guard)
 
+    def _confirm_document_close(self, event: Any, guard: Any) -> bool:
+        window = self._window
+        original = guard.capture_state()
+        capture_pending = guard._capture_blocked()
         message_box = self._message_box()
         buttons = (
             message_box.StandardButton.Save
@@ -57,21 +76,41 @@ class MainWindowShutdownCoordinator:
             buttons,
             message_box.StandardButton.Save,
         )
-        if reply == message_box.StandardButton.Cancel:
+        if not self._close_state_unchanged(guard, original, capture_pending):
             event.ignore()
             return True
-        if reply != message_box.StandardButton.Save:
+        if reply == message_box.StandardButton.Discard:
             return False
+        if reply != message_box.StandardButton.Save:
+            event.ignore()
+            return True
+        return self._save_before_close(event, guard, original, capture_pending)
 
+    def _save_before_close(
+        self, event: Any, guard: Any, original: tuple[int, int, int, int], capture_pending: bool
+    ) -> bool:
+        window = self._window
         target = window._document_path or window._prompt_save_path()
-        if target is None:
+        if target is None or not self._close_state_unchanged(guard, original, capture_pending):
             event.ignore()
             return True
         if window._try_start_close_save_async(target):
             event.ignore()
             return True
-        window._perform_save(target)
+        if not guard._save_and_confirm(target, original):
+            event.ignore()
+            return True
         return False
+
+    @staticmethod
+    def _close_state_unchanged(
+        guard: Any, original: tuple[int, int, int, int], capture_pending: bool
+    ) -> bool:
+        return (
+            not guard._save_in_flight()
+            and guard.capture_state() == original
+            and guard._capture_blocked() == capture_pending
+        )
 
     def _run_shutdown_cleanup(
         self,

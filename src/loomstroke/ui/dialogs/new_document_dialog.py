@@ -7,7 +7,7 @@ from typing import Any, cast
 from uuid import uuid4
 
 from PySide6.QtCore import QEvent, Qt, Signal
-from PySide6.QtGui import QColor
+from PySide6.QtGui import QColor, QGuiApplication
 from PySide6.QtWidgets import (
     QButtonGroup,
     QColorDialog,
@@ -171,7 +171,13 @@ class NewDocumentDialog(QDialog):
         self._form_scroll.setWidget(content)
         outer.addWidget(self._form_scroll, 1)
         outer.addWidget(buttons)
-        available_height = max(300, self.screen().availableGeometry().height() - 64)
+        # QWidget.screen() attaches PySide's shared screen wrapper to this
+        # transient dialog. Deleting it then invalidates that wrapper for the
+        # rest of the application, although the native screen is still alive.
+        screen = QGuiApplication.screenAt(self.mapToGlobal(self.rect().center()))
+        if screen is None:
+            screen = QGuiApplication.primaryScreen()
+        available_height = max(300, screen.availableGeometry().height() - 64) if screen else 650
         self.resize(520, min(650, available_height))
 
         self._populate_category_combo()

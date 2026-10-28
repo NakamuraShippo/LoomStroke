@@ -68,6 +68,11 @@ from ...plugins.vector_tools.common import (
     VectorReplaceCommand,
     copy_vector_object,
 )
+from ..common.document_capture_guard import (
+    DocumentCaptureLease,
+    begin_document_capture_edit,
+    release_document_capture_edit,
+)
 from ..common.vector_hit_test_geometry import VectorHitTestGeometry
 from .comic_balloon_move import ComicBalloonMove
 from .comic_panel_move import ComicPanelMove
@@ -75,6 +80,7 @@ from .layer_transform_controller import (
     LayerTransformController,
 )
 from .layer_transform_controller import LayerTransformState as _LayerTransformState
+from .live_capture import MoveLiveCapture
 
 logger = logging.getLogger(__name__)
 
@@ -170,6 +176,8 @@ class BasicMoveTool:
         self._selection_base: tuple[float, float] | None = None
         self._selection_size: tuple[float, float] = (0.0, 0.0)
         self._selection_cut_command: CutSelectionCommand | None = None
+        self._selection_capture_lease: DocumentCaptureLease | None = None
+        self._live_capture = MoveLiveCapture()
 
     def descriptor(self) -> ToolDescriptor:
         return ToolDescriptor(
@@ -464,6 +472,8 @@ class BasicMoveTool:
         if getattr(layer, "layer_type", "raster") == "vector":
             # Vector/text objects are handled by per-object hit testing.
             return False
+        if not _is_qimage_layer(layer) and not self._live_capture.begin(canvas, [layer]):
+            return False
         self._layer_ref = layer
         self._layer_id = getattr(layer, "id", None)
         self._layer_offset0 = (
@@ -611,6 +621,8 @@ class BasicMoveTool:
         for child_layer, original in self._group_vec_originals:
             self._replace_vector_object(child_layer, original)
         self._set_layer_transform_payload(self._offset_bounds(self._layer_bounds0, dx, dy))
+        if not self._live_capture.finish_restore():
+            return
         if dx == 0 and dy == 0:
             return
         self._pending_commands.append(MoveLayerCommand(dx, dy, layer_id=self._layer_id))
@@ -1180,6 +1192,10 @@ class BasicMoveTool:
             original = copy_vector_object(hit.obj)
         except Exception:
             return False
+        canvas = getattr(self.host_api, "canvas", None)
+        layer = _resolve_target_layer(canvas, hit.layer_id) if canvas is not None else None
+        if canvas is None or layer is None or not self._live_capture.begin(canvas, [layer]):
+            return False
         self._vector_drag_originals = [(hit.vec_id, hit.layer_id, original)]
         self._vector_drag_items = [{"id": hit.vec_id, "layer_id": hit.layer_id}]
         self._vector_drag_bounds = hit.bounds
@@ -1266,6 +1282,8 @@ class BasicMoveTool:
         # Restore originals and mask without recompose to avoid visible flash
         self._restore_vector_drag_originals_quiet()
         self._restore_mask(self._vector_drag_mask_layer, self._vector_drag_mask_snapshot)
+        if not self._live_capture.finish_restore():
+            return
         if dx != 0.0 or dy != 0.0:
             begin_tx = getattr(canvas, "begin_transaction", None)
             end_tx = getattr(canvas, "end_transaction", None)
@@ -1313,9 +1331,10 @@ class BasicMoveTool:
                 )
         self._notify_vector_canvas_changed()
 
-    def _restore_vector_drag_originals(self) -> None:
+    def _restore_vector_drag_originals(self) -> bool:
         self._restore_vector_drag_originals_quiet()
         self._notify_vector_canvas_changed()
+        return self._live_capture.finish_restore()
 
     def _restore_vector_drag_originals_quiet(self) -> None:
         """Restore originals without recompose (used at drag finish to avoid flash)."""
@@ -1401,6 +1420,10 @@ class BasicMoveTool:
         try:
             original = copy_vector_object(hit.obj)
         except Exception:
+            return False
+        canvas = getattr(self.host_api, "canvas", None)
+        layer = _resolve_target_layer(canvas, hit.layer_id) if canvas is not None else None
+        if canvas is None or layer is None or not self._live_capture.begin(canvas, [layer]):
             return False
         pivot = compute_pivot(handle, hit.bounds)
         press_point = (float(pt.pos[0]), float(pt.pos[1]))
@@ -1497,7 +1520,8 @@ class BasicMoveTool:
         changed = False
         if preview is not None:
             final_obj, final_bounds, changed, _preview_key = preview
-        self._restore_vector_drag_originals()
+        if not self._restore_vector_drag_originals():
+            return
         if changed:
             begin_tx = getattr(canvas, "begin_transaction", None)
             end_tx = getattr(canvas, "end_transaction", None)
@@ -2327,11 +2351,21 @@ class BasicMoveTool:
         canvas = getattr(self.host_api, "canvas", None)
         if canvas is None:
             return False
+        try:
+            self._selection_capture_lease = begin_document_capture_edit(
+                canvas, self._selection_capture_lease
+            )
+        except Exception:
+            logger.exception("Selection move could not acquire its document capture guard")
+            return False
         cmd = CutSelectionCommand(None)
         if not cmd.apply(canvas):
+            if release_document_capture_edit(self._selection_capture_lease):
+                self._selection_capture_lease = None
             return False
         if cmd.payload is None:
-            cmd.revert(canvas)
+            if cmd.revert(canvas):
+                release_document_capture_edit(self._selection_capture_lease)
             return False
         self._selection_cut_command = cmd
         self._selection_payload = cmd.payload
@@ -2364,10 +2398,8 @@ class BasicMoveTool:
             return
         dx, dy = self._delta_from_start(pt)
         dx, dy = self._apply_snap_selection(dx, dy)
-        if self._selection_cut_command is not None:
-            canvas = getattr(self.host_api, "canvas", None) if self.host_api else None
-            if canvas is not None:
-                self._selection_cut_command.revert(canvas)
+        if self._selection_cut_command is not None and not self._restore_selection_cut():
+            return
         self._cancel_selection_preview()
         if dx == 0 and dy == 0:
             return
@@ -2648,6 +2680,18 @@ class BasicMoveTool:
         canvas._native_selection_preview = None
         self._recompose_canvas()
 
+    def _restore_selection_cut(self) -> bool:
+        canvas = getattr(self.host_api, "canvas", None) if self.host_api else None
+        command = self._selection_cut_command
+        if canvas is None or command is None:
+            return self._selection_capture_lease is None
+        if not command.revert(canvas):
+            return False
+        if not release_document_capture_edit(self._selection_capture_lease):
+            return False
+        self._selection_capture_lease = None
+        return True
+
     def _selection_exists(self) -> bool:
         if not self.host_api:
             return False
@@ -2755,9 +2799,8 @@ class BasicMoveTool:
         elif self._mode == "comic_panel":
             self._comic_panel_move.cancel()
         elif self._mode == "selection":
-            canvas = getattr(self.host_api, "canvas", None) if self.host_api else None
-            if canvas is not None and self._selection_cut_command is not None:
-                self._selection_cut_command.revert(canvas)
+            if self._selection_cut_command is not None and not self._restore_selection_cut():
+                return
             self._cancel_selection_preview()
         elif self._mode in {"vector_object", "vector_transform"}:
             self._restore_vector_drag_originals()
@@ -2781,6 +2824,7 @@ class BasicMoveTool:
                 self._layer_ref.offset_x = int(self._layer_offset0[0])
                 self._layer_ref.offset_y = int(self._layer_offset0[1])
                 self._recompose_canvas()
+            self._live_capture.finish_restore()
 
     def _finish_pointer(self) -> None:
         if self.host_api:

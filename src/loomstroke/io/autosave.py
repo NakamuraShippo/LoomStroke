@@ -19,6 +19,7 @@ from PySide6.QtCore import QObject, QTimer, Signal
 
 from loomstroke.core.event_bus import EventBus
 from loomstroke.core.events import Events
+from loomstroke.core.history_failure_reporting import history_failure_event_is_current
 from loomstroke.core.save_outcome_claim import (
     UNMATCHABLE_CLAIM,
     PendingSaveOutcomeClaim,
@@ -27,8 +28,23 @@ from loomstroke.core.save_outcome_claim import (
     classify_save_outcome_announcement,
     evaluate_final_save_outcome,
 )
-from loomstroke.host_api import DocumentService, LoadOptions, SaveOptions
+from loomstroke.host_api import DocumentService, SaveOptions
+from loomstroke.io.atomic_export_writer import write_atomically
+from loomstroke.io.autosave_attempt import (
+    AutosaveAttempt,
+    RecoveryDocumentAttempt,
+    autosave_attempt_for,
+    load_recovery_attempt,
+    recovery_original_path,
+    release_autosave_attempt,
+)
+from loomstroke.io.autosave_capture_guard import capture_is_blocked, consume_deferred_autosave
 from loomstroke.io.autosave_revision_tracker import AutosaveRevisionTracker, AutosaveToken
+from loomstroke.io.recovery_source_pins import (
+    RecoverySourcePins,
+    preserve_cleanup_metadata,
+    release_proven_unused_sources,
+)
 from loomstroke.platform.settings_manager import SettingsManager
 
 if TYPE_CHECKING:
@@ -129,7 +145,10 @@ class AutosaveManager(QObject):
         # DOC_SAVED; only a strictly matching DOC_SAVE_OUTCOME may drive
         # manual-save bookkeeping (fail-closed otherwise).
         self._pending_manual_save_claim: PendingSaveOutcomeClaim | None = None
+        self._recovery_source_pins = RecoverySourcePins()
         self._autosave_task: asyncio.Task[bool] | None = None
+        self._autosave_attempt: AutosaveAttempt | None = None
+        self._recovery_document_attempt: RecoveryDocumentAttempt | None = None
         self._timer = QTimer(self)
         self._timer.timeout.connect(self._perform_autosave)
         self._session_id = self._generate_session_id()
@@ -156,6 +175,7 @@ class AutosaveManager(QObject):
             self._handler_doc_save_outcome = self._on_document_save_outcome
             self._handler_settings_changed = self._on_settings_changed
             self._handler_document_reset = self._on_document_reset
+            self._handler_document_loaded = self._on_document_loaded
             event_bus.subscribe(Events.DOC_CHANGED, self._handler_doc_changed)
             event_bus.subscribe(Events.DOC_SAVED, self._handler_doc_saved)
             event_bus.subscribe(Events.DOC_SAVE_OUTCOME, self._handler_doc_save_outcome)
@@ -164,7 +184,7 @@ class AutosaveManager(QObject):
             # the canonical load event; DOC_OPENED follows it on the same
             # path and is deliberately NOT subscribed (double reset).
             event_bus.subscribe(Events.DOC_CREATED, self._handler_document_reset)
-            event_bus.subscribe(Events.DOC_LOADED, self._handler_document_reset)
+            event_bus.subscribe(Events.DOC_LOADED, self._handler_document_loaded)
             event_bus.subscribe(Events.DOC_CLOSED, self._handler_document_reset)
 
     # ------------------------------------------------------------------
@@ -175,6 +195,8 @@ class AutosaveManager(QObject):
 
     def set_document_service(self, document_service: DocumentService) -> None:
         """Attach the document service used for autosave operations."""
+        if self._document_service is not document_service:
+            self._on_document_reset(None)
         self._document_service = document_service
 
     def start(self) -> None:
@@ -259,18 +281,26 @@ class AutosaveManager(QObject):
         if not self._state.enabled:
             logger.debug("Autosave skipped because it is disabled")
             return False
-        if self._document_service is None:
-            logger.warning("Document service not set; autosave skipped")
+        if self._document_service is None or capture_is_blocked(self._document_service):
+            if self._document_service is None:
+                logger.warning("Document service not set; autosave skipped")
+            else:
+                logger.debug("Autosave deferred until the current edit is finished or cancelled")
             return False
         token = self._claim_autosave_token(force=force)
         if token is None:
             return False
 
-        # From here on the token is claimed: every failure exit must go
-        # through _fail_autosave so the flight is always released and the
-        # next tick (or force_save) can retry.
+        # From here on the token is claimed: every failure exit must
+        # release the flight so the next tick (or force_save) can retry.
+        # A capture deferred after this check releases it quietly.
         try:
+            original_path = self._state.current_file
+            service = self._document_service
             save_path, options = self._prepare_autosave_artifacts()
+            self._autosave_attempt = AutosaveAttempt(
+                token, original_path, service, save_path, options
+            )
         except Exception as exc:
             return self._fail_autosave(token, str(exc))
         logger.info("Autosave write started")
@@ -315,11 +345,12 @@ class AutosaveManager(QObject):
         about a never-awaited coroutine.
         """
         coroutine = self._run_autosave_async(save_path, options, token)
+        attempt = autosave_attempt_for(self, save_path, options, token)
         try:
             task = loop.create_task(coroutine)
         except Exception as exc:
             coroutine.close()
-            return self._fail_autosave(token, str(exc), context=" (async)")
+            return self._fail_autosave(token, str(exc), context=" (async)", attempt=attempt)
         self._autosave_task = task
         task.add_done_callback(
             lambda done_task, autosave_token=token: self._on_autosave_task_done(
@@ -329,7 +360,14 @@ class AutosaveManager(QObject):
         self.autosave_started.emit()
         return True  # Scheduled — result surfaces via signals.
 
-    def _fail_autosave(self, token: AutosaveToken, message: str, *, context: str = "") -> bool:
+    def _fail_autosave(
+        self,
+        token: AutosaveToken,
+        message: str,
+        *,
+        context: str = "",
+        attempt: AutosaveAttempt | None = None,
+    ) -> bool:
         """Common failure exit after the flight token was claimed.
 
         Releases the flight for ``token`` (idempotent), reports the error
@@ -338,6 +376,7 @@ class AutosaveManager(QObject):
         state itself stays in :class:`AutosaveRevisionTracker`.
         """
         self._revision_tracker.complete_failure(token)
+        release_autosave_attempt(self, attempt)
         logger.error("Autosave failed%s: %s", context, message)
         self.autosave_failed.emit(message)
         return False
@@ -377,14 +416,22 @@ class AutosaveManager(QObject):
         only success advances coverage (failures stay dirty for the next
         periodic tick).
         """
-        assert self._document_service is not None  # guaranteed by caller
+        attempt = autosave_attempt_for(self, save_path, options, token)
+        if attempt is None or not attempt.can_start(self):
+            self._revision_tracker.complete_failure(token)
+            release_autosave_attempt(self, attempt)
+            return False
         try:
-            success = self._document_service.save(save_path, options)
+            success = attempt.service.save(save_path, options)
         except Exception as exc:
-            return self._fail_autosave(token, str(exc))
+            return self._fail_autosave(token, str(exc), attempt=attempt)
 
         if not success:
-            return self._fail_autosave(token, "Document service reported failure")
+            if consume_deferred_autosave(attempt.service, save_path):
+                self._revision_tracker.complete_failure(token)
+                release_autosave_attempt(self, attempt)
+                return False
+            return self._fail_autosave(token, "Document service reported failure", attempt=attempt)
 
         try:
             self._finalize_autosave_success(save_path, options)
@@ -392,8 +439,9 @@ class AutosaveManager(QObject):
             # The archive may already exist on disk, but the recovery
             # bookkeeping did not complete: stay dirty so the next
             # periodic tick saves (and registers) again.
-            return self._fail_autosave(token, str(exc))
+            return self._fail_autosave(token, str(exc), attempt=attempt)
         self._revision_tracker.complete_success(token)
+        release_autosave_attempt(self, attempt)
         logger.debug("Autosave write finished (revision %s covered)", token)
         return True
 
@@ -413,18 +461,27 @@ class AutosaveManager(QObject):
         advances coverage.  ``CancelledError`` re-raises after cleanup
         so asyncio cancellation semantics stay intact.
         """
-        assert self._document_service is not None  # guaranteed by caller
+        attempt = autosave_attempt_for(self, save_path, options, token)
+        if attempt is None or not attempt.can_start(self):
+            self._revision_tracker.complete_failure(token)
+            release_autosave_attempt(self, attempt)
+            return False
         try:
-            success = bool(await self._document_service.save_async(save_path, options))
+            success = bool(await attempt.service.save_async(save_path, options))
         except asyncio.CancelledError:
             self._revision_tracker.complete_failure(token)
+            release_autosave_attempt(self, attempt)
             raise
         except Exception as exc:
-            return self._fail_autosave(token, str(exc), context=" (async)")
+            return self._fail_autosave(token, str(exc), context=" (async)", attempt=attempt)
 
         if not success:
+            if consume_deferred_autosave(attempt.service, save_path):
+                self._revision_tracker.complete_failure(token)
+                release_autosave_attempt(self, attempt)
+                return False
             return self._fail_autosave(
-                token, "Document service reported failure", context=" (async)"
+                token, "Document service reported failure", context=" (async)", attempt=attempt
             )
 
         try:
@@ -432,8 +489,9 @@ class AutosaveManager(QObject):
         except Exception as exc:
             # Archive written but recovery bookkeeping incomplete: stay
             # dirty so the next periodic tick saves (and registers) again.
-            return self._fail_autosave(token, str(exc), context=" (async)")
+            return self._fail_autosave(token, str(exc), context=" (async)", attempt=attempt)
         self._revision_tracker.complete_success(token)
+        release_autosave_attempt(self, attempt)
         logger.debug("Autosave write finished (revision %s covered)", token)
         return True
 
@@ -450,14 +508,21 @@ class AutosaveManager(QObject):
         exactly once — service exceptions handled inside never reach this
         branch, so nothing is double-emitted.
         """
-        if self._autosave_task is task:
+        owns_task = self._autosave_task is task
+        attempt = getattr(self, "_autosave_attempt", None) if owns_task else None
+        if owns_task:
             self._autosave_task = None
         if task.cancelled():
-            self._revision_tracker.complete_failure(token)
+            if owns_task:
+                self._revision_tracker.complete_failure(token)
+                release_autosave_attempt(self, attempt)
             return
         escaped = task.exception()
         if escaped is not None:
-            self._fail_autosave(token, str(escaped), context=" (async)")
+            if owns_task:
+                self._fail_autosave(token, str(escaped), context=" (async)", attempt=attempt)
+            else:
+                logger.error("An earlier autosave task failed after ownership changed: %s", escaped)
 
     def _finalize_autosave_success(self, save_path: Path, options: SaveOptions) -> None:
         """Common post-save bookkeeping shared by sync and async paths.
@@ -479,7 +544,7 @@ class AutosaveManager(QObject):
             session_id=self._session_id,
             timestamp=datetime.now(),
             file_path=save_path,
-            original_path=self._state.current_file,
+            original_path=recovery_original_path(self, save_path),
             metadata={
                 "save_count": self._state.save_count,
                 "document": dict(document_payload) if document_payload is not None else {},
@@ -492,20 +557,25 @@ class AutosaveManager(QObject):
                 recovery_data = json.loads(self._recovery_file.read_text(encoding="utf-8"))
             except (OSError, ValueError) as exc:
                 logger.warning("Failed to load recovery data: %s", exc)
+                raise
+        if not isinstance(recovery_data, list):
+            raise ValueError("Invalid recovery metadata list")
 
         recovery_data.append(recovery_info.to_dict())
 
         max_entries = self._settings.get_int("autosave.max_recovery_entries", 50)
         if max_entries > 0:
-            recovery_data = recovery_data[-max_entries:]
+            recovery_data = self._recovery_source_pins.retain_newest(recovery_data, max_entries)
 
         try:
-            self._recovery_file.write_text(
-                json.dumps(recovery_data, indent=2),
-                encoding="utf-8",
+            payload = json.dumps(recovery_data, indent=2)
+            write_atomically(
+                self._recovery_file,
+                lambda temporary: temporary.write_text(payload, encoding="utf-8"),
             )
         except (OSError, ValueError) as exc:
             logger.error("Failed to update recovery info: %s", exc)
+            raise
 
     def check_recovery(self) -> None:
         """Check for recovery files from previous sessions and emit signal."""
@@ -598,22 +668,18 @@ class AutosaveManager(QObject):
             return False
 
         try:
-            success = self._document_service.load(
-                recovery_info.file_path,
-                LoadOptions(apply_ui_layout=True, strict=True, validate_manifest=True),
-            )
+            success = load_recovery_attempt(self, recovery_info)
         except Exception as exc:
             logger.error("Recovery failed: %s", exc)
             return False
-
         if not success:
-            logger.error("Recovery load returned failure for %s", recovery_info.file_path)
+            logger.error(
+                "Recovery load failed or the document changed: %s", recovery_info.file_path
+            )
             return False
-
-        if recovery_info.original_path:
-            self._state.current_file = recovery_info.original_path
-
-        self.recovery_completed.emit()
+        self._recovery_source_pins.mark_loaded(
+            recovery_info.file_path, owner=self._document_service
+        )
         logger.info("Recovered document from %s", recovery_info.file_path)
         return True
 
@@ -635,7 +701,8 @@ class AutosaveManager(QObject):
             for files in by_session.values():
                 if len(files) > self._state.keep_versions:
                     for old in files[: -self._state.keep_versions]:
-                        old.unlink(missing_ok=True)
+                        if not self._recovery_source_pins.is_protected(old):
+                            old.unlink(missing_ok=True)
         except Exception as exc:
             logger.warning("Failed to cleanup old autosaves: %s", exc)
 
@@ -644,7 +711,8 @@ class AutosaveManager(QObject):
         try:
             pattern = f"autosave_{self._session_id}_*.lstroke"
             for file in self._autosave_dir.glob(pattern):
-                file.unlink(missing_ok=True)
+                if not self._recovery_source_pins.is_protected(file):
+                    file.unlink(missing_ok=True)
             logger.info("Cleaned up session autosave files")
         except Exception as exc:
             logger.error("Failed to cleanup session files: %s", exc)
@@ -652,12 +720,18 @@ class AutosaveManager(QObject):
     def cleanup_all_old_sessions(self) -> None:
         """Remove all autosave files from previous sessions and clear recovery.json."""
         try:
+            deletions = []
             for lstroke in self._autosave_dir.glob("autosave_*.lstroke"):
                 parts = lstroke.stem.split("_", 2)
-                if len(parts) >= 3 and parts[1] != self._session_id:
-                    lstroke.unlink(missing_ok=True)
-            if self._recovery_file.exists():
-                self._recovery_file.unlink(missing_ok=True)
+                if (
+                    len(parts) >= 3
+                    and parts[1] != self._session_id
+                    and not self._recovery_source_pins.is_protected(lstroke)
+                ):
+                    deletions.append(lstroke)
+            preserve_cleanup_metadata(self._recovery_file, deletions)
+            for lstroke in deletions:
+                lstroke.unlink(missing_ok=True)
             logger.info("Cleaned up all old session autosave files")
         except Exception as exc:
             logger.error("Failed to cleanup old sessions: %s", exc)
@@ -719,16 +793,49 @@ class AutosaveManager(QObject):
         editing (the old stop/start debounce starved autosave during
         long sessions and logged a misleading INFO per edit).
         """
+        if not history_failure_event_is_current(_payload):
+            return
         token = self._revision_tracker.mark_modified()
         logger.debug("Autosave dirty revision advanced to %s", token)
 
     def _on_document_reset(self, _payload: Any) -> None:
-        """Enter a new document epoch on create / load / close."""
+        """Enter a new document epoch on create / close."""
         self._revision_tracker.reset_document()
+        self._state.current_file = None
+        self._pending_manual_save_claim = None
+        release_proven_unused_sources(self)
         logger.debug(
             "Autosave revision tracking reset (document epoch %d)",
             self._revision_tracker.document_epoch,
         )
+
+    def _on_document_loaded(self, payload: Any) -> None:
+        data = self._coerce_payload(payload)
+        source = data.get("path")
+        try:
+            loaded_path = Path(source) if isinstance(source, (str, Path)) and source else None
+            loaded_source = loaded_path.resolve() if loaded_path is not None else None
+        except (OSError, ValueError):
+            loaded_path = None
+            loaded_source = None
+        attempt = self._recovery_document_attempt
+        context = self._recovery_source_pins.current
+        if (
+            context is not None
+            and attempt is not None
+            and context is attempt.context
+            and loaded_source == context.source
+        ):
+            if self._revision_tracker.document_epoch != attempt.epoch:
+                # A nested boundary already replaced this recovery before its
+                # remaining DOC_LOADED listeners were delivered.
+                return
+            self._on_document_reset(payload)
+            self._state.current_file = context.original_path
+            attempt.loaded_epoch = self._revision_tracker.document_epoch
+            return
+        self._on_document_reset(payload)
+        self._state.current_file = loaded_path
 
     def _on_document_saved(self, payload: Any) -> None:
         data = self._coerce_payload(payload)
@@ -852,7 +959,9 @@ class AutosaveManager(QObject):
             # missing from the archive stay protected.
             self._revision_tracker.mark_manual_save()
         self._state.current_file = save_path
-        self.cleanup_session()
+        if covers_latest:
+            release_proven_unused_sources(self)
+            self.cleanup_session()
 
     def _coerce_payload(self, payload: Any) -> dict[str, Any]:
         if isinstance(payload, dict):

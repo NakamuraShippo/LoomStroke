@@ -16,6 +16,7 @@ from loomstroke.host_api import LayerRef
 from .comic_panels.membership import prepare_reparent_membership
 from .comic_panels.models import PanelFrameError
 from .events import Events
+from .layer_creation_preparation import prepare_layer
 
 logger = logging.getLogger(__name__)
 
@@ -437,13 +438,13 @@ class LayerRemovalService:
         self._canvas = canvas
         self._query = query
 
-    def remove_layer(self, layer_id: str) -> bool:
+    def remove_layer(self, layer_id: str, *, _owned_layer: Any | None = None) -> bool:
         """Remove a layer by ID, preserving single-delete side effects."""
-        if len(self._canvas._layers) <= 1:
+        if _owned_layer is None and len(self._canvas._layers) <= 1:
             logger.warning("Cannot remove last layer")
             return False
 
-        if self._canvas._layers and self._canvas._layers[0].id == layer_id:
+        if _owned_layer is None and self._canvas._layers and self._canvas._layers[0].id == layer_id:
             logger.warning("Cannot remove the background layer")
             return False
 
@@ -453,6 +454,8 @@ class LayerRemovalService:
             return False
 
         parent_list, index = result
+        if _owned_layer is not None and parent_list[index] is not _owned_layer:
+            return False
         removed_layer = parent_list.pop(index)
 
         if parent_list is self._canvas._layers:
@@ -600,39 +603,9 @@ class LayerCreationService:
         layer_type: str = "raster",
         vector_kind: str = "draw",
     ) -> LayerRef:
-        kind = layer_type if layer_type in {"raster", "vector", "mask", "3d"} else "raster"
-        native = getattr(self._canvas, "_native_cmyk_service", None)
-        if native is None and any(
-            getattr(layer, "native_cmyk", None) is not None
-            for layer in self._canvas._layer_tree().flatten_layers()
-        ):
-            native = self._canvas.native_cmyk()
-        if (
-            native is not None
-            and native.profile() is not None
-            and kind not in ("raster", "mask", "vector")
-        ):
-            raise ValueError("Native CMYK requires raster layers")
-        image: QImage | None = None
-        if kind != "vector":
-            image = QImage(
-                self._canvas._width,
-                self._canvas._height,
-                QImage.Format.Format_ARGB32_Premultiplied,
-            )
-            image.fill(Qt.GlobalColor.transparent)
-        layer = self._make_layer(
-            id=f"layer-{len(self._canvas._layers)}-{time.time_ns()}",
-            name=name,
-            visible=True,
-            opacity=1.0,
-            image=image,
-            layer_type=kind,
-            vector_kind=vector_kind if kind == "vector" else "draw",
+        layer = self._prepare_layer_for_history(
+            name, layer_type=layer_type, vector_kind=vector_kind
         )
-
-        if native is not None:
-            native.initialize_layer(layer)
         self._canvas._layers.append(layer)
         self._canvas._active_index = len(self._canvas._layers) - 1
         self._canvas._active_layer_id = layer.id
@@ -648,6 +621,11 @@ class LayerCreationService:
             new_value=layer_ref,
         )
         return layer_ref
+
+    def _prepare_layer_for_history(
+        self, name: str, *, layer_type: str = "raster", vector_kind: str = "draw"
+    ) -> Any:
+        return prepare_layer(self._canvas, self._make_layer, name, layer_type, vector_kind)
 
     def add_mask_layer(self, name: str | None = None) -> LayerRef:
         default_index = sum(1 for layer in self._canvas._layers if layer.layer_type == "mask") + 1
@@ -807,9 +785,11 @@ class LayerCreationService:
         )
         return layer_ref
 
-    def replace_layers(self, layers: Sequence[Any]) -> None:
+    def replace_layers(
+        self, layers: Sequence[Any], *, clear_history: bool = True, allow_empty: bool = False
+    ) -> None:
         incoming_layers = list(layers)
-        if not incoming_layers:
+        if not incoming_layers and not allow_empty:
             logger.warning("replace_layers called with an empty layer list; ignoring")
             return
 
@@ -825,8 +805,14 @@ class LayerCreationService:
         if self._canvas._layers and 0 <= self._canvas._active_index < len(self._canvas._layers):
             previous_active_id = self._canvas._layers[self._canvas._active_index].id
 
-        new_layers = [self.copy_layer_for_replace(layer) for layer in incoming_layers]
-        if not new_layers:
+        # History commands retain layer references; only document replacement
+        # takes copies so the caller keeps ownership of its input objects.
+        new_layers = (
+            [self.copy_layer_for_replace(layer) for layer in incoming_layers]
+            if clear_history
+            else incoming_layers
+        )
+        if not new_layers and not allow_empty:
             logger.warning("replace_layers did not receive any valid layers; ignoring")
             return
 
@@ -846,7 +832,8 @@ class LayerCreationService:
         self._canvas._invalidate_layer_cache()
         self._canvas._reset_filter_cache_bytes()
 
-        self._canvas.history_clear()
+        if clear_history:
+            self._canvas.history_clear()
         self._canvas._recompose()
 
         self._emit_replace_layers_doc_changed()
@@ -1011,6 +998,9 @@ class LayerTreeService:
     ) -> LayerRef:
         return self._creation.add_layer(name, layer_type=layer_type, vector_kind=vector_kind)
 
+    def _prepare_layer_for_history(self, name: str, *, layer_type: str = "raster") -> Any:
+        return self._creation._prepare_layer_for_history(name, layer_type=layer_type)
+
     def add_mask_layer(self, name: str | None = None) -> LayerRef:
         return self._creation.add_mask_layer(name)
 
@@ -1061,8 +1051,12 @@ class LayerTreeService:
             index=index,
         )
 
-    def replace_layers(self, layers: Sequence[Any]) -> None:
-        self._creation.replace_layers(layers)
+    def replace_layers(self, layers: Sequence[Any], *, clear_history: bool = True) -> None:
+        self._creation.replace_layers(layers, clear_history=clear_history)
+
+    def _replace_page_layers(self, layers: Sequence[Any]) -> None:
+        """An empty persisted page owns an empty tree, rather than the old ink."""
+        self._creation.replace_layers(layers, clear_history=True, allow_empty=True)
 
     def copy_layer_for_replace(self, layer: Any) -> Any:
         return self._creation.copy_layer_for_replace(layer)
@@ -1098,6 +1092,9 @@ class LayerTreeService:
 
     def remove_layer(self, layer_id: str) -> bool:
         return self._removal.remove_layer(layer_id)
+
+    def _remove_created_layer_for_history(self, layer: Any) -> bool:
+        return self._removal.remove_layer(layer.id, _owned_layer=layer)
 
     def remove_layer_by_index(self, index: int) -> bool:
         return self._removal.remove_layer_by_index(index)

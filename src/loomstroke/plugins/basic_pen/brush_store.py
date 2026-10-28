@@ -1,6 +1,5 @@
 from __future__ import annotations
 
-import json
 import logging
 import uuid
 from copy import deepcopy
@@ -12,6 +11,9 @@ from PySide6.QtCore import Qt
 from PySide6.QtGui import QColor, QImage, QPainter, QRadialGradient
 
 from loomstroke.platform.user_dirs import ensure_directory, plugin_data_dir
+
+from .brush_persistence import commit_brush_json, read_brush_json, recover_brush_json
+from .brush_tip_png import _commit_png
 
 logger = logging.getLogger(__name__)
 
@@ -78,6 +80,15 @@ def _now_iso() -> str:
     return datetime.now().astimezone().isoformat(timespec="seconds")
 
 
+def _store_file_is_missing(path: Path) -> bool:
+    """Only a confirmed absence allows creating a default store."""
+    try:
+        path.lstat()
+    except FileNotFoundError:
+        return True
+    return False
+
+
 class BrushStore:
     """Persist brush swatches and panel settings under user_data/plugins/basic_pen."""
 
@@ -113,57 +124,47 @@ class BrushStore:
 
     def load_db(self) -> dict[str, Any]:
         if self._db is not None:
-            return self._db
+            return deepcopy(self._db)
         self.ensure_dirs()
-        if not self.db_path.exists():
-            self._db = self._default_db()
-            self.save_db(self._db)
-            return self._db
+        if _store_file_is_missing(self.db_path):
+            default = self._default_db()
+            self.save_db(default)
+            return deepcopy(default)
+        source = read_brush_json(self.db_path)
         try:
-            self._db = json.loads(self.db_path.read_text(encoding="utf-8"))
-        except (OSError, ValueError) as exc:
+            self._db = source.parse()
+        except ValueError as exc:
             backup = self.db_path.with_suffix(f".broken.{int(datetime.now().timestamp())}.json")
-            try:
-                self.db_path.replace(backup)
-            except OSError:
-                logger.warning("Failed to backup corrupt brush DB: %s", self.db_path)
+            self._db = recover_brush_json(source, backup, self._default_db())
             logger.warning("Brush DB corrupted, reset to defaults: %s", exc)
-            self._db = self._default_db()
-            self.save_db(self._db)
-        return self._db
+        return deepcopy(self._db)
 
     def save_db(self, db: dict[str, Any]) -> None:
         self.ensure_dirs()
-        self.db_path.write_text(json.dumps(db, indent=2, sort_keys=True), encoding="utf-8")
+        self._db = commit_brush_json(self.db_path, db)
 
     def load_settings(self) -> dict[str, Any]:
         if self._settings is not None:
-            return self._settings
+            return deepcopy(self._settings)
         self.ensure_dirs()
-        if not self.settings_path.exists():
-            self._settings = self._default_settings()
-            self.save_settings(self._settings)
-            return self._settings
+        if _store_file_is_missing(self.settings_path):
+            default = self._default_settings()
+            self.save_settings(default)
+            return deepcopy(default)
+        source = read_brush_json(self.settings_path)
         try:
-            self._settings = json.loads(self.settings_path.read_text(encoding="utf-8"))
-        except (OSError, ValueError) as exc:
+            self._settings = source.parse()
+        except ValueError as exc:
             backup = self.settings_path.with_suffix(
                 f".broken.{int(datetime.now().timestamp())}.json"
             )
-            try:
-                self.settings_path.replace(backup)
-            except OSError:
-                logger.warning("Failed to backup corrupt brush settings: %s", self.settings_path)
+            self._settings = recover_brush_json(source, backup, self._default_settings())
             logger.warning("Brush settings corrupted, reset to defaults: %s", exc)
-            self._settings = self._default_settings()
-            self.save_settings(self._settings)
-        return self._settings
+        return deepcopy(self._settings)
 
     def save_settings(self, settings: dict[str, Any]) -> None:
         self.ensure_dirs()
-        self.settings_path.write_text(
-            json.dumps(settings, indent=2, sort_keys=True), encoding="utf-8"
-        )
+        self._settings = commit_brush_json(self.settings_path, settings)
 
     # --- Swatch CRUD ----------------------------------------------------------
     def list_swatches(self) -> list[dict[str, Any]]:
@@ -271,5 +272,5 @@ class BrushStore:
         painter.setBrush(gradient)
         painter.drawEllipse(0, 0, size, size)
         painter.end()
-        image.save(str(abs_path))
+        _commit_png(abs_path, image)
         return self.tip_path_relative(filename)

@@ -139,6 +139,7 @@ from loomstroke.core.commands import (
     LayerTransform,
     LayerVisibilityCommand,
 )
+from loomstroke.core.document_capture_guard import DocumentCaptureGuardMixin
 from loomstroke.core.fill.commands_fill import (
     FloodFillCommand,
     FloodFillToNewLayerCommand,
@@ -194,6 +195,7 @@ LayerValue: TypeAlias = LayerRef | Mapping[str, int] | bool | str | int | None
 
 
 class SimpleCanvasService(
+    DocumentCaptureGuardMixin,
     CanvasServiceChannelsApiMixin,
     CanvasServiceLayerApiMixin,
     CanvasServiceCommandApiMixin,
@@ -861,3 +863,7 @@ class SimpleCanvasService(
     # ------------------------------------------------------------------
     # Mask layer operations
     # ------------------------------------------------------------------
+
+
+# Keep the definition-time callable so later class overrides stay custom.
+_DEFAULT_ADD_VECTOR_OBJECT = SimpleCanvasService.add_vector_object

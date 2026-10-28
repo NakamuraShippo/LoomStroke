@@ -6,6 +6,7 @@ import logging
 from typing import Any
 
 from loomstroke.ui.history_action_presentation import HistoryActionPresenter
+from loomstroke.ui.history_failure_feedback import request_history
 from loomstroke.ui.inline_text_history_target import inline_text_history_target
 from loomstroke.ui.pending_comic_history import PendingComicHistory
 
@@ -86,7 +87,7 @@ class MainWindowHistoryActionCoordinator:
                         return
                 except Exception:
                     logger.debug("Tool undo dispatch failed", exc_info=True)
-            window._host_api.history.undo()
+            request_history(window, window._host_api.history, "undo")
             return
         window._event_bus.emit("history.undo", {})
 
@@ -100,6 +101,6 @@ class MainWindowHistoryActionCoordinator:
         if hasattr(window, "_host_api") and window._host_api:
             if self._pending_comic.defer("redo"):
                 return
-            window._host_api.history.redo()
+            request_history(window, window._host_api.history, "redo")
         else:
             window._event_bus.emit("history.redo", {})

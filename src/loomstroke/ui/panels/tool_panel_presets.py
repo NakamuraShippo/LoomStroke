@@ -77,16 +77,24 @@ class ToolPresetController:
             self._translate_panel_text("Preset name"),
             self._translate_panel_text("Name:"),
         )
-        if not ok or not name.strip():
+        if not ok or not name.strip() or not self._is_current(manager, tool_id):
             return
-        preset = ToolPreset(name=name.strip(), values=self._collect_settings())
+        values = self._collect_settings()
+        if not self._is_current(manager, tool_id):
+            return
+        preset = ToolPreset(name=name.strip(), values=values)
         manager.save_preset(tool_id, preset)
+        if not self._is_current(manager, tool_id):
+            return
         metadata = manager.get_tool_metadata(tool_id)
-        if metadata:
+        if metadata and self._is_current(manager, tool_id):
             self.refresh(metadata)
             index = self._combo.findData(preset.name)
             if index >= 0:
                 self._combo.setCurrentIndex(index)
+
+    def _is_current(self, manager: ToolManager, tool_id: str) -> bool:
+        return self._tool_manager() is manager and self._current_tool_id() == tool_id
 
     def delete(self) -> None:
         manager = self._tool_manager()

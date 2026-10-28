@@ -424,3 +424,13 @@ class CanvasServiceStrokeApiMixin(_CanvasServiceStrokeApiBase):
             elapsed_ms,
             rect_text,
         )
+
+
+# Keep private override compatibility even when a subclass/class hook is changed
+# before the first import of the optional RGB coverage implementation.
+_DEFAULT_RGB_ERASE_HOOKS = {
+    "_apply_erase_into_layer": CanvasServiceStrokeApiMixin._apply_erase_into_layer,
+    "_draw_erase_stroke": CanvasServiceStrokeApiMixin._draw_erase_stroke,
+    "_paint_erased_masked_stroke": CanvasServiceStrokeApiMixin._paint_erased_masked_stroke,
+    "_paint_erased_clear_stroke": CanvasServiceStrokeApiMixin._paint_erased_clear_stroke,
+}

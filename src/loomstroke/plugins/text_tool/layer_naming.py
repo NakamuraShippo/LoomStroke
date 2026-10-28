@@ -48,7 +48,9 @@ def sync_text_layer_name(tool, layer_id, object_id, content, *, previous_content
         return
     if layer.name != text_layer_name(previous_content or "") and not _is_default_name(layer.name):
         return
-    tool._submit_command(RenameLayerCommand(layer_id, desired))
+    # The accepted body command already reports the initial document change.
+    # A completed Undo/Redo group still reports its rename after stack commit.
+    tool._submit_command(RenameLayerCommand(layer_id, desired, _notify_document_on_submit=False))
 
 
 def _is_default_name(name):

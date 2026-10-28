@@ -21,6 +21,7 @@ from loomstroke.io.layer_io import DocumentMetadata, DocumentSnapshot, LayerSnap
 from .canvas import Canvas as LegacyCanvas
 from .canvas_service_simple import SimpleCanvasService, _Layer
 from .commands import BlendMode
+from .document_capture_guard import assert_document_capture_ready
 from .layer import Layer
 from .layer_transform_metadata import capture_layer_transform_metadata, read_layer_transform
 from .mask_coverage import alpha8_snapshot_rgba
@@ -57,11 +58,13 @@ class DocumentSnapshotBuilder:
         self._prepare_pages = prepare_pages
 
     def build(self, metadata: DocumentMetadata) -> DocumentSnapshotBuildResult:
+        assert_document_capture_ready(self._canvas)
         filter_pen = getattr(
             self._canvas, "_filter_pen_service", getattr(self._canvas, "_effect_pen_service", None)
         )
         if filter_pen is not None:
             filter_pen.finalize()
+        assert_document_capture_ready(self._canvas)
         layers = self.capture_canvas_layers(self._canvas)
         if self._prepare_pages is None:
             pages = [PageSnapshot(id="p_0001", index=0, layers=layers)]

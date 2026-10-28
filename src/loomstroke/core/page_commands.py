@@ -583,11 +583,20 @@ class ApplyMasterInstancesCommand:
     transitions: tuple[MasterInstanceTransition, ...]
     label_key: str = "master.instances_changed"
     affected_page_ids: tuple[str, ...] = field(default=())
+    _requires_checked_master: bool = field(default=False, init=False, repr=False, compare=False)
+    _checked_master_committed: bool = field(default=False, init=False, repr=False, compare=False)
 
     def __post_init__(self) -> None:
         self.affected_page_ids = tuple(t.page_id for t in self.transitions)
 
     def apply(self, service: Any) -> bool:
+        from .master_instance_adapter import _apply_master_instances_checked  # noqa: PLC0415
+
+        self._checked_master_committed = False
+        checked = _apply_master_instances_checked(service, self)
+        if checked is not None:
+            self._checked_master_committed = checked
+            return checked
         applied: list[MasterInstanceTransition] = []
         for transition in self.transitions:
             if not service._set_master_instance_layer(
@@ -608,6 +617,13 @@ class ApplyMasterInstancesCommand:
         return bool(applied)
 
     def revert(self, service: Any) -> bool:
+        from .master_instance_adapter import _apply_master_instances_checked  # noqa: PLC0415
+
+        self._checked_master_committed = False
+        checked = _apply_master_instances_checked(service, self, reverse=True)
+        if checked is not None:
+            self._checked_master_committed = checked
+            return checked
         succeeded = True
         for transition in reversed(self.transitions):
             if not service._set_master_instance_layer(

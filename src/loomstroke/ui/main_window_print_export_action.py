@@ -17,7 +17,7 @@ from typing import Any
 
 from PySide6.QtWidgets import QDialog, QFileDialog, QMessageBox
 
-from ..core.export_naming import NamingContext, NamingError, render_export_names
+from ..core.export_naming import NamingContext, NamingError, detect_collisions, render_export_names
 from ..io.bundled_color_profiles import create_print_profile_registry
 from ..io.color_profile_registry import ColorProfileRegistry
 from ..io.layer_io import DocumentMetadata
@@ -156,6 +156,17 @@ class MainWindowPrintExportAction:
             file_names = self._file_names(plan, names_by_id)
         except NamingError as error:
             self._warn_formatted("Invalid file name template: {error}", error=error)
+            return False
+        collisions = detect_collisions(file_names)
+        if collisions:
+            self._message_box().warning(
+                window,
+                _ts("Export for Print"),
+                translate_with_fallback(
+                    "ExportPagesDialog",
+                    "The template produces duplicate file names (e.g. {name}).",
+                ).format(name=collisions[0]),
+            )
             return False
         document_path = getattr(window, "_document_path", None)
         start = str(Path(document_path).parent) if document_path else ""

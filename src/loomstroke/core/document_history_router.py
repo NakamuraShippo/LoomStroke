@@ -124,7 +124,7 @@ class DocumentHistoryRouter:
         candidates: list[HistoryRouteCandidate] = []
         for page_id, group in sorted(tops(redo=redo)):
             sequence = int(getattr(group, "sequence", 0))
-            if sequence <= 0:
+            if sequence <= 0 and not self._page_restore_blocked(page_id):
                 continue
             candidates.append(
                 HistoryRouteCandidate(
@@ -207,6 +207,15 @@ class DocumentHistoryRouter:
         if book is not None:
             pool.append(book)
         pool.extend(self._inactive_candidates(redo=redo))
+        # A failed legacy restore has no sequence to order safely. Keep it
+        # as a stop candidate instead of silently choosing another scope.
+        unsequenced_blocked = [
+            candidate
+            for candidate in pool
+            if candidate.sequence <= 0 and self._candidate_restore_blocked(candidate)
+        ]
+        if unsequenced_blocked:
+            return unsequenced_blocked[0]
         sequenced = [candidate for candidate in pool if candidate.sequence > 0]
         if not sequenced:
             return self._select(content, book, prefer_smallest=redo)
@@ -229,11 +238,23 @@ class DocumentHistoryRouter:
 
     # ------------------------------------------------------------------
     # State
+    def _page_restore_blocked(self, page_id: str | None) -> bool:
+        if page_id == self._active_page_id_getter():
+            check = getattr(self._canvas, "_history_restore_blocked", None)
+            return bool(check()) if callable(check) else False
+        check = getattr(self._coordinator, "is_history_restore_blocked", None)
+        return bool(check(page_id)) if callable(check) else False
+
+    def _candidate_restore_blocked(self, candidate: HistoryRouteCandidate) -> bool:
+        return candidate.scope == _CONTENT and self._page_restore_blocked(candidate.active_page_id)
+
     def can_undo(self) -> bool:
-        return self.peek_undo() is not None
+        candidate = self.peek_undo()
+        return candidate is not None and not self._candidate_restore_blocked(candidate)
 
     def can_redo(self) -> bool:
-        return self.peek_redo() is not None
+        candidate = self.peek_redo()
+        return candidate is not None and not self._candidate_restore_blocked(candidate)
 
     def _content_count(self, name: str) -> int:
         counter = getattr(self._canvas, name, None)

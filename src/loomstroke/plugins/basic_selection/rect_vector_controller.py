@@ -6,6 +6,11 @@ from typing import TYPE_CHECKING, Any
 from ...core.commands import SelectionOp
 from ...host_api import StrokePoint
 from ...plugins.vector_tools.common import VectorObject
+from ..common.document_capture_guard import (
+    DocumentCaptureLease,
+    begin_document_capture_edit,
+    release_document_capture_edit,
+)
 
 if TYPE_CHECKING:
     from .rect_tool import BasicSelectionRectTool
@@ -23,6 +28,7 @@ class VectorSelectionState:
     drag_pivot: tuple[float, float] | None = None
     drag_press_vec: tuple[float, float] | None = None
     last_delta: tuple[float, float] = (0.0, 0.0)
+    capture_lease: DocumentCaptureLease | None = None
 
 
 class VectorSelectionController:
@@ -43,6 +49,15 @@ class VectorSelectionController:
         self.state.drag_pivot = None
         self.state.drag_press_vec = None
         self.state.last_delta = (0.0, 0.0)
+
+    def begin_content_preview(self, canvas: Any) -> None:
+        self.state.capture_lease = begin_document_capture_edit(canvas, self.state.capture_lease)
+
+    def finish_content_preview(self) -> bool:
+        if not release_document_capture_edit(self.state.capture_lease):
+            return False
+        self.state.capture_lease = None
+        return True
 
     def on_pointer_down(
         self,

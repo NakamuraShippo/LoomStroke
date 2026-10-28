@@ -5,7 +5,9 @@ from __future__ import annotations
 import logging
 
 from loomstroke.core import commands
+from loomstroke.core.commands_layer_blend_mode import SetLayerBlendModeCommand
 from loomstroke.core.commands_layer_metadata_key import SetLayerMetadataKeyCommand
+from loomstroke.core.commands_layer_opacity import SetLayerOpacityCommand
 from loomstroke.core.commands_layer_rename import RenameLayerCommand
 from loomstroke.core.commands_layer_transform import TransformLayerCommand
 from loomstroke.core.fill.commands_fill import (
@@ -44,6 +46,24 @@ class NativeCmykCommandDispatcher:
             return canvas._tree_command_submit().submit(command)
         if isinstance(command, (NativeCmykPatchCommand, ConvertNativeCmykCommand)):
             return canvas._simple_layer_command_submit().submit(command, "CMYK Edit")
+        if isinstance(command, SetLayerOpacityCommand):
+            from loomstroke.core.layer_opacity_submit import (  # noqa: PLC0415
+                _standard_opacity_route,
+            )
+
+            return None if _standard_opacity_route(canvas, command) else False
+        if isinstance(command, SetLayerBlendModeCommand):
+            from loomstroke.core.layer_blend_submit import _standard_blend_route  # noqa: PLC0415
+
+            from .capabilities import NativeCmykCapabilities  # noqa: PLC0415
+
+            return (
+                None
+                if _standard_blend_route(canvas, command)
+                and canvas._normalize_blend_mode(command._new).value
+                in NativeCmykCapabilities.BLEND_MODES
+                else False
+            )
         layer = canvas._get_active_layer()
         if canvas.channels().is_alpha(layer) or canvas._mask_edit_flag:
             return None

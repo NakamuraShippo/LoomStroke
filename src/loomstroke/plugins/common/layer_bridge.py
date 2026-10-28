@@ -203,12 +203,9 @@ class LayerTransferBridge:
             executed = bool(canvas.submit(command, merge_key=merge_key))
         except Exception as exc:
             logger.warning("canvas.submit failed for layer %s: %s", layer.id, exc)
-        if not executed:
-            try:
-                executed = command.apply(canvas)
-            except Exception as exc:
-                logger.error("Failed to apply command directly: %s", exc)
-                executed = False
+        else:
+            if not executed:
+                logger.warning("canvas.submit rejected ApplyImageCommand for layer %s", layer.id)
         dirty = command.dirty_region
         logger.info(
             "Applied image to layer %s (executed=%s, dirty=%s)",

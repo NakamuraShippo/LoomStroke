@@ -1,6 +1,6 @@
 """Resolve the export colour policy against the document profile (CT-09 §6/§9).
 
-``embed`` tags the file with the document's own ICC bytes, ``untagged``
+``embed`` tags RGB pixels with the document's compatible RGB ICC bytes, ``untagged``
 writes no profile, ``convert_srgb`` transforms the pixels with the
 authoritative CPU transform (CT-11 P1) and tags sRGB.  Nothing here ever
 fabricates a profile the document does not have: a document without a
@@ -67,6 +67,17 @@ class ExportColorPolicy:
         info = self._register(document_profile)
         if info is None:
             return ResolvedColorPolicy(icc_bytes=None, issues=(self._invalid_issue(),))
+        if info.colorspace.strip().upper() != "RGB":
+            return ResolvedColorPolicy(
+                icc_bytes=None,
+                issues=(
+                    ExportIssue(
+                        code="document_profile_invalid",
+                        message="the document ICC profile is not RGB; "
+                        "RGB pixels were exported without it",
+                    ),
+                ),
+            )
         return ResolvedColorPolicy(icc_bytes=self._registry.profile_bytes(info.profile_id))
 
     def _resolve_convert_srgb(self, document_profile: bytes | None) -> ResolvedColorPolicy:

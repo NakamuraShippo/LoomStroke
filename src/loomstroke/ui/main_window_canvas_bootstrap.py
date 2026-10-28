@@ -271,9 +271,9 @@ class MainWindowCanvasBootstrapCoordinator:
         if hasattr(window.tool_manager, "tool_undo_state_changed"):
             window.tool_manager.tool_undo_state_changed.connect(window._on_tool_undo_state_changed)
         if hasattr(window.tool_manager, "tool_registered"):
-            window.tool_manager.tool_registered.connect(
-                lambda _payload: window._sync_tool_shortcut_bindings()
-            )
+            # Bind the QObject receiver so Qt disconnects on window destruction,
+            # including pending notifications from a longer-lived ToolManager.
+            window.tool_manager.tool_registered.connect(window._sync_tool_shortcut_bindings)
 
     def _connect_canvas_and_tool_signals(self) -> None:
         window = self._window

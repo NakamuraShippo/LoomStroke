@@ -44,6 +44,7 @@ from .panel_content_snapshot import PanelContentUnit, content_units
 from .panel_frame_state import read_panel_sources
 from .panel_part_snapshot import PanelPartSnapshot, part_snapshots
 from .text_frames import autosize_body_rect, build_balloon_text_object
+from .text_update import update_existing_balloon_text
 
 if TYPE_CHECKING:
     from loomstroke.core.comic_panels.materialize_command import PanelFrameMaterializeCommand
@@ -516,33 +517,41 @@ class ComicPageController:
                     font_size_pt=props.font_size_pt,
                     vertical=props.vertical,
                     line_height=props.line_height,
-                    measured_block=rich_text_block(previous_text_obj, effective_text, props),
+                    measured_block=rich_text_block(previous_text_obj, effective_text, text_props),
                 ),
             )
         from .balloon_objects import build_balloon_object  # noqa: PLC0415
 
         balloon_obj = build_balloon_object(record)
-        previous_meta = dict(getattr(previous_text_obj, "meta", None) or {}) or None
-        text_obj = build_balloon_text_object(
-            record,
-            effective_text,
-            word_wrap=props.word_wrap,
-            font_size_pt=props.font_size_pt,
-            vertical=props.vertical,
-            vertical_flow=props.vertical_flow,
-            align=props.align,
-            line_height=props.line_height,
-            tracking=props.tracking,
-            font_family=props.font_family,
-            font_style=props.font_style,
-            color_rgba=props.color_rgba,
-            padding_top=props.padding_top,
-            padding_right=props.padding_right,
-            padding_bottom=props.padding_bottom,
-            padding_left=props.padding_left,
-            rotate_half_width=props.rotate_half_width,
-            previous_meta=previous_meta,
-        )
+        if previous_text_obj is not None and text_props is None:
+            text_obj = update_existing_balloon_text(
+                previous_text_obj,
+                record,
+                effective_text,
+                previous_record=state.balloons.get(record.balloon_id),
+            )
+        else:
+            previous_meta = dict(getattr(previous_text_obj, "meta", None) or {}) or None
+            text_obj = build_balloon_text_object(
+                record,
+                effective_text,
+                word_wrap=props.word_wrap,
+                font_size_pt=props.font_size_pt,
+                vertical=props.vertical,
+                vertical_flow=props.vertical_flow,
+                align=props.align,
+                line_height=props.line_height,
+                tracking=props.tracking,
+                font_family=props.font_family,
+                font_style=props.font_style,
+                color_rgba=props.color_rgba,
+                padding_top=props.padding_top,
+                padding_right=props.padding_right,
+                padding_bottom=props.padding_bottom,
+                padding_left=props.padding_left,
+                rotate_half_width=props.rotate_half_width,
+                previous_meta=previous_meta,
+            )
         from .raster_parts import is_raster_preserve  # noqa: PLC0415
 
         return ComicEditCommand(

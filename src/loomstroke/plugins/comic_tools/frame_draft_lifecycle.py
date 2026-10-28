@@ -1,6 +1,7 @@
 """Discard detached comic drafts when their document or page changes."""
 
 from loomstroke.core.events import Events
+from loomstroke.core.history_failure_reporting import history_failure_event_is_current
 
 
 class FrameDraftLifecycle:
@@ -16,6 +17,8 @@ class FrameDraftLifecycle:
                 self.tokens.append((event, subscribe(event, self.handler)))
 
     def changed(self, _payload=None):
+        if not history_failure_event_is_current(_payload):
+            return
         if self.workflow.draft is not None:
             self.workflow.cancel()
             if self.on_discard is not None:

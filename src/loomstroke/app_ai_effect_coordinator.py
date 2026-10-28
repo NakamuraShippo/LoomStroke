@@ -14,6 +14,15 @@ from typing import Any, cast
 from PySide6.QtWidgets import QMainWindow
 
 from .app_ai_effect_gallery import _AIEffectGalleryAdapter
+from .app_ai_effect_generation_commit import (
+    _apply_cached_generation_output,
+    _apply_normal_generation_outputs,
+)
+from .app_ai_effect_generation_target import (
+    _capture_normal_generation_target,
+    _GenerationTargetRejected,
+    _normal_generation_target_is_current,
+)
 from .app_ai_effect_output_names import output_layer_names
 from .app_ai_effect_output_result import AIEffectOutputApplication, observed_output_application
 
@@ -1146,7 +1155,9 @@ class AIEffectCoordinator:
             }
         return payload
 
-    async def _run_ai_effect_generation(self, layer_id: str, state: Any, resolver: Any) -> None:
+    async def _run_ai_effect_generation(  # noqa: PLR0911 - explicit await boundary refusals
+        self, layer_id: str, state: Any, resolver: Any
+    ) -> None:
         """Async wrapper that resolves inputs then drives the controller.
 
         Split from the synchronous ``_on_ai_effect_generate_requested``
@@ -1157,9 +1168,20 @@ class AIEffectCoordinator:
         if controller is None:
             return
         try:
+            target = _capture_normal_generation_target(self._app, layer_id, state)
+        except (_GenerationTargetRejected, RecursionError):
+            logger.warning(
+                "Generate ignored: original target or intent unavailable for %s", layer_id
+            )
+            return
+        if not _normal_generation_target_is_current(target, self._app):
+            return
+        try:
             gateway, layer_versions, slot_images, source_page_id = await resolver(layer_id, state)
         except Exception:
             logger.exception("Generate dispatch: resolve_inputs failed for %s", layer_id)
+            return
+        if not _normal_generation_target_is_current(target, self._app):
             return
         try:
             outcome = await controller.execute(
@@ -1173,24 +1195,17 @@ class AIEffectCoordinator:
         except Exception:
             logger.exception("Generate dispatch: controller.execute raised for %s", layer_id)
             return
+        if not _normal_generation_target_is_current(target, self._app):
+            return
         status = getattr(outcome, "status", "?")
-        # On success, apply the generated outputs onto the canvas. The
-        # controller used to stop at GenerationRecord / Gallery updates
-        # and never touched pixels — the Phase 2-6-2 TODO comment in
-        # SimpleCanvasService flagged this gap ("initial generation is
-        # expected to add the output layers through a different API").
-        # Applied here because the controller deliberately has no
-        # canvas reference (keeps the unit tests hermetic).
+        # Standard single-self results commit through document history.
+        # Other outputs and custom callbacks retain their original route.
         if status == "success":
-            try:
-                self._app._apply_ai_effect_outputs(layer_id, state, outcome)
-            except Exception:
-                logger.exception("AI Effect outputs application failed for %s", layer_id)
-            # Phase 6-g: first-generation banner. ``maybe_show_*`` is
-            # gated on ``OnboardingState.onboarding.first_gen_done``
-            # so it self-clamps to one-shot — no top-level guard
-            # needed here.
-            self._app._maybe_show_first_gen_banner()
+            if not _normal_generation_target_is_current(target, self._app):
+                return
+            _apply_normal_generation_outputs(self._app, layer_id, state, outcome, target)
+        elif status == "cache_hit":
+            _apply_cached_generation_output(self._app, layer_id, state, outcome, target)
         err = getattr(outcome, "error", None)
         if err is not None:
             # AIError carries class_ + title + detail + raw. Log all of

@@ -14,6 +14,13 @@ from .mask_coverage import coverage_to_mask_image
 logger = logging.getLogger("loomstroke.core.canvas_service_simple")
 
 
+def _selection_to_layer_mask_image(selection: QImage, width: int, height: int) -> QImage:
+    """Prepare the existing coverage representation without mutating a layer."""
+    image = selection.convertToFormat(QImage.Format.Format_Alpha8)
+    image = image.scaled(width, height, Qt.AspectRatioMode.IgnoreAspectRatio)
+    return coverage_to_mask_image(image)
+
+
 class CanvasLayerMaskService:
     """Coordinate layer-attached mask queries and mutations."""
 
@@ -107,9 +114,7 @@ class CanvasLayerMaskService:
             return False
 
         width, height = self._owner._width, self._owner._height
-        sel = sel_mask.convertToFormat(QImage.Format.Format_Alpha8)
-        sel = sel.scaled(width, height, Qt.AspectRatioMode.IgnoreAspectRatio)
-        layer.layer_mask = coverage_to_mask_image(sel)
+        layer.layer_mask = _selection_to_layer_mask_image(sel_mask, width, height)
         layer.mask_enabled = True
         self._owner._invalidate_layer_cache()
         self._owner._recompose()

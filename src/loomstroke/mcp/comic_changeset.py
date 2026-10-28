@@ -19,6 +19,7 @@ from loomstroke.plugins.vector_tools.common import (
     normalize_vector_object,
 )
 
+from .comic_changeset_preflight import _comic_object_ids_available
 from .comic_native_text import build_comic_native_text
 
 COMIC_CHANGESET_OPERATION_KINDS = frozenset(
@@ -53,6 +54,8 @@ class ComicApplyCommand(Command):
         return [item[2] for item in self._inserted_objects]
 
     def apply(self, canvas: Any) -> bool:
+        if self._executed or not _comic_object_ids_available(canvas, self.operations, _get_layer):
+            return False
         self._created_layer_ids = []
         self._inserted_objects = []
         self.applied_records = []

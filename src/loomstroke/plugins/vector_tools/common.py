@@ -6,6 +6,7 @@ import json
 import logging
 import uuid
 from collections.abc import Mapping, Sequence
+from copy import deepcopy
 from dataclasses import dataclass, field
 from math import isfinite
 
@@ -350,7 +351,7 @@ def copy_vector_object(obj: VectorObject) -> VectorObject:
             miter_limit=obj.style.miter_limit,
             dash=obj.style.dash,
         ),
-        meta=dict(obj.meta),
+        meta=deepcopy(obj.meta),
         preview=obj.preview,
     )
 

@@ -41,6 +41,7 @@ import asyncio
 import logging
 import re
 import uuid
+from collections.abc import Iterable
 from dataclasses import dataclass
 from typing import TYPE_CHECKING, Any
 
@@ -86,6 +87,33 @@ def _external_server_id(index: int, entry: dict[str, Any]) -> str:
     if isinstance(raw, str) and raw.strip():
         return _slug(raw, fallback=f"external_{index + 1}")
     return "external" if index == 0 else f"external_{index + 1}"
+
+
+def _reserve_external_server_ids(identifiers: Iterable[tuple[Any, bool]]) -> set[str]:
+    """Keep every existing row's raw and registry-normalized identity reserved."""
+    reserved = {"local"}
+    configured_index = 0
+    for value, has_url in identifiers:
+        identifier = str(value).strip() if value else ""
+        if identifier:
+            reserved.update((identifier, _slug(identifier)))
+            if has_url:
+                reserved.add(_external_server_id(configured_index, {"id": identifier}))
+                # The existing parser uses this fallback when that ID is already taken.
+                reserved.add(f"external_{configured_index + 1}")
+        if has_url:
+            configured_index += 1
+    return reserved
+
+
+def _allocate_external_server_id(index: int, reserved: set[str]) -> str:
+    """Allocate only a new row ID, preserving the usual external/N ordering."""
+    candidate = _external_server_id(index, {})
+    while candidate in reserved:
+        index += 1
+        candidate = _external_server_id(index, {})
+    reserved.add(candidate)
+    return candidate
 
 
 def configured_servers_from_settings(settings: Any) -> list[ComfyUIServer]:
