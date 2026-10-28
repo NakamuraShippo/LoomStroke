@@ -36,6 +36,62 @@ from .tool_locale_fallbacks import NON_JA_TOOL_FALLBACK_TRANSLATIONS
 TranslatorFn = Callable[[str], str]
 
 _JA_FALLBACK_TRANSLATIONS: dict[str, dict[str, str]] = {
+    "GuideTemplatesDialog": {
+        "Guide Templates": "ガイドテンプレート",
+        "Name": "名前",
+        "Save current guides": "現在のガイドを保存",
+        "Template": "テンプレート",
+        "Target page": "対象ページ",
+        "Scale positions proportionally": "位置をページサイズの比率で調整",
+        "Replace existing guides": "既存のガイドを置き換える",
+        "All pages": "全ページ",
+        "Could not save the guide template.": "ガイドテンプレートを保存できませんでした。",
+        "Could not apply guides. Some pages may already have been updated.": "ガイドを適用できませんでした。一部のページはすでに更新されている可能性があります。",
+    },
+    "MeasurementTool": {
+        "Measure": "計測",
+        "Measure distances and angles": "距離と角度を計測",
+        "Distance: {distance:.3f} {unit} | Angle: {angle:.2f}° | ΔX: {dx:.3f} | ΔY: {dy:.3f}": "距離: {distance:.3f} {unit} | 角度: {angle:.2f}° | ΔX: {dx:.3f} | ΔY: {dy:.3f}",
+    },
+    "CompositionGuidesDialog": {
+        "Composition Guides": "構図ガイド",
+        "Rule of thirds": "三分割",
+        "Golden ratio": "黄金比",
+        "Golden spiral": "黄金螺旋",
+        "Diagonals": "対角線",
+        "Center cross": "中心十字",
+        "Safe area": "セーフエリア",
+        "Canvas": "キャンバス",
+        "Trim area": "仕上がり枠",
+        "Selection": "選択範囲",
+        "Reference area": "基準範囲",
+        "Safe area margin": "セーフエリアの余白",
+    },
+    "GuideLayoutDialog": {
+        "Modular grid": "段組みグリッド",
+        "Column gutter": "列間隔",
+        "Row gutter": "行間隔",
+        "Create Guides": "ガイドを作成",
+        "Mode": "作成方法",
+        "Orientation": "方向",
+        "Unit": "単位",
+        "Position": "位置",
+        "Columns": "縦の分割数",
+        "Rows": "横の分割数",
+        "Create margin guides": "マージンガイドを作成",
+        "Left": "左",
+        "Top": "上",
+        "Right": "右",
+        "Bottom": "下",
+        "Vertical center": "垂直中央線",
+        "Horizontal center": "水平中央線",
+        "Replace existing guides": "既存のガイドを置き換える",
+        "Single guide": "1本のガイド",
+        "Batch guides": "一括作成",
+        "Vertical": "垂直",
+        "Horizontal": "水平",
+        "Guides must be inside the canvas with valid margins.": "ガイドをキャンバス内に配置し、マージンを正しく指定してください。",
+    },
     "ThreeDGeneratedPreviewPanel": {
         "Projection was not imported because this scene exceeds the current software rendering limit.": (
             "このシーンは現在のソフトウェア描画の対応範囲を超えているため、投影を取り込めませんでした。"
@@ -154,6 +210,14 @@ _JA_FALLBACK_TRANSLATIONS: dict[str, dict[str, str]] = {
         "話者欄で話者書式を変更、ページ・フキダシ欄で該当箇所へ移動します。",
     },
     "MainWindow": {
+        "Guide Templates...": "ガイドテンプレート...",
+        "Snap to Canvas Edges": "キャンバス端に吸着",
+        "Snap to Canvas Center": "キャンバス中央に吸着",
+        "Guides": "ガイド",
+        "Show Guides": "ガイドを表示",
+        "Lock Guides": "ガイドをロック",
+        "Clear All Guides": "ガイドをすべて消去",
+        "Composition Guides...": "構図ガイド...",
         "LoomStroke v0.1.0": "LoomStroke v0.1.0",
         "Finish or cancel the current edit before saving.": "現在の編集を確定または取り消してから保存してください。",
         "Undo/Redo could not be completed. Check the document before continuing.": "元に戻す/やり直すを完了できませんでした。続ける前に原稿の状態を確認してください。",
@@ -1753,6 +1817,13 @@ _JA_FALLBACK_TRANSLATIONS["LayerPanel"].update(FILTER_LAYER_JA)
 _JA_FALLBACK_TRANSLATIONS["AppearancePanel"].update(FILTER_APPEARANCE_JA)
 _JA_FALLBACK_TRANSLATIONS["MainWindow"].update(FILTER_EXPORT_JA)
 _JA_FALLBACK_TRANSLATIONS["DrawingAssistPanel"] = {
+    "ellipse": "楕円定規",
+    "Center X": "中心 X",
+    "Center Y": "中心 Y",
+    "Major diameter": "長径",
+    "Minor diameter": "短径",
+    "Rotation": "回転角",
+    "Concentric (0 or 1)": "同心楕円 (0 または 1)",
     "Drawing Assist Panel": "作画補助パネル",
     "Symmetry, parallel / radial / concentric rulers and perspective": "対称描画・平行 / 放射 / 同心円定規・透視",
     "Drawing Assist": "作画補助",
@@ -3622,16 +3693,17 @@ def _current_language_setting() -> str:
 
 def _current_language_candidates() -> tuple[str, ...]:
     try:
-        from loomstroke.ui.i18n import _canonical_language_code  # noqa: PLC0415
+        from loomstroke.ui.i18n import _canonical_language_code, resolve_language  # noqa: PLC0415
     except Exception:
 
         def _canonical_language_code(code: str) -> str:
             return str(code or "").strip().replace("-", "_")
 
+        def resolve_language(code: str) -> str:
+            return code
+
     setting = _current_language_setting()
-    if setting == "system":
-        return ()
-    canonical = _canonical_language_code(setting)
+    canonical = _canonical_language_code(resolve_language(setting))
     candidates: list[str] = []
 
     def _append(code: str) -> None:

@@ -66,6 +66,7 @@ __all__ = [
     "format_language_label",
     "layout_direction_for_language",
     "load_translator",
+    "resolve_language",
     "translation_domains",
     "translation_path_for",
 ]
@@ -178,6 +179,26 @@ def available_language_options() -> list[tuple[str, str]]:
     return [(code, format_language_label(code)) for code in discover_translation_codes()]
 
 
+def resolve_language(code: str) -> str:
+    """Resolve the system preference using OS display languages in priority order."""
+    if code and code != "system":
+        return code
+    supported = set(discover_translation_codes())
+    for language in QLocale.system().uiLanguages():
+        parts = language.replace("-", "_").split("_")
+        candidates = [language]
+        # Qt may include both script and territory (e.g. zh-Hant-TW).
+        # Prefer the territory-specific catalog before the script catalog.
+        if len(parts) >= 3:
+            candidates.insert(0, f"{parts[0]}_{parts[-1]}")
+        candidates.append(parts[0])
+        for candidate in candidates:
+            canonical = _canonical_language_code(candidate)
+            if canonical in supported:
+                return canonical
+    return DEFAULT_LANGUAGE
+
+
 def layout_direction_for_language(code: str) -> Qt.LayoutDirection:
     """Return layout direction appropriate for a language code."""
 
@@ -191,10 +212,7 @@ def layout_direction_for_language(code: str) -> Qt.LayoutDirection:
 def translation_path_for(code: str) -> Path | None:
     """Return the best available .qm path for ``code`` using locale fallback."""
 
-    if not code or code == "system":
-        return None
-
-    for candidate_code in _translation_candidates(code):
+    for candidate_code in _translation_candidates(resolve_language(code)):
         filename = f"{TRANSLATION_PREFIX}{candidate_code}{TRANSLATION_SUFFIX}"
         for root in _translation_roots():
             candidate = root / filename
@@ -206,8 +224,6 @@ def translation_path_for(code: str) -> Path | None:
 def build_translator(code: str) -> QTranslator | None:
     """Build a QTranslator for ``code`` without installing it."""
 
-    if not code or code == "system":
-        return None
     path = translation_path_for(code)
     if path is None:
         logger.info("No translation file found for language: %s", code)

@@ -6,9 +6,18 @@ import math
 from typing import Any
 
 from PySide6.QtCore import QPointF, QRect, QSize, Qt
-from PySide6.QtGui import QColor, QFontMetrics, QMouseEvent, QPainter, QPalette, QPen
-from PySide6.QtWidgets import QWidget
+from PySide6.QtGui import (
+    QColor,
+    QContextMenuEvent,
+    QFontMetrics,
+    QMouseEvent,
+    QPainter,
+    QPalette,
+    QPen,
+)
+from PySide6.QtWidgets import QDialog, QWidget
 
+from ..dialogs.guide_layout_dialog import GuideLayoutDialog
 from .guide_controller import GuideController
 from .guide_models import GuideOrientation, RulerUnit
 
@@ -112,6 +121,23 @@ class RulerWidget(QWidget):
 
     # ------------------------------------------------------------------
     # Interaction: drag from ruler to create guides
+    def contextMenuEvent(self, event: QContextMenuEvent) -> None:
+        state = getattr(self._canvas, "state", None)
+        ruler = self._guide_controller.ruler_state()
+        dialog = GuideLayoutDialog(
+            size=(int(getattr(state, "width", 1)), int(getattr(state, "height", 1))),
+            dpi=self._guide_controller.document_dpi(),
+            unit=ruler.unit,
+            origin=(ruler.origin.x(), ruler.origin.y()),
+            parent=self,
+        )
+        dialog.replace.setEnabled(not self._guide_controller.guides_locked)
+        if dialog.exec() == QDialog.DialogCode.Accepted:
+            self._guide_controller.apply_guides(
+                dialog.guide_positions(), replace=dialog.replace.isChecked()
+            )
+        event.accept()
+
     def mousePressEvent(self, event: QMouseEvent) -> None:
         if event.button() != Qt.MouseButton.LeftButton:
             return

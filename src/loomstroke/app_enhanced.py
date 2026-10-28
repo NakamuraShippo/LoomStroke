@@ -522,6 +522,7 @@ class LoomStrokeAppEnhanced:
             "loomstroke.plugins.basic_fill_bucket.fill_bucket_tool",
             "loomstroke.plugins.basic_gradient.gradient_tool",
             "loomstroke.plugins.basic_move.move_tool",
+            "loomstroke.plugins.measurement",
             "loomstroke.plugins.text_tool.tool",
             "loomstroke.plugins.basic_selection.rect_tool",
             "loomstroke.plugins.magic_wand.magic_wand_tool",

@@ -9,7 +9,12 @@ from typing import Any
 from PySide6.QtCore import QCoreApplication
 
 from ..core.events import Events, LanguageChangeEvent
-from .i18n import build_translator, layout_direction_for_language, translation_domains
+from .i18n import (
+    build_translator,
+    layout_direction_for_language,
+    resolve_language,
+    translation_domains,
+)
 
 logger = logging.getLogger("loomstroke.ui.main_window")
 
@@ -29,7 +34,7 @@ class MainWindowLanguageCoordinator:
 
     def set_language(self, language: str) -> None:
         window = self._window
-        target = language or "system"
+        target = resolve_language(language)
         if target == getattr(window, "_current_language", "system"):
             return
         if window._qt_translator is not None:

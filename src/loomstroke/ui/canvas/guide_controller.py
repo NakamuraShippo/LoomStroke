@@ -12,9 +12,11 @@ from PySide6.QtCore import QPointF, Qt
 from PySide6.QtGui import QColor, QKeyEvent, QMouseEvent, QPainter, QPen
 
 from ...core.events import Events
+from ...core.guide_layout_geometry import GuidePosition, canvas_snap_positions, numeric_guide
 from ...host_api import HostAPI
 from ...platform.settings_manager import SettingsManager
 from .guide_models import Guide, GuideOrientation, RulerState
+from .guide_position_overlay import draw_guide_position
 
 logger = logging.getLogger(__name__)
 
@@ -47,6 +49,11 @@ class GuideController:
         self._drag_preview_pos: float | None = None
         self._drag_last_inside_pos: float | None = None
         self._drag_new_guide = False
+        self._drag_pointer_pos: QPointF | None = None
+        self.guides_visible = bool(self._settings.get_bool("view/guides_visible", True))
+        self.guides_locked = bool(self._settings.get_bool("view/guides_locked", False))
+        self._canvas_edge_snap = bool(self._settings.get_bool("view/canvas_edge_snap", True))
+        self._canvas_center_snap = bool(self._settings.get_bool("view/canvas_center_snap", False))
         self._snap_active = False
         self._snap_position: float | None = None
         self._extra_snap_points: list[tuple[float, float]] = []
@@ -75,6 +82,30 @@ class GuideController:
     def guides(self) -> Sequence[Guide]:
         return list(self._guides)
 
+    def reload_page_state(self) -> None:
+        """Refresh guides after another page view-state writer applies a template."""
+        self._reset_drag_state()
+        self._load_active_page_state()
+
+    def apply_guides(self, positions: Iterable[GuidePosition], *, replace: bool = False) -> None:
+        """Apply validated canvas-space guides through the existing page-state writer."""
+        if replace and self.guides_locked:
+            raise ValueError("Guides are locked")
+        width, height, dpi = self._active_canvas_spec()
+        validated = [
+            numeric_guide(axis, value, unit="px", dpi=dpi, size=(width, height))
+            for axis, value in positions
+        ]
+        additions = [
+            Guide(id=self._new_guide_id(), orientation=axis, position=value)
+            for axis, value in validated
+        ]
+        self._reset_drag_state()
+        self._selected_id = None
+        self._guides = additions if replace else [*self._guides, *additions]
+        self._persist_view_state()
+        self._request_update()
+
     def ruler_state(self) -> RulerState:
         return self._ruler_state
 
@@ -102,6 +133,9 @@ class GuideController:
     # ------------------------------------------------------------------
     # Guide manipulation
     def begin_ruler_drag(self, orientation: GuideOrientation, canvas_pos: QPointF) -> None:
+        if not self.guides_visible or self.guides_locked:
+            return
+        self._drag_pointer_pos = canvas_pos
         self._dragging = True
         self._drag_new_guide = True
         self._drag_orientation = orientation
@@ -114,6 +148,7 @@ class GuideController:
         if not self._dragging or not self._drag_new_guide or self._drag_orientation is None:
             return
         value = self._axis_value(self._drag_orientation, canvas_pos)
+        self._drag_pointer_pos = canvas_pos
         snap = self._snap_value(value, self._drag_orientation, exclude_id=None)
         self._drag_preview_pos = snap.value
         self._snap_active = snap.snapped
@@ -137,6 +172,8 @@ class GuideController:
         self._request_update()
 
     def handle_mouse_press(self, event: QMouseEvent, canvas_pos: QPointF) -> bool:
+        if not self.guides_visible or self.guides_locked:
+            return False
         if event.button() != Qt.MouseButton.LeftButton:
             return False
         hit = self._hit_test(canvas_pos)
@@ -146,6 +183,7 @@ class GuideController:
                 self._request_update()
             return False
         self._selected_id = hit.id
+        self._drag_pointer_pos = canvas_pos
         self._dragging = True
         self._drag_new_guide = False
         self._drag_guide_id = hit.id
@@ -162,6 +200,7 @@ class GuideController:
         if not self._dragging or self._drag_orientation is None:
             return False
         value = self._axis_value(self._drag_orientation, canvas_pos)
+        self._drag_pointer_pos = canvas_pos
         snap = self._snap_value(value, self._drag_orientation, exclude_id=self._drag_guide_id)
         new_value = snap.value
         self._snap_active = snap.snapped
@@ -226,9 +265,12 @@ class GuideController:
     # ------------------------------------------------------------------
     # Rendering
     def draw(self, painter: QPainter) -> None:
+        if not self.guides_visible:
+            return
         if not self._guides:
             if self._drag_new_guide and self._drag_preview_pos is not None:
                 self._draw_preview(painter)
+                self._draw_drag_position(painter)
             return
         width, height, _dpi = self._active_canvas_spec()
         base_pen = self._guide_pen(selected=False, snapped=False, preview=False)
@@ -253,6 +295,24 @@ class GuideController:
             )
             self._draw_guide_line(painter, preview, width, height)
         painter.restore()
+        self._draw_drag_position(painter)
+
+    def _draw_drag_position(self, painter: QPainter) -> None:
+        if not self._dragging or self._drag_pointer_pos is None or self._drag_orientation is None:
+            return
+        guide = self._guide_by_id(self._drag_guide_id)
+        value = (
+            self._drag_preview_pos if self._drag_new_guide else (guide.position if guide else None)
+        )
+        if value is not None:
+            draw_guide_position(
+                painter,
+                self._drag_pointer_pos,
+                value,
+                self._drag_orientation,
+                self._ruler_state,
+                self.document_dpi(),
+            )
 
     # ------------------------------------------------------------------
     # Internal helpers
@@ -293,6 +353,8 @@ class GuideController:
         return float(canvas_pos.y() if orientation == "horizontal" else canvas_pos.x())
 
     def _hit_test(self, canvas_pos: QPointF) -> Guide | None:
+        if not self.guides_visible or self.guides_locked:
+            return None
         threshold = self._screen_to_canvas_distance(self._hit_slop_px)
         best: tuple[float, Guide] | None = None
         for guide in self._guides:
@@ -311,11 +373,15 @@ class GuideController:
         threshold_canvas = self._screen_to_canvas_distance(self._snap_threshold_px)
         candidates: list[float] = []
         width, height, _dpi = self._active_canvas_spec()
+        extent = height if orientation == "horizontal" else width
+        candidates.extend(
+            canvas_snap_positions(
+                extent, edges=self._canvas_edge_snap, center=self._canvas_center_snap
+            )
+        )
         if orientation == "horizontal":
-            candidates.extend([0.0, float(height)])
             candidates.extend([pt[1] for pt in self._extra_snap_points])
         else:
-            candidates.extend([0.0, float(width)])
             candidates.extend([pt[0] for pt in self._extra_snap_points])
         for guide in self._guides:
             if exclude_id is not None and guide.id == exclude_id:
@@ -334,6 +400,8 @@ class GuideController:
         return SnapResult(value=float(best[1]), snapped=True)
 
     def snap_position(self, x: float, y: float) -> tuple[float, float, bool, bool]:
+        if not self.guides_visible:
+            return x, y, False, False
         """Snap *x*/*y* to the nearest guide/canvas-edge.
 
         Returns ``(snapped_x, snapped_y, x_snapped, y_snapped)``.
@@ -391,6 +459,8 @@ class GuideController:
         return f"g_{uuid4().hex[:8]}"
 
     def _delete_selected_guide(self) -> None:
+        if self.guides_locked:
+            return
         if self._selected_id is None:
             return
         self._guides = [guide for guide in self._guides if guide.id != self._selected_id]
@@ -399,6 +469,7 @@ class GuideController:
 
     def _reset_drag_state(self) -> None:
         self._dragging = False
+        self._drag_pointer_pos = None
         self._drag_guide_id = None
         self._drag_orientation = None
         self._drag_original_pos = None
@@ -527,7 +598,35 @@ class GuideController:
 
     # ------------------------------------------------------------------
     # Settings updates
+    def _apply_guide_interaction_setting(self, key: str, value: object) -> None:
+        if key in ("view/canvas_edge_snap", "view/canvas_center_snap"):
+            setattr(
+                self,
+                "_canvas_edge_snap" if key == "view/canvas_edge_snap" else "_canvas_center_snap",
+                bool(value),
+            )
+            return
+        if self._dragging:
+            guide = self._guide_by_id(self._drag_guide_id)
+            if guide is not None and self._drag_original_pos is not None:
+                guide.position = self._drag_original_pos
+            self._reset_drag_state()
+        if key == "view/guides_visible":
+            self.guides_visible = bool(value)
+        else:
+            self.guides_locked = bool(value)
+        self._selected_id = None
+        self._request_update()
+
     def _on_setting_changed(self, key: str, value: object) -> None:
+        if key in (
+            "view/guides_visible",
+            "view/guides_locked",
+            "view/canvas_edge_snap",
+            "view/canvas_center_snap",
+        ):
+            self._apply_guide_interaction_setting(key, value)
+            return
         if key == "view/guides_color":
             self._guides_color = QColor(str(value))
             self._request_update()

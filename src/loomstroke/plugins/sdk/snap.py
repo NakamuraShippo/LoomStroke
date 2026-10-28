@@ -39,7 +39,8 @@ def is_snap_enabled(
         grid_snap_enabled = bool(grid_snap)
     if grid_snap_enabled:
         return True
-    return get_guide_controller(host_api) is not None
+    controller = get_guide_controller(host_api)
+    return controller is not None and bool(getattr(controller, "guides_visible", True))
 
 
 def _guide_snap(

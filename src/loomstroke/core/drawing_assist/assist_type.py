@@ -6,7 +6,9 @@ from typing import Literal
 
 __all__ = ["KNOWN_ASSIST_TYPES", "AssistType", "is_known_type"]
 
-AssistType = Literal["mirror", "rotational", "parallel", "radial", "concentric", "perspective"]
+AssistType = Literal[
+    "mirror", "rotational", "parallel", "radial", "concentric", "perspective", "ellipse"
+]
 KNOWN_ASSIST_TYPES: tuple[str, ...] = (
     "mirror",
     "rotational",
@@ -14,6 +16,7 @@ KNOWN_ASSIST_TYPES: tuple[str, ...] = (
     "radial",
     "concentric",
     "perspective",
+    "ellipse",
 )
 
 

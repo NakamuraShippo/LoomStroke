@@ -22,11 +22,9 @@ class MainWindowLayoutStateCoordinator:
         window: Any,
         *,
         single_shot: Callable[[int, Callable[[], None]], None],
-        load_initial_layout: Callable[[], UILayoutSnapshot | None],
     ) -> None:
         self._window = window
         self._single_shot = single_shot
-        self._load_initial_layout = load_initial_layout
 
     def initialize_state(self) -> None:
         """Initialize layout restore and feedback-guard state."""
@@ -152,16 +150,8 @@ class MainWindowLayoutStateCoordinator:
             window._layout_restored = True
             return
 
-        snapshot = self._load_initial_layout()
-        if snapshot is not None:
-            logger.info("Applying bundled first-run layout")
-            window._apply_layout_snapshot(
-                snapshot,
-                clear_missing=False,
-                service=service,
-                allow_restore_state=bool(snapshot.window_state),
-                force_panel_layout=True,
-            )
+        logger.info("Applying reset layout for first run")
+        window._reset_layout()
         window._layout_restored = True
 
     def apply_layout_snapshot(

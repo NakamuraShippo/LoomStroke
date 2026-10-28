@@ -120,6 +120,15 @@ class DrawingAssistController:
             "radial": ({"center": [cx, cy]}, {}),
             "concentric": ({"center": [cx, cy]}, {"ratio": 1.0}),
             "perspective": ({"vanishing_points": [[cx, cy]]}, {"axis": "auto"}),
+            "ellipse": (
+                {
+                    "center": [cx, cy],
+                    "major_diameter": max(1.0, width / 2),
+                    "minor_diameter": max(1.0, min(width, height) / 3),
+                    "angle": 0.0,
+                },
+                {"concentric": 1},
+            ),
         }
         if assist_type not in defaults:
             return None
@@ -155,6 +164,12 @@ class DrawingAssistController:
                     painter.drawLine(QPointF(x0, y0), QPointF(x1, y1))
                 for cx, cy, rx, ry in geometry.ellipses:
                     painter.drawEllipse(QRectF(cx - rx, cy - ry, 2.0 * rx, 2.0 * ry))
+                for cx, cy, rx, ry, angle in geometry.rotated_ellipses:
+                    painter.save()
+                    painter.translate(cx, cy)
+                    painter.rotate(angle)
+                    painter.drawEllipse(QRectF(-rx, -ry, 2.0 * rx, 2.0 * ry))
+                    painter.restore()
                 for x, y, label in geometry.markers:
                     painter.drawEllipse(QPointF(x, y), 3.0, 3.0)
                     painter.drawText(QPointF(x + 4.0, y - 4.0), label)

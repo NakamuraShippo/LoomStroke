@@ -5,6 +5,7 @@ from __future__ import annotations
 from collections.abc import Callable
 from typing import Any
 
+from PySide6.QtCore import QEvent
 from PySide6.QtWidgets import (
     QCheckBox,
     QComboBox,
@@ -26,6 +27,14 @@ from loomstroke.ui.translations import translated_literal_domain
 __all__ = ["DrawingAssistPanel"]
 
 _ROLE = 0x0100  # Qt.UserRole
+_ELLIPSE_LABELS = {
+    "center.x": "Center X",
+    "center.y": "Center Y",
+    "major_diameter": "Major diameter",
+    "minor_diameter": "Minor diameter",
+    "angle": "Rotation",
+    "concentric": "Concentric (0 or 1)",
+}
 
 
 def _ts(text: str) -> str:
@@ -237,7 +246,39 @@ class DrawingAssistPanel(QWidget):
     ) -> None:
         spin = QDoubleSpinBox()
         spin.setRange(-1e6, 1e6)
+        if self._editing is not None and self._editing.type == "ellipse" and key == "concentric":
+            spin.setRange(0, 1)
         spin.setDecimals(0 if key == "count" else 2)
+        if self._editing is not None and self._editing.type == "ellipse" and key == "concentric":
+            spin.setDecimals(0)
         spin.setValue(value)
+        if self._editing is not None and self._editing.type == "ellipse":
+            label = _ts(_ELLIPSE_LABELS.get(label, label))
         self.form.addRow(label, spin)
         self._fields[(source, key, index)] = spin
+
+    def changeEvent(self, event: QEvent) -> None:
+        super().changeEvent(event)
+        if event.type() != QEvent.Type.LanguageChange or not hasattr(self, "type_combo"):
+            return
+        index = self.type_combo.findData("ellipse")
+        if index >= 0:
+            self.type_combo.setItemText(index, _ts("ellipse"))
+        state = self._controller.state()
+        for row in range(self.list.count()):
+            item = self.list.item(row)
+            assist = state.get(str(item.data(_ROLE)))
+            if assist is not None and assist.type == "ellipse":
+                flags = []
+                if assist.id == state.active_id:
+                    flags.append(_ts("active"))
+                if not assist.enabled:
+                    flags.append(_ts("disabled"))
+                suffix = f"  [{', '.join(flags)}]" if flags else ""
+                item.setText(f"{_ts('ellipse')}{suffix}")
+        if self._editing is not None and self._editing.type == "ellipse":
+            for (_source, key, index), spin in self._fields.items():
+                source = f"{key}.{'x' if index == 0 else 'y'}" if index is not None else key
+                label = self.form.labelForField(spin)
+                if isinstance(label, QLabel):
+                    label.setText(_ts(_ELLIPSE_LABELS.get(source, source)))

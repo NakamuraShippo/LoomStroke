@@ -244,7 +244,6 @@ def _layout_state_for(window: Any) -> MainWindowLayoutStateCoordinator:
         coordinator = MainWindowLayoutStateCoordinator(
             window,
             single_shot=QTimer.singleShot,
-            load_initial_layout=lambda: load_bundled_initial_layout(),
         )
         window._layout_state_coordinator = coordinator
     return coordinator

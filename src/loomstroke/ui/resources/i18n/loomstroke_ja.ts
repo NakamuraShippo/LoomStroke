@@ -8569,4 +8569,94 @@ Use "Edit Filters" to add.</source>
         <translation>このシーンは現在のソフトウェア描画の対応範囲を超えているため、投影を取り込めませんでした。</translation>
     </message>
 </context>
+<context>
+    <name>GuideLayoutDialog</name>
+    <message><source>Modular grid</source><translation>段組みグリッド</translation></message>
+    <message><source>Column gutter</source><translation>列間隔</translation></message>
+    <message><source>Row gutter</source><translation>行間隔</translation></message>
+    <message><source>Create Guides</source><translation>ガイドを作成</translation></message>
+    <message><source>Mode</source><translation>作成方法</translation></message>
+    <message><source>Orientation</source><translation>方向</translation></message>
+    <message><source>Unit</source><translation>単位</translation></message>
+    <message><source>Position</source><translation>位置</translation></message>
+    <message><source>Columns</source><translation>縦の分割数</translation></message>
+    <message><source>Rows</source><translation>横の分割数</translation></message>
+    <message><source>Create margin guides</source><translation>マージンガイドを作成</translation></message>
+    <message><source>Left</source><translation>左</translation></message>
+    <message><source>Top</source><translation>上</translation></message>
+    <message><source>Right</source><translation>右</translation></message>
+    <message><source>Bottom</source><translation>下</translation></message>
+    <message><source>Vertical center</source><translation>垂直中央線</translation></message>
+    <message><source>Horizontal center</source><translation>水平中央線</translation></message>
+    <message><source>Replace existing guides</source><translation>既存のガイドを置き換える</translation></message>
+    <message><source>Single guide</source><translation>1本のガイド</translation></message>
+    <message><source>Batch guides</source><translation>一括作成</translation></message>
+    <message><source>Vertical</source><translation>垂直</translation></message>
+    <message><source>Horizontal</source><translation>水平</translation></message>
+    <message><source>Guides must be inside the canvas with valid margins.</source><translation>ガイドをキャンバス内に配置し、マージンを正しく指定してください。</translation></message>
+</context>
+<context>
+    <name>DrawingAssistPanel</name>
+    <message><source>ellipse</source><translation>楕円定規</translation></message>
+    <message><source>Center X</source><translation>中心 X</translation></message>
+    <message><source>Center Y</source><translation>中心 Y</translation></message>
+    <message><source>Major diameter</source><translation>長径</translation></message>
+    <message><source>Minor diameter</source><translation>短径</translation></message>
+    <message><source>Rotation</source><translation>回転角</translation></message>
+    <message><source>Concentric (0 or 1)</source><translation>同心楕円 (0 または 1)</translation></message>
+</context>
+<context>
+    <name>CompositionGuidesDialog</name>
+    <message><source>Composition Guides</source><translation>構図ガイド</translation></message>
+    <message><source>Rule of thirds</source><translation>三分割</translation></message>
+    <message><source>Golden ratio</source><translation>黄金比</translation></message>
+    <message><source>Golden spiral</source><translation>黄金螺旋</translation></message>
+    <message><source>Diagonals</source><translation>対角線</translation></message>
+    <message><source>Center cross</source><translation>中心十字</translation></message>
+    <message><source>Safe area</source><translation>セーフエリア</translation></message>
+    <message><source>Canvas</source><translation>キャンバス</translation></message>
+    <message><source>Trim area</source><translation>仕上がり枠</translation></message>
+    <message><source>Selection</source><translation>選択範囲</translation></message>
+    <message><source>Reference area</source><translation>基準範囲</translation></message>
+    <message><source>Safe area margin</source><translation>セーフエリアの余白</translation></message>
+</context>
+<context>
+    <name>MainWindow</name>
+    <message><source>Composition Guides...</source><translation>構図ガイド...</translation></message>
+</context>
+<context>
+    <name>MeasurementTool</name>
+    <message><source>Measure</source><translation>計測</translation></message>
+    <message><source>Measure distances and angles</source><translation>距離と角度を計測</translation></message>
+    <message><source>Distance: {distance:.3f} {unit} | Angle: {angle:.2f}° | ΔX: {dx:.3f} | ΔY: {dy:.3f}</source><translation>距離: {distance:.3f} {unit} | 角度: {angle:.2f}° | ΔX: {dx:.3f} | ΔY: {dy:.3f}</translation></message>
+</context>
+<context>
+    <name>MainWindow</name>
+    <message><source>Guides</source><translation>ガイド</translation></message>
+    <message><source>Show Guides</source><translation>ガイドを表示</translation></message>
+    <message><source>Lock Guides</source><translation>ガイドをロック</translation></message>
+    <message><source>Clear All Guides</source><translation>ガイドをすべて消去</translation></message>
+</context>
+<context>
+    <name>MainWindow</name>
+    <message><source>Snap to Canvas Edges</source><translation>キャンバス端に吸着</translation></message>
+    <message><source>Snap to Canvas Center</source><translation>キャンバス中央に吸着</translation></message>
+</context>
+<context>
+    <name>GuideTemplatesDialog</name>
+    <message><source>Guide Templates</source><translation>ガイドテンプレート</translation></message>
+    <message><source>Name</source><translation>名前</translation></message>
+    <message><source>Save current guides</source><translation>現在のガイドを保存</translation></message>
+    <message><source>Template</source><translation>テンプレート</translation></message>
+    <message><source>Target page</source><translation>対象ページ</translation></message>
+    <message><source>Scale positions proportionally</source><translation>位置をページサイズの比率で調整</translation></message>
+    <message><source>Replace existing guides</source><translation>既存のガイドを置き換える</translation></message>
+    <message><source>All pages</source><translation>全ページ</translation></message>
+    <message><source>Could not save the guide template.</source><translation>ガイドテンプレートを保存できませんでした。</translation></message>
+    <message><source>Could not apply guides. Some pages may already have been updated.</source><translation>ガイドを適用できませんでした。一部のページはすでに更新されている可能性があります。</translation></message>
+</context>
+<context>
+    <name>MainWindow</name>
+    <message><source>Guide Templates...</source><translation>ガイドテンプレート...</translation></message>
+</context>
 </TS>

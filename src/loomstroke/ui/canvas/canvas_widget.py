@@ -37,6 +37,7 @@ from loomstroke.host_api import HostAPI, StrokePoint
 from .canvas_diagnostics import build_canvas_widget_render_diagnostics
 from .canvas_presenter import CanvasPresenterDiagnostics
 from .canvas_wgpu_bitmap_coordinator import CanvasWidgetWgpuBitmapCoordinator
+from .composition_overlay import draw_composition_overlay
 from .guide_controller import GuideController
 from .input_handler import InputHandler
 from .projection_state import ProjectionStateTracker
@@ -966,6 +967,7 @@ class CanvasWidget(_CanvasWidgetBase):
             self._draw_grid(painter)
         self._draw_guides(painter)
         self._draw_drawing_assist(painter)
+        draw_composition_overlay(painter, self)
         if self._tool_preview_image is not None:
             prev_mode = painter.compositionMode()
             prev_opacity = painter.opacity()
