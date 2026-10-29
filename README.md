@@ -6,6 +6,8 @@
   </picture>
 </h1>
 
+[日本語](README.md) | [English](README.en.md) | [简体中文](README.zh-CN.md)
+
 ### [patreon](https://www.patreon.com/c/LoomStroke)
 
 LoomStrokeは、PySide6とwgpuによるデスクトップペイントアプリです。
