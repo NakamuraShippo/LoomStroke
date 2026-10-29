@@ -87,6 +87,17 @@ class GuideTemplateService:
             )
             guides = []
             for entry, (orientation, position) in zip(raw, mapped, strict=True):
+                extra = {}
+                if proportional and isinstance(entry.get("pivot"), (list, tuple)):
+                    pivot = entry["pivot"]
+                    if len(pivot) != 2:
+                        raise ValueError("Invalid guide pivot")
+                    extra = {
+                        "pivot": [
+                            float(pivot[0]) * target.width / template.canvas.width,
+                            float(pivot[1]) * target.height / template.canvas.height,
+                        ],
+                    }
                 prefix = "g_"
                 old_id = str(entry.get("id", ""))
                 if old_id.startswith("tpl-") and len(old_id.split("-")) >= 3:
@@ -94,6 +105,7 @@ class GuideTemplateService:
                 guides.append(
                     {
                         **entry,
+                        **extra,
                         "id": prefix + uuid4().hex[:12],
                         "orientation": orientation,
                         "position": position,

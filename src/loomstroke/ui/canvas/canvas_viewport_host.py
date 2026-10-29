@@ -253,6 +253,7 @@ class CanvasViewportHost(QWidget):
         self.legacy_canvas.hide()
         self._native_surface = _NativeSurfaceWidget(self)
         self._overlay_surface = _OverlaySurfaceWidget(self)
+        self.legacy_canvas._guide_viewport_host = self
         self._native_surface.fallback_requested.connect(self._activate_legacy_fallback)
         self._native_presenter: WgpuNativeCanvasPresenter | None = None
         self._native_disabled_reason: str | None = None

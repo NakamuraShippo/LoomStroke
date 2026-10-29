@@ -28,7 +28,11 @@ def guide_cell_candidate(
         return None
     spec = pages.get_active_canvas_spec()
     return guide_cell_rect(
-        ((g.orientation, g.position) for g in controller.guides()),
+        (
+            (g.orientation, g.position)
+            for g in controller.guides()
+            if not getattr(g, "rotation", 0) % 360
+        ),
         (spec.width, spec.height),
         coordinates,
     )

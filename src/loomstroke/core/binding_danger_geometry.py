@@ -7,7 +7,7 @@ from collections.abc import Mapping, Sequence
 from typing import Any
 
 from .geometry import Affine2D
-from .guide_layout_geometry import guide_role_edges
+from .guide_layout_geometry import guide_role_edges, is_unrotated_guide
 
 Bounds = tuple[float, float, float, float]
 
@@ -15,7 +15,11 @@ Bounds = tuple[float, float, float, float]
 def binding_danger_bounds(guides: Sequence[Mapping[str, Any]], physical_side: str) -> Bounds | None:
     if physical_side not in ("left", "right"):
         return None
-    entries = [g for g in guides if str(g.get("id", "")).startswith("tpl-gutter-")]
+    entries = [
+        g
+        for g in guides
+        if str(g.get("id", "")).startswith("tpl-gutter-") and is_unrotated_guide(g)
+    ]
     if len(entries) != 1 or entries[0].get("orientation") != "vertical":
         return None
     try:

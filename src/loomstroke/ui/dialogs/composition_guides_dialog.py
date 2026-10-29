@@ -2,6 +2,7 @@
 
 from __future__ import annotations
 
+from copy import deepcopy
 from typing import Any
 
 from PySide6.QtCore import QEvent
@@ -17,12 +18,11 @@ from PySide6.QtWidgets import (
 )
 
 from ...core.composition_geometry import KINDS
-from ..canvas.guide_dialog_preview import (
-    attach_guide_preview,
-    close_guide_preview,
-    preview_page_matches,
-)
+from ..canvas.guide_dialog_preview import attach_guide_preview
+from ..canvas.guide_reference import guide_reference_rect
 from ..translations import translate_with_fallback
+from .guide_editor_window import show_guide_editor
+from .guide_placement_controls import GuidePlacementControls, safe_offset
 
 _NAMES = (
     "Rule of thirds",
@@ -32,12 +32,19 @@ _NAMES = (
     "Center cross",
     "Safe area",
 )
-_REFERENCES = (("Canvas", "canvas"), ("Trim area", "trim"), ("Selection", "selection"))
+_REFERENCES = (
+    ("Canvas", "canvas"),
+    ("Trim area", "trim"),
+    ("Selection", "selection"),
+    ("Selected object", "object"),
+)
 
 
 class CompositionGuidesDialog(QDialog):
     def __init__(self, settings: Any, parent: QWidget | None = None) -> None:
         super().__init__(parent)
+        self._settings = settings
+        self._canvas = getattr(parent, "canvas", None)
         form = QFormLayout(self)
         selected = settings.get("view/composition_overlay_kinds", [])
         selected = selected if isinstance(selected, (list, tuple)) else []
@@ -66,6 +73,21 @@ class CompositionGuidesDialog(QDialog):
         self.percent.setValue(float(settings.get("view/composition_overlay_safe_percent", 10.0)))
         self.percent_label = QLabel(self)
         form.addRow(self.percent_label, self.percent)
+        self._old_rotation = settings.get("view/composition_overlay_rotation", 0.0)
+        self._old_offsets = deepcopy(settings.get("view/composition_overlay_offsets", {}))
+        self._old_offsets = self._old_offsets if isinstance(self._old_offsets, dict) else {}
+        first_kind = next((kind for kind in KINDS if kind in selected), None)
+        initial_offset = self._old_offsets.get(first_kind, (0, 0))
+        self.placement = GuidePlacementControls(
+            form, self, angle=self._old_rotation, offset=initial_offset
+        )
+        self._initial_offset = self.placement.offset()
+        self._offset_dirty = False
+        self.placement.x.valueChanged.connect(self._mark_offset)
+        self.placement.y.valueChanged.connect(self._mark_offset)
+        self.error = QLabel(self)
+        self._error_source = ""
+        form.addRow(self.error)
         buttons = QDialogButtonBox(
             QDialogButtonBox.StandardButton.Ok | QDialogButtonBox.StandardButton.Cancel, self
         )
@@ -76,13 +98,37 @@ class CompositionGuidesDialog(QDialog):
         self._guide_preview = attach_guide_preview(self, parent, "composition", self.values)
 
     def values(self) -> dict[str, Any]:
-        return {
+        values = {
             "view/composition_overlay_kinds": [
                 k for k, check in self.checks.items() if check.isChecked()
             ],
             "view/composition_overlay_reference": self.reference.currentData(),
             "view/composition_overlay_safe_percent": self.percent.value(),
         }
+        if self.placement.angle.value() != 0 or self.placement.angle.value() != self._old_rotation:
+            values["view/composition_overlay_rotation"] = self.placement.angle.value()
+        if self._offset_dirty:
+            offsets = deepcopy(self._old_offsets)
+            for kind in values["view/composition_overlay_kinds"]:
+                base = safe_offset(self._old_offsets.get(kind, (0, 0)))
+                offsets[kind] = [
+                    base[i] + self.placement.offset()[i] - self._initial_offset[i] for i in (0, 1)
+                ]
+            values["view/composition_overlay_offsets"] = offsets
+        return values
+
+    def _mark_offset(self, *_args):
+        self._offset_dirty = True
+
+    def accept(self):
+        if (
+            self._canvas is not None
+            and guide_reference_rect(self._canvas, self.reference.currentData()) is None
+        ):
+            self._error_source = "Select an object or choose another reference area."
+            self._retranslate()
+            return
+        super().accept()
 
     def _retranslate(self) -> None:
         def ts(source: str) -> str:
@@ -95,6 +141,12 @@ class CompositionGuidesDialog(QDialog):
             self.reference.setItemText(i, ts(source))
         self.reference_label.setText(ts("Reference area"))
         self.percent_label.setText(ts("Safe area margin"))
+        self.placement.retranslate()
+        self.error.setText(
+            translate_with_fallback("GuidePlacement", self._error_source)
+            if self._error_source
+            else ""
+        )
 
     def changeEvent(self, event: QEvent) -> None:
         super().changeEvent(event)
@@ -102,15 +154,14 @@ class CompositionGuidesDialog(QDialog):
             self._retranslate()
 
 
-def open_composition_guides(window: Any) -> None:
+def open_composition_guides(window: Any) -> CompositionGuidesDialog:
     dialog = CompositionGuidesDialog(window._settings, window)
-    try:
-        if dialog.exec() != QDialog.DialogCode.Accepted or not preview_page_matches(dialog):
-            return
+
+    def commit():
         for key, value in dialog.values().items():
             window._settings.set(key, value)
         canvas = getattr(window, "canvas", None)
         if canvas is not None:
             canvas.update()
-    finally:
-        close_guide_preview(dialog)
+
+    return show_guide_editor(dialog, window.canvas, commit)

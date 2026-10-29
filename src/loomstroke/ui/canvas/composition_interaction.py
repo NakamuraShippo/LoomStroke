@@ -6,7 +6,8 @@ from typing import Any
 
 from PySide6.QtCore import Qt
 
-from ...core.composition_snap import nearest_line_point
+from ...core.composition_snap import nearest_line_hit, nearest_line_point
+from .guide_canvas_bridge import update_guide_overlay
 
 
 def clear_composition_guides(widget: Any, settings: Any) -> None:
@@ -21,7 +22,7 @@ def clear_composition_guides(widget: Any, settings: Any) -> None:
         interaction.cancel()
     update = getattr(widget, "update", None)
     if callable(update):
-        update()
+        update_guide_overlay(widget)
 
 
 class CompositionInteraction:
@@ -33,11 +34,12 @@ class CompositionInteraction:
         self.original = (0.0, 0.0)
         self.page: Any = None
         self.tool: Any = None
+        self.last_snap_target: tuple[str, int | None] | None = None
 
     def cancel(self) -> None:
         self.start = None
         self.selected = None
-        self.widget.update()
+        update_guide_overlay(self.widget)
 
     def _settings(self) -> Any:
         return getattr(getattr(self.widget, "_host_api", None), "settings", None)
@@ -49,6 +51,7 @@ class CompositionInteraction:
     def snap_position(self, x: float, y: float, w: float = 0, h: float = 0) -> tuple:
         from .composition_overlay import composition_groups  # noqa: PLC0415
 
+        self.last_snap_target = None
         settings = self._settings()
         if settings is None:
             return x, y, False
@@ -58,18 +61,29 @@ class CompositionInteraction:
         threshold = self.widget.viewport.screen_to_canvas_distance(
             settings.get("view/guides_snap_threshold_px", 8)
         )
-        lines = tuple(line for group in groups.values() for line in group)
+        entries = tuple(
+            (kind, index, line)
+            for kind, group in groups.items()
+            for index, line in enumerate(group)
+        )
+        lines = tuple(entry[2] for entry in entries)
         best = None
         for px, py in dict.fromkeys(((x, y), (x + w, y), (x, y + h), (x + w, y + h))):
-            hit = nearest_line_point((px, py), lines, threshold)
-            if hit is None or not (
-                0 <= hit[0] <= self.widget.state.width and 0 <= hit[1] <= self.widget.state.height
+            hit = nearest_line_hit((px, py), lines, threshold)
+            if hit is None:
+                continue
+            point, entry_index = hit
+            if not (
+                0 <= point[0] <= self.widget.state.width
+                and 0 <= point[1] <= self.widget.state.height
             ):
                 continue
-            dx, dy = hit[0] - px, hit[1] - py
+            dx, dy = point[0] - px, point[1] - py
             distance = dx * dx + dy * dy
             if best is None or distance < best[0]:
                 best = distance, x + dx, y + dy
+                kind, index, _line = entries[entry_index]
+                self.last_snap_target = kind, None if kind == "spiral" else index
         return (x, y, False) if best is None else (best[1], best[2], True)
 
     def _valid(self) -> bool:
@@ -124,7 +138,7 @@ class CompositionInteraction:
         self.page = self._page()
         self.tool = getattr(self.widget, "_active_tool_id", lambda: None)()
         self.start = position
-        self.widget.update()
+        update_guide_overlay(self.widget)
         return True
 
     def move(self, point: Any) -> bool:
@@ -134,7 +148,7 @@ class CompositionInteraction:
             self.original[0] + point.x() - self.start[0],
             self.original[1] + point.y() - self.start[1],
         )
-        self.widget.update()
+        update_guide_overlay(self.widget)
         return True
 
     def release(self) -> bool:
@@ -146,7 +160,7 @@ class CompositionInteraction:
         offsets[self.selected] = list(self.offset)
         settings.set("view/composition_overlay_offsets", offsets)
         self.start = None
-        self.widget.update()
+        update_guide_overlay(self.widget)
         return True
 
     def key(self, event: Any) -> bool:
@@ -169,5 +183,5 @@ class CompositionInteraction:
             self.selected = None
         else:
             return False
-        self.widget.update()
+        update_guide_overlay(self.widget)
         return True

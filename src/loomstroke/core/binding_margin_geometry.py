@@ -6,7 +6,7 @@ import math
 from collections.abc import Mapping, Sequence
 from typing import Any
 
-from .guide_layout_geometry import guide_role_edges, unit_to_pixels
+from .guide_layout_geometry import guide_role_edges, is_unrotated_guide, unit_to_pixels
 
 
 def _safe_positions(guides: Sequence[Mapping[str, Any]]) -> tuple[float, float]:
@@ -42,6 +42,7 @@ def current_binding_margin_mm(
         for guide in guides
         if str(guide.get("id", "")).startswith("tpl-gutter-")
         and guide.get("orientation") == "vertical"
+        and is_unrotated_guide(guide)
     ]
     if len(entries) != 1:
         return 0.0

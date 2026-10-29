@@ -11,6 +11,14 @@ GuidePosition = tuple[GuideAxis, float]
 MAX_DIVISIONS = 1000
 
 
+def is_unrotated_guide(guide: Mapping[str, Any]) -> bool:
+    try:
+        angle = float(guide.get("rotation", 0))
+        return isfinite(angle) and angle % 360 == 0
+    except (TypeError, ValueError):
+        return False
+
+
 def guide_role_edges(
     guides: Sequence[Mapping[str, Any]], role: str, orientation: GuideAxis
 ) -> tuple[float, float]:
@@ -22,6 +30,7 @@ def guide_role_edges(
         if (
             str(guide.get("id", "")).startswith(f"tpl-{role}-")
             and guide.get("orientation") == orientation
+            and is_unrotated_guide(guide)
         ):
             try:
                 value = float(guide["position"])

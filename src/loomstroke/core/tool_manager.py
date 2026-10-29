@@ -9,10 +9,12 @@ from typing import Any, cast
 
 from PySide6.QtCore import QObject, Signal
 
+from loomstroke.core.brush_size_key_stepper import ACCELERATION_SETTING_KEY, BrushSizeKeyStepper
 from loomstroke.core.commands import Command, CutSelectionCommand
 from loomstroke.core.event_bus import EventBus
 from loomstroke.core.events import Events
 from loomstroke.core.task_registry import ToolTaskRegistry
+from loomstroke.core.tool_manager_size_keys import SIZE_KEY_DIRECTIONS, step_active_tool_size
 from loomstroke.core.tool_registry import ToolRegistry, ToolState
 from loomstroke.core.tool_session_manager import ToolSession, ToolSessionManager
 from loomstroke.host_api import HostAPI, StrokePoint
@@ -69,6 +71,7 @@ class ToolManager(QObject):
         # Input state
         self._modifier_state = {"shift": False, "ctrl": False, "alt": False}
         self._tool_can_undo = False
+        self._size_key_stepper = BrushSizeKeyStepper()
 
         # Connect to event bus if provided
         if self.event_bus:
@@ -99,6 +102,15 @@ class ToolManager(QObject):
     @property
     def _pending_commands(self) -> list[Command]:
         return self._sessions.pending_commands
+
+    def set_size_key_acceleration(self, level: object) -> None:
+        """Set the ``[`` / ``]`` size key acceleration level (input setting)."""
+        self._size_key_stepper.set_level(level)
+
+    def apply_input_setting(self, key: str, value: object) -> None:
+        """Slot for settings changes that affect tool input handling."""
+        if key == ACCELERATION_SETTING_KEY:
+            self.set_size_key_acceleration(value)
 
     def update_modifier_state(self, modifiers: Mapping[str, bool]) -> None:
         """Update modifier state (connected to canvas input handler)."""
@@ -431,6 +443,8 @@ class ToolManager(QObject):
             self.deactivate_tool()
         restore(canvas, area_selection)
 
+        self._size_key_stepper.reset()
+
         # Get tool state
         state = self._registry.activate_tool(tool_id)
 
@@ -678,7 +692,9 @@ class ToolManager(QObject):
             self._modifier_state[key] = pressed
 
         # Dispatch to tool
-        self._active_tool.on_key(key, pressed)
+        handled = self._active_tool.on_key(key, pressed)
+        if pressed and not handled and key in SIZE_KEY_DIRECTIONS and not self._stroke_active():
+            step_active_tool_size(self, key)
 
         # Collect commands that may be queued from key handling.
         self._collect_commands()

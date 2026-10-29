@@ -15,11 +15,11 @@ from PySide6.QtGui import (
     QPalette,
     QPen,
 )
-from PySide6.QtWidgets import QDialog, QWidget
+from PySide6.QtWidgets import QWidget
 
+from ..dialogs.guide_editor_window import show_guide_editor
 from ..dialogs.guide_layout_dialog import GuideLayoutDialog
 from .guide_controller import GuideController
-from .guide_dialog_preview import close_guide_preview, preview_page_matches
 from .guide_models import GuideOrientation, RulerUnit
 
 
@@ -133,13 +133,15 @@ class RulerWidget(QWidget):
             parent=self,
         )
         dialog.replace.setEnabled(not self._guide_controller.guides_locked)
-        try:
-            if dialog.exec() == QDialog.DialogCode.Accepted and preview_page_matches(dialog):
-                self._guide_controller.apply_guides(
-                    dialog.guide_positions(), replace=dialog.replace.isChecked()
-                )
-        finally:
-            close_guide_preview(dialog)
+
+        def commit():
+            self._guide_controller.apply_guides(
+                dialog.guide_positions(),
+                replace=dialog.replace.isChecked(),
+                **dialog.placement_options(),
+            )
+
+        show_guide_editor(dialog, self._canvas, commit)
         event.accept()
 
     def mousePressEvent(self, event: QMouseEvent) -> None:

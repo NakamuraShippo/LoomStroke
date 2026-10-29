@@ -63,6 +63,7 @@ def _guide_snap(
     h: float,
     sx: float,
     sy: float,
+    targets: list[tuple[str, float | str]] | None = None,
 ) -> tuple[float, float]:
     """Apply guide snap checking all edges, returning adjusted *(sx, sy)*.
 
@@ -75,20 +76,27 @@ def _guide_snap(
     gx, gy, gx_hit, gy_hit = snap_fn(x, y)
     best_dx: float | None = (gx - x) if gx_hit else None
     best_dy: float | None = (gy - y) if gy_hit else None
+    target_x, target_y = gx, gy
     if w > 0 or h > 0:
         gx2, gy2, gx2_hit, gy2_hit = snap_fn(x + w, y + h)
         if gx2_hit:
             dx2 = gx2 - (x + w)
             if best_dx is None or abs(dx2) < abs(best_dx):
                 best_dx = dx2
+                target_x = gx2
         if gy2_hit:
             dy2 = gy2 - (y + h)
             if best_dy is None or abs(dy2) < abs(best_dy):
                 best_dy = dy2
+                target_y = gy2
     if best_dx is not None:
         sx = x + best_dx
+        if targets is not None:
+            targets.append(("vertical", target_x))
     if best_dy is not None:
         sy = y + best_dy
+        if targets is not None:
+            targets.append(("horizontal", target_y))
     return sx, sy
 
 
@@ -141,9 +149,19 @@ def snap_position(
 
     # --- Guide snap (all edges, closest wins) ---
     gc = get_guide_controller(host_api)
+    targets: list[tuple[str, float | str]] = []
     if gc is not None:
-        sx, sy = _guide_snap(gc, x, y, w, h, sx, sy)
+        sx, sy = _guide_snap(gc, x, y, w, h, sx, sy, targets)
+        rotated = getattr(gc, "snap_rotated_position", None)
+        if callable(rotated):
+            rx, ry, guide_id = rotated(x, y, w, h)
+            if guide_id is not None and (
+                (sx, sy) == (x, y) or (rx - x) ** 2 + (ry - y) ** 2 < (sx - x) ** 2 + (sy - y) ** 2
+            ):
+                sx, sy = rx, ry
+                targets[:] = [("id", guide_id)]
 
+    composition_target = None
     composition = getattr(_canvas_widget(host_api), "_composition_interaction", None)
     if composition is not None:
         cx, cy, hit = composition.snap_position(x, y, w, h)
@@ -151,5 +169,11 @@ def snap_position(
             (sx, sy) == (x, y) or (cx - x) ** 2 + (cy - y) ** 2 < (sx - x) ** 2 + (sy - y) ** 2
         ):
             sx, sy = cx, cy
+            targets.clear()
+            composition_target = getattr(composition, "last_snap_target", None)
+
+    feedback = getattr(_canvas_widget(host_api), "_guide_snap_feedback", None)
+    if feedback is not None:
+        feedback.set_targets(tuple(targets), composition_target)
 
     return sx, sy

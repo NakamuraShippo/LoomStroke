@@ -133,6 +133,33 @@ class MouseBindingHelper:
                     ),
                 ],
             },
+            {
+                "action_id": "input.brush_size_key_acceleration",
+                "label": cast(
+                    str,
+                    QT_TRANSLATE_NOOP("ShortcutsPage", "Keyboard: Brush size acceleration"),
+                ),
+                "description": cast(
+                    str,
+                    QT_TRANSLATE_NOOP(
+                        "ShortcutsPage",
+                        "How much repeated [ / ] presses speed up brush size changes.",
+                    ),
+                ),
+                "category": cast(
+                    str,
+                    QT_TRANSLATE_NOOP("ShortcutsPage", "Keyboard Operations"),
+                ),
+                "owner": cast(str, QT_TRANSLATE_NOOP("ShortcutsPage", "LoomStroke Core")),
+                "setting_key": "input/brush_size_key_acceleration",
+                "default": "standard",
+                "options": [
+                    (cast(str, QT_TRANSLATE_NOOP("ShortcutsPage", "Off")), "none"),
+                    (cast(str, QT_TRANSLATE_NOOP("ShortcutsPage", "Weak")), "weak"),
+                    (cast(str, QT_TRANSLATE_NOOP("ShortcutsPage", "Standard")), "standard"),
+                    (cast(str, QT_TRANSLATE_NOOP("ShortcutsPage", "Strong")), "strong"),
+                ],
+            },
         ]
 
     def definition(self, action_id: str) -> dict[str, Any] | None:

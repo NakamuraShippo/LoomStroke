@@ -3,6 +3,7 @@
 from __future__ import annotations
 
 import logging
+import math
 from collections.abc import Callable, Iterable, Sequence
 from dataclasses import dataclass
 from typing import Any, Literal, cast
@@ -15,8 +16,10 @@ from ...core.events import Events
 from ...core.guide_layout_geometry import GuidePosition, canvas_snap_positions, numeric_guide
 from ...host_api import HostAPI
 from ...platform.settings_manager import SettingsManager
+from .guide_canvas_bridge import update_guide_overlay
 from .guide_models import Guide, GuideOrientation, RulerState
 from .guide_position_overlay import draw_guide_position
+from .rotated_guides import projected_axis, segment, snap_rotated, stored_transform
 
 logger = logging.getLogger(__name__)
 
@@ -87,17 +90,35 @@ class GuideController:
         self._reset_drag_state()
         self._load_active_page_state()
 
-    def apply_guides(self, positions: Iterable[GuidePosition], *, replace: bool = False) -> None:
+    def apply_guides(
+        self,
+        positions: Iterable[GuidePosition],
+        *,
+        replace: bool = False,
+        rotation: float = 0,
+        pivot: tuple | None = None,
+    ) -> None:
         """Apply validated canvas-space guides through the existing page-state writer."""
         if replace and self.guides_locked:
             raise ValueError("Guides are locked")
+        if not math.isfinite(rotation) or (
+            pivot is not None and (len(pivot) != 2 or not all(math.isfinite(v) for v in pivot))
+        ):
+            raise ValueError("Invalid guide rotation")
+        pivot = tuple(pivot) if pivot is not None else None
         width, height, dpi = self._active_canvas_spec()
         validated = [
             numeric_guide(axis, value, unit="px", dpi=dpi, size=(width, height))
             for axis, value in positions
         ]
         additions = [
-            Guide(id=self._new_guide_id(), orientation=axis, position=value)
+            Guide(
+                id=self._new_guide_id(),
+                orientation=axis,
+                position=value,
+                rotation=rotation % 360,
+                pivot=pivot,
+            )
             for axis, value in validated
         ]
         self._reset_drag_state()
@@ -153,6 +174,7 @@ class GuideController:
         self._drag_preview_pos = snap.value
         self._snap_active = snap.snapped
         self._snap_position = snap.value if snap.snapped else None
+        self._show_snap_feedback(snap)
         self._request_update()
 
     def end_ruler_drag(self, canvas_pos: QPointF) -> None:
@@ -199,12 +221,22 @@ class GuideController:
     def handle_mouse_move(self, event: QMouseEvent, canvas_pos: QPointF) -> bool:
         if not self._dragging or self._drag_orientation is None:
             return False
-        value = self._axis_value(self._drag_orientation, canvas_pos)
+        dragged = self._guide_by_id(self._drag_guide_id)
+        value = (
+            projected_axis(dragged, canvas_pos, self._active_canvas_spec()[:2])
+            if dragged is not None and dragged.rotation % 360
+            else self._axis_value(self._drag_orientation, canvas_pos)
+        )
         self._drag_pointer_pos = canvas_pos
-        snap = self._snap_value(value, self._drag_orientation, exclude_id=self._drag_guide_id)
+        snap = (
+            SnapResult(value, False)
+            if dragged is not None and dragged.rotation % 360
+            else self._snap_value(value, self._drag_orientation, exclude_id=self._drag_guide_id)
+        )
         new_value = snap.value
         self._snap_active = snap.snapped
         self._snap_position = snap.value if snap.snapped else None
+        self._show_snap_feedback(snap)
         if self._is_inside_canvas(canvas_pos):
             self._drag_last_inside_pos = new_value
         if self._drag_new_guide:
@@ -331,7 +363,11 @@ class GuideController:
         width: int,
         height: int,
     ) -> None:
-        if guide.orientation == "horizontal":
+        if guide.rotation % 360:
+            line = segment(guide, (width, height))
+            if line is not None:
+                painter.drawLine(QPointF(*line[0]), QPointF(*line[1]))
+        elif guide.orientation == "horizontal":
             painter.drawLine(QPointF(0.0, guide.position), QPointF(float(width), guide.position))
         else:
             painter.drawLine(QPointF(guide.position, 0.0), QPointF(guide.position, float(height)))
@@ -358,7 +394,12 @@ class GuideController:
         threshold = self._screen_to_canvas_distance(self._hit_slop_px)
         best: tuple[float, Guide] | None = None
         for guide in self._guides:
-            dist = abs(self._axis_value(guide.orientation, canvas_pos) - guide.position)
+            value = (
+                projected_axis(guide, canvas_pos, self._active_canvas_spec()[:2])
+                if guide.rotation % 360
+                else self._axis_value(guide.orientation, canvas_pos)
+            )
+            dist = abs(value - guide.position)
             if dist <= threshold and (best is None or dist < best[0]):
                 best = (dist, guide)
         return best[1] if best else None
@@ -384,6 +425,8 @@ class GuideController:
         else:
             candidates.extend([pt[0] for pt in self._extra_snap_points])
         for guide in self._guides:
+            if guide.rotation % 360:
+                continue
             if exclude_id is not None and guide.id == exclude_id:
                 continue
             if guide.orientation == orientation:
@@ -409,6 +452,9 @@ class GuideController:
         rx = self._snap_value(x, "vertical", exclude_id=None)
         ry = self._snap_value(y, "horizontal", exclude_id=None)
         return rx.value, ry.value, rx.snapped, ry.snapped
+
+    def snap_rotated_position(self, x, y, w=0, h=0):
+        return snap_rotated(self, x, y, w, h)
 
     def _screen_to_canvas_distance(self, pixels: float) -> float:
         viewport = getattr(self._canvas, "viewport", None)
@@ -468,6 +514,9 @@ class GuideController:
         self._persist_view_state()
 
     def _reset_drag_state(self) -> None:
+        feedback = getattr(self._canvas, "_guide_snap_feedback", None)
+        if feedback is not None:
+            feedback.clear()
         self._dragging = False
         self._drag_pointer_pos = None
         self._drag_guide_id = None
@@ -479,10 +528,15 @@ class GuideController:
         self._snap_active = False
         self._snap_position = None
 
+    def _show_snap_feedback(self, snap: SnapResult) -> None:
+        feedback = getattr(self._canvas, "_guide_snap_feedback", None)
+        if feedback is not None:
+            feedback.set_targets(((self._drag_orientation, snap.value),) if snap.snapped else ())
+
     def _request_update(self) -> None:
         update = getattr(self._canvas, "update", None)
         if callable(update):
-            update()
+            update_guide_overlay(self._canvas)
         if self._ruler_update_cb is not None:
             self._ruler_update_cb()
 
@@ -527,11 +581,22 @@ class GuideController:
                         continue
                     try:
                         pos_val = float(cast(float, position))
+                        if not math.isfinite(pos_val):
+                            continue
                     except (TypeError, ValueError):
                         continue
                     if not isinstance(gid, str) or not gid:
                         gid = self._new_guide_id()
-                    self._guides.append(Guide(id=gid, orientation=orientation, position=pos_val))
+                    rotation, pivot = stored_transform(entry)
+                    self._guides.append(
+                        Guide(
+                            id=gid,
+                            orientation=orientation,
+                            position=pos_val,
+                            rotation=rotation % 360,
+                            pivot=pivot,
+                        )
+                    )
         self._request_update()
 
     def _persist_view_state(self) -> None:
@@ -555,6 +620,14 @@ class GuideController:
                     "id": guide.id,
                     "orientation": guide.orientation,
                     "position": float(guide.position),
+                    **(
+                        {
+                            "rotation": guide.rotation,
+                            "pivot": list(guide.pivot) if guide.pivot else None,
+                        }
+                        if guide.rotation % 360
+                        else {}
+                    ),
                 }
                 for guide in self._guides
             ],

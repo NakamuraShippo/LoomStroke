@@ -9,14 +9,18 @@ from typing import Any
 from PySide6.QtCore import QPointF, QRectF, Qt
 from PySide6.QtGui import QColor, QPainter, QPen
 
-from ...core.composition_geometry import KINDS, composition_lines, reference_rect
+from ...core.composition_geometry import KINDS, composition_lines
+from ...core.guide_transform import transform_lines
+from .guide_reference import guide_reference_rect
 
 
 @lru_cache(maxsize=128)
-def _lines(rect: tuple, kind: str, percent: float, offset: tuple) -> tuple:
-    return tuple(
-        tuple((x + offset[0], y + offset[1]) for x, y in line)
-        for line in composition_lines(rect, (kind,), percent)
+def _lines(rect: tuple, kind: str, percent: float, offset: tuple, angle: float = 0) -> tuple:
+    return transform_lines(
+        composition_lines(rect, (kind,), percent),
+        (rect[0] + rect[2] / 2, rect[1] + rect[3] / 2),
+        angle,
+        offset,
     )
 
 
@@ -36,33 +40,18 @@ def composition_groups(widget: Any, *, preview: bool = False) -> dict[str, tuple
     kinds = read("view/composition_overlay_kinds", [])
     if not isinstance(kinds, (list, tuple)) or not kinds:
         return {}
-    pages = getattr(host, "pages", None)
-    guides = []
     reference = read("view/composition_overlay_reference", "canvas")
-    if pages is not None and reference == "trim":
-        view = pages.get_page_view_state(pages.get_active_page_id())
-        guides = view.get("guides", []) if isinstance(view, dict) else []
-    if not isinstance(guides, (list, tuple)):
-        guides = []
-    bounds = getattr(getattr(host, "canvas", None), "_selection_bounds", None)
-    selection = (
-        None
-        if bounds is None or bounds.isEmpty()
-        else (bounds.x(), bounds.y(), bounds.width(), bounds.height())
-    )
-    rect = reference_rect(
-        (widget.state.width, widget.state.height),
-        reference,
-        guides=(g for g in guides if isinstance(g, dict)),
-        selection=selection,
-    )
+    rect = guide_reference_rect(widget, reference)
     if rect is None:
         return {}
     try:
         percent = float(read("view/composition_overlay_safe_percent", 10.0))
+        angle = float(read("view/composition_overlay_rotation", 0.0))
+        if not math.isfinite(angle):
+            raise ValueError("Non-finite rotation")
     except (TypeError, ValueError):
         return {}
-    offsets = settings.get("view/composition_overlay_offsets", {})
+    offsets = read("view/composition_overlay_offsets", {})
     offsets = offsets if isinstance(offsets, dict) else {}
     interaction = getattr(widget, "_composition_interaction", None)
     groups = {}
@@ -78,7 +67,7 @@ def composition_groups(widget: Any, *, preview: bool = False) -> dict[str, tuple
             dx, dy = 0.0, 0.0
         if interaction is not None:
             dx, dy = interaction.preview_offset(kind, (dx, dy))
-        groups[kind] = _lines(tuple(rect), kind, percent, (dx, dy))
+        groups[kind] = _lines(tuple(rect), kind, percent, (dx, dy), angle)
     return groups
 
 

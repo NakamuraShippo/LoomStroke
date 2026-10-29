@@ -24,7 +24,9 @@ from ...core.guide_layout_geometry import (
     unit_to_pixels,
 )
 from ..canvas.guide_dialog_preview import attach_guide_preview
+from ..canvas.guide_reference import guide_reference_rect
 from ..translations import translate_with_fallback
+from .guide_placement_controls import GuidePlacementControls
 
 
 class GuideLayoutDialog(QDialog):
@@ -41,6 +43,7 @@ class GuideLayoutDialog(QDialog):
     ) -> None:
         super().__init__(parent)
         self._size, self._dpi, self._origin = size, dpi, origin
+        self._canvas = getattr(parent, "_canvas", None) or getattr(parent, "canvas", None)
         self._labels: list[tuple[QLabel, str]] = []
         self._checks: list[tuple[QCheckBox, str]] = []
         form = QFormLayout(self)
@@ -75,7 +78,17 @@ class GuideLayoutDialog(QDialog):
         self.center_vertical = self._check(form, "Vertical center")
         self.center_horizontal = self._check(form, "Horizontal center")
         self.replace = self._check(form, "Replace existing guides")
+        self.reference = QComboBox(self)
+        for label, value in (
+            ("Canvas", "canvas"),
+            ("Selection", "selection"),
+            ("Selected object", "object"),
+        ):
+            self.reference.addItem(label, value)
+        self._row(form, "Reference area", self.reference)
+        self.placement = GuidePlacementControls(form, self)
         self.error = QLabel(self)
+        self._error_source = ""
         form.addRow(self.error)
         self.buttons = QDialogButtonBox(
             QDialogButtonBox.StandardButton.Ok | QDialogButtonBox.StandardButton.Cancel, self
@@ -127,7 +140,42 @@ class GuideLayoutDialog(QDialog):
             self.center_horizontal.setEnabled(False)
         self.error.clear()
 
+    def _reference_rect(self):
+        if self._canvas is None:
+            return (0, 0, *self._size)
+        rect = guide_reference_rect(self._canvas, self.reference.currentData())
+        if rect is None:
+            raise ValueError("No reference frame")
+        return rect
+
+    def placement_options(self):
+        rect = self._reference_rect()
+        dx, dy = self.placement.offset()
+        angle = self.placement.angle.value()
+        return (
+            {}
+            if not angle
+            else {
+                "rotation": angle,
+                "pivot": (rect[0] + rect[2] / 2 + dx, rect[1] + rect[3] / 2 + dy),
+            }
+        )
+
     def guide_positions(self) -> list[GuidePosition]:
+        rect = self._reference_rect()
+        positions = self._local_positions((rect[2], rect[3]))
+        dx, dy = self.placement.offset()
+        positions = [
+            (axis, position + (rect[0] + dx if axis == "vertical" else rect[1] + dy))
+            for axis, position in positions
+        ]
+        # Keep legacy coordinate validation before any persistent write.
+        return [
+            numeric_guide(axis, position, unit="px", dpi=self._dpi, size=self._size)
+            for axis, position in positions
+        ]
+
+    def _local_positions(self, size) -> list[GuidePosition]:
         unit = self.unit.currentData()
         if self.mode.currentData() == "single":
             return [
@@ -136,8 +184,8 @@ class GuideLayoutDialog(QDialog):
                     self.position.value(),
                     unit=unit,
                     dpi=self._dpi,
-                    size=self._size,
-                    origin=self._origin,
+                    size=size,
+                    origin=self._origin if self.reference.currentData() == "canvas" else (0, 0),
                 )
             ]
         margins = None
@@ -148,7 +196,7 @@ class GuideLayoutDialog(QDialog):
             )
         if self.mode.currentData() == "modular":
             return modular_guides(
-                self._size,
+                size,
                 columns=self.columns.value(),
                 rows=self.rows.value(),
                 margins=margins or (0.0, 0.0, 0.0, 0.0),
@@ -156,7 +204,7 @@ class GuideLayoutDialog(QDialog):
                 row_gutter=unit_to_pixels(self.row_gutter.value(), unit, self._dpi[1]),
             )
         return batch_guides(
-            self._size,
+            size,
             columns=self.columns.value(),
             rows=self.rows.value(),
             margins=margins,
@@ -165,10 +213,26 @@ class GuideLayoutDialog(QDialog):
         )
 
     def accept(self) -> None:
+        controller = getattr(self._canvas, "_guide_controller", None)
+        if (
+            controller is not None
+            and getattr(controller, "guides_locked", False)
+            and self.replace.isChecked()
+        ):
+            self._error_source = "Unlock guides before replacing them."
+            self.error.setText(self._ts(self._error_source))
+            return
+        try:
+            self._reference_rect()
+        except ValueError:
+            self._error_source = "The reference area is unavailable."
+            self.error.setText(self._ts(self._error_source))
+            return
         try:
             self.guide_positions()
         except ValueError:
-            self.error.setText(self._ts("Guides must be inside the canvas with valid margins."))
+            self._error_source = "Guides must be inside the canvas with valid margins."
+            self.error.setText(self._ts(self._error_source))
             return
         super().accept()
 
@@ -178,6 +242,9 @@ class GuideLayoutDialog(QDialog):
 
     def _retranslate(self) -> None:
         self.setWindowTitle(self._ts("Create Guides"))
+        for index, source in enumerate(("Canvas", "Selection", "Selected object")):
+            self.reference.setItemText(index, self._ts(source))
+        self.placement.retranslate()
         for label, source in self._labels:
             label.setText(self._ts(source))
         for check, source in self._checks:
@@ -189,7 +256,11 @@ class GuideLayoutDialog(QDialog):
             for i, source in enumerate(sources):
                 combo.setItemText(i, self._ts(source))
         if self.error.text():
-            self.error.setText(self._ts("Guides must be inside the canvas with valid margins."))
+            self.error.setText(
+                self._ts(
+                    self._error_source or "Guides must be inside the canvas with valid margins."
+                )
+            )
 
     def changeEvent(self, event: QEvent) -> None:
         super().changeEvent(event)

@@ -175,6 +175,7 @@ DEFAULT_SETTINGS: dict[str, SettingsValue] = {
     "view/composition_overlay_reference": "canvas",
     "view/composition_overlay_safe_percent": 10.0,
     "view/composition_overlay_offsets": {},
+    "view/composition_overlay_rotation": 0.0,
     "view/ruler_unit": "px",
     "view/ruler_thickness_px": 18,
     "view/guides_color": "#00B7FF",
@@ -193,6 +194,7 @@ DEFAULT_SETTINGS: dict[str, SettingsValue] = {
     # Input settings
     "input/pan_gesture": "space_left",
     "input/context_menu_gesture": "right_click",
+    "input/brush_size_key_acceleration": "standard",
     # StartPage settings
     "plugins/ui_startpage/last_canvas": {
         "width_px": 832,

@@ -7,6 +7,8 @@ from collections.abc import Iterable, Mapping
 from itertools import pairwise
 from typing import Any
 
+from .guide_layout_geometry import is_unrotated_guide
+
 Rect = tuple[float, float, float, float]
 Line = tuple[tuple[float, float], tuple[float, float]]
 KINDS = ("thirds", "golden", "spiral", "diagonals", "center", "safe")
@@ -29,7 +31,11 @@ def reference_rect(
     axes: dict[str, list[float]] = {"horizontal": [], "vertical": []}
     for guide in guides:
         axis = guide.get("orientation")
-        if str(guide.get("id", "")).startswith("tpl-trim-") and axis in axes:
+        if (
+            str(guide.get("id", "")).startswith("tpl-trim-")
+            and axis in axes
+            and is_unrotated_guide(guide)
+        ):
             try:
                 value = float(guide["position"])
             except (TypeError, ValueError, KeyError):

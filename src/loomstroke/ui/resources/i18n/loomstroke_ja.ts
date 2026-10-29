@@ -3873,6 +3873,13 @@ Type: {type}</source>
         <source>Showing {shown} of {total}</source>
         <translation>{total} 件中 {shown} 件を表示</translation>
     </message>
+    <message><source>Keyboard Operations</source><translation>キーボード操作</translation></message>
+    <message><source>Keyboard: Brush size acceleration</source><translation>キーボード: ブラシサイズ変更の加速</translation></message>
+    <message><source>How much repeated [ / ] presses speed up brush size changes.</source><translation>[ / ] を連続で押したときに、ブラシサイズの変化をどれだけ速めるかを選択します。</translation></message>
+    <message><source>Off</source><translation>オフ</translation></message>
+    <message><source>Weak</source><translation>弱</translation></message>
+    <message><source>Standard</source><translation>標準</translation></message>
+    <message><source>Strong</source><translation>強</translation></message>
 
 </context>
 <context>
@@ -8600,6 +8607,30 @@ Use "Edit Filters" to add.</source>
     <message><source>Vertical</source><translation>垂直</translation></message>
     <message><source>Horizontal</source><translation>水平</translation></message>
     <message><source>Guides must be inside the canvas with valid margins.</source><translation>ガイドをキャンバス内に配置し、マージンを正しく指定してください。</translation></message>
+    <message>
+        <source>Canvas</source>
+        <translation>キャンバス</translation>
+    </message>
+    <message>
+        <source>Selection</source>
+        <translation>選択範囲</translation>
+    </message>
+    <message>
+        <source>Selected object</source>
+        <translation>選択オブジェクト</translation>
+    </message>
+    <message>
+        <source>Reference area</source>
+        <translation>基準範囲</translation>
+    </message>
+    <message>
+        <source>Unlock guides before replacing them.</source>
+        <translation>ガイドのロックを解除してから置換してください。</translation>
+    </message>
+    <message>
+        <source>The reference area is unavailable.</source>
+        <translation>基準となる範囲がありません。</translation>
+    </message>
 </context>
 <context>
     <name>CompositionGuidesDialog</name>
@@ -8615,6 +8646,10 @@ Use "Edit Filters" to add.</source>
     <message><source>Selection</source><translation>選択範囲</translation></message>
     <message><source>Reference area</source><translation>基準範囲</translation></message>
     <message><source>Safe area margin</source><translation>セーフエリアの余白</translation></message>
+    <message>
+        <source>Selected object</source>
+        <translation>選択オブジェクト</translation>
+    </message>
 </context>
 <context>
     <name>MainWindow</name>
@@ -8912,5 +8947,28 @@ Use "Edit Filters" to add.</source>
     <message><source>Right</source><translation>右</translation></message>
     <message><source>Top</source><translation>上</translation></message>
     <message><source>Bottom</source><translation>下</translation></message>
+</context>
+<context>
+    <name>GuidePlacement</name>
+    <message>
+        <source>Rotation</source>
+        <translation>回転</translation>
+    </message>
+    <message>
+        <source>Offset X</source>
+        <translation>位置の差 X</translation>
+    </message>
+    <message>
+        <source>Offset Y</source>
+        <translation>位置の差 Y</translation>
+    </message>
+    <message>
+        <source>Drag guides to move them; Shift-drag to rotate.</source>
+        <translation>ガイドをドラッグすると移動、Shiftを押しながらドラッグすると回転します。</translation>
+    </message>
+    <message>
+        <source>Select an object or choose another reference area.</source>
+        <translation>オブジェクトを選択するか、別の基準範囲を選んでください。</translation>
+    </message>
 </context>
 </TS>

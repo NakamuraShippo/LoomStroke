@@ -4,7 +4,7 @@ from __future__ import annotations
 
 from typing import Any
 
-from PySide6.QtCore import QEvent
+from PySide6.QtCore import QEvent, Qt
 from PySide6.QtWidgets import (
     QCheckBox,
     QComboBox,
@@ -148,15 +148,42 @@ class LayoutGridDialog(QDialog):
             self._retranslate()
 
 
-def open_layout_grid(window: Any) -> None:
+def open_layout_grid(window: Any) -> LayoutGridDialog:
+    previous = getattr(window, "_layout_grid_editor", None)
+    if previous is not None:
+        previous.raise_()
+        previous.activateWindow()
+        return previous
     dialog = LayoutGridDialog(window._settings, window)
-    if dialog.exec() != QDialog.DialogCode.Accepted:
-        return
-    values = dialog.values()
-    for key, value in values.items():
-        window._settings.set(key, value)
-    canvas = getattr(window, "canvas", None)
-    if canvas is not None:
-        canvas.state.grid_visible = values["view/grid_visible"]
-        canvas.set_grid_size(values["view/grid_size"])
-        canvas.update()
+    window._layout_grid_editor = dialog
+    dialog.setWindowModality(Qt.WindowModality.NonModal)
+    dialog.setAttribute(Qt.WidgetAttribute.WA_DeleteOnClose)
+
+    def clear_editor(*_args):
+        if getattr(window, "_layout_grid_editor", None) is dialog:
+            window._layout_grid_editor = None
+
+    def finished(code):
+        try:
+            if code != QDialog.DialogCode.Accepted:
+                return
+            values = dialog.values()
+            for key, value in values.items():
+                window._settings.set(key, value)
+            canvas = getattr(window, "canvas", None)
+            if canvas is not None:
+                canvas.state.grid_visible = values["view/grid_visible"]
+                canvas.set_grid_size(values["view/grid_size"])
+                canvas.update()
+        finally:
+            clear_editor()
+
+    dialog.finished.connect(finished)
+    dialog.destroyed.connect(clear_editor)
+    try:
+        dialog.show()
+    except Exception:
+        clear_editor()
+        dialog.deleteLater()
+        raise
+    return dialog

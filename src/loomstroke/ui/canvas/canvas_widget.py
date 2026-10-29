@@ -41,6 +41,8 @@ from .composition_interaction import CompositionInteraction
 from .composition_overlay import draw_composition_overlay
 from .guide_controller import GuideController
 from .guide_dialog_preview import draw_layout_guide_preview
+from .guide_preview_interaction import route_guide_preview
+from .guide_snap_feedback import GuideSnapFeedback
 from .input_handler import InputHandler
 from .layout_grid_overlay import draw_layout_grid
 from .projection_state import ProjectionStateTracker
@@ -189,6 +191,7 @@ class CanvasWidget(_CanvasWidgetBase):
         # Guide/ruler support
         self._guide_controller: GuideController | None = None
         self._composition_interaction = CompositionInteraction(self)
+        self._guide_snap_feedback = GuideSnapFeedback(self)
 
         # Context toolbar manager (set by MainWindow)
         self._context_toolbar_manager: Any = None
@@ -986,6 +989,7 @@ class CanvasWidget(_CanvasWidgetBase):
         if self._temp_buffer and self._is_drawing and self._show_stroke_preview:
             painter.drawPixmap(0, 0, self._temp_buffer)
         draw_trim_preview(painter, self)
+        self._guide_snap_feedback.draw(painter)
         self._draw_marching_ants(painter)
         self._draw_vector_selection_overlay(painter)
         if self._canvas_agent_overlay_fn is not None:
@@ -1324,6 +1328,17 @@ class CanvasWidget(_CanvasWidgetBase):
 
     def mousePressEvent(self, event: QMouseEvent) -> None:
         """Handle mouse press."""
+        self._guide_snap_feedback.clear()
+        if event.button() == Qt.LeftButton and not self._input_handler_intercepts(event):
+            pos = event.position()
+            if route_guide_preview(
+                self,
+                "press",
+                QPointF(*self.viewport.widget_to_canvas(pos.x(), pos.y())),
+                bool(event.modifiers() & Qt.ShiftModifier),
+            ):
+                event.accept()
+                return
         if not self._input_handler_intercepts(
             event
         ) and self._three_d_interaction.handle_mouse_press(event):
@@ -1354,6 +1369,16 @@ class CanvasWidget(_CanvasWidgetBase):
 
     def mouseMoveEvent(self, event: QMouseEvent) -> None:
         """Handle mouse move."""
+        if not self._input_handler_intercepts(event):
+            pos = event.position()
+            if route_guide_preview(
+                self,
+                "move",
+                QPointF(*self.viewport.widget_to_canvas(pos.x(), pos.y())),
+                bool(event.modifiers() & Qt.ShiftModifier),
+            ):
+                event.accept()
+                return
         if self._three_d_interaction.handle_mouse_move(event):
             return
         if (
@@ -1381,6 +1406,16 @@ class CanvasWidget(_CanvasWidgetBase):
 
     def mouseReleaseEvent(self, event: QMouseEvent) -> None:
         """Handle mouse release."""
+        if event.button() == Qt.LeftButton and not self._input_handler_intercepts(event):
+            pos = event.position()
+            if route_guide_preview(
+                self,
+                "release",
+                QPointF(*self.viewport.widget_to_canvas(pos.x(), pos.y())),
+                bool(event.modifiers() & Qt.ShiftModifier),
+            ):
+                event.accept()
+                return
         if self._three_d_interaction.handle_mouse_release(event):
             return
         if (
@@ -1496,12 +1531,35 @@ class CanvasWidget(_CanvasWidgetBase):
 
     def tabletEvent(self, event: QTabletEvent) -> None:
         """Handle tablet event."""
+        phase = {
+            QEvent.TabletPress: "press",
+            QEvent.TabletMove: "move",
+            QEvent.TabletRelease: "release",
+        }.get(getattr(event, "type", lambda: None)())
+        if phase is not None:
+            pos = event.position()
+            if route_guide_preview(
+                self,
+                phase,
+                QPointF(*self.viewport.widget_to_canvas(pos.x(), pos.y())),
+                bool(event.modifiers() & Qt.ShiftModifier),
+            ):
+                event.accept()
+                return
         self.input_handler.handle_tablet_event(event)
 
     def keyPressEvent(self, event: QKeyEvent) -> None:
         """Handle key press."""
+        if event.key() == Qt.Key.Key_Escape:
+            self._guide_snap_feedback.clear()
         # Pass to input handler first for modifier tracking
         self.input_handler.handle_key_press(event)
+        editor = getattr(self, "_guide_editor", None)
+        if editor is not None:
+            if event.key() == Qt.Key.Key_Escape:
+                editor.reject()
+            event.accept()
+            return
         if event.key() == Qt.Key.Key_Space:
             return
 
@@ -1608,6 +1666,15 @@ class CanvasWidget(_CanvasWidgetBase):
 
             # Emit signal for tool
             self.stroke_ended.emit(point)
+        self._guide_snap_feedback.clear()
+
+    def leaveEvent(self, event: QEvent) -> None:
+        self._guide_snap_feedback.clear()
+        super().leaveEvent(event)
+
+    def focusOutEvent(self, event: Any) -> None:
+        self._guide_snap_feedback.clear()
+        super().focusOutEvent(event)
 
     def _on_pointer_hover(self, point: StrokePoint) -> None:
         """Handle pointer hover from input handler."""

@@ -18,6 +18,8 @@ class Guide:
     id: str
     orientation: GuideOrientation
     position: float  # Canvas coordinate (x for vertical, y for horizontal)
+    rotation: float = 0.0
+    pivot: tuple[float, float] | None = None
 
 
 @dataclass(slots=True)

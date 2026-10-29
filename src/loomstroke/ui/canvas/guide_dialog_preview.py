@@ -10,15 +10,21 @@ from PySide6.QtGui import QColor, QPainter, QPen
 from PySide6.QtWidgets import QCheckBox, QComboBox, QDoubleSpinBox, QSpinBox
 from shiboken6 import isValid
 
+from ...core.guide_transform import guide_line
+from .guide_canvas_bridge import guide_canvas, update_guide_overlay
+from .guide_preview_interaction import GuidePreviewDrag
+
 
 class GuideDialogPreview:
     def __init__(self, dialog: Any, canvas: Any, kind: str, read: Callable) -> None:
-        self.canvas = canvas
+        self.canvas = canvas = guide_canvas(canvas)
         self.attribute = f"_{kind}_dialog_preview"
         self.previous = getattr(canvas, self.attribute, None)
         self.read = read
         self.values: Any = None
         self.closed = False
+        self.dialog = dialog
+        self.drag = GuidePreviewDrag(self, dialog)
         self.page = self._page()
         setattr(canvas, self.attribute, self)
         for widget_type, signal in (
@@ -45,7 +51,13 @@ class GuideDialogPreview:
         return self._alive() and self.page == self._page()
 
     def current_values(self) -> Any:
-        return self.values if not self.closed and self.page_matches() else None
+        if self.closed or not self.page_matches():
+            return None
+        # A modeless editor's selection frame can change without a field signal.
+        try:
+            return self.read()
+        except ValueError:
+            return None
 
     def refresh(self, *_args: Any) -> None:
         if self.closed or not self._alive():
@@ -54,7 +66,7 @@ class GuideDialogPreview:
             self.values = self.read()
         except ValueError:
             self.values = None
-        self.canvas.update()
+        update_guide_overlay(self.canvas)
 
     def close(self, *_args: Any) -> None:
         if self.closed:
@@ -64,8 +76,11 @@ class GuideDialogPreview:
         if not self._alive():
             return
         if getattr(self.canvas, self.attribute, None) is self:
-            setattr(self.canvas, self.attribute, self.previous)
-        self.canvas.update()
+            previous = self.previous
+            while previous is not None and previous.closed:
+                previous = previous.previous
+            setattr(self.canvas, self.attribute, previous)
+        update_guide_overlay(self.canvas)
 
 
 def attach_guide_preview(dialog: Any, parent: Any, kind: str, read: Callable) -> Any:
@@ -105,11 +120,17 @@ def draw_layout_guide_preview(painter: QPainter, widget: Any) -> bool:
     painter.save()
     try:
         painter.setPen(pen)
+        options = preview.dialog.placement_options()
         for axis, position in positions:
-            if axis == "horizontal":
-                painter.drawLine(QPointF(0, position), QPointF(widget.state.width, position))
-            else:
-                painter.drawLine(QPointF(position, 0), QPointF(position, widget.state.height))
+            line = guide_line(
+                axis,
+                position,
+                (widget.state.width, widget.state.height),
+                options.get("rotation", 0),
+                options.get("pivot"),
+            )
+            if line is not None:
+                painter.drawLine(QPointF(*line[0]), QPointF(*line[1]))
     finally:
         painter.restore()
     return True

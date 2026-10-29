@@ -11,6 +11,7 @@ from PySide6.QtCore import Qt, QTimer
 from PySide6.QtWidgets import QLabel, QStackedWidget
 
 from ..core.book_spread_layout import BookLayout
+from ..core.brush_size_key_stepper import ACCELERATION_SETTING_KEY
 from ..core.tool_manager import ToolManager
 from ..host_api import StrokePoint
 from ..platform.settings_schema import DEFAULT_SETTINGS
@@ -264,6 +265,7 @@ class MainWindowCanvasBootstrapCoordinator:
         window = self._window
         # Create tool manager
         window.tool_manager = ToolManager(window.host, event_bus=window._event_bus)
+        self._bind_tool_input_settings()
         # Bind ToolManager to HostAPI so plugins can register tools
         if hasattr(window.host, "set_tool_manager"):
             window.host.set_tool_manager(window.tool_manager)
@@ -274,6 +276,19 @@ class MainWindowCanvasBootstrapCoordinator:
             # Bind the QObject receiver so Qt disconnects on window destruction,
             # including pending notifications from a longer-lived ToolManager.
             window.tool_manager.tool_registered.connect(window._sync_tool_shortcut_bindings)
+
+    def _bind_tool_input_settings(self) -> None:
+        window = self._window
+        settings = getattr(window, "_settings", None)
+        get_setting = getattr(settings, "get", None)
+        if callable(get_setting):
+            window.tool_manager.set_size_key_acceleration(
+                get_setting(ACCELERATION_SETTING_KEY, DEFAULT_SETTINGS[ACCELERATION_SETTING_KEY])
+            )
+        settings_changed = getattr(settings, "settings_changed", None)
+        if settings_changed is not None:
+            # Bound to the ToolManager QObject so Qt drops it with the manager.
+            settings_changed.connect(window.tool_manager.apply_input_setting)
 
     def _connect_canvas_and_tool_signals(self) -> None:
         window = self._window

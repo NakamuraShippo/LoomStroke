@@ -36,6 +36,13 @@ from .tool_locale_fallbacks import NON_JA_TOOL_FALLBACK_TRANSLATIONS
 TranslatorFn = Callable[[str], str]
 
 _JA_FALLBACK_TRANSLATIONS: dict[str, dict[str, str]] = {
+    "GuidePlacement": {
+        "Rotation": "回転",
+        "Offset X": "位置の差 X",
+        "Offset Y": "位置の差 Y",
+        "Drag guides to move them; Shift-drag to rotate.": "ガイドをドラッグすると移動、Shiftを押しながらドラッグすると回転します。",
+        "Select an object or choose another reference area.": "オブジェクトを選択するか、別の基準範囲を選んでください。",
+    },
     "BleedExtensionDialog": {
         "Extend Bleed": "塗り足しを延長",
         "Extend only the area outside the trim guides. Pixels inside trim stay unchanged.": "仕上がりガイドの外側だけを延長します。仕上がり内の画素は保持します。",
@@ -215,6 +222,7 @@ _JA_FALLBACK_TRANSLATIONS: dict[str, dict[str, str]] = {
         "Distance: {distance:.3f} {unit} | Angle: {angle:.2f}° | ΔX: {dx:.3f} | ΔY: {dy:.3f}": "距離: {distance:.3f} {unit} | 角度: {angle:.2f}° | ΔX: {dx:.3f} | ΔY: {dy:.3f}",
     },
     "CompositionGuidesDialog": {
+        "Selected object": "選択オブジェクト",
         "Composition Guides": "構図ガイド",
         "Rule of thirds": "三分割",
         "Golden ratio": "黄金比",
@@ -229,6 +237,12 @@ _JA_FALLBACK_TRANSLATIONS: dict[str, dict[str, str]] = {
         "Safe area margin": "セーフエリアの余白",
     },
     "GuideLayoutDialog": {
+        "Canvas": "キャンバス",
+        "Selection": "選択範囲",
+        "Selected object": "選択オブジェクト",
+        "Reference area": "基準範囲",
+        "Unlock guides before replacing them.": "ガイドのロックを解除してから置換してください。",
+        "The reference area is unavailable.": "基準となる範囲がありません。",
         "Modular grid": "段組みグリッド",
         "Column gutter": "列間隔",
         "Row gutter": "行間隔",
@@ -662,6 +676,15 @@ _JA_FALLBACK_TRANSLATIONS: dict[str, dict[str, str]] = {
         "Alt + left click": "Alt + 左クリック",
         "Shift + left click": "Shift + 左クリック",
         "Ctrl + left click": "Ctrl + 左クリック",
+        "Keyboard Operations": "キーボード操作",
+        "Keyboard: Brush size acceleration": "キーボード: ブラシサイズ変更の加速",
+        "How much repeated [ / ] presses speed up brush size changes.": (
+            "[ / ] を連続で押したときに、ブラシサイズの変化をどれだけ速めるかを選択します。"
+        ),
+        "Off": "オフ",
+        "Weak": "弱",
+        "Standard": "標準",
+        "Strong": "強",
         "Conflict": "競合",
         "Conflicts with: {labels}": "競合対象: {labels}",
     },
