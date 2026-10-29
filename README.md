@@ -6,7 +6,7 @@
   </picture>
 </h1>
 
-[日本語](README.md) | [English](README.en.md) | [简体中文](README.zh-CN.md)
+[日本語](README.md) | [English](README.en.md) | [简体中文](README.zh-CN.md) | [繁體中文（台灣）](README.zh-TW.md)
 
 ### [patreon](https://www.patreon.com/c/LoomStroke)
 
