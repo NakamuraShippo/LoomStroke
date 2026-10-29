@@ -42,6 +42,9 @@ from PySide6.QtWidgets import (  # noqa: F401
 from loomstroke.plugins.common.constants import CK_LIST, CK_PROMPT, CK_STRING, CK_TEXT
 from loomstroke.ui.translations import translated_literal_domain
 
+from .selection_controls import PromptSelectionControls
+from .wrapped_chip_label import WrappedChipLabel
+
 if TYPE_CHECKING:
     from loomstroke.plugins.prompt_editor.panel_plugin import (
         PromptComponent,
@@ -129,6 +132,9 @@ class FlowLayout(QLayout):
 
         for item in self._items:
             hint = item.sizeHint()
+            width = min(hint.width(), max(1, effective.width()))
+            height = item.heightForWidth(width) if item.hasHeightForWidth() else hint.height()
+            hint = QSize(width, max(1, height if height >= 0 else hint.height()))
             next_x = x + hint.width() + spacing
             if x > effective.x() and next_x - spacing > effective.right():
                 x = effective.x()
@@ -177,7 +183,7 @@ class PromptChipWidget(QFrame):
         layout.setContentsMargins(2, 1, 2, 1)
         layout.setSpacing(0)
 
-        self._label = QLabel(self)
+        self._label = WrappedChipLabel(self)
         self._label.setTextFormat(Qt.TextFormat.PlainText)
         self._label.setAttribute(Qt.WidgetAttribute.WA_TransparentForMouseEvents)
         layout.addWidget(self._label)
@@ -385,7 +391,14 @@ class ChipEditPopup(QFrame):
             self._text_edit.textChanged.connect(self._on_text_changed)
             layout.addWidget(self._text_edit)
 
+        self._selection_controls = PromptSelectionControls(self._component.selection_mode, self)
+        self._selection_controls.modeChanged.connect(self._on_selection_mode_changed)
+        layout.addWidget(self._selection_controls)
         layout.addLayout(self._build_action_row())
+
+    def _on_selection_mode_changed(self, mode: str) -> None:
+        self._component.selection_mode = mode
+        self.changed.emit(self._component)
 
     def _build_action_row(self) -> QHBoxLayout:
         action_row = QHBoxLayout()

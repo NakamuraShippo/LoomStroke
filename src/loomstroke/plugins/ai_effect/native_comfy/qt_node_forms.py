@@ -10,6 +10,7 @@ from typing import Any
 from PySide6.QtWidgets import QFormLayout, QStackedWidget, QWidget
 
 from loomstroke.plugins.ai_effect.gateways.comfyui import _constraints_from_object_info
+from loomstroke.plugins.ai_effect.ui.dynamic_prompt_submission import advance_live_prompts
 from loomstroke.plugins.ai_effect.ui.param_widgets import SeedParamWidget, create_param_widget
 
 from .panel import tr
@@ -190,6 +191,8 @@ class QtNodeForms(QStackedWidget):
             schedule(state)
 
     def advance_seeds(self) -> None:
+        if not advance_live_prompts(self.widgets, self.panel.section._host, self.panel.layer_id):
+            raise ValueError(tr("Could not update the AI Effect layer."))
         for widget in self.widgets.values():
             if isinstance(widget, SeedParamWidget):
                 widget.apply_pre_generate_mutation()

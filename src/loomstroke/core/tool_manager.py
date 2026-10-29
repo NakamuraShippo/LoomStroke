@@ -14,7 +14,11 @@ from loomstroke.core.commands import Command, CutSelectionCommand
 from loomstroke.core.event_bus import EventBus
 from loomstroke.core.events import Events
 from loomstroke.core.task_registry import ToolTaskRegistry
-from loomstroke.core.tool_manager_size_keys import SIZE_KEY_DIRECTIONS, step_active_tool_size
+from loomstroke.core.tool_manager_size_keys import (
+    SIZE_KEY_DIRECTIONS,
+    step_active_tool_size,
+    step_active_tool_size_direction,
+)
 from loomstroke.core.tool_registry import ToolRegistry, ToolState
 from loomstroke.core.tool_session_manager import ToolSession, ToolSessionManager
 from loomstroke.host_api import HostAPI, StrokePoint
@@ -111,6 +115,12 @@ class ToolManager(QObject):
         """Slot for settings changes that affect tool input handling."""
         if key == ACCELERATION_SETTING_KEY:
             self.set_size_key_acceleration(value)
+
+    def step_tool_size(self, tool_id: str, direction: int) -> bool:
+        """Step ``tool_id``'s size like a ``[`` / ``]`` press if it is the active tool."""
+        if tool_id != self._active_tool_id or self._stroke_active():
+            return False
+        return step_active_tool_size_direction(self, direction)
 
     def update_modifier_state(self, modifiers: Mapping[str, bool]) -> None:
         """Update modifier state (connected to canvas input handler)."""

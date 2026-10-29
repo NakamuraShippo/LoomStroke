@@ -38,6 +38,7 @@ from .main_window_document_guard import DocumentReplacementGuard, guard_document
 from .main_window_image_open import open_image_document
 from .main_window_save_feedback import ManualSaveFeedback
 from .new_document_canvas_reset import reset_new_document_canvas
+from .new_document_guides import reset_new_document_guides
 from .startpage_models import StartPageCanvasSpec
 from .translations import translate_with_fallback
 
@@ -350,6 +351,7 @@ class MainWindowDocumentWorkflowCoordinator:
         flows so document-boundary observers (revision tracker, autosave
         epoch reset) see every fresh document, not only StartPage creations.
         """
+        reset_new_document_guides(self._window)
         emitter = getattr(self._window._event_bus, "emit", None) or getattr(
             self._window._event_bus, "publish", None
         )

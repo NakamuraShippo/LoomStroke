@@ -64,7 +64,6 @@ from loomstroke.plugins.common.constants import (  # noqa: F401
 )
 from loomstroke.plugins.common.events import PluginEvent
 from loomstroke.plugins.common.llm_gateway_client import LLMGatewayClient
-from loomstroke.plugins.common.models import ComposedPrompt, generate_prompt_id
 from loomstroke.plugins.common.snippet_models import (
     PromptPayload,
     Snippet,
@@ -182,6 +181,7 @@ class PromptComponent:
     list_index: int | None = None
     text_value: str = ""
     tag_filter: str | None = None
+    selection_mode: str = "fixed"
 
     def to_metadata(self) -> dict[str, Any]:
         data: dict[str, Any] = {"kind": self.kind}
@@ -193,6 +193,8 @@ class PromptComponent:
             data["text_value"] = self.text_value
         if self.tag_filter:
             data["tag_filter"] = self.tag_filter
+        if self.selection_mode in {"random", "sequential", "combinatorial"}:
+            data["selection_mode"] = self.selection_mode
         return data
 
     @classmethod
@@ -209,6 +211,11 @@ class PromptComponent:
             list_index=list_index,
             text_value=str(payload.get("text_value", "")),
             tag_filter=payload.get("tag_filter"),
+            selection_mode=(
+                payload.get("selection_mode")
+                if payload.get("selection_mode") in ("random", "sequential", "combinatorial")
+                else "fixed"
+            ),
         )
 
 
@@ -642,15 +649,6 @@ class PromptEditorPanel(QWidget, AsyncTaskOwner):
         self._separator_edit.textChanged.connect(self._on_separator_changed)
         action_row.addWidget(separator_label)
         action_row.addWidget(self._separator_edit)
-        compose_text = self._ts("Compose")
-        self._compose_button = self._create_compact_icon_button(
-            tab,
-            tooltip=compose_text,
-            theme_icon="media-playback-start",
-            fallback_icon=QStyle.SP_MediaPlay,
-            handler=self._handle_emit,
-        )
-        action_row.addWidget(self._compose_button)
         copy_text = self._ts("Copy")
         self._copy_button = self._create_compact_icon_button(
             tab,
@@ -1990,57 +1988,6 @@ class PromptEditorPanel(QWidget, AsyncTaskOwner):
     def _handle_copy(self) -> None:
         QApplication.clipboard().setText(self._compose_preview_text())
         self.set_status_message_translated("Prompt copied to clipboard.")
-
-    def _handle_emit(self) -> None:
-        self.create_owned_task(self._compose_and_emit(), consume_exceptions=True)
-
-    async def _compose_and_emit(self) -> None:
-        # Check for missing snippets before composing
-        missing = [
-            c.snippet_id
-            for c in self._components
-            if c.kind != CK_TEXT and c.snippet_id and self._catalog.get(c.snippet_id) is None
-        ]
-        if missing:
-            self.set_status_message_translated(
-                "Warning: {count} snippet(s) not found.",
-                count=len(missing),
-            )
-        final_prompt = self._compose_preview_text().strip()
-        if not final_prompt:
-            self.set_status_message_translated("Prompt is empty.")
-            return
-        snippet_ids = [
-            component.snippet_id for component in self._components if component.snippet_id
-        ]
-        composed = ComposedPrompt(
-            id=generate_prompt_id(final_prompt),
-            positive_prompt=final_prompt,
-            snippet_ids=snippet_ids,
-            metadata={
-                "components": [component.to_metadata() for component in self._components],
-                "separator": self._separator_edit.text() if self._separator_edit else "\n",
-            },
-        )
-        events = getattr(self._host, "events", None)
-        payload = {"prompt": final_prompt, "snippet_count": len(snippet_ids)}
-        if events and hasattr(events, "emit"):
-            try:
-                events.emit("prompt_editor.prompt_ready", payload)
-            except Exception as exc:
-                logger.debug("Host event emit failed: %s", exc)
-        if self._event_bus:
-            event = PluginEvent.create_notification(
-                EventTypes.PROMPTEDITOR_PROMPT_COMPOSED,
-                source_plugin="prompt_editor",
-                payload={"composed_prompt": composed.to_dict()},
-            )
-            try:
-                await self._event_bus.emit_async(event.event_type, event)
-            except Exception as exc:
-                logger.debug("Event bus emission failed: %s", exc)
-        self.prompt_built.emit(final_prompt)
-        self.set_status_message_translated("Prompt composed and emitted.")
 
 
 class PromptEditorPanelPlugin(UIPanelPlugin):

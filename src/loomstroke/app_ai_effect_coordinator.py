@@ -809,6 +809,10 @@ class AIEffectCoordinator:
         if generate_signal is not None:
             generate_signal.connect(self._app._on_ai_effect_generate_requested)
 
+        from .app_ai_effect_batch import bind  # noqa: PLC0415
+
+        bind(self._app, filter_panel)
+
         logger.info("Filter Panel AI signals wired (⊘ + Generate + row-Generate)")
 
     def _find_filter_panel_widget(self) -> Any:
@@ -1157,7 +1161,7 @@ class AIEffectCoordinator:
 
     async def _run_ai_effect_generation(  # noqa: PLR0911 - explicit await boundary refusals
         self, layer_id: str, state: Any, resolver: Any
-    ) -> None:
+    ) -> str | None:
         """Async wrapper that resolves inputs then drives the controller.
 
         Split from the synchronous ``_on_ai_effect_generate_requested``
@@ -1243,6 +1247,7 @@ class AIEffectCoordinator:
             len(slot_images or {}),
             len(layer_versions or {}),
         )
+        return status if err is None else "error"
 
     def _show_no_preset_dialog_safe(self, parent: Any) -> None:
         """Best-effort: surface "no presets" tip when Manager opens

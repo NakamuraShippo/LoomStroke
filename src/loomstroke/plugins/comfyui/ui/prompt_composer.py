@@ -35,11 +35,13 @@ from loomstroke.plugins.prompt_editor.compose_widgets import (
     PromptChipFlowWidget,
     PromptChipWidget,
 )
+from loomstroke.plugins.prompt_editor.dynamic_prompt import DynamicPromptSequence
 from loomstroke.plugins.prompt_editor.panel_plugin import (
     PromptComponent,
     SnippetCatalog,
     _resolve_list_items,
 )
+from loomstroke.plugins.prompt_editor.resizable_prompt_area import ResizablePromptArea
 from loomstroke.ui.translations import translated_literal_domain
 
 if TYPE_CHECKING:
@@ -95,6 +97,7 @@ class PromptComposerWidget(QWidget):
         self._catalog: SnippetCatalog | None = None
         self._snippet_repo: SnippetRepository | None = None
         self._catalog_initialized = False
+        self._dynamic_sequence = DynamicPromptSequence()
 
         self._build_ui()
         # Defer catalog / combo population until the widget is first shown
@@ -151,7 +154,10 @@ class PromptComposerWidget(QWidget):
         self._chip_flow = PromptChipFlowWidget()
         self._chip_flow.chipInserted.connect(self._on_chip_inserted)
         self._chip_flow.chipMoved.connect(self._on_chip_moved)
-        root.addWidget(self._chip_flow)
+        self._flow_area = ResizablePromptArea(
+            self._chip_flow, getattr(self._host_api, "settings", None)
+        )
+        root.addWidget(self._flow_area)
 
         # --- Separator row ---
         self._separator_container = QWidget()
@@ -170,7 +176,7 @@ class PromptComposerWidget(QWidget):
         root.addWidget(self._separator_container)
 
         # --- Composer area container (chip flow + separator) ---
-        self._composer_widgets = [self._chip_flow, self._separator_container]
+        self._composer_widgets = [self._flow_area, self._separator_container]
 
         # Connect combo
         self._composition_combo.currentIndexChanged.connect(self._on_composition_selected)
@@ -219,6 +225,7 @@ class PromptComposerWidget(QWidget):
     def _on_composition_selected(self, index: int) -> None:
         snippet_id = self._composition_combo.itemData(index)
         if snippet_id is None:
+            self._dynamic_sequence.reset()
             # Switch to flat-text mode
             self._components.clear()
             self._rebuild_chips()
@@ -231,11 +238,14 @@ class PromptComposerWidget(QWidget):
         snippet = self._catalog.get(snippet_id) if self._catalog else None
         if snippet is None:
             return
-        self._load_composition(snippet)
         self._set_composer_visible(True)
+        # A composed-text callback can synchronously persist and restore this
+        # widget. Publish the active mode before it snapshots the new chips.
         self.modeChanged.emit(True)
+        self._load_composition(snippet)
 
     def _load_composition(self, snippet: Snippet) -> None:
+        self._dynamic_sequence.reset()
         metadata = snippet.metadata or {}
         components_data = metadata.get("components")
         if isinstance(components_data, list):
@@ -288,9 +298,12 @@ class PromptComposerWidget(QWidget):
             for entry in raw_components:
                 if isinstance(entry, Mapping):
                     components.append(PromptComponent.from_metadata(dict(entry)))
-        self._components = components
-
         separator = state.get("separator")
+        separator = separator if isinstance(separator, str) else r"\n"
+        components_changed = components != self._components
+        if components_changed or separator != self._separator_edit.text():
+            self._dynamic_sequence.reset()
+        self._components = components if components_changed else self._components
         previous_sep_block = self._separator_edit.blockSignals(True)
         try:
             self._separator_edit.setText(separator if isinstance(separator, str) else r"\n")
@@ -322,10 +335,15 @@ class PromptComposerWidget(QWidget):
             combo.blockSignals(previous_combo_block)
 
         self._set_composer_visible(active or bool(components))
-        self._rebuild_chips()
+        # Keep both widget and component identities while the canvas echoes an
+        # identical state. Replacing them closes the editor popup mid-click.
+        if components_changed or len(self._component_widgets) != len(self._components):
+            self._rebuild_chips()
         composed = self._compose_text()
         fallback = state.get("composed_text")
-        if not composed and isinstance(fallback, str):
+        if isinstance(fallback, str) and (
+            not composed or any(c.selection_mode != "fixed" for c in components)
+        ):
             composed = fallback
         return composed
 
@@ -364,6 +382,7 @@ class PromptComposerWidget(QWidget):
         else:
             self._components.insert(row, component)
         self._rebuild_chips()
+        self.modeChanged.emit(True)
         self._recompose()
 
     def _on_chip_moved(self, from_index: int, to_index: int) -> None:
@@ -383,9 +402,11 @@ class PromptComposerWidget(QWidget):
         if 0 <= index < len(self._components):
             self._components.pop(index)
         self._component_widgets = [w for w in self._component_widgets if w is not widget]
+        self.modeChanged.emit(self.is_composer_active())
         self._recompose()
 
     def _on_chip_changed(self, _component: PromptComponent) -> None:
+        self._dynamic_sequence.reset()
         self._recompose()
 
     def _on_chip_expand(self, widget: PromptChipWidget) -> None:
@@ -448,6 +469,16 @@ class PromptComposerWidget(QWidget):
         parts = [self._render_component(c) for c in self._components]
         return separator.join(part for part in parts if part)
 
+    def resolve_for_generation(self) -> str:
+        """Resolve one submission without consuming choices during preview/save."""
+        return self._dynamic_sequence.generate(
+            self._components,
+            self._catalog,
+            self._render_component,
+            _resolve_list_items,
+            self._current_separator(),
+        )
+
     def _recompose(self) -> None:
         self.composedTextChanged.emit(self._compose_text())
 
@@ -471,5 +502,5 @@ class PromptComposerWidget(QWidget):
             widget.setVisible(visible)
 
     def is_composer_active(self) -> bool:
-        """Return True when a composition is loaded (not in flat-text mode)."""
-        return self._composition_combo.currentData() is not None
+        """Return True for a saved composition or manually added live chips."""
+        return self._composition_combo.currentData() is not None or bool(self._components)

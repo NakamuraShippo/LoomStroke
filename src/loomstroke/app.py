@@ -554,8 +554,10 @@ class LoomStrokeApp:
     def _on_ai_effect_generate_requested(self, layer_id: str) -> None:
         _ai_effect_for(self)._on_ai_effect_generate_requested(layer_id)
 
-    async def _run_ai_effect_generation(self, layer_id: str, state: Any, resolver: Any) -> None:
-        await _ai_effect_for(self)._run_ai_effect_generation(layer_id, state, resolver)
+    async def _run_ai_effect_generation(
+        self, layer_id: str, state: Any, resolver: Any
+    ) -> str | None:
+        return await _ai_effect_for(self)._run_ai_effect_generation(layer_id, state, resolver)
 
     def _show_no_preset_dialog_safe(self, parent: Any) -> None:
         _ai_effect_for(self)._show_no_preset_dialog_safe(parent)

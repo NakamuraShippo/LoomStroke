@@ -16,6 +16,7 @@ from typing import TYPE_CHECKING, Any, cast
 from PySide6.QtCore import QEvent, QSize, Qt, Signal  # noqa: F811
 from PySide6.QtGui import QIcon, QImage, QPixmap
 from PySide6.QtWidgets import (
+    QApplication,
     QComboBox,
     QHBoxLayout,
     QLabel,
@@ -196,6 +197,7 @@ class _DetailWidget(QWidget):
     def __init__(self, parent: QWidget | None = None) -> None:
         super().__init__(parent)
         self._current_job_id: str | None = None
+        self._current_prompt = ""
         self._translation_binder = TranslationBinder(self.tr)
         self._no_image_text = self._ts("No image")
         self._new_layer_text = self._ts("(New Layer)")
@@ -219,6 +221,10 @@ class _DetailWidget(QWidget):
 
         self._meta_text = QTextEdit()
         self._meta_text.setReadOnly(True)
+        self._meta_text.setTextInteractionFlags(
+            Qt.TextInteractionFlag.TextSelectableByMouse
+            | Qt.TextInteractionFlag.TextSelectableByKeyboard
+        )
         self._meta_text.setMaximumHeight(160)
         self._meta_text.setSizePolicy(QSizePolicy.Policy.Expanding, QSizePolicy.Policy.Preferred)
         top.addWidget(self._meta_text, 1)
@@ -226,13 +232,23 @@ class _DetailWidget(QWidget):
 
         # --- Action buttons ---
         btn_row = QHBoxLayout()
+        self._btn_copy_prompt = QPushButton()
+        self._translation_binder.register(
+            self._btn_copy_prompt.setText, self._ts("Copy full prompt")
+        )
+        self._btn_copy_prompt.setEnabled(False)
         self._btn_regenerate = QPushButton()
         self._translation_binder.register(self._btn_regenerate.setText, self._ts("Regenerate"))
         self._btn_restore = QPushButton()
         self._translation_binder.register(self._btn_restore.setText, self._ts("Restore"))
         self._btn_delete = QPushButton()
         self._translation_binder.register(self._btn_delete.setText, self._ts("Delete"))
-        for btn in (self._btn_regenerate, self._btn_restore, self._btn_delete):
+        for btn in (
+            self._btn_copy_prompt,
+            self._btn_regenerate,
+            self._btn_restore,
+            self._btn_delete,
+        ):
             btn_row.addWidget(btn)
         btn_row.addStretch()
         layout.addLayout(btn_row)
@@ -240,6 +256,7 @@ class _DetailWidget(QWidget):
         self._btn_regenerate.clicked.connect(lambda: self._emit_action(self.regenerate_requested))
         self._btn_restore.clicked.connect(lambda: self._emit_action(self.restore_requested))
         self._btn_delete.clicked.connect(lambda: self._emit_action(self.delete_requested))
+        self._btn_copy_prompt.clicked.connect(self._copy_prompt)
 
         # --- Layer transfer ---
         transfer_row = QHBoxLayout()
@@ -279,6 +296,8 @@ class _DetailWidget(QWidget):
         has_provider: bool,
     ) -> None:
         self._current_job_id = record.job_id
+        self._current_prompt = record.prompt or ""
+        self._btn_copy_prompt.setEnabled(bool(self._current_prompt))
         self._load_preview(record, base_path)
         self._load_metadata(record)
         self._btn_regenerate.setEnabled(has_provider)
@@ -288,6 +307,8 @@ class _DetailWidget(QWidget):
 
     def clear(self) -> None:
         self._current_job_id = None
+        self._current_prompt = ""
+        self._btn_copy_prompt.setEnabled(False)
         self._preview_label.clear()
         self._meta_text.clear()
         self.setVisible(False)
@@ -328,10 +349,7 @@ class _DetailWidget(QWidget):
         if record.model_name:
             lines.append(f"{self._ts('Model')}: {record.model_name}")
         if record.prompt:
-            prompt_display = record.prompt[:120]
-            if len(record.prompt) > 120:
-                prompt_display += "…"
-            lines.append(f"{self._ts('Prompt')}: {prompt_display}")
+            lines.append(f"{self._ts('Prompt')}: {record.prompt}")
         if record.seed is not None:
             lines.append(f"{self._ts('Seed')}: {record.seed}")
         if record.width and record.height:
@@ -346,6 +364,10 @@ class _DetailWidget(QWidget):
         lines.extend(_sam3_generation_diff_qa_metadata_lines(record, self._ts))
         lines.extend(_sam3_preview_apply_readiness_metadata_lines(record, self._ts))
         self._meta_text.setPlainText("\n".join(lines))
+
+    def _copy_prompt(self) -> None:
+        if self._current_prompt:
+            QApplication.clipboard().setText(self._current_prompt)
 
     def _emit_action(self, signal: Any) -> None:
         if self._current_job_id:

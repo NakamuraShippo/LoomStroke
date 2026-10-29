@@ -2045,11 +2045,18 @@ class ToolPropertiesPanel(QWidget):
             on_changed=self._on_property_changed,
             compact=self._bar_mode,
             translate_fn=self._translate_tool_label,
+            size_wheel_handler=self._step_size_by_wheel,
         )
         # Apply compact button styling for COLOR type in bar mode
         if spec.type == PropertyType.COLOR and self._bar_mode:
             self._apply_compact_button(cast(QPushButton, widget))
         return widget, setter, getter
+
+    def _step_size_by_wheel(self, direction: int) -> bool:
+        step = getattr(self.tool_manager, "step_tool_size", None)
+        if not callable(step) or not self._current_tool_id:
+            return False
+        return bool(step(self._current_tool_id, direction))
 
     def _on_property_changed(self, key: str, value: Any) -> None:
         if not self.tool_manager or not self._current_tool_id:

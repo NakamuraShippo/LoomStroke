@@ -484,7 +484,11 @@ class GPTImage2Panel(QWidget):
             )
             return
 
-        prompt = self._prompt_text.toPlainText().strip()
+        prompt = (
+            self._prompt_composer.resolve_for_generation()
+            if self._prompt_composer.is_composer_active()
+            else self._prompt_text.toPlainText()
+        ).strip()
         if not prompt:
             self.append_status_translated("Prompt is required")
             return

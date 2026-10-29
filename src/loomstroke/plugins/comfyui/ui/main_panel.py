@@ -1368,11 +1368,14 @@ class ComfyUIMainPanel(QWidget):
         self._on_queue_tab_clear_finished()
 
     def _prepare_workflow_for_submission(self, workflow: WorkflowModel) -> WorkflowModel:
+        from .dynamic_prompt_submission import apply_dynamic_prompts  # noqa: PLC0415
+
         if not workflow:
             raise ValueError("workflow is not loaded")
         clone = workflow.clone() if hasattr(workflow, "clone") else workflow
         if self.node_tabs:
             self._apply_seed_modes(clone)
+            apply_dynamic_prompts(self.node_tabs, clone)
         return clone
 
     def _apply_seed_modes(self, workflow: WorkflowModel) -> None:

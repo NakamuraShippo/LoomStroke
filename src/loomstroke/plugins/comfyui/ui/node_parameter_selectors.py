@@ -202,6 +202,8 @@ class NodePromptSelectorMixin:
         """Wrap a multiline text widget with the chip-based prompt composer."""
 
         composer = PromptComposerWidget(host_api=self.host_api)
+        composer.setProperty("prompt_node_id", self.node_id)
+        composer.setProperty("prompt_param_name", param_name)
         self._prompt_text_widgets[param_name] = text_widget
 
         def on_composed(text: str) -> None:

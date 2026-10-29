@@ -14,6 +14,7 @@ from loomstroke.plugins.comfyui.server_registry import get_registry
 from loomstroke.plugins.comfyui.session_target import active_url
 
 from .layer_cache import identity, take, target_url
+from .live_prompt_choices import NativeLivePromptChoices
 from .panel import NativePanel, tr
 from .qt_node_forms import QtNodeForms
 from .seed_control import advance_controls
@@ -52,6 +53,7 @@ class ComfyLayerPanel(NativePanel):
         self.classification_label = QLabel(self)
         self.body.insertWidget(2, self.classification_label)
         self.qt_forms = QtNodeForms(self)
+        self.live_prompt_choices = NativeLivePromptChoices(self)
         self.body.insertWidget(3, self.qt_forms)
         self.status.setText(
             tr(
@@ -110,6 +112,7 @@ class ComfyLayerPanel(NativePanel):
         self._nodes_loaded = False
         self._focus_path = None
         self.qt_forms.clear()
+        self.live_prompt_choices.clear()
         self.classification_label.clear()
         self.save_button.setEnabled(False)
         self.nodes.blockSignals(True)
@@ -223,9 +226,17 @@ class ComfyLayerPanel(NativePanel):
 
         self.run(edit_prompt(self))
 
-    async def commit(self, *, generate: bool = False, ui_updates: dict | None = None) -> None:
+    async def commit(
+        self, *, generate: bool = False, ui_updates: dict | None = None, dispatch: bool = True
+    ) -> None:
+        with self.live_prompt_choices.transaction():
+            await self._commit_values(generate=generate, ui_updates=ui_updates, dispatch=dispatch)
+
+    async def _commit_values(
+        self, *, generate: bool, ui_updates: dict | None, dispatch: bool = True
+    ) -> None:
         if self.view is None:
-            if generate:
+            if generate and dispatch:
                 self.section.ai_generate_requested.emit(self.layer_id)
             return
         if generate:
@@ -242,6 +253,8 @@ class ComfyLayerPanel(NativePanel):
             )
         values = snapshot_values(state, snapshot["output"])
         ui = prompt_ui_state(state.param_ui_state, values, ui_updates)
+        if generate:
+            snapshot = await self.live_prompt_choices.apply(state, values, ui, before) or snapshot
         ui["comfyui_native"] = {"workflow": snapshot["workflow"]}
         self._synced = copy.deepcopy(values)
         if not self.section._host.canvas.set_ai_effect_layer_state(
@@ -254,9 +267,9 @@ class ComfyLayerPanel(NativePanel):
                 (state.preset_snapshot, ui.get("comfyui_native"), state.target_server_id)
             )
         self.status.setText(tr("Values applied to this layer."))
-        if generate:
+        if generate and dispatch:
             self.section.ai_generate_requested.emit(self.layer_id)
-        else:
+        elif not generate:
             schedule = getattr(self.section, "_maybe_schedule_auto_generate", None)
             if callable(schedule):
                 schedule(state)

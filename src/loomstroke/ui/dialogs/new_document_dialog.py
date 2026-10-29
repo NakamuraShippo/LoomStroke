@@ -36,6 +36,7 @@ from ..startpage_models import (
     PresetCategory,
     StartPageCanvasSpec,
 )
+from ..startpage_paper_dimensions import paper_dimensions
 from ..startpage_presets_store import load_presets, save_presets
 from ..translations import TranslationBinder, translate_with_fallback, translated_literal
 from ..widgets.new_document_color_controls import NewDocumentColorControls
@@ -234,6 +235,7 @@ class NewDocumentDialog(QDialog):
         dpi_layout.setLabelAlignment(Qt.AlignmentFlag.AlignLeft)
         self._dpi_spin = _NewDocumentSpinBox()
         self._dpi_spin.setRange(1, 1200)
+        self._dpi_spin.valueChanged.connect(self._on_dpi_changed)
         self._add_labeled_row(dpi_layout, self._ts("DPI:"), self._dpi_spin)
         return dpi_group
 
@@ -348,9 +350,10 @@ class NewDocumentDialog(QDialog):
         except Exception:
             spec = StartPageCanvasSpec.from_payload(default_payload)
 
+        self._dpi_spin.setValue(max(1, int(spec.dpi)))
         self._width_spin.setValue(max(1, int(spec.width_px)))
         self._height_spin.setValue(max(1, int(spec.height_px)))
-        self._dpi_spin.setValue(max(1, int(spec.dpi)))
+        self._preset_combo.setCurrentIndex(0)
 
         bg = spec.background
         if bg.kind == "transparent":
@@ -385,12 +388,19 @@ class NewDocumentDialog(QDialog):
             self._apply_preset(preset)
 
     def _apply_preset(self, preset: CanvasPreset) -> None:
+        dimensions = paper_dimensions(preset, self._dpi_spin.value())
+        width, height = dimensions or (preset.width_px, preset.height_px)
         self._updating_from_preset = True
         try:
-            self._width_spin.setValue(int(preset.width_px))
-            self._height_spin.setValue(int(preset.height_px))
+            self._width_spin.setValue(int(width))
+            self._height_spin.setValue(int(height))
         finally:
             self._updating_from_preset = False
+
+    def _on_dpi_changed(self, _: int) -> None:
+        preset = self._preset_combo.currentData()
+        if isinstance(preset, CanvasPreset):
+            self._apply_preset(preset)
 
     def _on_dimension_changed(self, _: int) -> None:
         if self._updating_from_preset:

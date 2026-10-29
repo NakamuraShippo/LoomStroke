@@ -43,6 +43,8 @@ class AIEffectPanelSection(QWidget, AsyncTaskOwner):
     """Own AI Effect UI state while FilterPanel remains the public facade."""
 
     ai_generate_requested = Signal(str)
+    batch_generate_requested = Signal(str, int)
+    batch_stop_requested = Signal()
 
     def __init__(self, panel: QWidget) -> None:
         super().__init__(panel)
@@ -67,6 +69,7 @@ class AIEffectPanelSection(QWidget, AsyncTaskOwner):
         self._last_auto_connect_attempt_t: float = float("-inf")
         self._auto_connect_task: Any = None
         self._native_comfy_panel: Any = None
+        self._batch_controls: Any = None
 
     @property
     def _host(self) -> Any:
@@ -345,6 +348,9 @@ class AIEffectPanelSection(QWidget, AsyncTaskOwner):
 
     def _clear_ai_effect_ui(self) -> None:
         """Drop the AI preset GroupBox, param widgets, and slot combos."""
+        from loomstroke.plugins.ai_effect.ui.batch_controls import clear  # noqa: PLC0415
+
+        clear(self)
         if self._native_comfy_panel is not None:
             from loomstroke.plugins.ai_effect.native_comfy.layer_cache import park  # noqa: PLC0415
 
@@ -1389,6 +1395,9 @@ class AIEffectPanelSection(QWidget, AsyncTaskOwner):
 
         outer.addLayout(trigger_row)
         parent_layout.addLayout(outer)
+        from loomstroke.plugins.ai_effect.ui.batch_controls import mount  # noqa: PLC0415
+
+        mount(self, parent_layout)
 
     def _build_ai_server_section(self, parent_layout: QVBoxLayout) -> None:
         """ComfyUI server selector for this AI Effect layer.
@@ -1676,10 +1685,23 @@ class AIEffectPanelSection(QWidget, AsyncTaskOwner):
         """
         if not ai_features_enabled() or not isinstance(layer_id, str) or not layer_id:
             return
+        if (
+            getattr(self, "_batch_controls", None) is not None
+            and self._batch_controls.running
+            and layer_id == self._current_ai_effect_id
+        ):
+            return
         if layer_id == self._current_ai_effect_id and self._native_comfy_panel is not None:
             self._native_comfy_panel.run(self._native_comfy_panel.commit(generate=True))
             return
         if layer_id == self._current_ai_effect_id:
+            from loomstroke.plugins.ai_effect.ui.dynamic_prompt_submission import (  # noqa: PLC0415
+                advance_live_prompts,
+            )
+
+            if not advance_live_prompts(self._ai_effect_widgets, self._host, layer_id):
+                logger.warning("Could not prepare LivePrompt values for generation")
+                return
             self._apply_seed_mode_pre_generate()
         self.ai_generate_requested.emit(layer_id)
         logger.debug("AI effect generate requested for %s", layer_id)
@@ -1904,6 +1926,9 @@ class AIEffectPanelSection(QWidget, AsyncTaskOwner):
         so a slot rebind triggers re-generation just like a param edit
         does — both are inputs to the gateway run.
         """
+        if getattr(self, "_batch_controls", None) is not None and self._batch_controls.running:
+            self._ai_trigger_timer.stop()
+            return
         trigger = str(getattr(ai_state, "trigger", "manual") or "manual")
         if trigger == "manual":
             self._ai_trigger_timer.stop()

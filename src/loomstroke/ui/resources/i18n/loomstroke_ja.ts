@@ -2354,6 +2354,12 @@ Type: {type}</source>
         <source>Lower values reduce CPU load on large canvases</source>
         <translation>値を下げると大きなキャンバスでのCPU負荷が軽減されます</translation>
     </message>
+    <message><source>Brush Size Key Acceleration</source><translation>[ ] キーのブラシサイズ加速</translation></message>
+    <message><source>How much holding or repeatedly pressing [ / ] speeds up brush size changes. Off changes the size by the same ratio on every press.</source><translation>[ / ] を押し続けたり連打したりしたときに、ブラシサイズの変化をどれだけ速めるかを調整します。オフでは毎回同じ割合で変化します。</translation></message>
+    <message><source>Off</source><translation>オフ</translation></message>
+    <message><source>Weak</source><translation>弱</translation></message>
+    <message><source>Standard</source><translation>標準</translation></message>
+    <message><source>Strong</source><translation>強</translation></message>
 
 </context>
 <context>
@@ -3873,13 +3879,6 @@ Type: {type}</source>
         <source>Showing {shown} of {total}</source>
         <translation>{total} 件中 {shown} 件を表示</translation>
     </message>
-    <message><source>Keyboard Operations</source><translation>キーボード操作</translation></message>
-    <message><source>Keyboard: Brush size acceleration</source><translation>キーボード: ブラシサイズ変更の加速</translation></message>
-    <message><source>How much repeated [ / ] presses speed up brush size changes.</source><translation>[ / ] を連続で押したときに、ブラシサイズの変化をどれだけ速めるかを選択します。</translation></message>
-    <message><source>Off</source><translation>オフ</translation></message>
-    <message><source>Weak</source><translation>弱</translation></message>
-    <message><source>Standard</source><translation>標準</translation></message>
-    <message><source>Strong</source><translation>強</translation></message>
 
 </context>
 <context>
@@ -7175,6 +7174,10 @@ Use "Edit Filters" to add.</source>
 <context>
     <name>_DetailWidget</name>
     <message>
+        <source>Copy full prompt</source>
+        <translation>プロンプト全文をコピー</translation>
+    </message>
+    <message>
         <source>Regenerate</source>
         <translation>再生成</translation>
     </message>
@@ -8970,5 +8973,35 @@ Use "Edit Filters" to add.</source>
         <source>Select an object or choose another reference area.</source>
         <translation>オブジェクトを選択するか、別の基準範囲を選んでください。</translation>
     </message>
+</context>
+<context>
+    <name>PromptSelectionControls</name>
+    <message><source>Random</source><translation>ランダム</translation></message>
+    <message><source>Sequential</source><translation>順次選択</translation></message>
+    <message><source>Combinatorial</source><translation>組み合わせ列挙</translation></message>
+    <message><source>All unchecked: fixed. List: items; String/Prompt: snippets matching the tag; Text: {a|b|c}. One choice per generation; combinations advance rightmost first.</source><translation>すべてオフで固定。Listは項目、String/Promptはタグに合うスニペット、Textは {a|b|c} から選択します。生成ごとに1件選択し、組み合わせは右側から進みます。</translation></message>
+</context>
+<context>
+    <name>BatchGenerationControls</name>
+    <message><source>Continuous generation</source><translation>連続生成</translation></message>
+    <message><source>Specified count</source><translation>回数指定</translation></message>
+    <message><source>One full cycle</source><translation>一巡するまで</translation></message>
+    <message><source>Until stopped</source><translation>中止するまで (無限)</translation></message>
+    <message><source>Start continuous generation</source><translation>連続生成を開始</translation></message>
+    <message><source>Stop</source><translation>停止</translation></message>
+    <message><source>Number of generations</source><translation>生成回数</translation></message>
+    <message><source>A cycle uses Sequential and Combinatorial choices; random choices are excluded.</source><translation>一巡は順次選択・組み合わせ列挙の候補から計算します。ランダム選択は計算対象外です。</translation></message>
+    <message><source>Completed {completed} / {total}</source><translation>完了 {completed} / {total}</translation></message>
+    <message><source>Finished: {completed}</source><translation>完了: {completed}件</translation></message>
+    <message><source>Stopped: {completed}</source><translation>停止: {completed}件完了</translation></message>
+    <message><source>Generation failed; stopped after {completed}.</source><translation>生成に失敗したため停止しました ({completed}件完了)。</translation></message>
+    <message><source>External services are disabled.</source><translation>外部サービスの利用が無効です。</translation></message>
+    <message><source>Wait until generation is ready.</source><translation>生成の準備が完了するまでお待ちください。</translation></message>
+    <message><source>A cycle requires Sequential or Combinatorial LivePrompt choices.</source><translation>一巡にはライブプロンプトの順次選択または組み合わせ列挙を設定してください。</translation></message>
+</context>
+<context>
+    <name>PromptComposer</name>
+    <message><source>Resize input area</source><translation>入力欄のサイズ変更</translation></message>
+    <message><source>Drag to resize the input area.</source><translation>下端をドラッグして入力欄の高さを変更します。</translation></message>
 </context>
 </TS>

@@ -36,6 +36,12 @@ from .tool_locale_fallbacks import NON_JA_TOOL_FALLBACK_TRANSLATIONS
 TranslatorFn = Callable[[str], str]
 
 _JA_FALLBACK_TRANSLATIONS: dict[str, dict[str, str]] = {
+    "PromptSelectionControls": {
+        "Random": "ランダム",
+        "Sequential": "順次選択",
+        "Combinatorial": "組み合わせ列挙",
+        "All unchecked: fixed. List: items; String/Prompt: snippets matching the tag; Text: {a|b|c}. One choice per generation; combinations advance rightmost first.": "すべてオフで固定。Listは項目、String/Promptはタグに合うスニペット、Textは {a|b|c} から選択します。生成ごとに1件選択し、組み合わせは右側から進みます。",
+    },
     "GuidePlacement": {
         "Rotation": "回転",
         "Offset X": "位置の差 X",
@@ -676,15 +682,6 @@ _JA_FALLBACK_TRANSLATIONS: dict[str, dict[str, str]] = {
         "Alt + left click": "Alt + 左クリック",
         "Shift + left click": "Shift + 左クリック",
         "Ctrl + left click": "Ctrl + 左クリック",
-        "Keyboard Operations": "キーボード操作",
-        "Keyboard: Brush size acceleration": "キーボード: ブラシサイズ変更の加速",
-        "How much repeated [ / ] presses speed up brush size changes.": (
-            "[ / ] を連続で押したときに、ブラシサイズの変化をどれだけ速めるかを選択します。"
-        ),
-        "Off": "オフ",
-        "Weak": "弱",
-        "Standard": "標準",
-        "Strong": "強",
         "Conflict": "競合",
         "Conflicts with: {labels}": "競合対象: {labels}",
     },
@@ -2456,6 +2453,18 @@ _JA_FALLBACK_TRANSLATIONS["PerformancePage"] = {
         "フルは編集中のページと同じシャープさを保ちます。"
         "大きく多レイヤーのページでは、下げるほど GPU メモリを節約できます。"
     ),
+    "Brush Size Key Acceleration": "[ ] キーのブラシサイズ加速",
+    (
+        "How much holding or repeatedly pressing [ / ] speeds up brush size changes. "
+        "Off changes the size by the same ratio on every press."
+    ): (
+        "[ / ] を押し続けたり連打したりしたときに、ブラシサイズの変化をどれだけ速めるかを"
+        "調整します。オフでは毎回同じ割合で変化します。"
+    ),
+    "Off": "オフ",
+    "Weak": "弱",
+    "Standard": "標準",
+    "Strong": "強",
 }
 _JA_FALLBACK_TRANSLATIONS["FileIOPage"] = {
     "Enable autosave (effective after restart)": "自動保存を有効化 (再起動後に有効)",
@@ -3098,7 +3107,29 @@ _JA_FALLBACK_TRANSLATIONS["ComfyUIMainPanel"] = {
     "Failed": "失敗",
     "Cancelled": "キャンセル済み",
 }
+_JA_FALLBACK_TRANSLATIONS["PromptComposer"] = {
+    "Resize input area": "入力欄のサイズ変更",
+    "Drag to resize the input area.": "下端をドラッグして入力欄の高さを変更します。",
+}
+_JA_FALLBACK_TRANSLATIONS["BatchGenerationControls"] = {
+    "Continuous generation": "連続生成",
+    "Specified count": "回数指定",
+    "One full cycle": "一巡するまで",
+    "Until stopped": "中止するまで (無限)",
+    "Start continuous generation": "連続生成を開始",
+    "Stop": "停止",
+    "Number of generations": "生成回数",
+    "A cycle uses Sequential and Combinatorial choices; random choices are excluded.": "一巡は順次選択・組み合わせ列挙の候補から計算します。ランダム選択は計算対象外です。",
+    "Completed {completed} / {total}": "完了 {completed} / {total}",
+    "Finished: {completed}": "完了: {completed}件",
+    "Stopped: {completed}": "停止: {completed}件完了",
+    "Generation failed; stopped after {completed}.": "生成に失敗したため停止しました ({completed}件完了)。",
+    "External services are disabled.": "外部サービスの利用が無効です。",
+    "Wait until generation is ready.": "生成の準備が完了するまでお待ちください。",
+    "A cycle requires Sequential or Combinatorial LivePrompt choices.": "一巡にはライブプロンプトの順次選択または組み合わせ列挙を設定してください。",
+}
 _JA_FALLBACK_TRANSLATIONS["_DetailWidget"] = {
+    "Copy full prompt": "プロンプト全文をコピー",
     "Regenerate": "再生成",
     "Restore": "復元",
     "Copy to Nodes": "ノードにコピー",

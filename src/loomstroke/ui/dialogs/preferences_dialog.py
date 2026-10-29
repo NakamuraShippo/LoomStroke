@@ -454,6 +454,12 @@ class PerformancePage(PreferencesPage):
             self._ts("Spread Facing Page Quality"),
             self.spread_quality_combo,
         )
+        from .brush_size_acceleration_preferences import (  # noqa: PLC0415
+            BrushSizeAccelerationControl,
+        )
+
+        self.brush_size_acceleration = BrushSizeAccelerationControl(self)
+        self.brush_size_acceleration.add_to(form)
 
         self._load()
 
@@ -470,6 +476,7 @@ class PerformancePage(PreferencesPage):
         self._populate_spread_quality_combo(
             current_data=str(self.settings.get("performance/spread_inactive_page_quality", "full"))
         )
+        self.brush_size_acceleration.load()
 
     def collect_values(self) -> dict[str, Any]:
         threshold_bytes = self.memmap_threshold_spin.value() * 1_000_000
@@ -483,6 +490,7 @@ class PerformancePage(PreferencesPage):
                 self.sharp_vector_check.isChecked()
             ),
             "performance/spread_inactive_page_quality": (self.spread_quality_combo.currentData()),
+            **self.brush_size_acceleration.collect_values(),
         }
 
     def _populate_spread_quality_combo(self, current_data: str | None = None) -> None:
@@ -499,6 +507,7 @@ class PerformancePage(PreferencesPage):
         self.memmap_threshold_spin.setSuffix(self._ts(" MB"))
         self.recompose_fps_spin.setSuffix(self._ts(" fps"))
         self._populate_spread_quality_combo()
+        self.brush_size_acceleration.refresh_value_label()
 
 
 class InterfacePage(PreferencesPage):

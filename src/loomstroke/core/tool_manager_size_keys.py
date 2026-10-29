@@ -1,7 +1,8 @@
 """Host-side ``[`` / ``]`` brush size keys for tools exposing a ``size`` property.
 
 Runs only when the active tool's ``on_key`` did not handle the key, so tools
-with their own bracket behaviour keep it. The new value goes through
+with their own bracket behaviour keep it. Wheel notches over the tool panel's
+size slider use the same stepper. The new value goes through
 ``ToolManager.set_tool_setting`` so the tool and its UI slider stay in sync.
 """
 
@@ -20,7 +21,7 @@ SIZE_KEY_DIRECTIONS = {"[": -1, "]": 1}
 _SIZE_PROPERTY_KEY = "size"
 _DEFAULT_MIN_SIZE = 1.0
 
-__all__ = ["SIZE_KEY_DIRECTIONS", "step_active_tool_size"]
+__all__ = ["SIZE_KEY_DIRECTIONS", "step_active_tool_size", "step_active_tool_size_direction"]
 
 
 def _size_range(manager: ToolManager, tool_id: str) -> tuple[float, float] | None:
@@ -57,9 +58,16 @@ def _current_size(manager: ToolManager, tool_id: str, plugin: Any) -> float | No
 def step_active_tool_size(manager: ToolManager, key: str) -> bool:
     """Step the active tool's size for a bracket key; return True if applied."""
     direction = SIZE_KEY_DIRECTIONS.get(key)
+    if direction is None:
+        return False
+    return step_active_tool_size_direction(manager, direction)
+
+
+def step_active_tool_size_direction(manager: ToolManager, direction: int) -> bool:
+    """Step the active tool's size up (+1) or down (-1); return True if applied."""
     tool_id = manager._active_tool_id
     plugin = manager._active_tool
-    if direction is None or tool_id is None or plugin is None:
+    if tool_id is None or plugin is None:
         return False
     size_range = _size_range(manager, tool_id)
     if size_range is None:

@@ -39,14 +39,24 @@ def create_widget_for_spec(
     on_changed: Callable[[str, Any], None],
     compact: bool = False,
     translate_fn: Callable[[str], str] | None = None,
+    size_wheel_handler: Callable[[int], bool] | None = None,
 ) -> tuple[QWidget, Callable[[Any], None], Callable[[], Any]]:
     """Create a UI widget from a PropertySpec.
+
+    ``size_wheel_handler`` (optional) receives +1/-1 per wheel notch over the
+    ``size`` slider and returns True when it applied the step.
 
     Returns:
         (widget, setter, getter) tuple.
     """
     if spec.type in {PropertyType.FLOAT, PropertyType.INT}:
-        return _create_numeric_widget(spec, parent=parent, on_changed=on_changed, compact=compact)
+        return _create_numeric_widget(
+            spec,
+            parent=parent,
+            on_changed=on_changed,
+            compact=compact,
+            size_wheel_handler=size_wheel_handler,
+        )
     if spec.type == PropertyType.BOOL:
         return _create_bool_widget(spec, parent=parent, on_changed=on_changed)
     if spec.type == PropertyType.ENUM:
@@ -142,6 +152,7 @@ def _create_numeric_widget(  # noqa: PLR0915 - compact factory assembly
     parent: QWidget | None = None,
     on_changed: Callable[[str, Any], None],
     compact: bool = False,
+    size_wheel_handler: Callable[[int], bool] | None = None,
 ) -> tuple[QWidget, Callable[[Any], None], Callable[[], Any]]:
     container = QWidget(parent)
     layout = QHBoxLayout(container)
@@ -198,6 +209,10 @@ def _create_numeric_widget(  # noqa: PLR0915 - compact factory assembly
         on_changed(spec.key, value)
 
     slider.valueChanged.connect(sync_from_slider)
+    if size_wheel_handler is not None and spec.key == "size":
+        from loomstroke.ui.widgets.size_wheel_filter import SizeWheelFilter  # noqa: PLC0415
+
+        slider.installEventFilter(SizeWheelFilter(size_wheel_handler, slider))
 
     layout.addWidget(slider, 1)
     layout.addWidget(spin_widget)
