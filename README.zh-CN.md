@@ -24,7 +24,8 @@ LoomStroke 是一款基于 PySide6 和 wgpu 的桌面绘画应用。
 1. 通过上方链接下载 ZIP 文件。
 2. 右键单击 ZIP，选择“全部解压缩”，然后打开解压后的 `LoomStroke-main` 文件夹。
 3. 双击 `install.bat`，等待出现“Installation completed successfully.”。
-4. 双击 `boot_LoomStroke.bat` 启动应用。
+4. 双击 `update.bat`，等待更新到最新版本。
+5. 双击 `boot_LoomStroke.bat` 启动应用。
 
 以后只需运行 `boot_LoomStroke.bat` 即可启动，无需安装 Git 或输入命令。
 如需在不启用 AI 功能的情况下启动，请双击 `boot_LoomStroke_noAI.bat`。
@@ -68,8 +69,9 @@ Python 和虚拟环境会在安装时准备，模型权重和用户数据不包�
 需要时，安装程序会下载官方 CPython 3.13.16，使用固定的 SHA-256 校验值验证后，将其准备在 `.runtime/` 中。
 无需管理员权限，也无需修改系统 Python 或 PATH。
 安装程序会复用现有的 `.venv` / `venv`；如果均不存在，则创建 `.venv`，并安装应用及其必需依赖。
-完成后使用 `boot_LoomStroke.bat` 启动。失败时会保留屏幕上的错误信息并退出，
-不会删除或替换现有虚拟环境。
+安装失败时会保留屏幕上的错误信息并退出，不会删除或替换现有虚拟环境。
+安装完成后，请双击 `update.bat`，等待更新到最新版本后，
+再使用 `boot_LoomStroke.bat` 启动。
 
 可使用 `install.bat --nanobanana` 启用 NanoBanana 的附加依赖。
 自动执行时可添加 `--no-pause`；如需指定创建新虚拟环境所用的 Python，

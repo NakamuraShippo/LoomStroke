@@ -24,7 +24,8 @@ ComfyUI・LLM・画像生成サービスとの連携を備えます。
 1. 上のリンクからZIPをダウンロードします。
 2. ZIPを右クリックして「すべて展開」し、中の `LoomStroke-main` フォルダを開きます。
 3. `install.bat` をダブルクリックし、「Installation completed successfully.」と表示されるまで待ちます。
-4. `boot_LoomStroke.bat` をダブルクリックして起動します。
+4. `update.bat` をダブルクリックし、最新版への更新が完了するまで待ちます。
+5. `boot_LoomStroke.bat` をダブルクリックして起動します。
 
 2回目以降は `boot_LoomStroke.bat` だけで起動できます。Gitのインストールやコマンド入力は不要です。
 AI機能を使わずに起動する場合は、`boot_LoomStroke_noAI.bat` をダブルクリックします。
@@ -68,8 +69,9 @@ Windows 64-bitでは、Python未導入のまま `install.bat` をダブルクリ
 必要な場合は公式CPython 3.13.16を取得し、固定SHA-256の検証後、`.runtime/` 内に準備します。
 管理者権限、システムのPythonやPATHの変更は必要ありません。
 既存の `.venv` / `venv` を再利用し、なければ `.venv` を作り、本体と必須依存をインストールします。
-完了後は `boot_LoomStroke.bat` で起動します。失敗時はエラーを画面に残して終了し、
-既存の仮想環境を削除・置換しません。
+インストールが失敗した場合はエラーを画面に残して終了し、既存の仮想環境を削除・置換しません。
+インストール完了後は `update.bat` をダブルクリックし、最新版への更新が完了してから
+`boot_LoomStroke.bat` で起動します。
 
 `install.bat --nanobanana` でNanoBananaの追加依存を有効にできます。
 自動実行時は `--no-pause`、新しい仮想環境の作成に使うPythonを指定する場合は

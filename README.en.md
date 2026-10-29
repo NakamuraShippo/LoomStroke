@@ -24,7 +24,8 @@ for the initial setup. If Python is not found, the installer automatically downl
 1. Download the ZIP using the link above.
 2. Right-click the ZIP, select “Extract All,” and open the extracted `LoomStroke-main` folder.
 3. Double-click `install.bat` and wait until “Installation completed successfully.” appears.
-4. Double-click `boot_LoomStroke.bat` to launch the app.
+4. Double-click `update.bat` and wait until the update to the latest version finishes.
+5. Double-click `boot_LoomStroke.bat` to launch the app.
 
 For subsequent launches, just use `boot_LoomStroke.bat`. You do not need Git or any command-line input.
 To launch without AI features, double-click `boot_LoomStroke_noAI.bat`.
@@ -68,8 +69,9 @@ On 64-bit Windows, you can double-click `install.bat` without installing Python 
 When needed, it downloads official CPython 3.13.16, verifies it against a fixed SHA-256 hash, and prepares it in `.runtime/`.
 Administrator privileges and changes to the system Python or PATH are not required.
 It reuses an existing `.venv` / `venv`, or creates `.venv` if neither exists, then installs the app and its required dependencies.
-After setup, launch with `boot_LoomStroke.bat`. On failure, the installer leaves the error visible and exits
-without deleting or replacing an existing virtual environment.
+On failure, the installer leaves the error visible and exits without deleting or replacing an existing virtual environment.
+After installation, double-click `update.bat` and wait until the update to the latest version finishes,
+then launch with `boot_LoomStroke.bat`.
 
 Use `install.bat --nanobanana` to enable NanoBanana's additional dependencies.
 For automated execution, add `--no-pause`. To choose the Python used to create a new virtual environment,
