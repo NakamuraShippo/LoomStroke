@@ -30,6 +30,8 @@ from PySide6.QtWidgets import (
     QWidget,
 )
 
+from loomstroke.ui.widget_translations import bind_widget_text
+
 # Geometry constants
 _BAR_HEIGHT = 24
 _HANDLE_HEIGHT = 10
@@ -347,7 +349,12 @@ class GradientStopsWidget(QWidget):
 
         self._btn_delete = QPushButton(self)
         self._btn_delete.setText("\u2212")  # minus sign
-        self._btn_delete.setToolTip("Delete selected stop")
+        bind_widget_text(
+            self._btn_delete,
+            "Delete selected stop",
+            domain="GradientStopsWidget",
+            attribute="toolTip",
+        )
         self._btn_delete.setFixedSize(24, 20)
         self._btn_delete.setEnabled(False)
         self._btn_delete.clicked.connect(self._on_delete)

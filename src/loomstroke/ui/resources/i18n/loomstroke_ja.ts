@@ -418,6 +418,38 @@
         <source>Marker</source>
         <translation>マーカー</translation>
     </message>
+    <message>
+        <source>Pen taper could not be completed. The stroke was preserved.</source>
+        <translation>入り抜きを確定できませんでした。描画した線は保持されています。</translation>
+    </message>
+    <message>
+        <source>Recontour</source>
+        <translation>描線を再調整</translation>
+    </message>
+    <message>
+        <source>Recontour could not edit this stroke. The raster stroke was preserved.</source>
+        <translation>Recontourでこの線を編集できませんでした。元のラスターストロークは保持されています。</translation>
+    </message>
+    <message>
+        <source>RecontourSmoothness (next stroke)</source>
+        <translation>RecontourSmoothness (次のストロークから適用)</translation>
+    </message>
+    <message>
+        <source>Taper End Length</source>
+        <translation>抜きの長さ</translation>
+    </message>
+    <message>
+        <source>Taper In Length</source>
+        <translation>入りの長さ</translation>
+    </message>
+    <message>
+        <source>Taper Out Length</source>
+        <translation>抜きの長さ</translation>
+    </message>
+    <message>
+        <source>Taper Start Length</source>
+        <translation>入りの長さ</translation>
+    </message>
 </context>
 <context>
     <name>BrushManagerPanel</name>
@@ -450,6 +482,14 @@
         <translation>ブラシマネージャー</translation>
     </message>
 
+    <message>
+        <source>Brushes</source>
+        <translation>ブラシ</translation>
+    </message>
+    <message>
+        <source>Pen</source>
+        <translation>ペン</translation>
+    </message>
 </context>
 <context>
     <name>CanvasResizeDialog</name>
@@ -517,6 +557,10 @@
         <source>Mobile Screen</source>
         <translation>モバイル画面</translation>
     </message>
+    <message>
+        <source>Cancel</source>
+        <translation>キャンセル</translation>
+    </message>
 </context>
 <context>
     <name>ColorPanel</name>
@@ -534,7 +578,7 @@
     </message>
     <message>
         <source>Hex</source>
-        <translation>Hex</translation>
+        <translation>16進数</translation>
     </message>
     <message>
         <source>Palette</source>
@@ -708,6 +752,72 @@
         <translation>キャンセル済み</translation>
     </message>
 
+    <message>
+        <source>Loaded workflow: {name}</source>
+        <translation>ワークフローを読み込みました: {name}</translation>
+    </message>
+    <message>
+        <source>Failed to load workflow: {error}</source>
+        <translation>ワークフローを読み込めませんでした: {error}</translation>
+    </message>
+    <message>
+        <source>No workflow loaded</source>
+        <translation>ワークフローが読み込まれていません</translation>
+    </message>
+    <message>
+        <source>Enable 'Allow external AI services' in Preferences to queue workflows.</source>
+        <translation>ワークフローを実行待ちに追加するには、環境設定の「外部AIサービスを許可」を有効にしてください。</translation>
+    </message>
+    <message>
+        <source>Waiting to start</source>
+        <translation>開始待ち</translation>
+    </message>
+    <message>
+        <source>Invalid Image Path</source>
+        <translation>画像パスが無効です</translation>
+    </message>
+    <message>
+        <source>The workflow contains LoadImage nodes with invalid file paths.
+
+Please check that all image paths in your workflow are valid.
+</source>
+        <translation>ワークフローに無効なファイルパスを持つLoadImageノードがあります。
+
+ワークフロー内のすべての画像パスを確認してください。
+</translation>
+    </message>
+    <message>
+        <source>Failed to queue workflow: {error}</source>
+        <translation>ワークフローを実行待ちに追加できませんでした: {error}</translation>
+    </message>
+    <message>
+        <source>Failed to queue workflow. Please try again.</source>
+        <translation>ワークフローを実行待ちに追加できませんでした。再試行してください。</translation>
+    </message>
+    <message>
+        <source>Unable to cancel job {short_id}</source>
+        <translation>ジョブ {short_id} を取り消せません</translation>
+    </message>
+    <message>
+        <source>Unable to cancel job - event loop unavailable</source>
+        <translation>イベントループを利用できないため、ジョブを取り消せません</translation>
+    </message>
+    <message>
+        <source>(No workflow loaded)</source>
+        <translation>(ワークフローが読み込まれていません)</translation>
+    </message>
+    <message>
+        <source>Error</source>
+        <translation>エラー</translation>
+    </message>
+    <message>
+        <source>Error: {error}</source>
+        <translation>エラー: {error}</translation>
+    </message>
+    <message>
+        <source>Warning</source>
+        <translation>警告</translation>
+    </message>
 </context>
 <context>
     <name>ComfyUIPanel</name>
@@ -799,6 +909,10 @@
         <source>Generation completed</source>
         <translation>生成完了</translation>
     </message>
+    <message>
+        <source>External service access is disabled. Enable it in Preferences.</source>
+        <translation>外部サービスへの接続は無効です。環境設定で有効にしてください。</translation>
+    </message>
 </context>
 <context>
     <name>ComponentPaletteWidget</name>
@@ -886,6 +1000,22 @@
         <translation>外部アクセスが無効です</translation>
     </message>
 
+    <message>
+        <source>Local — {url}</source>
+        <translation>ローカル — {url}</translation>
+    </message>
+    <message>
+        <source>Enable 'Allow external AI services' in Preferences to connect to ComfyUI.</source>
+        <translation>ComfyUIに接続するには、環境設定の「外部AIサービスを許可」を有効にしてください。</translation>
+    </message>
+    <message>
+        <source>Choose a ComfyUI server configured in Preferences.</source>
+        <translation>Preferences で設定した ComfyUI サーバーを選択します。</translation>
+    </message>
+    <message>
+        <source>Server</source>
+        <translation>サーバー</translation>
+    </message>
 </context>
 <context>
     <name>ConnectionPanel</name>
@@ -1084,6 +1214,14 @@
         <translation>グリッド間隔</translation>
     </message>
 
+    <message>
+        <source>Each page keeps the zoom and position it was left at. Off keeps one view for the whole document.</source>
+        <translation>各ページが最後に見ていた拡大率と位置を保ちます。オフのときは作品全体で 1 つの表示状態を使います。</translation>
+    </message>
+    <message>
+        <source>Remember zoom and pan per page</source>
+        <translation>ページごとに拡大率と表示位置を記憶する</translation>
+    </message>
 </context>
 <context>
     <name>JobQueuePanel</name>
@@ -1350,6 +1488,50 @@
     <message>
         <source>How this layer blends with the layers below</source>
         <translation>このレイヤーと下のレイヤーのブレンド方法</translation>
+    </message>
+    <message>
+        <source>Mask</source>
+        <translation>マスク</translation>
+    </message>
+    <message>
+        <source>Add Vector Layer</source>
+        <translation>ベクターレイヤーを追加</translation>
+    </message>
+    <message>
+        <source>(not set)</source>
+        <translation>（未設定）</translation>
+    </message>
+    <message>
+        <source>(optional) drag a layer</source>
+        <translation>（任意）レイヤーをドラッグ</translation>
+    </message>
+    <message>
+        <source>(missing layer)</source>
+        <translation>（レイヤーが見つかりません）</translation>
+    </message>
+    <message>
+        <source>Add AI Effect Layer</source>
+        <translation>AI Effect レイヤーを追加</translation>
+    </message>
+    <message>
+        <source>Add Candidate to Existing Mask</source>
+        <translation>既存マスクに候補を追加</translation>
+    </message>
+    <message>
+        <source>Component</source>
+        <translation>コンポーネント</translation>
+    </message>
+    <message>
+        <source>Create SAM3 Mask from Layer</source>
+        <translation>レイヤーに SAM3 マスクを作成</translation>
+    </message>
+    <message>
+        <source>Replace Layer Mask with Candidate</source>
+        <translation>レイヤーマスクを候補で置換</translation>
+    </message>
+    <message>
+        <source>Toggle Candidate Overlay</source>
+        <translation>候補オーバーレイを切り替え</translation>
     </message>
 </context>
 <context>
@@ -2043,6 +2225,358 @@
         <source>Exported {name}, but omitted {count} unsupported vector layer(s). Layers using non-normal blend modes or visible live filters cannot be represented in the current SVG subset.</source>
         <translation>{name} を書き出しましたが、未対応のベクターレイヤー {count} 件を省略しました。通常以外の描画モード、または表示中のライブフィルターを使用するレイヤーは、現在の SVG 対応範囲では表現できません。</translation>
     </message>
+    <message>
+        <source>Initialization Error</source>
+        <translation>初期化エラー</translation>
+    </message>
+    <message>
+        <source>Failed to initialize: {error}</source>
+        <translation>初期化に失敗しました: {error}</translation>
+    </message>
+    <message>
+        <source>&amp;Fit Spread</source>
+        <translation>見開きに合わせる(&amp;F)</translation>
+    </message>
+    <message>
+        <source>&amp;Flatten All</source>
+        <translation>画像を統合(&amp;F)</translation>
+    </message>
+    <message>
+        <source>&amp;Import…</source>
+        <translation>読み込み(&amp;I)…</translation>
+    </message>
+    <message>
+        <source>&amp;Soft Proof</source>
+        <translation>ソフトプルーフ(&amp;S)</translation>
+    </message>
+    <message>
+        <source>(No presets installed)</source>
+        <translation>(インストール済みのプリセットはありません)</translation>
+    </message>
+    <message>
+        <source>AI</source>
+        <translation>AI</translation>
+    </message>
+    <message>
+        <source>AI Effect &amp;Presets...</source>
+        <translation>AI エフェクトプリセット(&amp;P)...</translation>
+    </message>
+    <message>
+        <source>BMP Image (*.bmp)</source>
+        <translation>BMP 画像 (*.bmp)</translation>
+    </message>
+    <message>
+        <source>Canvas Assistant(incomplete)</source>
+        <translation>キャンバスアシスタント（未完成）</translation>
+    </message>
+    <message>
+        <source>Choose Proof &amp;Profile...</source>
+        <translation>プルーフ用プロファイルを選択(&amp;P)...</translation>
+    </message>
+    <message>
+        <source>Choose Proof Profile</source>
+        <translation>プルーフ用プロファイルを選択</translation>
+    </message>
+    <message>
+        <source>Colour profile assigned: {name}</source>
+        <translation>カラープロファイルを割り当てました: {name}</translation>
+    </message>
+    <message>
+        <source>Colour profile removed (treated as sRGB)</source>
+        <translation>カラープロファイルを解除しました (sRGB とみなす)</translation>
+    </message>
+    <message>
+        <source>Comic</source>
+        <translation>コミック</translation>
+    </message>
+    <message>
+        <source>Comic &amp;Book Settings...</source>
+        <translation>漫画作品の設定(&amp;B)...</translation>
+    </message>
+    <message>
+        <source>Comic Book Settings</source>
+        <translation>漫画作品の設定</translation>
+    </message>
+    <message>
+        <source>Could not import: {path}</source>
+        <translation>読み込めませんでした: {path}</translation>
+    </message>
+    <message>
+        <source>Create Screentone</source>
+        <translation>スクリーントーンを作成</translation>
+    </message>
+    <message>
+        <source>Default Foreground/Background C&amp;olors</source>
+        <translation>描画色と背景色を初期設定に戻す(&amp;O)</translation>
+    </message>
+    <message>
+        <source>Document Mode…</source>
+        <translation>ドキュメントモード…</translation>
+    </message>
+    <message>
+        <source>Drawing</source>
+        <translation>描画</translation>
+    </message>
+    <message>
+        <source>Export Digital Comic Package…</source>
+        <translation>デジタル漫画パッケージを書き出し…</translation>
+    </message>
+    <message>
+        <source>Export Pages…</source>
+        <translation>ページを一括書き出し…</translation>
+    </message>
+    <message>
+        <source>Export Webtoon…</source>
+        <translation>Webtoon を書き出し…</translation>
+    </message>
+    <message>
+        <source>Export for Print…</source>
+        <translation>印刷用に書き出し…</translation>
+    </message>
+    <message>
+        <source>Exported {name}</source>
+        <translation>{name} を書き出しました</translation>
+    </message>
+    <message>
+        <source>Failed to add AI effect layer</source>
+        <translation>AI エフェクトレイヤーを追加できませんでした</translation>
+    </message>
+    <message>
+        <source>Failed to assign the colour profile.</source>
+        <translation>カラープロファイルの割り当てに失敗しました。</translation>
+    </message>
+    <message>
+        <source>Failed to create the screentone layer.</source>
+        <translation>スクリーントーンレイヤーの作成に失敗しました。</translation>
+    </message>
+    <message>
+        <source>Failed to resize image.</source>
+        <translation>画像のリサイズに失敗しました。</translation>
+    </message>
+    <message>
+        <source>Font Diagnostics…</source>
+        <translation>フォント診断…</translation>
+    </message>
+    <message>
+        <source>ICC Profile (*.icc *.icm);;All Files (*.*)</source>
+        <translation>ICC プロファイル (*.icc *.icm);;すべてのファイル (*.*)</translation>
+    </message>
+    <message>
+        <source>Image Si&amp;ze...</source>
+        <translation>画像解像度(&amp;Z)...</translation>
+    </message>
+    <message>
+        <source>Image Size</source>
+        <translation>画像解像度</translation>
+    </message>
+    <message>
+        <source>Image resized to {width}x{height} px at {dpi} dpi</source>
+        <translation>画像を {width}x{height} px / {dpi} dpi にリサイズしました</translation>
+    </message>
+    <message>
+        <source>Import</source>
+        <translation>読み込み</translation>
+    </message>
+    <message>
+        <source>Import Failed</source>
+        <translation>読み込みに失敗しました</translation>
+    </message>
+    <message>
+        <source>Imported {name}</source>
+        <translation>{name} を読み込みました</translation>
+    </message>
+    <message>
+        <source>Imported {name} ({count} layers)</source>
+        <translation>{name} を読み込みました ({count} レイヤー)</translation>
+    </message>
+    <message>
+        <source>Installed AI Presets</source>
+        <translation>インストール済み AI プリセット</translation>
+    </message>
+    <message>
+        <source>JPEG Image (*.jpg *.jpeg)</source>
+        <translation>JPEG 画像 (*.jpg *.jpeg)</translation>
+    </message>
+    <message>
+        <source>Layers / Pages</source>
+        <translation>レイヤー・ページ</translation>
+    </message>
+    <message>
+        <source>Manga Preflight…</source>
+        <translation>漫画プリフライト…</translation>
+    </message>
+    <message>
+        <source>New &amp;Screentone Layer...</source>
+        <translation>新規スクリーントーンレイヤー(&amp;S)...</translation>
+    </message>
+    <message>
+        <source>New Screentone Layer</source>
+        <translation>新規スクリーントーンレイヤー</translation>
+    </message>
+    <message>
+        <source>No canvas is available to paste into.</source>
+        <translation>貼り付け先のキャンバスがありません。</translation>
+    </message>
+    <message>
+        <source>No selection. Apply the screentone to the whole page?</source>
+        <translation>選択範囲がありません。ページ全体にスクリーントーンを適用しますか?</translation>
+    </message>
+    <message>
+        <source>Other</source>
+        <translation>その他</translation>
+    </message>
+    <message>
+        <source>PNG Image (*.png)</source>
+        <translation>PNG 画像 (*.png)</translation>
+    </message>
+    <message>
+        <source>PSD Image (*.psd)</source>
+        <translation>PSD 画像 (*.psd)</translation>
+    </message>
+    <message>
+        <source>Package Project…</source>
+        <translation>プロジェクトをパッケージ…</translation>
+    </message>
+    <message>
+        <source>Paste from &amp;System Clipboard</source>
+        <translation>システムクリップボードから貼り付け(&amp;S)</translation>
+    </message>
+    <message>
+        <source>Pasted from the system clipboard as pixels (editable data was invalid).</source>
+        <translation>システムクリップボードからピクセルとして貼り付けました (編集可能データは無効でした)。</translation>
+    </message>
+    <message>
+        <source>Pasted from the system clipboard.</source>
+        <translation>システムクリップボードから貼り付けました。</translation>
+    </message>
+    <message>
+        <source>Place Image…</source>
+        <translation>画像を配置…</translation>
+    </message>
+    <message>
+        <source>Preparing canvas...</source>
+        <translation>キャンバスを準備中...</translation>
+    </message>
+    <message>
+        <source>Production Control</source>
+        <translation>制作管理</translation>
+    </message>
+    <message>
+        <source>Production Control(incomplete)</source>
+        <translation>制作管理（未完成）</translation>
+    </message>
+    <message>
+        <source>Resolution set to {dpi} dpi</source>
+        <translation>解像度を {dpi} dpi に変更しました</translation>
+    </message>
+    <message>
+        <source>S&amp;wap Foreground/Background Colors</source>
+        <translation>描画色と背景色を入れ替え(&amp;W)</translation>
+    </message>
+    <message>
+        <source>SVG Image (*.svg)</source>
+        <translation>SVG 画像 (*.svg)</translation>
+    </message>
+    <message>
+        <source>Saved previous document {name}</source>
+        <translation>以前のドキュメント {name} を保存しました</translation>
+    </message>
+    <message>
+        <source>Saved {name} — newer unsaved changes remain</source>
+        <translation>{name} を保存しました — より新しい未保存の変更が残っています</translation>
+    </message>
+    <message>
+        <source>Saved {name} — newer unsaved changes remain, close cancelled</source>
+        <translation>{name} を保存しました — より新しい未保存の変更が残っているため、終了を中止しました</translation>
+    </message>
+    <message>
+        <source>Screentone</source>
+        <translation>スクリーントーン</translation>
+    </message>
+    <message>
+        <source>Screentone layer created</source>
+        <translation>スクリーントーンレイヤーを作成しました</translation>
+    </message>
+    <message>
+        <source>Selection to &amp;Mask</source>
+        <translation>選択範囲をマスクに変換(&amp;M)</translation>
+    </message>
+    <message>
+        <source>Soft Proof</source>
+        <translation>ソフトプルーフ</translation>
+    </message>
+    <message>
+        <source>Soft proof could not be enabled for this profile.</source>
+        <translation>このプロファイルではソフトプルーフを有効にできませんでした。</translation>
+    </message>
+    <message>
+        <source>TIFF Image (*.tif *.tiff)</source>
+        <translation>TIFF 画像 (*.tif *.tiff)</translation>
+    </message>
+    <message>
+        <source>The book settings could not be stored in this document.</source>
+        <translation>この文書には作品設定を保存できませんでした。</translation>
+    </message>
+    <message>
+        <source>The canvas did not accept the paste.</source>
+        <translation>キャンバスが貼り付けを受け付けませんでした。</translation>
+    </message>
+    <message>
+        <source>The clipboard data from LoomStroke could not be read.</source>
+        <translation>LoomStroke のクリップボードデータを読めませんでした。</translation>
+    </message>
+    <message>
+        <source>The clipboard image could not be decoded.</source>
+        <translation>クリップボードの画像をデコードできませんでした。</translation>
+    </message>
+    <message>
+        <source>The clipboard image is too large to paste.</source>
+        <translation>クリップボードの画像が大きすぎて貼り付けられません。</translation>
+    </message>
+    <message>
+        <source>The file is not a usable ICC profile.</source>
+        <translation>このファイルは使用できる ICC プロファイルではありません。</translation>
+    </message>
+    <message>
+        <source>The system clipboard has no image to paste.</source>
+        <translation>システムクリップボードに貼り付けられる画像がありません。</translation>
+    </message>
+    <message>
+        <source>WebP Image (*.webp)</source>
+        <translation>WebP 画像 (*.webp)</translation>
+    </message>
+
+
+    <message><source>Composition Guides...</source><translation>構図ガイド...</translation></message>
+
+
+    <message><source>Guides</source><translation>ガイド</translation></message>
+    <message><source>Show Guides</source><translation>ガイドを表示</translation></message>
+    <message><source>Lock Guides</source><translation>ガイドをロック</translation></message>
+    <message><source>Clear All Guides</source><translation>ガイドをすべて消去</translation></message>
+
+
+    <message><source>Snap to Canvas Edges</source><translation>キャンバス端に吸着</translation></message>
+    <message><source>Snap to Canvas Center</source><translation>キャンバス中央に吸着</translation></message>
+
+
+    <message><source>Guide Templates...</source><translation>ガイドテンプレート...</translation></message>
+
+
+    <message><source>Select Guide Cell</source><translation>ガイドのセルを選択</translation></message>
+
+
+    <message><source>Grid Settings...</source><translation>グリッド設定...</translation></message>
+
+
+    <message><source>Binding Margin...</source><translation>ノド余白...</translation></message>
+
+
+    <message><source>Page Format Guides...</source><translation>判型ガイド...</translation></message>
+
+
+    <message><source>Preview Trimmed Page</source><translation>仕上がり表示</translation></message>
+    <message><source>Extend Bleed...</source><translation>塗り足しを延長...</translation></message>
 </context>
 <context>
     <name>NanoBananaPanel</name>
@@ -2159,6 +2693,14 @@
         <translation>外部 AI サービスは無効です。生成するには Preferences で「Allow external AI services」を有効にしてください。</translation>
     </message>
 
+    <message>
+        <source>Enter prompt text...</source>
+        <translation>プロンプトを入力...</translation>
+    </message>
+    <message>
+        <source>Prompt:</source>
+        <translation>プロンプト:</translation>
+    </message>
 </context>
 <context>
     <name>NewDocumentDialog</name>
@@ -2262,6 +2804,10 @@
         <source>Mobile Screen</source>
         <translation>モバイル画面</translation>
     </message>
+    <message>
+        <source>Cancel</source>
+        <translation>キャンセル</translation>
+    </message>
 </context>
 <context>
     <name>NodePanel</name>
@@ -2361,6 +2907,34 @@ Type: {type}</source>
     <message><source>Standard</source><translation>標準</translation></message>
     <message><source>Strong</source><translation>強</translation></message>
 
+    <message>
+        <source>Balanced</source>
+        <translation>バランス</translation>
+    </message>
+    <message>
+        <source>Composites the display at view resolution so vector and text layers stay sharp when zoomed in, regardless of layer order.</source>
+        <translation>表示解像度で合成し、拡大してもベクターレイヤーとテキストレイヤーをレイヤー順に関係なくくっきり表示します。</translation>
+    </message>
+    <message>
+        <source>Enable sharp vector rendering (zoom)</source>
+        <translation>拡大時にベクターをくっきり表示する</translation>
+    </message>
+    <message>
+        <source>Full</source>
+        <translation>フル</translation>
+    </message>
+    <message>
+        <source>Low</source>
+        <translation>低</translation>
+    </message>
+    <message>
+        <source>Lowers the composite resolution of the facing page in a spread. Full keeps it as sharp as the page being edited; the lower steps trade sharpness for GPU memory on large, many-layered pages.</source>
+        <translation>見開きで隣に表示される相手ページの合成解像度を下げます。フルは編集中のページと同じシャープさを保ちます。大きく多レイヤーのページでは、下げるほど GPU メモリを節約できます。</translation>
+    </message>
+    <message>
+        <source>Spread Facing Page Quality</source>
+        <translation>見開きの相手ページ画質</translation>
+    </message>
 </context>
 <context>
     <name>PreferencesDialog</name>
@@ -2449,6 +3023,14 @@ Type: {type}</source>
         <translation>適用</translation>
     </message>
 
+    <message>
+        <source>SAM 3.1</source>
+        <translation>SAM 3.1</translation>
+    </message>
+    <message>
+        <source>SAM 3.1 runtime and one-click setup for AI Select</source>
+        <translation>AI Select 用 SAM 3.1 ランタイムとワンクリックセットアップ</translation>
+    </message>
 </context>
 <context>
     <name>PreviewView</name>
@@ -2939,12 +3521,20 @@ Type: {type}</source>
         <translation>プロンプトを生成して送信しました。</translation>
     </message>
 
+    <message>
+        <source>Load to Compose</source>
+        <translation>構成へ読み込む</translation>
+    </message>
+    <message>
+        <source>Delete '{title}'?</source>
+        <translation>'{title}' を削除しますか?</translation>
+    </message>
 </context>
 <context>
     <name>PromptPanel</name>
     <message>
         <source>Prompt Editor</source>
-        <translation>Prompt Editor</translation>
+        <translation>プロンプトエディター</translation>
     </message>
     <message>
         <source>Template:</source>
@@ -3200,6 +3790,14 @@ Type: {type}</source>
     <message>
         <source>Select Layout Directory</source>
         <translation>レイアウトディレクトリを選択</translation>
+    </message>
+    <message>
+        <source>Composites the display at view resolution so vector and text layers stay sharp when zoomed in, regardless of layer order.</source>
+        <translation>表示解像度で合成し、拡大してもベクターレイヤーとテキストレイヤーをレイヤー順に関係なくくっきり表示します。</translation>
+    </message>
+    <message>
+        <source>Enable sharp vector rendering (zoom)</source>
+        <translation>拡大時にベクターをくっきり表示する</translation>
     </message>
 </context>
 <context>
@@ -3880,6 +4478,402 @@ Type: {type}</source>
         <translation>{total} 件中 {shown} 件を表示</translation>
     </message>
 
+    <message>
+        <source>Cancel</source>
+        <translation>キャンセル</translation>
+    </message>
+    <message>
+        <source>Mask overlay color</source>
+        <translation>マスクのオーバーレイ色</translation>
+    </message>
+    <message>
+        <source>Mask overlay opacity</source>
+        <translation>マスクのオーバーレイ不透明度</translation>
+    </message>
+    <message>
+        <source>Enable local LoomStroke MCP server</source>
+        <translation>ローカルのLoomStroke MCPサーバーを有効にする</translation>
+    </message>
+    <message>
+        <source>Opens a Streamable HTTP MCP endpoint on 127.0.0.1 only.</source>
+        <translation>127.0.0.1のみでStreamable HTTPのMCP接続先を開きます。</translation>
+    </message>
+    <message>
+        <source>Start on launch</source>
+        <translation>起動時に開始</translation>
+    </message>
+    <message>
+        <source>Starts the local endpoint automatically when LoomStroke opens.</source>
+        <translation>LoomStrokeの起動時にローカルの接続先を自動的に開始します。</translation>
+    </message>
+    <message>
+        <source>Use 0 to select an automatic local port.</source>
+        <translation>0を指定するとローカルポートを自動選択します。</translation>
+    </message>
+    <message>
+        <source>Comma-separated HTTP Origins allowed to call the local MCP endpoint.</source>
+        <translation>ローカルMCPへの呼び出しを許可するHTTP Originをカンマで区切って指定します。</translation>
+    </message>
+    <message>
+        <source>Controls when LoomStroke asks before allowing MCP agent actions.</source>
+        <translation>LoomStrokeがMCPエージェントの操作を許可する前に確認するタイミングを設定します。</translation>
+    </message>
+    <message>
+        <source>Port</source>
+        <translation>ポート</translation>
+    </message>
+    <message>
+        <source>Endpoint URL</source>
+        <translation>接続先URL</translation>
+    </message>
+    <message>
+        <source>Session Token</source>
+        <translation>セッショントークン</translation>
+    </message>
+    <message>
+        <source>Allowed Origins</source>
+        <translation>許可するOrigin</translation>
+    </message>
+    <message>
+        <source>File Roots</source>
+        <translation>ファイル操作の許可フォルダー</translation>
+    </message>
+    <message>
+        <source>Not running</source>
+        <translation>停止中</translation>
+    </message>
+    <message>
+        <source>Semicolon-separated directories allowed for MCP file writes.</source>
+        <translation>MCPによるファイル書き込みを許可するフォルダーをセミコロンで区切って指定します。</translation>
+    </message>
+    <message>
+        <source>The live endpoint stays local. File writes and external generation still require the existing LoomStroke safety gates.</source>
+        <translation>接続先はローカルに限定されます。ファイルへの書き込みや外部生成には、既存のLoomStrokeの安全確認が適用されます。</translation>
+    </message>
+    <message>
+        <source>Select MCP File Root</source>
+        <translation>MCPファイル操作の許可フォルダーを選択</translation>
+    </message>
+    <message>
+        <source> entries</source>
+        <translation> 件</translation>
+    </message>
+    <message>
+        <source>Disable cache for manual regenerate</source>
+        <translation>手動再生成ではキャッシュを使用しない</translation>
+    </message>
+    <message>
+        <source>Show first-generation banner</source>
+        <translation>初回生成の案内を表示する</translation>
+    </message>
+    <message>
+        <source>Register on-change / debounced generations in Gallery</source>
+        <translation>変更時・遅延生成の結果をギャラリーに登録する</translation>
+    </message>
+    <message>
+        <source>When unchecked, only manually-triggered generations are saved to the Gallery. Auto-fired runs (on_change / debounced) skip Gallery registration to avoid cluttering history with intermediate probes.</source>
+        <translation>オフの場合、手動で実行した生成結果だけをギャラリーに保存します。変更時・遅延生成による途中結果を履歴へ登録しません。</translation>
+    </message>
+    <message>
+        <source>Default trigger</source>
+        <translation>既定の生成タイミング</translation>
+    </message>
+    <message>
+        <source>Debounce delay</source>
+        <translation>変更後の待ち時間</translation>
+    </message>
+    <message>
+        <source>Generation timeout</source>
+        <translation>生成のタイムアウト</translation>
+    </message>
+    <message>
+        <source>Cache entries per layer</source>
+        <translation>レイヤーごとのキャッシュ件数</translation>
+    </message>
+    <message>
+        <source>Auto-retries on 'on change' trigger</source>
+        <translation>変更時生成の自動再試行回数</translation>
+    </message>
+    <message>
+        <source>Retry delay</source>
+        <translation>再試行の待ち時間</translation>
+    </message>
+    <message>
+        <source>ComfyUI Servers</source>
+        <translation>ComfyUIサーバー</translation>
+    </message>
+    <message>
+        <source>URL of the ComfyUI server running on this machine. Leave blank to use http://127.0.0.1:8188.</source>
+        <translation>このコンピューターで稼働するComfyUIサーバーのURL。空欄の場合は http://127.0.0.1:8188 を使用します。</translation>
+    </message>
+    <message>
+        <source>Local URL</source>
+        <translation>ローカルURL</translation>
+    </message>
+    <message>
+        <source>External URL</source>
+        <translation>外部URL</translation>
+    </message>
+    <message>
+        <source>Add external ComfyUI server</source>
+        <translation>外部ComfyUIサーバーを追加</translation>
+    </message>
+    <message>
+        <source>Optional URL of a remote ComfyUI server. Blank rows are ignored.</source>
+        <translation>リモートのComfyUIサーバーのURL（任意）。空欄の行は無視します。</translation>
+    </message>
+    <message>
+        <source>API Keys</source>
+        <translation>APIキー</translation>
+    </message>
+    <message>
+        <source>✓ Configured</source>
+        <translation>✓ 設定済み</translation>
+    </message>
+    <message>
+        <source>Not set</source>
+        <translation>未設定</translation>
+    </message>
+    <message>
+        <source> MB</source>
+        <translation> MB</translation>
+    </message>
+    <message>
+        <source> fps</source>
+        <translation> fps</translation>
+    </message>
+    <message>
+        <source> items</source>
+        <translation> 件</translation>
+    </message>
+    <message>
+        <source> ms</source>
+        <translation> ms</translation>
+    </message>
+    <message>
+        <source> px</source>
+        <translation> px</translation>
+    </message>
+    <message>
+        <source> sec</source>
+        <translation> 秒</translation>
+    </message>
+    <message>
+        <source>Agent Approval</source>
+        <translation>エージェント操作の承認</translation>
+    </message>
+    <message>
+        <source>Allow all MCP agent actions</source>
+        <translation>MCPエージェント操作をすべて許可</translation>
+    </message>
+    <message>
+        <source>Allow external AI services (ComfyUI, LLM Gateway, NanoBanana)</source>
+        <translation>外部AIサービス (ComfyUI, LLM Gateway, NanoBanana) を許可</translation>
+    </message>
+    <message>
+        <source>Apply</source>
+        <translation>適用</translation>
+    </message>
+    <message>
+        <source>Ask before every MCP agent action</source>
+        <translation>MCPエージェント操作のたびに確認</translation>
+    </message>
+    <message>
+        <source>Ask only before external generation queues</source>
+        <translation>外部生成の実行前のみ確認</translation>
+    </message>
+    <message>
+        <source>Asset cache limit</source>
+        <translation>アセットキャッシュ上限</translation>
+    </message>
+    <message>
+        <source>Autosave interval (effective after restart)</source>
+        <translation>自動保存間隔 (再起動後に有効)</translation>
+    </message>
+    <message>
+        <source>Balanced</source>
+        <translation>バランス</translation>
+    </message>
+    <message>
+        <source>Browse…</source>
+        <translation>参照…</translation>
+    </message>
+    <message>
+        <source>Cache Size</source>
+        <translation>キャッシュサイズ</translation>
+    </message>
+    <message>
+        <source>Color Theme</source>
+        <translation>カラーテーマ</translation>
+    </message>
+    <message>
+        <source>Composites the display at view resolution so vector and text layers stay sharp when zoomed in, regardless of layer order.</source>
+        <translation>表示解像度で合成し、拡大してもベクターレイヤーとテキストレイヤーをレイヤー順に関係なくくっきり表示します。</translation>
+    </message>
+    <message>
+        <source>Compression quality</source>
+        <translation>圧縮品質</translation>
+    </message>
+    <message>
+        <source>Copy</source>
+        <translation>コピー</translation>
+    </message>
+    <message>
+        <source>Crash recovery requires autosave. If autosave is off, unsaved changes cannot be restored after a forced quit or crash.</source>
+        <translation>クラッシュ復元には自動保存が必要です。自動保存をオフにすると、強制終了やクラッシュ後に未保存の変更を復元できません。</translation>
+    </message>
+    <message>
+        <source>Dark</source>
+        <translation>ダーク</translation>
+    </message>
+    <message>
+        <source>Each page keeps the zoom and position it was left at. Off keeps one view for the whole document.</source>
+        <translation>各ページが最後に見ていた拡大率と位置を保ちます。オフのときは作品全体で 1 つの表示状態を使います。</translation>
+    </message>
+    <message>
+        <source>Enable Numba optimizations</source>
+        <translation>Numba 最適化を有効化</translation>
+    </message>
+    <message>
+        <source>Enable autosave (effective after restart)</source>
+        <translation>自動保存を有効化 (再起動後に有効)</translation>
+    </message>
+    <message>
+        <source>Enable sharp vector rendering (zoom)</source>
+        <translation>拡大時にベクターをくっきり表示する</translation>
+    </message>
+    <message>
+        <source>Full</source>
+        <translation>フル</translation>
+    </message>
+    <message>
+        <source>Grid interval</source>
+        <translation>グリッド間隔</translation>
+    </message>
+    <message>
+        <source>Language</source>
+        <translation>言語</translation>
+    </message>
+    <message>
+        <source>Layout directory</source>
+        <translation>レイアウトディレクトリ</translation>
+    </message>
+    <message>
+        <source>Light</source>
+        <translation>ライト</translation>
+    </message>
+    <message>
+        <source>Low</source>
+        <translation>低</translation>
+    </message>
+    <message>
+        <source>Lower values reduce CPU load on large canvases</source>
+        <translation>値を下げると大きなキャンバスでのCPU負荷が軽減されます</translation>
+    </message>
+    <message>
+        <source>Lowers the composite resolution of the facing page in a spread. Full keeps it as sharp as the page being edited; the lower steps trade sharpness for GPU memory on large, many-layered pages.</source>
+        <translation>見開きで隣に表示される相手ページの合成解像度を下げます。フルは編集中のページと同じシャープさを保ちます。大きく多レイヤーのページでは、下げるほど GPU メモリを節約できます。</translation>
+    </message>
+    <message>
+        <source>Memmap Threshold</source>
+        <translation>メモリマップ閾値</translation>
+    </message>
+    <message>
+        <source>Menus</source>
+        <translation>メニュー</translation>
+    </message>
+    <message>
+        <source>Mouse Operations</source>
+        <translation>マウス操作</translation>
+    </message>
+    <message>
+        <source>Name</source>
+        <translation>名前</translation>
+    </message>
+    <message>
+        <source>OpenAI key not set</source>
+        <translation>OpenAI キー未設定</translation>
+    </message>
+    <message>
+        <source>Pick Color...</source>
+        <translation>色を選択...</translation>
+    </message>
+    <message>
+        <source>Preferences</source>
+        <translation>環境設定</translation>
+    </message>
+    <message>
+        <source>Recompose FPS Limit</source>
+        <translation>再合成FPS上限</translation>
+    </message>
+    <message>
+        <source>Refresh</source>
+        <translation>更新</translation>
+    </message>
+    <message>
+        <source>Refresh Session Token</source>
+        <translation>セッショントークンを更新</translation>
+    </message>
+    <message>
+        <source>Refresh the MCP session token?
+
+After refreshing the token, any agents registered to this LoomStroke MCP server must update their connection settings before they can connect again.</source>
+        <translation>MCP セッショントークンを更新しますか?
+
+トークンを更新すると、この LoomStroke MCP サーバーを登録しているエージェント側で接続設定を更新するまで再接続できなくなります。</translation>
+    </message>
+    <message>
+        <source>Remember zoom and pan per page</source>
+        <translation>ページごとに拡大率と表示位置を記憶する</translation>
+    </message>
+    <message>
+        <source>Running</source>
+        <translation>実行中</translation>
+    </message>
+    <message>
+        <source>Select Layout Directory</source>
+        <translation>レイアウトディレクトリを選択</translation>
+    </message>
+    <message>
+        <source>Show status bar</source>
+        <translation>ステータスバーを表示</translation>
+    </message>
+    <message>
+        <source>Show toolbar</source>
+        <translation>ツールバーを表示</translation>
+    </message>
+    <message>
+        <source>Spread Facing Page Quality</source>
+        <translation>見開きの相手ページ画質</translation>
+    </message>
+    <message>
+        <source>System</source>
+        <translation>システム</translation>
+    </message>
+    <message>
+        <source>System Default</source>
+        <translation>システム既定</translation>
+    </message>
+    <message>
+        <source>Undo Steps</source>
+        <translation>元に戻す回数</translation>
+    </message>
+    <message>
+        <source>Use the OpenAI API key for GPT Image 2</source>
+        <translation>GPT Image 2 で OpenAI API キーを使用</translation>
+    </message>
+    <message>
+        <source>Using OpenAI key</source>
+        <translation>OpenAI キーを使用中</translation>
+    </message>
+    <message>
+        <source>When disabled, network access to ComfyUI, LLM Gateway, and NanoBanana is blocked.</source>
+        <translation>無効にすると、ComfyUI・LLM Gateway・NanoBanana へのネットワークアクセスを遮断します。</translation>
+    </message>
+    <message>
+        <source>When enabled, GPT Image 2 generation uses the OpenAI API key row instead of the dedicated GPT Image 2 key.</source>
+        <translation>有効にすると、GPT Image 2 の生成は専用の GPT Image 2 キーではなく、OpenAI API キー行を使用します。</translation>
+    </message>
 </context>
 <context>
     <name>StartPagePanel</name>
@@ -4062,6 +5056,14 @@ Type: {type}</source>
         <translation>文字詰め</translation>
     </message>
 
+    <message>
+        <source>Padding</source>
+        <translation>余白</translation>
+    </message>
+    <message>
+        <source>Word Wrap</source>
+        <translation>折り返し</translation>
+    </message>
 </context>
 <context>
     <name>TextTool</name>
@@ -4136,6 +5138,66 @@ Type: {type}</source>
     <message>
         <source>Tools</source>
         <translation>ツール</translation>
+    </message>
+    <message>
+        <source>Text deleted.</source>
+        <translation>テキストを削除しました。</translation>
+    </message>
+    <message>
+        <source>No selection. Draw a selection first.</source>
+        <translation>選択範囲がありません。先に範囲を選択してください。</translation>
+    </message>
+    <message>
+        <source>Delete</source>
+        <translation>削除</translation>
+    </message>
+    <message>
+        <source>Copy</source>
+        <translation>コピー</translation>
+    </message>
+    <message>
+        <source>Cut</source>
+        <translation>切り取り</translation>
+    </message>
+    <message>
+        <source>Edit</source>
+        <translation>編集</translation>
+    </message>
+    <message>
+        <source>Padding Bottom</source>
+        <translation>下の余白</translation>
+    </message>
+    <message>
+        <source>Padding Left</source>
+        <translation>左の余白</translation>
+    </message>
+    <message>
+        <source>Padding Right</source>
+        <translation>右の余白</translation>
+    </message>
+    <message>
+        <source>Padding Top</source>
+        <translation>上の余白</translation>
+    </message>
+    <message>
+        <source>Paste</source>
+        <translation>貼り付け</translation>
+    </message>
+    <message>
+        <source>Rotate Latin/Digits</source>
+        <translation>英字・数字を回転</translation>
+    </message>
+    <message>
+        <source>Select All</source>
+        <translation>すべて選択</translation>
+    </message>
+    <message>
+        <source>Text Along Path</source>
+        <translation>パスに沿って配置</translation>
+    </message>
+    <message>
+        <source>Word Wrap</source>
+        <translation>折り返し</translation>
     </message>
 </context>
 <context>
@@ -4684,6 +5746,66 @@ Type: {type}</source>
         <translation>シェイプ</translation>
     </message>
 
+    <message>
+        <source>Basic Pen</source>
+        <translation>ベーシックペン</translation>
+    </message>
+    <message>
+        <source>Brushes</source>
+        <translation>ブラシ</translation>
+    </message>
+    <message>
+        <source>Edge Cleanup</source>
+        <translation>エッジ調整</translation>
+    </message>
+    <message>
+        <source>Enable Eyedropper</source>
+        <translation>スポイトを有効化</translation>
+    </message>
+    <message>
+        <source>Inking</source>
+        <translation>インキング</translation>
+    </message>
+    <message>
+        <source>Marker</source>
+        <translation>マーカー</translation>
+    </message>
+    <message>
+        <source>Match Reference</source>
+        <translation>リファレンスに合わせる</translation>
+    </message>
+    <message>
+        <source>Palette Only</source>
+        <translation>パレットのみ</translation>
+    </message>
+    <message>
+        <source>Path</source>
+        <translation>パス</translation>
+    </message>
+    <message>
+        <source>Sketch</source>
+        <translation>スケッチ</translation>
+    </message>
+    <message>
+        <source>Soft Erase</source>
+        <translation>ソフト消去</translation>
+    </message>
+    <message>
+        <source>Text</source>
+        <translation>テキスト</translation>
+    </message>
+    <message>
+        <source>Vector</source>
+        <translation>ベクター</translation>
+    </message>
+    <message>
+        <source>Vector Pen (Precise)</source>
+        <translation>ベクターペン (高精度)</translation>
+    </message>
+    <message>
+        <source>Vertical Text</source>
+        <translation>縦書きテキスト</translation>
+    </message>
 </context>
 <context>
     <name>ToolToolbar</name>
@@ -4753,6 +5875,40 @@ Type: {type}</source>
     <message>
         <source>Loaded: {name}</source>
         <translation>読み込み済み: {name}</translation>
+    </message>
+    <message>
+        <source>Failed to load workflow:
+{error}</source>
+        <translation>ワークフローを読み込めませんでした:
+{error}</translation>
+    </message>
+    <message>
+        <source>Save ComfyUI Workflow</source>
+        <translation>ComfyUIワークフローを保存</translation>
+    </message>
+    <message>
+        <source>Failed to save workflow:
+{error}</source>
+        <translation>ワークフローを保存できませんでした:
+{error}</translation>
+    </message>
+    <message>
+        <source>Workflow has unsaved changes</source>
+        <translation>ワークフローに未保存の変更があります</translation>
+    </message>
+    <message>
+        <source>Unsaved Changes</source>
+        <translation>未保存の変更</translation>
+    </message>
+    <message>
+        <source>The current workflow has unsaved changes.
+Do you want to save them?</source>
+        <translation>現在のワークフローに未保存の変更があります。
+保存しますか？</translation>
+    </message>
+    <message>
+        <source>New workflow created</source>
+        <translation>新規ワークフローを作成しました</translation>
     </message>
 </context>
 <context>
@@ -5024,6 +6180,18 @@ Type: {type}</source>
         <source>Fill</source>
         <translation>塗りつぶし</translation>
     </message>
+    <message>
+        <source>Color Tolerance</source>
+        <translation>色許容値</translation>
+    </message>
+    <message>
+        <source>Fill Target</source>
+        <translation>塗りつぶし対象</translation>
+    </message>
+    <message>
+        <source>Gap Close (px)</source>
+        <translation>隙間閉じ (px)</translation>
+    </message>
 </context>
 <context>
     <name>NodeTabsWidget</name>
@@ -5279,6 +6447,14 @@ Use "Edit Filters" to add.</source>
     </message>
 
 
+    <message>
+        <source>No image specified</source>
+        <translation>画像が指定されていません</translation>
+    </message>
+    <message>
+        <source>Failed to render parameters for node: {node}</source>
+        <translation>ノードのパラメーターを表示できませんでした: {node}</translation>
+    </message>
 </context>
 <context>
     <name>ShortcutEditDialog</name>
@@ -5445,13 +6621,109 @@ Use "Edit Filters" to add.</source>
         <translation>階調の反転</translation>
     </message>
 
+    <message>
+        <source>Accurate</source>
+        <translation>正確</translation>
+    </message>
+    <message>
+        <source>Angle</source>
+        <translation>角度</translation>
+    </message>
+    <message>
+        <source>Cell Size</source>
+        <translation>セルの大きさ</translation>
+    </message>
+    <message>
+        <source>Choose a ComfyUI server configured in Preferences.</source>
+        <translation>Preferences で設定した ComfyUI サーバーを選択します。</translation>
+    </message>
+    <message>
+        <source>Cross</source>
+        <translation>クロス</translation>
+    </message>
+    <message>
+        <source>Custom</source>
+        <translation>カスタム</translation>
+    </message>
+    <message>
+        <source>Density (%)</source>
+        <translation>濃度 (%)</translation>
+    </message>
+    <message>
+        <source>Dot Aspect</source>
+        <translation>網点の縦横比</translation>
+    </message>
+    <message>
+        <source>Ellipse</source>
+        <translation>楕円</translation>
+    </message>
+    <message>
+        <source>Frequency (LPI)</source>
+        <translation>線数 (LPI)</translation>
+    </message>
+    <message>
+        <source>Line</source>
+        <translation>線</translation>
+    </message>
+    <message>
+        <source>Local</source>
+        <translation>レイヤー</translation>
+    </message>
+    <message>
+        <source>Manga Screentone</source>
+        <translation>漫画スクリーントーン</translation>
+    </message>
+    <message>
+        <source>Moire Safe</source>
+        <translation>モアレ抑制</translation>
+    </message>
+    <message>
+        <source>Mosaic</source>
+        <translation>モザイク</translation>
+    </message>
+    <message>
+        <source>Origin</source>
+        <translation>原点</translation>
+    </message>
+    <message>
+        <source>Page</source>
+        <translation>ページ</translation>
+    </message>
+    <message>
+        <source>Pattern</source>
+        <translation>パターン</translation>
+    </message>
+    <message>
+        <source>Preview</source>
+        <translation>プレビュー</translation>
+    </message>
+    <message>
+        <source>Round</source>
+        <translation>丸</translation>
+    </message>
+    <message>
+        <source>Seed</source>
+        <translation>シード</translation>
+    </message>
+    <message>
+        <source>Server</source>
+        <translation>サーバー</translation>
+    </message>
+    <message>
+        <source>Solid Fallback</source>
+        <translation>ベタ (簡易)</translation>
+    </message>
+    <message>
+        <source>Stochastic</source>
+        <translation>ランダム (FM)</translation>
+    </message>
 </context>
 
 <context>
     <name>PresetManagerWindow</name>
     <message>
         <source>AI Effects Manager</source>
-        <translation>AI Effects Manager</translation>
+        <translation>AIエフェクト管理</translation>
     </message>
     <message>
         <source>Search presets by name / tag / author...</source>
@@ -5523,7 +6795,7 @@ Use "Edit Filters" to add.</source>
     </message>
     <message>
         <source>Gateway</source>
-        <translation>Gateway</translation>
+        <translation>ゲートウェイ</translation>
     </message>
     <message>
         <source>Source</source>
@@ -5712,7 +6984,7 @@ Use "Edit Filters" to add.</source>
     </message>
     <message>
         <source>AI Effect</source>
-        <translation>AI Effect</translation>
+        <translation>AIエフェクト</translation>
     </message>
     <message>
         <source>Your first AI Effect generation completed.</source>
@@ -5732,7 +7004,7 @@ Use "Edit Filters" to add.</source>
     </message>
     <message>
         <source>Gateway</source>
-        <translation>Gateway</translation>
+        <translation>ゲートウェイ</translation>
     </message>
     <message>
         <source>Server</source>
@@ -5956,11 +7228,19 @@ Use "Edit Filters" to add.</source>
     </message>
     <message>
         <source>Workflow: %s</source>
-        <translation>Workflow: %s</translation>
+        <translation>ワークフロー: %s</translation>
     </message>
     <message>
         <source>Load failed: %s</source>
         <translation>読み込み失敗: %s</translation>
+    </message>
+    <message>
+        <source>Local — {url}</source>
+        <translation>ローカル — {url}</translation>
+    </message>
+    <message>
+        <source>Choose which Preferences-configured ComfyUI server runs this preset.</source>
+        <translation>このプリセットを実行する Preferences 登録済み ComfyUI サーバーを選択します。</translation>
     </message>
 </context>
 
@@ -6161,6 +7441,14 @@ Use "Edit Filters" to add.</source>
         <source>Move tool for selection, vector objects, or active raster layer</source>
         <translation>選択範囲・ベクターオブジェクト・アクティブなラスターレイヤーを移動するツール</translation>
     </message>
+    <message>
+        <source>Grid Snap</source>
+        <translation>グリッドにスナップ</translation>
+    </message>
+    <message>
+        <source>Grid Size</source>
+        <translation>グリッドサイズ</translation>
+    </message>
 </context>
 <context>
     <name>BasicEraser</name>
@@ -6283,6 +7571,46 @@ Use "Edit Filters" to add.</source>
         <source>Cancel</source>
         <translation>キャンセル</translation>
     </message>
+    <message>
+        <source>Colour Profile</source>
+        <translation>カラープロファイル</translation>
+    </message>
+    <message>
+        <source>ICC Profiles (*.icc *.icm);;All Files (*.*)</source>
+        <translation>ICC プロファイル (*.icc *.icm);;すべてのファイル (*.*)</translation>
+    </message>
+    <message>
+        <source>Load ICC Profile</source>
+        <translation>ICC プロファイルを読み込む</translation>
+    </message>
+    <message>
+        <source>Load ICC Profile...</source>
+        <translation>ICC プロファイルを読み込む...</translation>
+    </message>
+    <message>
+        <source>Profile:</source>
+        <translation>プロファイル:</translation>
+    </message>
+    <message>
+        <source>The file is not a valid ICC profile.</source>
+        <translation>有効な ICC プロファイルではありません。</translation>
+    </message>
+    <message>
+        <source>Untagged (treated as sRGB)</source>
+        <translation>プロファイルなし (sRGB とみなす)</translation>
+    </message>
+    <message>
+        <source>sRGB (built-in)</source>
+        <translation>sRGB (内蔵)</translation>
+    </message>
+    <message>
+        <source>{name} (document)</source>
+        <translation>{name} (ドキュメント)</translation>
+    </message>
+    <message>
+        <source>{name} (file)</source>
+        <translation>{name} (ファイル)</translation>
+    </message>
 </context>
 <context>
     <name>VectorPathTool</name>
@@ -6360,6 +7688,10 @@ Use "Edit Filters" to add.</source>
     <message>
         <source>Edit anchors/handles of vector paths</source>
         <translation>ベクターパスのアンカーとハンドルを編集します。</translation>
+    </message>
+    <message>
+        <source>Stroke Width</source>
+        <translation>線幅</translation>
     </message>
 </context>
 <context>
@@ -6547,6 +7879,14 @@ Use "Edit Filters" to add.</source>
         <source>Rectangle selection tool</source>
         <translation>矩形選択ツール</translation>
     </message>
+    <message>
+        <source>Convert</source>
+        <translation>変換</translation>
+    </message>
+    <message>
+        <source>Selection</source>
+        <translation>選択範囲</translation>
+    </message>
 </context>
 <context>
     <name>ColorToolPlugin</name>
@@ -6699,6 +8039,10 @@ Use "Edit Filters" to add.</source>
         <source>Vector Object</source>
         <translation>ベクターオブジェクト</translation>
     </message>
+    <message>
+        <source>Vector Objects</source>
+        <translation>ベクターオブジェクト</translation>
+    </message>
 </context>
 <context>
     <name>ColorPanelPlugin</name>
@@ -6729,6 +8073,278 @@ Use "Edit Filters" to add.</source>
     <message>
         <source>Pages</source>
         <translation>ページ</translation>
+    </message>
+    <message>
+        <source>Delete</source>
+        <translation>削除</translation>
+    </message>
+    <message>
+        <source>A blank page cannot be inserted before the first page. Use Add Page instead.</source>
+        <translation>先頭ページの前には挿入できません。「ページを追加」を使ってください。</translation>
+    </message>
+    <message>
+        <source>Active Page</source>
+        <translation>アクティブページ</translation>
+    </message>
+    <message>
+        <source>All Pages</source>
+        <translation>すべてのページ</translation>
+    </message>
+    <message>
+        <source>Apply</source>
+        <translation>適用</translation>
+    </message>
+    <message>
+        <source>Automatic</source>
+        <translation>自動</translation>
+    </message>
+    <message>
+        <source>Binding</source>
+        <translation>綴じ方向</translation>
+    </message>
+    <message>
+        <source>Body</source>
+        <translation>本文</translation>
+    </message>
+    <message>
+        <source>Built-in</source>
+        <translation>組み込み</translation>
+    </message>
+    <message>
+        <source>Category...</source>
+        <translation>カテゴリ...</translation>
+    </message>
+    <message>
+        <source>Changing the binding does not reorder pages</source>
+        <translation>綴じ方向を変えてもページの並び順は変わりません</translation>
+    </message>
+    <message>
+        <source>Colophon</source>
+        <translation>奥付</translation>
+    </message>
+    <message>
+        <source>Comic</source>
+        <translation>漫画</translation>
+    </message>
+    <message>
+        <source>Cover</source>
+        <translation>表紙</translation>
+    </message>
+    <message>
+        <source>Create from Current Page...</source>
+        <translation>現在のページから作成...</translation>
+    </message>
+    <message>
+        <source>Current Page</source>
+        <translation>現在のページ</translation>
+    </message>
+    <message>
+        <source>Custom Folio</source>
+        <translation>カスタムノンブル</translation>
+    </message>
+    <message>
+        <source>Custom...</source>
+        <translation>カスタム...</translation>
+    </message>
+    <message>
+        <source>Delete Template</source>
+        <translation>テンプレートの削除</translation>
+    </message>
+    <message>
+        <source>Delete this master definition? {count} page instance(s) stay on their pages as detached content.</source>
+        <translation>このマスター定義を削除しますか? {count} ページの instance はリンクの切れた内容としてページに残ります。</translation>
+    </message>
+    <message>
+        <source>Delete this template? This cannot be undone.</source>
+        <translation>このテンプレートを削除しますか? 削除は元に戻せません。</translation>
+    </message>
+    <message>
+        <source>Duplicate</source>
+        <translation>複製</translation>
+    </message>
+    <message>
+        <source>Empty</source>
+        <translation>空き</translation>
+    </message>
+    <message>
+        <source>Folio</source>
+        <translation>ノンブル</translation>
+    </message>
+    <message>
+        <source>Folio text:</source>
+        <translation>ノンブル文字列:</translation>
+    </message>
+    <message>
+        <source>Hidden</source>
+        <translation>隠す</translation>
+    </message>
+    <message>
+        <source>Include guides</source>
+        <translation>ガイドを含める</translation>
+    </message>
+    <message>
+        <source>Include raster artwork (stored inside the template)</source>
+        <translation>ラスター画像を含める (テンプレート内に保存)</translation>
+    </message>
+    <message>
+        <source>Include vector objects</source>
+        <translation>ベクターオブジェクトを含める</translation>
+    </message>
+    <message>
+        <source>Insert Blank Page</source>
+        <translation>白ページの挿入</translation>
+    </message>
+    <message>
+        <source>Insert a blank page here</source>
+        <translation>ここに白ページを挿入</translation>
+    </message>
+    <message>
+        <source>Insert a blank page here?</source>
+        <translation>ここに白ページを挿入しますか?</translation>
+    </message>
+    <message>
+        <source>Inside Cover</source>
+        <translation>表紙裏</translation>
+    </message>
+    <message>
+        <source>Large artwork bloats the template library.</source>
+        <translation>大きな画像はテンプレートライブラリを肥大化させます。</translation>
+    </message>
+    <message>
+        <source>Left Binding</source>
+        <translation>左綴じ</translation>
+    </message>
+    <message>
+        <source>Left Side</source>
+        <translation>左側</translation>
+    </message>
+    <message>
+        <source>Manage Masters</source>
+        <translation>マスターページの管理</translation>
+    </message>
+    <message>
+        <source>Manage Masters...</source>
+        <translation>マスターページの管理...</translation>
+    </message>
+    <message>
+        <source>Manage Templates</source>
+        <translation>テンプレートの管理</translation>
+    </message>
+    <message>
+        <source>Manage Templates...</source>
+        <translation>テンプレートの管理...</translation>
+    </message>
+    <message>
+        <source>Master name:</source>
+        <translation>マスター名:</translation>
+    </message>
+    <message>
+        <source>No pages match this scope.</source>
+        <translation>対象になるページがありません。</translation>
+    </message>
+    <message>
+        <source>Page Role</source>
+        <translation>ページの役割</translation>
+    </message>
+    <message>
+        <source>Raster artwork: about {size} uncompressed.</source>
+        <translation>ラスター画像: 非圧縮で約 {size}。</translation>
+    </message>
+    <message>
+        <source>Rename Template</source>
+        <translation>テンプレート名の変更</translation>
+    </message>
+    <message>
+        <source>Rename...</source>
+        <translation>名前を変更...</translation>
+    </message>
+    <message>
+        <source>Right Binding</source>
+        <translation>右綴じ</translation>
+    </message>
+    <message>
+        <source>Right Side</source>
+        <translation>右側</translation>
+    </message>
+    <message>
+        <source>Save Page Template</source>
+        <translation>ページテンプレートを保存</translation>
+    </message>
+    <message>
+        <source>Single</source>
+        <translation>単ページ</translation>
+    </message>
+    <message>
+        <source>Spread</source>
+        <translation>見開き</translation>
+    </message>
+    <message>
+        <source>Spread {number}</source>
+        <translation>見開き{number}</translation>
+    </message>
+    <message>
+        <source>Spread {number}, {side}, {page}</source>
+        <translation>見開き{number}、{side}、{page}</translation>
+    </message>
+    <message>
+        <source>Target Roles</source>
+        <translation>対象の役割</translation>
+    </message>
+    <message>
+        <source>Template Category</source>
+        <translation>テンプレートのカテゴリ</translation>
+    </message>
+    <message>
+        <source>Template category:</source>
+        <translation>テンプレートのカテゴリ:</translation>
+    </message>
+    <message>
+        <source>Template name:</source>
+        <translation>テンプレート名:</translation>
+    </message>
+    <message>
+        <source>The current page has no instance of this master.</source>
+        <translation>現在のページにこのマスターの instance はありません。</translation>
+    </message>
+    <message>
+        <source>The current page has no vector layers to capture.</source>
+        <translation>現在のページに取り込めるベクターレイヤーがありません。</translation>
+    </message>
+    <message>
+        <source>The page could not be loaded. Select it again to retry.</source>
+        <translation>ページを読み込めませんでした。もう一度選択すると再試行します。</translation>
+    </message>
+    <message>
+        <source>The template could not be saved. See the log for details.</source>
+        <translation>テンプレートを保存できませんでした。詳細はログを確認してください。</translation>
+    </message>
+    <message>
+        <source>Title</source>
+        <translation>扉</translation>
+    </message>
+    <message>
+        <source>Unlink on Current Page</source>
+        <translation>現在のページでリンク解除</translation>
+    </message>
+    <message>
+        <source>Update from Current Page</source>
+        <translation>現在のページから更新</translation>
+    </message>
+    <message>
+        <source>Update this master and refresh {count} page(s)?</source>
+        <translation>このマスターを更新し、{count} ページの instance を更新しますか?</translation>
+    </message>
+    <message>
+        <source>User</source>
+        <translation>ユーザー</translation>
+    </message>
+    <message>
+        <source>View</source>
+        <translation>表示</translation>
+    </message>
+    <message>
+        <source>{name} (rev {revision}, {count} page(s))</source>
+        <translation>{name} (rev {revision}、{count} ページ)</translation>
     </message>
 </context>
 <context>
@@ -7072,7 +8688,7 @@ Use "Edit Filters" to add.</source>
     </message>
     <message>
         <source>tag1, tag2</source>
-        <translation>tag1, tag2</translation>
+        <translation>タグ1, タグ2</translation>
     </message>
     <message>
         <source>Component</source>
@@ -7307,6 +8923,10 @@ Use "Edit Filters" to add.</source>
     <message>
         <source>Layer import not available</source>
         <translation>レイヤーインポートは利用できません</translation>
+    </message>
+    <message>
+        <source>Failed to import image as new layer</source>
+        <translation>画像を新規レイヤーとして読み込めませんでした</translation>
     </message>
 </context>
 <context>
@@ -7725,6 +9345,118 @@ Use "Edit Filters" to add.</source>
         <source>Please select at least one plugin to update.</source>
         <translation>更新するプラグインを少なくとも 1 つ選択してください。</translation>
     </message>
+    <message>
+        <source>&lt;b&gt;Warnings:&lt;/b&gt;</source>
+        <translation>&lt;b&gt;警告:&lt;/b&gt;</translation>
+    </message>
+    <message>
+        <source>Allowed network domains:</source>
+        <translation>許可されたネットワークドメイン:</translation>
+    </message>
+    <message>
+        <source>Cannot Install</source>
+        <translation>インストールできません</translation>
+    </message>
+    <message>
+        <source>Compatibility</source>
+        <translation>互換性</translation>
+    </message>
+    <message>
+        <source>Connect to internet services</source>
+        <translation>インターネットサービスに接続します</translation>
+    </message>
+    <message>
+        <source>File System Access</source>
+        <translation>ファイルシステムアクセス</translation>
+    </message>
+    <message>
+        <source>File system access is required</source>
+        <translation>ファイルシステムアクセスが必要です</translation>
+    </message>
+    <message>
+        <source>GPU Acceleration</source>
+        <translation>GPU アクセラレーション</translation>
+    </message>
+    <message>
+        <source>Install</source>
+        <translation>インストール</translation>
+    </message>
+    <message>
+        <source>Network Access</source>
+        <translation>ネットワークアクセス</translation>
+    </message>
+    <message>
+        <source>Network access is required</source>
+        <translation>ネットワークアクセスが必要です</translation>
+    </message>
+    <message>
+        <source>Network access requires at least one allowed domain</source>
+        <translation>ネットワークアクセスには少なくとも 1 つの許可ドメインが必要です</translation>
+    </message>
+    <message>
+        <source>Permission Required</source>
+        <translation>権限が必要です</translation>
+    </message>
+    <message>
+        <source>Please grant the required permissions to install this plugin.</source>
+        <translation>このプラグインをインストールするには必要な権限を許可してください。</translation>
+    </message>
+    <message>
+        <source>Plugin Information</source>
+        <translation>プラグイン情報</translation>
+    </message>
+    <message>
+        <source>Read and write files on your computer</source>
+        <translation>コンピューター上のファイルを読み書きします</translation>
+    </message>
+    <message>
+        <source>Required Permissions</source>
+        <translation>必要な権限</translation>
+    </message>
+    <message>
+        <source>This plugin requires the following permissions to function:</source>
+        <translation>このプラグインを動作させるには次の権限が必要です:</translation>
+    </message>
+    <message>
+        <source>Unknown Status</source>
+        <translation>不明な状態</translation>
+    </message>
+    <message>
+        <source>Use GPU for performance optimization</source>
+        <translation>パフォーマンス最適化のために GPU を使用します</translation>
+    </message>
+    <message>
+        <source>Validation Status</source>
+        <translation>検証状態</translation>
+    </message>
+    <message>
+        <source>⚠️ Permissions Required</source>
+        <translation>⚠️ 権限が必要</translation>
+    </message>
+    <message>
+        <source>⚠️ Untrusted Source</source>
+        <translation>⚠️ 信頼されていない配布元</translation>
+    </message>
+    <message>
+        <source>✅ Valid</source>
+        <translation>✅ 有効</translation>
+    </message>
+    <message>
+        <source>❌ Incompatible Version</source>
+        <translation>❌ バージョン非互換</translation>
+    </message>
+    <message>
+        <source>❌ Invalid Manifest</source>
+        <translation>❌ マニフェスト不正</translation>
+    </message>
+    <message>
+        <source>❌ Invalid Signature</source>
+        <translation>❌ 署名が無効</translation>
+    </message>
+    <message>
+        <source>❌ Missing Dependencies</source>
+        <translation>❌ 依存関係不足</translation>
+    </message>
 </context>
 <context>
     <name>FilterPanel</name>
@@ -7871,6 +9603,106 @@ Use "Edit Filters" to add.</source>
     <message>
         <source>No filter selected</source>
         <translation>フィルターが選択されていません</translation>
+    </message>
+    <message>
+        <source>Local — {url}</source>
+        <translation>ローカル — {url}</translation>
+    </message>
+    <message>
+        <source>Accurate</source>
+        <translation>正確</translation>
+    </message>
+    <message>
+        <source>Angle</source>
+        <translation>角度</translation>
+    </message>
+    <message>
+        <source>Cell Size</source>
+        <translation>セルの大きさ</translation>
+    </message>
+    <message>
+        <source>Choose a ComfyUI server configured in Preferences.</source>
+        <translation>Preferences で設定した ComfyUI サーバーを選択します。</translation>
+    </message>
+    <message>
+        <source>Cross</source>
+        <translation>クロス</translation>
+    </message>
+    <message>
+        <source>Custom</source>
+        <translation>カスタム</translation>
+    </message>
+    <message>
+        <source>Density (%)</source>
+        <translation>濃度 (%)</translation>
+    </message>
+    <message>
+        <source>Dot Aspect</source>
+        <translation>網点の縦横比</translation>
+    </message>
+    <message>
+        <source>Ellipse</source>
+        <translation>楕円</translation>
+    </message>
+    <message>
+        <source>Frequency (LPI)</source>
+        <translation>線数 (LPI)</translation>
+    </message>
+    <message>
+        <source>Line</source>
+        <translation>線</translation>
+    </message>
+    <message>
+        <source>Local</source>
+        <translation>レイヤー</translation>
+    </message>
+    <message>
+        <source>Manga Screentone</source>
+        <translation>漫画スクリーントーン</translation>
+    </message>
+    <message>
+        <source>Moire Safe</source>
+        <translation>モアレ抑制</translation>
+    </message>
+    <message>
+        <source>Mosaic</source>
+        <translation>モザイク</translation>
+    </message>
+    <message>
+        <source>Origin</source>
+        <translation>原点</translation>
+    </message>
+    <message>
+        <source>Page</source>
+        <translation>ページ</translation>
+    </message>
+    <message>
+        <source>Pattern</source>
+        <translation>パターン</translation>
+    </message>
+    <message>
+        <source>Preview</source>
+        <translation>プレビュー</translation>
+    </message>
+    <message>
+        <source>Round</source>
+        <translation>丸</translation>
+    </message>
+    <message>
+        <source>Seed</source>
+        <translation>シード</translation>
+    </message>
+    <message>
+        <source>Server</source>
+        <translation>サーバー</translation>
+    </message>
+    <message>
+        <source>Solid Fallback</source>
+        <translation>ベタ (簡易)</translation>
+    </message>
+    <message>
+        <source>Stochastic</source>
+        <translation>ランダム (FM)</translation>
     </message>
 </context>
 <context>
@@ -8238,6 +10070,122 @@ Use "Edit Filters" to add.</source>
         <source>Could not access presets. The previous library was kept. Check permissions and reload.</source>
         <translation>プリセットを読み書きできません。元のライブラリは保持しました。権限を確認して再読込してください。</translation>
     </message>
+    <message>
+        <source>Kind</source>
+        <translation>種類</translation>
+    </message>
+    <message>
+        <source>Add</source>
+        <translation>追加</translation>
+    </message>
+    <message>
+        <source>Adjustment Layer</source>
+        <translation>調整レイヤー</translation>
+    </message>
+    <message>
+        <source>Applied.</source>
+        <translation>適用しました。</translation>
+    </message>
+    <message>
+        <source>Apply</source>
+        <translation>適用</translation>
+    </message>
+    <message>
+        <source>Close</source>
+        <translation>閉じる</translation>
+    </message>
+    <message>
+        <source>Color Overlay</source>
+        <translation>カラーオーバーレイ</translation>
+    </message>
+    <message>
+        <source>Could not apply styles.</source>
+        <translation>スタイルを適用できませんでした。</translation>
+    </message>
+    <message>
+        <source>Down</source>
+        <translation>下へ</translation>
+    </message>
+    <message>
+        <source>Drop Shadow</source>
+        <translation>ドロップシャドウ</translation>
+    </message>
+    <message>
+        <source>Edit Fill</source>
+        <translation>塗りつぶしを編集</translation>
+    </message>
+    <message>
+        <source>Edit Fill...</source>
+        <translation>塗りつぶしを編集...</translation>
+    </message>
+    <message>
+        <source>Enabled</source>
+        <translation>有効</translation>
+    </message>
+    <message>
+        <source>Fill Layer</source>
+        <translation>塗りつぶしレイヤー</translation>
+    </message>
+    <message>
+        <source>Gradient</source>
+        <translation>グラデーション</translation>
+    </message>
+    <message>
+        <source>Layer Styles</source>
+        <translation>レイヤースタイル</translation>
+    </message>
+    <message>
+        <source>Layer Styles...</source>
+        <translation>レイヤースタイル...</translation>
+    </message>
+    <message>
+        <source>Live Filter Layer</source>
+        <translation>ライブフィルターレイヤー</translation>
+    </message>
+    <message>
+        <source>No effects available</source>
+        <translation>利用できるエフェクトがありません</translation>
+    </message>
+    <message>
+        <source>Nothing to rasterize.</source>
+        <translation>ラスタライズするものがありません。</translation>
+    </message>
+    <message>
+        <source>Outer Glow</source>
+        <translation>光彩 (外側)</translation>
+    </message>
+    <message>
+        <source>Pattern</source>
+        <translation>パターン</translation>
+    </message>
+    <message>
+        <source>Rasterize Appearance</source>
+        <translation>外観をラスタライズ</translation>
+    </message>
+    <message>
+        <source>Rasterized into a new layer.</source>
+        <translation>新しいレイヤーにラスタライズしました。</translation>
+    </message>
+    <message>
+        <source>Remove</source>
+        <translation>削除</translation>
+    </message>
+    <message>
+        <source>Solid Color</source>
+        <translation>単色</translation>
+    </message>
+    <message>
+        <source>Stroke</source>
+        <translation>境界線</translation>
+    </message>
+    <message>
+        <source>Up</source>
+        <translation>上へ</translation>
+    </message>
+    <message>
+        <source>disabled</source>
+        <translation>無効</translation>
+    </message>
 </context>
 <context>
     <name>EffectPanelPlugin</name>
@@ -8442,6 +10390,14 @@ Use "Edit Filters" to add.</source>
         <source>Preparing CMYK preview...</source>
         <translation>CMYKの表示画像を準備中...</translation>
     </message>
+    <message>
+        <source>8 bit</source>
+        <translation>8ビット</translation>
+    </message>
+    <message>
+        <source>16 bit</source>
+        <translation>16ビット</translation>
+    </message>
 </context>
 <context>
     <name>IccProfileDownloads</name>
@@ -8510,15 +10466,15 @@ Use "Edit Filters" to add.</source>
     </message>
     <message>
         <source>RGB / 8 bit</source>
-        <translation>RGB / 8 bit</translation>
+        <translation>RGB / 8ビット</translation>
     </message>
     <message>
         <source>CMYK / 8 bit</source>
-        <translation>CMYK / 8 bit</translation>
+        <translation>CMYK / 8ビット</translation>
     </message>
     <message>
         <source>CMYK / 16 bit</source>
-        <translation>CMYK / 16 bit</translation>
+        <translation>CMYK / 16ビット</translation>
     </message>
     <message>
         <source>Choose a CMYK ICC profile to create a CMYK document.</source>
@@ -8577,12 +10533,104 @@ Use "Edit Filters" to add.</source>
         <source>Comic assets could not be loaded. Reload to try again.</source>
         <translation>漫画素材を読み込めませんでした。再読込してやり直してください。</translation>
     </message>
+    <message>
+        <source>Balloons</source>
+        <translation>フキダシ</translation>
+    </message>
+    <message>
+        <source>{name}
+{asset_id}
+Drag onto the canvas to place</source>
+        <translation>{name}
+{asset_id}
+ドラッグでキャンバスへ配置</translation>
+    </message>
+    <message>
+        <source>Rename</source>
+        <translation>名前変更</translation>
+    </message>
+    <message>
+        <source>Asset name:</source>
+        <translation>素材名:</translation>
+    </message>
+    <message>
+        <source>Delete Asset</source>
+        <translation>素材の削除</translation>
+    </message>
+    <message>
+        <source>Delete "{name}"?</source>
+        <translation>「{name}」を削除しますか?</translation>
+    </message>
+    <message>
+        <source>Register Selected Balloon</source>
+        <translation>選択中のフキダシを登録</translation>
+    </message>
+    <message>
+        <source>Save the balloon selected in the Comic panel as an asset in this tab.</source>
+        <translation>Comic パネルで選択中のフキダシをこのタブの素材として保存</translation>
+    </message>
+    <message>
+        <source>Delete</source>
+        <translation>削除</translation>
+    </message>
+    <message>
+        <source>Reload</source>
+        <translation>再読込</translation>
+    </message>
+    <message>
+        <source>Cannot register: select a balloon in the Comic panel.</source>
+        <translation>登録できません: Comic パネルでフキダシを選択してください</translation>
+    </message>
+    <message>
+        <source>Registered: {name}</source>
+        <translation>登録しました: {name}</translation>
+    </message>
+    <message>
+        <source>Placed at the page center.</source>
+        <translation>ページ中央に配置しました</translation>
+    </message>
+    <message>
+        <source>Could not place the asset (no canvas).</source>
+        <translation>配置できませんでした (キャンバスなし)</translation>
+    </message>
 </context>
 <context>
     <name>ThreeDGeneratedPreviewPanel</name>
     <message>
         <source>Projection was not imported because this scene exceeds the current software rendering limit.</source>
         <translation>このシーンは現在のソフトウェア描画の対応範囲を超えているため、投影を取り込めませんでした。</translation>
+    </message>
+    <message>
+        <source>Turntable</source>
+        <translation>ターンテーブル</translation>
+    </message>
+    <message>
+        <source>Add 3D Layer</source>
+        <translation>3Dレイヤーを追加</translation>
+    </message>
+    <message>
+        <source>Import Projection</source>
+        <translation>投影画像を読み込む</translation>
+    </message>
+    <message>
+        <source>3D Layer</source>
+        <translation>3Dレイヤー</translation>
+    </message>
+    <message>
+        <source>3D Preview</source>
+        <translation>3Dプレビュー</translation>
+    </message>
+    <message>
+        <source>Preview generated 3D assets and import projections.</source>
+        <translation>生成した3D素材をプレビューし、投影画像を読み込みます。</translation>
+    </message>
+    <message>
+        <source>Fit</source>
+        <translation>フィット</translation>
+    </message>
+    <message>
+        <source>Rotate</source>
+        <translation>回転</translation>
     </message>
 </context>
 <context>
@@ -8654,28 +10702,15 @@ Use "Edit Filters" to add.</source>
         <translation>選択オブジェクト</translation>
     </message>
 </context>
-<context>
-    <name>MainWindow</name>
-    <message><source>Composition Guides...</source><translation>構図ガイド...</translation></message>
-</context>
+
 <context>
     <name>MeasurementTool</name>
     <message><source>Measure</source><translation>計測</translation></message>
     <message><source>Measure distances and angles</source><translation>距離と角度を計測</translation></message>
     <message><source>Distance: {distance:.3f} {unit} | Angle: {angle:.2f}° | ΔX: {dx:.3f} | ΔY: {dy:.3f}</source><translation>距離: {distance:.3f} {unit} | 角度: {angle:.2f}° | ΔX: {dx:.3f} | ΔY: {dy:.3f}</translation></message>
 </context>
-<context>
-    <name>MainWindow</name>
-    <message><source>Guides</source><translation>ガイド</translation></message>
-    <message><source>Show Guides</source><translation>ガイドを表示</translation></message>
-    <message><source>Lock Guides</source><translation>ガイドをロック</translation></message>
-    <message><source>Clear All Guides</source><translation>ガイドをすべて消去</translation></message>
-</context>
-<context>
-    <name>MainWindow</name>
-    <message><source>Snap to Canvas Edges</source><translation>キャンバス端に吸着</translation></message>
-    <message><source>Snap to Canvas Center</source><translation>キャンバス中央に吸着</translation></message>
-</context>
+
+
 <context>
     <name>GuideTemplatesDialog</name>
     <message><source>Guide Templates</source><translation>ガイドテンプレート</translation></message>
@@ -8689,14 +10724,8 @@ Use "Edit Filters" to add.</source>
     <message><source>Could not save the guide template.</source><translation>ガイドテンプレートを保存できませんでした。</translation></message>
     <message><source>Could not apply guides. Some pages may already have been updated.</source><translation>ガイドを適用できませんでした。一部のページはすでに更新されている可能性があります。</translation></message>
 </context>
-<context>
-    <name>MainWindow</name>
-    <message><source>Guide Templates...</source><translation>ガイドテンプレート...</translation></message>
-</context>
-<context>
-    <name>MainWindow</name>
-    <message><source>Select Guide Cell</source><translation>ガイドのセルを選択</translation></message>
-</context>
+
+
 <context>
     <name>LayoutGridDialog</name>
     <message><source>Grid Settings</source><translation>グリッド設定</translation></message>
@@ -8717,29 +10746,26 @@ Use "Edit Filters" to add.</source>
     <message><source>Show grid</source><translation>グリッドを表示</translation></message>
     <message><source>Snap to grid</source><translation>グリッドに吸着</translation></message>
     <message><source>Dense grids are visually thinned; snapping uses the full grid.</source><translation>密なグリッドは表示を間引きます。吸着にはすべての格子点を使います。</translation></message>
-</context>
-<context>
-    <name>MainWindow</name>
-    <message><source>Grid Settings...</source><translation>グリッド設定...</translation></message>
-</context>
-<context>
-    <name>LayoutGridDialog</name>
+
+
     <message><source>Baseline</source><translation>行送り</translation></message>
     <message><source>Line spacing</source><translation>行送り間隔</translation></message>
     <message><source>Start position</source><translation>開始位置</translation></message>
     <message><source>Baseline unit</source><translation>行送りの単位</translation></message>
 </context>
+
+
 <context>
     <name>BindingMarginDialog</name>
     <message><source>Binding Margin</source><translation>ノド余白</translation></message>
     <message><source>Width (mm)</source><translation>幅 (mm)</translation></message>
     <message><source>All pages</source><translation>全ページ</translation></message>
     <message><source>Could not apply the binding margin. Check the page format; some pages may already have been updated.</source><translation>ノド余白を適用できませんでした。判型ガイドを確認してください。一部のページはすでに更新されている可能性があります。</translation></message>
+
+
+    <message><source>Show binding danger zone in spread view</source><translation>見開き表示でノド危険域を表示</translation></message>
 </context>
-<context>
-    <name>MainWindow</name>
-    <message><source>Binding Margin...</source><translation>ノド余白...</translation></message>
-</context>
+
 <context>
     <name>CoverTemplateDialog</name>
     <message><source>Cover Template</source><translation>表紙テンプレート</translation></message>
@@ -8885,19 +10911,258 @@ Use "Edit Filters" to add.</source>
     <message><source>A4 Body (Monochrome)</source><translation>A4 本文 (モノクロ)</translation></message>
     <message><source>A4 Body (Color)</source><translation>A4 本文 (カラー)</translation></message>
 </context>
-<context>
-    <name>MainWindow</name>
-    <message><source>Page Format Guides...</source><translation>判型ガイド...</translation></message>
-</context>
-<context>
-    <name>BindingMarginDialog</name>
-    <message><source>Show binding danger zone in spread view</source><translation>見開き表示でノド危険域を表示</translation></message>
-</context>
+
+
 <context>
     <name>MangaPreflightDialog</name>
     <message><source>Text or balloon overlaps the binding danger zone.</source><translation>文字または吹き出しがノド危険域と重なっています。</translation></message>
     <message><source>Move the object away from the binding edge</source><translation>オブジェクトを綴じ端から離す</translation></message>
     <message><source>Some text bounds could not be verified for the binding check.</source><translation>一部の文字範囲を確認できないため、ノド危険域の検査は未完了です。</translation></message>
+    <message>
+        <source>Add a blank page</source>
+        <translation>白ページを追加する</translation>
+    </message>
+    <message>
+        <source>Adjust with Image Size...</source>
+        <translation>「画像サイズ...」で調整する</translation>
+    </message>
+    <message>
+        <source>All pages</source>
+        <translation>すべてのページ</translation>
+    </message>
+    <message>
+        <source>Assign a colour profile in Image Properties</source>
+        <translation>「画像のプロパティ」でカラープロファイルを割り当てる</translation>
+    </message>
+    <message>
+        <source>Create the page from a manga profile</source>
+        <translation>漫画プロファイルからページを作成する</translation>
+    </message>
+    <message>
+        <source>Current page</source>
+        <translation>現在のページ</translation>
+    </message>
+    <message>
+        <source>Delete the object</source>
+        <translation>オブジェクトを削除する</translation>
+    </message>
+    <message>
+        <source>Digital comic</source>
+        <translation>デジタル漫画</translation>
+    </message>
+    <message>
+        <source>Duplicate page id.</source>
+        <translation>ページ ID が重複しています。</translation>
+    </message>
+    <message>
+        <source>Empty text object.</source>
+        <translation>空のテキストオブジェクトです。</translation>
+    </message>
+    <message>
+        <source>Enlarge the text frame</source>
+        <translation>テキストフレームを広げる</translation>
+    </message>
+    <message>
+        <source>Export Pages</source>
+        <translation>ページの一括書き出し</translation>
+    </message>
+    <message>
+        <source>Export Webtoon</source>
+        <translation>Webtoon を書き出し</translation>
+    </message>
+    <message>
+        <source>Export for Print</source>
+        <translation>印刷用に書き出し</translation>
+    </message>
+    <message>
+        <source>Fatal</source>
+        <translation>致命的</translation>
+    </message>
+    <message>
+        <source>Font "{family}" is not installed.</source>
+        <translation>フォント「{family}」がインストールされていません。</translation>
+    </message>
+    <message>
+        <source>Font size {size} pt is below the minimum of {minimum} pt.</source>
+        <translation>フォントサイズ {size} pt は最小 {minimum} pt を下回っています。</translation>
+    </message>
+    <message>
+        <source>Increase the font size</source>
+        <translation>フォントサイズを大きくする</translation>
+    </message>
+    <message>
+        <source>Info</source>
+        <translation>情報</translation>
+    </message>
+    <message>
+        <source>Install the font</source>
+        <translation>フォントをインストールする</translation>
+    </message>
+    <message>
+        <source>Linked assets are not available in this build.</source>
+        <translation>リンク素材はこのビルドでは利用できません。</translation>
+    </message>
+    <message>
+        <source>Manga Preflight</source>
+        <translation>漫画プリフライト</translation>
+    </message>
+    <message>
+        <source>No pages are available to check.</source>
+        <translation>検査できるページがありません。</translation>
+    </message>
+    <message>
+        <source>No physical layout: bleed and trim are unknown for this page.</source>
+        <translation>物理レイアウトがないため、このページの塗り足しと仕上がりは不明です。</translation>
+    </message>
+    <message>
+        <source>Not checked:</source>
+        <translation>未検査:</translation>
+    </message>
+    <message>
+        <source>Odd page count ({count}); print books usually need an even count.</source>
+        <translation>ページ数が奇数です ({count})。印刷本は通常偶数ページが必要です。</translation>
+    </message>
+    <message>
+        <source>Page</source>
+        <translation>ページ</translation>
+    </message>
+    <message>
+        <source>Page content could not be inspected.</source>
+        <translation>ページ内容を検査できませんでした。</translation>
+    </message>
+    <message>
+        <source>Page content was not loaded.</source>
+        <translation>ページ内容が読み込まれていません。</translation>
+    </message>
+    <message>
+        <source>Page is {width} x {height} px, below the minimum of {minimum} px.</source>
+        <translation>ページは {width} x {height} px で、最小 {minimum} px を下回っています。</translation>
+    </message>
+    <message>
+        <source>Page size {width} x {height} px differs from the document's {expected_width} x {expected_height} px.</source>
+        <translation>ページサイズ {width} x {height} px がドキュメントの {expected_width} x {expected_height} px と異なります。</translation>
+    </message>
+    <message>
+        <source>Pages use different resolutions ({values} dpi).</source>
+        <translation>ページごとに解像度が異なります ({values} dpi)。</translation>
+    </message>
+    <message>
+        <source>Pages:</source>
+        <translation>対象:</translation>
+    </message>
+    <message>
+        <source>Preflight found {count} fatal issue(s). Export anyway?</source>
+        <translation>プリフライトで致命的な問題が {count} 件見つかりました。それでも書き出しますか?</translation>
+    </message>
+    <message>
+        <source>Print (monochrome)</source>
+        <translation>印刷 (モノクロ)</translation>
+    </message>
+    <message>
+        <source>Profile:</source>
+        <translation>プロファイル:</translation>
+    </message>
+    <message>
+        <source>Reason</source>
+        <translation>理由</translation>
+    </message>
+    <message>
+        <source>Recommended action</source>
+        <translation>推奨対応</translation>
+    </message>
+    <message>
+        <source>Reduce the font size</source>
+        <translation>フォントサイズを小さくする</translation>
+    </message>
+    <message>
+        <source>Replace the font</source>
+        <translation>フォントを置き換える</translation>
+    </message>
+    <message>
+        <source>Resolution {dpi} dpi is below the minimum of {minimum} dpi.</source>
+        <translation>解像度 {dpi} dpi は最小 {minimum} dpi を下回っています。</translation>
+    </message>
+    <message>
+        <source>Rule</source>
+        <translation>ルール</translation>
+    </message>
+    <message>
+        <source>Run Preflight</source>
+        <translation>プリフライトを実行</translation>
+    </message>
+    <message>
+        <source>Run the preflight to see issues.</source>
+        <translation>プリフライトを実行すると問題が表示されます。</translation>
+    </message>
+    <message>
+        <source>Severity</source>
+        <translation>重要度</translation>
+    </message>
+    <message>
+        <source>Show:</source>
+        <translation>表示:</translation>
+    </message>
+    <message>
+        <source>Text does not fit its frame.</source>
+        <translation>テキストがフレームに収まっていません。</translation>
+    </message>
+    <message>
+        <source>Text layout was not verified (vertical area text).</source>
+        <translation>テキストのレイアウトは未検証です (縦書きエリアテキスト)。</translation>
+    </message>
+    <message>
+        <source>The document has no pages.</source>
+        <translation>ドキュメントにページがありません。</translation>
+    </message>
+    <message>
+        <source>The document has no working colour profile.</source>
+        <translation>ドキュメントに作業用カラープロファイルがありません。</translation>
+    </message>
+    <message>
+        <source>The font database is unavailable.</source>
+        <translation>フォントデータベースを利用できません。</translation>
+    </message>
+    <message>
+        <source>The page has no visible content.</source>
+        <translation>ページに表示される内容がありません。</translation>
+    </message>
+    <message>
+        <source>The preflight report is out of date; run Manga Preflight again.</source>
+        <translation>プリフライトの結果が古くなっています。漫画プリフライトを再実行してください。</translation>
+    </message>
+    <message>
+        <source>The profile references an unknown rule.</source>
+        <translation>プロファイルが未知のルールを参照しています。</translation>
+    </message>
+    <message>
+        <source>The rule failed to run.</source>
+        <translation>ルールの実行に失敗しました。</translation>
+    </message>
+    <message>
+        <source>The scan was cancelled.</source>
+        <translation>検査はキャンセルされました。</translation>
+    </message>
+    <message>
+        <source>Warning</source>
+        <translation>警告</translation>
+    </message>
+    <message>
+        <source>Webtoon</source>
+        <translation>縦読み漫画</translation>
+    </message>
+    <message>
+        <source>{fatal} fatal, {warning} warning(s), {info} info — {checked} rule(s) checked, {skipped} not checked.</source>
+        <translation>致命的 {fatal} 件、警告 {warning} 件、情報 {info} 件 — 検査したルール {checked}、未検査 {skipped}。</translation>
+    </message>
+
+
+    <message><source>Artwork reaches trim but not the bleed edge: {sides}.</source><translation>絵柄が仕上がり線に達していますが塗り足し縁まで届いていません: {sides}。</translation></message>
+    <message><source>Extend artwork to the bleed edge</source><translation>絵柄を塗り足し縁まで延長する</translation></message>
+    <message><source>Some content bounds could not be verified for the bleed check.</source><translation>一部の描画範囲を確認できないため、塗り足しの検査は未完了です。</translation></message>
+    <message><source>Left</source><translation>左</translation></message>
+    <message><source>Right</source><translation>右</translation></message>
+    <message><source>Top</source><translation>上</translation></message>
+    <message><source>Bottom</source><translation>下</translation></message>
 </context>
 <context>
     <name>PrintMarkControls</name>
@@ -8936,21 +11201,8 @@ Use "Edit Filters" to add.</source>
     <message><source>Mirror edge pixels</source><translation>端の画素を鏡像にする</translation></message>
     <message><source>Could not extend bleed. Select an unlocked, untransformed full-canvas RGBA raster layer and valid trim guides.</source><translation>塗り足しを延長できませんでした。ロックや変形のないキャンバス全面のRGBAラスターレイヤーと、有効な仕上がりガイドを選んでください。</translation></message>
 </context>
-<context>
-    <name>MainWindow</name>
-    <message><source>Preview Trimmed Page</source><translation>仕上がり表示</translation></message>
-    <message><source>Extend Bleed...</source><translation>塗り足しを延長...</translation></message>
-</context>
-<context>
-    <name>MangaPreflightDialog</name>
-    <message><source>Artwork reaches trim but not the bleed edge: {sides}.</source><translation>絵柄が仕上がり線に達していますが塗り足し縁まで届いていません: {sides}。</translation></message>
-    <message><source>Extend artwork to the bleed edge</source><translation>絵柄を塗り足し縁まで延長する</translation></message>
-    <message><source>Some content bounds could not be verified for the bleed check.</source><translation>一部の描画範囲を確認できないため、塗り足しの検査は未完了です。</translation></message>
-    <message><source>Left</source><translation>左</translation></message>
-    <message><source>Right</source><translation>右</translation></message>
-    <message><source>Top</source><translation>上</translation></message>
-    <message><source>Bottom</source><translation>下</translation></message>
-</context>
+
+
 <context>
     <name>GuidePlacement</name>
     <message>
@@ -9003,5 +11255,24367 @@ Use "Edit Filters" to add.</source>
     <name>PromptComposer</name>
     <message><source>Resize input area</source><translation>入力欄のサイズ変更</translation></message>
     <message><source>Drag to resize the input area.</source><translation>下端をドラッグして入力欄の高さを変更します。</translation></message>
+    <message>
+        <source>Refresh compositions</source>
+        <translation>構成を更新</translation>
+    </message>
+    <message>
+        <source>Separator:</source>
+        <translation>区切り文字:</translation>
+    </message>
+    <message>
+        <source>(None)</source>
+        <translation>（なし）</translation>
+    </message>
+    <message>
+        <source>Saved LivePrompt</source>
+        <translation>保存済みLivePrompt</translation>
+    </message>
+</context>
+<context>
+    <name>APIKeyDialog</name>
+    <message>
+        <source>Set {name} API key</source>
+        <translation>{name} のAPIキーを設定</translation>
+    </message>
+    <message>
+        <source>{name} uses Google Gemini's API. The key is stored encrypted in your OS keyring and is read only when you press Generate.</source>
+        <translation>{name} はGoogle GeminiのAPIを使用します。キーはOSのキーリングに暗号化して保存され、「生成」を押したときだけ読み取られます。</translation>
+    </message>
+    <message>
+        <source>Get your API key…</source>
+        <translation>APIキーを取得…</translation>
+    </message>
+    <message>
+        <source>API key:</source>
+        <translation>APIキー:</translation>
+    </message>
+    <message>
+        <source>Paste your API key</source>
+        <translation>APIキーを貼り付け</translation>
+    </message>
+    <message>
+        <source>After saving, the key is no longer kept in this dialog. To replace it later, enter a new value here. To remove it entirely, click Clear in Preferences.</source>
+        <translation>保存後、キーはこのダイアログに保持されません。変更する場合は新しい値を入力してください。完全に削除するには環境設定の「クリア」をクリックしてください。</translation>
+    </message>
+    <message>
+        <source>API key required</source>
+        <translation>APIキーが必要です</translation>
+    </message>
+    <message>
+        <source>Please enter your API key before saving.</source>
+        <translation>保存する前にAPIキーを入力してください。</translation>
+    </message>
+    <message>
+        <source>Could not save API key</source>
+        <translation>APIキーを保存できませんでした</translation>
+    </message>
+    <message>
+        <source>The API key could not be saved to your keyring. Check the log for details and try again.</source>
+        <translation>APIキーをキーリングに保存できませんでした。ログを確認して再試行してください。</translation>
+    </message>
+    <message>
+        <source>Save</source>
+        <translation>保存</translation>
+    </message>
+</context>
+<context>
+    <name>ActionsPanel</name>
+    <message>
+        <source>Cancel</source>
+        <translation>キャンセル</translation>
+    </message>
+    <message>
+        <source>Actions</source>
+        <translation>アクション</translation>
+    </message>
+    <message>
+        <source>Actions Panel</source>
+        <translation>アクションパネル</translation>
+    </message>
+    <message>
+        <source>All pages</source>
+        <translation>すべてのページ</translation>
+    </message>
+    <message>
+        <source>Batch...</source>
+        <translation>一括実行...</translation>
+    </message>
+    <message>
+        <source>Batch: {name}</source>
+        <translation>一括実行: {name}</translation>
+    </message>
+    <message>
+        <source>Browse...</source>
+        <translation>参照...</translation>
+    </message>
+    <message>
+        <source>Choose a folder</source>
+        <translation>フォルダーを選択</translation>
+    </message>
+    <message>
+        <source>Current page</source>
+        <translation>現在のページ</translation>
+    </message>
+    <message>
+        <source>Delete</source>
+        <translation>削除</translation>
+    </message>
+    <message>
+        <source>Delete macro {name}?</source>
+        <translation>マクロ {name} を削除しますか?</translation>
+    </message>
+    <message>
+        <source>Dry Run</source>
+        <translation>ドライラン</translation>
+    </message>
+    <message>
+        <source>Export macro</source>
+        <translation>マクロを書き出し</translation>
+    </message>
+    <message>
+        <source>Export...</source>
+        <translation>書き出し...</translation>
+    </message>
+    <message>
+        <source>Exported {name}</source>
+        <translation>{name} を書き出しました</translation>
+    </message>
+    <message>
+        <source>Import macro</source>
+        <translation>マクロを読み込み</translation>
+    </message>
+    <message>
+        <source>Import...</source>
+        <translation>読み込み...</translation>
+    </message>
+    <message>
+        <source>Imported {name}</source>
+        <translation>{name} を読み込みました</translation>
+    </message>
+    <message>
+        <source>Layer name</source>
+        <translation>レイヤー名</translation>
+    </message>
+    <message>
+        <source>Macro is not ready on this page; see the dry run.</source>
+        <translation>このページではマクロを実行できません。ドライランを確認してください。</translation>
+    </message>
+    <message>
+        <source>Macro name:</source>
+        <translation>マクロ名:</translation>
+    </message>
+    <message>
+        <source>Macros</source>
+        <translation>マクロ</translation>
+    </message>
+    <message>
+        <source>No targets.</source>
+        <translation>対象がありません。</translation>
+    </message>
+    <message>
+        <source>Not processed: {ids}</source>
+        <translation>未処理: {ids}</translation>
+    </message>
+    <message>
+        <source>Nothing recorded.</source>
+        <translation>何も記録されませんでした。</translation>
+    </message>
+    <message>
+        <source>On failure:</source>
+        <translation>失敗時:</translation>
+    </message>
+    <message>
+        <source>Page range (e.g. 1-3,5)</source>
+        <translation>ページ範囲 (例: 1-3,5)</translation>
+    </message>
+    <message>
+        <source>Play</source>
+        <translation>再生</translation>
+    </message>
+    <message>
+        <source>Record</source>
+        <translation>記録</translation>
+    </message>
+    <message>
+        <source>Record, play and batch declarative macros</source>
+        <translation>宣言的マクロの記録・再生・一括実行</translation>
+    </message>
+    <message>
+        <source>Recording started. Run actions from this panel to add steps.</source>
+        <translation>記録を開始しました。このパネルからアクションを実行するとステップに追加されます。</translation>
+    </message>
+    <message>
+        <source>Recording: {count} step(s)</source>
+        <translation>記録中: {count} ステップ</translation>
+    </message>
+    <message>
+        <source>Run</source>
+        <translation>実行</translation>
+    </message>
+    <message>
+        <source>Run Action...</source>
+        <translation>アクションを実行...</translation>
+    </message>
+    <message>
+        <source>Run this macro?</source>
+        <translation>このマクロを実行しますか?</translation>
+    </message>
+    <message>
+        <source>Run {name} on {count} page(s) with policy {policy}?</source>
+        <translation>{name} を {count} ページに実行しますか? (失敗時: {policy})</translation>
+    </message>
+    <message>
+        <source>Run {title}? This cannot be previewed.</source>
+        <translation>{title} を実行しますか? プレビューはできません。</translation>
+    </message>
+    <message>
+        <source>Save macro</source>
+        <translation>マクロを保存</translation>
+    </message>
+    <message>
+        <source>Saved macro {name} ({count} step(s), {dropped} dropped)</source>
+        <translation>マクロ {name} を保存しました ({count} ステップ、{dropped} 件は記録不可)</translation>
+    </message>
+    <message>
+        <source>Stop Recording</source>
+        <translation>記録を停止</translation>
+    </message>
+    <message>
+        <source>Target</source>
+        <translation>対象</translation>
+    </message>
+    <message>
+        <source>Targets ({count} page(s))</source>
+        <translation>対象 (全 {count} ページ)</translation>
+    </message>
+    <message>
+        <source>That file already exists; choose another name.</source>
+        <translation>同名のファイルがあります。別の名前を選んでください。</translation>
+    </message>
+    <message>
+        <source>The file is not a valid macro.</source>
+        <translation>有効なマクロファイルではありません。</translation>
+    </message>
+    <message>
+        <source>active_layer</source>
+        <translation>アクティブレイヤー</translation>
+    </message>
+    <message>
+        <source>all_layers</source>
+        <translation>すべてのレイヤー</translation>
+    </message>
+    <message>
+        <source>continue</source>
+        <translation>続行</translation>
+    </message>
+    <message>
+        <source>layer name (for layer_by_name)</source>
+        <translation>レイヤー名 (layer_by_name 用)</translation>
+    </message>
+    <message>
+        <source>layer_by_name</source>
+        <translation>名前で指定したレイヤー</translation>
+    </message>
+    <message>
+        <source>skip_blocked</source>
+        <translation>ブロックをスキップ</translation>
+    </message>
+    <message>
+        <source>stop</source>
+        <translation>停止</translation>
+    </message>
+</context>
+<context>
+    <name>CanvasCopilotPanel</name>
+    <message>
+        <source>Apply is in progress.</source>
+        <translation>適用中です。</translation>
+    </message>
+    <message>
+        <source>Canvas context is not available: {reason}</source>
+        <translation>キャンバスのコンテキストを取得できません: {reason}</translation>
+    </message>
+    <message>
+        <source>Canvas context refresh failed: {error}</source>
+        <translation>キャンバスのコンテキストを更新できませんでした: {error}</translation>
+    </message>
+    <message>
+        <source>Context ready.</source>
+        <translation>コンテキストを取得しました。</translation>
+    </message>
+    <message>
+        <source>Prompt is required.</source>
+        <translation>プロンプトを入力してください。</translation>
+    </message>
+    <message>
+        <source>Planning edit.</source>
+        <translation>編集計画を作成中。</translation>
+    </message>
+    <message>
+        <source>Planning failed: {error}</source>
+        <translation>計画を作成できませんでした: {error}</translation>
+    </message>
+    <message>
+        <source>Clarification needed.</source>
+        <translation>確認が必要です。</translation>
+    </message>
+    <message>
+        <source>Plan has safety blocks.</source>
+        <translation>計画は安全上の理由でブロックされています。</translation>
+    </message>
+    <message>
+        <source>Plan ready.</source>
+        <translation>計画の準備ができました。</translation>
+    </message>
+    <message>
+        <source>Clarification is not available.</source>
+        <translation>確認事項を取得できません。</translation>
+    </message>
+    <message>
+        <source>Clarification resolution is not available.</source>
+        <translation>確認事項を解決できません。</translation>
+    </message>
+    <message>
+        <source>Resolving clarification.</source>
+        <translation>確認事項を解決中。</translation>
+    </message>
+    <message>
+        <source>Clarification failed: {error}</source>
+        <translation>確認事項を解決できませんでした: {error}</translation>
+    </message>
+    <message>
+        <source>Clarification resolved. Preview ready.</source>
+        <translation>確認事項を解決しました。プレビューできます。</translation>
+    </message>
+    <message>
+        <source>Preview discarded.</source>
+        <translation>プレビューを破棄しました。</translation>
+    </message>
+    <message>
+        <source>Action required: {message}</source>
+        <translation>操作が必要です: {message}</translation>
+    </message>
+    <message>
+        <source>Clarification is blocked.</source>
+        <translation>確認はブロックされています。</translation>
+    </message>
+    <message>
+        <source>Preview requires a ready plan.</source>
+        <translation>プレビューするには計画の準備が必要です。</translation>
+    </message>
+    <message>
+        <source>Select a candidate before preview.</source>
+        <translation>プレビューする候補を選択してください。</translation>
+    </message>
+    <message>
+        <source>Preview failed: {error}</source>
+        <translation>プレビューに失敗しました: {error}</translation>
+    </message>
+    <message>
+        <source>Preview is blocked.</source>
+        <translation>プレビューはブロックされています。</translation>
+    </message>
+    <message>
+        <source>Preview ready.</source>
+        <translation>プレビューの準備ができました。</translation>
+    </message>
+    <message>
+        <source>Candidate generation requires an AI generation plan.</source>
+        <translation>候補を生成するにはAI生成の計画が必要です。</translation>
+    </message>
+    <message>
+        <source>Candidate generation is already in progress.</source>
+        <translation>候補を生成中です。</translation>
+    </message>
+    <message>
+        <source>Candidate generation requires a source layer.</source>
+        <translation>候補を生成するには元のレイヤーが必要です。</translation>
+    </message>
+    <message>
+        <source>Generating candidates.</source>
+        <translation>候補を生成中。</translation>
+    </message>
+    <message>
+        <source>Candidate generation did not create a job.</source>
+        <translation>候補生成のジョブが作成されませんでした。</translation>
+    </message>
+    <message>
+        <source>Candidate generation failed: {reason}</source>
+        <translation>候補の生成に失敗しました: {reason}</translation>
+    </message>
+    <message>
+        <source>Candidate generation failed: {error}</source>
+        <translation>候補の生成に失敗しました: {error}</translation>
+    </message>
+    <message>
+        <source>Candidate stack ready: {count} assets.</source>
+        <translation>候補一覧の準備ができました: {count} 個の素材。</translation>
+    </message>
+    <message>
+        <source>Candidate stack is not available.</source>
+        <translation>候補一覧を利用できません。</translation>
+    </message>
+    <message>
+        <source>Candidate selection failed: {error}</source>
+        <translation>候補を選択できませんでした: {error}</translation>
+    </message>
+    <message>
+        <source>Candidate selected.</source>
+        <translation>候補を選択しました。</translation>
+    </message>
+    <message>
+        <source>Apply is already in progress.</source>
+        <translation>すでに適用中です。</translation>
+    </message>
+    <message>
+        <source>Apply requires a preview approval ticket.</source>
+        <translation>適用にはプレビューの承認チケットが必要です。</translation>
+    </message>
+    <message>
+        <source>Applying edit.</source>
+        <translation>編集を適用中。</translation>
+    </message>
+    <message>
+        <source>Apply failed: {error}</source>
+        <translation>適用に失敗しました: {error}</translation>
+    </message>
+    <message>
+        <source>Apply complete.</source>
+        <translation>適用が完了しました。</translation>
+    </message>
+    <message>
+        <source>Panel undo is not available.</source>
+        <translation>このパネルから元に戻す操作はできません。</translation>
+    </message>
+    <message>
+        <source>Undo failed: {error}</source>
+        <translation>元に戻せませんでした: {error}</translation>
+    </message>
+    <message>
+        <source>Undo complete.</source>
+        <translation>元に戻しました。</translation>
+    </message>
+    <message>
+        <source>Undo was not applied.</source>
+        <translation>元に戻す操作は適用されませんでした。</translation>
+    </message>
+    <message>
+        <source>Verify requires an applied edit.</source>
+        <translation>検証するには編集の適用が必要です。</translation>
+    </message>
+    <message>
+        <source>Verify failed: {error}</source>
+        <translation>検証に失敗しました: {error}</translation>
+    </message>
+    <message>
+        <source>Verify complete.</source>
+        <translation>検証が完了しました。</translation>
+    </message>
+    <message>
+        <source>Plan</source>
+        <translation>計画</translation>
+    </message>
+    <message>
+        <source>Undo</source>
+        <translation>元に戻す</translation>
+    </message>
+    <message>
+        <source>Verify</source>
+        <translation>検証</translation>
+    </message>
+    <message>
+        <source>Generate Candidates</source>
+        <translation>候補を生成</translation>
+    </message>
+    <message>
+        <source>Select Candidate</source>
+        <translation>候補を選択</translation>
+    </message>
+    <message>
+        <source>Describe the canvas edit...</source>
+        <translation>キャンバスへの編集内容を入力...</translation>
+    </message>
+    <message>
+        <source>Context</source>
+        <translation>コンテキスト</translation>
+    </message>
+    <message>
+        <source>Clarification</source>
+        <translation>確認事項</translation>
+    </message>
+    <message>
+        <source>Safety</source>
+        <translation>安全性</translation>
+    </message>
+    <message>
+        <source>Candidates</source>
+        <translation>候補</translation>
+    </message>
+    <message>
+        <source>Approval</source>
+        <translation>承認</translation>
+    </message>
+    <message>
+        <source>Apply Result</source>
+        <translation>適用結果</translation>
+    </message>
+    <message>
+        <source>Next</source>
+        <translation>次へ</translation>
+    </message>
+    <message>
+        <source>Status</source>
+        <translation>状態</translation>
+    </message>
+    <message>
+        <source>Intent</source>
+        <translation>意図</translation>
+    </message>
+    <message>
+        <source>Question</source>
+        <translation>質問</translation>
+    </message>
+    <message>
+        <source>Selected</source>
+        <translation>選択中</translation>
+    </message>
+    <message>
+        <source>Mutation</source>
+        <translation>変更</translation>
+    </message>
+    <message>
+        <source>Visual</source>
+        <translation>表示</translation>
+    </message>
+    <message>
+        <source>Thumbnails</source>
+        <translation>サムネイル</translation>
+    </message>
+    <message>
+        <source>Ticket</source>
+        <translation>承認チケット</translation>
+    </message>
+    <message>
+        <source>Expires</source>
+        <translation>有効期限</translation>
+    </message>
+    <message>
+        <source>History</source>
+        <translation>履歴</translation>
+    </message>
+    <message>
+        <source>Revision</source>
+        <translation>リビジョン</translation>
+    </message>
+    <message>
+        <source>Page: {page}</source>
+        <translation>ページ: {page}</translation>
+    </message>
+    <message>
+        <source>Layer: {layer}</source>
+        <translation>レイヤー: {layer}</translation>
+    </message>
+    <message>
+        <source>Selection: {state}</source>
+        <translation>選択範囲: {state}</translation>
+    </message>
+    <message>
+        <source>Visible: {count}</source>
+        <translation>表示中: {count}</translation>
+    </message>
+    <message>
+        <source>External: {state}</source>
+        <translation>外部接続: {state}</translation>
+    </message>
+    <message>
+        <source>on</source>
+        <translation>オン</translation>
+    </message>
+    <message>
+        <source>off</source>
+        <translation>オフ</translation>
+    </message>
+    <message>
+        <source>{kind} ({confidence})</source>
+        <translation>{kind} ({confidence})</translation>
+    </message>
+    <message>
+        <source>Layer {layer}, selection {selection}</source>
+        <translation>レイヤー {layer}、選択範囲 {selection}</translation>
+    </message>
+    <message>
+        <source>required</source>
+        <translation>必要</translation>
+    </message>
+    <message>
+        <source>none</source>
+        <translation>なし</translation>
+    </message>
+    <message>
+        <source>{title} - mutation: {mutation}</source>
+        <translation>{title} - 変更: {mutation}</translation>
+    </message>
+    <message>
+        <source>{label} | {provider} | {width}x{height} | {target} | thumb {thumbnail}</source>
+        <translation>{label} | {provider} | {width}x{height} | {target} | サムネイル {thumbnail}</translation>
+    </message>
+    <message>
+        <source>{count} candidates</source>
+        <translation>候補 {count} 件</translation>
+    </message>
+    <message>
+        <source>Ready to request external candidates</source>
+        <translation>外部サービスへの候補要求の準備ができました</translation>
+    </message>
+    <message>
+        <source>Prompt changed. Plan again.</source>
+        <translation>プロンプトが変更されました。計画を再作成してください。</translation>
+    </message>
+    <message>
+        <source>Apply</source>
+        <translation>適用</translation>
+    </message>
+    <message>
+        <source>Discard</source>
+        <translation>破棄</translation>
+    </message>
+    <message>
+        <source>Layers</source>
+        <translation>レイヤー</translation>
+    </message>
+    <message>
+        <source>MCP runtime is not available.</source>
+        <translation>MCP runtime が利用できません。</translation>
+    </message>
+    <message>
+        <source>Mode</source>
+        <translation>モード</translation>
+    </message>
+    <message>
+        <source>Overlay</source>
+        <translation>オーバーレイ</translation>
+    </message>
+    <message>
+        <source>Preview</source>
+        <translation>プレビュー</translation>
+    </message>
+    <message>
+        <source>Reason</source>
+        <translation>理由</translation>
+    </message>
+    <message>
+        <source>Refresh</source>
+        <translation>更新</translation>
+    </message>
+    <message>
+        <source>Run</source>
+        <translation>実行</translation>
+    </message>
+    <message>
+        <source>Scope</source>
+        <translation>スコープ</translation>
+    </message>
+    <message>
+        <source>Target</source>
+        <translation>対象</translation>
+    </message>
+    <message>
+        <source>blocked</source>
+        <translation>ブロック</translation>
+    </message>
+    <message>
+        <source>no</source>
+        <translation>未</translation>
+    </message>
+    <message>
+        <source>ready</source>
+        <translation>準備完了</translation>
+    </message>
+    <message>
+        <source>yes</source>
+        <translation>可</translation>
+    </message>
+</context>
+<context>
+    <name>CanvasWidget</name>
+    <message>
+        <source>GPU initialization failed</source>
+        <translation>GPUの初期化に失敗しました</translation>
+    </message>
+    <message>
+        <source>LoomStroke requires a wgpu-compatible graphics backend (D3D12, Vulkan, or Metal).
+
+Failed to initialise the GPU compositor. Please update your graphics driver and try again.</source>
+        <translation>LoomStrokeにはwgpu対応のグラフィックスバックエンド（D3D12、Vulkan、Metal）が必要です。
+
+GPU合成処理を初期化できませんでした。グラフィックスドライバーを更新してから再試行してください。</translation>
+    </message>
+</context>
+<context>
+    <name>ColorPickerPopup</name>
+    <message>
+        <source>Color Picker</source>
+        <translation>色を選択</translation>
+    </message>
+    <message>
+        <source>Cancel</source>
+        <translation>キャンセル</translation>
+    </message>
+    <message>
+        <source>OK</source>
+        <translation>OK</translation>
+    </message>
+</context>
+<context>
+    <name>ComfyUIIntegrationWindow</name>
+    <message>
+        <source>Panel Creation Error</source>
+        <translation>パネル作成エラー</translation>
+    </message>
+    <message>
+        <source>Failed to create UI panels: {error}</source>
+        <translation>UIパネルを作成できませんでした: {error}</translation>
+    </message>
+    <message>
+        <source>ComfyUI Integration</source>
+        <translation>ComfyUI 連携</translation>
+    </message>
+    <message>
+        <source>Connection</source>
+        <translation>接続</translation>
+    </message>
+    <message>
+        <source>Preview</source>
+        <translation>プレビュー</translation>
+    </message>
+    <message>
+        <source>Settings</source>
+        <translation>設定</translation>
+    </message>
+    <message>
+        <source>Tools</source>
+        <translation>ツール</translation>
+    </message>
+</context>
+<context>
+    <name>ComicAssetsPanelWidget</name>
+    <message>
+        <source>Register Selected Balloon</source>
+        <translation>選択中のフキダシを登録</translation>
+    </message>
+    <message>
+        <source>Save the balloon selected in the Comic panel as an asset in this tab.</source>
+        <translation>Comic パネルで選択中のフキダシをこのタブの素材として保存</translation>
+    </message>
+    <message>
+        <source>Rename</source>
+        <translation>名前変更</translation>
+    </message>
+    <message>
+        <source>Delete</source>
+        <translation>削除</translation>
+    </message>
+    <message>
+        <source>Reload</source>
+        <translation>再読込</translation>
+    </message>
+</context>
+<context>
+    <name>ComicBookSettingsDialog</name>
+    <message>
+        <source>Cancel</source>
+        <translation>キャンセル</translation>
+    </message>
+    <message>
+        <source>(empty)</source>
+        <translation>(空き)</translation>
+    </message>
+    <message>
+        <source>... and {count} more</source>
+        <translation>… 他 {count} 見開き</translation>
+    </message>
+    <message>
+        <source>Auto</source>
+        <translation>自動</translation>
+    </message>
+    <message>
+        <source>Binding:</source>
+        <translation>綴じ方向:</translation>
+    </message>
+    <message>
+        <source>Body</source>
+        <translation>本文</translation>
+    </message>
+    <message>
+        <source>Changing the binding does not reorder pages</source>
+        <translation>綴じ方向を変えてもページの並び順は変わりません</translation>
+    </message>
+    <message>
+        <source>Colophon</source>
+        <translation>奥付</translation>
+    </message>
+    <message>
+        <source>Comic Book Settings</source>
+        <translation>漫画作品の設定</translation>
+    </message>
+    <message>
+        <source>Cover</source>
+        <translation>表紙</translation>
+    </message>
+    <message>
+        <source>Example: {folio}</source>
+        <translation>例: {folio}</translation>
+    </message>
+    <message>
+        <source>Folio prefix:</source>
+        <translation>ノンブル接頭辞:</translation>
+    </message>
+    <message>
+        <source>Folio starts at:</source>
+        <translation>ノンブル開始番号:</translation>
+    </message>
+    <message>
+        <source>Hide folio for:</source>
+        <translation>ノンブルを表示しない役割:</translation>
+    </message>
+    <message>
+        <source>Inside Cover</source>
+        <translation>表紙裏</translation>
+    </message>
+    <message>
+        <source>Left Binding</source>
+        <translation>左綴じ</translation>
+    </message>
+    <message>
+        <source>OK</source>
+        <translation>OK</translation>
+    </message>
+    <message>
+        <source>Page display:</source>
+        <translation>ページ表示:</translation>
+    </message>
+    <message>
+        <source>Recto (front face)</source>
+        <translation>表面 (recto)</translation>
+    </message>
+    <message>
+        <source>Right Binding</source>
+        <translation>右綴じ</translation>
+    </message>
+    <message>
+        <source>Single</source>
+        <translation>単ページ</translation>
+    </message>
+    <message>
+        <source>Spread</source>
+        <translation>見開き</translation>
+    </message>
+    <message>
+        <source>Spread preview:</source>
+        <translation>見開きプレビュー:</translation>
+    </message>
+    <message>
+        <source>Start body page:</source>
+        <translation>本文の開始面:</translation>
+    </message>
+    <message>
+        <source>Title</source>
+        <translation>扉</translation>
+    </message>
+    <message>
+        <source>Verso (back face)</source>
+        <translation>裏面 (verso)</translation>
+    </message>
+    <message>
+        <source>Which face the first body page falls on. Auto keeps the current layout; Recto and Verso insert at most one blank facing slot to line the body up.</source>
+        <translation>本文の最初のページがどちらの面に来るかを決めます。自動は現在の配置のまま、表面 / 裏面を選ぶと面を揃えるために空きスロットを最大 1 つ挿入します。</translation>
+    </message>
+</context>
+<context>
+    <name>ComicToolsPanelWidget</name>
+    <message>
+        <source>Balloons</source>
+        <translation>フキダシ</translation>
+    </message>
+    <message>
+        <source>Dialogue</source>
+        <translation>セリフ</translation>
+    </message>
+    <message>
+        <source>Create Balloon</source>
+        <translation>フキダシ作成</translation>
+    </message>
+    <message>
+        <source>Vertical writing</source>
+        <translation>縦書き</translation>
+    </message>
+    <message>
+        <source>Auto-size to fit text</source>
+        <translation>テキストに合わせて自動サイズ調整</translation>
+    </message>
+    <message>
+        <source>Open the balloon at the tail base</source>
+        <translation>しっぽの付け根でバルーンを開く</translation>
+    </message>
+    <message>
+        <source>On: open the contour at the tail base and follow tail movement. Off: keep the contour closed, filling any drawn gap.</source>
+        <translation>ON: 輪郭をしっぽの付け根で切り欠き、しっぽを動かすと開口部も追従します。 OFF: 輪郭は常に閉じます (開いて描いた場合は隙間を線で埋めます)。</translation>
+    </message>
+    <message>
+        <source>Make the base follow the tip</source>
+        <translation>付け根を先端に追従させる</translation>
+    </message>
+    <message>
+        <source>On: moving the tip moves the base and opening along the balloon contour. Off: keep the base fixed and move only the tip.</source>
+        <translation>ON: 先端を動かすと付け根 (と開口) がバルーンの外周に沿って追従します。 OFF: 付け根は今の位置に固定され、先端だけが動きます。</translation>
+    </message>
+    <message>
+        <source>Automatically join tail and balloon outlines</source>
+        <translation>しっぽとバルーンの線を自動でつなぐ</translation>
+    </message>
+    <message>
+        <source>Smoothly join the tail and balloon outlines using tangents, widths and colors estimated from pixels. Distant outlines are not joined.</source>
+        <translation>しっぽの線の端とバルーンの輪郭を、ピクセルから推定した接線・太さ・色で 滑らかにつなぎます (離れすぎている場合はつなぎません)。</translation>
+    </message>
+    <message>
+        <source>Distance between the tail base and balloon contour. Conversion preserves the drawn distance. Zero touches the contour; negative values overlap it.</source>
+        <translation>しっぽの付け根とバルーン外周の距離。変換時は描いたままの距離になります。 0 で密着、負の値で食い込み。</translation>
+    </message>
+    <message>
+        <source>Tail distance</source>
+        <translation>しっぽの距離</translation>
+    </message>
+    <message>
+        <source>Enter dialogue...</source>
+        <translation>セリフを入力...</translation>
+    </message>
+    <message>
+        <source>Apply Dialogue</source>
+        <translation>セリフを反映</translation>
+    </message>
+    <message>
+        <source>Speaker ID (e.g. char_a)</source>
+        <translation>speaker_id (例: char_a)</translation>
+    </message>
+    <message>
+        <source>Display name (e.g. Protagonist)</source>
+        <translation>表示名 (例: 主人公)</translation>
+    </message>
+    <message>
+        <source>Speaker ID</source>
+        <translation>話者ID</translation>
+    </message>
+    <message>
+        <source>Speaker name</source>
+        <translation>話者名</translation>
+    </message>
+    <message>
+        <source>Set Speaker</source>
+        <translation>話者を設定</translation>
+    </message>
+    <message>
+        <source>Delete Balloon</source>
+        <translation>フキダシ削除</translation>
+    </message>
+    <message>
+        <source>Convert Hand-drawn Balloon (Selection/Layer)</source>
+        <translation>手描きフキダシを変換 (選択範囲/レイヤー)</translation>
+    </message>
+    <message>
+        <source>Candidate</source>
+        <translation>候補</translation>
+    </message>
+    <message>
+        <source>Kind</source>
+        <translation>種類</translation>
+    </message>
+    <message>
+        <source>Add tail</source>
+        <translation>tail を付ける</translation>
+    </message>
+    <message>
+        <source>Tail tip</source>
+        <translation>tail 先端</translation>
+    </message>
+    <message>
+        <source>Body size</source>
+        <translation>body サイズ</translation>
+    </message>
+    <message>
+        <source>Hide source layer (keep it)</source>
+        <translation>元レイヤーを非表示にする (削除はしない)</translation>
+    </message>
+    <message>
+        <source>Confirm and Convert</source>
+        <translation>確定して変換</translation>
+    </message>
+    <message>
+        <source>Cancel</source>
+        <translation>キャンセル</translation>
+    </message>
+    <message>
+        <source>Create Balloon from Body/Tail Layers</source>
+        <translation>Body/Tail レイヤーからフキダシ化</translation>
+    </message>
+    <message>
+        <source>Selected</source>
+        <translation>選択中</translation>
+    </message>
+    <message>
+        <source>Register Selected Balloon as Asset</source>
+        <translation>選択中のフキダシを素材パネルに登録</translation>
+    </message>
+    <message>
+        <source>Save as an asset in the Balloons tab of the Comic Assets panel.</source>
+        <translation>Comic Assets パネルの「フキダシ」タブに素材として保存します</translation>
+    </message>
+    <message>
+        <source>Could not recognize a balloon (check the selection or layer).</source>
+        <translation>フキダシを認識できませんでした (選択範囲かレイヤーを確認)</translation>
+    </message>
+    <message>
+        <source>Body layer</source>
+        <translation>Body レイヤー</translation>
+    </message>
+    <message>
+        <source>Tail layer</source>
+        <translation>Tail レイヤー</translation>
+    </message>
+    <message>
+        <source>Register and Preview</source>
+        <translation>登録してプレビュー</translation>
+    </message>
+    <message>
+        <source>Clean Conversion (Development)</source>
+        <translation>クリーン変換 (開発)</translation>
+    </message>
+    <message>
+        <source>Legacy mode that combines masks and converts them to shaped vectors (development).</source>
+        <translation>マスクを結合して整形ベクターに変換する旧モード (開発用)</translation>
+    </message>
+    <message>
+        <source>Status</source>
+        <translation>状態</translation>
+    </message>
+    <message>
+        <source>Tail size</source>
+        <translation>しっぽの大きさ</translation>
+    </message>
+    <message>
+        <source>Connection mode</source>
+        <translation>接続モード</translation>
+    </message>
+    <message>
+        <source>Width of fill into the body at the connection</source>
+        <translation>接続部で本体側へ塗り込む幅</translation>
+    </message>
+    <message>
+        <source>Fill inset</source>
+        <translation>塗り込み</translation>
+    </message>
+    <message>
+        <source>Depth of the tail base inside the body (negative = outside the contour)</source>
+        <translation>しっぽの付け根を本体側へ押し込む量 (負 = 輪郭の外)</translation>
+    </message>
+    <message>
+        <source>Base depth</source>
+        <translation>付け根の深さ</translation>
+    </message>
+    <message>
+        <source>Show Diagnostics (Development)</source>
+        <translation>診断を表示 (開発)</translation>
+    </message>
+    <message>
+        <source>Select Body/Tail layers, then click Register and Preview.</source>
+        <translation>Body / Tail レイヤーを選んで「登録してプレビュー」</translation>
+    </message>
+    <message>
+        <source>Select both Body and Tail layers.</source>
+        <translation>Body と Tail のレイヤーを両方選択してください</translation>
+    </message>
+    <message>
+        <source>Select different layers for Body and Tail.</source>
+        <translation>Body と Tail は別のレイヤーを選んでください</translation>
+    </message>
+    <message>
+        <source>Could not register: {reasons}</source>
+        <translation>登録できませんでした: {reasons}</translation>
+    </message>
+    <message>
+        <source> / Warnings: {warnings}</source>
+        <translation> / 注意: {warnings}</translation>
+    </message>
+    <message>
+        <source>Click Register and Preview first.</source>
+        <translation>先に「登録してプレビュー」を実行してください</translation>
+    </message>
+    <message>
+        <source>Select a Body layer.</source>
+        <translation>Body レイヤーを選択してください</translation>
+    </message>
+    <message>
+        <source>Could not recognize the balloon.</source>
+        <translation>認識できませんでした</translation>
+    </message>
+    <message>
+        <source>Review the clean conversion candidate.</source>
+        <translation>Clean 変換候補を確認してください</translation>
+    </message>
+    <message>
+        <source>Refresh List</source>
+        <translation>一覧を更新</translation>
+    </message>
+    <message>
+        <source>{balloon} / Panel: {panel} / Speaker: {speaker}</source>
+        <translation>{balloon} / コマ: {panel} / 話者: {speaker}</translation>
+    </message>
+    <message>
+        <source>Edit selected dialogues</source>
+        <translation>選択したセリフを一括編集</translation>
+    </message>
+    <message>
+        <source>Panels</source>
+        <translation>コマ割り</translation>
+    </message>
+</context>
+<context>
+    <name>ComicToolsPlugin</name>
+    <message>
+        <source>Comic Tools</source>
+        <translation>漫画ツール</translation>
+    </message>
+    <message>
+        <source>Panel layout, speech balloons and dialogue management</source>
+        <translation>コマ割り・フキダシ・セリフを管理</translation>
+    </message>
+    <message>
+        <source>Comic Assets</source>
+        <translation>漫画素材</translation>
+    </message>
+    <message>
+        <source>Comic</source>
+        <translation>コミック</translation>
+    </message>
+</context>
+<context>
+    <name>ComicWorkflowPanel</name>
+    <message>
+        <source>Status</source>
+        <translation>状態</translation>
+    </message>
+    <message>
+        <source>Apply Page</source>
+        <translation>ページに適用</translation>
+    </message>
+    <message>
+        <source>Apply is blocked.</source>
+        <translation>適用はブロックされています。</translation>
+    </message>
+    <message>
+        <source>Apply {count} operation(s) to the current page as one undo step?</source>
+        <translation>{count} 件の操作を現在のページに 1 回の Undo として適用しますか?</translation>
+    </message>
+    <message>
+        <source>Book plan, page plan and editable apply for AI comic production</source>
+        <translation>AI 漫画制作の book plan・page plan・編集可能な適用</translation>
+    </message>
+    <message>
+        <source>Comic Workflow</source>
+        <translation>コミックワークフロー</translation>
+    </message>
+    <message>
+        <source>Comic Workflow Panel</source>
+        <translation>コミックワークフローパネル</translation>
+    </message>
+    <message>
+        <source>Dialogues</source>
+        <translation>台詞</translation>
+    </message>
+    <message>
+        <source>Next step: {step}</source>
+        <translation>次のステップ: {step}</translation>
+    </message>
+    <message>
+        <source>No issues.</source>
+        <translation>問題はありません。</translation>
+    </message>
+    <message>
+        <source>Page / Panel</source>
+        <translation>ページ / コマ</translation>
+    </message>
+    <message>
+        <source>Page plan blocked: {codes}</source>
+        <translation>ページ計画がブロック: {codes}</translation>
+    </message>
+    <message>
+        <source>Page plan ready: {count} panel(s)</source>
+        <translation>ページ計画が完了: {count} コマ</translation>
+    </message>
+    <message>
+        <source>Page {number}</source>
+        <translation>ページ {number}</translation>
+    </message>
+    <message>
+        <source>Plan Book</source>
+        <translation>Book を計画</translation>
+    </message>
+    <message>
+        <source>Plan Page</source>
+        <translation>ページを計画</translation>
+    </message>
+    <message>
+        <source>Planned {pages} page(s), {panels} panel(s); revision {revision}</source>
+        <translation>{pages} ページ / {panels} コマを計画しました (revision {revision})</translation>
+    </message>
+    <message>
+        <source>Preview Apply</source>
+        <translation>適用をプレビュー</translation>
+    </message>
+    <message>
+        <source>Project:</source>
+        <translation>プロジェクト:</translation>
+    </message>
+    <message>
+        <source>Ready to apply.</source>
+        <translation>適用できます。</translation>
+    </message>
+    <message>
+        <source>Select a comic project first.</source>
+        <translation>先にコミックプロジェクトを選択してください。</translation>
+    </message>
+    <message>
+        <source>Validate</source>
+        <translation>検証</translation>
+    </message>
+    <message>
+        <source>[unlinked]</source>
+        <translation>[未リンク]</translation>
+    </message>
+    <message>
+        <source>accepted</source>
+        <translation>採用</translation>
+    </message>
+    <message>
+        <source>applied</source>
+        <translation>適用済</translation>
+    </message>
+    <message>
+        <source>blocked</source>
+        <translation>ブロック</translation>
+    </message>
+    <message>
+        <source>generating</source>
+        <translation>生成中</translation>
+    </message>
+    <message>
+        <source>planned</source>
+        <translation>計画済</translation>
+    </message>
+    <message>
+        <source>ready</source>
+        <translation>準備完了</translation>
+    </message>
+    <message>
+        <source>rejected</source>
+        <translation>却下</translation>
+    </message>
+    <message>
+        <source>review</source>
+        <translation>レビュー</translation>
+    </message>
+</context>
+<context>
+    <name>DialogueBatchDialog</name>
+    <message>
+        <source>Page</source>
+        <translation>ページ</translation>
+    </message>
+    <message>
+        <source>Speaker</source>
+        <translation>話者</translation>
+    </message>
+    <message>
+        <source>Dialogue</source>
+        <translation>セリフ</translation>
+    </message>
+    <message>
+        <source>Cancel</source>
+        <translation>キャンセル</translation>
+    </message>
+    <message>
+        <source>Apply batch</source>
+        <translation>まとめて反映</translation>
+    </message>
+    <message>
+        <source>Apply speaker to all rows</source>
+        <translation>全行に話者を適用</translation>
+    </message>
+    <message>
+        <source>Edit selected dialogues</source>
+        <translation>選択したセリフを一括編集</translation>
+    </message>
+    <message>
+        <source>Find text</source>
+        <translation>検索する文字列</translation>
+    </message>
+    <message>
+        <source>Replace in all rows</source>
+        <translation>全行で置換</translation>
+    </message>
+    <message>
+        <source>Replace with</source>
+        <translation>置換後の文字列</translation>
+    </message>
+    <message>
+        <source>The batch was not applied. A dialogue changed or a layer is locked. Reopen the editor.</source>
+        <translation>一括変更を反映できませんでした。元の内容が変更されたか、レイヤーがロックされています。編集画面を開き直してください。</translation>
+    </message>
+</context>
+<context>
+    <name>DocumentModeDialog</name>
+    <message>
+        <source>Close</source>
+        <translation>閉じる</translation>
+    </message>
+    <message>
+        <source>Bits</source>
+        <translation>ビット</translation>
+    </message>
+    <message>
+        <source>Blocked: {codes}</source>
+        <translation>ブロック理由: {codes}</translation>
+    </message>
+    <message>
+        <source>Brush</source>
+        <translation>ブラシ</translation>
+    </message>
+    <message>
+        <source>Channels</source>
+        <translation>チャンネル</translation>
+    </message>
+    <message>
+        <source>Conversion {src} -&gt; {dst}: {state}</source>
+        <translation>変換 {src} -&gt; {dst}: {state}</translation>
+    </message>
+    <message>
+        <source>Convert to:</source>
+        <translation>変換先:</translation>
+    </message>
+    <message>
+        <source>Current mode: {mode} ({width} x {height}, {layers} layer(s))</source>
+        <translation>現在のモード: {mode} ({width} x {height}、{layers} レイヤー)</translation>
+    </message>
+    <message>
+        <source>Document Mode</source>
+        <translation>ドキュメントモード</translation>
+    </message>
+    <message>
+        <source>Estimate Ink Coverage</source>
+        <translation>インキ被覆率を見積もる</translation>
+    </message>
+    <message>
+        <source>Estimated pixel memory: {mib:.1f} MiB</source>
+        <translation>推定ピクセルメモリ: {mib:.1f} MiB</translation>
+    </message>
+    <message>
+        <source>Export</source>
+        <translation>書き出し</translation>
+    </message>
+    <message>
+        <source>Ink coverage (estimate, no output profile): {coverage}</source>
+        <translation>インキ被覆率 (出力プロファイルなしの見積もり): {coverage}</translation>
+    </message>
+    <message>
+        <source>Keep alpha</source>
+        <translation>アルファを保持</translation>
+    </message>
+    <message>
+        <source>Mode</source>
+        <translation>モード</translation>
+    </message>
+    <message>
+        <source>No composite is available.</source>
+        <translation>合成画像が取得できません。</translation>
+    </message>
+    <message>
+        <source>Plates on: {plates}</source>
+        <translation>表示中の版: {plates}</translation>
+    </message>
+    <message>
+        <source>Plates:</source>
+        <translation>版:</translation>
+    </message>
+    <message>
+        <source>Storage</source>
+        <translation>保存</translation>
+    </message>
+    <message>
+        <source>TAC max {max:.1f}% / mean {mean:.1f}% / over {limit:.0f}%: {over:.2f}% of pixels</source>
+        <translation>TAC 最大 {max:.1f}% / 平均 {mean:.1f}% / {limit:.0f}%超: 画素の {over:.2f}%</translation>
+    </message>
+    <message>
+        <source>Warnings: {codes}</source>
+        <translation>警告: {codes}</translation>
+    </message>
+    <message>
+        <source>blocked</source>
+        <translation>ブロック</translation>
+    </message>
+    <message>
+        <source>no</source>
+        <translation>未</translation>
+    </message>
+    <message>
+        <source>ready (dry run only)</source>
+        <translation>実行可能 (ドライランのみ)</translation>
+    </message>
+    <message>
+        <source>yes</source>
+        <translation>可</translation>
+    </message>
+</context>
+<context>
+    <name>DocumentReplacementGuard</name>
+    <message>
+        <source>Unsaved Changes</source>
+        <translation>未保存の変更</translation>
+    </message>
+    <message>
+        <source>You have unsaved changes. Do you want to save before closing?</source>
+        <translation>未保存の変更があります。閉じる前に保存しますか？</translation>
+    </message>
+</context>
+<context>
+    <name>EraserOptionsPanel</name>
+    <message>
+        <source>Size</source>
+        <translation>サイズ</translation>
+    </message>
+    <message>
+        <source>Strength</source>
+        <translation>強度</translation>
+    </message>
+    <message>
+        <source>Hardness</source>
+        <translation>硬さ</translation>
+    </message>
+</context>
+<context>
+    <name>ExportDigitalPackageDialog</name>
+    <message>
+        <source>Cancel</source>
+        <translation>キャンセル</translation>
+    </message>
+    <message>
+        <source>A folder of images plus publication_manifest.json — a neutral exchange package, not CBZ or EPUB.</source>
+        <translation>画像フォルダーと publication_manifest.json による中立な交換パッケージです (CBZ / EPUB ではありません)。</translation>
+    </message>
+    <message>
+        <source>Binding:</source>
+        <translation>綴じ方向:</translation>
+    </message>
+    <message>
+        <source>CBZ</source>
+        <translation>CBZ</translation>
+    </message>
+    <message>
+        <source>CBZ is a de facto format: readers interpret ComicInfo.xml differently.</source>
+        <translation>CBZ は事実上の標準であり、ComicInfo.xml の解釈はリーダーごとに異なります。</translation>
+    </message>
+    <message>
+        <source>Choose Output Folder</source>
+        <translation>出力フォルダーを選択</translation>
+    </message>
+    <message>
+        <source>Comic Book Archive (*.cbz)</source>
+        <translation>コミックブックアーカイブ (*.cbz)</translation>
+    </message>
+    <message>
+        <source>Cover:</source>
+        <translation>表紙:</translation>
+    </message>
+    <message>
+        <source>Creators:</source>
+        <translation>作者:</translation>
+    </message>
+    <message>
+        <source>Description:</source>
+        <translation>説明:</translation>
+    </message>
+    <message>
+        <source>EPUB Publication (*.epub)</source>
+        <translation>EPUB 出版物 (*.epub)</translation>
+    </message>
+    <message>
+        <source>EPUB conformance checked (EPUBCheck).</source>
+        <translation>EPUB 適合性を検査しました (EPUBCheck)。</translation>
+    </message>
+    <message>
+        <source>EPUB conformance not checked (EPUBCheck unavailable or failed).</source>
+        <translation>EPUB 適合性は未検査です (EPUBCheck が利用できないか失敗しました)。</translation>
+    </message>
+    <message>
+        <source>Export Digital Comic Package</source>
+        <translation>デジタル漫画パッケージを書き出し</translation>
+    </message>
+    <message>
+        <source>Exported {count} page(s) to {name}.</source>
+        <translation>{name} に {count} ページを書き出しました。</translation>
+    </message>
+    <message>
+        <source>Exporting package...</source>
+        <translation>パッケージを書き出しています...</translation>
+    </message>
+    <message>
+        <source>Fixed-Layout EPUB 3</source>
+        <translation>固定レイアウト EPUB 3</translation>
+    </message>
+    <message>
+        <source>Format:</source>
+        <translation>形式:</translation>
+    </message>
+    <message>
+        <source>Generate</source>
+        <translation>生成</translation>
+    </message>
+    <message>
+        <source>Identifier:</source>
+        <translation>識別子:</translation>
+    </message>
+    <message>
+        <source>Image Package + Manifest</source>
+        <translation>画像パッケージ + マニフェスト</translation>
+    </message>
+    <message>
+        <source>Image-only fixed-layout EPUB 3. Conformance is reported as checked only when EPUBCheck is installed.</source>
+        <translation>画像のみの固定レイアウト EPUB 3 です。適合性は EPUBCheck が導入されている場合にのみ「検査済み」と表示します。</translation>
+    </message>
+    <message>
+        <source>Images:</source>
+        <translation>画像:</translation>
+    </message>
+    <message>
+        <source>Include the LoomStroke manifest in the CBZ</source>
+        <translation>CBZ に LoomStroke マニフェストを含める</translation>
+    </message>
+    <message>
+        <source>Language:</source>
+        <translation>言語:</translation>
+    </message>
+    <message>
+        <source>Left binding (left-to-right)</source>
+        <translation>左綴じ (左から右)</translation>
+    </message>
+    <message>
+        <source>Metadata</source>
+        <translation>書誌情報</translation>
+    </message>
+    <message>
+        <source>No pages are available to export.</source>
+        <translation>書き出せるページがありません。</translation>
+    </message>
+    <message>
+        <source>No pages are included.</source>
+        <translation>含まれるページがありません。</translation>
+    </message>
+    <message>
+        <source>Pages</source>
+        <translation>ページ</translation>
+    </message>
+    <message>
+        <source>Right binding (right-to-left)</source>
+        <translation>右綴じ (右から左)</translation>
+    </message>
+    <message>
+        <source>Series:</source>
+        <translation>シリーズ:</translation>
+    </message>
+    <message>
+        <source>The cover page is not included.</source>
+        <translation>表紙ページが含まれていません。</translation>
+    </message>
+    <message>
+        <source>The package could not be written: {codes}</source>
+        <translation>パッケージを書き出せませんでした: {codes}</translation>
+    </message>
+    <message>
+        <source>Title, language and identifier are required.</source>
+        <translation>タイトル・言語・識別子は必須です。</translation>
+    </message>
+    <message>
+        <source>Title:</source>
+        <translation>タイトル:</translation>
+    </message>
+    <message>
+        <source>Volume:</source>
+        <translation>巻:</translation>
+    </message>
+    <message>
+        <source>Warnings: {codes}</source>
+        <translation>警告: {codes}</translation>
+    </message>
+    <message>
+        <source>{count} page(s) in story order, page progression {progression}.</source>
+        <translation>{count} ページ (ストーリー順)、ページ進行方向 {progression}。</translation>
+    </message>
+    <message>
+        <source>{name} already exists and will be replaced. Continue?</source>
+        <translation>{name} は既に存在し、置き換えられます。続行しますか?</translation>
+    </message>
+</context>
+<context>
+    <name>ExportImageDialog</name>
+    <message>
+        <source>Cancel</source>
+        <translation>キャンセル</translation>
+    </message>
+    <message>
+        <source>BMP</source>
+        <translation>BMP</translation>
+    </message>
+    <message>
+        <source>Colour Profile</source>
+        <translation>カラープロファイル</translation>
+    </message>
+    <message>
+        <source>Compression level:</source>
+        <translation>圧縮レベル:</translation>
+    </message>
+    <message>
+        <source>Compression:</source>
+        <translation>圧縮:</translation>
+    </message>
+    <message>
+        <source>Convert to sRGB and embed</source>
+        <translation>sRGB に変換して埋め込む</translation>
+    </message>
+    <message>
+        <source>Deflate (ZIP)</source>
+        <translation>Deflate (ZIP)</translation>
+    </message>
+    <message>
+        <source>Embed document profile (none - exported untagged)</source>
+        <translation>ドキュメントのプロファイルを埋め込む (なし - プロファイルなしで書き出し)</translation>
+    </message>
+    <message>
+        <source>Embed document profile ({name})</source>
+        <translation>ドキュメントのプロファイルを埋め込む ({name})</translation>
+    </message>
+    <message>
+        <source>Export Image</source>
+        <translation>画像を書き出し</translation>
+    </message>
+    <message>
+        <source>Export...</source>
+        <translation>書き出し...</translation>
+    </message>
+    <message>
+        <source>Exports the visible layer composite of the active page. Guides, the selection outline and tool overlays are never included.</source>
+        <translation>アクティブページの表示レイヤー合成結果を書き出します。ガイド・選択範囲の枠線・ツールのオーバーレイは含まれません。</translation>
+    </message>
+    <message>
+        <source>Flatten onto a colour</source>
+        <translation>色で塗りつぶして統合</translation>
+    </message>
+    <message>
+        <source>Format</source>
+        <translation>形式</translation>
+    </message>
+    <message>
+        <source>Format Options</source>
+        <translation>形式オプション</translation>
+    </message>
+    <message>
+        <source>Format:</source>
+        <translation>形式:</translation>
+    </message>
+    <message>
+        <source>Image:</source>
+        <translation>画像:</translation>
+    </message>
+    <message>
+        <source>Included Content</source>
+        <translation>書き出し内容</translation>
+    </message>
+    <message>
+        <source>JPEG</source>
+        <translation>JPEG</translation>
+    </message>
+    <message>
+        <source>LZW</source>
+        <translation>LZW</translation>
+    </message>
+    <message>
+        <source>Layered formats use their own exporter; colour and alpha options do not apply.</source>
+        <translation>レイヤー付き形式は専用の書き出し経路を使うため、カラー/透明度オプションは適用されません。</translation>
+    </message>
+    <message>
+        <source>Lossless</source>
+        <translation>可逆</translation>
+    </message>
+    <message>
+        <source>Matte colour</source>
+        <translation>背景色</translation>
+    </message>
+    <message>
+        <source>No options for this format.</source>
+        <translation>この形式にオプションはありません。</translation>
+    </message>
+    <message>
+        <source>No warnings.</source>
+        <translation>警告はありません。</translation>
+    </message>
+    <message>
+        <source>None</source>
+        <translation>なし</translation>
+    </message>
+    <message>
+        <source>PNG</source>
+        <translation>PNG</translation>
+    </message>
+    <message>
+        <source>PSD (layered)</source>
+        <translation>PSD (レイヤー付き)</translation>
+    </message>
+    <message>
+        <source>PackBits</source>
+        <translation>PackBits</translation>
+    </message>
+    <message>
+        <source>Preserve transparency</source>
+        <translation>透明度を保持</translation>
+    </message>
+    <message>
+        <source>Profile:</source>
+        <translation>プロファイル:</translation>
+    </message>
+    <message>
+        <source>Progressive</source>
+        <translation>プログレッシブ</translation>
+    </message>
+    <message>
+        <source>Quality:</source>
+        <translation>品質:</translation>
+    </message>
+    <message>
+        <source>SVG (vector)</source>
+        <translation>SVG (ベクター)</translation>
+    </message>
+    <message>
+        <source>Supports:</source>
+        <translation>対応:</translation>
+    </message>
+    <message>
+        <source>TIFF</source>
+        <translation>TIFF</translation>
+    </message>
+    <message>
+        <source>The document has no ICC profile; pixels are assumed to be sRGB.</source>
+        <translation>ドキュメントに ICC プロファイルがないため、ピクセルを sRGB とみなして変換します。</translation>
+    </message>
+    <message>
+        <source>The document has no ICC profile; the file is exported untagged (treated as sRGB).</source>
+        <translation>ドキュメントに ICC プロファイルがないため、プロファイルなし (sRGB とみなす) で書き出します。</translation>
+    </message>
+    <message>
+        <source>This format cannot embed an ICC profile.</source>
+        <translation>この形式は ICC プロファイルを埋め込めません。</translation>
+    </message>
+    <message>
+        <source>This format does not store DPI metadata.</source>
+        <translation>この形式は DPI メタデータを保存しません。</translation>
+    </message>
+    <message>
+        <source>Transparency</source>
+        <translation>透明度</translation>
+    </message>
+    <message>
+        <source>Transparency will be flattened onto the background.</source>
+        <translation>透明部分は背景色で塗りつぶされます。</translation>
+    </message>
+    <message>
+        <source>Untagged (no profile)</source>
+        <translation>プロファイルなし</translation>
+    </message>
+    <message>
+        <source>Warnings</source>
+        <translation>警告</translation>
+    </message>
+    <message>
+        <source>WebP</source>
+        <translation>WebP</translation>
+    </message>
+    <message>
+        <source>alpha: {alpha} / ICC: {icc} / DPI: {dpi}</source>
+        <translation>透明度: {alpha} / ICC: {icc} / DPI: {dpi}</translation>
+    </message>
+    <message>
+        <source>no</source>
+        <translation>不可</translation>
+    </message>
+    <message>
+        <source>yes</source>
+        <translation>可</translation>
+    </message>
+    <message>
+        <source>{width} x {height} px, {dpi} dpi ({mm_w} x {mm_h} mm)</source>
+        <translation>{width} x {height} px, {dpi} dpi ({mm_w} x {mm_h} mm)</translation>
+    </message>
+</context>
+<context>
+    <name>ExportPagesDialog</name>
+    <message>
+        <source>Cancel</source>
+        <translation>キャンセル</translation>
+    </message>
+    <message>
+        <source>Add a numeric suffix</source>
+        <translation>連番を付けて保存</translation>
+    </message>
+    <message>
+        <source>All Pages</source>
+        <translation>すべてのページ</translation>
+    </message>
+    <message>
+        <source>Ask before replacing</source>
+        <translation>上書き前に確認</translation>
+    </message>
+    <message>
+        <source>Body</source>
+        <translation>本文</translation>
+    </message>
+    <message>
+        <source>Browse...</source>
+        <translation>参照...</translation>
+    </message>
+    <message>
+        <source>By Role</source>
+        <translation>役割で選択</translation>
+    </message>
+    <message>
+        <source>Choose a destination folder.</source>
+        <translation>出力先フォルダーを選んでください。</translation>
+    </message>
+    <message>
+        <source>Colophon</source>
+        <translation>奥付</translation>
+    </message>
+    <message>
+        <source>Cover</source>
+        <translation>表紙</translation>
+    </message>
+    <message>
+        <source>Current Page</source>
+        <translation>現在のページ</translation>
+    </message>
+    <message>
+        <source>Even Pages</source>
+        <translation>偶数ページ</translation>
+    </message>
+    <message>
+        <source>Existing files:</source>
+        <translation>既存ファイル:</translation>
+    </message>
+    <message>
+        <source>Export Pages</source>
+        <translation>ページの一括書き出し</translation>
+    </message>
+    <message>
+        <source>Exported {done} of {total} page(s).</source>
+        <translation>{total} ページ中 {done} ページを書き出しました。</translation>
+    </message>
+    <message>
+        <source>Exporting pages...</source>
+        <translation>ページを書き出しています...</translation>
+    </message>
+    <message>
+        <source>Failed: {names}</source>
+        <translation>失敗: {names}</translation>
+    </message>
+    <message>
+        <source>File names:</source>
+        <translation>ファイル名:</translation>
+    </message>
+    <message>
+        <source>Folder:</source>
+        <translation>出力先:</translation>
+    </message>
+    <message>
+        <source>Format:</source>
+        <translation>形式:</translation>
+    </message>
+    <message>
+        <source>Inside Cover</source>
+        <translation>表紙裏</translation>
+    </message>
+    <message>
+        <source>Invalid name template: {error}</source>
+        <translation>ファイル名テンプレートが不正です: {error}</translation>
+    </message>
+    <message>
+        <source>Invalid page range: {error}</source>
+        <translation>ページ範囲が不正です: {error}</translation>
+    </message>
+    <message>
+        <source>No pages match this scope.</source>
+        <translation>対象になるページがありません。</translation>
+    </message>
+    <message>
+        <source>Odd Pages</source>
+        <translation>奇数ページ</translation>
+    </message>
+    <message>
+        <source>Page Range</source>
+        <translation>ページ範囲</translation>
+    </message>
+    <message>
+        <source>Pages:</source>
+        <translation>対象:</translation>
+    </message>
+    <message>
+        <source>Range:</source>
+        <translation>範囲:</translation>
+    </message>
+    <message>
+        <source>Replace existing files</source>
+        <translation>既存ファイルを置き換える</translation>
+    </message>
+    <message>
+        <source>Roles:</source>
+        <translation>役割:</translation>
+    </message>
+    <message>
+        <source>Select at least one role.</source>
+        <translation>役割を 1 つ以上選んでください。</translation>
+    </message>
+    <message>
+        <source>Skip existing files</source>
+        <translation>既存ファイルをスキップ</translation>
+    </message>
+    <message>
+        <source>Skipped: {count}</source>
+        <translation>スキップ: {count} 件</translation>
+    </message>
+    <message>
+        <source>The export report could not be written.</source>
+        <translation>export-report.json を書き込めませんでした。</translation>
+    </message>
+    <message>
+        <source>The template produces duplicate file names (e.g. {name}).</source>
+        <translation>ファイル名が重複します (例: {name})。</translation>
+    </message>
+    <message>
+        <source>Title</source>
+        <translation>扉</translation>
+    </message>
+    <message>
+        <source>Warnings: {codes}</source>
+        <translation>警告: {codes}</translation>
+    </message>
+    <message>
+        <source>Write export-report.json</source>
+        <translation>export-report.json を書き出す</translation>
+    </message>
+    <message>
+        <source>{count} file(s) already exist and will be replaced. Continue?</source>
+        <translation>{count} 件のファイルが既に存在し、置き換えられます。続行しますか?</translation>
+    </message>
+    <message>
+        <source>{count} pages -&gt; {names}</source>
+        <translation>{count} ページ → {names}</translation>
+    </message>
+</context>
+<context>
+    <name>ExportPrintDialog</name>
+    <message>
+        <source>Cancel</source>
+        <translation>キャンセル</translation>
+    </message>
+    <message>
+        <source>A CMYK profile is required for CMYK output.</source>
+        <translation>CMYK 出力には CMYK プロファイルが必要です。</translation>
+    </message>
+    <message>
+        <source>Absolute Colorimetric</source>
+        <translation>絶対的な色域を維持</translation>
+    </message>
+    <message>
+        <source>Add a numeric suffix</source>
+        <translation>連番を付けて保存</translation>
+    </message>
+    <message>
+        <source>All Pages</source>
+        <translation>すべてのページ</translation>
+    </message>
+    <message>
+        <source>Ask before replacing</source>
+        <translation>上書き前に確認</translation>
+    </message>
+    <message>
+        <source>Black point compensation</source>
+        <translation>黒点の補正</translation>
+    </message>
+    <message>
+        <source>CMYK TIFF sequence</source>
+        <translation>CMYK TIFF 連番</translation>
+    </message>
+    <message>
+        <source>CMYK profile:</source>
+        <translation>CMYK プロファイル:</translation>
+    </message>
+    <message>
+        <source>Choose CMYK Profile</source>
+        <translation>CMYK プロファイルを選択</translation>
+    </message>
+    <message>
+        <source>Choose Output Folder</source>
+        <translation>出力フォルダーを選択</translation>
+    </message>
+    <message>
+        <source>Colour</source>
+        <translation>カラー</translation>
+    </message>
+    <message>
+        <source>Current Page</source>
+        <translation>現在のページ</translation>
+    </message>
+    <message>
+        <source>Draw crop marks</source>
+        <translation>トンボを描く</translation>
+    </message>
+    <message>
+        <source>Existing files:</source>
+        <translation>既存ファイル:</translation>
+    </message>
+    <message>
+        <source>Export for Print</source>
+        <translation>印刷用に書き出し</translation>
+    </message>
+    <message>
+        <source>Exported {count} page(s) to {name}.</source>
+        <translation>{name} に {count} ページを書き出しました。</translation>
+    </message>
+    <message>
+        <source>Exported {done} of {total} page(s).</source>
+        <translation>{total} ページ中 {done} ページを書き出しました。</translation>
+    </message>
+    <message>
+        <source>Exporting print PDF...</source>
+        <translation>印刷用 PDF を書き出しています...</translation>
+    </message>
+    <message>
+        <source>Exporting print pages...</source>
+        <translation>印刷用ページを書き出しています...</translation>
+    </message>
+    <message>
+        <source>Failed: {names}</source>
+        <translation>失敗: {names}</translation>
+    </message>
+    <message>
+        <source>File names:</source>
+        <translation>ファイル名:</translation>
+    </message>
+    <message>
+        <source>Files</source>
+        <translation>ファイル</translation>
+    </message>
+    <message>
+        <source>Flattened CMYK TIFF, one file per page, with the profile embedded.</source>
+        <translation>透明を統合した CMYK TIFF を 1 ページ 1 ファイルで書き出します (プロファイル同梱)。</translation>
+    </message>
+    <message>
+        <source>Grayscale K TIFF sequence</source>
+        <translation>グレースケール K TIFF 連番</translation>
+    </message>
+    <message>
+        <source>Grayscale K TIFF: flattened lightness on the K channel (C=M=Y=0), one file per page.</source>
+        <translation>グレースケール K TIFF: 統合後の明度を K チャンネルに配置します (C=M=Y=0)。1 ページ 1 ファイルです。</translation>
+    </message>
+    <message>
+        <source>ICC Profiles (*.icc *.icm);;All Files (*.*)</source>
+        <translation>ICC プロファイル (*.icc *.icm);;すべてのファイル (*.*)</translation>
+    </message>
+    <message>
+        <source>Invalid file name template: {error}</source>
+        <translation>ファイル名テンプレートが不正です: {error}</translation>
+    </message>
+    <message>
+        <source>Invalid page range: {error}</source>
+        <translation>ページ範囲が不正です: {error}</translation>
+    </message>
+    <message>
+        <source>Load ICC Profile...</source>
+        <translation>ICC プロファイルを読み込む...</translation>
+    </message>
+    <message>
+        <source>No CMYK profile loaded</source>
+        <translation>CMYK プロファイル未読込</translation>
+    </message>
+    <message>
+        <source>No pages are available to export.</source>
+        <translation>書き出せるページがありません。</translation>
+    </message>
+    <message>
+        <source>No pages match this scope.</source>
+        <translation>対象になるページがありません。</translation>
+    </message>
+    <message>
+        <source>No physical layout: the whole canvas is the trim area (no bleed).</source>
+        <translation>物理レイアウトがないため、キャンバス全体を仕上がり領域として扱います (塗り足しなし)。</translation>
+    </message>
+    <message>
+        <source>Not available: no PDF/X backend is installed.</source>
+        <translation>利用できません: PDF/X バックエンドが導入されていません。</translation>
+    </message>
+    <message>
+        <source>Output:</source>
+        <translation>出力:</translation>
+    </message>
+    <message>
+        <source>PDF Document (*.pdf)</source>
+        <translation>PDF ドキュメント (*.pdf)</translation>
+    </message>
+    <message>
+        <source>PDF/X-1a</source>
+        <translation>PDF/X-1a</translation>
+    </message>
+    <message>
+        <source>PDF/X-4</source>
+        <translation>PDF/X-4</translation>
+    </message>
+    <message>
+        <source>Page Range</source>
+        <translation>ページ範囲</translation>
+    </message>
+    <message>
+        <source>Page {page} could not be rendered; no PDF was written.</source>
+        <translation>ページ {page} を描画できなかったため、PDF は書き出されていません。</translation>
+    </message>
+    <message>
+        <source>Pages:</source>
+        <translation>対象:</translation>
+    </message>
+    <message>
+        <source>Perceptual</source>
+        <translation>知覚的</translation>
+    </message>
+    <message>
+        <source>Preview</source>
+        <translation>プレビュー</translation>
+    </message>
+    <message>
+        <source>Range:</source>
+        <translation>範囲:</translation>
+    </message>
+    <message>
+        <source>Relative Colorimetric</source>
+        <translation>相対的な色域を維持</translation>
+    </message>
+    <message>
+        <source>Rendering intent:</source>
+        <translation>レンダリングインテント:</translation>
+    </message>
+    <message>
+        <source>Replace existing files</source>
+        <translation>既存ファイルを置き換える</translation>
+    </message>
+    <message>
+        <source>Saturation</source>
+        <translation>彩度</translation>
+    </message>
+    <message>
+        <source>Skip existing files</source>
+        <translation>既存ファイルをスキップ</translation>
+    </message>
+    <message>
+        <source>Skipped: {count}</source>
+        <translation>スキップ: {count} 件</translation>
+    </message>
+    <message>
+        <source>Some pages have no bleed; the whole canvas is the trim area.</source>
+        <translation>塗り足しのないページがあります (キャンバス全体を仕上がり領域として扱います)。</translation>
+    </message>
+    <message>
+        <source>Source profile: {name}</source>
+        <translation>ソースプロファイル: {name}</translation>
+    </message>
+    <message>
+        <source>Standard PDF</source>
+        <translation>標準 PDF</translation>
+    </message>
+    <message>
+        <source>Standard RGB PDF (not PDF/X). One logical page per PDF page, in reading order.</source>
+        <translation>標準 RGB PDF です (PDF/X ではありません)。論理順で 1 ページ = PDF 1 ページとして出力します。</translation>
+    </message>
+    <message>
+        <source>The PDF could not be written.</source>
+        <translation>PDF を書き出せませんでした。</translation>
+    </message>
+    <message>
+        <source>The document profile is not a usable ICC profile.</source>
+        <translation>ドキュメントのプロファイルは ICC プロファイルとして使用できません。</translation>
+    </message>
+    <message>
+        <source>The file is not a usable ICC profile.</source>
+        <translation>このファイルは ICC プロファイルとして使用できません。</translation>
+    </message>
+    <message>
+        <source>The output profile could not be used: {error}</source>
+        <translation>出力プロファイルを使用できません: {error}</translation>
+    </message>
+    <message>
+        <source>The profile is not a CMYK profile.</source>
+        <translation>このプロファイルは CMYK ではありません。</translation>
+    </message>
+    <message>
+        <source>Trim: {width} x {height} mm</source>
+        <translation>仕上がり: {width} x {height} mm</translation>
+    </message>
+    <message>
+        <source>sRGB (assumed)</source>
+        <translation>sRGB (仮定)</translation>
+    </message>
+    <message>
+        <source>{count} file(s) already exist and will be replaced. Continue?</source>
+        <translation>{count} 件のファイルが既に存在し、置き換えられます。続行しますか?</translation>
+    </message>
+    <message>
+        <source>{count} page(s) will be exported.</source>
+        <translation>{count} ページを書き出します。</translation>
+    </message>
+</context>
+<context>
+    <name>ExportWebtoonDialog</name>
+    <message>
+        <source>Cancel</source>
+        <translation>キャンセル</translation>
+    </message>
+    <message>
+        <source> px</source>
+        <translation> px</translation>
+    </message>
+    <message>
+        <source>Add a numeric suffix</source>
+        <translation>連番を付けて保存</translation>
+    </message>
+    <message>
+        <source>Ask before replacing</source>
+        <translation>上書き前に確認</translation>
+    </message>
+    <message>
+        <source>Boundaries are fixed-height only; check them in the preview before publishing.</source>
+        <translation>分割位置は固定高さのみで決めています。投稿前にプレビューで確認してください。</translation>
+    </message>
+    <message>
+        <source>Check the platform's current requirements before publishing.</source>
+        <translation>投稿前に各プラットフォームの最新の投稿条件を確認してください。</translation>
+    </message>
+    <message>
+        <source>Choose Output Folder</source>
+        <translation>出力フォルダーを選択</translation>
+    </message>
+    <message>
+        <source>Existing files:</source>
+        <translation>既存ファイル:</translation>
+    </message>
+    <message>
+        <source>Export Webtoon</source>
+        <translation>Webtoon を書き出し</translation>
+    </message>
+    <message>
+        <source>Exported {done} of {total} slice(s).</source>
+        <translation>{total} スライス中 {done} スライスを書き出しました。</translation>
+    </message>
+    <message>
+        <source>Exporting webtoon slices...</source>
+        <translation>Webtoon スライスを書き出しています...</translation>
+    </message>
+    <message>
+        <source>Failed: {names}</source>
+        <translation>失敗: {names}</translation>
+    </message>
+    <message>
+        <source>File names:</source>
+        <translation>ファイル名:</translation>
+    </message>
+    <message>
+        <source>Format:</source>
+        <translation>形式:</translation>
+    </message>
+    <message>
+        <source>Gap between pages:</source>
+        <translation>ページ間の余白:</translation>
+    </message>
+    <message>
+        <source>Generic</source>
+        <translation>汎用</translation>
+    </message>
+    <message>
+        <source>Invalid file name template: {error}</source>
+        <translation>ファイル名テンプレートが不正です: {error}</translation>
+    </message>
+    <message>
+        <source>Max slice height:</source>
+        <translation>スライス最大高さ:</translation>
+    </message>
+    <message>
+        <source>No pages are available to export.</source>
+        <translation>書き出せるページがありません。</translation>
+    </message>
+    <message>
+        <source>No pages are included.</source>
+        <translation>含まれるページがありません。</translation>
+    </message>
+    <message>
+        <source>Profile: {name} (rev {revision}, updated {date})</source>
+        <translation>プロファイル: {name} (rev {revision}、更新 {date})</translation>
+    </message>
+    <message>
+        <source>Replace existing files</source>
+        <translation>既存ファイルを置き換える</translation>
+    </message>
+    <message>
+        <source>Segments</source>
+        <translation>セグメント</translation>
+    </message>
+    <message>
+        <source>Settings</source>
+        <translation>設定</translation>
+    </message>
+    <message>
+        <source>Skip existing files</source>
+        <translation>既存ファイルをスキップ</translation>
+    </message>
+    <message>
+        <source>Skipped: {count}</source>
+        <translation>スキップ: {count} 件</translation>
+    </message>
+    <message>
+        <source>Stream: {width} x {height} px, {count} slice(s), tallest {tallest} px</source>
+        <translation>ストリーム: {width} x {height} px、{count} スライス、最大高さ {tallest} px</translation>
+    </message>
+    <message>
+        <source>Target width:</source>
+        <translation>出力幅:</translation>
+    </message>
+    <message>
+        <source>The manifest could not be written.</source>
+        <translation>webtoon_manifest.json を書き込めませんでした。</translation>
+    </message>
+    <message>
+        <source>Warnings: {codes}</source>
+        <translation>警告: {codes}</translation>
+    </message>
+    <message>
+        <source>Write webtoon_manifest.json</source>
+        <translation>webtoon_manifest.json を書き出す</translation>
+    </message>
+    <message>
+        <source>{count} file(s) already exist and will be replaced. Continue?</source>
+        <translation>{count} 件のファイルが既に存在し、置き換えられます。続行しますか?</translation>
+    </message>
+</context>
+<context>
+    <name>FilterParameterForm</name>
+    <message>
+        <source>Delete selected stop</source>
+        <translation>選択した分岐点を削除</translation>
+    </message>
+    <message>
+        <source>No adjustable parameters</source>
+        <translation>調整項目はありません</translation>
+    </message>
+</context>
+<context>
+    <name>FilterPenOptionsDialog</name>
+    <message>
+        <source>Close</source>
+        <translation>閉じる</translation>
+    </message>
+    <message>
+        <source>Filter Settings</source>
+        <translation>フィルター設定</translation>
+    </message>
+</context>
+<context>
+    <name>FontDiagnosticsDialog</name>
+    <message>
+        <source>Status</source>
+        <translation>状態</translation>
+    </message>
+    <message>
+        <source>(default font)</source>
+        <translation>(既定フォント)</translation>
+    </message>
+    <message>
+        <source>Characters</source>
+        <translation>文字数</translation>
+    </message>
+    <message>
+        <source>Convert Text to Outlines</source>
+        <translation>テキストのアウトライン化</translation>
+    </message>
+    <message>
+        <source>Convert the text objects using this font on the current page to outlines? They stop being editable text (searchability is lost); the original text is kept for restore.</source>
+        <translation>現在のページでこのフォントを使うテキストオブジェクトをアウトライン化しますか? 編集可能なテキストではなくなります (検索性は失われます)。元のテキストは復元用に保持されます。</translation>
+    </message>
+    <message>
+        <source>Convert to Outlines</source>
+        <translation>アウトライン化</translation>
+    </message>
+    <message>
+        <source>Convert to Outlines...</source>
+        <translation>アウトライン化...</translation>
+    </message>
+    <message>
+        <source>Converted {count} text object(s) to outlines.</source>
+        <translation>テキストオブジェクト {count} 件をアウトライン化しました。</translation>
+    </message>
+    <message>
+        <source>Current page</source>
+        <translation>現在のページ</translation>
+    </message>
+    <message>
+        <source>Font</source>
+        <translation>フォント</translation>
+    </message>
+    <message>
+        <source>Font Diagnostics</source>
+        <translation>フォント診断</translation>
+    </message>
+    <message>
+        <source>No document is open.</source>
+        <translation>ドキュメントが開かれていません。</translation>
+    </message>
+    <message>
+        <source>Objects</source>
+        <translation>オブジェクト</translation>
+    </message>
+    <message>
+        <source>Pages</source>
+        <translation>ページ</translation>
+    </message>
+    <message>
+        <source>Scope:</source>
+        <translation>範囲:</translation>
+    </message>
+    <message>
+        <source>Substitute Font</source>
+        <translation>フォント置換</translation>
+    </message>
+    <message>
+        <source>Substitute with:</source>
+        <translation>置換先:</translation>
+    </message>
+    <message>
+        <source>Substitute...</source>
+        <translation>置換...</translation>
+    </message>
+    <message>
+        <source>Substituted {count} text object(s) on the current page.</source>
+        <translation>現在のページのテキストオブジェクト {count} 件を置換しました。</translation>
+    </message>
+    <message>
+        <source>Whole document</source>
+        <translation>ドキュメント全体</translation>
+    </message>
+    <message>
+        <source>exact</source>
+        <translation>利用可</translation>
+    </message>
+    <message>
+        <source>fallback</source>
+        <translation>欠落 (代替表示)</translation>
+    </message>
+    <message>
+        <source>family_only</source>
+        <translation>利用可 (スタイル代替)</translation>
+    </message>
+    <message>
+        <source>missing</source>
+        <translation>欠落</translation>
+    </message>
+    <message>
+        <source>unknown</source>
+        <translation>不明</translation>
+    </message>
+    <message>
+        <source>{count} object(s) could not be outlined.</source>
+        <translation>{count} 件はアウトライン化できませんでした。</translation>
+    </message>
+    <message>
+        <source>{count} object(s) on other pages were left unchanged.</source>
+        <translation>他のページの {count} 件は変更していません。</translation>
+    </message>
+    <message>
+        <source>{fonts} font(s), {missing} missing, {objects} text object(s).</source>
+        <translation>フォント {fonts} 件、欠落 {missing} 件、テキストオブジェクト {objects} 件。</translation>
+    </message>
+</context>
+<context>
+    <name>GPTImage2Panel</name>
+    <message>
+        <source>Size</source>
+        <translation>サイズ</translation>
+    </message>
+    <message>
+        <source>&lt;New Layer&gt;</source>
+        <translation>&lt;新規レイヤー&gt;</translation>
+    </message>
+    <message>
+        <source>Auto</source>
+        <translation>自動</translation>
+    </message>
+    <message>
+        <source>Background</source>
+        <translation>背景</translation>
+    </message>
+    <message>
+        <source>Compression</source>
+        <translation>圧縮</translation>
+    </message>
+    <message>
+        <source>Enter prompt text...</source>
+        <translation>プロンプトを入力...</translation>
+    </message>
+    <message>
+        <source>External AI services are disabled. Enable 'Allow external AI services' in Preferences to generate.</source>
+        <translation>外部 AI サービスは無効です。生成するには Preferences で「Allow external AI services」を有効にしてください。</translation>
+    </message>
+    <message>
+        <source>Format</source>
+        <translation>形式</translation>
+    </message>
+    <message>
+        <source>Generate</source>
+        <translation>生成</translation>
+    </message>
+    <message>
+        <source>High</source>
+        <translation>高</translation>
+    </message>
+    <message>
+        <source>JPEG</source>
+        <translation>JPEG</translation>
+    </message>
+    <message>
+        <source>Low</source>
+        <translation>低</translation>
+    </message>
+    <message>
+        <source>Medium</source>
+        <translation>中</translation>
+    </message>
+    <message>
+        <source>Model</source>
+        <translation>モデル</translation>
+    </message>
+    <message>
+        <source>Moderation</source>
+        <translation>モデレーション</translation>
+    </message>
+    <message>
+        <source>Opaque</source>
+        <translation>不透明</translation>
+    </message>
+    <message>
+        <source>PNG</source>
+        <translation>PNG</translation>
+    </message>
+    <message>
+        <source>Prompt is required</source>
+        <translation>プロンプトは必須です</translation>
+    </message>
+    <message>
+        <source>Prompt:</source>
+        <translation>プロンプト:</translation>
+    </message>
+    <message>
+        <source>Quality</source>
+        <translation>品質</translation>
+    </message>
+    <message>
+        <source>Status messages will appear here</source>
+        <translation>ステータスメッセージがここに表示されます</translation>
+    </message>
+    <message>
+        <source>Submitted job to queue</source>
+        <translation>ジョブをキューに送信しました</translation>
+    </message>
+    <message>
+        <source>Target layer</source>
+        <translation>出力先レイヤー</translation>
+    </message>
+    <message>
+        <source>WebP</source>
+        <translation>WebP</translation>
+    </message>
+</context>
+<context>
+    <name>GradientStopsWidget</name>
+    <message>
+        <source>Delete selected stop</source>
+        <translation>選択した分岐点を削除</translation>
+    </message>
+</context>
+<context>
+    <name>IccProfileDownloadDialog</name>
+    <message>
+        <source>Close</source>
+        <translation>閉じる</translation>
+    </message>
+    <message>
+        <source>Representative ICC Profiles</source>
+        <translation>代表的なICCプロファイル</translation>
+    </message>
+</context>
+<context>
+    <name>ImageSizeDialog</name>
+    <message>
+        <source>Cancel</source>
+        <translation>キャンセル</translation>
+    </message>
+    <message>
+        <source> %</source>
+        <translation> %</translation>
+    </message>
+    <message>
+        <source> dpi</source>
+        <translation> dpi</translation>
+    </message>
+    <message>
+        <source> px</source>
+        <translation> px</translation>
+    </message>
+    <message>
+        <source>Bicubic (recommended)</source>
+        <translation>バイキュービック (推奨)</translation>
+    </message>
+    <message>
+        <source>Bilinear</source>
+        <translation>バイリニア</translation>
+    </message>
+    <message>
+        <source>Box (integer reduction)</source>
+        <translation>ボックス (整数倍縮小)</translation>
+    </message>
+    <message>
+        <source>Constrain proportions</source>
+        <translation>縦横比を固定</translation>
+    </message>
+    <message>
+        <source>Current: {width} x {height} px at {dpi} dpi</source>
+        <translation>現在: {width} x {height} px / {dpi} dpi</translation>
+    </message>
+    <message>
+        <source>DPI:</source>
+        <translation>DPI:</translation>
+    </message>
+    <message>
+        <source>Estimated undo memory: {megabytes} MB</source>
+        <translation>取り消し用メモリの見積もり: {megabytes} MB</translation>
+    </message>
+    <message>
+        <source>Hamming</source>
+        <translation>ハミング</translation>
+    </message>
+    <message>
+        <source>Height:</source>
+        <translation>高さ:</translation>
+    </message>
+    <message>
+        <source>Image Size</source>
+        <translation>画像解像度</translation>
+    </message>
+    <message>
+        <source>Interpolation:</source>
+        <translation>補間方法:</translation>
+    </message>
+    <message>
+        <source>Lanczos (best for reduction)</source>
+        <translation>Lanczos (縮小に最適)</translation>
+    </message>
+    <message>
+        <source>Nearest Neighbor</source>
+        <translation>ニアレストネイバー</translation>
+    </message>
+    <message>
+        <source>OK</source>
+        <translation>OK</translation>
+    </message>
+    <message>
+        <source>Options</source>
+        <translation>オプション</translation>
+    </message>
+    <message>
+        <source>Physical Size</source>
+        <translation>実寸</translation>
+    </message>
+    <message>
+        <source>Pixel Dimensions</source>
+        <translation>ピクセル寸法</translation>
+    </message>
+    <message>
+        <source>Resample image</source>
+        <translation>画像を再サンプル</translation>
+    </message>
+    <message>
+        <source>Resolution</source>
+        <translation>解像度</translation>
+    </message>
+    <message>
+        <source>Scale:</source>
+        <translation>拡大率:</translation>
+    </message>
+    <message>
+        <source>Unit:</source>
+        <translation>単位:</translation>
+    </message>
+    <message>
+        <source>Width:</source>
+        <translation>幅:</translation>
+    </message>
+    <message>
+        <source>inch</source>
+        <translation>インチ</translation>
+    </message>
+    <message>
+        <source>mm</source>
+        <translation>mm</translation>
+    </message>
+</context>
+<context>
+    <name>LLMPaneController</name>
+    <message>
+        <source>Cancel</source>
+        <translation>キャンセル</translation>
+    </message>
+    <message>
+        <source>Add Library</source>
+        <translation>ライブラリを追加</translation>
+    </message>
+    <message>
+        <source>Clear</source>
+        <translation>クリア</translation>
+    </message>
+    <message>
+        <source>Enter user prompt...</source>
+        <translation>ユーザープロンプトを入力...</translation>
+    </message>
+    <message>
+        <source>Expect JSON response</source>
+        <translation>JSON 応答を期待する</translation>
+    </message>
+    <message>
+        <source>LLM Settings</source>
+        <translation>LLM 設定</translation>
+    </message>
+    <message>
+        <source>Max tokens</source>
+        <translation>最大トークン</translation>
+    </message>
+    <message>
+        <source>Model</source>
+        <translation>モデル</translation>
+    </message>
+    <message>
+        <source>Optional system instructions...</source>
+        <translation>任意のシステム指示...</translation>
+    </message>
+    <message>
+        <source>Output</source>
+        <translation>出力</translation>
+    </message>
+    <message>
+        <source>Provider</source>
+        <translation>プロバイダー</translation>
+    </message>
+    <message>
+        <source>Schema</source>
+        <translation>スキーマ</translation>
+    </message>
+    <message>
+        <source>Select system prompt...</source>
+        <translation>システムプロンプトを選択...</translation>
+    </message>
+    <message>
+        <source>Select user prompt...</source>
+        <translation>ユーザープロンプトを選択...</translation>
+    </message>
+    <message>
+        <source>Stream updates</source>
+        <translation>ストリーム更新</translation>
+    </message>
+    <message>
+        <source>Submit</source>
+        <translation>送信</translation>
+    </message>
+    <message>
+        <source>System prompt</source>
+        <translation>システムプロンプト</translation>
+    </message>
+    <message>
+        <source>Temperature</source>
+        <translation>温度</translation>
+    </message>
+    <message>
+        <source>User prompt</source>
+        <translation>ユーザープロンプト</translation>
+    </message>
+</context>
+<context>
+    <name>LayerGenerateButton</name>
+    <message>
+        <source>Generate (AI Effect)</source>
+        <translation>生成（AIエフェクト）</translation>
+    </message>
+</context>
+<context>
+    <name>LayerItemWidget</name>
+    <message>
+        <source>Exclude from blend (AI input only)</source>
+        <translation>合成から除外（AI入力のみ）</translation>
+    </message>
+    <message>
+        <source>Click to edit mask</source>
+        <translation>クリックしてマスクを編集</translation>
+    </message>
+</context>
+<context>
+    <name>LayerPanelContextMenuBuilder</name>
+    <message>
+        <source>Add Layer</source>
+        <translation>レイヤーを追加</translation>
+    </message>
+    <message>
+        <source>Duplicate Layer</source>
+        <translation>レイヤーを複製</translation>
+    </message>
+    <message>
+        <source>Delete Layer</source>
+        <translation>レイヤーを削除</translation>
+    </message>
+    <message>
+        <source>Release Clipping Mask</source>
+        <translation>クリッピングマスクを解除</translation>
+    </message>
+    <message>
+        <source>Create Clipping Mask</source>
+        <translation>クリッピングマスクを作成</translation>
+    </message>
+    <message>
+        <source>Load as Selection</source>
+        <translation>選択範囲として読み込む</translation>
+    </message>
+    <message>
+        <source>Invert Transparency</source>
+        <translation>透明度を反転</translation>
+    </message>
+    <message>
+        <source>Rename</source>
+        <translation>名前変更</translation>
+    </message>
+    <message>
+        <source>Rasterize</source>
+        <translation>ラスタライズ</translation>
+    </message>
+    <message>
+        <source>Finish Mask Editing</source>
+        <translation>マスク編集を終了</translation>
+    </message>
+    <message>
+        <source>Edit Layer Mask</source>
+        <translation>レイヤーマスクを編集</translation>
+    </message>
+    <message>
+        <source>Remove Layer Mask</source>
+        <translation>レイヤーマスクを削除</translation>
+    </message>
+    <message>
+        <source>Add Filter</source>
+        <translation>フィルターを追加</translation>
+    </message>
+    <message>
+        <source>Add Layer Mask</source>
+        <translation>レイヤーマスクを追加</translation>
+    </message>
+    <message>
+        <source>Convert to Vector</source>
+        <translation>ベクターオブジェクトに変換</translation>
+    </message>
+    <message>
+        <source>Group Layers</source>
+        <translation>レイヤーをグループ化</translation>
+    </message>
+    <message>
+        <source>Merge Down</source>
+        <translation>下のレイヤーと結合</translation>
+    </message>
+    <message>
+        <source>Merge Visible</source>
+        <translation>表示レイヤーを結合</translation>
+    </message>
+    <message>
+        <source>Ungroup</source>
+        <translation>グループ解除</translation>
+    </message>
+</context>
+<context>
+    <name>LayerSelector</name>
+    <message>
+        <source>Select Layer:</source>
+        <translation>レイヤーを選択:</translation>
+    </message>
+</context>
+<context>
+    <name>LoomStroke</name>
+    <message>
+        <source>Startup Error</source>
+        <translation>起動エラー</translation>
+    </message>
+    <message>
+        <source>Failed to create main window:</source>
+        <translation>メインウィンドウを作成できませんでした:</translation>
+    </message>
+    <message>
+        <source>Fatal Error</source>
+        <translation>致命的なエラー</translation>
+    </message>
+    <message>
+        <source>Application failed to run:</source>
+        <translation>アプリケーションを実行できませんでした:</translation>
+    </message>
+    <message>
+        <source>Application crashed:</source>
+        <translation>アプリケーションが異常終了しました:</translation>
+    </message>
+</context>
+<context>
+    <name>LoomStrokeApp</name>
+    <message>
+        <source>Startup Error</source>
+        <translation>起動エラー</translation>
+    </message>
+    <message>
+        <source>Failed to create main window: {error}</source>
+        <translation>メインウィンドウを作成できませんでした: {error}</translation>
+    </message>
+    <message>
+        <source>Fatal Error</source>
+        <translation>致命的なエラー</translation>
+    </message>
+    <message>
+        <source>Application failed to run: {error}</source>
+        <translation>アプリケーションを実行できませんでした: {error}</translation>
+    </message>
+</context>
+<context>
+    <name>MainWindowCanvasBootstrapCoordinator</name>
+    <message>
+        <source>Canvas Placeholder
+(CanvasWidget not found)</source>
+        <translation>キャンバス代替表示
+(CanvasWidgetが見つかりません)</translation>
+    </message>
+</context>
+<context>
+    <name>MainWindowComfyUIPanelCoordinator</name>
+    <message>
+        <source>ComfyUI Panel
+(Not Available)</source>
+        <translation>ComfyUIパネル
+（利用不可）</translation>
+    </message>
+</context>
+<context>
+    <name>MainWindowDefaultPanelsCoordinator</name>
+    <message>
+        <source>Preview Area
+(ComfyUI preview will appear here)</source>
+        <translation>プレビュー領域
+（ComfyUIのプレビューを表示します）</translation>
+    </message>
+</context>
+<context>
+    <name>MainWindowDockLayoutController</name>
+    <message>
+        <source>Dock</source>
+        <translation>ドッキング</translation>
+    </message>
+    <message>
+        <source>Float</source>
+        <translation>フローティング</translation>
+    </message>
+</context>
+<context>
+    <name>MainWindowDocumentWorkflowCoordinator</name>
+    <message>
+        <source>LoomStroke Project (*.lstroke);;Photoshop (*.psd);;Images (*.png *.jpg *.jpeg *.bmp *.tiff *.webp);;All Files (*.*)</source>
+        <translation>LoomStrokeプロジェクト (*.lstroke);;Photoshop (*.psd);;画像 (*.png *.jpg *.jpeg *.bmp *.tiff *.webp);;すべてのファイル (*.*)</translation>
+    </message>
+    <message>
+        <source>Photoshop (*.psd);;Images (*.png *.jpg *.jpeg *.bmp *.tiff *.webp);;All Files (*.*)</source>
+        <translation>Photoshop (*.psd);;画像 (*.png *.jpg *.jpeg *.bmp *.tiff *.webp);;すべてのファイル (*.*)</translation>
+    </message>
+    <message>
+        <source>Recovered {name} from autosave. Save to keep recovered changes.</source>
+        <translation>{name} を自動保存から復元しました。復元した変更を保存してください。</translation>
+    </message>
+    <message>
+        <source>Recovered unsaved document from autosave. Use Save As to keep it.</source>
+        <translation>未保存の文書を自動保存から復元しました。「名前を付けて保存」で保存してください。</translation>
+    </message>
+    <message>
+        <source>LoomStroke Project (*.lstroke);;All Files (*.*)</source>
+        <translation>LoomStrokeプロジェクト (*.lstroke);;すべてのファイル (*.*)</translation>
+    </message>
+    <message>
+        <source>Save already in progress — skipping duplicate request</source>
+        <translation>保存中のため、重複した保存要求を省略しました</translation>
+    </message>
+    <message>
+        <source>Saving {name}…</source>
+        <translation>{name} を保存中…</translation>
+    </message>
+    <message>
+        <source>Saving</source>
+        <translation>保存中</translation>
+    </message>
+    <message>
+        <source>PNG Image (*.png);;JPEG Image (*.jpg *.jpeg);;TIFF Image (*.tif *.tiff);;WebP Image (*.webp);;SVG Image (*.svg);;PSD Image (*.psd);;All Files (*.*)</source>
+        <translation>PNG画像 (*.png);;JPEG画像 (*.jpg *.jpeg);;TIFF画像 (*.tif *.tiff);;WebP画像 (*.webp);;SVG画像 (*.svg);;PSD画像 (*.psd);;すべてのファイル (*.*)</translation>
+    </message>
+    <message>
+        <source>Export SVG</source>
+        <translation>SVGを書き出す</translation>
+    </message>
+    <message>
+        <source>No visible vector objects to export.</source>
+        <translation>書き出せる可視ベクターオブジェクトがありません。</translation>
+    </message>
+    <message>
+        <source>Exported {name}; omitted {count} unsupported vector layer(s).</source>
+        <translation>{name} を書き出しました。未対応のベクターレイヤー {count} 個を省略しました。</translation>
+    </message>
+    <message>
+        <source>Canvas composite is not available.</source>
+        <translation>キャンバス合成は利用できません。</translation>
+    </message>
+    <message>
+        <source>Could not import: {path}</source>
+        <translation>読み込めませんでした: {path}</translation>
+    </message>
+    <message>
+        <source>Document service is not ready.</source>
+        <translation>ドキュメントサービスの準備ができていません。</translation>
+    </message>
+    <message>
+        <source>Export Failed</source>
+        <translation>エクスポートに失敗しました</translation>
+    </message>
+    <message>
+        <source>Export Image</source>
+        <translation>画像をエクスポート</translation>
+    </message>
+    <message>
+        <source>Export Pages</source>
+        <translation>ページの一括書き出し</translation>
+    </message>
+    <message>
+        <source>Export Unavailable</source>
+        <translation>エクスポート不可</translation>
+    </message>
+    <message>
+        <source>Exported {name}, but omitted {count} unsupported vector layer(s). Layers using non-normal blend modes or visible live filters cannot be represented in the current SVG subset.</source>
+        <translation>{name} を書き出しましたが、未対応のベクターレイヤー {count} 件を省略しました。通常以外の描画モード、または表示中のライブフィルターを使用するレイヤーは、現在の SVG 対応範囲では表現できません。</translation>
+    </message>
+    <message>
+        <source>Failed to save document</source>
+        <translation>ドキュメントの保存に失敗しました</translation>
+    </message>
+    <message>
+        <source>Failed to save {path}</source>
+        <translation>{path} の保存に失敗しました</translation>
+    </message>
+    <message>
+        <source>Failed to write {path}</source>
+        <translation>{path} への書き込みに失敗しました</translation>
+    </message>
+    <message>
+        <source>Finish or cancel the current edit before saving.</source>
+        <translation>現在の編集を確定または取り消してから保存してください。</translation>
+    </message>
+    <message>
+        <source>Import</source>
+        <translation>インポート</translation>
+    </message>
+    <message>
+        <source>Import Failed</source>
+        <translation>インポートに失敗しました</translation>
+    </message>
+    <message>
+        <source>Imported {name}</source>
+        <translation>{name} を読み込みました</translation>
+    </message>
+    <message>
+        <source>Imported {name} ({count} layers)</source>
+        <translation>{name} を読み込みました ({count} レイヤー)</translation>
+    </message>
+    <message>
+        <source>Load Failed</source>
+        <translation>読み込みに失敗しました</translation>
+    </message>
+    <message>
+        <source>No SVG-compatible vector objects to export. Unsupported blend modes or live filters were omitted.</source>
+        <translation>SVG に書き出せるベクターオブジェクトがありません。対応していない描画モードまたはライブフィルターを使用するレイヤーは省略されました。</translation>
+    </message>
+    <message>
+        <source>No pages are available to export.</source>
+        <translation>書き出せるページがありません。</translation>
+    </message>
+    <message>
+        <source>Open Project</source>
+        <translation>プロジェクトを開く</translation>
+    </message>
+    <message>
+        <source>Save Failed</source>
+        <translation>保存に失敗しました</translation>
+    </message>
+    <message>
+        <source>Save Project</source>
+        <translation>プロジェクトを保存</translation>
+    </message>
+    <message>
+        <source>Save Unavailable</source>
+        <translation>保存不可</translation>
+    </message>
+    <message>
+        <source>Saved previous document {name}</source>
+        <translation>以前のドキュメント {name} を保存しました</translation>
+    </message>
+    <message>
+        <source>Saved {name} — newer unsaved changes remain</source>
+        <translation>{name} を保存しました — より新しい未保存の変更が残っています</translation>
+    </message>
+    <message>
+        <source>Saved {name} — newer unsaved changes remain, close cancelled</source>
+        <translation>{name} を保存しました — より新しい未保存の変更が残っているため、終了を中止しました</translation>
+    </message>
+    <message>
+        <source>Unable to export image: {path}</source>
+        <translation>画像をエクスポートできません: {path}</translation>
+    </message>
+    <message>
+        <source>Unable to load document: {path}</source>
+        <translation>ドキュメントを読み込めません: {path}</translation>
+    </message>
+    <message>
+        <source>Unable to save document: {path}
+{error}</source>
+        <translation>ドキュメントを保存できません: {path}
+{error}</translation>
+    </message>
+</context>
+<context>
+    <name>MainWindowGalleryPanelCoordinator</name>
+    <message>
+        <source>No provider available for regeneration</source>
+        <translation>再生成に利用できるプロバイダーがありません</translation>
+    </message>
+    <message>
+        <source>No provider available for restoration</source>
+        <translation>復元に利用できるプロバイダーがありません</translation>
+    </message>
+    <message>
+        <source>Warning</source>
+        <translation>警告</translation>
+    </message>
+</context>
+<context>
+    <name>MainWindowHelpActionCoordinator</name>
+    <message>
+        <source>About LoomStroke</source>
+        <translation>LoomStrokeについて</translation>
+    </message>
+    <message>
+        <source>&lt;p style='margin:2px 0'&gt;Version {version}&lt;/p&gt;&lt;p style='margin:2px 0'&gt;Plugin-first paint application with AI integration.&lt;/p&gt;&lt;p style='margin:2px 0'&gt;Copyright NakamuraShippo. All rights reserved.&lt;/p&gt;&lt;p style='margin:2px 0'&gt;Contact: &lt;a href="mailto:nakamurashippo@gmail.com"&gt;nakamurashippo@gmail.com&lt;/a&gt;&lt;/p&gt;</source>
+        <translation>&lt;p style='margin:2px 0'&gt;バージョン {version}&lt;/p&gt;&lt;p style='margin:2px 0'&gt;AI連携に対応した、プラグイン中心のペイントアプリケーション。&lt;/p&gt;&lt;p style='margin:2px 0'&gt;Copyright NakamuraShippo. All rights reserved.&lt;/p&gt;&lt;p style='margin:2px 0'&gt;連絡先: &lt;a href="mailto:nakamurashippo@gmail.com"&gt;nakamurashippo@gmail.com&lt;/a&gt;&lt;/p&gt;</translation>
+    </message>
+    <message>
+        <source>Close</source>
+        <translation>閉じる</translation>
+    </message>
+    <message>
+        <source>License</source>
+        <translation>ライセンス</translation>
+    </message>
+    <message>
+        <source>Hide License</source>
+        <translation>ライセンスを隠す</translation>
+    </message>
+    <message>
+        <source>Third-Party Licenses</source>
+        <translation>サードパーティーのライセンス</translation>
+    </message>
+    <message>
+        <source>Hide Third-Party</source>
+        <translation>サードパーティーのライセンスを隠す</translation>
+    </message>
+</context>
+<context>
+    <name>MainWindowMcpRuntime</name>
+    <message>
+        <source>Allow this MCP operation?
+
+Operation: {operation}
+
+{details}</source>
+        <translation>このMCP操作を許可しますか？
+
+操作: {operation}
+
+{details}</translation>
+    </message>
+    <message>
+        <source>LoomStroke MCP</source>
+        <translation>LoomStroke MCP</translation>
+    </message>
+</context>
+<context>
+    <name>MainWindowShutdownCoordinator</name>
+    <message>
+        <source>Unsaved Changes</source>
+        <translation>未保存の変更</translation>
+    </message>
+    <message>
+        <source>You have unsaved changes. Do you want to save before closing?</source>
+        <translation>未保存の変更があります。閉じる前に保存しますか？</translation>
+    </message>
+</context>
+<context>
+    <name>MenuTelemetryDialog</name>
+    <message>
+        <source>Menu Visibility Log</source>
+        <translation>メニュー表示ログ</translation>
+    </message>
+    <message>
+        <source>Close</source>
+        <translation>閉じる</translation>
+    </message>
+    <message>
+        <source>Refresh Logs</source>
+        <translation>ログを更新</translation>
+    </message>
+    <message>
+        <source>Export CSV</source>
+        <translation>CSVを書き出す</translation>
+    </message>
+    <message>
+        <source>Menu</source>
+        <translation>メニュー</translation>
+    </message>
+    <message>
+        <source>Menu Telemetry</source>
+        <translation>メニュー使用状況</translation>
+    </message>
+    <message>
+        <source>No menu visibility records to export.</source>
+        <translation>書き出せるメニュー表示記録がありません。</translation>
+    </message>
+    <message>
+        <source>Failed to export CSV: {error}</source>
+        <translation>CSVを書き出せませんでした: {error}</translation>
+    </message>
+    <message>
+        <source>Exported {count} records to {path}</source>
+        <translation>{count} 件の記録を {path} に書き出しました</translation>
+    </message>
+    <message>
+        <source>Export Menu Visibility CSV</source>
+        <translation>メニュー表示ログをCSVで書き出す</translation>
+    </message>
+    <message>
+        <source>CSV Files (*.csv)</source>
+        <translation>CSVファイル (*.csv)</translation>
+    </message>
+    <message>
+        <source>Enabled</source>
+        <translation>有効</translation>
+    </message>
+    <message>
+        <source>Off</source>
+        <translation>オフ</translation>
+    </message>
+    <message>
+        <source>On</source>
+        <translation>有効</translation>
+    </message>
+    <message>
+        <source>Source</source>
+        <translation>ソース</translation>
+    </message>
+    <message>
+        <source>Time</source>
+        <translation>時刻</translation>
+    </message>
+</context>
+<context>
+    <name>NodeDockManager</name>
+    <message>
+        <source>Show all nodes as separate panels</source>
+        <translation>すべてのノードを個別パネルで表示</translation>
+    </message>
+    <message>
+        <source>Show all nodes in tabs</source>
+        <translation>すべてのノードをタブで表示</translation>
+    </message>
+    <message>
+        <source>📋 {title}
+
+Click to show as panel</source>
+        <translation>📋 {title}
+
+クリックしてパネルを表示</translation>
+    </message>
+</context>
+<context>
+    <name>NodeParameterWidget</name>
+    <message>
+        <source>Output Layer:</source>
+        <translation>出力先レイヤー:</translation>
+    </message>
+    <message>
+        <source>3D Output Layer:</source>
+        <translation>3D出力先レイヤー:</translation>
+    </message>
+</context>
+<context>
+    <name>PackageProjectDialog</name>
+    <message>
+        <source>Size</source>
+        <translation>サイズ</translation>
+    </message>
+    <message>
+        <source>Close</source>
+        <translation>閉じる</translation>
+    </message>
+    <message>
+        <source>Action</source>
+        <translation>処理</translation>
+    </message>
+    <message>
+        <source>Already embedded</source>
+        <translation>埋め込み済み</translation>
+    </message>
+    <message>
+        <source>Browse...</source>
+        <translation>参照...</translation>
+    </message>
+    <message>
+        <source>Choose the package folder</source>
+        <translation>パッケージフォルダーを選択</translation>
+    </message>
+    <message>
+        <source>Copy into package</source>
+        <translation>パッケージにコピー</translation>
+    </message>
+    <message>
+        <source>Copy {copy} / external {external} / embedded {embed} / missing {missing}</source>
+        <translation>コピー {copy} / 外部 {external} / 埋め込み {embed} / 欠落 {missing}</translation>
+    </message>
+    <message>
+        <source>Destination folder:</source>
+        <translation>出力フォルダー:</translation>
+    </message>
+    <message>
+        <source>Issues: {issues}</source>
+        <translation>問題: {issues}</translation>
+    </message>
+    <message>
+        <source>Leave external</source>
+        <translation>外部のまま</translation>
+    </message>
+    <message>
+        <source>Missing</source>
+        <translation>見つからない</translation>
+    </message>
+    <message>
+        <source>Package Project</source>
+        <translation>プロジェクトをパッケージ</translation>
+    </message>
+    <message>
+        <source>Package failed: {code} {detail}</source>
+        <translation>パッケージに失敗しました: {code} {detail}</translation>
+    </message>
+    <message>
+        <source>Package written: {path} ({copied} asset(s) copied, {omitted} omitted)</source>
+        <translation>パッケージを書き出しました: {path} (素材 {copied} 件コピー、{omitted} 件除外)</translation>
+    </message>
+    <message>
+        <source>Resource</source>
+        <translation>素材</translation>
+    </message>
+    <message>
+        <source>Save the document before packaging.</source>
+        <translation>パッケージの前にドキュメントを保存してください。</translation>
+    </message>
+    <message>
+        <source>State</source>
+        <translation>状態</translation>
+    </message>
+    <message>
+        <source>Write Package</source>
+        <translation>パッケージを書き出す</translation>
+    </message>
+</context>
+<context>
+    <name>PagePanelWidget</name>
+    <message>
+        <source>Dup</source>
+        <translation>複製</translation>
+    </message>
+    <message>
+        <source>Del</source>
+        <translation>削除</translation>
+    </message>
+    <message>
+        <source>Move Up</source>
+        <translation>上へ移動</translation>
+    </message>
+    <message>
+        <source>Move Down</source>
+        <translation>下へ移動</translation>
+    </message>
+    <message>
+        <source>this page</source>
+        <translation>このページ</translation>
+    </message>
+    <message>
+        <source>Basic</source>
+        <translation>基本</translation>
+    </message>
+    <message>
+        <source>Save Current Page as Template...</source>
+        <translation>現在のページをテンプレートとして保存...</translation>
+    </message>
+    <message>
+        <source>Page Operation Failed</source>
+        <translation>ページ操作に失敗</translation>
+    </message>
+    <message>
+        <source>save_template failed: feature not supported</source>
+        <translation>テンプレートを保存できませんでした: 未対応の機能です</translation>
+    </message>
+    <message>
+        <source>Page Template</source>
+        <translation>ページテンプレート</translation>
+    </message>
+    <message>
+        <source>Blank (Like Current Page)</source>
+        <translation>白紙（現在のページと同じ）</translation>
+    </message>
+    <message>
+        <source>A blank page cannot be inserted before the first page. Use Add Page instead.</source>
+        <translation>先頭ページの前には挿入できません。「ページを追加」を使ってください。</translation>
+    </message>
+    <message>
+        <source>Add Page</source>
+        <translation>ページ追加</translation>
+    </message>
+    <message>
+        <source>Comic</source>
+        <translation>コミック</translation>
+    </message>
+    <message>
+        <source>Custom</source>
+        <translation>カスタム</translation>
+    </message>
+    <message>
+        <source>Delete Page</source>
+        <translation>ページ削除</translation>
+    </message>
+    <message>
+        <source>Down</source>
+        <translation>下へ</translation>
+    </message>
+    <message>
+        <source>Duplicate Page</source>
+        <translation>ページ複製</translation>
+    </message>
+    <message>
+        <source>Insert Blank Page</source>
+        <translation>白ページの挿入</translation>
+    </message>
+    <message>
+        <source>Insert a blank page here?</source>
+        <translation>ここに白ページを挿入しますか?</translation>
+    </message>
+    <message>
+        <source>Manage Masters...</source>
+        <translation>マスターページの管理...</translation>
+    </message>
+    <message>
+        <source>Manage Templates...</source>
+        <translation>テンプレートの管理...</translation>
+    </message>
+    <message>
+        <source>Save Page Template</source>
+        <translation>ページテンプレートを保存</translation>
+    </message>
+    <message>
+        <source>The page could not be loaded. Select it again to retry.</source>
+        <translation>ページを読み込めませんでした。もう一度選択すると再試行します。</translation>
+    </message>
+    <message>
+        <source>The template could not be saved. See the log for details.</source>
+        <translation>テンプレートを保存できませんでした。詳細はログを確認してください。</translation>
+    </message>
+    <message>
+        <source>Up</source>
+        <translation>上へ</translation>
+    </message>
+</context>
+<context>
+    <name>ParameterEditor</name>
+    <message>
+        <source>Optional Parameters</source>
+        <translation>任意のパラメーター</translation>
+    </message>
+</context>
+<context>
+    <name>PatternFill</name>
+    <message>
+        <source>Fill regions with tiled patterns</source>
+        <translation>パターンを敷き詰めて領域を塗りつぶす</translation>
+    </message>
+    <message>
+        <source>Fill</source>
+        <translation>塗りつぶし</translation>
+    </message>
+    <message>
+        <source>Gap Close (px)</source>
+        <translation>隙間閉じ (px)</translation>
+    </message>
+    <message>
+        <source>Pattern</source>
+        <translation>パターン</translation>
+    </message>
+    <message>
+        <source>Pattern Fill</source>
+        <translation>パターン塗りつぶし</translation>
+    </message>
+    <message>
+        <source>Scale</source>
+        <translation>拡大縮小</translation>
+    </message>
+    <message>
+        <source>Tolerance</source>
+        <translation>許容値</translation>
+    </message>
+</context>
+<context>
+    <name>PenOptionsPanel</name>
+    <message>
+        <source>Size</source>
+        <translation>サイズ</translation>
+    </message>
+    <message>
+        <source>Opacity</source>
+        <translation>不透明度</translation>
+    </message>
+    <message>
+        <source>Hardness</source>
+        <translation>硬さ</translation>
+    </message>
+</context>
+<context>
+    <name>ProductionControlPanel</name>
+    <message>
+        <source>Production recipes</source>
+        <translation>制作レシピ</translation>
+    </message>
+    <message>
+        <source>Kind</source>
+        <translation>種類</translation>
+    </message>
+    <message>
+        <source>Status</source>
+        <translation>状態</translation>
+    </message>
+    <message>
+        <source>Size</source>
+        <translation>サイズ</translation>
+    </message>
+    <message>
+        <source>Modes</source>
+        <translation>モード</translation>
+    </message>
+    <message>
+        <source>SAM3 Worker</source>
+        <translation>SAM3ワーカー</translation>
+    </message>
+    <message>
+        <source>Experimental</source>
+        <translation>実験的機能</translation>
+    </message>
+    <message>
+        <source>AI Effect presets</source>
+        <translation>AI Effect プリセット</translation>
+    </message>
+    <message>
+        <source>Artifact</source>
+        <translation>成果物</translation>
+    </message>
+    <message>
+        <source>Artifact/Job</source>
+        <translation>成果物/ジョブ</translation>
+    </message>
+    <message>
+        <source>Artifacts</source>
+        <translation>成果物</translation>
+    </message>
+    <message>
+        <source>Bible</source>
+        <translation>作品設定資料</translation>
+    </message>
+    <message>
+        <source>Bible entries</source>
+        <translation>Bible 項目</translation>
+    </message>
+    <message>
+        <source>Catalog</source>
+        <translation>カタログ</translation>
+    </message>
+    <message>
+        <source>Checks</source>
+        <translation>チェック</translation>
+    </message>
+    <message>
+        <source>Class</source>
+        <translation>分類</translation>
+    </message>
+    <message>
+        <source>Confirmation</source>
+        <translation>確認</translation>
+    </message>
+    <message>
+        <source>Created</source>
+        <translation>作成日時</translation>
+    </message>
+    <message>
+        <source>Details</source>
+        <translation>詳細</translation>
+    </message>
+    <message>
+        <source>Edge</source>
+        <translation>エッジ</translation>
+    </message>
+    <message>
+        <source>Entry</source>
+        <translation>項目</translation>
+    </message>
+    <message>
+        <source>Export</source>
+        <translation>書き出し</translation>
+    </message>
+    <message>
+        <source>Export profiles</source>
+        <translation>書き出しプロファイル</translation>
+    </message>
+    <message>
+        <source>External services</source>
+        <translation>外部サービス</translation>
+    </message>
+    <message>
+        <source>Feature</source>
+        <translation>機能</translation>
+    </message>
+    <message>
+        <source>Features</source>
+        <translation>機能</translation>
+    </message>
+    <message>
+        <source>Format</source>
+        <translation>形式</translation>
+    </message>
+    <message>
+        <source>From</source>
+        <translation>生成元</translation>
+    </message>
+    <message>
+        <source>Gateway</source>
+        <translation>ゲートウェイ</translation>
+    </message>
+    <message>
+        <source>ID</source>
+        <translation>ID</translation>
+    </message>
+    <message>
+        <source>Job</source>
+        <translation>ジョブ</translation>
+    </message>
+    <message>
+        <source>Jobs</source>
+        <translation>ジョブ</translation>
+    </message>
+    <message>
+        <source>Lineage</source>
+        <translation>リネージ</translation>
+    </message>
+    <message>
+        <source>MCP runtime is not available.</source>
+        <translation>MCP runtime が利用できません。</translation>
+    </message>
+    <message>
+        <source>Name</source>
+        <translation>名前</translation>
+    </message>
+    <message>
+        <source>Origin</source>
+        <translation>原点</translation>
+    </message>
+    <message>
+        <source>Overview</source>
+        <translation>概要</translation>
+    </message>
+    <message>
+        <source>Preset</source>
+        <translation>プリセット</translation>
+    </message>
+    <message>
+        <source>Profile</source>
+        <translation>プロファイル</translation>
+    </message>
+    <message>
+        <source>Progress</source>
+        <translation>進捗</translation>
+    </message>
+    <message>
+        <source>Recipe</source>
+        <translation>レシピ</translation>
+    </message>
+    <message>
+        <source>Recipes</source>
+        <translation>レシピ</translation>
+    </message>
+    <message>
+        <source>Refresh</source>
+        <translation>更新</translation>
+    </message>
+    <message>
+        <source>Refresh failed: {error}</source>
+        <translation>更新に失敗しました: {error}</translation>
+    </message>
+    <message>
+        <source>Report</source>
+        <translation>レポート</translation>
+    </message>
+    <message>
+        <source>Root</source>
+        <translation>ルート</translation>
+    </message>
+    <message>
+        <source>Scope</source>
+        <translation>スコープ</translation>
+    </message>
+    <message>
+        <source>Scope ID</source>
+        <translation>スコープ ID</translation>
+    </message>
+    <message>
+        <source>Source</source>
+        <translation>ソース</translation>
+    </message>
+    <message>
+        <source>Store root</source>
+        <translation>保存先</translation>
+    </message>
+    <message>
+        <source>Title</source>
+        <translation>タイトル</translation>
+    </message>
+    <message>
+        <source>To</source>
+        <translation>生成先</translation>
+    </message>
+    <message>
+        <source>Updated</source>
+        <translation>更新日時</translation>
+    </message>
+    <message>
+        <source>Updated from local Production Control store.</source>
+        <translation>ローカルの Production Control store から更新しました。</translation>
+    </message>
+    <message>
+        <source>Visual QA</source>
+        <translation>表示の品質確認</translation>
+    </message>
+    <message>
+        <source>Visual QA reports</source>
+        <translation>Visual QA レポート</translation>
+    </message>
+    <message>
+        <source>{count} presets</source>
+        <translation>{count} 件のプリセット</translation>
+    </message>
+</context>
+<context>
+    <name>PromptDialog</name>
+    <message>
+        <source>Cancel</source>
+        <translation>キャンセル</translation>
+    </message>
+    <message>
+        <source>Apply to node</source>
+        <translation>ノードに適用</translation>
+    </message>
+    <message>
+        <source>Prompt input…</source>
+        <translation>プロンプト入力…</translation>
+    </message>
+</context>
+<context>
+    <name>QMessageBox</name>
+    <message>
+        <source>Clear {name} API key?</source>
+        <translation>{name} のAPIキーを消去しますか？</translation>
+    </message>
+    <message>
+        <source>Remove the saved {name} API key from your keyring?
+
+You will need to enter it again before generating.</source>
+        <translation>保存された {name} のAPIキーをキーリングから削除しますか？
+
+次回の生成前に再入力が必要です。</translation>
+    </message>
+</context>
+<context>
+    <name>RecoveryDialog</name>
+    <message>
+        <source>LoomStroke — Recovery</source>
+        <translation>LoomStroke — 復元</translation>
+    </message>
+    <message>
+        <source>Autosave files from the previous session were found.
+Select a file to recover.</source>
+        <translation>前回のセッションから自動保存ファイルが見つかりました。
+復元するファイルを選択してください。</translation>
+    </message>
+    <message>
+        <source>Recover</source>
+        <translation>復元</translation>
+    </message>
+    <message>
+        <source>Discard and Start New</source>
+        <translation>破棄して新規開始</translation>
+    </message>
+    <message>
+        <source>{timestamp}  —  {name}  (session: {session})</source>
+        <translation>{timestamp}  —  {name}  (セッション: {session})</translation>
+    </message>
+    <message>
+        <source>(unsaved)</source>
+        <translation>(未保存)</translation>
+    </message>
+</context>
+<context>
+    <name>ReferenceViewerPanel</name>
+    <message>
+        <source>Load a reference image</source>
+        <translation>参照画像を読み込む</translation>
+    </message>
+    <message>
+        <source>Opacity</source>
+        <translation>不透明度</translation>
+    </message>
+    <message>
+        <source>Open Reference Image</source>
+        <translation>参照画像を開く</translation>
+    </message>
+    <message>
+        <source>Open</source>
+        <translation>開く</translation>
+    </message>
+    <message>
+        <source>Remove</source>
+        <translation>削除</translation>
+    </message>
+</context>
+<context>
+    <name>ReferenceViewerPlugin</name>
+    <message>
+        <source>View reference images in a dockable panel.</source>
+        <translation>ドッキング可能なパネルに参照画像を表示します。</translation>
+    </message>
+    <message>
+        <source>Reference</source>
+        <translation>参照</translation>
+    </message>
+</context>
+<context>
+    <name>Sam31PreferencesSection</name>
+    <message>
+        <source>Status</source>
+        <translation>状態</translation>
+    </message>
+    <message>
+        <source>Cancel</source>
+        <translation>キャンセル</translation>
+    </message>
+    <message>
+        <source>Browse...</source>
+        <translation>参照...</translation>
+    </message>
+    <message>
+        <source>Checkpoint</source>
+        <translation>チェックポイント</translation>
+    </message>
+    <message>
+        <source>Load Model</source>
+        <translation>モデルをロード</translation>
+    </message>
+    <message>
+        <source>Model</source>
+        <translation>モデル</translation>
+    </message>
+    <message>
+        <source>Point mode</source>
+        <translation>ポイントモード</translation>
+    </message>
+    <message>
+        <source>Ready</source>
+        <translation>準備完了</translation>
+    </message>
+    <message>
+        <source>Restart</source>
+        <translation>再起動</translation>
+    </message>
+    <message>
+        <source>Runtime</source>
+        <translation>ランタイム</translation>
+    </message>
+    <message>
+        <source>SAM 3.1 Ready</source>
+        <translation>SAM 3.1 準備完了</translation>
+    </message>
+    <message>
+        <source>SAM 3.1 root folder</source>
+        <translation>SAM 3.1 ルートフォルダー</translation>
+    </message>
+    <message>
+        <source>Select SAM 3.1 root folder</source>
+        <translation>SAM 3.1 ルートフォルダーを選択</translation>
+    </message>
+    <message>
+        <source>Setup</source>
+        <translation>セットアップ</translation>
+    </message>
+    <message>
+        <source>Start</source>
+        <translation>開始</translation>
+    </message>
+    <message>
+        <source>Start SAM 3.1 server automatically</source>
+        <translation>SAM 3.1 サーバーを自動起動</translation>
+    </message>
+    <message>
+        <source>Starting setup...</source>
+        <translation>セットアップを開始しています...</translation>
+    </message>
+    <message>
+        <source>Status error</source>
+        <translation>状態取得エラー</translation>
+    </message>
+    <message>
+        <source>Stop</source>
+        <translation>停止</translation>
+    </message>
+    <message>
+        <source>Unload Model</source>
+        <translation>モデルをアンロード</translation>
+    </message>
+    <message>
+        <source>Worker</source>
+        <translation>ワーカー</translation>
+    </message>
+    <message>
+        <source>missing</source>
+        <translation>未検出</translation>
+    </message>
+</context>
+<context>
+    <name>Sam3AISelectCandidateListPanel</name>
+    <message>
+        <source>No AI Select tool</source>
+        <translation>AI選択ツールがありません</translation>
+    </message>
+    <message>
+        <source>Candidate list unavailable</source>
+        <translation>候補一覧を利用できません</translation>
+    </message>
+    <message>
+        <source>Refresh failed</source>
+        <translation>更新に失敗</translation>
+    </message>
+    <message>
+        <source>Select at least two candidates</source>
+        <translation>候補を2つ以上選択してください</translation>
+    </message>
+    <message>
+        <source>Select a candidate</source>
+        <translation>候補を選択してください</translation>
+    </message>
+    <message>
+        <source>Action</source>
+        <translation>アクション</translation>
+    </message>
+    <message>
+        <source>Combine Selected</source>
+        <translation>選択候補を合成</translation>
+    </message>
+    <message>
+        <source>Combine the multi-selected candidates (Ctrl+click rows) into one mask using the Mode</source>
+        <translation>複数選択した候補 (行を Ctrl+クリック) を Mode の方式で 1 つのマスクに合成</translation>
+    </message>
+    <message>
+        <source>Cut each multi-selected candidate to its own layer inside a new layer group</source>
+        <translation>複数選択した候補をそれぞれレイヤー化して新規レイヤーグループにまとめる</translation>
+    </message>
+    <message>
+        <source>Layer Group</source>
+        <translation>レイヤーグループ化</translation>
+    </message>
+    <message>
+        <source>Manually adjust the selected candidate's mask (feather / expand / fill holes — no AI inference)</source>
+        <translation>選択中候補のマスクを手動調整 (ぼかし / 拡張 / 穴埋め — AI 推論なし)</translation>
+    </message>
+    <message>
+        <source>Mode</source>
+        <translation>モード</translation>
+    </message>
+    <message>
+        <source>Refine Mask...</source>
+        <translation>マスクを調整...</translation>
+    </message>
+</context>
+<context>
+    <name>Sam3AISelectCandidateListWidget</name>
+    <message>
+        <source>Candidate List</source>
+        <translation>候補一覧</translation>
+    </message>
+    <message>
+        <source>No candidates</source>
+        <translation>候補がありません</translation>
+    </message>
+    <message>
+        <source>Candidate</source>
+        <translation>候補</translation>
+    </message>
+    <message>
+        <source>Score</source>
+        <translation>スコア</translation>
+    </message>
+    <message>
+        <source>Box</source>
+        <translation>範囲</translation>
+    </message>
+    <message>
+        <source>Select</source>
+        <translation>選択</translation>
+    </message>
+    <message>
+        <source>Reject</source>
+        <translation>却下</translation>
+    </message>
+    <message>
+        <source>Refine</source>
+        <translation>調整</translation>
+    </message>
+    <message>
+        <source>Mask</source>
+        <translation>マスク</translation>
+    </message>
+    <message>
+        <source>Inpaint</source>
+        <translation>インペイント</translation>
+    </message>
+    <message>
+        <source>Clip</source>
+        <translation>クリッピング</translation>
+    </message>
+    <message>
+        <source>FG</source>
+        <translation>前景</translation>
+    </message>
+    <message>
+        <source>BG</source>
+        <translation>背景</translation>
+    </message>
+    <message>
+        <source>Actions</source>
+        <translation>操作</translation>
+    </message>
+    <message>
+        <source>Cut</source>
+        <translation>切り取り</translation>
+    </message>
+    <message>
+        <source>Preview</source>
+        <translation>プレビュー</translation>
+    </message>
+    <message>
+        <source>Protect</source>
+        <translation>保護</translation>
+    </message>
+    <message>
+        <source>Save</source>
+        <translation>保存</translation>
+    </message>
+    <message>
+        <source>State</source>
+        <translation>状態</translation>
+    </message>
+</context>
+<context>
+    <name>Sam3AISelectToolPlugin</name>
+    <message>
+        <source>AI Select</source>
+        <translation>AI選択</translation>
+    </message>
+    <message>
+        <source>SAM3 AI selection tool shell</source>
+        <translation>SAM3によるAI選択ツール</translation>
+    </message>
+    <message>
+        <source>Max Candidates</source>
+        <translation>候補の最大数</translation>
+    </message>
+    <message>
+        <source>Preview Color Mode</source>
+        <translation>プレビューの色モード</translation>
+    </message>
+    <message>
+        <source>Overlay Opacity</source>
+        <translation>オーバーレイの不透明度</translation>
+    </message>
+    <message>
+        <source>Run on Click</source>
+        <translation>クリックで実行</translation>
+    </message>
+    <message>
+        <source>Click Accumulate Apply</source>
+        <translation>クリックで選択を累積適用</translation>
+    </message>
+    <message>
+        <source>Apply Edge Feather (px)</source>
+        <translation>適用時の境界ぼかし (px)</translation>
+    </message>
+    <message>
+        <source>Apply Edge Smooth (px)</source>
+        <translation>適用時の境界平滑化 (px)</translation>
+    </message>
+    <message>
+        <source>Edge Tightness</source>
+        <translation>境界の締め具合</translation>
+    </message>
+    <message>
+        <source>Export Padding (px)</source>
+        <translation>書き出し余白 (px)</translation>
+    </message>
+    <message>
+        <source>Export Source</source>
+        <translation>書き出し元</translation>
+    </message>
+    <message>
+        <source>AI Select Candidates</source>
+        <translation>AI選択候補</translation>
+    </message>
+    <message>
+        <source>Manga Mask Assistant</source>
+        <translation>漫画マスクアシスタント</translation>
+    </message>
+    <message>
+        <source>Apply on Candidate Click</source>
+        <translation>候補クリックで選択範囲に適用</translation>
+    </message>
+    <message>
+        <source>Auto Mask Cleanup</source>
+        <translation>マスクを自動クリーンアップ</translation>
+    </message>
+    <message>
+        <source>Combine Mode</source>
+        <translation>合成モード</translation>
+    </message>
+    <message>
+        <source>Detection Threshold</source>
+        <translation>検出しきい値</translation>
+    </message>
+    <message>
+        <source>Min Candidate Score</source>
+        <translation>候補スコアの下限</translation>
+    </message>
+    <message>
+        <source>Mode</source>
+        <translation>モード</translation>
+    </message>
+    <message>
+        <source>Operation</source>
+        <translation>演算</translation>
+    </message>
+    <message>
+        <source>Prompt</source>
+        <translation>プロンプト</translation>
+    </message>
+    <message>
+        <source>Selection</source>
+        <translation>選択範囲</translation>
+    </message>
+    <message>
+        <source>Sheet Format</source>
+        <translation>シート形式</translation>
+    </message>
+    <message>
+        <source>Sheet Power of Two</source>
+        <translation>シートを 2 の冪に</translation>
+    </message>
+    <message>
+        <source>Sheet Spacing (px)</source>
+        <translation>シート余白 (px)</translation>
+    </message>
+    <message>
+        <source>Show All Instances</source>
+        <translation>全候補を表示 (オフ = 最良 1 件)</translation>
+    </message>
+    <message>
+        <source>Source</source>
+        <translation>ソース</translation>
+    </message>
+    <message>
+        <source>Split Disconnected Instances</source>
+        <translation>分離したオブジェクトを分割</translation>
+    </message>
+</context>
+<context>
+    <name>Sam3MangaMaskAssistantPanel</name>
+    <message>
+        <source>No Manga Mask Assistant source</source>
+        <translation>漫画マスクアシスタントの参照元がありません</translation>
+    </message>
+    <message>
+        <source>Manga Mask Assistant unavailable</source>
+        <translation>漫画マスクアシスタントを利用できません</translation>
+    </message>
+    <message>
+        <source>Refresh failed</source>
+        <translation>更新に失敗</translation>
+    </message>
+    <message>
+        <source>Build Package</source>
+        <translation>パッケージを作成</translation>
+    </message>
+    <message>
+        <source>Panel source</source>
+        <translation>コマの参照元</translation>
+    </message>
+    <message>
+        <source>Cancel Preview</source>
+        <translation>プレビューを取り消す</translation>
+    </message>
+    <message>
+        <source>Build Manga mask package from last SAM3 session</source>
+        <translation>最後のSAM3セッションから漫画マスクパッケージを作成</translation>
+    </message>
+    <message>
+        <source>Action</source>
+        <translation>アクション</translation>
+    </message>
+    <message>
+        <source>Category</source>
+        <translation>カテゴリ</translation>
+    </message>
+    <message>
+        <source>Preset</source>
+        <translation>プリセット</translation>
+    </message>
+</context>
+<context>
+    <name>Sam3MangaMaskAssistantTableWidget</name>
+    <message>
+        <source>Manga Mask Assistant</source>
+        <translation>漫画マスクアシスタント</translation>
+    </message>
+    <message>
+        <source>No mask candidates</source>
+        <translation>マスク候補がありません</translation>
+    </message>
+    <message>
+        <source>Panel</source>
+        <translation>コマ</translation>
+    </message>
+    <message>
+        <source>Score</source>
+        <translation>スコア</translation>
+    </message>
+    <message>
+        <source>Area</source>
+        <translation>面積</translation>
+    </message>
+    <message>
+        <source>Accepted</source>
+        <translation>採用済み</translation>
+    </message>
+    <message>
+        <source>Unaccept</source>
+        <translation>採用を取り消す</translation>
+    </message>
+    <message>
+        <source>Accept</source>
+        <translation>採用</translation>
+    </message>
+    <message>
+        <source>Candidate unavailable</source>
+        <translation>候補を利用できません</translation>
+    </message>
+    <message>
+        <source>Actions</source>
+        <translation>操作</translation>
+    </message>
+    <message>
+        <source>Category</source>
+        <translation>カテゴリ</translation>
+    </message>
+    <message>
+        <source>Scope</source>
+        <translation>スコープ</translation>
+    </message>
+    <message>
+        <source>Warnings</source>
+        <translation>警告</translation>
+    </message>
+</context>
+<context>
+    <name>SeedParamWidget</name>
+    <message>
+        <source>mode:</source>
+        <translation>モード:</translation>
+    </message>
+</context>
+<context>
+    <name>ThreeDLayerContextToolbar</name>
+    <message>
+        <source>Orbit</source>
+        <translation>周回回転</translation>
+    </message>
+    <message>
+        <source>Left drag rotates the 3D layer</source>
+        <translation>左ドラッグで3Dレイヤーを回転</translation>
+    </message>
+    <message>
+        <source>Left drag moves the 3D layer on the canvas</source>
+        <translation>左ドラッグでキャンバス上の3Dレイヤーを移動</translation>
+    </message>
+    <message>
+        <source>Fit 3D view</source>
+        <translation>3D表示を全体に合わせる</translation>
+    </message>
+    <message>
+        <source>Rotate left</source>
+        <translation>左に回転</translation>
+    </message>
+    <message>
+        <source>Rotate right</source>
+        <translation>右に回転</translation>
+    </message>
+    <message>
+        <source>Tilt down</source>
+        <translation>下に傾ける</translation>
+    </message>
+    <message>
+        <source>Tilt up</source>
+        <translation>上に傾ける</translation>
+    </message>
+    <message>
+        <source>Zoom out</source>
+        <translation>縮小</translation>
+    </message>
+    <message>
+        <source>Zoom in</source>
+        <translation>拡大</translation>
+    </message>
+    <message>
+        <source>3D</source>
+        <translation>3D</translation>
+    </message>
+    <message>
+        <source>Fit</source>
+        <translation>フィット</translation>
+    </message>
+    <message>
+        <source>Move</source>
+        <translation>移動</translation>
+    </message>
+</context>
+<context>
+    <name>TransformPanelPlugin</name>
+    <message>
+        <source>Numeric position/size/rotation input for selected objects.</source>
+        <translation>選択したオブジェクトの位置・サイズ・回転を数値入力します。</translation>
+    </message>
+    <message>
+        <source>Transform</source>
+        <translation>変形</translation>
+    </message>
+</context>
+<context>
+    <name>__shared__</name>
+    <message>
+        <source>Allow this MCP operation?
+
+Operation: {operation}
+
+{details}</source>
+        <translation>このMCP操作を許可しますか？
+
+操作: {operation}
+
+{details}</translation>
+    </message>
+    <message>
+        <source>Startup Error</source>
+        <translation>起動エラー</translation>
+    </message>
+    <message>
+        <source>Fatal Error</source>
+        <translation>致命的なエラー</translation>
+    </message>
+    <message>
+        <source>Failed to create main window: {error}</source>
+        <translation>メインウィンドウを作成できませんでした: {error}</translation>
+    </message>
+    <message>
+        <source>Application failed to run: {error}</source>
+        <translation>アプリケーションを実行できませんでした: {error}</translation>
+    </message>
+    <message>
+        <source>Generated outputs could not be fully applied</source>
+        <translation>生成結果の一部を適用できませんでした</translation>
+    </message>
+    <message>
+        <source>Failed to create main window:</source>
+        <translation>メインウィンドウを作成できませんでした:</translation>
+    </message>
+    <message>
+        <source>Application failed to run:</source>
+        <translation>アプリケーションを実行できませんでした:</translation>
+    </message>
+    <message>
+        <source>Application crashed:</source>
+        <translation>アプリケーションが異常終了しました:</translation>
+    </message>
+    <message>
+        <source>Panel Creation Error</source>
+        <translation>パネル作成エラー</translation>
+    </message>
+    <message>
+        <source>Failed to create UI panels: {error}</source>
+        <translation>UIパネルを作成できませんでした: {error}</translation>
+    </message>
+    <message>
+        <source>Dock</source>
+        <translation>ドッキング</translation>
+    </message>
+    <message>
+        <source>Float</source>
+        <translation>フローティング</translation>
+    </message>
+    <message>
+        <source>Unsaved Changes</source>
+        <translation>未保存の変更</translation>
+    </message>
+    <message>
+        <source>You have unsaved changes. Do you want to save before closing?</source>
+        <translation>未保存の変更があります。閉じる前に保存しますか？</translation>
+    </message>
+    <message>
+        <source>LoomStroke Project (*.lstroke);;Photoshop (*.psd);;Images (*.png *.jpg *.jpeg *.bmp *.tiff *.webp);;All Files (*.*)</source>
+        <translation>LoomStrokeプロジェクト (*.lstroke);;Photoshop (*.psd);;画像 (*.png *.jpg *.jpeg *.bmp *.tiff *.webp);;すべてのファイル (*.*)</translation>
+    </message>
+    <message>
+        <source>Photoshop (*.psd);;Images (*.png *.jpg *.jpeg *.bmp *.tiff *.webp);;All Files (*.*)</source>
+        <translation>Photoshop (*.psd);;画像 (*.png *.jpg *.jpeg *.bmp *.tiff *.webp);;すべてのファイル (*.*)</translation>
+    </message>
+    <message>
+        <source>Recovered unsaved document from autosave. Use Save As to keep it.</source>
+        <translation>未保存の文書を自動保存から復元しました。「名前を付けて保存」で保存してください。</translation>
+    </message>
+    <message>
+        <source>LoomStroke Project (*.lstroke);;All Files (*.*)</source>
+        <translation>LoomStrokeプロジェクト (*.lstroke);;すべてのファイル (*.*)</translation>
+    </message>
+    <message>
+        <source>Saving</source>
+        <translation>保存中</translation>
+    </message>
+    <message>
+        <source>PNG Image (*.png);;JPEG Image (*.jpg *.jpeg);;TIFF Image (*.tif *.tiff);;WebP Image (*.webp);;SVG Image (*.svg);;PSD Image (*.psd);;All Files (*.*)</source>
+        <translation>PNG画像 (*.png);;JPEG画像 (*.jpg *.jpeg);;TIFF画像 (*.tif *.tiff);;WebP画像 (*.webp);;SVG画像 (*.svg);;PSD画像 (*.psd);;すべてのファイル (*.*)</translation>
+    </message>
+    <message>
+        <source>Export SVG</source>
+        <translation>SVGを書き出す</translation>
+    </message>
+    <message>
+        <source>Save already in progress — skipping duplicate request</source>
+        <translation>保存中のため、重複した保存要求を省略しました</translation>
+    </message>
+    <message>
+        <source>No visible vector objects to export.</source>
+        <translation>書き出せる可視ベクターオブジェクトがありません。</translation>
+    </message>
+    <message>
+        <source>Recovered {name} from autosave. Save to keep recovered changes.</source>
+        <translation>{name} を自動保存から復元しました。復元した変更を保存してください。</translation>
+    </message>
+    <message>
+        <source>Saving {name}…</source>
+        <translation>{name} を保存中…</translation>
+    </message>
+    <message>
+        <source>Exported {name}; omitted {count} unsupported vector layer(s).</source>
+        <translation>{name} を書き出しました。未対応のベクターレイヤー {count} 個を省略しました。</translation>
+    </message>
+    <message>
+        <source>No provider available for regeneration</source>
+        <translation>再生成に利用できるプロバイダーがありません</translation>
+    </message>
+    <message>
+        <source>No provider available for restoration</source>
+        <translation>復元に利用できるプロバイダーがありません</translation>
+    </message>
+    <message>
+        <source>GPU initialization failed</source>
+        <translation>GPUの初期化に失敗しました</translation>
+    </message>
+    <message>
+        <source>LoomStroke requires a wgpu-compatible graphics backend (D3D12, Vulkan, or Metal).
+
+Failed to initialise the GPU compositor. Please update your graphics driver and try again.</source>
+        <translation>LoomStrokeにはwgpu対応のグラフィックスバックエンド（D3D12、Vulkan、Metal）が必要です。
+
+GPU合成処理を初期化できませんでした。グラフィックスドライバーを更新してから再試行してください。</translation>
+    </message>
+    <message>
+        <source>Orbit</source>
+        <translation>周回回転</translation>
+    </message>
+    <message>
+        <source>Left drag rotates the 3D layer</source>
+        <translation>左ドラッグで3Dレイヤーを回転</translation>
+    </message>
+    <message>
+        <source>Left drag moves the 3D layer on the canvas</source>
+        <translation>左ドラッグでキャンバス上の3Dレイヤーを移動</translation>
+    </message>
+    <message>
+        <source>Fit 3D view</source>
+        <translation>3D表示を全体に合わせる</translation>
+    </message>
+    <message>
+        <source>Rotate left</source>
+        <translation>左に回転</translation>
+    </message>
+    <message>
+        <source>Rotate right</source>
+        <translation>右に回転</translation>
+    </message>
+    <message>
+        <source>Tilt down</source>
+        <translation>下に傾ける</translation>
+    </message>
+    <message>
+        <source>Tilt up</source>
+        <translation>上に傾ける</translation>
+    </message>
+    <message>
+        <source>Zoom out</source>
+        <translation>縮小</translation>
+    </message>
+    <message>
+        <source>Zoom in</source>
+        <translation>拡大</translation>
+    </message>
+    <message>
+        <source>Menu Visibility Log</source>
+        <translation>メニュー表示ログ</translation>
+    </message>
+    <message>
+        <source>Refresh Logs</source>
+        <translation>ログを更新</translation>
+    </message>
+    <message>
+        <source>Export CSV</source>
+        <translation>CSVを書き出す</translation>
+    </message>
+    <message>
+        <source>Menu Telemetry</source>
+        <translation>メニュー使用状況</translation>
+    </message>
+    <message>
+        <source>Export Menu Visibility CSV</source>
+        <translation>メニュー表示ログをCSVで書き出す</translation>
+    </message>
+    <message>
+        <source>CSV Files (*.csv)</source>
+        <translation>CSVファイル (*.csv)</translation>
+    </message>
+    <message>
+        <source>Menu</source>
+        <translation>メニュー</translation>
+    </message>
+    <message>
+        <source>No menu visibility records to export.</source>
+        <translation>書き出せるメニュー表示記録がありません。</translation>
+    </message>
+    <message>
+        <source>Exported {count} records to {path}</source>
+        <translation>{count} 件の記録を {path} に書き出しました</translation>
+    </message>
+    <message>
+        <source>Failed to export CSV: {error}</source>
+        <translation>CSVを書き出せませんでした: {error}</translation>
+    </message>
+    <message>
+        <source>The live endpoint stays local. File writes and external generation still require the existing LoomStroke safety gates.</source>
+        <translation>接続先はローカルに限定されます。ファイルへの書き込みや外部生成には、既存のLoomStrokeの安全確認が適用されます。</translation>
+    </message>
+    <message>
+        <source>Mask overlay color</source>
+        <translation>マスクのオーバーレイ色</translation>
+    </message>
+    <message>
+        <source>Mask overlay opacity</source>
+        <translation>マスクのオーバーレイ不透明度</translation>
+    </message>
+    <message>
+        <source>Enable local LoomStroke MCP server</source>
+        <translation>ローカルのLoomStroke MCPサーバーを有効にする</translation>
+    </message>
+    <message>
+        <source>Opens a Streamable HTTP MCP endpoint on 127.0.0.1 only.</source>
+        <translation>127.0.0.1のみでStreamable HTTPのMCP接続先を開きます。</translation>
+    </message>
+    <message>
+        <source>Start on launch</source>
+        <translation>起動時に開始</translation>
+    </message>
+    <message>
+        <source>Starts the local endpoint automatically when LoomStroke opens.</source>
+        <translation>LoomStrokeの起動時にローカルの接続先を自動的に開始します。</translation>
+    </message>
+    <message>
+        <source>Use 0 to select an automatic local port.</source>
+        <translation>0を指定するとローカルポートを自動選択します。</translation>
+    </message>
+    <message>
+        <source>Comma-separated HTTP Origins allowed to call the local MCP endpoint.</source>
+        <translation>ローカルMCPへの呼び出しを許可するHTTP Originをカンマで区切って指定します。</translation>
+    </message>
+    <message>
+        <source>Controls when LoomStroke asks before allowing MCP agent actions.</source>
+        <translation>LoomStrokeがMCPエージェントの操作を許可する前に確認するタイミングを設定します。</translation>
+    </message>
+    <message>
+        <source>Port</source>
+        <translation>ポート</translation>
+    </message>
+    <message>
+        <source>Endpoint URL</source>
+        <translation>接続先URL</translation>
+    </message>
+    <message>
+        <source>Session Token</source>
+        <translation>セッショントークン</translation>
+    </message>
+    <message>
+        <source>Allowed Origins</source>
+        <translation>許可するOrigin</translation>
+    </message>
+    <message>
+        <source>File Roots</source>
+        <translation>ファイル操作の許可フォルダー</translation>
+    </message>
+    <message>
+        <source>Not running</source>
+        <translation>停止中</translation>
+    </message>
+    <message>
+        <source>Semicolon-separated directories allowed for MCP file writes.</source>
+        <translation>MCPによるファイル書き込みを許可するフォルダーをセミコロンで区切って指定します。</translation>
+    </message>
+    <message>
+        <source>Select MCP File Root</source>
+        <translation>MCPファイル操作の許可フォルダーを選択</translation>
+    </message>
+    <message>
+        <source> entries</source>
+        <translation> 件</translation>
+    </message>
+    <message>
+        <source>Disable cache for manual regenerate</source>
+        <translation>手動再生成ではキャッシュを使用しない</translation>
+    </message>
+    <message>
+        <source>Show first-generation banner</source>
+        <translation>初回生成の案内を表示する</translation>
+    </message>
+    <message>
+        <source>Register on-change / debounced generations in Gallery</source>
+        <translation>変更時・遅延生成の結果をギャラリーに登録する</translation>
+    </message>
+    <message>
+        <source>When unchecked, only manually-triggered generations are saved to the Gallery. Auto-fired runs (on_change / debounced) skip Gallery registration to avoid cluttering history with intermediate probes.</source>
+        <translation>オフの場合、手動で実行した生成結果だけをギャラリーに保存します。変更時・遅延生成による途中結果を履歴へ登録しません。</translation>
+    </message>
+    <message>
+        <source>Default trigger</source>
+        <translation>既定の生成タイミング</translation>
+    </message>
+    <message>
+        <source>Debounce delay</source>
+        <translation>変更後の待ち時間</translation>
+    </message>
+    <message>
+        <source>Generation timeout</source>
+        <translation>生成のタイムアウト</translation>
+    </message>
+    <message>
+        <source>Cache entries per layer</source>
+        <translation>レイヤーごとのキャッシュ件数</translation>
+    </message>
+    <message>
+        <source>Auto-retries on 'on change' trigger</source>
+        <translation>変更時生成の自動再試行回数</translation>
+    </message>
+    <message>
+        <source>Retry delay</source>
+        <translation>再試行の待ち時間</translation>
+    </message>
+    <message>
+        <source>ComfyUI Servers</source>
+        <translation>ComfyUIサーバー</translation>
+    </message>
+    <message>
+        <source>URL of the ComfyUI server running on this machine. Leave blank to use http://127.0.0.1:8188.</source>
+        <translation>このコンピューターで稼働するComfyUIサーバーのURL。空欄の場合は http://127.0.0.1:8188 を使用します。</translation>
+    </message>
+    <message>
+        <source>Local URL</source>
+        <translation>ローカルURL</translation>
+    </message>
+    <message>
+        <source>External URL</source>
+        <translation>外部URL</translation>
+    </message>
+    <message>
+        <source>Add external ComfyUI server</source>
+        <translation>外部ComfyUIサーバーを追加</translation>
+    </message>
+    <message>
+        <source>Optional URL of a remote ComfyUI server. Blank rows are ignored.</source>
+        <translation>リモートのComfyUIサーバーのURL（任意）。空欄の行は無視します。</translation>
+    </message>
+    <message>
+        <source>API Keys</source>
+        <translation>APIキー</translation>
+    </message>
+    <message>
+        <source>✓ Configured</source>
+        <translation>✓ 設定済み</translation>
+    </message>
+    <message>
+        <source>Not set</source>
+        <translation>未設定</translation>
+    </message>
+    <message>
+        <source>Context ready.</source>
+        <translation>コンテキストを取得しました。</translation>
+    </message>
+    <message>
+        <source>Planning edit.</source>
+        <translation>編集計画を作成中。</translation>
+    </message>
+    <message>
+        <source>Resolving clarification.</source>
+        <translation>確認事項を解決中。</translation>
+    </message>
+    <message>
+        <source>Generating candidates.</source>
+        <translation>候補を生成中。</translation>
+    </message>
+    <message>
+        <source>Candidate selected.</source>
+        <translation>候補を選択しました。</translation>
+    </message>
+    <message>
+        <source>Applying edit.</source>
+        <translation>編集を適用中。</translation>
+    </message>
+    <message>
+        <source>Apply complete.</source>
+        <translation>適用が完了しました。</translation>
+    </message>
+    <message>
+        <source>Preview discarded.</source>
+        <translation>プレビューを破棄しました。</translation>
+    </message>
+    <message>
+        <source>Verify complete.</source>
+        <translation>検証が完了しました。</translation>
+    </message>
+    <message>
+        <source>Plan</source>
+        <translation>計画</translation>
+    </message>
+    <message>
+        <source>Undo</source>
+        <translation>元に戻す</translation>
+    </message>
+    <message>
+        <source>Verify</source>
+        <translation>検証</translation>
+    </message>
+    <message>
+        <source>Generate Candidates</source>
+        <translation>候補を生成</translation>
+    </message>
+    <message>
+        <source>Select Candidate</source>
+        <translation>候補を選択</translation>
+    </message>
+    <message>
+        <source>Describe the canvas edit...</source>
+        <translation>キャンバスへの編集内容を入力...</translation>
+    </message>
+    <message>
+        <source>Context</source>
+        <translation>コンテキスト</translation>
+    </message>
+    <message>
+        <source>Clarification</source>
+        <translation>確認事項</translation>
+    </message>
+    <message>
+        <source>Safety</source>
+        <translation>安全性</translation>
+    </message>
+    <message>
+        <source>Candidates</source>
+        <translation>候補</translation>
+    </message>
+    <message>
+        <source>Approval</source>
+        <translation>承認</translation>
+    </message>
+    <message>
+        <source>Apply Result</source>
+        <translation>適用結果</translation>
+    </message>
+    <message>
+        <source>Next</source>
+        <translation>次へ</translation>
+    </message>
+    <message>
+        <source>Intent</source>
+        <translation>意図</translation>
+    </message>
+    <message>
+        <source>Question</source>
+        <translation>質問</translation>
+    </message>
+    <message>
+        <source>Selected</source>
+        <translation>選択中</translation>
+    </message>
+    <message>
+        <source>Mutation</source>
+        <translation>変更</translation>
+    </message>
+    <message>
+        <source>Visual</source>
+        <translation>表示</translation>
+    </message>
+    <message>
+        <source>Thumbnails</source>
+        <translation>サムネイル</translation>
+    </message>
+    <message>
+        <source>Ticket</source>
+        <translation>承認チケット</translation>
+    </message>
+    <message>
+        <source>Expires</source>
+        <translation>有効期限</translation>
+    </message>
+    <message>
+        <source>History</source>
+        <translation>履歴</translation>
+    </message>
+    <message>
+        <source>Revision</source>
+        <translation>リビジョン</translation>
+    </message>
+    <message>
+        <source>Prompt changed. Plan again.</source>
+        <translation>プロンプトが変更されました。計画を再作成してください。</translation>
+    </message>
+    <message>
+        <source>Apply is in progress.</source>
+        <translation>適用中です。</translation>
+    </message>
+    <message>
+        <source>Prompt is required.</source>
+        <translation>プロンプトを入力してください。</translation>
+    </message>
+    <message>
+        <source>Clarification needed.</source>
+        <translation>確認が必要です。</translation>
+    </message>
+    <message>
+        <source>Clarification is not available.</source>
+        <translation>確認事項を取得できません。</translation>
+    </message>
+    <message>
+        <source>Clarification resolution is not available.</source>
+        <translation>確認事項を解決できません。</translation>
+    </message>
+    <message>
+        <source>Clarification resolved. Preview ready.</source>
+        <translation>確認事項を解決しました。プレビューできます。</translation>
+    </message>
+    <message>
+        <source>Preview requires a ready plan.</source>
+        <translation>プレビューするには計画の準備が必要です。</translation>
+    </message>
+    <message>
+        <source>Preview is blocked.</source>
+        <translation>プレビューはブロックされています。</translation>
+    </message>
+    <message>
+        <source>Candidate generation requires an AI generation plan.</source>
+        <translation>候補を生成するにはAI生成の計画が必要です。</translation>
+    </message>
+    <message>
+        <source>Candidate generation is already in progress.</source>
+        <translation>候補を生成中です。</translation>
+    </message>
+    <message>
+        <source>Candidate generation requires a source layer.</source>
+        <translation>候補を生成するには元のレイヤーが必要です。</translation>
+    </message>
+    <message>
+        <source>Candidate stack is not available.</source>
+        <translation>候補一覧を利用できません。</translation>
+    </message>
+    <message>
+        <source>Select a candidate before preview.</source>
+        <translation>プレビューする候補を選択してください。</translation>
+    </message>
+    <message>
+        <source>Apply is already in progress.</source>
+        <translation>すでに適用中です。</translation>
+    </message>
+    <message>
+        <source>Apply requires a preview approval ticket.</source>
+        <translation>適用にはプレビューの承認チケットが必要です。</translation>
+    </message>
+    <message>
+        <source>Panel undo is not available.</source>
+        <translation>このパネルから元に戻す操作はできません。</translation>
+    </message>
+    <message>
+        <source>Undo complete.</source>
+        <translation>元に戻しました。</translation>
+    </message>
+    <message>
+        <source>Undo was not applied.</source>
+        <translation>元に戻す操作は適用されませんでした。</translation>
+    </message>
+    <message>
+        <source>Verify requires an applied edit.</source>
+        <translation>検証するには編集の適用が必要です。</translation>
+    </message>
+    <message>
+        <source>required</source>
+        <translation>必要</translation>
+    </message>
+    <message>
+        <source>none</source>
+        <translation>なし</translation>
+    </message>
+    <message>
+        <source>Plan has safety blocks.</source>
+        <translation>計画は安全上の理由でブロックされています。</translation>
+    </message>
+    <message>
+        <source>Plan ready.</source>
+        <translation>計画の準備ができました。</translation>
+    </message>
+    <message>
+        <source>Preview ready.</source>
+        <translation>プレビューの準備ができました。</translation>
+    </message>
+    <message>
+        <source>Candidate generation did not create a job.</source>
+        <translation>候補生成のジョブが作成されませんでした。</translation>
+    </message>
+    <message>
+        <source>Candidate stack ready: {count} assets.</source>
+        <translation>候補一覧の準備ができました: {count} 個の素材。</translation>
+    </message>
+    <message>
+        <source>Page: {page}</source>
+        <translation>ページ: {page}</translation>
+    </message>
+    <message>
+        <source>Layer: {layer}</source>
+        <translation>レイヤー: {layer}</translation>
+    </message>
+    <message>
+        <source>Selection: {state}</source>
+        <translation>選択範囲: {state}</translation>
+    </message>
+    <message>
+        <source>Visible: {count}</source>
+        <translation>表示中: {count}</translation>
+    </message>
+    <message>
+        <source>External: {state}</source>
+        <translation>外部接続: {state}</translation>
+    </message>
+    <message>
+        <source>Layer {layer}, selection {selection}</source>
+        <translation>レイヤー {layer}、選択範囲 {selection}</translation>
+    </message>
+    <message>
+        <source>{label} | {provider} | {width}x{height} | {target} | thumb {thumbnail}</source>
+        <translation>{label} | {provider} | {width}x{height} | {target} | サムネイル {thumbnail}</translation>
+    </message>
+    <message>
+        <source>Ready to request external candidates</source>
+        <translation>外部サービスへの候補要求の準備ができました</translation>
+    </message>
+    <message>
+        <source>Clarification is blocked.</source>
+        <translation>確認はブロックされています。</translation>
+    </message>
+    <message>
+        <source>on</source>
+        <translation>オン</translation>
+    </message>
+    <message>
+        <source>off</source>
+        <translation>オフ</translation>
+    </message>
+    <message>
+        <source>{kind} ({confidence})</source>
+        <translation>{kind} ({confidence})</translation>
+    </message>
+    <message>
+        <source>{title} - mutation: {mutation}</source>
+        <translation>{title} - 変更: {mutation}</translation>
+    </message>
+    <message>
+        <source>{count} candidates</source>
+        <translation>候補 {count} 件</translation>
+    </message>
+    <message>
+        <source>Canvas context is not available: {reason}</source>
+        <translation>キャンバスのコンテキストを取得できません: {reason}</translation>
+    </message>
+    <message>
+        <source>Canvas context refresh failed: {error}</source>
+        <translation>キャンバスのコンテキストを更新できませんでした: {error}</translation>
+    </message>
+    <message>
+        <source>Planning failed: {error}</source>
+        <translation>計画を作成できませんでした: {error}</translation>
+    </message>
+    <message>
+        <source>Clarification failed: {error}</source>
+        <translation>確認事項を解決できませんでした: {error}</translation>
+    </message>
+    <message>
+        <source>Preview failed: {error}</source>
+        <translation>プレビューに失敗しました: {error}</translation>
+    </message>
+    <message>
+        <source>Candidate generation failed: {reason}</source>
+        <translation>候補の生成に失敗しました: {reason}</translation>
+    </message>
+    <message>
+        <source>Candidate generation failed: {error}</source>
+        <translation>候補の生成に失敗しました: {error}</translation>
+    </message>
+    <message>
+        <source>Candidate selection failed: {error}</source>
+        <translation>候補を選択できませんでした: {error}</translation>
+    </message>
+    <message>
+        <source>Undo failed: {error}</source>
+        <translation>元に戻せませんでした: {error}</translation>
+    </message>
+    <message>
+        <source>Verify failed: {error}</source>
+        <translation>検証に失敗しました: {error}</translation>
+    </message>
+    <message>
+        <source>Action required: {message}</source>
+        <translation>操作が必要です: {message}</translation>
+    </message>
+    <message>
+        <source>Apply failed: {error}</source>
+        <translation>適用に失敗しました: {error}</translation>
+    </message>
+    <message>
+        <source>External service access is disabled. Enable it in Preferences.</source>
+        <translation>外部サービスへの接続は無効です。環境設定で有効にしてください。</translation>
+    </message>
+    <message>
+        <source>Failed to import image as new layer</source>
+        <translation>画像を新規レイヤーとして読み込めませんでした</translation>
+    </message>
+    <message>
+        <source>Generate (AI Effect)</source>
+        <translation>生成（AIエフェクト）</translation>
+    </message>
+    <message>
+        <source>Mask</source>
+        <translation>マスク</translation>
+    </message>
+    <message>
+        <source>Add Vector Layer</source>
+        <translation>ベクターレイヤーを追加</translation>
+    </message>
+    <message>
+        <source>Exclude from blend (AI input only)</source>
+        <translation>合成から除外（AI入力のみ）</translation>
+    </message>
+    <message>
+        <source>Click to edit mask</source>
+        <translation>クリックしてマスクを編集</translation>
+    </message>
+    <message>
+        <source>(optional) drag a layer</source>
+        <translation>（任意）レイヤーをドラッグ</translation>
+    </message>
+    <message>
+        <source>(missing layer)</source>
+        <translation>（レイヤーが見つかりません）</translation>
+    </message>
+    <message>
+        <source>(not set)</source>
+        <translation>（未設定）</translation>
+    </message>
+    <message>
+        <source>Add Layer</source>
+        <translation>レイヤーを追加</translation>
+    </message>
+    <message>
+        <source>Duplicate Layer</source>
+        <translation>レイヤーを複製</translation>
+    </message>
+    <message>
+        <source>Delete Layer</source>
+        <translation>レイヤーを削除</translation>
+    </message>
+    <message>
+        <source>Release Clipping Mask</source>
+        <translation>クリッピングマスクを解除</translation>
+    </message>
+    <message>
+        <source>Create Clipping Mask</source>
+        <translation>クリッピングマスクを作成</translation>
+    </message>
+    <message>
+        <source>Rasterize</source>
+        <translation>ラスタライズ</translation>
+    </message>
+    <message>
+        <source>Load as Selection</source>
+        <translation>選択範囲として読み込む</translation>
+    </message>
+    <message>
+        <source>Invert Transparency</source>
+        <translation>透明度を反転</translation>
+    </message>
+    <message>
+        <source>Finish Mask Editing</source>
+        <translation>マスク編集を終了</translation>
+    </message>
+    <message>
+        <source>Edit Layer Mask</source>
+        <translation>レイヤーマスクを編集</translation>
+    </message>
+    <message>
+        <source>Remove Layer Mask</source>
+        <translation>レイヤーマスクを削除</translation>
+    </message>
+    <message>
+        <source>Layer name:</source>
+        <translation>レイヤー名:</translation>
+    </message>
+    <message>
+        <source>Production recipes</source>
+        <translation>制作レシピ</translation>
+    </message>
+    <message>
+        <source>Modes</source>
+        <translation>モード</translation>
+    </message>
+    <message>
+        <source>SAM3 Worker</source>
+        <translation>SAM3ワーカー</translation>
+    </message>
+    <message>
+        <source>Experimental</source>
+        <translation>実験的機能</translation>
+    </message>
+    <message>
+        <source>Grid Snap</source>
+        <translation>グリッドにスナップ</translation>
+    </message>
+    <message>
+        <source>Grid Size</source>
+        <translation>グリッドサイズ</translation>
+    </message>
+    <message>
+        <source>Comic Tools</source>
+        <translation>漫画ツール</translation>
+    </message>
+    <message>
+        <source>Panel layout, speech balloons and dialogue management</source>
+        <translation>コマ割り・フキダシ・セリフを管理</translation>
+    </message>
+    <message>
+        <source>Comic Assets</source>
+        <translation>漫画素材</translation>
+    </message>
+    <message>
+        <source>Page Template</source>
+        <translation>ページテンプレート</translation>
+    </message>
+    <message>
+        <source>Dup</source>
+        <translation>複製</translation>
+    </message>
+    <message>
+        <source>Del</source>
+        <translation>削除</translation>
+    </message>
+    <message>
+        <source>Move Up</source>
+        <translation>上へ移動</translation>
+    </message>
+    <message>
+        <source>Move Down</source>
+        <translation>下へ移動</translation>
+    </message>
+    <message>
+        <source>this page</source>
+        <translation>このページ</translation>
+    </message>
+    <message>
+        <source>Basic</source>
+        <translation>基本</translation>
+    </message>
+    <message>
+        <source>Save Current Page as Template...</source>
+        <translation>現在のページをテンプレートとして保存...</translation>
+    </message>
+    <message>
+        <source>Page Operation Failed</source>
+        <translation>ページ操作に失敗</translation>
+    </message>
+    <message>
+        <source>save_template failed: feature not supported</source>
+        <translation>テンプレートを保存できませんでした: 未対応の機能です</translation>
+    </message>
+    <message>
+        <source>Blank (Like Current Page)</source>
+        <translation>白紙（現在のページと同じ）</translation>
+    </message>
+    <message>
+        <source>Fill regions with tiled patterns</source>
+        <translation>パターンを敷き詰めて領域を塗りつぶす</translation>
+    </message>
+    <message>
+        <source>Add Library</source>
+        <translation>ライブラリを追加</translation>
+    </message>
+    <message>
+        <source>Load to Compose</source>
+        <translation>構成へ読み込む</translation>
+    </message>
+    <message>
+        <source>Load a reference image</source>
+        <translation>参照画像を読み込む</translation>
+    </message>
+    <message>
+        <source>Open Reference Image</source>
+        <translation>参照画像を開く</translation>
+    </message>
+    <message>
+        <source>View reference images in a dockable panel.</source>
+        <translation>ドッキング可能なパネルに参照画像を表示します。</translation>
+    </message>
+    <message>
+        <source>Union</source>
+        <translation>和集合</translation>
+    </message>
+    <message>
+        <source>No candidates</source>
+        <translation>候補がありません</translation>
+    </message>
+    <message>
+        <source>Xor</source>
+        <translation>排他的論理和</translation>
+    </message>
+    <message>
+        <source>Select at least two candidates</source>
+        <translation>候補を2つ以上選択してください</translation>
+    </message>
+    <message>
+        <source>No AI Select tool</source>
+        <translation>AI選択ツールがありません</translation>
+    </message>
+    <message>
+        <source>Candidate list unavailable</source>
+        <translation>候補一覧を利用できません</translation>
+    </message>
+    <message>
+        <source>Select a candidate</source>
+        <translation>候補を選択してください</translation>
+    </message>
+    <message>
+        <source>Refresh failed</source>
+        <translation>更新に失敗</translation>
+    </message>
+    <message>
+        <source>Candidate List</source>
+        <translation>候補一覧</translation>
+    </message>
+    <message>
+        <source>Selected: {candidate_id}</source>
+        <translation>選択中: {candidate_id}</translation>
+    </message>
+    <message>
+        <source>Candidate</source>
+        <translation>候補</translation>
+    </message>
+    <message>
+        <source>Score</source>
+        <translation>スコア</translation>
+    </message>
+    <message>
+        <source>Box</source>
+        <translation>範囲</translation>
+    </message>
+    <message>
+        <source>Select</source>
+        <translation>選択</translation>
+    </message>
+    <message>
+        <source>Reject</source>
+        <translation>却下</translation>
+    </message>
+    <message>
+        <source>Refine</source>
+        <translation>調整</translation>
+    </message>
+    <message>
+        <source>Inpaint</source>
+        <translation>インペイント</translation>
+    </message>
+    <message>
+        <source>Clip</source>
+        <translation>クリッピング</translation>
+    </message>
+    <message>
+        <source>FG</source>
+        <translation>前景</translation>
+    </message>
+    <message>
+        <source>BG</source>
+        <translation>背景</translation>
+    </message>
+    <message>
+        <source>Blocked</source>
+        <translation>ブロック中</translation>
+    </message>
+    <message>
+        <source>No mask candidates</source>
+        <translation>マスク候補がありません</translation>
+    </message>
+    <message>
+        <source>Speech Bubble Protection</source>
+        <translation>フキダシを保護</translation>
+    </message>
+    <message>
+        <source>Character Extraction</source>
+        <translation>キャラクターを抽出</translation>
+    </message>
+    <message>
+        <source>Background Extraction</source>
+        <translation>背景を抽出</translation>
+    </message>
+    <message>
+        <source>Inpaint Prep</source>
+        <translation>インペイントの準備</translation>
+    </message>
+    <message>
+        <source>Manga Mask Assistant unavailable</source>
+        <translation>漫画マスクアシスタントを利用できません</translation>
+    </message>
+    <message>
+        <source>Build Package</source>
+        <translation>パッケージを作成</translation>
+    </message>
+    <message>
+        <source>Panel source</source>
+        <translation>コマの参照元</translation>
+    </message>
+    <message>
+        <source>Cancel Preview</source>
+        <translation>プレビューを取り消す</translation>
+    </message>
+    <message>
+        <source>Scorecard: {ready} ready / {accepted} accepted / {total} total</source>
+        <translation>検査結果: 準備完了 {ready} / 採用済み {accepted} / 合計 {total}</translation>
+    </message>
+    <message>
+        <source>Build Package unavailable: {reason}</source>
+        <translation>パッケージを作成できません: {reason}</translation>
+    </message>
+    <message>
+        <source>No Manga Mask Assistant source</source>
+        <translation>漫画マスクアシスタントの参照元がありません</translation>
+    </message>
+    <message>
+        <source>Build Manga mask package from last SAM3 session</source>
+        <translation>最後のSAM3セッションから漫画マスクパッケージを作成</translation>
+    </message>
+    <message>
+        <source>Scorecard: {reason}</source>
+        <translation>検査結果: {reason}</translation>
+    </message>
+    <message>
+        <source>Scorecard: OK - {ready} ready / {accepted} accepted / {total} total</source>
+        <translation>検査結果: OK - 準備完了 {ready} / 採用済み {accepted} / 合計 {total}</translation>
+    </message>
+    <message>
+        <source>{visible} visible / {total} total</source>
+        <translation>表示中 {visible} / 合計 {total}</translation>
+    </message>
+    <message>
+        <source>Changeset</source>
+        <translation>変更内容</translation>
+    </message>
+    <message>
+        <source>Yes</source>
+        <translation>はい</translation>
+    </message>
+    <message>
+        <source>No</source>
+        <translation>いいえ</translation>
+    </message>
+    <message>
+        <source>Manga Mask Assistant</source>
+        <translation>漫画マスクアシスタント</translation>
+    </message>
+    <message>
+        <source>Unaccept</source>
+        <translation>採用を取り消す</translation>
+    </message>
+    <message>
+        <source>Accept</source>
+        <translation>採用</translation>
+    </message>
+    <message>
+        <source>Panel</source>
+        <translation>コマ</translation>
+    </message>
+    <message>
+        <source>Area</source>
+        <translation>面積</translation>
+    </message>
+    <message>
+        <source>Accepted</source>
+        <translation>採用済み</translation>
+    </message>
+    <message>
+        <source>Candidate unavailable</source>
+        <translation>候補を利用できません</translation>
+    </message>
+    <message>
+        <source>Row: {row_id}</source>
+        <translation>行: {row_id}</translation>
+    </message>
+    <message>
+        <source>{label}: {blocked}</source>
+        <translation>{label}: {blocked}</translation>
+    </message>
+    <message>
+        <source>{label}: Unavailable</source>
+        <translation>{label}: 利用不可</translation>
+    </message>
+    <message>
+        <source>Scope: {scope}</source>
+        <translation>対象: {scope}</translation>
+    </message>
+    <message>
+        <source>Panel: {panel_id}</source>
+        <translation>コマ: {panel_id}</translation>
+    </message>
+    <message>
+        <source>Candidate: {candidate_id}</source>
+        <translation>候補: {candidate_id}</translation>
+    </message>
+    <message>
+        <source>Category: {category}</source>
+        <translation>分類: {category}</translation>
+    </message>
+    <message>
+        <source>Score: {score}</source>
+        <translation>スコア: {score}</translation>
+    </message>
+    <message>
+        <source>Area: {area}</source>
+        <translation>面積: {area}</translation>
+    </message>
+    <message>
+        <source>Warnings: {warnings}</source>
+        <translation>警告: {warnings}</translation>
+    </message>
+    <message>
+        <source>Box: {box}</source>
+        <translation>範囲: {box}</translation>
+    </message>
+    <message>
+        <source>Panel box: {box}</source>
+        <translation>コマの範囲: {box}</translation>
+    </message>
+    <message>
+        <source>No candidate</source>
+        <translation>候補なし</translation>
+    </message>
+    <message>
+        <source>Previous</source>
+        <translation>前へ</translation>
+    </message>
+    <message>
+        <source>Apply as Layer Mask</source>
+        <translation>レイヤーマスクとして適用</translation>
+    </message>
+    <message>
+        <source>Use as Inpaint Mask</source>
+        <translation>インペイントマスクに使用</translation>
+    </message>
+    <message>
+        <source>Apply as Clipping Mask</source>
+        <translation>クリッピングマスクとして適用</translation>
+    </message>
+    <message>
+        <source>Cut to New Layer</source>
+        <translation>新規レイヤーに切り出す</translation>
+    </message>
+    <message>
+        <source>Extract Foreground</source>
+        <translation>前景を抽出</translation>
+    </message>
+    <message>
+        <source>Extract Background</source>
+        <translation>背景を抽出</translation>
+    </message>
+    <message>
+        <source>Save Mask Asset</source>
+        <translation>マスク素材を保存</translation>
+    </message>
+    <message>
+        <source>AI Select</source>
+        <translation>AI選択</translation>
+    </message>
+    <message>
+        <source>SAM3 AI selection tool shell</source>
+        <translation>SAM3によるAI選択ツール</translation>
+    </message>
+    <message>
+        <source>Idle</source>
+        <translation>待機中</translation>
+    </message>
+    <message>
+        <source>AI Select Candidates</source>
+        <translation>AI選択候補</translation>
+    </message>
+    <message>
+        <source>Max Candidates</source>
+        <translation>候補の最大数</translation>
+    </message>
+    <message>
+        <source>Preview Color Mode</source>
+        <translation>プレビューの色モード</translation>
+    </message>
+    <message>
+        <source>Overlay Opacity</source>
+        <translation>オーバーレイの不透明度</translation>
+    </message>
+    <message>
+        <source>Run on Click</source>
+        <translation>クリックで実行</translation>
+    </message>
+    <message>
+        <source>Click Accumulate Apply</source>
+        <translation>クリックで選択を累積適用</translation>
+    </message>
+    <message>
+        <source>Apply Edge Feather (px)</source>
+        <translation>適用時の境界ぼかし (px)</translation>
+    </message>
+    <message>
+        <source>Apply Edge Smooth (px)</source>
+        <translation>適用時の境界平滑化 (px)</translation>
+    </message>
+    <message>
+        <source>Edge Tightness</source>
+        <translation>境界の締め具合</translation>
+    </message>
+    <message>
+        <source>Export Padding (px)</source>
+        <translation>書き出し余白 (px)</translation>
+    </message>
+    <message>
+        <source>Export Source</source>
+        <translation>書き出し元</translation>
+    </message>
+    <message>
+        <source>Text deleted.</source>
+        <translation>テキストを削除しました。</translation>
+    </message>
+    <message>
+        <source>No selection. Draw a selection first.</source>
+        <translation>選択範囲がありません。先に範囲を選択してください。</translation>
+    </message>
+    <message>
+        <source>Turntable</source>
+        <translation>ターンテーブル</translation>
+    </message>
+    <message>
+        <source>Add 3D Layer</source>
+        <translation>3Dレイヤーを追加</translation>
+    </message>
+    <message>
+        <source>Import Projection</source>
+        <translation>投影画像を読み込む</translation>
+    </message>
+    <message>
+        <source>3D Preview</source>
+        <translation>3Dプレビュー</translation>
+    </message>
+    <message>
+        <source>Preview generated 3D assets and import projections.</source>
+        <translation>生成した3D素材をプレビューし、投影画像を読み込みます。</translation>
+    </message>
+    <message>
+        <source>3D Layer</source>
+        <translation>3Dレイヤー</translation>
+    </message>
+    <message>
+        <source>Numeric position/size/rotation input for selected objects.</source>
+        <translation>選択したオブジェクトの位置・サイズ・回転を数値入力します。</translation>
+    </message>
+    <message>
+        <source>Vector Objects</source>
+        <translation>ベクターオブジェクト</translation>
+    </message>
+    <message>
+        <source>Get your API key…</source>
+        <translation>APIキーを取得…</translation>
+    </message>
+    <message>
+        <source>API key:</source>
+        <translation>APIキー:</translation>
+    </message>
+    <message>
+        <source>Paste your API key</source>
+        <translation>APIキーを貼り付け</translation>
+    </message>
+    <message>
+        <source>After saving, the key is no longer kept in this dialog. To replace it later, enter a new value here. To remove it entirely, click Clear in Preferences.</source>
+        <translation>保存後、キーはこのダイアログに保持されません。変更する場合は新しい値を入力してください。完全に削除するには環境設定の「クリア」をクリックしてください。</translation>
+    </message>
+    <message>
+        <source>API key required</source>
+        <translation>APIキーが必要です</translation>
+    </message>
+    <message>
+        <source>Please enter your API key before saving.</source>
+        <translation>保存する前にAPIキーを入力してください。</translation>
+    </message>
+    <message>
+        <source>Could not save API key</source>
+        <translation>APIキーを保存できませんでした</translation>
+    </message>
+    <message>
+        <source>The API key could not be saved to your keyring. Check the log for details and try again.</source>
+        <translation>APIキーをキーリングに保存できませんでした。ログを確認して再試行してください。</translation>
+    </message>
+    <message>
+        <source>Clear {name} API key?</source>
+        <translation>{name} のAPIキーを消去しますか？</translation>
+    </message>
+    <message>
+        <source>Remove the saved {name} API key from your keyring?
+
+You will need to enter it again before generating.</source>
+        <translation>保存された {name} のAPIキーをキーリングから削除しますか？
+
+次回の生成前に再入力が必要です。</translation>
+    </message>
+    <message>
+        <source>Set {name} API key</source>
+        <translation>{name} のAPIキーを設定</translation>
+    </message>
+    <message>
+        <source>{name} uses Google Gemini's API. The key is stored encrypted in your OS keyring and is read only when you press Generate.</source>
+        <translation>{name} はGoogle GeminiのAPIを使用します。キーはOSのキーリングに暗号化して保存され、「生成」を押したときだけ読み取られます。</translation>
+    </message>
+    <message>
+        <source>Enable 'Allow external AI services' in Preferences to connect to ComfyUI.</source>
+        <translation>ComfyUIに接続するには、環境設定の「外部AIサービスを許可」を有効にしてください。</translation>
+    </message>
+    <message>
+        <source>No workflow loaded</source>
+        <translation>ワークフローが読み込まれていません</translation>
+    </message>
+    <message>
+        <source>Enable 'Allow external AI services' in Preferences to queue workflows.</source>
+        <translation>ワークフローを実行待ちに追加するには、環境設定の「外部AIサービスを許可」を有効にしてください。</translation>
+    </message>
+    <message>
+        <source>Waiting to start</source>
+        <translation>開始待ち</translation>
+    </message>
+    <message>
+        <source>Failed to queue workflow. Please try again.</source>
+        <translation>ワークフローを実行待ちに追加できませんでした。再試行してください。</translation>
+    </message>
+    <message>
+        <source>Unable to cancel job - event loop unavailable</source>
+        <translation>イベントループを利用できないため、ジョブを取り消せません</translation>
+    </message>
+    <message>
+        <source>Loaded workflow: {name}</source>
+        <translation>ワークフローを読み込みました: {name}</translation>
+    </message>
+    <message>
+        <source>Invalid Image Path</source>
+        <translation>画像パスが無効です</translation>
+    </message>
+    <message>
+        <source>Failed to load workflow: {error}</source>
+        <translation>ワークフローを読み込めませんでした: {error}</translation>
+    </message>
+    <message>
+        <source>The workflow contains LoadImage nodes with invalid file paths.
+
+Please check that all image paths in your workflow are valid.
+</source>
+        <translation>ワークフローに無効なファイルパスを持つLoadImageノードがあります。
+
+ワークフロー内のすべての画像パスを確認してください。
+</translation>
+    </message>
+    <message>
+        <source>Unable to cancel job {short_id}</source>
+        <translation>ジョブ {short_id} を取り消せません</translation>
+    </message>
+    <message>
+        <source>Failed to queue workflow: {error}</source>
+        <translation>ワークフローを実行待ちに追加できませんでした: {error}</translation>
+    </message>
+    <message>
+        <source>Show all nodes as separate panels</source>
+        <translation>すべてのノードを個別パネルで表示</translation>
+    </message>
+    <message>
+        <source>Show all nodes in tabs</source>
+        <translation>すべてのノードをタブで表示</translation>
+    </message>
+    <message>
+        <source>Save ComfyUI Workflow</source>
+        <translation>ComfyUIワークフローを保存</translation>
+    </message>
+    <message>
+        <source>The current workflow has unsaved changes.
+Do you want to save them?</source>
+        <translation>現在のワークフローに未保存の変更があります。
+保存しますか？</translation>
+    </message>
+    <message>
+        <source>Workflow has unsaved changes</source>
+        <translation>ワークフローに未保存の変更があります</translation>
+    </message>
+    <message>
+        <source>Failed to load workflow:
+{error}</source>
+        <translation>ワークフローを読み込めませんでした:
+{error}</translation>
+    </message>
+    <message>
+        <source>Failed to save workflow:
+{error}</source>
+        <translation>ワークフローを保存できませんでした:
+{error}</translation>
+    </message>
+    <message>
+        <source>Color Picker</source>
+        <translation>色を選択</translation>
+    </message>
+    <message>
+        <source>LoomStroke — Recovery</source>
+        <translation>LoomStroke — 復元</translation>
+    </message>
+    <message>
+        <source>Autosave files from the previous session were found.
+Select a file to recover.</source>
+        <translation>前回のセッションから自動保存ファイルが見つかりました。
+復元するファイルを選択してください。</translation>
+    </message>
+    <message>
+        <source>Recover</source>
+        <translation>復元</translation>
+    </message>
+    <message>
+        <source>Discard and Start New</source>
+        <translation>破棄して新規開始</translation>
+    </message>
+    <message>
+        <source>(unsaved)</source>
+        <translation>(未保存)</translation>
+    </message>
+    <message>
+        <source>{timestamp}  —  {name}  (session: {session})</source>
+        <translation>{timestamp}  —  {name}  (セッション: {session})</translation>
+    </message>
+    <message>
+        <source>Register Selected Balloon</source>
+        <translation>選択中のフキダシを登録</translation>
+    </message>
+    <message>
+        <source>Save the balloon selected in the Comic panel as an asset in this tab.</source>
+        <translation>Comic パネルで選択中のフキダシをこのタブの素材として保存</translation>
+    </message>
+    <message>
+        <source>Rename</source>
+        <translation>名前変更</translation>
+    </message>
+    <message>
+        <source>Delete</source>
+        <translation>削除</translation>
+    </message>
+    <message>
+        <source>Reload</source>
+        <translation>再読込</translation>
+    </message>
+    <message>
+        <source>Balloons</source>
+        <translation>フキダシ</translation>
+    </message>
+    <message>
+        <source>{name}
+{asset_id}
+Drag onto the canvas to place</source>
+        <translation>{name}
+{asset_id}
+ドラッグでキャンバスへ配置</translation>
+    </message>
+    <message>
+        <source>Cannot register: select a balloon in the Comic panel.</source>
+        <translation>登録できません: Comic パネルでフキダシを選択してください</translation>
+    </message>
+    <message>
+        <source>Registered: {name}</source>
+        <translation>登録しました: {name}</translation>
+    </message>
+    <message>
+        <source>Asset name:</source>
+        <translation>素材名:</translation>
+    </message>
+    <message>
+        <source>Delete Asset</source>
+        <translation>素材の削除</translation>
+    </message>
+    <message>
+        <source>Delete "{name}"?</source>
+        <translation>「{name}」を削除しますか?</translation>
+    </message>
+    <message>
+        <source>Placed at the page center.</source>
+        <translation>ページ中央に配置しました</translation>
+    </message>
+    <message>
+        <source>Could not place the asset (no canvas).</source>
+        <translation>配置できませんでした (キャンバスなし)</translation>
+    </message>
+    <message>
+        <source>Create Balloon</source>
+        <translation>フキダシ作成</translation>
+    </message>
+    <message>
+        <source>Vertical writing</source>
+        <translation>縦書き</translation>
+    </message>
+    <message>
+        <source>Auto-size to fit text</source>
+        <translation>テキストに合わせて自動サイズ調整</translation>
+    </message>
+    <message>
+        <source>Open the balloon at the tail base</source>
+        <translation>しっぽの付け根でバルーンを開く</translation>
+    </message>
+    <message>
+        <source>On: open the contour at the tail base and follow tail movement. Off: keep the contour closed, filling any drawn gap.</source>
+        <translation>ON: 輪郭をしっぽの付け根で切り欠き、しっぽを動かすと開口部も追従します。 OFF: 輪郭は常に閉じます (開いて描いた場合は隙間を線で埋めます)。</translation>
+    </message>
+    <message>
+        <source>Make the base follow the tip</source>
+        <translation>付け根を先端に追従させる</translation>
+    </message>
+    <message>
+        <source>On: moving the tip moves the base and opening along the balloon contour. Off: keep the base fixed and move only the tip.</source>
+        <translation>ON: 先端を動かすと付け根 (と開口) がバルーンの外周に沿って追従します。 OFF: 付け根は今の位置に固定され、先端だけが動きます。</translation>
+    </message>
+    <message>
+        <source>Automatically join tail and balloon outlines</source>
+        <translation>しっぽとバルーンの線を自動でつなぐ</translation>
+    </message>
+    <message>
+        <source>Smoothly join the tail and balloon outlines using tangents, widths and colors estimated from pixels. Distant outlines are not joined.</source>
+        <translation>しっぽの線の端とバルーンの輪郭を、ピクセルから推定した接線・太さ・色で 滑らかにつなぎます (離れすぎている場合はつなぎません)。</translation>
+    </message>
+    <message>
+        <source>Distance between the tail base and balloon contour. Conversion preserves the drawn distance. Zero touches the contour; negative values overlap it.</source>
+        <translation>しっぽの付け根とバルーン外周の距離。変換時は描いたままの距離になります。 0 で密着、負の値で食い込み。</translation>
+    </message>
+    <message>
+        <source>Tail distance</source>
+        <translation>しっぽの距離</translation>
+    </message>
+    <message>
+        <source>Enter dialogue...</source>
+        <translation>セリフを入力...</translation>
+    </message>
+    <message>
+        <source>Dialogue</source>
+        <translation>セリフ</translation>
+    </message>
+    <message>
+        <source>Apply Dialogue</source>
+        <translation>セリフを反映</translation>
+    </message>
+    <message>
+        <source>Speaker ID (e.g. char_a)</source>
+        <translation>speaker_id (例: char_a)</translation>
+    </message>
+    <message>
+        <source>Display name (e.g. Protagonist)</source>
+        <translation>表示名 (例: 主人公)</translation>
+    </message>
+    <message>
+        <source>Speaker ID</source>
+        <translation>話者ID</translation>
+    </message>
+    <message>
+        <source>Speaker name</source>
+        <translation>話者名</translation>
+    </message>
+    <message>
+        <source>Set Speaker</source>
+        <translation>話者を設定</translation>
+    </message>
+    <message>
+        <source>Delete Balloon</source>
+        <translation>フキダシ削除</translation>
+    </message>
+    <message>
+        <source>Convert Hand-drawn Balloon (Selection/Layer)</source>
+        <translation>手描きフキダシを変換 (選択範囲/レイヤー)</translation>
+    </message>
+    <message>
+        <source>Kind</source>
+        <translation>種類</translation>
+    </message>
+    <message>
+        <source>Add tail</source>
+        <translation>tail を付ける</translation>
+    </message>
+    <message>
+        <source>Tail tip</source>
+        <translation>tail 先端</translation>
+    </message>
+    <message>
+        <source>Body size</source>
+        <translation>body サイズ</translation>
+    </message>
+    <message>
+        <source>Hide source layer (keep it)</source>
+        <translation>元レイヤーを非表示にする (削除はしない)</translation>
+    </message>
+    <message>
+        <source>Confirm and Convert</source>
+        <translation>確定して変換</translation>
+    </message>
+    <message>
+        <source>Cancel</source>
+        <translation>キャンセル</translation>
+    </message>
+    <message>
+        <source>Create Balloon from Body/Tail Layers</source>
+        <translation>Body/Tail レイヤーからフキダシ化</translation>
+    </message>
+    <message>
+        <source>Register Selected Balloon as Asset</source>
+        <translation>選択中のフキダシを素材パネルに登録</translation>
+    </message>
+    <message>
+        <source>Save as an asset in the Balloons tab of the Comic Assets panel.</source>
+        <translation>Comic Assets パネルの「フキダシ」タブに素材として保存します</translation>
+    </message>
+    <message>
+        <source>Could not recognize a balloon (check the selection or layer).</source>
+        <translation>フキダシを認識できませんでした (選択範囲かレイヤーを確認)</translation>
+    </message>
+    <message>
+        <source>Body layer</source>
+        <translation>Body レイヤー</translation>
+    </message>
+    <message>
+        <source>Tail layer</source>
+        <translation>Tail レイヤー</translation>
+    </message>
+    <message>
+        <source>Register and Preview</source>
+        <translation>登録してプレビュー</translation>
+    </message>
+    <message>
+        <source>Clean Conversion (Development)</source>
+        <translation>クリーン変換 (開発)</translation>
+    </message>
+    <message>
+        <source>Legacy mode that combines masks and converts them to shaped vectors (development).</source>
+        <translation>マスクを結合して整形ベクターに変換する旧モード (開発用)</translation>
+    </message>
+    <message>
+        <source>Status</source>
+        <translation>状態</translation>
+    </message>
+    <message>
+        <source>Tail size</source>
+        <translation>しっぽの大きさ</translation>
+    </message>
+    <message>
+        <source>Connection mode</source>
+        <translation>接続モード</translation>
+    </message>
+    <message>
+        <source>Width of fill into the body at the connection</source>
+        <translation>接続部で本体側へ塗り込む幅</translation>
+    </message>
+    <message>
+        <source>Fill inset</source>
+        <translation>塗り込み</translation>
+    </message>
+    <message>
+        <source>Depth of the tail base inside the body (negative = outside the contour)</source>
+        <translation>しっぽの付け根を本体側へ押し込む量 (負 = 輪郭の外)</translation>
+    </message>
+    <message>
+        <source>Base depth</source>
+        <translation>付け根の深さ</translation>
+    </message>
+    <message>
+        <source>Show Diagnostics (Development)</source>
+        <translation>診断を表示 (開発)</translation>
+    </message>
+    <message>
+        <source>Select Body/Tail layers, then click Register and Preview.</source>
+        <translation>Body / Tail レイヤーを選んで「登録してプレビュー」</translation>
+    </message>
+    <message>
+        <source>Select both Body and Tail layers.</source>
+        <translation>Body と Tail のレイヤーを両方選択してください</translation>
+    </message>
+    <message>
+        <source>Select different layers for Body and Tail.</source>
+        <translation>Body と Tail は別のレイヤーを選んでください</translation>
+    </message>
+    <message>
+        <source>Click Register and Preview first.</source>
+        <translation>先に「登録してプレビュー」を実行してください</translation>
+    </message>
+    <message>
+        <source>Select a Body layer.</source>
+        <translation>Body レイヤーを選択してください</translation>
+    </message>
+    <message>
+        <source>Could not recognize the balloon.</source>
+        <translation>認識できませんでした</translation>
+    </message>
+    <message>
+        <source>Review the clean conversion candidate.</source>
+        <translation>Clean 変換候補を確認してください</translation>
+    </message>
+    <message>
+        <source>Refresh List</source>
+        <translation>一覧を更新</translation>
+    </message>
+    <message>
+        <source>Open and fill base (standard)</source>
+        <translation>付け根を開いて塗る (標準)</translation>
+    </message>
+    <message>
+        <source>Open base (transparent)</source>
+        <translation>付け根を開く (透明)</translation>
+    </message>
+    <message>
+        <source>Use registration settings</source>
+        <translation>登録時の設定のまま</translation>
+    </message>
+    <message>
+        <source>Ellipse</source>
+        <translation>楕円</translation>
+    </message>
+    <message>
+        <source>Rounded Rectangle</source>
+        <translation>角丸矩形</translation>
+    </message>
+    <message>
+        <source>Cloud (Thought)</source>
+        <translation>雲形 (思考)</translation>
+    </message>
+    <message>
+        <source>Spiky (Shout)</source>
+        <translation>ギザギザ (叫び)</translation>
+    </message>
+    <message>
+        <source>Page</source>
+        <translation>ページ</translation>
+    </message>
+    <message>
+        <source>Speaker</source>
+        <translation>話者</translation>
+    </message>
+    <message>
+        <source>Canvas Placeholder
+(CanvasWidget not found)</source>
+        <translation>キャンバス代替表示
+(CanvasWidgetが見つかりません)</translation>
+    </message>
+    <message>
+        <source>ComfyUI Panel
+(Not Available)</source>
+        <translation>ComfyUIパネル
+（利用不可）</translation>
+    </message>
+    <message>
+        <source>Preview Area
+(ComfyUI preview will appear here)</source>
+        <translation>プレビュー領域
+（ComfyUIのプレビューを表示します）</translation>
+    </message>
+    <message>
+        <source>About LoomStroke</source>
+        <translation>LoomStrokeについて</translation>
+    </message>
+    <message>
+        <source>Close</source>
+        <translation>閉じる</translation>
+    </message>
+    <message>
+        <source>License</source>
+        <translation>ライセンス</translation>
+    </message>
+    <message>
+        <source>Hide License</source>
+        <translation>ライセンスを隠す</translation>
+    </message>
+    <message>
+        <source>Third-Party Licenses</source>
+        <translation>サードパーティーのライセンス</translation>
+    </message>
+    <message>
+        <source>Hide Third-Party</source>
+        <translation>サードパーティーのライセンスを隠す</translation>
+    </message>
+    <message>
+        <source>Select Layer:</source>
+        <translation>レイヤーを選択:</translation>
+    </message>
+    <message>
+        <source>Delete selected stop</source>
+        <translation>選択した分岐点を削除</translation>
+    </message>
+    <message>
+        <source>Optional Parameters</source>
+        <translation>任意のパラメーター</translation>
+    </message>
+    <message>
+        <source>mode:</source>
+        <translation>モード:</translation>
+    </message>
+    <message>
+        <source>Size</source>
+        <translation>サイズ</translation>
+    </message>
+    <message>
+        <source>Strength</source>
+        <translation>強度</translation>
+    </message>
+    <message>
+        <source>Hardness</source>
+        <translation>硬さ</translation>
+    </message>
+    <message>
+        <source>Opacity</source>
+        <translation>不透明度</translation>
+    </message>
+    <message>
+        <source>Output Layer:</source>
+        <translation>出力先レイヤー:</translation>
+    </message>
+    <message>
+        <source>3D Output Layer:</source>
+        <translation>3D出力先レイヤー:</translation>
+    </message>
+    <message>
+        <source>Permission check failed. Please grant all required permissions.</source>
+        <translation>権限の確認に失敗しました。必要な権限をすべて許可してください。</translation>
+    </message>
+    <message>
+        <source>No image specified</source>
+        <translation>画像が指定されていません</translation>
+    </message>
+    <message>
+        <source>Refresh compositions</source>
+        <translation>構成を更新</translation>
+    </message>
+    <message>
+        <source>Separator:</source>
+        <translation>区切り文字:</translation>
+    </message>
+    <message>
+        <source>(None)</source>
+        <translation>（なし）</translation>
+    </message>
+    <message>
+        <source>Saved LivePrompt</source>
+        <translation>保存済みLivePrompt</translation>
+    </message>
+    <message>
+        <source>Review the candidate.</source>
+        <translation>候補を確認してください</translation>
+    </message>
+    <message>
+        <source>Tail not detected (you can add one manually)</source>
+        <translation>tail 未検出 (手動で付けられます)</translation>
+    </message>
+    <message>
+        <source>Tail candidate is ambiguous (review required)</source>
+        <translation>tail 候補が曖昧です (要確認)</translation>
+    </message>
+    <message>
+        <source>Tail not detected (you can add one manually) / Tail candidate is ambiguous (review required)</source>
+        <translation>tail 未検出 (手動で付けられます) / tail 候補が曖昧です (要確認)</translation>
+    </message>
+    <message>
+        <source>Registered as an asset: {name}</source>
+        <translation>素材に登録しました: {name}</translation>
+    </message>
+    <message>
+        <source>Asset registration: select a balloon.</source>
+        <translation>素材登録: フキダシを選択してください</translation>
+    </message>
+    <message>
+        <source>Could not register: {reasons}</source>
+        <translation>登録できませんでした: {reasons}</translation>
+    </message>
+    <message>
+        <source> / Warnings: {warnings}</source>
+        <translation> / 注意: {warnings}</translation>
+    </message>
+    <message>
+        <source>{balloon} / Panel: {panel} / Speaker: {speaker}</source>
+        <translation>{balloon} / コマ: {panel} / 話者: {speaker}</translation>
+    </message>
+    <message>
+        <source>📋 {title}
+
+Click to show as panel</source>
+        <translation>📋 {title}
+
+クリックしてパネルを表示</translation>
+    </message>
+    <message>
+        <source>Failed to render parameters for node: {node}</source>
+        <translation>ノードのパラメーターを表示できませんでした: {node}</translation>
+    </message>
+    <message>
+        <source>Local — {url}</source>
+        <translation>ローカル — {url}</translation>
+    </message>
+    <message>
+        <source>8 bit</source>
+        <translation>8ビット</translation>
+    </message>
+    <message>
+        <source>16 bit</source>
+        <translation>16ビット</translation>
+    </message>
+    <message>
+        <source>&lt;p style='margin:2px 0'&gt;Version {version}&lt;/p&gt;&lt;p style='margin:2px 0'&gt;Plugin-first paint application with AI integration.&lt;/p&gt;&lt;p style='margin:2px 0'&gt;Copyright NakamuraShippo. All rights reserved.&lt;/p&gt;&lt;p style='margin:2px 0'&gt;Contact: &lt;a href="mailto:nakamurashippo@gmail.com"&gt;nakamurashippo@gmail.com&lt;/a&gt;&lt;/p&gt;</source>
+        <translation>&lt;p style='margin:2px 0'&gt;バージョン {version}&lt;/p&gt;&lt;p style='margin:2px 0'&gt;AI連携に対応した、プラグイン中心のペイントアプリケーション。&lt;/p&gt;&lt;p style='margin:2px 0'&gt;Copyright NakamuraShippo. All rights reserved.&lt;/p&gt;&lt;p style='margin:2px 0'&gt;連絡先: &lt;a href="mailto:nakamurashippo@gmail.com"&gt;nakamurashippo@gmail.com&lt;/a&gt;&lt;/p&gt;</translation>
+    </message>
+    <message>
+        <source>Initialization Error</source>
+        <translation>初期化エラー</translation>
+    </message>
+    <message>
+        <source>Failed to initialize: {error}</source>
+        <translation>初期化に失敗しました: {error}</translation>
+    </message>
+    <message>
+        <source>fixed</source>
+        <translation>固定</translation>
+    </message>
+    <message>
+        <source>increment (+1)</source>
+        <translation>増加 (+1)</translation>
+    </message>
+    <message>
+        <source>decrement (-1)</source>
+        <translation>減少 (-1)</translation>
+    </message>
+    <message>
+        <source>randomize</source>
+        <translation>ランダム</translation>
+    </message>
+    <message>
+        <source>None</source>
+        <translation>なし</translation>
+    </message>
+    <message>
+        <source>Portrait</source>
+        <translation>ポートレート</translation>
+    </message>
+    <message>
+        <source>Landscape</source>
+        <translation>風景</translation>
+    </message>
+    <message>
+        <source>Anime</source>
+        <translation>アニメ</translation>
+    </message>
+    <message>
+        <source>Concept Art</source>
+        <translation>コンセプトアート</translation>
+    </message>
+    <message>
+        <source> %</source>
+        <translation> %</translation>
+    </message>
+    <message>
+        <source> (required)</source>
+        <translation> (必須)</translation>
+    </message>
+    <message>
+        <source> MB</source>
+        <translation> MB</translation>
+    </message>
+    <message>
+        <source> dpi</source>
+        <translation> dpi</translation>
+    </message>
+    <message>
+        <source> fps</source>
+        <translation> fps</translation>
+    </message>
+    <message>
+        <source> items</source>
+        <translation> 件</translation>
+    </message>
+    <message>
+        <source> ms</source>
+        <translation> ms</translation>
+    </message>
+    <message>
+        <source> px</source>
+        <translation> px</translation>
+    </message>
+    <message>
+        <source> sec</source>
+        <translation> 秒</translation>
+    </message>
+    <message>
+        <source>#</source>
+        <translation>#</translation>
+    </message>
+    <message>
+        <source>%(n)d of %(total)d</source>
+        <translation>%(total)d 件中 %(n)d 件</translation>
+    </message>
+    <message>
+        <source>%d items</source>
+        <translation>%d 件</translation>
+    </message>
+    <message>
+        <source>&amp;AI</source>
+        <translation>AI(&amp;A)</translation>
+    </message>
+    <message>
+        <source>&amp;About LoomStroke</source>
+        <translation>LoomStroke について(&amp;A)</translation>
+    </message>
+    <message>
+        <source>&amp;Arrange</source>
+        <translation>重ね順</translation>
+    </message>
+    <message>
+        <source>&amp;Cancel Active Job</source>
+        <translation>実行中のジョブをキャンセル(&amp;C)</translation>
+    </message>
+    <message>
+        <source>&amp;Check for Updates</source>
+        <translation>更新を確認(&amp;C)</translation>
+    </message>
+    <message>
+        <source>&amp;Close</source>
+        <translation>閉じる(&amp;C)</translation>
+    </message>
+    <message>
+        <source>&amp;Connect / Reconnect</source>
+        <translation>接続/再接続(&amp;C)</translation>
+    </message>
+    <message>
+        <source>&amp;Copy</source>
+        <translation>コピー(&amp;C)</translation>
+    </message>
+    <message>
+        <source>&amp;Delete</source>
+        <translation>削除</translation>
+    </message>
+    <message>
+        <source>&amp;Deselect</source>
+        <translation>選択解除(&amp;D)</translation>
+    </message>
+    <message>
+        <source>&amp;Docs / Shortcuts</source>
+        <translation>ドキュメント / ショートカット(&amp;D)</translation>
+    </message>
+    <message>
+        <source>&amp;Duplicate</source>
+        <translation>複製</translation>
+    </message>
+    <message>
+        <source>&amp;Edit</source>
+        <translation>編集(&amp;E)</translation>
+    </message>
+    <message>
+        <source>&amp;Export…</source>
+        <translation>書き出し(&amp;E)…</translation>
+    </message>
+    <message>
+        <source>&amp;File</source>
+        <translation>ファイル(&amp;F)</translation>
+    </message>
+    <message>
+        <source>&amp;Filter</source>
+        <translation>フィルター(&amp;F)</translation>
+    </message>
+    <message>
+        <source>&amp;Fit Spread</source>
+        <translation>見開きに合わせる(&amp;F)</translation>
+    </message>
+    <message>
+        <source>&amp;Flatten All</source>
+        <translation>画像を統合(&amp;F)</translation>
+    </message>
+    <message>
+        <source>&amp;Full Screen</source>
+        <translation>全画面表示(&amp;F)</translation>
+    </message>
+    <message>
+        <source>&amp;Group Layers</source>
+        <translation>レイヤーをグループ化</translation>
+    </message>
+    <message>
+        <source>&amp;Help</source>
+        <translation>ヘルプ(&amp;H)</translation>
+    </message>
+    <message>
+        <source>&amp;Image</source>
+        <translation>画像(&amp;I)</translation>
+    </message>
+    <message>
+        <source>&amp;Import…</source>
+        <translation>読み込み(&amp;I)…</translation>
+    </message>
+    <message>
+        <source>&amp;Last Filter</source>
+        <translation>最後のフィルター</translation>
+    </message>
+    <message>
+        <source>&amp;Layer</source>
+        <translation>レイヤー(&amp;L)</translation>
+    </message>
+    <message>
+        <source>&amp;Manage Tools...</source>
+        <translation>ツールの管理(&amp;M)</translation>
+    </message>
+    <message>
+        <source>&amp;Merge Down</source>
+        <translation>下のレイヤーと結合</translation>
+    </message>
+    <message>
+        <source>&amp;New Layer</source>
+        <translation>新規レイヤー</translation>
+    </message>
+    <message>
+        <source>&amp;New…</source>
+        <translation>新規作成(&amp;N)…</translation>
+    </message>
+    <message>
+        <source>&amp;Open…</source>
+        <translation>開く(&amp;O)…</translation>
+    </message>
+    <message>
+        <source>&amp;Panels</source>
+        <translation>パネル(&amp;P)</translation>
+    </message>
+    <message>
+        <source>&amp;Paste</source>
+        <translation>貼り付け(&amp;P)</translation>
+    </message>
+    <message>
+        <source>&amp;Plugin Manager...</source>
+        <translation>プラグインマネージャー(&amp;P)</translation>
+    </message>
+    <message>
+        <source>&amp;Plugins</source>
+        <translation>プラグイン(&amp;P)</translation>
+    </message>
+    <message>
+        <source>&amp;Preferences…</source>
+        <translation>環境設定(&amp;P)…</translation>
+    </message>
+    <message>
+        <source>&amp;Rasterize</source>
+        <translation>ラスタライズ</translation>
+    </message>
+    <message>
+        <source>&amp;Redo</source>
+        <translation>やり直し(&amp;R)</translation>
+    </message>
+    <message>
+        <source>&amp;Redo {operation} — {page}</source>
+        <translation>{operation}をやり直す(&amp;R) — {page}</translation>
+    </message>
+    <message>
+        <source>&amp;Reset Layout</source>
+        <translation>レイアウトをリセット(&amp;R)</translation>
+    </message>
+    <message>
+        <source>&amp;Reset Zoom</source>
+        <translation>ズームをリセット(&amp;R)</translation>
+    </message>
+    <message>
+        <source>&amp;Save</source>
+        <translation>保存(&amp;S)</translation>
+    </message>
+    <message>
+        <source>&amp;Soft Proof</source>
+        <translation>ソフトプルーフ(&amp;S)</translation>
+    </message>
+    <message>
+        <source>&amp;Submit</source>
+        <translation>送信(&amp;S)</translation>
+    </message>
+    <message>
+        <source>&amp;Tools</source>
+        <translation>ツール(&amp;T)</translation>
+    </message>
+    <message>
+        <source>&amp;Undo</source>
+        <translation>元に戻す(&amp;U)</translation>
+    </message>
+    <message>
+        <source>&amp;Undo {operation} — {page}</source>
+        <translation>{operation}を元に戻す(&amp;U) — {page}</translation>
+    </message>
+    <message>
+        <source>&amp;View</source>
+        <translation>表示(&amp;V)</translation>
+    </message>
+    <message>
+        <source>&amp;Window</source>
+        <translation>ウィンドウ(&amp;W)</translation>
+    </message>
+    <message>
+        <source>(Do not import)</source>
+        <translation>(取り込まない)</translation>
+    </message>
+    <message>
+        <source>(New Layer)</source>
+        <translation>(新規レイヤー)</translation>
+    </message>
+    <message>
+        <source>(No Recent Files)</source>
+        <translation>(最近使用したファイルはありません)</translation>
+    </message>
+    <message>
+        <source>(No layers available)</source>
+        <translation>（利用できるレイヤーがありません）</translation>
+    </message>
+    <message>
+        <source>(No node name conditions)</source>
+        <translation>(ノード名条件なし)</translation>
+    </message>
+    <message>
+        <source>(No presets installed)</source>
+        <translation>(インストール済みのプリセットはありません)</translation>
+    </message>
+    <message>
+        <source>(No recent files)</source>
+        <translation>(最近使ったファイルはありません)</translation>
+    </message>
+    <message>
+        <source>(No workflow loaded)</source>
+        <translation>(ワークフローが読み込まれていません)</translation>
+    </message>
+    <message>
+        <source>(Optional) Choose a layer to receive SaveImage output</source>
+        <translation>(任意) SaveImage の出力先レイヤーを選択</translation>
+    </message>
+    <message>
+        <source>(Panels are in Window menu)</source>
+        <translation>(パネルはウィンドウメニューにあります)</translation>
+    </message>
+    <message>
+        <source>(Unnamed preset)</source>
+        <translation>(名称未設定のプリセット)</translation>
+    </message>
+    <message>
+        <source>(Use workflow file)</source>
+        <translation>(ワークフローファイルを使用)</translation>
+    </message>
+    <message>
+        <source>(default font)</source>
+        <translation>(既定フォント)</translation>
+    </message>
+    <message>
+        <source>(empty)</source>
+        <translation>(空き)</translation>
+    </message>
+    <message>
+        <source>(icon set)</source>
+        <translation>(アイコン設定済み)</translation>
+    </message>
+    <message>
+        <source>(imported preview)</source>
+        <translation>(インポート済みプレビュー)</translation>
+    </message>
+    <message>
+        <source>(linked)</source>
+        <translation>(リンク済)</translation>
+    </message>
+    <message>
+        <source>(new line)</source>
+        <translation>(新しい台詞)</translation>
+    </message>
+    <message>
+        <source>(no layers)</source>
+        <translation>(レイヤーなし)</translation>
+    </message>
+    <message>
+        <source>(no project)</source>
+        <translation>(プロジェクトなし)</translation>
+    </message>
+    <message>
+        <source>(no workflow loaded)</source>
+        <translation>(workflow 未読み込み)</translation>
+    </message>
+    <message>
+        <source>(none)</source>
+        <translation>(なし)</translation>
+    </message>
+    <message>
+        <source>(preview set)</source>
+        <translation>(プレビュー設定済み)</translation>
+    </message>
+    <message>
+        <source>(read error)</source>
+        <translation>(読み込みエラー)</translation>
+    </message>
+    <message>
+        <source>(too large, max %d MiB)</source>
+        <translation>(大きすぎます、最大 %d MiB)</translation>
+    </message>
+    <message>
+        <source>(unassigned)</source>
+        <translation>(未割り当て)</translation>
+    </message>
+    <message>
+        <source>(unbound)</source>
+        <translation>(未接続)</translation>
+    </message>
+    <message>
+        <source>+ Selected text has style overrides</source>
+        <translation>+ 選択テキストに書式の上書きがあります</translation>
+    </message>
+    <message>
+        <source>--- Layers ---</source>
+        <translation>--- レイヤー ---</translation>
+    </message>
+    <message>
+        <source>... and {count} more</source>
+        <translation>… 他 {count} 見開き</translation>
+    </message>
+    <message>
+        <source>...and {more_count} more</source>
+        <translation>さらに{more_count}件</translation>
+    </message>
+    <message>
+        <source>0 keeps the original contour; higher values ignore smaller bumps.</source>
+        <translation>0では元の輪郭を使用し、値を上げるほど細かな凹凸を無視します。</translation>
+    </message>
+    <message>
+        <source>0: smooth outline. 100: retain body shape and line-width variation. Joint stays smooth; texture is not preserved.</source>
+        <translation>0: 滑らかに整える / 100: 本体の形と線幅の変化を残す。接続部は滑らかさを維持。色むら・かすれは再現しません。</translation>
+    </message>
+    <message>
+        <source>3D</source>
+        <translation>3D</translation>
+    </message>
+    <message>
+        <source>&lt;New Layer&gt;</source>
+        <translation>&lt;新規レイヤー&gt;</translation>
+    </message>
+    <message>
+        <source>&lt;No prompts found&gt;</source>
+        <translation>&lt;プロンプトが見つかりません&gt;</translation>
+    </message>
+    <message>
+        <source>&lt;b&gt;Warnings:&lt;/b&gt;</source>
+        <translation>&lt;b&gt;警告:&lt;/b&gt;</translation>
+    </message>
+    <message>
+        <source>A CMYK profile is required for CMYK output.</source>
+        <translation>CMYK 出力には CMYK プロファイルが必要です。</translation>
+    </message>
+    <message>
+        <source>A blank page cannot be inserted before the first page. Use Add Page instead.</source>
+        <translation>先頭ページの前には挿入できません。「ページを追加」を使ってください。</translation>
+    </message>
+    <message>
+        <source>A closed ink ring is required for contour reconstruction.</source>
+        <translation>輪郭を一体化できる、閉じた本体の線が必要です。</translation>
+    </message>
+    <message>
+        <source>A cycle requires Sequential or Combinatorial LivePrompt choices.</source>
+        <translation>一巡にはライブプロンプトの順次選択または組み合わせ列挙を設定してください。</translation>
+    </message>
+    <message>
+        <source>A cycle uses Sequential and Combinatorial choices; random choices are excluded.</source>
+        <translation>一巡は順次選択・組み合わせ列挙の候補から計算します。ランダム選択は計算対象外です。</translation>
+    </message>
+    <message>
+        <source>A fill is still being prepared.</source>
+        <translation>塗りつぶしを準備中です。</translation>
+    </message>
+    <message>
+        <source>A folder of images plus publication_manifest.json — a neutral exchange package, not CBZ or EPUB.</source>
+        <translation>画像フォルダーと publication_manifest.json による中立な交換パッケージです (CBZ / EPUB ではありません)。</translation>
+    </message>
+    <message>
+        <source>A layer could not be rendered for PSD export.</source>
+        <translation>PSD書き出し用のレイヤー画像を取得できませんでした。</translation>
+    </message>
+    <message>
+        <source>A linked text frame is locked.</source>
+        <translation>連結先のテキスト枠がロックされています。</translation>
+    </message>
+    <message>
+        <source>A linked text frame is missing.</source>
+        <translation>連結先のテキスト枠が見つかりません。</translation>
+    </message>
+    <message>
+        <source>A vector erase is still being prepared.</source>
+        <translation>ベクター消去を準備中です。</translation>
+    </message>
+    <message>
+        <source>A4 Body (Color)</source>
+        <translation>A4 本文 (カラー)</translation>
+    </message>
+    <message>
+        <source>A4 Body (Monochrome)</source>
+        <translation>A4 本文 (モノクロ)</translation>
+    </message>
+    <message>
+        <source>A5 Body (Color)</source>
+        <translation>A5 本文 (カラー)</translation>
+    </message>
+    <message>
+        <source>A5 Body (Monochrome)</source>
+        <translation>A5 本文 (モノクロ)</translation>
+    </message>
+    <message>
+        <source>A5 Wrap Cover (Color)</source>
+        <translation>A5 全面表紙 (カラー)</translation>
+    </message>
+    <message>
+        <source>A6 Body (Color)</source>
+        <translation>A6 文庫 (カラー)</translation>
+    </message>
+    <message>
+        <source>A6 Body (Monochrome)</source>
+        <translation>A6 文庫 (モノクロ)</translation>
+    </message>
+    <message>
+        <source>ABR</source>
+        <translation>ABR</translation>
+    </message>
+    <message>
+        <source>ABR import errors:</source>
+        <translation>ABR インポート時のエラー:</translation>
+    </message>
+    <message>
+        <source>AI</source>
+        <translation>AI</translation>
+    </message>
+    <message>
+        <source>AI Effect</source>
+        <translation>AIエフェクト</translation>
+    </message>
+    <message>
+        <source>AI Effect &amp;Presets...</source>
+        <translation>AI エフェクトプリセット(&amp;P)...</translation>
+    </message>
+    <message>
+        <source>AI Effect presets</source>
+        <translation>AI Effect プリセット</translation>
+    </message>
+    <message>
+        <source>AI Effect — Preset Editor</source>
+        <translation>AI Effect - プリセットエディター</translation>
+    </message>
+    <message>
+        <source>AI Effect — no gateway</source>
+        <translation>AI Effect - Gateway なし</translation>
+    </message>
+    <message>
+        <source>AI Effect — no presets</source>
+        <translation>AI Effect - プリセットなし</translation>
+    </message>
+    <message>
+        <source>AI Effects Manager</source>
+        <translation>AIエフェクト管理</translation>
+    </message>
+    <message>
+        <source>AI Refine blocked</source>
+        <translation>AI Refine 中断</translation>
+    </message>
+    <message>
+        <source>AI Refine finished</source>
+        <translation>AI Refine 完了</translation>
+    </message>
+    <message>
+        <source>AI Refine running...</source>
+        <translation>AI Refine 処理中...</translation>
+    </message>
+    <message>
+        <source>AI Refine...</source>
+        <translation>AIで再調整...</translation>
+    </message>
+    <message>
+        <source>AI Select running...</source>
+        <translation>AI Select 実行中...</translation>
+    </message>
+    <message>
+        <source>AI menu</source>
+        <translation>AI メニュー</translation>
+    </message>
+    <message>
+        <source>API key migration needs attention</source>
+        <translation>APIキーの移行を確認してください</translation>
+    </message>
+    <message>
+        <source>Absolute Colorimetric</source>
+        <translation>絶対的な色域を維持</translation>
+    </message>
+    <message>
+        <source>Acceleration:</source>
+        <translation>高速化:</translation>
+    </message>
+    <message>
+        <source>Accurate</source>
+        <translation>正確</translation>
+    </message>
+    <message>
+        <source>Action</source>
+        <translation>アクション</translation>
+    </message>
+    <message>
+        <source>Action ID: {action_id}</source>
+        <translation>アクションID: {action_id}</translation>
+    </message>
+    <message>
+        <source>Actions</source>
+        <translation>操作</translation>
+    </message>
+    <message>
+        <source>Actions Panel</source>
+        <translation>アクションパネル</translation>
+    </message>
+    <message>
+        <source>Activate Basic Pen</source>
+        <translation>ベーシックペンを有効化</translation>
+    </message>
+    <message>
+        <source>Activate Filter Pen</source>
+        <translation>フィルターペンを選択</translation>
+    </message>
+    <message>
+        <source>Activate Move Tool</source>
+        <translation>移動ツールを有効化</translation>
+    </message>
+    <message>
+        <source>Activate Text Tool</source>
+        <translation>テキストツールを有効化</translation>
+    </message>
+    <message>
+        <source>Active Layer</source>
+        <translation>アクティブレイヤー</translation>
+    </message>
+    <message>
+        <source>Active Page</source>
+        <translation>アクティブページ</translation>
+    </message>
+    <message>
+        <source>Active Workflow</source>
+        <translation>アクティブなワークフロー</translation>
+    </message>
+    <message>
+        <source>Active: {job_type} - {message}</source>
+        <translation>アクティブ: {job_type} - {message}</translation>
+    </message>
+    <message>
+        <source>Add</source>
+        <translation>追加</translation>
+    </message>
+    <message>
+        <source>Add AI Effect Layer</source>
+        <translation>AI Effect レイヤーを追加</translation>
+    </message>
+    <message>
+        <source>Add Candidate to Existing Mask</source>
+        <translation>既存マスクに候補を追加</translation>
+    </message>
+    <message>
+        <source>Add Filter</source>
+        <translation>フィルターを追加</translation>
+    </message>
+    <message>
+        <source>Add Filter Layer</source>
+        <translation>フィルターレイヤーを追加</translation>
+    </message>
+    <message>
+        <source>Add Folder</source>
+        <translation>フォルダーを追加</translation>
+    </message>
+    <message>
+        <source>Add Layer Mask</source>
+        <translation>レイヤーマスクを追加</translation>
+    </message>
+    <message>
+        <source>Add Node</source>
+        <translation>ノードを追加</translation>
+    </message>
+    <message>
+        <source>Add Page</source>
+        <translation>ページ追加</translation>
+    </message>
+    <message>
+        <source>Add Shape</source>
+        <translation>シェイプを追加</translation>
+    </message>
+    <message>
+        <source>Add a blank page</source>
+        <translation>白ページを追加する</translation>
+    </message>
+    <message>
+        <source>Add a numeric suffix</source>
+        <translation>連番を付けて保存</translation>
+    </message>
+    <message>
+        <source>Add category</source>
+        <translation>カテゴリを追加</translation>
+    </message>
+    <message>
+        <source>Add chapter</source>
+        <translation>章を追加</translation>
+    </message>
+    <message>
+        <source>Add dialogue</source>
+        <translation>台詞を追加</translation>
+    </message>
+    <message>
+        <source>Add light</source>
+        <translation>光源を追加</translation>
+    </message>
+    <message>
+        <source>Add page</source>
+        <translation>ページを追加</translation>
+    </message>
+    <message>
+        <source>Add source</source>
+        <translation>ソースを追加</translation>
+    </message>
+    <message>
+        <source>Add spacing rule</source>
+        <translation>アキ規則を追加</translation>
+    </message>
+    <message>
+        <source>Add to Palette</source>
+        <translation>パレットに追加</translation>
+    </message>
+    <message>
+        <source>Add to Presets</source>
+        <translation>プリセットに追加</translation>
+    </message>
+    <message>
+        <source>Add to Queue</source>
+        <translation>キューに追加</translation>
+    </message>
+    <message>
+        <source>Add to Selection</source>
+        <translation>選択範囲へ追加</translation>
+    </message>
+    <message>
+        <source>Add {add} line(s), update {update}, unchanged {unchanged}, invalid {invalid}. Apply?</source>
+        <translation>追加 {add} 件、更新 {update} 件、変更なし {unchanged} 件、不正 {invalid} 件。適用しますか?</translation>
+    </message>
+    <message>
+        <source>Add {label} component</source>
+        <translation>{label} コンポーネントを追加</translation>
+    </message>
+    <message>
+        <source>Added category '%s'.</source>
+        <translation>カテゴリ '%s' を追加しました。</translation>
+    </message>
+    <message>
+        <source>Added source '%s'.</source>
+        <translation>ソース '%s' を追加しました。</translation>
+    </message>
+    <message>
+        <source>Additional model components</source>
+        <translation>追加モデルコンポーネント</translation>
+    </message>
+    <message>
+        <source>Address:</source>
+        <translation>アドレス:</translation>
+    </message>
+    <message>
+        <source>Adjust on canvas</source>
+        <translation>キャンバスで調整</translation>
+    </message>
+    <message>
+        <source>Adjust selected content on canvas</source>
+        <translation>選択した内容をキャンバスで調整</translation>
+    </message>
+    <message>
+        <source>Adjust with Image Size...</source>
+        <translation>「画像サイズ...」で調整する</translation>
+    </message>
+    <message>
+        <source>Adjustment Layer</source>
+        <translation>調整レイヤー</translation>
+    </message>
+    <message>
+        <source>Advanced connection settings</source>
+        <translation>接続の詳細設定</translation>
+    </message>
+    <message>
+        <source>After (below / left)</source>
+        <translation>後側 (下/左)</translation>
+    </message>
+    <message>
+        <source>Agent Approval</source>
+        <translation>エージェント操作の承認</translation>
+    </message>
+    <message>
+        <source>Align Reference:</source>
+        <translation>整列基準:</translation>
+    </message>
+    <message>
+        <source>Alignment</source>
+        <translation>配置</translation>
+    </message>
+    <message>
+        <source>All</source>
+        <translation>すべて</translation>
+    </message>
+    <message>
+        <source>All Layers</source>
+        <translation>すべてのレイヤー</translation>
+    </message>
+    <message>
+        <source>All Pages</source>
+        <translation>すべてのページ</translation>
+    </message>
+    <message>
+        <source>All Presets</source>
+        <translation>すべてのプリセット</translation>
+    </message>
+    <message>
+        <source>All Services</source>
+        <translation>すべてのサービス</translation>
+    </message>
+    <message>
+        <source>All Shortcuts</source>
+        <translation>すべてのショートカット</translation>
+    </message>
+    <message>
+        <source>All images in this panel</source>
+        <translation>このコマにすべて配置</translation>
+    </message>
+    <message>
+        <source>All pages</source>
+        <translation>全ページ</translation>
+    </message>
+    <message>
+        <source>All tags</source>
+        <translation>すべてのタグ</translation>
+    </message>
+    <message>
+        <source>All unchecked: fixed. List: items; String/Prompt: snippets matching the tag; Text: {a|b|c}. One choice per generation; combinations advance rightmost first.</source>
+        <translation>すべてオフで固定。Listは項目、String/Promptはタグに合うスニペット、Textは {a|b|c} から選択します。生成ごとに1件選択し、組み合わせは右側から進みます。</translation>
+    </message>
+    <message>
+        <source>Allow all MCP agent actions</source>
+        <translation>MCPエージェント操作をすべて許可</translation>
+    </message>
+    <message>
+        <source>Allow external AI services (ComfyUI, LLM Gateway, NanoBanana)</source>
+        <translation>外部AIサービス (ComfyUI, LLM Gateway, NanoBanana) を許可</translation>
+    </message>
+    <message>
+        <source>Allow external services in Preferences &gt; Privacy before installing missing packages, or prepare all runtime dependencies in advance to use Setup offline. A local sam3 source copy alone is insufficient.</source>
+        <translation>不足パッケージを導入する前に、設定のプライバシーで外部サービスを許可してください。オフラインで使う場合は必要な実行環境をすべて事前に準備してください。sam3のソースだけでは不十分です。</translation>
+    </message>
+    <message>
+        <source>Allow selected content overflow</source>
+        <translation>選択した内容のはみ出しを許可</translation>
+    </message>
+    <message>
+        <source>Allowed network domains:</source>
+        <translation>許可されたネットワークドメイン:</translation>
+    </message>
+    <message>
+        <source>Allowed overhang</source>
+        <translation>はみ出し量の上限</translation>
+    </message>
+    <message>
+        <source>Alpha</source>
+        <translation>αチャンネル</translation>
+    </message>
+    <message>
+        <source>Already embedded</source>
+        <translation>埋め込み済み</translation>
+    </message>
+    <message>
+        <source>Alt + left click</source>
+        <translation>Alt + 左クリック</translation>
+    </message>
+    <message>
+        <source>Alt + left drag</source>
+        <translation>Alt + 左ドラッグ</translation>
+    </message>
+    <message>
+        <source>Alternate brush binding</source>
+        <translation>代替ブラシバインド</translation>
+    </message>
+    <message>
+        <source>Alternate color binding</source>
+        <translation>代替カラーバインド</translation>
+    </message>
+    <message>
+        <source>Ambient</source>
+        <translation>環境光</translation>
+    </message>
+    <message>
+        <source>Amount</source>
+        <translation>量</translation>
+    </message>
+    <message>
+        <source>An operation is in progress. Wait before reloading nodes.</source>
+        <translation>処理中です。完了してからノードを再読み込みしてください。</translation>
+    </message>
+    <message>
+        <source>Anchor</source>
+        <translation>アンカー</translation>
+    </message>
+    <message>
+        <source>Anchor Density</source>
+        <translation>アンカー密度</translation>
+    </message>
+    <message>
+        <source>Angle</source>
+        <translation>角度</translation>
+    </message>
+    <message>
+        <source>Angle Variation</source>
+        <translation>角度のばらつき</translation>
+    </message>
+    <message>
+        <source>Anti alias</source>
+        <translation>アンチエイリアス</translation>
+    </message>
+    <message>
+        <source>Anti-alias</source>
+        <translation>アンチエイリアス</translation>
+    </message>
+    <message>
+        <source>Applied.</source>
+        <translation>適用しました。</translation>
+    </message>
+    <message>
+        <source>Apply</source>
+        <translation>適用</translation>
+    </message>
+    <message>
+        <source>Apply Changes</source>
+        <translation>変更を適用</translation>
+    </message>
+    <message>
+        <source>Apply Options</source>
+        <translation>適用方法</translation>
+    </message>
+    <message>
+        <source>Apply Page</source>
+        <translation>ページに適用</translation>
+    </message>
+    <message>
+        <source>Apply Result To:</source>
+        <translation>結果の適用先:</translation>
+    </message>
+    <message>
+        <source>Apply as Add</source>
+        <translation>追加で適用</translation>
+    </message>
+    <message>
+        <source>Apply as Intersect</source>
+        <translation>交差で適用</translation>
+    </message>
+    <message>
+        <source>Apply as Subtract</source>
+        <translation>減算で適用</translation>
+    </message>
+    <message>
+        <source>Apply batch</source>
+        <translation>まとめて反映</translation>
+    </message>
+    <message>
+        <source>Apply changes to Editor</source>
+        <translation>変更をEditorに反映</translation>
+    </message>
+    <message>
+        <source>Apply character distribution</source>
+        <translation>字取りを適用</translation>
+    </message>
+    <message>
+        <source>Apply emphasis</source>
+        <translation>圏点を適用</translation>
+    </message>
+    <message>
+        <source>Apply is blocked.</source>
+        <translation>適用はブロックされています。</translation>
+    </message>
+    <message>
+        <source>Apply on Candidate Click</source>
+        <translation>候補クリックで選択範囲に適用</translation>
+    </message>
+    <message>
+        <source>Apply per-character ruby (readings separated by |)</source>
+        <translation>文字ごとのルビを適用 (読みを | で区切る)</translation>
+    </message>
+    <message>
+        <source>Apply preset</source>
+        <translation>プリセットを適用</translation>
+    </message>
+    <message>
+        <source>Apply ruby</source>
+        <translation>ルビを適用</translation>
+    </message>
+    <message>
+        <source>Apply speaker to all rows</source>
+        <translation>全行に話者を適用</translation>
+    </message>
+    <message>
+        <source>Apply style</source>
+        <translation>スタイルを適用</translation>
+    </message>
+    <message>
+        <source>Apply tate-chu-yoko</source>
+        <translation>縦中横を適用</translation>
+    </message>
+    <message>
+        <source>Apply template</source>
+        <translation>テンプレート適用</translation>
+    </message>
+    <message>
+        <source>Apply this mask as a clipping mask</source>
+        <translation>このマスクをクリッピングマスクとして適用</translation>
+    </message>
+    <message>
+        <source>Apply this mask as the active layer's layer mask</source>
+        <translation>このマスクをアクティブレイヤーのレイヤーマスクとして適用</translation>
+    </message>
+    <message>
+        <source>Apply to Canvas</source>
+        <translation>キャンバスに適用</translation>
+    </message>
+    <message>
+        <source>Apply to dialogue</source>
+        <translation>台詞に反映</translation>
+    </message>
+    <message>
+        <source>Apply to node</source>
+        <translation>ノードに適用</translation>
+    </message>
+    <message>
+        <source>Apply to selected balloon</source>
+        <translation>選択フキダシに適用</translation>
+    </message>
+    <message>
+        <source>Apply to the current layer. Undo restores the original pixels.</source>
+        <translation>現在のレイヤーへ直接適用します。元の画像にはUndoで戻せます。</translation>
+    </message>
+    <message>
+        <source>Apply two-line note</source>
+        <translation>割注を適用</translation>
+    </message>
+    <message>
+        <source>Apply values</source>
+        <translation>値を反映</translation>
+    </message>
+    <message>
+        <source>Apply values before generating or changing layers. Only published parameters are applied.</source>
+        <translation>生成・レイヤー切替の前に値を反映してください。公開対象のパラメーターを反映します。</translation>
+    </message>
+    <message>
+        <source>Apply {count} operation(s) to the current page as one undo step?</source>
+        <translation>{count} 件の操作を現在のページに 1 回の Undo として適用しますか?</translation>
+    </message>
+    <message>
+        <source>Applying this filter requires rasterizing "{name}". The vector or text will no longer be editable after applying. Continue?</source>
+        <translation>このフィルターを適用するには「{name}」のラスタライズが必要です。適用後はベクターや文字として編集できなくなります。続行しますか?</translation>
+    </message>
+    <message>
+        <source>Area Scaling</source>
+        <translation>領域の拡張・縮小</translation>
+    </message>
+    <message>
+        <source>Area Text</source>
+        <translation>エリアテキスト</translation>
+    </message>
+    <message>
+        <source>Artifact</source>
+        <translation>成果物</translation>
+    </message>
+    <message>
+        <source>Artifact/Job</source>
+        <translation>成果物/ジョブ</translation>
+    </message>
+    <message>
+        <source>Artifacts</source>
+        <translation>成果物</translation>
+    </message>
+    <message>
+        <source>Artwork reaches trim but not the bleed edge: {sides}.</source>
+        <translation>絵柄が仕上がり線に達していますが塗り足し縁まで届いていません: {sides}。</translation>
+    </message>
+    <message>
+        <source>Ask before every MCP agent action</source>
+        <translation>MCPエージェント操作のたびに確認</translation>
+    </message>
+    <message>
+        <source>Ask before replacing</source>
+        <translation>上書き前に確認</translation>
+    </message>
+    <message>
+        <source>Ask only before external generation queues</source>
+        <translation>外部生成の実行前のみ確認</translation>
+    </message>
+    <message>
+        <source>Aspect ratio</source>
+        <translation>アスペクト比</translation>
+    </message>
+    <message>
+        <source>Asset cache limit</source>
+        <translation>アセットキャッシュ上限</translation>
+    </message>
+    <message>
+        <source>Asset registration / Delete</source>
+        <translation>素材登録・削除</translation>
+    </message>
+    <message>
+        <source>Assign a colour profile in Image Properties</source>
+        <translation>「画像のプロパティ」でカラープロファイルを割り当てる</translation>
+    </message>
+    <message>
+        <source>Assign the line to a linked page first.</source>
+        <translation>先に台詞をリンク済みページへ割り当ててください。</translation>
+    </message>
+    <message>
+        <source>Assigned only</source>
+        <translation>割り当て済みのみ</translation>
+    </message>
+    <message>
+        <source>At least one output must be enabled.</source>
+        <translation>少なくとも 1 つの output を有効にしてください。</translation>
+    </message>
+    <message>
+        <source>Attach selected balloon</source>
+        <translation>選択フキダシをこのコマに所属</translation>
+    </message>
+    <message>
+        <source>Attachment limit reached</source>
+        <translation>添付上限に達しました</translation>
+    </message>
+    <message>
+        <source>Author: {author}</source>
+        <translation>作者: {author}</translation>
+    </message>
+    <message>
+        <source>Auto</source>
+        <translation>自動</translation>
+    </message>
+    <message>
+        <source>Auto Close</source>
+        <translation>自動閉合</translation>
+    </message>
+    <message>
+        <source>Auto Close Tolerance (px)</source>
+        <translation>自動閉合許容値 (px)</translation>
+    </message>
+    <message>
+        <source>Auto Mask Cleanup</source>
+        <translation>マスクを自動クリーンアップ</translation>
+    </message>
+    <message>
+        <source>Auto-fix preview: {width}x{height} -&gt; {fixed_w}x{fixed_h}</source>
+        <translation>自動修正プレビュー: {width}x{height} -&gt; {fixed_w}x{fixed_h}</translation>
+    </message>
+    <message>
+        <source>Auto-fix to image-friendly resolution (multiple of 64)</source>
+        <translation>画像生成に適した解像度へ自動修正（64の倍数）</translation>
+    </message>
+    <message>
+        <source>Auto-save disabled</source>
+        <translation>自動保存: 無効</translation>
+    </message>
+    <message>
+        <source>Auto-save enabled</source>
+        <translation>自動保存: 有効</translation>
+    </message>
+    <message>
+        <source>Auto-save:</source>
+        <translation>自動保存:</translation>
+    </message>
+    <message>
+        <source>Automatic</source>
+        <translation>自動</translation>
+    </message>
+    <message>
+        <source>Automatic startup requires a local HTTP URL without a path.</source>
+        <translation>自動起動には、このPCのHTTP URLをパスなしで指定してください。</translation>
+    </message>
+    <message>
+        <source>Autosave Interval:</source>
+        <translation>自動保存間隔:</translation>
+    </message>
+    <message>
+        <source>Autosave and formats</source>
+        <translation>自動保存と形式</translation>
+    </message>
+    <message>
+        <source>Autosave interval</source>
+        <translation>自動保存間隔</translation>
+    </message>
+    <message>
+        <source>Autosave interval (effective after restart)</source>
+        <translation>自動保存間隔 (再起動後に有効)</translation>
+    </message>
+    <message>
+        <source>Autosave:</source>
+        <translation>自動保存:</translation>
+    </message>
+    <message>
+        <source>Autosaved: {title}</source>
+        <translation>自動保存しました: {title}</translation>
+    </message>
+    <message>
+        <source>Available Workflows</source>
+        <translation>利用可能なワークフロー</translation>
+    </message>
+    <message>
+        <source>Available models/checkpoints</source>
+        <translation>利用可能なモデル/チェックポイント</translation>
+    </message>
+    <message>
+        <source>Avoid overlapping letters</source>
+        <translation>文字の重なりを避ける</translation>
+    </message>
+    <message>
+        <source>A判</source>
+        <translation>A判</translation>
+    </message>
+    <message>
+        <source>B5 Body (Color)</source>
+        <translation>B5 本文 (カラー)</translation>
+    </message>
+    <message>
+        <source>B5 Body (Monochrome)</source>
+        <translation>B5 本文 (モノクロ)</translation>
+    </message>
+    <message>
+        <source>B6 Body (Color)</source>
+        <translation>B6 (カラー)</translation>
+    </message>
+    <message>
+        <source>B6 Body (Monochrome)</source>
+        <translation>B6 (モノクロ)</translation>
+    </message>
+    <message>
+        <source>BMP</source>
+        <translation>BMP</translation>
+    </message>
+    <message>
+        <source>BMP Image (*.bmp)</source>
+        <translation>BMP 画像 (*.bmp)</translation>
+    </message>
+    <message>
+        <source>Backend metadata applied: %d parameter(s) constrained</source>
+        <translation>backend metadata を適用しました: %d 個の parameter に制約を設定</translation>
+    </message>
+    <message>
+        <source>Backend metadata fetch failed</source>
+        <translation>backend metadata の取得に失敗しました</translation>
+    </message>
+    <message>
+        <source>Backend returned no metadata; using defaults</source>
+        <translation>backend から metadata が返らなかったため、既定値を使います</translation>
+    </message>
+    <message>
+        <source>Background</source>
+        <translation>背景</translation>
+    </message>
+    <message>
+        <source>Background color (click to change)</source>
+        <translation>背景色 (クリックで変更)</translation>
+    </message>
+    <message>
+        <source>Balance columns</source>
+        <translation>段の末尾を揃える</translation>
+    </message>
+    <message>
+        <source>Balanced</source>
+        <translation>バランス</translation>
+    </message>
+    <message>
+        <source>Balloon</source>
+        <translation>フキダシ</translation>
+    </message>
+    <message>
+        <source>Balloon: {id}</source>
+        <translation>対象: {id}</translation>
+    </message>
+    <message>
+        <source>Base Name:</source>
+        <translation>ベース名:</translation>
+    </message>
+    <message>
+        <source>Base URL:</source>
+        <translation>ベースURL:</translation>
+    </message>
+    <message>
+        <source>Baseline</source>
+        <translation>行送り</translation>
+    </message>
+    <message>
+        <source>Baseline grid (0: off)</source>
+        <translation>行グリッド (0: 無効)</translation>
+    </message>
+    <message>
+        <source>Baseline shift</source>
+        <translation>ベースライン移動</translation>
+    </message>
+    <message>
+        <source>Baseline unit</source>
+        <translation>行送りの単位</translation>
+    </message>
+    <message>
+        <source>Basic Eraser</source>
+        <translation>ベーシック消しゴム</translation>
+    </message>
+    <message>
+        <source>Basic Fill Bucket</source>
+        <translation>ベーシック塗りつぶし</translation>
+    </message>
+    <message>
+        <source>Basic Gradient</source>
+        <translation>ベーシックグラデーション</translation>
+    </message>
+    <message>
+        <source>Basic Move</source>
+        <translation>ベーシック移動</translation>
+    </message>
+    <message>
+        <source>Basic Pen</source>
+        <translation>ベーシックペン</translation>
+    </message>
+    <message>
+        <source>Basic Pen Tool</source>
+        <translation>ベーシックペンツール</translation>
+    </message>
+    <message>
+        <source>Basic Pen could not be activated because its brush data could not be prepared.</source>
+        <translation>ブラシデータを準備できなかったため、ベーシックペンを有効にできませんでした。</translation>
+    </message>
+    <message>
+        <source>Basic Selection</source>
+        <translation>ベーシック選択</translation>
+    </message>
+    <message>
+        <source>Basic Settings</source>
+        <translation>基本</translation>
+    </message>
+    <message>
+        <source>Basic Shapes</source>
+        <translation>基本シェイプ</translation>
+    </message>
+    <message>
+        <source>Basic pen tool with pressure sensitivity</source>
+        <translation>筆圧感知に対応したベーシックペンツール</translation>
+    </message>
+    <message>
+        <source>Basic pressure-sensitive eraser tool</source>
+        <translation>筆圧感知に対応したベーシック消しゴムツール</translation>
+    </message>
+    <message>
+        <source>Basic shape not found.</source>
+        <translation>基本シェイプが見つかりませんでした。</translation>
+    </message>
+    <message>
+        <source>Basic widgets (Qt)</source>
+        <translation>基本ウィジェット (Qt)</translation>
+    </message>
+    <message>
+        <source>Batch guides</source>
+        <translation>一括作成</translation>
+    </message>
+    <message>
+        <source>Batch...</source>
+        <translation>一括実行...</translation>
+    </message>
+    <message>
+        <source>Batch: {name}</source>
+        <translation>一括実行: {name}</translation>
+    </message>
+    <message>
+        <source>Before (above / right)</source>
+        <translation>前側 (上/右)</translation>
+    </message>
+    <message>
+        <source>Bevel / Emboss</source>
+        <translation>ベベル / エンボス</translation>
+    </message>
+    <message>
+        <source>Bible</source>
+        <translation>作品設定資料</translation>
+    </message>
+    <message>
+        <source>Bible entries</source>
+        <translation>Bible 項目</translation>
+    </message>
+    <message>
+        <source>Bicubic (recommended)</source>
+        <translation>バイキュービック (推奨)</translation>
+    </message>
+    <message>
+        <source>Bilinear</source>
+        <translation>バイリニア</translation>
+    </message>
+    <message>
+        <source>Bind to metadata</source>
+        <translation>メタデータにバインド</translation>
+    </message>
+    <message>
+        <source>Binding</source>
+        <translation>綴じ方向</translation>
+    </message>
+    <message>
+        <source>Binding Margin</source>
+        <translation>ノド余白</translation>
+    </message>
+    <message>
+        <source>Binding Margin...</source>
+        <translation>ノド余白...</translation>
+    </message>
+    <message>
+        <source>Binding margin</source>
+        <translation>ノド余白</translation>
+    </message>
+    <message>
+        <source>Binding:</source>
+        <translation>綴じ方向:</translation>
+    </message>
+    <message>
+        <source>Bits</source>
+        <translation>ビット</translation>
+    </message>
+    <message>
+        <source>Black</source>
+        <translation>ブラック</translation>
+    </message>
+    <message>
+        <source>Black point compensation</source>
+        <translation>黒点の補正</translation>
+    </message>
+    <message>
+        <source>Bleed (mm)</source>
+        <translation>塗り足し (mm)</translation>
+    </message>
+    <message>
+        <source>Bleed bottom</source>
+        <translation>塗り足し 下</translation>
+    </message>
+    <message>
+        <source>Bleed left</source>
+        <translation>塗り足し 左</translation>
+    </message>
+    <message>
+        <source>Bleed marks</source>
+        <translation>塗り足しマーク</translation>
+    </message>
+    <message>
+        <source>Bleed right</source>
+        <translation>塗り足し 右</translation>
+    </message>
+    <message>
+        <source>Bleed top</source>
+        <translation>塗り足し 上</translation>
+    </message>
+    <message>
+        <source>Blend Mode</source>
+        <translation>描画モード</translation>
+    </message>
+    <message>
+        <source>Blend mode</source>
+        <translation>描画モード</translation>
+    </message>
+    <message>
+        <source>Blocked: {codes}</source>
+        <translation>ブロック理由: {codes}</translation>
+    </message>
+    <message>
+        <source>Blue</source>
+        <translation>青</translation>
+    </message>
+    <message>
+        <source>Blur</source>
+        <translation>ぼかし</translation>
+    </message>
+    <message>
+        <source>Body</source>
+        <translation>本文</translation>
+    </message>
+    <message>
+        <source>Body fidelity: {value}%</source>
+        <translation>本体の再現度: {value}%</translation>
+    </message>
+    <message>
+        <source>Body pages</source>
+        <translation>本文ページ数</translation>
+    </message>
+    <message>
+        <source>Book Layout</source>
+        <translation>ブック設定</translation>
+    </message>
+    <message>
+        <source>Book plan, page plan and editable apply for AI comic production</source>
+        <translation>AI 漫画制作の book plan・page plan・編集可能な適用</translation>
+    </message>
+    <message>
+        <source>Bottom</source>
+        <translation>下</translation>
+    </message>
+    <message>
+        <source>Boundaries are fixed-height only; check them in the preview before publishing.</source>
+        <translation>分割位置は固定高さのみで決めています。投稿前にプレビューで確認してください。</translation>
+    </message>
+    <message>
+        <source>Boundary and content repair</source>
+        <translation>境界と内容を手直し</translation>
+    </message>
+    <message>
+        <source>Boundary slope</source>
+        <translation>境界の傾き</translation>
+    </message>
+    <message>
+        <source>Bounds H</source>
+        <translation>範囲 高さ</translation>
+    </message>
+    <message>
+        <source>Bounds W</source>
+        <translation>範囲 幅</translation>
+    </message>
+    <message>
+        <source>Bounds X</source>
+        <translation>範囲 X</translation>
+    </message>
+    <message>
+        <source>Bounds Y</source>
+        <translation>範囲 Y</translation>
+    </message>
+    <message>
+        <source>Bounds could not be determined</source>
+        <translation>表示範囲を判定できません</translation>
+    </message>
+    <message>
+        <source>Box (integer reduction)</source>
+        <translation>ボックス (整数倍縮小)</translation>
+    </message>
+    <message>
+        <source>Brightness</source>
+        <translation>明るさ</translation>
+    </message>
+    <message>
+        <source>Brightness / Contrast</source>
+        <translation>明るさ / コントラスト</translation>
+    </message>
+    <message>
+        <source>Bring &amp;Forward</source>
+        <translation>前面へ</translation>
+    </message>
+    <message>
+        <source>Bring selected content to page front</source>
+        <translation>選択した内容をページ前面へ</translation>
+    </message>
+    <message>
+        <source>Bring to &amp;Front</source>
+        <translation>最前面へ</translation>
+    </message>
+    <message>
+        <source>Browse...</source>
+        <translation>参照...</translation>
+    </message>
+    <message>
+        <source>Browse…</source>
+        <translation>参照…</translation>
+    </message>
+    <message>
+        <source>Brush</source>
+        <translation>ブラシ</translation>
+    </message>
+    <message>
+        <source>Brush Manager</source>
+        <translation>ブラシマネージャー</translation>
+    </message>
+    <message>
+        <source>Brush Size Key Acceleration</source>
+        <translation>[ ] キーのブラシサイズ加速</translation>
+    </message>
+    <message>
+        <source>Brush Tip</source>
+        <translation>ブラシ先端</translation>
+    </message>
+    <message>
+        <source>Brushes</source>
+        <translation>ブラシ</translation>
+    </message>
+    <message>
+        <source>Bucket</source>
+        <translation>バケツ</translation>
+    </message>
+    <message>
+        <source>Built-in</source>
+        <translation>組み込み</translation>
+    </message>
+    <message>
+        <source>By Role</source>
+        <translation>役割で選択</translation>
+    </message>
+    <message>
+        <source>B判</source>
+        <translation>B判</translation>
+    </message>
+    <message>
+        <source>CBZ</source>
+        <translation>CBZ</translation>
+    </message>
+    <message>
+        <source>CBZ is a de facto format: readers interpret ComicInfo.xml differently.</source>
+        <translation>CBZ は事実上の標準であり、ComicInfo.xml の解釈はリーダーごとに異なります。</translation>
+    </message>
+    <message>
+        <source>CFG Scale:</source>
+        <translation>CFGスケール:</translation>
+    </message>
+    <message>
+        <source>CMYK</source>
+        <translation>CMYK</translation>
+    </message>
+    <message>
+        <source>CMYK / 16 bit</source>
+        <translation>CMYK / 16ビット</translation>
+    </message>
+    <message>
+        <source>CMYK / 8 bit</source>
+        <translation>CMYK / 8ビット</translation>
+    </message>
+    <message>
+        <source>CMYK TIFF sequence</source>
+        <translation>CMYK TIFF 連番</translation>
+    </message>
+    <message>
+        <source>CMYK conversion requires raster layers with supported blends and no live filters or transforms.</source>
+        <translation>CMYK変換には、対応ブレンドのラスターレイヤーが必要です。未確定のフィルターや変形を適用してから変換してください。</translation>
+    </message>
+    <message>
+        <source>CMYK profile:</source>
+        <translation>CMYK プロファイル:</translation>
+    </message>
+    <message>
+        <source>Cache Size</source>
+        <translation>キャッシュサイズ</translation>
+    </message>
+    <message>
+        <source>Cache Size:</source>
+        <translation>キャッシュサイズ:</translation>
+    </message>
+    <message>
+        <source>Cancel failed: {error}</source>
+        <translation>キャンセルに失敗しました: {error}</translation>
+    </message>
+    <message>
+        <source>Cancel job</source>
+        <translation>ジョブをキャンセル</translation>
+    </message>
+    <message>
+        <source>Cancel linking</source>
+        <translation>連結を取り消す</translation>
+    </message>
+    <message>
+        <source>Cancelled</source>
+        <translation>キャンセル済み</translation>
+    </message>
+    <message>
+        <source>Cancelled job {job_id}.</source>
+        <translation>ジョブ {job_id} をキャンセルしました。</translation>
+    </message>
+    <message>
+        <source>Candidate Actions</source>
+        <translation>候補操作</translation>
+    </message>
+    <message>
+        <source>Cannot Install</source>
+        <translation>インストールできません</translation>
+    </message>
+    <message>
+        <source>Cannot delete '%s' (builtin or missing).</source>
+        <translation>'%s' は削除できません (組み込み、または見つかりません)。</translation>
+    </message>
+    <message>
+        <source>Cannot group these balloons. The original layers have been kept.</source>
+        <translation>このフキダシはまとめられません。元のレイヤーは保持されています。</translation>
+    </message>
+    <message>
+        <source>Cannot save empty prompt snippet</source>
+        <translation>空のプロンプトスニペットは保存できません</translation>
+    </message>
+    <message>
+        <source>Cannot save empty prompt.</source>
+        <translation>空のプロンプトは保存できません。</translation>
+    </message>
+    <message>
+        <source>Cannot save prompt without components</source>
+        <translation>コンポーネントがないためプロンプトを保存できません</translation>
+    </message>
+    <message>
+        <source>Canvas</source>
+        <translation>キャンバス</translation>
+    </message>
+    <message>
+        <source>Canvas &amp;Size...</source>
+        <translation>キャンバスサイズ...</translation>
+    </message>
+    <message>
+        <source>Canvas Assistant(incomplete)</source>
+        <translation>キャンバスアシスタント（未完成）</translation>
+    </message>
+    <message>
+        <source>Canvas Presets</source>
+        <translation>キャンバスプリセット</translation>
+    </message>
+    <message>
+        <source>Canvas Resize</source>
+        <translation>キャンバスのサイズ変更</translation>
+    </message>
+    <message>
+        <source>Canvas Settings</source>
+        <translation>キャンバス設定</translation>
+    </message>
+    <message>
+        <source>Canvas Size</source>
+        <translation>キャンバスサイズ</translation>
+    </message>
+    <message>
+        <source>Canvas composite is not available.</source>
+        <translation>キャンバス合成は利用できません。</translation>
+    </message>
+    <message>
+        <source>Canvas flipped</source>
+        <translation>キャンバスを反転しました</translation>
+    </message>
+    <message>
+        <source>Canvas flipped horizontally</source>
+        <translation>キャンバスを左右反転しました</translation>
+    </message>
+    <message>
+        <source>Canvas flipped vertically</source>
+        <translation>キャンバスを上下反転しました</translation>
+    </message>
+    <message>
+        <source>Canvas insert failed.</source>
+        <translation>キャンバスへの挿入に失敗しました。</translation>
+    </message>
+    <message>
+        <source>Canvas rotated 180°</source>
+        <translation>キャンバスを180°回転しました</translation>
+    </message>
+    <message>
+        <source>Canvas rotated 90° clockwise</source>
+        <translation>キャンバスを時計回りに90°回転しました</translation>
+    </message>
+    <message>
+        <source>Canvas rotated 90° counter-clockwise</source>
+        <translation>キャンバスを反時計回りに90°回転しました</translation>
+    </message>
+    <message>
+        <source>Canvas service is not available.</source>
+        <translation>キャンバスサービスが利用できません。</translation>
+    </message>
+    <message>
+        <source>Canvas size unavailable.</source>
+        <translation>キャンバスサイズが取得できません。</translation>
+    </message>
+    <message>
+        <source>Canvas text object placement and editing tool</source>
+        <translation>テキストオブジェクトをキャンバス上で配置・編集するためのツール</translation>
+    </message>
+    <message>
+        <source>Catalog</source>
+        <translation>カタログ</translation>
+    </message>
+    <message>
+        <source>Category</source>
+        <translation>カテゴリ</translation>
+    </message>
+    <message>
+        <source>Category '%s' already exists.</source>
+        <translation>カテゴリ '%s' はすでに存在します。</translation>
+    </message>
+    <message>
+        <source>Category name:</source>
+        <translation>カテゴリ名:</translation>
+    </message>
+    <message>
+        <source>Category...</source>
+        <translation>カテゴリ...</translation>
+    </message>
+    <message>
+        <source>Category:</source>
+        <translation>カテゴリ:</translation>
+    </message>
+    <message>
+        <source>Cell Size</source>
+        <translation>セルの大きさ</translation>
+    </message>
+    <message>
+        <source>Center</source>
+        <translation>中央</translation>
+    </message>
+    <message>
+        <source>Center X</source>
+        <translation>中心 X</translation>
+    </message>
+    <message>
+        <source>Center Y</source>
+        <translation>中心 Y</translation>
+    </message>
+    <message>
+        <source>Center cross</source>
+        <translation>中心十字</translation>
+    </message>
+    <message>
+        <source>Center in panel</source>
+        <translation>コマの中央へ移動</translation>
+    </message>
+    <message>
+        <source>Center marks</source>
+        <translation>センタートンボ</translation>
+    </message>
+    <message>
+        <source>Centre X offset ratio</source>
+        <translation>中心Xの移動比率</translation>
+    </message>
+    <message>
+        <source>Centre Y offset ratio</source>
+        <translation>中心Yの移動比率</translation>
+    </message>
+    <message>
+        <source>Change Binding - {label}</source>
+        <translation>バインドを変更 - {label}</translation>
+    </message>
+    <message>
+        <source>Change Gateway icon</source>
+        <translation>Gateway アイコンを変更</translation>
+    </message>
+    <message>
+        <source>Change Shortcut - {label}</source>
+        <translation>ショートカットを変更 - {label}</translation>
+    </message>
+    <message>
+        <source>Change boundary slope</source>
+        <translation>境界の傾きを変更</translation>
+    </message>
+    <message>
+        <source>Change icon</source>
+        <translation>アイコンを変更</translation>
+    </message>
+    <message>
+        <source>Change panel gutter</source>
+        <translation>コマ間隔を変更</translation>
+    </message>
+    <message>
+        <source>Change ratio</source>
+        <translation>比率変更</translation>
+    </message>
+    <message>
+        <source>Change template slope</source>
+        <translation>全体の傾きを変更</translation>
+    </message>
+    <message>
+        <source>Changed Gateway icon for '%s'.</source>
+        <translation>'%s' の Gateway アイコンを変更しました。</translation>
+    </message>
+    <message>
+        <source>Change…</source>
+        <translation>変更…</translation>
+    </message>
+    <message>
+        <source>Changing the binding does not reorder pages</source>
+        <translation>綴じ方向を変えてもページの並び順は変わりません</translation>
+    </message>
+    <message>
+        <source>Channels</source>
+        <translation>チャンネル</translation>
+    </message>
+    <message>
+        <source>Channels of the active layer; alpha channels store selections.</source>
+        <translation>現在のレイヤーの成分を編集します。αチャンネルには選択範囲を保存できます。</translation>
+    </message>
+    <message>
+        <source>Chapter {number}</source>
+        <translation>第 {number} 章</translation>
+    </message>
+    <message>
+        <source>Chapters / pages</source>
+        <translation>章 / ページ</translation>
+    </message>
+    <message>
+        <source>Char Spacing</source>
+        <translation>文字詰め</translation>
+    </message>
+    <message>
+        <source>Character distribution width</source>
+        <translation>字取り幅</translation>
+    </message>
+    <message>
+        <source>Character style</source>
+        <translation>文字スタイル</translation>
+    </message>
+    <message>
+        <source>Characters</source>
+        <translation>文字数</translation>
+    </message>
+    <message>
+        <source>Check links</source>
+        <translation>リンクを検査</translation>
+    </message>
+    <message>
+        <source>Check the numbered frame order before linking.</source>
+        <translation>番号順に本文が流れます。順番を確認して連結してください。</translation>
+    </message>
+    <message>
+        <source>Check the platform's current requirements before publishing.</source>
+        <translation>投稿前に各プラットフォームの最新の投稿条件を確認してください。</translation>
+    </message>
+    <message>
+        <source>Checking saved server URLs…</source>
+        <translation>保存済みの接続先を確認しています…</translation>
+    </message>
+    <message>
+        <source>Checkpoint</source>
+        <translation>チェックポイント</translation>
+    </message>
+    <message>
+        <source>Checks</source>
+        <translation>チェック</translation>
+    </message>
+    <message>
+        <source>Choices</source>
+        <translation>選択肢</translation>
+    </message>
+    <message>
+        <source>Choose CMYK Profile</source>
+        <translation>CMYK プロファイルを選択</translation>
+    </message>
+    <message>
+        <source>Choose Output Folder</source>
+        <translation>出力フォルダーを選択</translation>
+    </message>
+    <message>
+        <source>Choose Proof &amp;Profile...</source>
+        <translation>プルーフ用プロファイルを選択(&amp;P)...</translation>
+    </message>
+    <message>
+        <source>Choose Proof Profile</source>
+        <translation>プルーフ用プロファイルを選択</translation>
+    </message>
+    <message>
+        <source>Choose a CMYK ICC profile to create a CMYK document.</source>
+        <translation>CMYK文書の作成に使用するCMYK ICCプロファイルを選択してください。</translation>
+    </message>
+    <message>
+        <source>Choose a ComfyUI server configured in Preferences.</source>
+        <translation>Preferences で設定した ComfyUI サーバーを選択します。</translation>
+    </message>
+    <message>
+        <source>Choose a destination folder.</source>
+        <translation>出力先フォルダーを選んでください。</translation>
+    </message>
+    <message>
+        <source>Choose a drawing layer in this panel first.</source>
+        <translation>このコマの描画先を一度指定してください。</translation>
+    </message>
+    <message>
+        <source>Choose a folder</source>
+        <translation>フォルダーを選択</translation>
+    </message>
+    <message>
+        <source>Choose color</source>
+        <translation>色を選択</translation>
+    </message>
+    <message>
+        <source>Choose icon</source>
+        <translation>アイコンを選択</translation>
+    </message>
+    <message>
+        <source>Choose icon...</source>
+        <translation>アイコンを選択...</translation>
+    </message>
+    <message>
+        <source>Choose preview</source>
+        <translation>プレビューを選択</translation>
+    </message>
+    <message>
+        <source>Choose preview...</source>
+        <translation>プレビューを選択...</translation>
+    </message>
+    <message>
+        <source>Choose the file</source>
+        <translation>ファイルを選択</translation>
+    </message>
+    <message>
+        <source>Choose the mouse gesture used to open the canvas context menu.</source>
+        <translation>キャンバスのコンテキストメニューを開くためのマウス操作を選択します。</translation>
+    </message>
+    <message>
+        <source>Choose the mouse gesture used to pan the canvas.</source>
+        <translation>キャンバスをパンするためのマウス操作を選択します。</translation>
+    </message>
+    <message>
+        <source>Choose the package folder</source>
+        <translation>パッケージフォルダーを選択</translation>
+    </message>
+    <message>
+        <source>Choose the printing condition specified by your printer; region alone is not enough.</source>
+        <translation>印刷会社が指定する印刷条件に合わせて選んでください。地域だけでは決まりません。</translation>
+    </message>
+    <message>
+        <source>Choose which ComfyUI server runs this preset. Local / External are configured in Preferences; Custom URL... lets you pin a one-off endpoint.</source>
+        <translation>このプリセットを実行する ComfyUI サーバーを選択します。ローカル / 外部は Preferences で設定し、カスタム URL... では一時的な endpoint を固定できます。</translation>
+    </message>
+    <message>
+        <source>Choose which Preferences-configured ComfyUI server runs this preset.</source>
+        <translation>このプリセットを実行する Preferences 登録済み ComfyUI サーバーを選択します。</translation>
+    </message>
+    <message>
+        <source>Circle</source>
+        <translation>白丸</translation>
+    </message>
+    <message>
+        <source>Class</source>
+        <translation>分類</translation>
+    </message>
+    <message>
+        <source>Cleanup of older API key data could not be completed. The remaining files were kept. Review your API key settings before restarting the app to retry.</source>
+        <translation>以前のAPIキーデータの整理を完了できませんでした。残ったファイルは保持しています。APIキーの設定を確認してからアプリを再起動し、再試行してください。</translation>
+    </message>
+    <message>
+        <source>Clear</source>
+        <translation>クリア</translation>
+    </message>
+    <message>
+        <source>Clear All</source>
+        <translation>すべて消去</translation>
+    </message>
+    <message>
+        <source>Clear All Guides</source>
+        <translation>ガイドをすべて消去</translation>
+    </message>
+    <message>
+        <source>Clear Completed</source>
+        <translation>完了済みをクリア</translation>
+    </message>
+    <message>
+        <source>Clear Finished</source>
+        <translation>完了分を消去</translation>
+    </message>
+    <message>
+        <source>Clear Recent</source>
+        <translation>最近使った項目をクリア</translation>
+    </message>
+    <message>
+        <source>Clear binding</source>
+        <translation>バインドを解除</translation>
+    </message>
+    <message>
+        <source>Clear components</source>
+        <translation>コンポーネントをクリア</translation>
+    </message>
+    <message>
+        <source>Clear style</source>
+        <translation>書式を解除</translation>
+    </message>
+    <message>
+        <source>Clear style overrides</source>
+        <translation>書式の上書きを解除</translation>
+    </message>
+    <message>
+        <source>Clear tag</source>
+        <translation>タグを解除</translation>
+    </message>
+    <message>
+        <source>Cleared prompt and attachments</source>
+        <translation>プロンプトと添付をクリアしました</translation>
+    </message>
+    <message>
+        <source>Cleared prompts.</source>
+        <translation>プロンプトをクリアしました。</translation>
+    </message>
+    <message>
+        <source>Cleared {count} finished jobs</source>
+        <translation>完了したジョブを {count} 件消去しました</translation>
+    </message>
+    <message>
+        <source>Click Behavior</source>
+        <translation>クリック時の動作</translation>
+    </message>
+    <message>
+        <source>Click a segment to add an anchor. Alt-click an anchor to delete. Drag anchors or handles to reshape. S: smooth, C: corner, B: break handles, M: symmetric. Esc to finish.</source>
+        <translation>線上クリックでアンカー追加、Alt+クリックで削除。アンカーやハンドルをドラッグして形状を変更できます。S: なめらか、C: 角、B: ハンドル分離、M: 対称。Escで終了します。</translation>
+    </message>
+    <message>
+        <source>Click or drag anchors and handles. Alt-click deletes an anchor.</source>
+        <translation>アンカーやハンドルをクリック・ドラッグして編集します。Alt+クリックでアンカーを削除できます。</translation>
+    </message>
+    <message>
+        <source>Click the next text frame. Esc cancels linking.</source>
+        <translation>連結先のテキスト枠をクリックしてください。Escで取り消せます。</translation>
+    </message>
+    <message>
+        <source>Click to add a point. Drag to adjust. Right-click or Delete removes an interior point.</source>
+        <translation>クリックで制御点を追加、ドラッグで調整。右クリックまたはDeleteキーで途中の制御点を削除します。</translation>
+    </message>
+    <message>
+        <source>Click-based vector path tool</source>
+        <translation>クリック操作でパスを作成するベクターツール</translation>
+    </message>
+    <message>
+        <source>Clip region</source>
+        <translation>クリップ対象</translation>
+    </message>
+    <message>
+        <source>Clip selected content</source>
+        <translation>選択した内容を枠内に収める</translation>
+    </message>
+    <message>
+        <source>Clipboard</source>
+        <translation>クリップボード</translation>
+    </message>
+    <message>
+        <source>Closing punctuation</source>
+        <translation>閉じ括弧</translation>
+    </message>
+    <message>
+        <source>Closing punctuation at line end</source>
+        <translation>行末の閉じ約物</translation>
+    </message>
+    <message>
+        <source>Colophon</source>
+        <translation>奥付</translation>
+    </message>
+    <message>
+        <source>Color</source>
+        <translation>色</translation>
+    </message>
+    <message>
+        <source>Color Burn</source>
+        <translation>焼き込みカラー</translation>
+    </message>
+    <message>
+        <source>Color Dodge</source>
+        <translation>覆い焼きカラー</translation>
+    </message>
+    <message>
+        <source>Color Manager</source>
+        <translation>カラーマネージャー</translation>
+    </message>
+    <message>
+        <source>Color Mixing</source>
+        <translation>下地との混色</translation>
+    </message>
+    <message>
+        <source>Color Mode</source>
+        <translation>カラーモード</translation>
+    </message>
+    <message>
+        <source>Color Overlay</source>
+        <translation>カラーオーバーレイ</translation>
+    </message>
+    <message>
+        <source>Color Stops</source>
+        <translation>中間色</translation>
+    </message>
+    <message>
+        <source>Color Strength</source>
+        <translation>カラー強度</translation>
+    </message>
+    <message>
+        <source>Color Theme</source>
+        <translation>カラーテーマ</translation>
+    </message>
+    <message>
+        <source>Color Tolerance</source>
+        <translation>色許容値</translation>
+    </message>
+    <message>
+        <source>Color Variation</source>
+        <translation>色のばらつき</translation>
+    </message>
+    <message>
+        <source>Color picker and palette management panel</source>
+        <translation>カラーピッカーとパレット管理パネル</translation>
+    </message>
+    <message>
+        <source>Color tag</source>
+        <translation>色タグ</translation>
+    </message>
+    <message>
+        <source>Colour</source>
+        <translation>カラー</translation>
+    </message>
+    <message>
+        <source>Colour Profile</source>
+        <translation>カラープロファイル</translation>
+    </message>
+    <message>
+        <source>Colour bar</source>
+        <translation>カラーバー</translation>
+    </message>
+    <message>
+        <source>Colour mode</source>
+        <translation>カラーモード</translation>
+    </message>
+    <message>
+        <source>Colour profile assigned: {name}</source>
+        <translation>カラープロファイルを割り当てました: {name}</translation>
+    </message>
+    <message>
+        <source>Colour profile removed (treated as sRGB)</source>
+        <translation>カラープロファイルを解除しました (sRGB とみなす)</translation>
+    </message>
+    <message>
+        <source>Column flow</source>
+        <translation>縦書きの列方向</translation>
+    </message>
+    <message>
+        <source>Column gap</source>
+        <translation>段間</translation>
+    </message>
+    <message>
+        <source>Column gutter</source>
+        <translation>列間隔</translation>
+    </message>
+    <message>
+        <source>Columns</source>
+        <translation>縦の分割数</translation>
+    </message>
+    <message>
+        <source>Combinatorial</source>
+        <translation>組み合わせ列挙</translation>
+    </message>
+    <message>
+        <source>Combine Mode</source>
+        <translation>合成モード</translation>
+    </message>
+    <message>
+        <source>Combine Selected</source>
+        <translation>選択候補を合成</translation>
+    </message>
+    <message>
+        <source>Combine the multi-selected candidates (Ctrl+click rows) into one mask using the Mode</source>
+        <translation>複数選択した候補 (行を Ctrl+クリック) を Mode の方式で 1 つのマスクに合成</translation>
+    </message>
+    <message>
+        <source>ComfyUI</source>
+        <translation>ComfyUI</translation>
+    </message>
+    <message>
+        <source>ComfyUI Connection</source>
+        <translation>ComfyUI 接続</translation>
+    </message>
+    <message>
+        <source>ComfyUI Folders</source>
+        <translation>ComfyUI Folders (フォルダ)</translation>
+    </message>
+    <message>
+        <source>ComfyUI Integration</source>
+        <translation>ComfyUI 連携</translation>
+    </message>
+    <message>
+        <source>ComfyUI Panel</source>
+        <translation>ComfyUI パネル</translation>
+    </message>
+    <message>
+        <source>ComfyUI did not finish loading. Check the server connection and reload nodes.</source>
+        <translation>ComfyUIの読み込みがタイムアウトしました。サーバーの接続状態を確認して、ノードを再読み込みしてください。</translation>
+    </message>
+    <message>
+        <source>ComfyUI error: %s</source>
+        <translation>ComfyUIエラー: %s</translation>
+    </message>
+    <message>
+        <source>ComfyUI exited during startup. See the ComfyUI console.</source>
+        <translation>ComfyUIが起動途中で終了しました。ComfyUIのコンソールを確認してください。</translation>
+    </message>
+    <message>
+        <source>ComfyUI exited during startup. See the ComfyUI startup log.</source>
+        <translation>ComfyUIが起動途中で終了しました。ComfyUIの起動ログを確認してください。</translation>
+    </message>
+    <message>
+        <source>ComfyUI folder containing main.py</source>
+        <translation>main.pyがあるComfyUIフォルダ</translation>
+    </message>
+    <message>
+        <source>ComfyUI integration panel for AI image generation</source>
+        <translation>AI画像生成のための ComfyUI 連携パネル</translation>
+    </message>
+    <message>
+        <source>ComfyUI is already running.</source>
+        <translation>ComfyUIはすでに起動しています。</translation>
+    </message>
+    <message>
+        <source>ComfyUI is ready.</source>
+        <translation>ComfyUIの起動が完了しました。</translation>
+    </message>
+    <message>
+        <source>ComfyUI page could not be loaded. Check the server URL.</source>
+        <translation>ComfyUIのページを読み込めませんでした。サーバーURLを確認してください。</translation>
+    </message>
+    <message>
+        <source>ComfyUI startup failed: %s</source>
+        <translation>ComfyUIの起動に失敗しました: %s</translation>
+    </message>
+    <message>
+        <source>ComfyUI startup timed out. See the ComfyUI console.</source>
+        <translation>ComfyUIの起動確認がタイムアウトしました。ComfyUIのコンソールを確認してください。</translation>
+    </message>
+    <message>
+        <source>ComfyUI startup timed out. See the ComfyUI startup log.</source>
+        <translation>ComfyUIの起動確認がタイムアウトしました。ComfyUIの起動ログを確認してください。</translation>
+    </message>
+    <message>
+        <source>Comic</source>
+        <translation>コミック</translation>
+    </message>
+    <message>
+        <source>Comic &amp;Book Settings...</source>
+        <translation>漫画作品の設定(&amp;B)...</translation>
+    </message>
+    <message>
+        <source>Comic Book Archive (*.cbz)</source>
+        <translation>コミックブックアーカイブ (*.cbz)</translation>
+    </message>
+    <message>
+        <source>Comic Book Settings</source>
+        <translation>漫画作品の設定</translation>
+    </message>
+    <message>
+        <source>Comic Project</source>
+        <translation>コミックプロジェクト</translation>
+    </message>
+    <message>
+        <source>Comic Project Panel</source>
+        <translation>コミックプロジェクトパネル</translation>
+    </message>
+    <message>
+        <source>Comic Workflow</source>
+        <translation>コミックワークフロー</translation>
+    </message>
+    <message>
+        <source>Comic Workflow Panel</source>
+        <translation>コミックワークフローパネル</translation>
+    </message>
+    <message>
+        <source>Comic assets could not be loaded. Reload to try again.</source>
+        <translation>漫画素材を読み込めませんでした。再読込してやり直してください。</translation>
+    </message>
+    <message>
+        <source>Common Properties</source>
+        <translation>共通プロパティ</translation>
+    </message>
+    <message>
+        <source>Compatibility</source>
+        <translation>互換性</translation>
+    </message>
+    <message>
+        <source>Completed</source>
+        <translation>完了</translation>
+    </message>
+    <message>
+        <source>Completed {completed} / {total}</source>
+        <translation>完了 {completed} / {total}</translation>
+    </message>
+    <message>
+        <source>Component</source>
+        <translation>コンポーネント</translation>
+    </message>
+    <message>
+        <source>Component type</source>
+        <translation>コンポーネント種別</translation>
+    </message>
+    <message>
+        <source>Components</source>
+        <translation>コンポーネント</translation>
+    </message>
+    <message>
+        <source>Compose</source>
+        <translation>作成</translation>
+    </message>
+    <message>
+        <source>Compose prompts, manage a library, and submit to LLM.</source>
+        <translation>プロンプトを組み立て、ライブラリを管理し、LLM に送信します。</translation>
+    </message>
+    <message>
+        <source>Composites the display at view resolution so vector and text layers stay sharp when zoomed in, regardless of layer order.</source>
+        <translation>表示解像度で合成し、拡大してもベクターレイヤーとテキストレイヤーをレイヤー順に関係なくくっきり表示します。</translation>
+    </message>
+    <message>
+        <source>Composition Guides</source>
+        <translation>構図ガイド</translation>
+    </message>
+    <message>
+        <source>Composition Guides...</source>
+        <translation>構図ガイド...</translation>
+    </message>
+    <message>
+        <source>Compress spaces</source>
+        <translation>アキを詰める</translation>
+    </message>
+    <message>
+        <source>Compression</source>
+        <translation>圧縮</translation>
+    </message>
+    <message>
+        <source>Compression level:</source>
+        <translation>圧縮レベル:</translation>
+    </message>
+    <message>
+        <source>Compression quality</source>
+        <translation>圧縮品質</translation>
+    </message>
+    <message>
+        <source>Compression:</source>
+        <translation>圧縮:</translation>
+    </message>
+    <message>
+        <source>Configure GPT Image 2 jobs</source>
+        <translation>GPT Image 2 ジョブを設定します</translation>
+    </message>
+    <message>
+        <source>Configure NanoBanana Gemini jobs</source>
+        <translation>NanoBanana Gemini ジョブを設定します。</translation>
+    </message>
+    <message>
+        <source>Configure effect…</source>
+        <translation>エフェクトとして設定…</translation>
+    </message>
+    <message>
+        <source>Confirm</source>
+        <translation>確定</translation>
+    </message>
+    <message>
+        <source>Confirm Remove</source>
+        <translation>削除の確認</translation>
+    </message>
+    <message>
+        <source>Confirm Rollback</source>
+        <translation>ロールバックの確認</translation>
+    </message>
+    <message>
+        <source>Confirm and paint this edge</source>
+        <translation>確定してこの辺を描く</translation>
+    </message>
+    <message>
+        <source>Confirm or cancel the current preview first.</source>
+        <translation>プレビューを確定または取消してから操作してください。</translation>
+    </message>
+    <message>
+        <source>Confirmation</source>
+        <translation>確認</translation>
+    </message>
+    <message>
+        <source>Conflict</source>
+        <translation>競合</translation>
+    </message>
+    <message>
+        <source>Conflicts only</source>
+        <translation>競合のみ</translation>
+    </message>
+    <message>
+        <source>Conflicts with: {labels}</source>
+        <translation>競合対象: {labels}</translation>
+    </message>
+    <message>
+        <source>Connect</source>
+        <translation>接続</translation>
+    </message>
+    <message>
+        <source>Connect ComfyUI to apply backend metadata (parameter constraints will load on next workflow open).</source>
+        <translation>backend metadata を適用するには ComfyUI に接続してください (parameter 制約は次回 workflow を開いたときに読み込まれます)。</translation>
+    </message>
+    <message>
+        <source>Connect to internet services</source>
+        <translation>インターネットサービスに接続します</translation>
+    </message>
+    <message>
+        <source>Connected</source>
+        <translation>接続済み</translation>
+    </message>
+    <message>
+        <source>Connected to ComfyUI</source>
+        <translation>ComfyUI に接続済み</translation>
+    </message>
+    <message>
+        <source>Connected to ComfyUI ({identifier})</source>
+        <translation>ComfyUI に接続済み ({identifier})</translation>
+    </message>
+    <message>
+        <source>Connecting to ComfyUI…</source>
+        <translation>ComfyUIに接続中…</translation>
+    </message>
+    <message>
+        <source>Connecting...</source>
+        <translation>接続中...</translation>
+    </message>
+    <message>
+        <source>Connection</source>
+        <translation>接続</translation>
+    </message>
+    <message>
+        <source>Connection Error</source>
+        <translation>接続エラー</translation>
+    </message>
+    <message>
+        <source>Connection Settings</source>
+        <translation>接続設定</translation>
+    </message>
+    <message>
+        <source>Connection Status</source>
+        <translation>接続状態</translation>
+    </message>
+    <message>
+        <source>Connection failed</source>
+        <translation>接続に失敗しました</translation>
+    </message>
+    <message>
+        <source>Connection failed: {error}</source>
+        <translation>接続に失敗しました: {error}</translation>
+    </message>
+    <message>
+        <source>Connection lost{detail}</source>
+        <translation>接続が切断されました{detail}</translation>
+    </message>
+    <message>
+        <source>Connection settings saved.</source>
+        <translation>接続設定を保存しました。</translation>
+    </message>
+    <message>
+        <source>Connection successful!</source>
+        <translation>接続に成功しました！</translation>
+    </message>
+    <message>
+        <source>Constrain proportions</source>
+        <translation>縦横比を固定</translation>
+    </message>
+    <message>
+        <source>Content to repair</source>
+        <translation>手直しする内容</translation>
+    </message>
+    <message>
+        <source>Contents</source>
+        <translation>内容</translation>
+    </message>
+    <message>
+        <source>Contextual</source>
+        <translation>前後の文字に応じる</translation>
+    </message>
+    <message>
+        <source>Contiguous</source>
+        <translation>隣接のみ</translation>
+    </message>
+    <message>
+        <source>Continuous contour (standard)</source>
+        <translation>輪郭を一体化 (標準)</translation>
+    </message>
+    <message>
+        <source>Continuous contour preview: drag the root and tip, then confirm.{note}</source>
+        <translation>輪郭を一体化してプレビュー中。付け根と先端をドラッグし、「確定して変換」を押してください。{note}</translation>
+    </message>
+    <message>
+        <source>Continuous contour preview: drag the root, middle and tip, then confirm.{note}</source>
+        <translation>輪郭を一体化してプレビュー中。付け根・中間・先端をドラッグし、「確定して変換」を押してください。{note}</translation>
+    </message>
+    <message>
+        <source>Continuous generation</source>
+        <translation>連続生成</translation>
+    </message>
+    <message>
+        <source>Contour</source>
+        <translation>輪郭</translation>
+    </message>
+    <message>
+        <source>Contour smoothing</source>
+        <translation>輪郭のなめらかさ</translation>
+    </message>
+    <message>
+        <source>Contract</source>
+        <translation>縮小</translation>
+    </message>
+    <message>
+        <source>Contrast</source>
+        <translation>コントラスト</translation>
+    </message>
+    <message>
+        <source>Control seed behavior after generation</source>
+        <translation>生成後の seed 挙動を制御</translation>
+    </message>
+    <message>
+        <source>Conversion {src} -&gt; {dst}: {state}</source>
+        <translation>変換 {src} -&gt; {dst}: {state}</translation>
+    </message>
+    <message>
+        <source>Convert</source>
+        <translation>変換</translation>
+    </message>
+    <message>
+        <source>Convert Basic Shape</source>
+        <translation>基本図形に変換</translation>
+    </message>
+    <message>
+        <source>Convert Document to CMYK</source>
+        <translation>文書をCMYKへ変換</translation>
+    </message>
+    <message>
+        <source>Convert Text to Outlines</source>
+        <translation>テキストのアウトライン化</translation>
+    </message>
+    <message>
+        <source>Convert all pages to editable CMYK with a CMYK ICC profile.</source>
+        <translation>CMYK ICCプロファイルを使い、すべてのページを編集可能なCMYKへ変換します。</translation>
+    </message>
+    <message>
+        <source>Convert panel</source>
+        <translation>コマ枠レイヤーに変換</translation>
+    </message>
+    <message>
+        <source>Convert the text objects using this font on the current page to outlines? They stop being editable text (searchability is lost); the original text is kept for restore.</source>
+        <translation>現在のページでこのフォントを使うテキストオブジェクトをアウトライン化しますか? 編集可能なテキストではなくなります (検索性は失われます)。元のテキストは復元用に保持されます。</translation>
+    </message>
+    <message>
+        <source>Convert to Outlines</source>
+        <translation>アウトライン化</translation>
+    </message>
+    <message>
+        <source>Convert to Outlines...</source>
+        <translation>アウトライン化...</translation>
+    </message>
+    <message>
+        <source>Convert to Vector</source>
+        <translation>ベクターオブジェクトに変換</translation>
+    </message>
+    <message>
+        <source>Convert to sRGB and embed</source>
+        <translation>sRGB に変換して埋め込む</translation>
+    </message>
+    <message>
+        <source>Convert to:</source>
+        <translation>変換先:</translation>
+    </message>
+    <message>
+        <source>Converted to CMYK. Undo restores the previous mode.</source>
+        <translation>CMYKへ変換しました。元に戻す操作で以前のモードに戻せます。</translation>
+    </message>
+    <message>
+        <source>Converted {count} text object(s) to outlines.</source>
+        <translation>テキストオブジェクト {count} 件をアウトライン化しました。</translation>
+    </message>
+    <message>
+        <source>Converted {} basic shape(s).</source>
+        <translation>{} 個の基本図形を変換しました。</translation>
+    </message>
+    <message>
+        <source>Copy</source>
+        <translation>コピー</translation>
+    </message>
+    <message>
+        <source>Copy everything except the mask (background) to a new layer</source>
+        <translation>マスク以外 (背景) を新規レイヤーに複製</translation>
+    </message>
+    <message>
+        <source>Copy full prompt</source>
+        <translation>プロンプト全文をコピー</translation>
+    </message>
+    <message>
+        <source>Copy into package</source>
+        <translation>パッケージにコピー</translation>
+    </message>
+    <message>
+        <source>Copy the masked area (foreground) to a new layer</source>
+        <translation>マスク部分 (前景) を新規レイヤーに複製</translation>
+    </message>
+    <message>
+        <source>Copy to Nodes</source>
+        <translation>ノードにコピー</translation>
+    </message>
+    <message>
+        <source>Copy {copy} / external {external} / embedded {embed} / missing {missing}</source>
+        <translation>コピー {copy} / 外部 {external} / 埋め込み {embed} / 欠落 {missing}</translation>
+    </message>
+    <message>
+        <source>Could not access presets. The previous library was kept. Check permissions and reload.</source>
+        <translation>プリセットを読み書きできません。元のライブラリは保持しました。権限を確認して再読込してください。</translation>
+    </message>
+    <message>
+        <source>Could not apply formatting. Reselect the balloon and try again.</source>
+        <translation>書式を反映できませんでした。フキダシを選び直してやり直してください。</translation>
+    </message>
+    <message>
+        <source>Could not apply guides. Some pages may already have been updated.</source>
+        <translation>ガイドを適用できませんでした。一部のページはすでに更新されている可能性があります。</translation>
+    </message>
+    <message>
+        <source>Could not apply styles.</source>
+        <translation>スタイルを適用できませんでした。</translation>
+    </message>
+    <message>
+        <source>Could not apply the binding margin. Check the page format; some pages may already have been updated.</source>
+        <translation>ノド余白を適用できませんでした。判型ガイドを確認してください。一部のページはすでに更新されている可能性があります。</translation>
+    </message>
+    <message>
+        <source>Could not apply the page guides. The format must match the existing canvas size and leave a valid safe area. Some pages may already have been updated.</source>
+        <translation>判型ガイドを適用できませんでした。既存のキャンバスサイズに一致し、安全領域が残る寸法を指定してください。一部のページはすでに更新されている可能性があります。</translation>
+    </message>
+    <message>
+        <source>Could not auto-connect to ComfyUI.</source>
+        <translation>ComfyUI に自動接続できませんでした。</translation>
+    </message>
+    <message>
+        <source>Could not create the document. Check the CMYK profile and canvas size.</source>
+        <translation>文書を作成できませんでした。CMYKプロファイルとキャンバスサイズを確認してください。</translation>
+    </message>
+    <message>
+        <source>Could not export scheme: {error}</source>
+        <translation>スキームをエクスポートできませんでした: {error}</translation>
+    </message>
+    <message>
+        <source>Could not extend bleed. Select an unlocked, untransformed full-canvas RGBA raster layer and valid trim guides.</source>
+        <translation>塗り足しを延長できませんでした。ロックや変形のないキャンバス全面のRGBAラスターレイヤーと、有効な仕上がりガイドを選んでください。</translation>
+    </message>
+    <message>
+        <source>Could not import scheme: {error}</source>
+        <translation>スキームをインポートできませんでした: {error}</translation>
+    </message>
+    <message>
+        <source>Could not import: {path}</source>
+        <translation>読み込めませんでした: {path}</translation>
+    </message>
+    <message>
+        <source>Could not open the browser. Copy the page address and open it in your browser.</source>
+        <translation>ブラウザを開けませんでした。ページのアドレスをコピーしてブラウザで開いてください。</translation>
+    </message>
+    <message>
+        <source>Could not open the selected dialogues. Refresh the list and try again.</source>
+        <translation>選択したセリフを開けませんでした。一覧を更新してやり直してください。</translation>
+    </message>
+    <message>
+        <source>Could not open this dialogue. Refresh the list and try again.</source>
+        <translation>セリフを開けませんでした。一覧を更新してやり直してください。</translation>
+    </message>
+    <message>
+        <source>Could not place the pattern. Check the path, spacing and editable layer.</source>
+        <translation>模様を配置できませんでした。パス・間隔・編集対象レイヤーを確認してください。</translation>
+    </message>
+    <message>
+        <source>Could not read scheme: {error}</source>
+        <translation>スキームを読み込めませんでした: {error}</translation>
+    </message>
+    <message>
+        <source>Could not release model memory ({error}).</source>
+        <translation>モデルのメモリを解放できませんでした ({error})。</translation>
+    </message>
+    <message>
+        <source>Could not save sidebar settings: %s</source>
+        <translation>サイドバー設定を保存できませんでした: %s</translation>
+    </message>
+    <message>
+        <source>Could not save the cover template.</source>
+        <translation>表紙テンプレートを保存できませんでした。</translation>
+    </message>
+    <message>
+        <source>Could not save the format preset.</source>
+        <translation>判型プリセットを保存できませんでした。</translation>
+    </message>
+    <message>
+        <source>Could not save the guide template.</source>
+        <translation>ガイドテンプレートを保存できませんでした。</translation>
+    </message>
+    <message>
+        <source>Could not update speaker styles. Check the selection and locked layers.</source>
+        <translation>話者書式を更新できませんでした。選択状態とレイヤーのロックを確認してください。</translation>
+    </message>
+    <message>
+        <source>Could not update the AI Effect layer.</source>
+        <translation>AI Effectレイヤーを更新できませんでした。</translation>
+    </message>
+    <message>
+        <source>Cover</source>
+        <translation>表紙</translation>
+    </message>
+    <message>
+        <source>Cover Template</source>
+        <translation>表紙テンプレート</translation>
+    </message>
+    <message>
+        <source>Cover Template...</source>
+        <translation>表紙テンプレート...</translation>
+    </message>
+    <message>
+        <source>Cover panel</source>
+        <translation>コマを埋める</translation>
+    </message>
+    <message>
+        <source>Cover:</source>
+        <translation>表紙:</translation>
+    </message>
+    <message>
+        <source>Crash recovery requires autosave. If autosave is off, unsaved changes cannot be restored after a forced quit or crash.</source>
+        <translation>クラッシュ復元には自動保存が必要です。自動保存をオフにすると、強制終了やクラッシュ後に未保存の変更を復元できません。</translation>
+    </message>
+    <message>
+        <source>Create Guides</source>
+        <translation>ガイドを作成</translation>
+    </message>
+    <message>
+        <source>Create SAM3 Mask from Layer</source>
+        <translation>レイヤーに SAM3 マスクを作成</translation>
+    </message>
+    <message>
+        <source>Create Screentone</source>
+        <translation>スクリーントーンを作成</translation>
+    </message>
+    <message>
+        <source>Create Tip</source>
+        <translation>チップを作成</translation>
+    </message>
+    <message>
+        <source>Create Tip from Selection</source>
+        <translation>選択範囲から先端を作成</translation>
+    </message>
+    <message>
+        <source>Create a balloon</source>
+        <translation>フキダシを作成</translation>
+    </message>
+    <message>
+        <source>Create from Current Page...</source>
+        <translation>現在のページから作成...</translation>
+    </message>
+    <message>
+        <source>Create margin guides</source>
+        <translation>マージンガイドを作成</translation>
+    </message>
+    <message>
+        <source>Create text object</source>
+        <translation>テキストを作成</translation>
+    </message>
+    <message>
+        <source>Create the page from a manga profile</source>
+        <translation>漫画プロファイルからページを作成する</translation>
+    </message>
+    <message>
+        <source>Created</source>
+        <translation>作成日</translation>
+    </message>
+    <message>
+        <source>Created '{title}'.</source>
+        <translation>'{title}' を作成しました。</translation>
+    </message>
+    <message>
+        <source>Creators:</source>
+        <translation>作者:</translation>
+    </message>
+    <message>
+        <source>Crop marks</source>
+        <translation>裁断マーク</translation>
+    </message>
+    <message>
+        <source>Cross</source>
+        <translation>クロス</translation>
+    </message>
+    <message>
+        <source>Ctrl + left click</source>
+        <translation>Ctrl + 左クリック</translation>
+    </message>
+    <message>
+        <source>Ctrl + left drag</source>
+        <translation>Ctrl + 左ドラッグ</translation>
+    </message>
+    <message>
+        <source>Cu&amp;t</source>
+        <translation>切り取り(&amp;T)</translation>
+    </message>
+    <message>
+        <source>Current Layer</source>
+        <translation>現在のレイヤー</translation>
+    </message>
+    <message>
+        <source>Current Page</source>
+        <translation>現在のページ</translation>
+    </message>
+    <message>
+        <source>Current black (RGB)</source>
+        <translation>従来の黒 (RGB)</translation>
+    </message>
+    <message>
+        <source>Current mode: {mode} ({width} x {height}, {layers} layer(s))</source>
+        <translation>現在のモード: {mode} ({width} x {height}、{layers} レイヤー)</translation>
+    </message>
+    <message>
+        <source>Current page</source>
+        <translation>現在のページ</translation>
+    </message>
+    <message>
+        <source>Current: {value}</source>
+        <translation>現在: {value}</translation>
+    </message>
+    <message>
+        <source>Current: {width} x {height} px at {dpi} dpi</source>
+        <translation>現在: {width} x {height} px / {dpi} dpi</translation>
+    </message>
+    <message>
+        <source>Curve</source>
+        <translation>カーブ</translation>
+    </message>
+    <message>
+        <source>Curve: {gamma}; minimum: {minimum}%</source>
+        <translation>カーブ: {gamma} / 下限: {minimum}%</translation>
+    </message>
+    <message>
+        <source>Curves</source>
+        <translation>トーンカーブ</translation>
+    </message>
+    <message>
+        <source>Custom</source>
+        <translation>カスタム</translation>
+    </message>
+    <message>
+        <source>Custom Color</source>
+        <translation>カスタムカラー</translation>
+    </message>
+    <message>
+        <source>Custom Folio</source>
+        <translation>カスタムノンブル</translation>
+    </message>
+    <message>
+        <source>Custom Font Folders</source>
+        <translation>カスタムフォントフォルダー</translation>
+    </message>
+    <message>
+        <source>Custom UI (ComfyUI)</source>
+        <translation>独自UIあり (ComfyUI)</translation>
+    </message>
+    <message>
+        <source>Custom URL...</source>
+        <translation>カスタム URL...</translation>
+    </message>
+    <message>
+        <source>Custom line breaking and spacing</source>
+        <translation>禁則・アキの詳細設定</translation>
+    </message>
+    <message>
+        <source>Custom...</source>
+        <translation>カスタム...</translation>
+    </message>
+    <message>
+        <source>Cut</source>
+        <translation>切り取り</translation>
+    </message>
+    <message>
+        <source>Cut each multi-selected candidate to its own layer inside a new layer group</source>
+        <translation>複数選択した候補をそれぞれレイヤー化して新規レイヤーグループにまとめる</translation>
+    </message>
+    <message>
+        <source>Cut the masked area to a new layer</source>
+        <translation>マスク部分を切り取って新規レイヤーへ</translation>
+    </message>
+    <message>
+        <source>Cyan</source>
+        <translation>シアン</translation>
+    </message>
+    <message>
+        <source>DPI</source>
+        <translation>DPI</translation>
+    </message>
+    <message>
+        <source>DPI updated to {dpi}</source>
+        <translation>DPI を {dpi} に更新しました</translation>
+    </message>
+    <message>
+        <source>DPI:</source>
+        <translation>DPI:</translation>
+    </message>
+    <message>
+        <source>Dark</source>
+        <translation>ダーク</translation>
+    </message>
+    <message>
+        <source>Darken</source>
+        <translation>比較(暗)</translation>
+    </message>
+    <message>
+        <source>Darker Color</source>
+        <translation>カラー比較(暗)</translation>
+    </message>
+    <message>
+        <source>Date and time</source>
+        <translation>日時</translation>
+    </message>
+    <message>
+        <source>Decagon</source>
+        <translation>十角形</translation>
+    </message>
+    <message>
+        <source>Default</source>
+        <translation>既定値</translation>
+    </message>
+    <message>
+        <source>Default Foreground/Background C&amp;olors</source>
+        <translation>描画色と背景色を初期設定に戻す(&amp;O)</translation>
+    </message>
+    <message>
+        <source>Default Format:</source>
+        <translation>既定の形式:</translation>
+    </message>
+    <message>
+        <source>Default colors (black / white)</source>
+        <translation>初期設定の色 (黒 / 白)</translation>
+    </message>
+    <message>
+        <source>Default font</source>
+        <translation>既定のフォント</translation>
+    </message>
+    <message>
+        <source>Default for unregistered speakers</source>
+        <translation>未登録の話者に使う既定書式</translation>
+    </message>
+    <message>
+        <source>Default style</source>
+        <translation>標準</translation>
+    </message>
+    <message>
+        <source>Deflate (ZIP)</source>
+        <translation>Deflate (ZIP)</translation>
+    </message>
+    <message>
+        <source>Delete '%s'? This cannot be undone.</source>
+        <translation>'%s' を削除しますか? この操作は元に戻せません。</translation>
+    </message>
+    <message>
+        <source>Delete '{title}'?</source>
+        <translation>'{title}' を削除しますか?</translation>
+    </message>
+    <message>
+        <source>Delete Page</source>
+        <translation>ページ削除</translation>
+    </message>
+    <message>
+        <source>Delete Record</source>
+        <translation>レコードを削除</translation>
+    </message>
+    <message>
+        <source>Delete Shape</source>
+        <translation>シェイプを削除</translation>
+    </message>
+    <message>
+        <source>Delete Template</source>
+        <translation>テンプレートの削除</translation>
+    </message>
+    <message>
+        <source>Delete Workflow</source>
+        <translation>ワークフローを削除</translation>
+    </message>
+    <message>
+        <source>Delete category</source>
+        <translation>カテゴリを削除</translation>
+    </message>
+    <message>
+        <source>Delete dialogue</source>
+        <translation>台詞を削除</translation>
+    </message>
+    <message>
+        <source>Delete failed: %s</source>
+        <translation>削除に失敗しました: %s</translation>
+    </message>
+    <message>
+        <source>Delete macro {name}?</source>
+        <translation>マクロ {name} を削除しますか?</translation>
+    </message>
+    <message>
+        <source>Delete panel</source>
+        <translation>コマ削除</translation>
+    </message>
+    <message>
+        <source>Delete panel and its content</source>
+        <translation>コマと所属する内容を削除する</translation>
+    </message>
+    <message>
+        <source>Delete panel and keep content</source>
+        <translation>コマを削除して内容を残す</translation>
+    </message>
+    <message>
+        <source>Delete preset</source>
+        <translation>プリセットを削除</translation>
+    </message>
+    <message>
+        <source>Delete prompt</source>
+        <translation>プロンプトを削除</translation>
+    </message>
+    <message>
+        <source>Delete snippet</source>
+        <translation>スニペットを削除</translation>
+    </message>
+    <message>
+        <source>Delete source</source>
+        <translation>ソースを削除</translation>
+    </message>
+    <message>
+        <source>Delete style</source>
+        <translation>登録を削除</translation>
+    </message>
+    <message>
+        <source>Delete the object</source>
+        <translation>オブジェクトを削除する</translation>
+    </message>
+    <message>
+        <source>Delete this generation record?</source>
+        <translation>この生成レコードを削除しますか?</translation>
+    </message>
+    <message>
+        <source>Delete this master definition? {count} page instance(s) stay on their pages as detached content.</source>
+        <translation>このマスター定義を削除しますか? {count} ページの instance はリンクの切れた内容としてページに残ります。</translation>
+    </message>
+    <message>
+        <source>Delete this template? This cannot be undone.</source>
+        <translation>このテンプレートを削除しますか? 削除は元に戻せません。</translation>
+    </message>
+    <message>
+        <source>Delete workflow '{name}'?</source>
+        <translation>ワークフロー '{name}' を削除しますか？</translation>
+    </message>
+    <message>
+        <source>Delete...</source>
+        <translation>削除...</translation>
+    </message>
+    <message>
+        <source>Deleted '%s'</source>
+        <translation>'%s' を削除しました</translation>
+    </message>
+    <message>
+        <source>Deleted prompt '{title}'.</source>
+        <translation>プロンプト '{title}' を削除しました。</translation>
+    </message>
+    <message>
+        <source>Deleted workflow: {name}</source>
+        <translation>ワークフローを削除しました: {name}</translation>
+    </message>
+    <message>
+        <source>Dense grids are visually thinned; snapping uses the full grid.</source>
+        <translation>密なグリッドは表示を間引きます。吸着にはすべての格子点を使います。</translation>
+    </message>
+    <message>
+        <source>Density (%)</source>
+        <translation>濃度 (%)</translation>
+    </message>
+    <message>
+        <source>Depth</source>
+        <translation>深さ</translation>
+    </message>
+    <message>
+        <source>Description</source>
+        <translation>説明</translation>
+    </message>
+    <message>
+        <source>Description:</source>
+        <translation>説明:</translation>
+    </message>
+    <message>
+        <source>Desktop Screen</source>
+        <translation>デスクトップ画面</translation>
+    </message>
+    <message>
+        <source>Destination</source>
+        <translation>割り当て先</translation>
+    </message>
+    <message>
+        <source>Destination folder:</source>
+        <translation>出力フォルダー:</translation>
+    </message>
+    <message>
+        <source>Details</source>
+        <translation>詳細</translation>
+    </message>
+    <message>
+        <source>Detect candidates failed (see log)</source>
+        <translation>候補検出に失敗しました (ログを確認してください)</translation>
+    </message>
+    <message>
+        <source>Detection</source>
+        <translation>検出</translation>
+    </message>
+    <message>
+        <source>Detection Threshold</source>
+        <translation>検出しきい値</translation>
+    </message>
+    <message>
+        <source>Diagonals</source>
+        <translation>対角線</translation>
+    </message>
+    <message>
+        <source>Dialogue editing</source>
+        <translation>セリフ一覧の編集</translation>
+    </message>
+    <message>
+        <source>Dialogues</source>
+        <translation>台詞</translation>
+    </message>
+    <message>
+        <source>Diff QA</source>
+        <translation>差分 QA</translation>
+    </message>
+    <message>
+        <source>Difference</source>
+        <translation>差の絶対値</translation>
+    </message>
+    <message>
+        <source>Diffuse</source>
+        <translation>拡散光</translation>
+    </message>
+    <message>
+        <source>Digital comic</source>
+        <translation>デジタル漫画</translation>
+    </message>
+    <message>
+        <source>Direction (degrees)</source>
+        <translation>方向 (度)</translation>
+    </message>
+    <message>
+        <source>Direction:</source>
+        <translation>方向:</translation>
+    </message>
+    <message>
+        <source>Disable</source>
+        <translation>無効化</translation>
+    </message>
+    <message>
+        <source>Disable failed: plugin {plugin_id} not found.</source>
+        <translation>無効化に失敗しました: プラグイン {plugin_id} が見つかりません。</translation>
+    </message>
+    <message>
+        <source>Disable may be pending: {plugin_id}</source>
+        <translation>無効化を処理中の可能性があります: {plugin_id}</translation>
+    </message>
+    <message>
+        <source>Disabled</source>
+        <translation>無効</translation>
+    </message>
+    <message>
+        <source>Disabled: {plugin_id}</source>
+        <translation>無効化しました: {plugin_id}</translation>
+    </message>
+    <message>
+        <source>Discard</source>
+        <translation>破棄</translation>
+    </message>
+    <message>
+        <source>Disconnect</source>
+        <translation>切断</translation>
+    </message>
+    <message>
+        <source>Disconnected</source>
+        <translation>切断済み</translation>
+    </message>
+    <message>
+        <source>Disconnected from ComfyUI</source>
+        <translation>ComfyUI から切断しました</translation>
+    </message>
+    <message>
+        <source>Dismiss</source>
+        <translation>閉じる</translation>
+    </message>
+    <message>
+        <source>Display Name</source>
+        <translation>表示名</translation>
+    </message>
+    <message>
+        <source>Display name</source>
+        <translation>表示名</translation>
+    </message>
+    <message>
+        <source>Dissolve</source>
+        <translation>ディザ合成</translation>
+    </message>
+    <message>
+        <source>Distance from path (px)</source>
+        <translation>パスからの距離 (px)</translation>
+    </message>
+    <message>
+        <source>Distance: {distance:.3f} {unit} | Angle: {angle:.2f}° | ΔX: {dx:.3f} | ΔY: {dy:.3f}</source>
+        <translation>距離: {distance:.3f} {unit} | 角度: {angle:.2f}° | ΔX: {dx:.3f} | ΔY: {dy:.3f}</translation>
+    </message>
+    <message>
+        <source>Distribute</source>
+        <translation>均等配置</translation>
+    </message>
+    <message>
+        <source>Distribute in reading order</source>
+        <translation>読み順で各コマに配布</translation>
+    </message>
+    <message>
+        <source>Dither</source>
+        <translation>ディザー</translation>
+    </message>
+    <message>
+        <source>Divide</source>
+        <translation>除算</translation>
+    </message>
+    <message>
+        <source>Document</source>
+        <translation>ドキュメント</translation>
+    </message>
+    <message>
+        <source>Document Mode</source>
+        <translation>ドキュメントモード</translation>
+    </message>
+    <message>
+        <source>Document Mode…</source>
+        <translation>ドキュメントモード…</translation>
+    </message>
+    <message>
+        <source>Document service is not ready.</source>
+        <translation>ドキュメントサービスの準備ができていません。</translation>
+    </message>
+    <message>
+        <source>Don't ask again</source>
+        <translation>次回から確認しない</translation>
+    </message>
+    <message>
+        <source>Dot</source>
+        <translation>ビュレット</translation>
+    </message>
+    <message>
+        <source>Dot Aspect</source>
+        <translation>網点の縦横比</translation>
+    </message>
+    <message>
+        <source>Double-click dialogue to edit. Enter: new line; Ctrl+Enter: apply; Esc: cancel. Double-click speaker to change its style. Double-click page or balloon to jump.</source>
+        <translation>セリフ欄をダブルクリックして編集。Enter: 改行、Ctrl+Enter: 確定、Esc: 取消。話者欄で話者書式を変更、ページ・フキダシ欄で該当箇所へ移動します。</translation>
+    </message>
+    <message>
+        <source>Down</source>
+        <translation>下へ</translation>
+    </message>
+    <message>
+        <source>Download Representative ICC Profiles...</source>
+        <translation>代表的なICCプロファイルのダウンロード...</translation>
+    </message>
+    <message>
+        <source>Drag components to build a prompt.</source>
+        <translation>コンポーネントをドラッグしてプロンプトを組み立てます。</translation>
+    </message>
+    <message>
+        <source>Drag guides to move them; Shift-drag to rotate.</source>
+        <translation>ガイドをドラッグすると移動、Shiftを押しながらドラッグすると回転します。</translation>
+    </message>
+    <message>
+        <source>Drag onto the canvas to add shapes. Right-click for conversion handles.</source>
+        <translation>キャンバスへドラッグしてシェイプを追加します。右クリックで変換ハンドルを表示します。</translation>
+    </message>
+    <message>
+        <source>Drag the handles to adjust taper lengths. Left/Right adjust; Shift changes by 10 px; Up/Down choose a handle; Home turns off; End sets 2000 px.</source>
+        <translation>ハンドルをドラッグして入り抜きの長さを調整します。矢印キーで調整、Shiftで10 pxずつ、上下キーでハンドルを選択、Homeで無効、Endで2000 pxに設定します。</translation>
+    </message>
+    <message>
+        <source>Drag the middle handle to change the curve, or the left handle to change the minimum. Left/Right choose a handle; Up/Down adjust; Shift increases the step; Home resets; Esc cancels the drag.</source>
+        <translation>中央のハンドルでカーブ、左のハンドルで下限を調整します。左右キーで選択、上下キーで調整、Shiftで大きく調整、Homeで初期値へ戻し、Escでドラッグを取り消します。</translation>
+    </message>
+    <message>
+        <source>Drag the start and end handles along the contour.</source>
+        <translation>開始・終了ハンドルを輪郭に沿ってドラッグできます。</translation>
+    </message>
+    <message>
+        <source>Drag to change width; Alt-click a stop to remove it; Esc cancels.</source>
+        <translation>ドラッグで線幅を変更、Altクリックで調整点を削除、Escで取り消します。</translation>
+    </message>
+    <message>
+        <source>Drag to move or scale. Release to apply. Esc cancels the drag.</source>
+        <translation>ドラッグで移動・拡縮し、離すと確定します。Escでドラッグを取り消します。</translation>
+    </message>
+    <message>
+        <source>Drag to move. Drag the image corner to scale. Esc cancels the preview.</source>
+        <translation>ドラッグで移動、画像の角をドラッグして拡大縮小。Escでプレビューを取り消します。</translation>
+    </message>
+    <message>
+        <source>Drag to resize the input area.</source>
+        <translation>下端をドラッグして入力欄の高さを変更します。</translation>
+    </message>
+    <message>
+        <source>Draw crop marks</source>
+        <translation>トンボを描く</translation>
+    </message>
+    <message>
+        <source>Draw here</source>
+        <translation>ここで描く</translation>
+    </message>
+    <message>
+        <source>Drawing</source>
+        <translation>描画</translation>
+    </message>
+    <message>
+        <source>Drawing Assist</source>
+        <translation>作画補助</translation>
+    </message>
+    <message>
+        <source>Drawing Assist Panel</source>
+        <translation>作画補助パネル</translation>
+    </message>
+    <message>
+        <source>Drop Shadow</source>
+        <translation>ドロップシャドウ</translation>
+    </message>
+    <message>
+        <source>Drop a .lsfx file into the preset folder, then restart the panel to pick it up.</source>
+        <translation>.lsfx ファイルをプリセットフォルダーに入れてから、パネルを再起動して読み込んでください。</translation>
+    </message>
+    <message>
+        <source>Dry Run</source>
+        <translation>ドライラン</translation>
+    </message>
+    <message>
+        <source>Duplicate</source>
+        <translation>複製</translation>
+    </message>
+    <message>
+        <source>Duplicate Page</source>
+        <translation>ページ複製</translation>
+    </message>
+    <message>
+        <source>Duplicate page id.</source>
+        <translation>ページ ID が重複しています。</translation>
+    </message>
+    <message>
+        <source>Duplicate style</source>
+        <translation>書式を複製</translation>
+    </message>
+    <message>
+        <source>Duplicated '{title}'.</source>
+        <translation>'{title}' を複製しました。</translation>
+    </message>
+    <message>
+        <source>Duration</source>
+        <translation>所要時間</translation>
+    </message>
+    <message>
+        <source>E&amp;xit</source>
+        <translation>終了(&amp;X)</translation>
+    </message>
+    <message>
+        <source>EPUB Publication (*.epub)</source>
+        <translation>EPUB 出版物 (*.epub)</translation>
+    </message>
+    <message>
+        <source>EPUB conformance checked (EPUBCheck).</source>
+        <translation>EPUB 適合性を検査しました (EPUBCheck)。</translation>
+    </message>
+    <message>
+        <source>EPUB conformance not checked (EPUBCheck unavailable or failed).</source>
+        <translation>EPUB 適合性は未検査です (EPUBCheck が利用できないか失敗しました)。</translation>
+    </message>
+    <message>
+        <source>Each page keeps the zoom and position it was left at. Off keeps one view for the whole document.</source>
+        <translation>各ページが最後に見ていた拡大率と位置を保ちます。オフのときは作品全体で 1 つの表示状態を使います。</translation>
+    </message>
+    <message>
+        <source>Each spacing class pair must be unique.</source>
+        <translation>同じ文字クラスの組み合わせは複数登録できません。</translation>
+    </message>
+    <message>
+        <source>Edge</source>
+        <translation>エッジ</translation>
+    </message>
+    <message>
+        <source>Edge Cleanup</source>
+        <translation>エッジ調整</translation>
+    </message>
+    <message>
+        <source>Edit</source>
+        <translation>編集</translation>
+    </message>
+    <message>
+        <source>Edit Fill</source>
+        <translation>塗りつぶしを編集</translation>
+    </message>
+    <message>
+        <source>Edit Fill...</source>
+        <translation>塗りつぶしを編集...</translation>
+    </message>
+    <message>
+        <source>Edit Filters</source>
+        <translation>フィルターを編集</translation>
+    </message>
+    <message>
+        <source>Edit Mode</source>
+        <translation>編集モード</translation>
+    </message>
+    <message>
+        <source>Edit Snippet</source>
+        <translation>スニペットを編集</translation>
+    </message>
+    <message>
+        <source>Edit Tags</source>
+        <translation>タグを編集</translation>
+    </message>
+    <message>
+        <source>Edit Width Stop</source>
+        <translation>線幅の調整点を編集</translation>
+    </message>
+    <message>
+        <source>Edit Width on Canvas</source>
+        <translation>キャンバス上で線幅を編集</translation>
+    </message>
+    <message>
+        <source>Edit a workflow here, then configure its exposed parameters and outputs.</source>
+        <translation>ここでワークフローを編集し、公開するパラメーターと出力を設定します。</translation>
+    </message>
+    <message>
+        <source>Edit anchors/handles of vector paths</source>
+        <translation>ベクターパスのアンカーとハンドルを編集します。</translation>
+    </message>
+    <message>
+        <source>Edit frame lines</source>
+        <translation>枠線を加工</translation>
+    </message>
+    <message>
+        <source>Edit native nodes</source>
+        <translation>ノードを編集</translation>
+    </message>
+    <message>
+        <source>Edit parameters of filter layers.</source>
+        <translation>フィルターレイヤーのパラメーターを編集します。</translation>
+    </message>
+    <message>
+        <source>Edit path</source>
+        <translation>パスを編集</translation>
+    </message>
+    <message>
+        <source>Edit selected dialogues</source>
+        <translation>選択したセリフを一括編集</translation>
+    </message>
+    <message>
+        <source>Edit text</source>
+        <translation>本文を編集</translation>
+    </message>
+    <message>
+        <source>Edit text here. Ctrl+Enter to finish.</source>
+        <translation>ここで本文を編集できます。Ctrl+Enterで確定します。</translation>
+    </message>
+    <message>
+        <source>Edit the selected text in Font, then register or update its speaker style.</source>
+        <translation>Fontで選択テキストの書式を調整し、話者書式として登録・更新してください。</translation>
+    </message>
+    <message>
+        <source>Edit vector edge</source>
+        <translation>この辺をベクター編集</translation>
+    </message>
+    <message>
+        <source>Edit workflow in ComfyUI</source>
+        <translation>ComfyUIでワークフローを編集</translation>
+    </message>
+    <message>
+        <source>Edit...</source>
+        <translation>編集...</translation>
+    </message>
+    <message>
+        <source>Edit: Effect Editor is not wired in this session.</source>
+        <translation>編集: このセッションでは Effect Editor が接続されていません。</translation>
+    </message>
+    <message>
+        <source>Editor</source>
+        <translation>エディター</translation>
+    </message>
+    <message>
+        <source>Effect Lines</source>
+        <translation>効果線</translation>
+    </message>
+    <message>
+        <source>Effect editor is unavailable.</source>
+        <translation>エフェクトエディターを利用できません。</translation>
+    </message>
+    <message>
+        <source>Effects</source>
+        <translation>効果</translation>
+    </message>
+    <message>
+        <source>Elevation</source>
+        <translation>光の高さ</translation>
+    </message>
+    <message>
+        <source>Embed</source>
+        <translation>埋め込む</translation>
+    </message>
+    <message>
+        <source>Embed a copy in the document</source>
+        <translation>コピーをドキュメントに埋め込む</translation>
+    </message>
+    <message>
+        <source>Embed document profile (none - exported untagged)</source>
+        <translation>ドキュメントのプロファイルを埋め込む (なし - プロファイルなしで書き出し)</translation>
+    </message>
+    <message>
+        <source>Embed document profile ({name})</source>
+        <translation>ドキュメントのプロファイルを埋め込む ({name})</translation>
+    </message>
+    <message>
+        <source>Embedded</source>
+        <translation>埋め込みました</translation>
+    </message>
+    <message>
+        <source>Embedded {count} layer(s).</source>
+        <translation>{count} レイヤーを埋め込みました。</translation>
+    </message>
+    <message>
+        <source>Emphasis gap</source>
+        <translation>圏点の間隔</translation>
+    </message>
+    <message>
+        <source>Emphasis mark</source>
+        <translation>圏点の記号</translation>
+    </message>
+    <message>
+        <source>Emphasis position</source>
+        <translation>圏点の位置</translation>
+    </message>
+    <message>
+        <source>Emphasis size ratio</source>
+        <translation>圏点のサイズ比率</translation>
+    </message>
+    <message>
+        <source>Empty</source>
+        <translation>空き</translation>
+    </message>
+    <message>
+        <source>Empty text frame</source>
+        <translation>空のテキスト枠</translation>
+    </message>
+    <message>
+        <source>Empty text object.</source>
+        <translation>空のテキストオブジェクトです。</translation>
+    </message>
+    <message>
+        <source>Enable</source>
+        <translation>有効化</translation>
+    </message>
+    <message>
+        <source>Enable Autosave</source>
+        <translation>自動保存を有効化</translation>
+    </message>
+    <message>
+        <source>Enable Eyedropper</source>
+        <translation>スポイトを有効化</translation>
+    </message>
+    <message>
+        <source>Enable GPU Acceleration</source>
+        <translation>GPU高速化を有効化</translation>
+    </message>
+    <message>
+        <source>Enable GPU acceleration</source>
+        <translation>GPU高速化を有効化</translation>
+    </message>
+    <message>
+        <source>Enable Numba JIT</source>
+        <translation>Numba JIT を有効化</translation>
+    </message>
+    <message>
+        <source>Enable Numba optimizations</source>
+        <translation>Numba 最適化を有効化</translation>
+    </message>
+    <message>
+        <source>Enable autosave</source>
+        <translation>自動保存を有効化</translation>
+    </message>
+    <message>
+        <source>Enable autosave (effective after restart)</source>
+        <translation>自動保存を有効化 (再起動後に有効)</translation>
+    </message>
+    <message>
+        <source>Enable external services in Preferences to use ComfyUI.</source>
+        <translation>ComfyUIを使うにはPreferencesで外部サービスを許可してください。</translation>
+    </message>
+    <message>
+        <source>Enable failed: plugin {plugin_id} not found.</source>
+        <translation>有効化に失敗しました: プラグイン {plugin_id} が見つかりません。</translation>
+    </message>
+    <message>
+        <source>Enable failed: {plugin_id}</source>
+        <translation>有効化に失敗しました: {plugin_id}</translation>
+    </message>
+    <message>
+        <source>Enable may be pending: {plugin_id}</source>
+        <translation>有効化を処理中の可能性があります: {plugin_id}</translation>
+    </message>
+    <message>
+        <source>Enable sharp vector rendering (zoom)</source>
+        <translation>拡大時にベクターをくっきり表示する</translation>
+    </message>
+    <message>
+        <source>Enabled</source>
+        <translation>有効</translation>
+    </message>
+    <message>
+        <source>Enabled: {plugin_id}</source>
+        <translation>有効化しました: {plugin_id}</translation>
+    </message>
+    <message>
+        <source>Enclose and Fill</source>
+        <translation>囲って塗る</translation>
+    </message>
+    <message>
+        <source>End</source>
+        <translation>終了</translation>
+    </message>
+    <message>
+        <source>End (%)</source>
+        <translation>終了位置 (%)</translation>
+    </message>
+    <message>
+        <source>End Color</source>
+        <translation>終了色</translation>
+    </message>
+    <message>
+        <source>End color</source>
+        <translation>終了色</translation>
+    </message>
+    <message>
+        <source>End punctuation hangs outside the line.</source>
+        <translation>行末の約物を行の外へぶら下げています。</translation>
+    </message>
+    <message>
+        <source>Engine requirement: {engine_version}</source>
+        <translation>エンジン要件: {engine_version}</translation>
+    </message>
+    <message>
+        <source>Enlarge the text frame</source>
+        <translation>テキストフレームを広げる</translation>
+    </message>
+    <message>
+        <source>Enter ComfyUI host</source>
+        <translation>ComfyUI ホストを入力</translation>
+    </message>
+    <message>
+        <source>Enter a reading and select characters within one paragraph.</source>
+        <translation>読みを入力し、同じ段落内の文字を選択してください。</translation>
+    </message>
+    <message>
+        <source>Enter negative prompt...</source>
+        <translation>ネガティブプロンプトを入力...</translation>
+    </message>
+    <message>
+        <source>Enter positive prompt...</source>
+        <translation>ポジティブプロンプトを入力...</translation>
+    </message>
+    <message>
+        <source>Enter prompt for LLM...</source>
+        <translation>LLM 用プロンプトを入力...</translation>
+    </message>
+    <message>
+        <source>Enter prompt text...</source>
+        <translation>プロンプトを入力...</translation>
+    </message>
+    <message>
+        <source>Enter text...</source>
+        <translation>テキストを入力...</translation>
+    </message>
+    <message>
+        <source>Enter user prompt...</source>
+        <translation>ユーザープロンプトを入力...</translation>
+    </message>
+    <message>
+        <source>Entry</source>
+        <translation>項目</translation>
+    </message>
+    <message>
+        <source>Equal overlap with child panels</source>
+        <translation>複数のコマと同じ面積で重なります</translation>
+    </message>
+    <message>
+        <source>Erase vector edge</source>
+        <translation>ベクターの枠線を部分消去する</translation>
+    </message>
+    <message>
+        <source>Eraser</source>
+        <translation>消しゴム</translation>
+    </message>
+    <message>
+        <source>Eraser Stroke</source>
+        <translation>消しゴムストローク</translation>
+    </message>
+    <message>
+        <source>Erasers</source>
+        <translation>消しゴム</translation>
+    </message>
+    <message>
+        <source>Error</source>
+        <translation>エラー</translation>
+    </message>
+    <message>
+        <source>Error: {error}</source>
+        <translation>エラー: {error}</translation>
+    </message>
+    <message>
+        <source>Estimate Ink Coverage</source>
+        <translation>インキ被覆率を見積もる</translation>
+    </message>
+    <message>
+        <source>Estimated pixel memory: {mib:.1f} MiB</source>
+        <translation>推定ピクセルメモリ: {mib:.1f} MiB</translation>
+    </message>
+    <message>
+        <source>Estimated undo memory: {megabytes} MB</source>
+        <translation>取り消し用メモリの見積もり: {megabytes} MB</translation>
+    </message>
+    <message>
+        <source>Europe</source>
+        <translation>欧州</translation>
+    </message>
+    <message>
+        <source>Even Pages</source>
+        <translation>偶数ページ</translation>
+    </message>
+    <message>
+        <source>Example: {folio}</source>
+        <translation>例: {folio}</translation>
+    </message>
+    <message>
+        <source>Exchange panel positions</source>
+        <translation>コマの位置を交換</translation>
+    </message>
+    <message>
+        <source>Exchange with</source>
+        <translation>位置交換するコマ</translation>
+    </message>
+    <message>
+        <source>Exclude this candidate (also removed from Next/Previous cycling)</source>
+        <translation>この候補を除外する (Next/Previous の巡回からも外れる)</translation>
+    </message>
+    <message>
+        <source>Exclusion</source>
+        <translation>除外</translation>
+    </message>
+    <message>
+        <source>Execute Workflow</source>
+        <translation>ワークフローを実行</translation>
+    </message>
+    <message>
+        <source>Executing workflow...</source>
+        <translation>ワークフローを実行中...</translation>
+    </message>
+    <message>
+        <source>Executing workflow: {workflow_id}</source>
+        <translation>ワークフローを実行中: {workflow_id}</translation>
+    </message>
+    <message>
+        <source>Execution</source>
+        <translation>実行</translation>
+    </message>
+    <message>
+        <source>Existing files:</source>
+        <translation>既存ファイル:</translation>
+    </message>
+    <message>
+        <source>Existing stories keep their internal frame order.</source>
+        <translation>すでに連結された枠同士の内部の順番は維持します。</translation>
+    </message>
+    <message>
+        <source>Existing text keeps its layout until these settings are enabled.</source>
+        <translation>設定を有効にするまで、既存のテキストの配置を保ちます。</translation>
+    </message>
+    <message>
+        <source>Expand</source>
+        <translation>拡張</translation>
+    </message>
+    <message>
+        <source>Expect JSON response</source>
+        <translation>JSON 応答を期待する</translation>
+    </message>
+    <message>
+        <source>Export</source>
+        <translation>書き出し</translation>
+    </message>
+    <message>
+        <source>Export All Candidates</source>
+        <translation>全候補を書き出し</translation>
+    </message>
+    <message>
+        <source>Export All...</source>
+        <translation>全候補を書き出し...</translation>
+    </message>
+    <message>
+        <source>Export Digital Comic Package</source>
+        <translation>デジタル漫画パッケージを書き出し</translation>
+    </message>
+    <message>
+        <source>Export Digital Comic Package…</source>
+        <translation>デジタル漫画パッケージを書き出し…</translation>
+    </message>
+    <message>
+        <source>Export Failed</source>
+        <translation>エクスポートに失敗しました</translation>
+    </message>
+    <message>
+        <source>Export Image</source>
+        <translation>画像をエクスポート</translation>
+    </message>
+    <message>
+        <source>Export PNG</source>
+        <translation>PNG 書き出し</translation>
+    </message>
+    <message>
+        <source>Export PNG...</source>
+        <translation>PNG 書き出し...</translation>
+    </message>
+    <message>
+        <source>Export Pages</source>
+        <translation>ページの一括書き出し</translation>
+    </message>
+    <message>
+        <source>Export Pages…</source>
+        <translation>ページを一括書き出し…</translation>
+    </message>
+    <message>
+        <source>Export Pen</source>
+        <translation>ペンを書き出す</translation>
+    </message>
+    <message>
+        <source>Export Script</source>
+        <translation>台本の書き出し</translation>
+    </message>
+    <message>
+        <source>Export Selection...</source>
+        <translation>選択範囲を書き出し...</translation>
+    </message>
+    <message>
+        <source>Export Sheet...</source>
+        <translation>シート書き出し...</translation>
+    </message>
+    <message>
+        <source>Export Shortcut Scheme</source>
+        <translation>ショートカットスキームをエクスポート</translation>
+    </message>
+    <message>
+        <source>Export Sprite Sheet</source>
+        <translation>スプライトシート書き出し</translation>
+    </message>
+    <message>
+        <source>Export Unavailable</source>
+        <translation>エクスポート不可</translation>
+    </message>
+    <message>
+        <source>Export Webtoon</source>
+        <translation>Webtoon を書き出し</translation>
+    </message>
+    <message>
+        <source>Export Webtoon…</source>
+        <translation>Webtoon を書き出し…</translation>
+    </message>
+    <message>
+        <source>Export failed: %s</source>
+        <translation>書き出し失敗: %s</translation>
+    </message>
+    <message>
+        <source>Export failed: no workflow loaded</source>
+        <translation>書き出し失敗: workflow が読み込まれていません</translation>
+    </message>
+    <message>
+        <source>Export failed: {error}</source>
+        <translation>エクスポートに失敗しました: {error}</translation>
+    </message>
+    <message>
+        <source>Export for Print</source>
+        <translation>印刷用に書き出し</translation>
+    </message>
+    <message>
+        <source>Export for Print…</source>
+        <translation>印刷用に書き出し…</translation>
+    </message>
+    <message>
+        <source>Export is disabled: %s.</source>
+        <translation>書き出しは無効です: %s。</translation>
+    </message>
+    <message>
+        <source>Export macro</source>
+        <translation>マクロを書き出し</translation>
+    </message>
+    <message>
+        <source>Export preset</source>
+        <translation>プリセットを書き出し</translation>
+    </message>
+    <message>
+        <source>Export preset...</source>
+        <translation>プリセットを書き出し...</translation>
+    </message>
+    <message>
+        <source>Export profiles</source>
+        <translation>書き出しプロファイル</translation>
+    </message>
+    <message>
+        <source>Export prompt</source>
+        <translation>プロンプトをエクスポート</translation>
+    </message>
+    <message>
+        <source>Export the configured preset as a .lsfx file.</source>
+        <translation>設定したプリセットを .lsfx ファイルとして書き出します。</translation>
+    </message>
+    <message>
+        <source>Export...</source>
+        <translation>書き出し...</translation>
+    </message>
+    <message>
+        <source>Exported manifest failed validation (internal): %s</source>
+        <translation>書き出した manifest の検証に失敗しました (内部): %s</translation>
+    </message>
+    <message>
+        <source>Exported to {path}.</source>
+        <translation>{path} にエクスポートしました。</translation>
+    </message>
+    <message>
+        <source>Exported {count} page(s) to {name}.</source>
+        <translation>{name} に {count} ページを書き出しました。</translation>
+    </message>
+    <message>
+        <source>Exported {done} of {total} page(s).</source>
+        <translation>{total} ページ中 {done} ページを書き出しました。</translation>
+    </message>
+    <message>
+        <source>Exported {done} of {total} slice(s).</source>
+        <translation>{total} スライス中 {done} スライスを書き出しました。</translation>
+    </message>
+    <message>
+        <source>Exported {name}</source>
+        <translation>{name} を書き出しました</translation>
+    </message>
+    <message>
+        <source>Exported {name}, but omitted {count} unsupported vector layer(s). Layers using non-normal blend modes or visible live filters cannot be represented in the current SVG subset.</source>
+        <translation>{name} を書き出しましたが、未対応のベクターレイヤー {count} 件を省略しました。通常以外の描画モード、または表示中のライブフィルターを使用するレイヤーは、現在の SVG 対応範囲では表現できません。</translation>
+    </message>
+    <message>
+        <source>Exported: %s</source>
+        <translation>書き出しました: %s</translation>
+    </message>
+    <message>
+        <source>Exporting package...</source>
+        <translation>パッケージを書き出しています...</translation>
+    </message>
+    <message>
+        <source>Exporting pages...</source>
+        <translation>ページを書き出しています...</translation>
+    </message>
+    <message>
+        <source>Exporting print PDF...</source>
+        <translation>印刷用 PDF を書き出しています...</translation>
+    </message>
+    <message>
+        <source>Exporting print pages...</source>
+        <translation>印刷用ページを書き出しています...</translation>
+    </message>
+    <message>
+        <source>Exporting webtoon slices...</source>
+        <translation>Webtoon スライスを書き出しています...</translation>
+    </message>
+    <message>
+        <source>Exports the visible layer composite of the active page. Guides, the selection outline and tool overlays are never included.</source>
+        <translation>アクティブページの表示レイヤー合成結果を書き出します。ガイド・選択範囲の枠線・ツールのオーバーレイは含まれません。</translation>
+    </message>
+    <message>
+        <source>Export…</source>
+        <translation>エクスポート…</translation>
+    </message>
+    <message>
+        <source>Extend Bleed</source>
+        <translation>塗り足しを延長</translation>
+    </message>
+    <message>
+        <source>Extend Bleed...</source>
+        <translation>塗り足しを延長...</translation>
+    </message>
+    <message>
+        <source>Extend artwork to the bleed edge</source>
+        <translation>絵柄を塗り足し縁まで延長する</translation>
+    </message>
+    <message>
+        <source>Extend only the area outside the trim guides. Pixels inside trim stay unchanged.</source>
+        <translation>仕上がりガイドの外側だけを延長します。仕上がり内の画素は保持します。</translation>
+    </message>
+    <message>
+        <source>External</source>
+        <translation>外部</translation>
+    </message>
+    <message>
+        <source>External AI services are disabled. Enable 'Allow external AI services' in Preferences before submitting.</source>
+        <translation>外部 AI サービスは無効です。送信前に Preferences で「Allow external AI services」を有効にしてください。</translation>
+    </message>
+    <message>
+        <source>External AI services are disabled. Enable 'Allow external AI services' in Preferences to generate.</source>
+        <translation>外部 AI サービスは無効です。生成するには Preferences で「Allow external AI services」を有効にしてください。</translation>
+    </message>
+    <message>
+        <source>External access disabled</source>
+        <translation>外部アクセスが無効です</translation>
+    </message>
+    <message>
+        <source>External services</source>
+        <translation>外部サービス</translation>
+    </message>
+    <message>
+        <source>External services are disabled.</source>
+        <translation>外部サービスの利用が無効です。</translation>
+    </message>
+    <message>
+        <source>External services disabled</source>
+        <translation>外部サービスが無効です</translation>
+    </message>
+    <message>
+        <source>Eyedropper</source>
+        <translation>スポイト</translation>
+    </message>
+    <message>
+        <source>Face height (mm)</source>
+        <translation>片面の仕上がり高さ (mm)</translation>
+    </message>
+    <message>
+        <source>Face width (mm)</source>
+        <translation>片面の仕上がり幅 (mm)</translation>
+    </message>
+    <message>
+        <source>Failed</source>
+        <translation>失敗</translation>
+    </message>
+    <message>
+        <source>Failed to add AI effect layer</source>
+        <translation>AI エフェクトレイヤーを追加できませんでした</translation>
+    </message>
+    <message>
+        <source>Failed to assign the colour profile.</source>
+        <translation>カラープロファイルの割り当てに失敗しました。</translation>
+    </message>
+    <message>
+        <source>Failed to attach {path}: {error}</source>
+        <translation>{path} の添付に失敗しました: {error}</translation>
+    </message>
+    <message>
+        <source>Failed to build basic shape.</source>
+        <translation>基本図形の作成に失敗しました。</translation>
+    </message>
+    <message>
+        <source>Failed to build shape.</source>
+        <translation>図形の作成に失敗しました。</translation>
+    </message>
+    <message>
+        <source>Failed to copy ABR: {error}</source>
+        <translation>ABR のコピーに失敗しました: {error}</translation>
+    </message>
+    <message>
+        <source>Failed to create the screentone layer.</source>
+        <translation>スクリーントーンレイヤーの作成に失敗しました。</translation>
+    </message>
+    <message>
+        <source>Failed to create vector layer.</source>
+        <translation>ベクター図形レイヤーの作成に失敗しました。</translation>
+    </message>
+    <message>
+        <source>Failed to delete snippet.</source>
+        <translation>スニペットの削除に失敗しました。</translation>
+    </message>
+    <message>
+        <source>Failed to flip canvas.</source>
+        <translation>キャンバスの反転に失敗しました。</translation>
+    </message>
+    <message>
+        <source>Failed to load models: {error}</source>
+        <translation>モデルの読み込みに失敗しました: {error}</translation>
+    </message>
+    <message>
+        <source>Failed to load providers: {error}</source>
+        <translation>プロバイダーの読み込みに失敗しました: {error}</translation>
+    </message>
+    <message>
+        <source>Failed to load snippets.</source>
+        <translation>スニペットの読み込みに失敗しました。</translation>
+    </message>
+    <message>
+        <source>Failed to read SVG</source>
+        <translation>SVG の読み取りに失敗しました</translation>
+    </message>
+    <message>
+        <source>Failed to refresh snippets.</source>
+        <translation>スニペットの更新に失敗しました。</translation>
+    </message>
+    <message>
+        <source>Failed to register shape.</source>
+        <translation>シェイプの登録に失敗しました。</translation>
+    </message>
+    <message>
+        <source>Failed to resize canvas.</source>
+        <translation>キャンバスのリサイズに失敗しました。</translation>
+    </message>
+    <message>
+        <source>Failed to resize image.</source>
+        <translation>画像のリサイズに失敗しました。</translation>
+    </message>
+    <message>
+        <source>Failed to rotate canvas.</source>
+        <translation>キャンバスの回転に失敗しました。</translation>
+    </message>
+    <message>
+        <source>Failed to save document</source>
+        <translation>ドキュメントの保存に失敗しました</translation>
+    </message>
+    <message>
+        <source>Failed to save snippet.</source>
+        <translation>スニペットの保存に失敗しました。</translation>
+    </message>
+    <message>
+        <source>Failed to save {path}</source>
+        <translation>{path} の保存に失敗しました</translation>
+    </message>
+    <message>
+        <source>Failed to update DPI.</source>
+        <translation>DPI の更新に失敗しました。</translation>
+    </message>
+    <message>
+        <source>Failed to write {path}</source>
+        <translation>{path} への書き込みに失敗しました</translation>
+    </message>
+    <message>
+        <source>Failed: {names}</source>
+        <translation>失敗: {names}</translation>
+    </message>
+    <message>
+        <source>Fatal</source>
+        <translation>致命的</translation>
+    </message>
+    <message>
+        <source>Favorite</source>
+        <translation>お気に入り</translation>
+    </message>
+    <message>
+        <source>Feather</source>
+        <translation>ぼかし</translation>
+    </message>
+    <message>
+        <source>Feather Radius</source>
+        <translation>ぼかし半径</translation>
+    </message>
+    <message>
+        <source>Feature</source>
+        <translation>機能</translation>
+    </message>
+    <message>
+        <source>Features</source>
+        <translation>機能</translation>
+    </message>
+    <message>
+        <source>Fetching backend metadata...</source>
+        <translation>backend metadata を取得中...</translation>
+    </message>
+    <message>
+        <source>File</source>
+        <translation>ファイル</translation>
+    </message>
+    <message>
+        <source>File I/O</source>
+        <translation>ファイルI/O</translation>
+    </message>
+    <message>
+        <source>File I/O Settings</source>
+        <translation>ファイルI/O設定</translation>
+    </message>
+    <message>
+        <source>File System Access</source>
+        <translation>ファイルシステムアクセス</translation>
+    </message>
+    <message>
+        <source>File name</source>
+        <translation>ファイル名</translation>
+    </message>
+    <message>
+        <source>File names:</source>
+        <translation>ファイル名:</translation>
+    </message>
+    <message>
+        <source>File not found: {path}</source>
+        <translation>ファイルが見つかりません: {path}</translation>
+    </message>
+    <message>
+        <source>File system access is required</source>
+        <translation>ファイルシステムアクセスが必要です</translation>
+    </message>
+    <message>
+        <source>File: {file_name}</source>
+        <translation>ファイル: {file_name}</translation>
+    </message>
+    <message>
+        <source>Files</source>
+        <translation>ファイル</translation>
+    </message>
+    <message>
+        <source>Fill</source>
+        <translation>塗りつぶし</translation>
+    </message>
+    <message>
+        <source>Fill Color</source>
+        <translation>塗りの色</translation>
+    </message>
+    <message>
+        <source>Fill Enabled</source>
+        <translation>塗りを有効化</translation>
+    </message>
+    <message>
+        <source>Fill Layer</source>
+        <translation>塗りつぶしレイヤー</translation>
+    </message>
+    <message>
+        <source>Fill Mode</source>
+        <translation>塗りつぶし方式</translation>
+    </message>
+    <message>
+        <source>Fill Target</source>
+        <translation>塗りつぶし対象</translation>
+    </message>
+    <message>
+        <source>Fill holes</source>
+        <translation>穴を埋める</translation>
+    </message>
+    <message>
+        <source>Fill requires an unlocked raster layer.</source>
+        <translation>塗りつぶしにはロックされていないラスターレイヤーが必要です。</translation>
+    </message>
+    <message>
+        <source>Filter</source>
+        <translation>フィルター</translation>
+    </message>
+    <message>
+        <source>Filter Error</source>
+        <translation>フィルターエラー</translation>
+    </message>
+    <message>
+        <source>Filter Layer</source>
+        <translation>フィルターレイヤー</translation>
+    </message>
+    <message>
+        <source>Filter Pen</source>
+        <translation>フィルターペン</translation>
+    </message>
+    <message>
+        <source>Filter Pen cannot paint a locked layer or a layer mask.</source>
+        <translation>ロックされたレイヤーやレイヤーマスクには描画できません。</translation>
+    </message>
+    <message>
+        <source>Filter Pen is unavailable.</source>
+        <translation>フィルターペンは利用できません。</translation>
+    </message>
+    <message>
+        <source>Filter Pen requires a raster layer.</source>
+        <translation>フィルターペンにはラスターレイヤーが必要です。</translation>
+    </message>
+    <message>
+        <source>Filter Settings</source>
+        <translation>フィルター設定</translation>
+    </message>
+    <message>
+        <source>Filter Settings…</source>
+        <translation>フィルター設定…</translation>
+    </message>
+    <message>
+        <source>Filter Strength</source>
+        <translation>適用量</translation>
+    </message>
+    <message>
+        <source>Filter menu</source>
+        <translation>フィルターメニュー</translation>
+    </message>
+    <message>
+        <source>Filters</source>
+        <translation>フィルター</translation>
+    </message>
+    <message>
+        <source>Filters cannot edit locked layers or layer masks.</source>
+        <translation>ロックされたレイヤーやレイヤーマスクにはフィルターを適用できません。</translation>
+    </message>
+    <message>
+        <source>Find text</source>
+        <translation>検索する文字列</translation>
+    </message>
+    <message>
+        <source>Fine tuning / Diagnostics</source>
+        <translation>接続の微調整・診断</translation>
+    </message>
+    <message>
+        <source>Finish or cancel the current edit before saving.</source>
+        <translation>現在の編集を確定または取り消してから保存してください。</translation>
+    </message>
+    <message>
+        <source>Finish the current stroke before changing channels.</source>
+        <translation>描線を完了してからチャンネルを切り替えてください。</translation>
+    </message>
+    <message>
+        <source>Finish the current stroke before changing pen settings.</source>
+        <translation>ペン設定を変更する前に描画を完了してください。</translation>
+    </message>
+    <message>
+        <source>Finish the current stroke or text composition first.</source>
+        <translation>描画または文字入力を完了してください。</translation>
+    </message>
+    <message>
+        <source>Finish the current stroke or text edit first.</source>
+        <translation>描画中の線や文字編集を完了してください。</translation>
+    </message>
+    <message>
+        <source>Finished: {completed}</source>
+        <translation>完了: {completed}件</translation>
+    </message>
+    <message>
+        <source>First-line indent</source>
+        <translation>段落先頭の字下げ</translation>
+    </message>
+    <message>
+        <source>Fit</source>
+        <translation>フィット</translation>
+    </message>
+    <message>
+        <source>Fit Contain</source>
+        <translation>収める</translation>
+    </message>
+    <message>
+        <source>Fit Stretch</source>
+        <translation>引き伸ばす</translation>
+    </message>
+    <message>
+        <source>Fit editable Bezier handles like the vector pen. 0 restores the path before correction.</source>
+        <translation>ベクターペンと同じ補正で、編集できるベジェハンドルを生成します。0で補正前のパスに戻ります。</translation>
+    </message>
+    <message>
+        <source>Fit whole image</source>
+        <translation>画像全体を収める</translation>
+    </message>
+    <message>
+        <source>Fixed-Layout EPUB 3</source>
+        <translation>固定レイアウト EPUB 3</translation>
+    </message>
+    <message>
+        <source>Flap width on each side (mm)</source>
+        <translation>両側の袖幅 (mm)</translation>
+    </message>
+    <message>
+        <source>Flatten All</source>
+        <translation>画像を統合</translation>
+    </message>
+    <message>
+        <source>Flatten onto a colour</source>
+        <translation>色で塗りつぶして統合</translation>
+    </message>
+    <message>
+        <source>Flattened CMYK TIFF, one file per page, with the profile embedded.</source>
+        <translation>透明を統合した CMYK TIFF を 1 ページ 1 ファイルで書き出します (プロファイル同梱)。</translation>
+    </message>
+    <message>
+        <source>Flip Canvas</source>
+        <translation>キャンバスを反転</translation>
+    </message>
+    <message>
+        <source>Flip Canvas &amp;Horizontal</source>
+        <translation>キャンバスを左右反転(&amp;H)</translation>
+    </message>
+    <message>
+        <source>Flip Canvas &amp;Vertical</source>
+        <translation>キャンバスを上下反転(&amp;V)</translation>
+    </message>
+    <message>
+        <source>Flip H</source>
+        <translation>左右反転</translation>
+    </message>
+    <message>
+        <source>Flip V</source>
+        <translation>上下反転</translation>
+    </message>
+    <message>
+        <source>Flood fill bucket tool</source>
+        <translation>塗りつぶしバケツツール</translation>
+    </message>
+    <message>
+        <source>Flow</source>
+        <translation>流量</translation>
+    </message>
+    <message>
+        <source>Focus Lines</source>
+        <translation>集中線</translation>
+    </message>
+    <message>
+        <source>Folder:</source>
+        <translation>出力先:</translation>
+    </message>
+    <message>
+        <source>Folio</source>
+        <translation>ノンブル</translation>
+    </message>
+    <message>
+        <source>Folio prefix:</source>
+        <translation>ノンブル接頭辞:</translation>
+    </message>
+    <message>
+        <source>Folio starts at:</source>
+        <translation>ノンブル開始番号:</translation>
+    </message>
+    <message>
+        <source>Folio text:</source>
+        <translation>ノンブル文字列:</translation>
+    </message>
+    <message>
+        <source>Follow path rotation</source>
+        <translation>パスの向きに回転</translation>
+    </message>
+    <message>
+        <source>Follow ruler origin</source>
+        <translation>ルーラー原点に追従</translation>
+    </message>
+    <message>
+        <source>Font</source>
+        <translation>フォント</translation>
+    </message>
+    <message>
+        <source>Font "{family}" is not installed.</source>
+        <translation>フォント「{family}」がインストールされていません。</translation>
+    </message>
+    <message>
+        <source>Font Diagnostics</source>
+        <translation>フォント診断</translation>
+    </message>
+    <message>
+        <source>Font Diagnostics…</source>
+        <translation>フォント診断…</translation>
+    </message>
+    <message>
+        <source>Font Family</source>
+        <translation>フォントファミリー</translation>
+    </message>
+    <message>
+        <source>Font Size (pt)</source>
+        <translation>フォントサイズ (pt)</translation>
+    </message>
+    <message>
+        <source>Font Style</source>
+        <translation>フォントスタイル</translation>
+    </message>
+    <message>
+        <source>Font and typography settings for Text Tool</source>
+        <translation>テキストツールのフォントと文字設定</translation>
+    </message>
+    <message>
+        <source>Font size {size} pt is below the minimum of {minimum} pt.</source>
+        <translation>フォントサイズ {size} pt は最小 {minimum} pt を下回っています。</translation>
+    </message>
+    <message>
+        <source>Font style</source>
+        <translation>書体スタイル</translation>
+    </message>
+    <message>
+        <source>Foreground and background colors</source>
+        <translation>描画色と背景色</translation>
+    </message>
+    <message>
+        <source>Foreground color (click to change)</source>
+        <translation>描画色 (クリックで変更)</translation>
+    </message>
+    <message>
+        <source>Format</source>
+        <translation>形式</translation>
+    </message>
+    <message>
+        <source>Format Options</source>
+        <translation>形式オプション</translation>
+    </message>
+    <message>
+        <source>Format:</source>
+        <translation>形式:</translation>
+    </message>
+    <message>
+        <source>Four panels (grid)</source>
+        <translation>4コマ (田型)</translation>
+    </message>
+    <message>
+        <source>Four-panel strip</source>
+        <translation>4コマ漫画</translation>
+    </message>
+    <message>
+        <source>Frame</source>
+        <translation>コマ枠</translation>
+    </message>
+    <message>
+        <source>Frame Padding</source>
+        <translation>枠の余白</translation>
+    </message>
+    <message>
+        <source>Frame edge</source>
+        <translation>加工する辺</translation>
+    </message>
+    <message>
+        <source>Frame layers</source>
+        <translation>コマ枠レイヤー</translation>
+    </message>
+    <message>
+        <source>Frame line to repair</source>
+        <translation>手直しする辺</translation>
+    </message>
+    <message>
+        <source>Frame lines</source>
+        <translation>枠線</translation>
+    </message>
+    <message>
+        <source>Frame operation failed: {reason}</source>
+        <translation>コマ操作を実行できません: {reason}</translation>
+    </message>
+    <message>
+        <source>Frequency (LPI)</source>
+        <translation>線数 (LPI)</translation>
+    </message>
+    <message>
+        <source>From</source>
+        <translation>生成元</translation>
+    </message>
+    <message>
+        <source>Full</source>
+        <translation>フル</translation>
+    </message>
+    <message>
+        <source>Full em</source>
+        <translation>全角</translation>
+    </message>
+    <message>
+        <source>GPT Image 2</source>
+        <translation>GPT Image 2</translation>
+    </message>
+    <message>
+        <source>GPT Image 2 Panel</source>
+        <translation>GPT Image 2 パネル</translation>
+    </message>
+    <message>
+        <source>GPU Acceleration</source>
+        <translation>GPU アクセラレーション</translation>
+    </message>
+    <message>
+        <source>Gallery</source>
+        <translation>ギャラリー</translation>
+    </message>
+    <message>
+        <source>Gamma</source>
+        <translation>ガンマ</translation>
+    </message>
+    <message>
+        <source>Gap</source>
+        <translation>親文字とのアキ</translation>
+    </message>
+    <message>
+        <source>Gap Close (px)</source>
+        <translation>隙間閉じ (px)</translation>
+    </message>
+    <message>
+        <source>Gap Fill</source>
+        <translation>塗り残しを塗る</translation>
+    </message>
+    <message>
+        <source>Gap Fill Size</source>
+        <translation>塗り残しブラシのサイズ</translation>
+    </message>
+    <message>
+        <source>Gap between pages:</source>
+        <translation>ページ間の余白:</translation>
+    </message>
+    <message>
+        <source>Gateway</source>
+        <translation>ゲートウェイ</translation>
+    </message>
+    <message>
+        <source>Gateway icon (empty resets to default):</source>
+        <translation>Gateway アイコン (空なら既定に戻す):</translation>
+    </message>
+    <message>
+        <source>Gaussian Blur</source>
+        <translation>ガウスぼかし</translation>
+    </message>
+    <message>
+        <source>Generate</source>
+        <translation>生成</translation>
+    </message>
+    <message>
+        <source>Generate one inpaint preview (result goes to the Gallery; the canvas is unchanged)</source>
+        <translation>インペイントのプレビューを 1 回生成 (結果は Gallery へ、キャンバスは不変)</translation>
+    </message>
+    <message>
+        <source>Generated Prompt</source>
+        <translation>生成されたプロンプト</translation>
+    </message>
+    <message>
+        <source>Generated prompt will appear here...</source>
+        <translation>生成されたプロンプトがここに表示されます...</translation>
+    </message>
+    <message>
+        <source>Generating... {progress}%</source>
+        <translation>生成中... {progress}%</translation>
+    </message>
+    <message>
+        <source>Generating: {prompt_id}</source>
+        <translation>生成中: {prompt_id}</translation>
+    </message>
+    <message>
+        <source>Generation</source>
+        <translation>生成</translation>
+    </message>
+    <message>
+        <source>Generation Settings</source>
+        <translation>生成設定</translation>
+    </message>
+    <message>
+        <source>Generation completed</source>
+        <translation>生成完了</translation>
+    </message>
+    <message>
+        <source>Generation failed</source>
+        <translation>生成に失敗しました</translation>
+    </message>
+    <message>
+        <source>Generation failed; stopped after {completed}.</source>
+        <translation>生成に失敗したため停止しました ({completed}件完了)。</translation>
+    </message>
+    <message>
+        <source>Generation interrupted</source>
+        <translation>生成が中断されました</translation>
+    </message>
+    <message>
+        <source>Generic</source>
+        <translation>汎用</translation>
+    </message>
+    <message>
+        <source>Go to Layer</source>
+        <translation>レイヤーへ移動</translation>
+    </message>
+    <message>
+        <source>Go to source</source>
+        <translation>元データへ移動</translation>
+    </message>
+    <message>
+        <source>Golden ratio</source>
+        <translation>黄金比</translation>
+    </message>
+    <message>
+        <source>Golden spiral</source>
+        <translation>黄金螺旋</translation>
+    </message>
+    <message>
+        <source>Gradient</source>
+        <translation>グラデーション</translation>
+    </message>
+    <message>
+        <source>Gradient Map</source>
+        <translation>グラデーションマップ</translation>
+    </message>
+    <message>
+        <source>Gradient Overlay</source>
+        <translation>グラデーションオーバーレイ</translation>
+    </message>
+    <message>
+        <source>Gradient Stop Color</source>
+        <translation>グラデーションストップ色</translation>
+    </message>
+    <message>
+        <source>Grayscale K TIFF sequence</source>
+        <translation>グレースケール K TIFF 連番</translation>
+    </message>
+    <message>
+        <source>Grayscale K TIFF: flattened lightness on the K channel (C=M=Y=0), one file per page.</source>
+        <translation>グレースケール K TIFF: 統合後の明度を K チャンネルに配置します (C=M=Y=0)。1 ページ 1 ファイルです。</translation>
+    </message>
+    <message>
+        <source>Green</source>
+        <translation>緑</translation>
+    </message>
+    <message>
+        <source>Grey bar</source>
+        <translation>グレーバー</translation>
+    </message>
+    <message>
+        <source>Grid Settings</source>
+        <translation>グリッド設定</translation>
+    </message>
+    <message>
+        <source>Grid Settings...</source>
+        <translation>グリッド設定...</translation>
+    </message>
+    <message>
+        <source>Grid interval</source>
+        <translation>グリッド間隔</translation>
+    </message>
+    <message>
+        <source>Grid type</source>
+        <translation>グリッドの種類</translation>
+    </message>
+    <message>
+        <source>Grid view</source>
+        <translation>グリッド表示</translation>
+    </message>
+    <message>
+        <source>Group</source>
+        <translation>グループ</translation>
+    </message>
+    <message>
+        <source>Group Balloon Objects</source>
+        <translation>フキダシをオブジェクトレイヤーにまとめる</translation>
+    </message>
+    <message>
+        <source>Group Layers</source>
+        <translation>レイヤーをグループ化</translation>
+    </message>
+    <message>
+        <source>Group: {label}</source>
+        <translation>グループ: {label}</translation>
+    </message>
+    <message>
+        <source>Guide Templates</source>
+        <translation>ガイドテンプレート</translation>
+    </message>
+    <message>
+        <source>Guide Templates...</source>
+        <translation>ガイドテンプレート...</translation>
+    </message>
+    <message>
+        <source>Guides</source>
+        <translation>ガイド</translation>
+    </message>
+    <message>
+        <source>Guides must be inside the canvas with valid margins.</source>
+        <translation>ガイドをキャンバス内に配置し、マージンを正しく指定してください。</translation>
+    </message>
+    <message>
+        <source>Guides use each page's DPI. Canvas size is unchanged.</source>
+        <translation>各ページのDPIでガイドを作成します。キャンバスサイズは変更しません。</translation>
+    </message>
+    <message>
+        <source>Gutter</source>
+        <translation>コマ間隔</translation>
+    </message>
+    <message>
+        <source>H-Center</source>
+        <translation>水平中央</translation>
+    </message>
+    <message>
+        <source>H-Distribute</source>
+        <translation>水平分布</translation>
+    </message>
+    <message>
+        <source>HSV</source>
+        <translation>HSV</translation>
+    </message>
+    <message>
+        <source>Half em</source>
+        <translation>半角</translation>
+    </message>
+    <message>
+        <source>Hamming</source>
+        <translation>ハミング</translation>
+    </message>
+    <message>
+        <source>Hand-drawn connection / Preview</source>
+        <translation>手描きの接続・プレビュー</translation>
+    </message>
+    <message>
+        <source>Handle Smoothness</source>
+        <translation>ハンドル滑らかさ</translation>
+    </message>
+    <message>
+        <source>Handle smoothness</source>
+        <translation>ハンドルの滑らかさ</translation>
+    </message>
+    <message>
+        <source>Hang end punctuation</source>
+        <translation>行末の約物をぶら下げる</translation>
+    </message>
+    <message>
+        <source>Hanging characters</source>
+        <translation>ぶら下げ対象文字</translation>
+    </message>
+    <message>
+        <source>Hard Light</source>
+        <translation>ハードライト</translation>
+    </message>
+    <message>
+        <source>Hard Mix</source>
+        <translation>ハードミックス</translation>
+    </message>
+    <message>
+        <source>Hash</source>
+        <translation>ハッシュ</translation>
+    </message>
+    <message>
+        <source>Height</source>
+        <translation>高さ</translation>
+    </message>
+    <message>
+        <source>Height (px):</source>
+        <translation>高さ (px):</translation>
+    </message>
+    <message>
+        <source>Height:</source>
+        <translation>高さ:</translation>
+    </message>
+    <message>
+        <source>Heptagon</source>
+        <translation>七角形</translation>
+    </message>
+    <message>
+        <source>Hex</source>
+        <translation>16進数</translation>
+    </message>
+    <message>
+        <source>Hexagon</source>
+        <translation>六角形</translation>
+    </message>
+    <message>
+        <source>Hexagonal</source>
+        <translation>六角</translation>
+    </message>
+    <message>
+        <source>Hidden</source>
+        <translation>隠す</translation>
+    </message>
+    <message>
+        <source>Hide folio for:</source>
+        <translation>ノンブルを表示しない役割:</translation>
+    </message>
+    <message>
+        <source>High</source>
+        <translation>高</translation>
+    </message>
+    <message>
+        <source>Highlight color</source>
+        <translation>ハイライト色</translation>
+    </message>
+    <message>
+        <source>Hong Kong / Asia</source>
+        <translation>香港・アジア</translation>
+    </message>
+    <message>
+        <source>Horizontal</source>
+        <translation>水平</translation>
+    </message>
+    <message>
+        <source>Horizontal center</source>
+        <translation>水平中央線</translation>
+    </message>
+    <message>
+        <source>Horizontal scale</source>
+        <translation>水平比率</translation>
+    </message>
+    <message>
+        <source>Horizontal spacing</source>
+        <translation>横方向の間隔</translation>
+    </message>
+    <message>
+        <source>Host</source>
+        <translation>ホスト</translation>
+    </message>
+    <message>
+        <source>Host/IP</source>
+        <translation>ホスト/IP</translation>
+    </message>
+    <message>
+        <source>Host:</source>
+        <translation>ホスト:</translation>
+    </message>
+    <message>
+        <source>How much holding or repeatedly pressing [ / ] speeds up brush size changes. Off changes the size by the same ratio on every press.</source>
+        <translation>[ / ] を押し続けたり連打したりしたときに、ブラシサイズの変化をどれだけ速めるかを調整します。オフでは毎回同じ割合で変化します。</translation>
+    </message>
+    <message>
+        <source>How should {name} be placed?</source>
+        <translation>{name} をどのように配置しますか?</translation>
+    </message>
+    <message>
+        <source>How this layer blends with the layers below</source>
+        <translation>このレイヤーと下のレイヤーのブレンド方法</translation>
+    </message>
+    <message>
+        <source>Hue</source>
+        <translation>色相</translation>
+    </message>
+    <message>
+        <source>Hue/Saturation</source>
+        <translation>色相/彩度</translation>
+    </message>
+    <message>
+        <source>ICC Profile (*.icc *.icm);;All Files (*.*)</source>
+        <translation>ICC プロファイル (*.icc *.icm);;すべてのファイル (*.*)</translation>
+    </message>
+    <message>
+        <source>ICC Profiles (*.icc *.icm);;All Files (*.*)</source>
+        <translation>ICC プロファイル (*.icc *.icm);;すべてのファイル (*.*)</translation>
+    </message>
+    <message>
+        <source>ID</source>
+        <translation>ID</translation>
+    </message>
+    <message>
+        <source>Icon</source>
+        <translation>アイコン</translation>
+    </message>
+    <message>
+        <source>Identifier:</source>
+        <translation>識別子:</translation>
+    </message>
+    <message>
+        <source>Illustrator-like precise vector pen</source>
+        <translation>Illustrator風の高精度ベクターペン</translation>
+    </message>
+    <message>
+        <source>Image</source>
+        <translation>画像</translation>
+    </message>
+    <message>
+        <source>Image &amp;Properties...</source>
+        <translation>画像の設定(&amp;P)...</translation>
+    </message>
+    <message>
+        <source>Image Package + Manifest</source>
+        <translation>画像パッケージ + マニフェスト</translation>
+    </message>
+    <message>
+        <source>Image Properties</source>
+        <translation>画像の設定</translation>
+    </message>
+    <message>
+        <source>Image Si&amp;ze...</source>
+        <translation>画像解像度(&amp;Z)...</translation>
+    </message>
+    <message>
+        <source>Image Size</source>
+        <translation>画像解像度</translation>
+    </message>
+    <message>
+        <source>Image Source:</source>
+        <translation>画像ソース:</translation>
+    </message>
+    <message>
+        <source>Image file not found</source>
+        <translation>画像ファイルが見つかりません</translation>
+    </message>
+    <message>
+        <source>Image files (*.png *.jpg *.jpeg);;All files (*)</source>
+        <translation>画像ファイル (*.png *.jpg *.jpeg);;すべてのファイル (*)</translation>
+    </message>
+    <message>
+        <source>Image fit</source>
+        <translation>画像の収め方</translation>
+    </message>
+    <message>
+        <source>Image handling</source>
+        <translation>画像の扱い</translation>
+    </message>
+    <message>
+        <source>Image resized to {width}x{height} px at {dpi} dpi</source>
+        <translation>画像を {width}x{height} px / {dpi} dpi にリサイズしました</translation>
+    </message>
+    <message>
+        <source>Image-only fixed-layout EPUB 3. Conformance is reported as checked only when EPUBCheck is installed.</source>
+        <translation>画像のみの固定レイアウト EPUB 3 です。適合性は EPUBCheck が導入されている場合にのみ「検査済み」と表示します。</translation>
+    </message>
+    <message>
+        <source>Image:</source>
+        <translation>画像:</translation>
+    </message>
+    <message>
+        <source>Images and balloons</source>
+        <translation>画像・フキダシ</translation>
+    </message>
+    <message>
+        <source>Images:</source>
+        <translation>画像:</translation>
+    </message>
+    <message>
+        <source>Import</source>
+        <translation>インポート</translation>
+    </message>
+    <message>
+        <source>Import ABR</source>
+        <translation>ABR をインポート</translation>
+    </message>
+    <message>
+        <source>Import Failed</source>
+        <translation>インポートに失敗しました</translation>
+    </message>
+    <message>
+        <source>Import PNG</source>
+        <translation>PNG をインポート</translation>
+    </message>
+    <message>
+        <source>Import Pen</source>
+        <translation>ペンを読み込む</translation>
+    </message>
+    <message>
+        <source>Import Plugin Package</source>
+        <translation>プラグインパッケージをインポート</translation>
+    </message>
+    <message>
+        <source>Import SVG</source>
+        <translation>SVG をインポート</translation>
+    </message>
+    <message>
+        <source>Import Script</source>
+        <translation>台本の読み込み</translation>
+    </message>
+    <message>
+        <source>Import Shortcut Scheme</source>
+        <translation>ショートカットスキームをインポート</translation>
+    </message>
+    <message>
+        <source>Import Tags</source>
+        <translation>タグをインポート</translation>
+    </message>
+    <message>
+        <source>Import Tip Images</source>
+        <translation>チップ画像をインポート</translation>
+    </message>
+    <message>
+        <source>Import Warnings</source>
+        <translation>インポート警告</translation>
+    </message>
+    <message>
+        <source>Import cancelled.</source>
+        <translation>インポートをキャンセルしました。</translation>
+    </message>
+    <message>
+        <source>Import completed.</source>
+        <translation>インポートが完了しました。</translation>
+    </message>
+    <message>
+        <source>Import failed: %s</source>
+        <translation>インポートに失敗しました: %s</translation>
+    </message>
+    <message>
+        <source>Import failed: detect candidates error</source>
+        <translation>インポート失敗: 候補検出エラー</translation>
+    </message>
+    <message>
+        <source>Import failed: gateway %s is not registered</source>
+        <translation>インポート失敗: gateway %s は登録されていません</translation>
+    </message>
+    <message>
+        <source>Import failed: gateway file missing (%s)</source>
+        <translation>インポート失敗: gateway ファイルが見つかりません (%s)</translation>
+    </message>
+    <message>
+        <source>Import failed: manifest invalid (%s)</source>
+        <translation>インポート失敗: manifest が不正です (%s)</translation>
+    </message>
+    <message>
+        <source>Import failed: preset has no embedded workflow.</source>
+        <translation>インポート失敗: プリセットに埋め込み workflow がありません。</translation>
+    </message>
+    <message>
+        <source>Import macro</source>
+        <translation>マクロを読み込み</translation>
+    </message>
+    <message>
+        <source>Import not yet implemented</source>
+        <translation>インポートは未実装です</translation>
+    </message>
+    <message>
+        <source>Import preset</source>
+        <translation>プリセットをインポート</translation>
+    </message>
+    <message>
+        <source>Import preset...</source>
+        <translation>プリセットをインポート...</translation>
+    </message>
+    <message>
+        <source>Import requested.</source>
+        <translation>インポートを要求しました。</translation>
+    </message>
+    <message>
+        <source>Import requested: {path}</source>
+        <translation>インポートを要求しました: {path}</translation>
+    </message>
+    <message>
+        <source>Import...</source>
+        <translation>インポート...</translation>
+    </message>
+    <message>
+        <source>Imported</source>
+        <translation>インポート済み</translation>
+    </message>
+    <message>
+        <source>Imported {count} ABR tips</source>
+        <translation>{count}件のABR tipをインポートしました</translation>
+    </message>
+    <message>
+        <source>Imported {count} PNG tips</source>
+        <translation>{count}件のPNGチップをインポートしました</translation>
+    </message>
+    <message>
+        <source>Imported {count} PNG tips ({skipped} skipped)</source>
+        <translation>{count}件のPNGチップをインポートしました（{skipped}件スキップ）</translation>
+    </message>
+    <message>
+        <source>Imported {name}</source>
+        <translation>{name} を読み込みました</translation>
+    </message>
+    <message>
+        <source>Imported {name} ({count} layers)</source>
+        <translation>{name} を読み込みました ({count} レイヤー)</translation>
+    </message>
+    <message>
+        <source>Imported: %s</source>
+        <translation>インポートしました: %s</translation>
+    </message>
+    <message>
+        <source>Imported: %s (gateway: %s)</source>
+        <translation>インポートしました: %s (gateway: %s)</translation>
+    </message>
+    <message>
+        <source>Import…</source>
+        <translation>インポート…</translation>
+    </message>
+    <message>
+        <source>In: {length} px</source>
+        <translation>入り: {length} px</translation>
+    </message>
+    <message>
+        <source>Include guides</source>
+        <translation>ガイドを含める</translation>
+    </message>
+    <message>
+        <source>Include raster artwork (stored inside the template)</source>
+        <translation>ラスター画像を含める (テンプレート内に保存)</translation>
+    </message>
+    <message>
+        <source>Include the LoomStroke manifest in the CBZ</source>
+        <translation>CBZ に LoomStroke マニフェストを含める</translation>
+    </message>
+    <message>
+        <source>Include vector objects</source>
+        <translation>ベクターオブジェクトを含める</translation>
+    </message>
+    <message>
+        <source>Included Content</source>
+        <translation>書き出し内容</translation>
+    </message>
+    <message>
+        <source>Increase the font size</source>
+        <translation>フォントサイズを大きくする</translation>
+    </message>
+    <message>
+        <source>Independent copy</source>
+        <translation>独立コピー</translation>
+    </message>
+    <message>
+        <source>Info</source>
+        <translation>情報</translation>
+    </message>
+    <message>
+        <source>Ink coverage (estimate, no output profile): {coverage}</source>
+        <translation>インキ被覆率 (出力プロファイルなしの見積もり): {coverage}</translation>
+    </message>
+    <message>
+        <source>Inking</source>
+        <translation>インキング</translation>
+    </message>
+    <message>
+        <source>Inline note line gap</source>
+        <translation>割注の行間</translation>
+    </message>
+    <message>
+        <source>Inline note size ratio</source>
+        <translation>割注の文字比率</translation>
+    </message>
+    <message>
+        <source>Inline text</source>
+        <translation>インラインテキスト</translation>
+    </message>
+    <message>
+        <source>Inline text editor is not available.</source>
+        <translation>インラインテキストエディタを使用できません。</translation>
+    </message>
+    <message>
+        <source>Inner Glow</source>
+        <translation>光彩 (内側)</translation>
+    </message>
+    <message>
+        <source>Inner Shadow</source>
+        <translation>シャドウ (内側)</translation>
+    </message>
+    <message>
+        <source>Inner diameter ratio</source>
+        <translation>内径の比率</translation>
+    </message>
+    <message>
+        <source>Inpaint submit</source>
+        <translation>インペイント送信</translation>
+    </message>
+    <message>
+        <source>Input</source>
+        <translation>入力</translation>
+    </message>
+    <message>
+        <source>Input Black</source>
+        <translation>入力(黒)</translation>
+    </message>
+    <message>
+        <source>Input Layers (select up to {count}):</source>
+        <translation>入力レイヤー (最大 {count}):</translation>
+    </message>
+    <message>
+        <source>Input White</source>
+        <translation>入力(白)</translation>
+    </message>
+    <message>
+        <source>Input slots</source>
+        <translation>入力スロット</translation>
+    </message>
+    <message>
+        <source>Inseparable repeated characters</source>
+        <translation>同じ文字の連続を分離しない文字</translation>
+    </message>
+    <message>
+        <source>Insert Blank Page</source>
+        <translation>白ページの挿入</translation>
+    </message>
+    <message>
+        <source>Insert a blank page here</source>
+        <translation>ここに白ページを挿入</translation>
+    </message>
+    <message>
+        <source>Insert a blank page here?</source>
+        <translation>ここに白ページを挿入しますか?</translation>
+    </message>
+    <message>
+        <source>Inside Cover</source>
+        <translation>表紙裏</translation>
+    </message>
+    <message>
+        <source>Inspector</source>
+        <translation>インスペクター</translation>
+    </message>
+    <message>
+        <source>Install</source>
+        <translation>インストール</translation>
+    </message>
+    <message>
+        <source>Install the font</source>
+        <translation>フォントをインストールする</translation>
+    </message>
+    <message>
+        <source>Installed AI Presets</source>
+        <translation>インストール済み AI プリセット</translation>
+    </message>
+    <message>
+        <source>Installing the sam3 package failed; check the setup log. Installing from runtime/sam3-src also requires permission for missing dependencies.</source>
+        <translation>sam3パッケージの導入に失敗しました。セットアップログを確認してください。runtime/sam3-srcからの導入でも、不足している依存の取得には許可が必要です。</translation>
+    </message>
+    <message>
+        <source>Integer value (min: {min_val}, max: {max_val})</source>
+        <translation>整数値 (最小: {min_val}, 最大: {max_val})</translation>
+    </message>
+    <message>
+        <source>Intensity</source>
+        <translation>強さ</translation>
+    </message>
+    <message>
+        <source>Interface</source>
+        <translation>インターフェース</translation>
+    </message>
+    <message>
+        <source>Internal id</source>
+        <translation>内部 ID</translation>
+    </message>
+    <message>
+        <source>Interpolation</source>
+        <translation>補間</translation>
+    </message>
+    <message>
+        <source>Interpolation:</source>
+        <translation>補間方法:</translation>
+    </message>
+    <message>
+        <source>Interrupt</source>
+        <translation>中断</translation>
+    </message>
+    <message>
+        <source>Intersect</source>
+        <translation>交差</translation>
+    </message>
+    <message>
+        <source>Intersect Selection</source>
+        <translation>選択範囲との共通部分</translation>
+    </message>
+    <message>
+        <source>Interval:</source>
+        <translation>間隔:</translation>
+    </message>
+    <message>
+        <source>Invalid cover dimensions or pixel limit exceeded.</source>
+        <translation>表紙寸法が不正、または画素数の上限を超えています。</translation>
+    </message>
+    <message>
+        <source>Invalid effect bounds.</source>
+        <translation>効果線の範囲が不正です。</translation>
+    </message>
+    <message>
+        <source>Invalid file name template: {error}</source>
+        <translation>ファイル名テンプレートが不正です: {error}</translation>
+    </message>
+    <message>
+        <source>Invalid input schema</source>
+        <translation>入力定義を確認できませんでした</translation>
+    </message>
+    <message>
+        <source>Invalid name template: {error}</source>
+        <translation>ファイル名テンプレートが不正です: {error}</translation>
+    </message>
+    <message>
+        <source>Invalid page range: {error}</source>
+        <translation>ページ範囲が不正です: {error}</translation>
+    </message>
+    <message>
+        <source>Invalid shortcut scheme detected.</source>
+        <translation>無効なショートカットスキームが検出されました。</translation>
+    </message>
+    <message>
+        <source>Invalid value</source>
+        <translation>無効な値</translation>
+    </message>
+    <message>
+        <source>Invalid widget information</source>
+        <translation>ウィジェット情報を確認できませんでした</translation>
+    </message>
+    <message>
+        <source>Inversion</source>
+        <translation>反転</translation>
+    </message>
+    <message>
+        <source>Invert</source>
+        <translation>反転</translation>
+    </message>
+    <message>
+        <source>Isometric</source>
+        <translation>アイソメトリック</translation>
+    </message>
+    <message>
+        <source>Issues: {issues}</source>
+        <translation>問題: {issues}</translation>
+    </message>
+    <message>
+        <source>Item</source>
+        <translation>内容</translation>
+    </message>
+    <message>
+        <source>JIT Compiler:</source>
+        <translation>JITコンパイラ:</translation>
+    </message>
+    <message>
+        <source>JPEG</source>
+        <translation>JPEG</translation>
+    </message>
+    <message>
+        <source>JPEG Image (*.jpg *.jpeg)</source>
+        <translation>JPEG 画像 (*.jpg *.jpeg)</translation>
+    </message>
+    <message>
+        <source>JPEG Quality:</source>
+        <translation>JPEG品質:</translation>
+    </message>
+    <message>
+        <source>JSON Files (*.json)</source>
+        <translation>JSONファイル (*.json)</translation>
+    </message>
+    <message>
+        <source>JSON Files (*.json);;All Files (*)</source>
+        <translation>JSON ファイル (*.json);;すべてのファイル (*)</translation>
+    </message>
+    <message>
+        <source>JSON Files (*.json);;All Files (*.*)</source>
+        <translation>JSONファイル (*.json);;すべてのファイル (*.*)</translation>
+    </message>
+    <message>
+        <source>Japan</source>
+        <translation>日本</translation>
+    </message>
+    <message>
+        <source>Japanese</source>
+        <translation>和文</translation>
+    </message>
+    <message>
+        <source>Japanese corner (current)</source>
+        <translation>日本式角トンボ (従来)</translation>
+    </message>
+    <message>
+        <source>Japanese double</source>
+        <translation>日本式ダブルトンボ</translation>
+    </message>
+    <message>
+        <source>Japanese prohibitions</source>
+        <translation>日本語の禁則</translation>
+    </message>
+    <message>
+        <source>Japanese standard</source>
+        <translation>日本語組版の標準</translation>
+    </message>
+    <message>
+        <source>Japanese typesetting</source>
+        <translation>日本語組版</translation>
+    </message>
+    <message>
+        <source>Japanese-Latin spacing</source>
+        <translation>和欧間隔</translation>
+    </message>
+    <message>
+        <source>Job</source>
+        <translation>ジョブ</translation>
+    </message>
+    <message>
+        <source>Job Queue</source>
+        <translation>ジョブキュー</translation>
+    </message>
+    <message>
+        <source>Job completed</source>
+        <translation>ジョブが完了しました</translation>
+    </message>
+    <message>
+        <source>Job failed</source>
+        <translation>ジョブが失敗しました</translation>
+    </message>
+    <message>
+        <source>Job {job_id} cancelled</source>
+        <translation>ジョブ {job_id} をキャンセルしました</translation>
+    </message>
+    <message>
+        <source>Job {job_id} completed</source>
+        <translation>ジョブ {job_id} が完了しました</translation>
+    </message>
+    <message>
+        <source>Job {job_id} failed</source>
+        <translation>ジョブ {job_id} が失敗しました</translation>
+    </message>
+    <message>
+        <source>Job {job_id} submitted</source>
+        <translation>ジョブ {job_id} を送信しました</translation>
+    </message>
+    <message>
+        <source>Jobs</source>
+        <translation>ジョブ</translation>
+    </message>
+    <message>
+        <source>Justify</source>
+        <translation>両端揃え</translation>
+    </message>
+    <message>
+        <source>Justify spaces</source>
+        <translation>アキを調整して両端揃え</translation>
+    </message>
+    <message>
+        <source>K only (100%)</source>
+        <translation>Kのみ (100%)</translation>
+    </message>
+    <message>
+        <source>Keep alpha</source>
+        <translation>アルファを保持</translation>
+    </message>
+    <message>
+        <source>Keep edited clip</source>
+        <translation>加工済みクリップを保持</translation>
+    </message>
+    <message>
+        <source>Keep edited clip (stop automatic updates)</source>
+        <translation>加工済みクリップを保持 (自動更新を停止)</translation>
+    </message>
+    <message>
+        <source>Keep source pixels</source>
+        <translation>元の画素を保持</translation>
+    </message>
+    <message>
+        <source>Keyboard shortcut mapping</source>
+        <translation>キーボードショートカットの割り当て</translation>
+    </message>
+    <message>
+        <source>LLM</source>
+        <translation>LLM</translation>
+    </message>
+    <message>
+        <source>LLM Output</source>
+        <translation>LLM 出力</translation>
+    </message>
+    <message>
+        <source>LLM Prompt</source>
+        <translation>LLM プロンプト</translation>
+    </message>
+    <message>
+        <source>LLM Settings</source>
+        <translation>LLM 設定</translation>
+    </message>
+    <message>
+        <source>LLM gateway unavailable.</source>
+        <translation>LLM ゲートウェイを利用できません。</translation>
+    </message>
+    <message>
+        <source>LLM gateway unavailable; submission disabled.</source>
+        <translation>LLM ゲートウェイが利用できないため送信を無効化しました。</translation>
+    </message>
+    <message>
+        <source>LLM output copied to editor.</source>
+        <translation>LLM 出力をエディターへコピーしました。</translation>
+    </message>
+    <message>
+        <source>LLM prompt is empty.</source>
+        <translation>LLM プロンプトが空です。</translation>
+    </message>
+    <message>
+        <source>LLM response did not include text.</source>
+        <translation>LLM 応答にテキストが含まれていません。</translation>
+    </message>
+    <message>
+        <source>LZW</source>
+        <translation>LZW</translation>
+    </message>
+    <message>
+        <source>Lanczos (best for reduction)</source>
+        <translation>Lanczos (縮小に最適)</translation>
+    </message>
+    <message>
+        <source>Language</source>
+        <translation>言語</translation>
+    </message>
+    <message>
+        <source>Language:</source>
+        <translation>言語:</translation>
+    </message>
+    <message>
+        <source>Large artwork bloats the template library.</source>
+        <translation>大きな画像はテンプレートライブラリを肥大化させます。</translation>
+    </message>
+    <message>
+        <source>Largest overlap with child panel</source>
+        <translation>最も広く重なるコマへ割り当て</translation>
+    </message>
+    <message>
+        <source>Lasso</source>
+        <translation>投げ縄</translation>
+    </message>
+    <message>
+        <source>Latin</source>
+        <translation>欧文</translation>
+    </message>
+    <message>
+        <source>Latin in vertical text</source>
+        <translation>縦書き中の欧文</translation>
+    </message>
+    <message>
+        <source>Layer</source>
+        <translation>レイヤー</translation>
+    </message>
+    <message>
+        <source>Layer Blend</source>
+        <translation>レイヤーブレンド</translation>
+    </message>
+    <message>
+        <source>Layer Group</source>
+        <translation>レイヤーグループ化</translation>
+    </message>
+    <message>
+        <source>Layer Styles</source>
+        <translation>レイヤースタイル</translation>
+    </message>
+    <message>
+        <source>Layer Styles...</source>
+        <translation>レイヤースタイル...</translation>
+    </message>
+    <message>
+        <source>Layer Visibility</source>
+        <translation>レイヤーの表示切替</translation>
+    </message>
+    <message>
+        <source>Layer attachment failed: {error}</source>
+        <translation>レイヤー添付に失敗しました: {error}</translation>
+    </message>
+    <message>
+        <source>Layer blend mode</source>
+        <translation>レイヤー描画モード</translation>
+    </message>
+    <message>
+        <source>Layer import not available</source>
+        <translation>レイヤーインポートは利用できません</translation>
+    </message>
+    <message>
+        <source>Layer menu</source>
+        <translation>レイヤーメニュー</translation>
+    </message>
+    <message>
+        <source>Layer name</source>
+        <translation>レイヤー名</translation>
+    </message>
+    <message>
+        <source>Layer opacity</source>
+        <translation>レイヤー不透明度</translation>
+    </message>
+    <message>
+        <source>Layer values changed while reading nodes. Reopen the node editor.</source>
+        <translation>読込中にレイヤーの値が変更されました。ノード編集を開き直してください。</translation>
+    </message>
+    <message>
+        <source>Layered formats use their own exporter; colour and alpha options do not apply.</source>
+        <translation>レイヤー付き形式は専用の書き出し経路を使うため、カラー/透明度オプションは適用されません。</translation>
+    </message>
+    <message>
+        <source>Layers</source>
+        <translation>レイヤー</translation>
+    </message>
+    <message>
+        <source>Layers / Pages</source>
+        <translation>レイヤー・ページ</translation>
+    </message>
+    <message>
+        <source>Layout Directory:</source>
+        <translation>レイアウトディレクトリ:</translation>
+    </message>
+    <message>
+        <source>Layout directory</source>
+        <translation>レイアウトディレクトリ</translation>
+    </message>
+    <message>
+        <source>Leave external</source>
+        <translation>外部のまま</translation>
+    </message>
+    <message>
+        <source>Left</source>
+        <translation>左</translation>
+    </message>
+    <message>
+        <source>Left Binding</source>
+        <translation>左綴じ</translation>
+    </message>
+    <message>
+        <source>Left Side</source>
+        <translation>左側</translation>
+    </message>
+    <message>
+        <source>Left binding</source>
+        <translation>左綴じ</translation>
+    </message>
+    <message>
+        <source>Left binding (left-to-right)</source>
+        <translation>左綴じ (左から右)</translation>
+    </message>
+    <message>
+        <source>Left class</source>
+        <translation>前の文字クラス</translation>
+    </message>
+    <message>
+        <source>Leftward</source>
+        <translation>左方向</translation>
+    </message>
+    <message>
+        <source>Legacy layout</source>
+        <translation>従来の配置</translation>
+    </message>
+    <message>
+        <source>Length variation</source>
+        <translation>長さのばらつき</translation>
+    </message>
+    <message>
+        <source>Levels</source>
+        <translation>レベル補正</translation>
+    </message>
+    <message>
+        <source>Library</source>
+        <translation>ライブラリ</translation>
+    </message>
+    <message>
+        <source>Light</source>
+        <translation>ライト</translation>
+    </message>
+    <message>
+        <source>Light direction</source>
+        <translation>光の方向</translation>
+    </message>
+    <message>
+        <source>Light sources</source>
+        <translation>光源</translation>
+    </message>
+    <message>
+        <source>Light {number}</source>
+        <translation>光源 {number}</translation>
+    </message>
+    <message>
+        <source>Lighten</source>
+        <translation>比較(明)</translation>
+    </message>
+    <message>
+        <source>Lighter Color</source>
+        <translation>カラー比較(明)</translation>
+    </message>
+    <message>
+        <source>Lightness</source>
+        <translation>明度</translation>
+    </message>
+    <message>
+        <source>Line</source>
+        <translation>線</translation>
+    </message>
+    <message>
+        <source>Line Height</source>
+        <translation>行間</translation>
+    </message>
+    <message>
+        <source>Line adjustment</source>
+        <translation>行調整</translation>
+    </message>
+    <message>
+        <source>Line breaking</source>
+        <translation>禁則処理</translation>
+    </message>
+    <message>
+        <source>Line breaking could not satisfy the selected prohibitions.</source>
+        <translation>指定した禁則を満たせない改行があります。</translation>
+    </message>
+    <message>
+        <source>Line count</source>
+        <translation>線の本数</translation>
+    </message>
+    <message>
+        <source>Line height</source>
+        <translation>行間</translation>
+    </message>
+    <message>
+        <source>Line spacing</source>
+        <translation>行送り間隔</translation>
+    </message>
+    <message>
+        <source>Line width (pt)</source>
+        <translation>線幅 (pt)</translation>
+    </message>
+    <message>
+        <source>Lineage</source>
+        <translation>リネージ</translation>
+    </message>
+    <message>
+        <source>Linear</source>
+        <translation>線形</translation>
+    </message>
+    <message>
+        <source>Linear Burn</source>
+        <translation>焼き込み(リニア)</translation>
+    </message>
+    <message>
+        <source>Linear Dodge</source>
+        <translation>覆い焼き (リニア)</translation>
+    </message>
+    <message>
+        <source>Linear Dodge (Add)</source>
+        <translation>覆い焼き(リニア)/加算</translation>
+    </message>
+    <message>
+        <source>Linear Light</source>
+        <translation>リニアライト</translation>
+    </message>
+    <message>
+        <source>Linear and radial gradient fill tool</source>
+        <translation>線形・放射状グラデーション塗りつぶしツール</translation>
+    </message>
+    <message>
+        <source>Link page to current</source>
+        <translation>現在のページにリンク</translation>
+    </message>
+    <message>
+        <source>Link selected frames</source>
+        <translation>選択した枠を連結</translation>
+    </message>
+    <message>
+        <source>Link text frames</source>
+        <translation>テキスト枠を連結</translation>
+    </message>
+    <message>
+        <source>Link to frame</source>
+        <translation>次の枠へ連結</translation>
+    </message>
+    <message>
+        <source>Link to selected frame</source>
+        <translation>一覧の選択先へ連結</translation>
+    </message>
+    <message>
+        <source>Link to the file (stays external, can be reloaded)</source>
+        <translation>ファイルにリンク (外部のまま、再読込可能)</translation>
+    </message>
+    <message>
+        <source>Linked</source>
+        <translation>リンクしました</translation>
+    </message>
+    <message>
+        <source>Linked and embedded resources: status, relink, reload, embed</source>
+        <translation>リンク / 埋め込み素材の状態・再リンク・再読込・埋め込み</translation>
+    </message>
+    <message>
+        <source>Linked assets are not available in this build.</source>
+        <translation>リンク素材はこのビルドでは利用できません。</translation>
+    </message>
+    <message>
+        <source>Linked frames must use the same writing direction.</source>
+        <translation>連結する枠の縦書き・横書きを揃えてください。</translation>
+    </message>
+    <message>
+        <source>Linking requires rectangular text frames.</source>
+        <translation>連結には長方形のテキスト枠を使用してください。</translation>
+    </message>
+    <message>
+        <source>Links</source>
+        <translation>リンク</translation>
+    </message>
+    <message>
+        <source>Links Panel</source>
+        <translation>リンクパネル</translation>
+    </message>
+    <message>
+        <source>Links: {unresolved_pages} missing page(s), {unplaced} unplaced, {unresolved_text_refs} lost text object(s), {duplicates} duplicate(s), {text_diffs} text difference(s).</source>
+        <translation>リンク: ページ欠落 {unresolved_pages}、未配置 {unplaced}、テキスト消失 {unresolved_text_refs}、重複 {duplicates}、本文差分 {text_diffs}。</translation>
+    </message>
+    <message>
+        <source>List</source>
+        <translation>リスト</translation>
+    </message>
+    <message>
+        <source>List item</source>
+        <translation>リスト項目</translation>
+    </message>
+    <message>
+        <source>List view</source>
+        <translation>リスト表示</translation>
+    </message>
+    <message>
+        <source>Live Filter Layer</source>
+        <translation>ライブフィルターレイヤー</translation>
+    </message>
+    <message>
+        <source>Live prompt</source>
+        <translation>ライブプロンプト</translation>
+    </message>
+    <message>
+        <source>Load</source>
+        <translation>読み込み</translation>
+    </message>
+    <message>
+        <source>Load ComfyUI Workflow</source>
+        <translation>ComfyUI ワークフローを読み込む</translation>
+    </message>
+    <message>
+        <source>Load Failed</source>
+        <translation>読み込みに失敗しました</translation>
+    </message>
+    <message>
+        <source>Load ICC Profile</source>
+        <translation>ICC プロファイルを読み込む</translation>
+    </message>
+    <message>
+        <source>Load ICC Profile...</source>
+        <translation>ICC プロファイルを読み込む...</translation>
+    </message>
+    <message>
+        <source>Load Model</source>
+        <translation>モデルをロード</translation>
+    </message>
+    <message>
+        <source>Load Selection</source>
+        <translation>選択を読込</translation>
+    </message>
+    <message>
+        <source>Load failed: %s</source>
+        <translation>読み込み失敗: %s</translation>
+    </message>
+    <message>
+        <source>Load failed: {error}</source>
+        <translation>読み込みに失敗しました: {error}</translation>
+    </message>
+    <message>
+        <source>Load user defaults</source>
+        <translation>ユーザー既定を読み込み</translation>
+    </message>
+    <message>
+        <source>Load workflow</source>
+        <translation>workflow を読み込み</translation>
+    </message>
+    <message>
+        <source>Load workflow...</source>
+        <translation>workflow を読み込み...</translation>
+    </message>
+    <message>
+        <source>Load workflow…</source>
+        <translation>ワークフローを読み込む…</translation>
+    </message>
+    <message>
+        <source>Load...</source>
+        <translation>読み込み...</translation>
+    </message>
+    <message>
+        <source>Loaded fonts: {loaded}, failed: {failed}</source>
+        <translation>読み込んだフォント: {loaded}, 失敗: {failed}</translation>
+    </message>
+    <message>
+        <source>Loaded prompt '{title}'.</source>
+        <translation>プロンプト '{title}' を読み込みました。</translation>
+    </message>
+    <message>
+        <source>Loaded snippet: {title}</source>
+        <translation>スニペットを読み込みました: {title}</translation>
+    </message>
+    <message>
+        <source>Loaded: %s</source>
+        <translation>読み込みました: %s</translation>
+    </message>
+    <message>
+        <source>Loaded: {name}</source>
+        <translation>読み込み済み: {name}</translation>
+    </message>
+    <message>
+        <source>Local</source>
+        <translation>ローカル</translation>
+    </message>
+    <message>
+        <source>Lock</source>
+        <translation>ロック</translation>
+    </message>
+    <message>
+        <source>Lock Guides</source>
+        <translation>ガイドをロック</translation>
+    </message>
+    <message>
+        <source>Lock aspect ratio</source>
+        <translation>アスペクト比を固定</translation>
+    </message>
+    <message>
+        <source>LoomStroke</source>
+        <translation>LoomStroke</translation>
+    </message>
+    <message>
+        <source>LoomStroke Core</source>
+        <translation>LoomStroke コア</translation>
+    </message>
+    <message>
+        <source>LoomStroke MCP</source>
+        <translation>LoomStroke MCP</translation>
+    </message>
+    <message>
+        <source>LoomStroke Pen (*.lspn)</source>
+        <translation>LoomStroke ペン (*.lspn)</translation>
+    </message>
+    <message>
+        <source>LoomStroke Project (*.skr);;All Files (*.*)</source>
+        <translation>LoomStroke プロジェクト (*.skr);;すべてのファイル (*.*)</translation>
+    </message>
+    <message>
+        <source>LoomStroke effect (*.lsfx);;All files (*)</source>
+        <translation>LoomStroke effect (*.lsfx);;すべてのファイル (*)</translation>
+    </message>
+    <message>
+        <source>LoomStroke v0.1.0</source>
+        <translation>LoomStroke v0.1.0</translation>
+    </message>
+    <message>
+        <source>LoomStroke v{version}</source>
+        <translation>LoomStroke v{version}</translation>
+    </message>
+    <message>
+        <source>Lossless</source>
+        <translation>可逆</translation>
+    </message>
+    <message>
+        <source>Low</source>
+        <translation>低</translation>
+    </message>
+    <message>
+        <source>Lower values reduce CPU load on large canvases</source>
+        <translation>値を下げると大きなキャンバスでのCPU負荷が軽減されます</translation>
+    </message>
+    <message>
+        <source>Lowers the composite resolution of the facing page in a spread. Full keeps it as sharp as the page being edited; the lower steps trade sharpness for GPU memory on large, many-layered pages.</source>
+        <translation>見開きで隣に表示される相手ページの合成解像度を下げます。フルは編集中のページと同じシャープさを保ちます。大きく多レイヤーのページでは、下げるほど GPU メモリを節約できます。</translation>
+    </message>
+    <message>
+        <source>Luminosity</source>
+        <translation>輝度</translation>
+    </message>
+    <message>
+        <source>MCP runtime is not available.</source>
+        <translation>MCP runtime が利用できません。</translation>
+    </message>
+    <message>
+        <source>Macro is not ready on this page; see the dry run.</source>
+        <translation>このページではマクロを実行できません。ドライランを確認してください。</translation>
+    </message>
+    <message>
+        <source>Macro name:</source>
+        <translation>マクロ名:</translation>
+    </message>
+    <message>
+        <source>Macros</source>
+        <translation>マクロ</translation>
+    </message>
+    <message>
+        <source>Magenta</source>
+        <translation>マゼンタ</translation>
+    </message>
+    <message>
+        <source>Magic Wand</source>
+        <translation>自動選択</translation>
+    </message>
+    <message>
+        <source>Main</source>
+        <translation>メイン</translation>
+    </message>
+    <message>
+        <source>Major and minor lines</source>
+        <translation>主線と補助線</translation>
+    </message>
+    <message>
+        <source>Major line every</source>
+        <translation>主線の間隔</translation>
+    </message>
+    <message>
+        <source>Make shared view independent</source>
+        <translation>このコマの共通表示を独立させる</translation>
+    </message>
+    <message>
+        <source>Manage Masters</source>
+        <translation>マスターページの管理</translation>
+    </message>
+    <message>
+        <source>Manage Masters...</source>
+        <translation>マスターページの管理...</translation>
+    </message>
+    <message>
+        <source>Manage Templates</source>
+        <translation>テンプレートの管理</translation>
+    </message>
+    <message>
+        <source>Manage Templates...</source>
+        <translation>テンプレートの管理...</translation>
+    </message>
+    <message>
+        <source>Manage manga shapes, balloons, and frames.</source>
+        <translation>マンガの図形・フキダシ・コマを管理します。</translation>
+    </message>
+    <message>
+        <source>Manager</source>
+        <translation>マネージャー</translation>
+    </message>
+    <message>
+        <source>Manga Preflight</source>
+        <translation>漫画プリフライト</translation>
+    </message>
+    <message>
+        <source>Manga Preflight…</source>
+        <translation>漫画プリフライト…</translation>
+    </message>
+    <message>
+        <source>Manga Screentone</source>
+        <translation>漫画スクリーントーン</translation>
+    </message>
+    <message>
+        <source>Manually adjust the selected candidate's mask (feather / expand / fill holes — no AI inference)</source>
+        <translation>選択中候補のマスクを手動調整 (ぼかし / 拡張 / 穴埋め — AI 推論なし)</translation>
+    </message>
+    <message>
+        <source>Manually assigned</source>
+        <translation>手動で割り当て</translation>
+    </message>
+    <message>
+        <source>Margin information</source>
+        <translation>余白情報</translation>
+    </message>
+    <message>
+        <source>Mark colour</source>
+        <translation>マークの色</translation>
+    </message>
+    <message>
+        <source>Marker</source>
+        <translation>マーカー</translation>
+    </message>
+    <message>
+        <source>Mask Ops</source>
+        <translation>マスク操作</translation>
+    </message>
+    <message>
+        <source>Mask Radius</source>
+        <translation>マスク半径</translation>
+    </message>
+    <message>
+        <source>Master name:</source>
+        <translation>マスター名:</translation>
+    </message>
+    <message>
+        <source>Match Reference</source>
+        <translation>リファレンスに合わせる</translation>
+    </message>
+    <message>
+        <source>Matte colour</source>
+        <translation>背景色</translation>
+    </message>
+    <message>
+        <source>Max Layers:</source>
+        <translation>最大レイヤー数:</translation>
+    </message>
+    <message>
+        <source>Max Retries:</source>
+        <translation>最大リトライ数:</translation>
+    </message>
+    <message>
+        <source>Max Undo Steps:</source>
+        <translation>最大Undoステップ数:</translation>
+    </message>
+    <message>
+        <source>Max slice height:</source>
+        <translation>スライス最大高さ:</translation>
+    </message>
+    <message>
+        <source>Max tokens</source>
+        <translation>最大トークン</translation>
+    </message>
+    <message>
+        <source>Maximum (em)</source>
+        <translation>最大アキ (em)</translation>
+    </message>
+    <message>
+        <source>Maximum compression</source>
+        <translation>詰め量の上限</translation>
+    </message>
+    <message>
+        <source>Maximum expansion</source>
+        <translation>伸ばし量の上限</translation>
+    </message>
+    <message>
+        <source>Measure</source>
+        <translation>計測</translation>
+    </message>
+    <message>
+        <source>Measure distances and angles</source>
+        <translation>距離と角度を計測</translation>
+    </message>
+    <message>
+        <source>Medium</source>
+        <translation>中</translation>
+    </message>
+    <message>
+        <source>MemMap Threshold:</source>
+        <translation>メモリマップ閾値:</translation>
+    </message>
+    <message>
+        <source>Memmap Threshold</source>
+        <translation>メモリマップ閾値</translation>
+    </message>
+    <message>
+        <source>Menu &amp;Visibility Log...</source>
+        <translation>メニュー可視性ログ...</translation>
+    </message>
+    <message>
+        <source>Menus</source>
+        <translation>メニュー</translation>
+    </message>
+    <message>
+        <source>Merge &amp;Visible</source>
+        <translation>表示レイヤーを結合</translation>
+    </message>
+    <message>
+        <source>Merge Down</source>
+        <translation>下のレイヤーと結合</translation>
+    </message>
+    <message>
+        <source>Merge Visible</source>
+        <translation>表示レイヤーを結合</translation>
+    </message>
+    <message>
+        <source>Merge with next</source>
+        <translation>次のコマと結合</translation>
+    </message>
+    <message>
+        <source>Merged</source>
+        <translation>結合結果</translation>
+    </message>
+    <message>
+        <source>Message</source>
+        <translation>メッセージ</translation>
+    </message>
+    <message>
+        <source>Metadata</source>
+        <translation>書誌情報</translation>
+    </message>
+    <message>
+        <source>Method</source>
+        <translation>方法</translation>
+    </message>
+    <message>
+        <source>Middle Stops</source>
+        <translation>中間ストップ</translation>
+    </message>
+    <message>
+        <source>Middle click</source>
+        <translation>中クリック</translation>
+    </message>
+    <message>
+        <source>Middle drag</source>
+        <translation>中ドラッグ</translation>
+    </message>
+    <message>
+        <source>Middle punctuation</source>
+        <translation>中点類</translation>
+    </message>
+    <message>
+        <source>Min Candidate Score</source>
+        <translation>候補スコアの下限</translation>
+    </message>
+    <message>
+        <source>Minimal</source>
+        <translation>最小</translation>
+    </message>
+    <message>
+        <source>Minimum (em)</source>
+        <translation>最小アキ (em)</translation>
+    </message>
+    <message>
+        <source>Minimum Pressure Opacity</source>
+        <translation>筆圧不透明度の下限</translation>
+    </message>
+    <message>
+        <source>Minimum Pressure Size</source>
+        <translation>筆圧サイズの下限</translation>
+    </message>
+    <message>
+        <source>Mirror edge pixels</source>
+        <translation>端の画素を鏡像にする</translation>
+    </message>
+    <message>
+        <source>Missing</source>
+        <translation>見つからない</translation>
+    </message>
+    <message>
+        <source>Missing input schema</source>
+        <translation>入力定義を取得できませんでした</translation>
+    </message>
+    <message>
+        <source>Missing placeholders: {placeholders}</source>
+        <translation>不足しているプレースホルダー: {placeholders}</translation>
+    </message>
+    <message>
+        <source>Missing widget information</source>
+        <translation>ウィジェット情報を取得できませんでした</translation>
+    </message>
+    <message>
+        <source>Mobile Screen</source>
+        <translation>モバイル画面</translation>
+    </message>
+    <message>
+        <source>Modality</source>
+        <translation>モダリティ</translation>
+    </message>
+    <message>
+        <source>Mode</source>
+        <translation>モード</translation>
+    </message>
+    <message>
+        <source>Model</source>
+        <translation>モデル</translation>
+    </message>
+    <message>
+        <source>Model checkpoint</source>
+        <translation>モデルチェックポイント</translation>
+    </message>
+    <message>
+        <source>Model memory released. Reloads on next use.</source>
+        <translation>モデルのメモリを解放しました。次回使用時に再ロードします。</translation>
+    </message>
+    <message>
+        <source>Moderation</source>
+        <translation>モデレーション</translation>
+    </message>
+    <message>
+        <source>Modified</source>
+        <translation>更新日時</translation>
+    </message>
+    <message>
+        <source>Modular grid</source>
+        <translation>段組みグリッド</translation>
+    </message>
+    <message>
+        <source>Moire Safe</source>
+        <translation>モアレ抑制</translation>
+    </message>
+    <message>
+        <source>More</source>
+        <translation>その他</translation>
+    </message>
+    <message>
+        <source>More formatting</source>
+        <translation>書式の詳細</translation>
+    </message>
+    <message>
+        <source>Mosaic</source>
+        <translation>モザイク</translation>
+    </message>
+    <message>
+        <source>Mouse Operations</source>
+        <translation>マウス操作</translation>
+    </message>
+    <message>
+        <source>Mouse: Context menu</source>
+        <translation>マウス: コンテキストメニュー</translation>
+    </message>
+    <message>
+        <source>Mouse: Pan gesture</source>
+        <translation>マウス: パン操作</translation>
+    </message>
+    <message>
+        <source>Move</source>
+        <translation>移動</translation>
+    </message>
+    <message>
+        <source>Move Page</source>
+        <translation>ページ移動</translation>
+    </message>
+    <message>
+        <source>Move down</source>
+        <translation>読み順を下へ</translation>
+    </message>
+    <message>
+        <source>Move earlier</source>
+        <translation>前へ</translation>
+    </message>
+    <message>
+        <source>Move later</source>
+        <translation>後へ</translation>
+    </message>
+    <message>
+        <source>Move the object away from the binding edge</source>
+        <translation>オブジェクトを綴じ端から離す</translation>
+    </message>
+    <message>
+        <source>Move tool for selection, vector objects, or active raster layer</source>
+        <translation>選択範囲・ベクターオブジェクト・アクティブなラスターレイヤーを移動するツール</translation>
+    </message>
+    <message>
+        <source>Move up</source>
+        <translation>読み順を上へ</translation>
+    </message>
+    <message>
+        <source>Multiple images</source>
+        <translation>複数画像の配置先</translation>
+    </message>
+    <message>
+        <source>Multiply</source>
+        <translation>乗算</translation>
+    </message>
+    <message>
+        <source>Name</source>
+        <translation>名前</translation>
+    </message>
+    <message>
+        <source>Name (A-Z)</source>
+        <translation>名前 (A-Z)</translation>
+    </message>
+    <message>
+        <source>Name:</source>
+        <translation>名前:</translation>
+    </message>
+    <message>
+        <source>Named styles</source>
+        <translation>名前付きスタイル</translation>
+    </message>
+    <message>
+        <source>NanoBanana</source>
+        <translation>NanoBanana</translation>
+    </message>
+    <message>
+        <source>NanoBanana Panel</source>
+        <translation>NanoBanana パネル</translation>
+    </message>
+    <message>
+        <source>Nearest Neighbor</source>
+        <translation>ニアレストネイバー</translation>
+    </message>
+    <message>
+        <source>Network Access</source>
+        <translation>ネットワークアクセス</translation>
+    </message>
+    <message>
+        <source>Network access is required</source>
+        <translation>ネットワークアクセスが必要です</translation>
+    </message>
+    <message>
+        <source>Network access requires at least one allowed domain</source>
+        <translation>ネットワークアクセスには少なくとも 1 つの許可ドメインが必要です</translation>
+    </message>
+    <message>
+        <source>New</source>
+        <translation>新規</translation>
+    </message>
+    <message>
+        <source>New &amp;Screentone Layer...</source>
+        <translation>新規スクリーントーンレイヤー(&amp;S)...</translation>
+    </message>
+    <message>
+        <source>New Alpha</source>
+        <translation>α作成</translation>
+    </message>
+    <message>
+        <source>New Comic Project</source>
+        <translation>新しいコミックプロジェクト</translation>
+    </message>
+    <message>
+        <source>New Document</source>
+        <translation>新規ドキュメント</translation>
+    </message>
+    <message>
+        <source>New Document Failed</source>
+        <translation>新規文書を作成できませんでした</translation>
+    </message>
+    <message>
+        <source>New Document...</source>
+        <translation>新規ドキュメント...</translation>
+    </message>
+    <message>
+        <source>New Layer</source>
+        <translation>新規レイヤー</translation>
+    </message>
+    <message>
+        <source>New Screentone Layer</source>
+        <translation>新規スクリーントーンレイヤー</translation>
+    </message>
+    <message>
+        <source>New Snippet</source>
+        <translation>新規スニペット</translation>
+    </message>
+    <message>
+        <source>New Workflow</source>
+        <translation>新規ワークフロー</translation>
+    </message>
+    <message>
+        <source>New rough drawing</source>
+        <translation>新しくラフを描く</translation>
+    </message>
+    <message>
+        <source>New workflow created</source>
+        <translation>新規ワークフローを作成しました</translation>
+    </message>
+    <message>
+        <source>New...</source>
+        <translation>新規...</translation>
+    </message>
+    <message>
+        <source>Next needs review</source>
+        <translation>次の要校正</translation>
+    </message>
+    <message>
+        <source>Next step: {step}</source>
+        <translation>次のステップ: {step}</translation>
+    </message>
+    <message>
+        <source>Next text frame</source>
+        <translation>連結先のテキスト枠</translation>
+    </message>
+    <message>
+        <source>Next unplaced</source>
+        <translation>次の未配置</translation>
+    </message>
+    <message>
+        <source>No AI Effect presets are installed.</source>
+        <translation>AI Effect プリセットがインストールされていません。</translation>
+    </message>
+    <message>
+        <source>No AI backend is configured.</source>
+        <translation>AI バックエンドが設定されていません。</translation>
+    </message>
+    <message>
+        <source>No CMYK profile loaded</source>
+        <translation>CMYK プロファイル未読込</translation>
+    </message>
+    <message>
+        <source>No LLM output to apply.</source>
+        <translation>適用できる LLM 出力がありません。</translation>
+    </message>
+    <message>
+        <source>No PNG tips imported</source>
+        <translation>PNG チップがインポートされませんでした</translation>
+    </message>
+    <message>
+        <source>No PNG tips imported ({skipped} skipped)</source>
+        <translation>PNG チップがインポートされませんでした（{skipped}件スキップ）</translation>
+    </message>
+    <message>
+        <source>No SVG-compatible vector objects to export. Unsupported blend modes or live filters were omitted.</source>
+        <translation>SVG に書き出せるベクターオブジェクトがありません。対応していない描画モードまたはライブフィルターを使用するレイヤーは省略されました。</translation>
+    </message>
+    <message>
+        <source>No Updates Selected</source>
+        <translation>更新対象が選択されていません</translation>
+    </message>
+    <message>
+        <source>No active job</source>
+        <translation>アクティブなジョブはありません</translation>
+    </message>
+    <message>
+        <source>No active job to cancel.</source>
+        <translation>キャンセルできるジョブがありません。</translation>
+    </message>
+    <message>
+        <source>No active selection</source>
+        <translation>アクティブな選択範囲がありません</translation>
+    </message>
+    <message>
+        <source>No adjustable parameters</source>
+        <translation>調整項目はありません</translation>
+    </message>
+    <message>
+        <source>No canvas is available to paste into.</source>
+        <translation>貼り付け先のキャンバスがありません。</translation>
+    </message>
+    <message>
+        <source>No composite is available.</source>
+        <translation>合成画像が取得できません。</translation>
+    </message>
+    <message>
+        <source>No connection to ComfyUI</source>
+        <translation>ComfyUI に接続されていません</translation>
+    </message>
+    <message>
+        <source>No custom fonts loaded.</source>
+        <translation>カスタムフォントは読み込まれていません。</translation>
+    </message>
+    <message>
+        <source>No document is open.</source>
+        <translation>ドキュメントが開かれていません。</translation>
+    </message>
+    <message>
+        <source>No editable basic shapes are selected.</source>
+        <translation>編集可能な基本図形が選択されていません。</translation>
+    </message>
+    <message>
+        <source>No effect selected</source>
+        <translation>エフェクトが選択されていません</translation>
+    </message>
+    <message>
+        <source>No effects available</source>
+        <translation>利用できるエフェクトがありません</translation>
+    </message>
+    <message>
+        <source>No embedded Python or ComfyUI virtual environment was found.</source>
+        <translation>同梱PythonまたはComfyUIの仮想環境が見つかりません。</translation>
+    </message>
+    <message>
+        <source>No filter selected</source>
+        <translation>フィルターが選択されていません</translation>
+    </message>
+    <message>
+        <source>No filters available</source>
+        <translation>利用できるフィルターがありません</translation>
+    </message>
+    <message>
+        <source>No finished jobs to clear</source>
+        <translation>消去できる完了ジョブはありません</translation>
+    </message>
+    <message>
+        <source>No image</source>
+        <translation>画像なし</translation>
+    </message>
+    <message>
+        <source>No image available</source>
+        <translation>利用可能な画像がありません</translation>
+    </message>
+    <message>
+        <source>No issues.</source>
+        <translation>問題はありません。</translation>
+    </message>
+    <message>
+        <source>No new ABR tips found</source>
+        <translation>新しいABR tipは見つかりませんでした</translation>
+    </message>
+    <message>
+        <source>No nodes match this category.</source>
+        <translation>このカテゴリに一致するノードがありません。</translation>
+    </message>
+    <message>
+        <source>No options for this format.</source>
+        <translation>この形式にオプションはありません。</translation>
+    </message>
+    <message>
+        <source>No pages are available to check.</source>
+        <translation>検査できるページがありません。</translation>
+    </message>
+    <message>
+        <source>No pages are available to export.</source>
+        <translation>書き出せるページがありません。</translation>
+    </message>
+    <message>
+        <source>No pages are included.</source>
+        <translation>含まれるページがありません。</translation>
+    </message>
+    <message>
+        <source>No pages match this scope.</source>
+        <translation>対象になるページがありません。</translation>
+    </message>
+    <message>
+        <source>No physical layout: bleed and trim are unknown for this page.</source>
+        <translation>物理レイアウトがないため、このページの塗り足しと仕上がりは不明です。</translation>
+    </message>
+    <message>
+        <source>No physical layout: the whole canvas is the trim area (no bleed).</source>
+        <translation>物理レイアウトがないため、キャンバス全体を仕上がり領域として扱います (塗り足しなし)。</translation>
+    </message>
+    <message>
+        <source>No plugin selected.</source>
+        <translation>プラグインが選択されていません。</translation>
+    </message>
+    <message>
+        <source>No presets yet. Save the current styles to create one.</source>
+        <translation>プリセットはまだありません。現在のスタイルを登録できます。</translation>
+    </message>
+    <message>
+        <source>No prompt selected.</source>
+        <translation>プロンプトが選択されていません。</translation>
+    </message>
+    <message>
+        <source>No published nodes were found in this workflow.</source>
+        <translation>このワークフローに公開対象のノードが見つかりません。</translation>
+    </message>
+    <message>
+        <source>No recent files</source>
+        <translation>最近使用したファイルはありません</translation>
+    </message>
+    <message>
+        <source>No rollback backup for {plugin_id}</source>
+        <translation>{plugin_id} のロールバック用バックアップがありません。</translation>
+    </message>
+    <message>
+        <source>No selection</source>
+        <translation>選択なし</translation>
+    </message>
+    <message>
+        <source>No selection. Apply the screentone to the whole page?</source>
+        <translation>選択範囲がありません。ページ全体にスクリーントーンを適用しますか?</translation>
+    </message>
+    <message>
+        <source>No shapes were registered.</source>
+        <translation>図形は登録されませんでした。</translation>
+    </message>
+    <message>
+        <source>No swatch selected</source>
+        <translation>スウォッチが選択されていません</translation>
+    </message>
+    <message>
+        <source>No targets.</source>
+        <translation>対象がありません。</translation>
+    </message>
+    <message>
+        <source>No tips extracted</source>
+        <translation>チップを抽出できませんでした</translation>
+    </message>
+    <message>
+        <source>No tips were found in this ABR file</source>
+        <translation>このABRファイルには先端がありません</translation>
+    </message>
+    <message>
+        <source>No tool plugins registered</source>
+        <translation>ツールプラグインが登録されていません</translation>
+    </message>
+    <message>
+        <source>No tools available</source>
+        <translation>利用可能なツールがありません</translation>
+    </message>
+    <message>
+        <source>No usable contour. Select an object or make a selection first.</source>
+        <translation>使用できる輪郭がありません。オブジェクトまたは選択範囲を指定してください。</translation>
+    </message>
+    <message>
+        <source>No user filters yet.
+Use "Edit Filters" to add.</source>
+        <translation>ユーザーフィルターはまだありません。
+「フィルターを編集」から追加してください。</translation>
+    </message>
+    <message>
+        <source>No valid vector shapes selected.</source>
+        <translation>有効なベクター図形が選択されていません。</translation>
+    </message>
+    <message>
+        <source>No warnings.</source>
+        <translation>警告はありません。</translation>
+    </message>
+    <message>
+        <source>No workflow to save</source>
+        <translation>保存するワークフローがありません</translation>
+    </message>
+    <message>
+        <source>Node</source>
+        <translation>ノード</translation>
+    </message>
+    <message>
+        <source>Node Name Keywords</source>
+        <translation>ノード名キーワード</translation>
+    </message>
+    <message>
+        <source>Node Parameters</source>
+        <translation>ノードパラメータ</translation>
+    </message>
+    <message>
+        <source>Node editor will appear here</source>
+        <translation>ノードエディタがここに表示されます</translation>
+    </message>
+    <message>
+        <source>Node: {node}</source>
+        <translation>ノード: {node}</translation>
+    </message>
+    <message>
+        <source>Node: {title}
+Type: {type}</source>
+        <translation>ノード: {title}
+種類: {type}</translation>
+    </message>
+    <message>
+        <source>Nodes</source>
+        <translation>ノード</translation>
+    </message>
+    <message>
+        <source>Noise Reduction</source>
+        <translation>ノイズ除去</translation>
+    </message>
+    <message>
+        <source>Noise scheduler</source>
+        <translation>ノイズスケジューラー</translation>
+    </message>
+    <message>
+        <source>Nonagon</source>
+        <translation>九角形</translation>
+    </message>
+    <message>
+        <source>Normal</source>
+        <translation>通常</translation>
+    </message>
+    <message>
+        <source>North America</source>
+        <translation>北米</translation>
+    </message>
+    <message>
+        <source>Not Connected</source>
+        <translation>未接続</translation>
+    </message>
+    <message>
+        <source>Not applied: {codes}</source>
+        <translation>適用できません: {codes}</translation>
+    </message>
+    <message>
+        <source>Not available: no PDF/X backend is installed.</source>
+        <translation>利用できません: PDF/X バックエンドが導入されていません。</translation>
+    </message>
+    <message>
+        <source>Not checked:</source>
+        <translation>未検査:</translation>
+    </message>
+    <message>
+        <source>Not implemented</source>
+        <translation>未実装</translation>
+    </message>
+    <message>
+        <source>Not linked to a Comic Project.</source>
+        <translation>コミックプロジェクトにリンクされていません。</translation>
+    </message>
+    <message>
+        <source>Not processed: {ids}</source>
+        <translation>未処理: {ids}</translation>
+    </message>
+    <message>
+        <source>Notes</source>
+        <translation>メモ</translation>
+    </message>
+    <message>
+        <source>Nothing</source>
+        <translation>なし</translation>
+    </message>
+    <message>
+        <source>Nothing changed: {code}</source>
+        <translation>変更なし: {code}</translation>
+    </message>
+    <message>
+        <source>Nothing recorded.</source>
+        <translation>何も記録されませんでした。</translation>
+    </message>
+    <message>
+        <source>Nothing to rasterize.</source>
+        <translation>ラスタライズするものがありません。</translation>
+    </message>
+    <message>
+        <source>Nothing to save</source>
+        <translation>保存するものがありません</translation>
+    </message>
+    <message>
+        <source>Number of generations</source>
+        <translation>生成回数</translation>
+    </message>
+    <message>
+        <source>Number of sequential runs (0 = infinite until cancel)</source>
+        <translation>連続実行回数 (0 はキャンセルまで無限)</translation>
+    </message>
+    <message>
+        <source>OK</source>
+        <translation>OK</translation>
+    </message>
+    <message>
+        <source>Objects</source>
+        <translation>オブジェクト</translation>
+    </message>
+    <message>
+        <source>Octagon</source>
+        <translation>八角形</translation>
+    </message>
+    <message>
+        <source>Odd Pages</source>
+        <translation>奇数ページ</translation>
+    </message>
+    <message>
+        <source>Odd page count ({count}); print books usually need an even count.</source>
+        <translation>ページ数が奇数です ({count})。印刷本は通常偶数ページが必要です。</translation>
+    </message>
+    <message>
+        <source>Off</source>
+        <translation>オフ</translation>
+    </message>
+    <message>
+        <source>Official page</source>
+        <translation>公式ページ</translation>
+    </message>
+    <message>
+        <source>Offset X</source>
+        <translation>横方向の距離</translation>
+    </message>
+    <message>
+        <source>Offset Y</source>
+        <translation>縦方向の距離</translation>
+    </message>
+    <message>
+        <source>Offset outside bleed (pt)</source>
+        <translation>塗り足し外側からの距離 (pt)</translation>
+    </message>
+    <message>
+        <source>Older API key data differs from the system keyring. Neither copy was replaced, and the old data has been kept for recovery. Review your API key settings before restarting to try again.</source>
+        <translation>以前のAPIキーデータとシステムのキーリングの内容が異なります。どちらも置き換えず、復旧できるように古いデータを保持しています。APIキーの設定を確認してから、再起動して再試行してください。</translation>
+    </message>
+    <message>
+        <source>On</source>
+        <translation>有効</translation>
+    </message>
+    <message>
+        <source>On failure:</source>
+        <translation>失敗時:</translation>
+    </message>
+    <message>
+        <source>One full cycle</source>
+        <translation>一巡するまで</translation>
+    </message>
+    <message>
+        <source>One-off ComfyUI server URL for this preset (Custom URL... mode).</source>
+        <translation>このプリセット用の一時的な ComfyUI サーバー URL (カスタム URL... モード)。</translation>
+    </message>
+    <message>
+        <source>Only active when Agent Approval is set to Allow all MCP agent actions. File roots, external-service permissions, and connection authentication still apply.</source>
+        <translation>エージェントの承認を「すべてのMCPエージェント操作を許可」にした場合のみ有効です。ファイルの許可フォルダー、外部サービスの許可、接続認証は引き続き適用されます。</translation>
+    </message>
+    <message>
+        <source>Opacity Pressure</source>
+        <translation>筆圧で不透明度を変える</translation>
+    </message>
+    <message>
+        <source>Opacity Pressure Curve</source>
+        <translation>不透明度の筆圧カーブ</translation>
+    </message>
+    <message>
+        <source>Opaque</source>
+        <translation>不透明</translation>
+    </message>
+    <message>
+        <source>Open</source>
+        <translation>開く</translation>
+    </message>
+    <message>
+        <source>Open &amp;Recent</source>
+        <translation>最近使ったファイルを開く(&amp;R)</translation>
+    </message>
+    <message>
+        <source>Open ComfyUI</source>
+        <translation>ComfyUIを開く</translation>
+    </message>
+    <message>
+        <source>Open ComfyUI before releasing VRAM.</source>
+        <translation>VRAMを解放するには、先にComfyUIを開いてください。</translation>
+    </message>
+    <message>
+        <source>Open Preferences → AI Effect and register a backend (e.g. a running ComfyUI instance) before generating.</source>
+        <translation>生成前に Preferences → AI Effect を開き、バックエンド (例: 起動中の ComfyUI インスタンス) を登録してください。</translation>
+    </message>
+    <message>
+        <source>Open Project</source>
+        <translation>プロジェクトを開く</translation>
+    </message>
+    <message>
+        <source>Open Workflow</source>
+        <translation>ワークフローを開く</translation>
+    </message>
+    <message>
+        <source>Open an official page in your browser, review its terms, and download a profile yourself. Then use Load ICC Profile... to select the downloaded CMYK ICC file.</source>
+        <translation>公式ページをブラウザで開き、利用条件を確認してからご自身でダウンロードしてください。その後「ICCプロファイルを読み込む...」からダウンロードしたCMYK ICCファイルを選択します。</translation>
+    </message>
+    <message>
+        <source>Open or load a workflow first.</source>
+        <translation>先にワークフローを開くか読み込んでください。</translation>
+    </message>
+    <message>
+        <source>Open preset folder</source>
+        <translation>プリセットフォルダーを開く</translation>
+    </message>
+    <message>
+        <source>Open this effect's workflow in the ComfyUI tab.</source>
+        <translation>このエフェクトのワークフローをComfyUIタブで開きます。</translation>
+    </message>
+    <message>
+        <source>Open...</source>
+        <translation>開く...</translation>
+    </message>
+    <message>
+        <source>OpenAI key not set</source>
+        <translation>OpenAI キー未設定</translation>
+    </message>
+    <message>
+        <source>Opening bracket at line start</source>
+        <translation>行頭の開き括弧</translation>
+    </message>
+    <message>
+        <source>Opening punctuation</source>
+        <translation>開き括弧</translation>
+    </message>
+    <message>
+        <source>Operation</source>
+        <translation>演算</translation>
+    </message>
+    <message>
+        <source>Optional &amp;Menus</source>
+        <translation>オプションメニュー(&amp;M)</translation>
+    </message>
+    <message>
+        <source>Optional preset description</source>
+        <translation>任意のプリセット説明</translation>
+    </message>
+    <message>
+        <source>Optional system instructions...</source>
+        <translation>任意のシステム指示...</translation>
+    </message>
+    <message>
+        <source>Optional:</source>
+        <translation>任意:</translation>
+    </message>
+    <message>
+        <source>Options</source>
+        <translation>オプション</translation>
+    </message>
+    <message>
+        <source>Order</source>
+        <translation>順序</translation>
+    </message>
+    <message>
+        <source>Orientation</source>
+        <translation>方向</translation>
+    </message>
+    <message>
+        <source>Origin</source>
+        <translation>原点</translation>
+    </message>
+    <message>
+        <source>Other</source>
+        <translation>その他</translation>
+    </message>
+    <message>
+        <source>Other Settings</source>
+        <translation>その他の設定</translation>
+    </message>
+    <message>
+        <source>Out: {length} px</source>
+        <translation>抜き: {length} px</translation>
+    </message>
+    <message>
+        <source>Outer Glow</source>
+        <translation>光彩 (外側)</translation>
+    </message>
+    <message>
+        <source>Outer diameter ratio</source>
+        <translation>外径の比率</translation>
+    </message>
+    <message>
+        <source>Output</source>
+        <translation>出力</translation>
+    </message>
+    <message>
+        <source>Output Black</source>
+        <translation>出力(黒)</translation>
+    </message>
+    <message>
+        <source>Output Quality</source>
+        <translation>出力品質</translation>
+    </message>
+    <message>
+        <source>Output White</source>
+        <translation>出力(白)</translation>
+    </message>
+    <message>
+        <source>Output to this layer (override)</source>
+        <translation>このレイヤーへ出力 (上書き)</translation>
+    </message>
+    <message>
+        <source>Output:</source>
+        <translation>出力:</translation>
+    </message>
+    <message>
+        <source>Outputs</source>
+        <translation>出力</translation>
+    </message>
+    <message>
+        <source>Outside all child panels</source>
+        <translation>分割後のコマ外</translation>
+    </message>
+    <message>
+        <source>Overflow</source>
+        <translation>はみ出し</translation>
+    </message>
+    <message>
+        <source>Overlay</source>
+        <translation>オーバーレイ</translation>
+    </message>
+    <message>
+        <source>Overview</source>
+        <translation>概要</translation>
+    </message>
+    <message>
+        <source>Overwrite Layer</source>
+        <translation>レイヤーを上書き</translation>
+    </message>
+    <message>
+        <source>Overwrite on regenerate</source>
+        <translation>再生成時に上書き</translation>
+    </message>
+    <message>
+        <source>Overwrite the selected layer with this image?</source>
+        <translation>選択したレイヤーをこの画像で上書きしますか?</translation>
+    </message>
+    <message>
+        <source>Owner</source>
+        <translation>所有者</translation>
+    </message>
+    <message>
+        <source>PDF Document (*.pdf)</source>
+        <translation>PDF ドキュメント (*.pdf)</translation>
+    </message>
+    <message>
+        <source>PDF/X-1a</source>
+        <translation>PDF/X-1a</translation>
+    </message>
+    <message>
+        <source>PDF/X-4</source>
+        <translation>PDF/X-4</translation>
+    </message>
+    <message>
+        <source>PNG</source>
+        <translation>PNG</translation>
+    </message>
+    <message>
+        <source>PNG Image (*.png)</source>
+        <translation>PNG 画像 (*.png)</translation>
+    </message>
+    <message>
+        <source>PNG Image (*.png);;JPEG Image (*.jpg *.jpeg);;All Files (*.*)</source>
+        <translation>PNG画像 (*.png);;JPEG画像 (*.jpg *.jpeg);;すべてのファイル (*.*)</translation>
+    </message>
+    <message>
+        <source>PNG Images (*.png)</source>
+        <translation>PNG画像 (*.png)</translation>
+    </message>
+    <message>
+        <source>PNG Images (*.png);;Image Files (*.png *.jpg *.jpeg *.bmp *.gif);;All Files (*.*)</source>
+        <translation>PNG 画像 (*.png);;画像ファイル (*.png *.jpg *.jpeg *.bmp *.gif);;すべてのファイル (*.*)</translation>
+    </message>
+    <message>
+        <source>PSD (layered)</source>
+        <translation>PSD (レイヤー付き)</translation>
+    </message>
+    <message>
+        <source>PSD Image (*.psd)</source>
+        <translation>PSD 画像 (*.psd)</translation>
+    </message>
+    <message>
+        <source>PSD export cannot preserve a transformed layer mask.</source>
+        <translation>変形したレイヤーマスクはPSDで保持できません。</translation>
+    </message>
+    <message>
+        <source>PSD export cannot preserve this filter layer. Export a flattened image instead.</source>
+        <translation>このフィルターレイヤーはPSDで保持できません。統合した画像として書き出してください。</translation>
+    </message>
+    <message>
+        <source>PackBits</source>
+        <translation>PackBits</translation>
+    </message>
+    <message>
+        <source>Package Project</source>
+        <translation>プロジェクトをパッケージ</translation>
+    </message>
+    <message>
+        <source>Package Project…</source>
+        <translation>プロジェクトをパッケージ…</translation>
+    </message>
+    <message>
+        <source>Package failed: {code} {detail}</source>
+        <translation>パッケージに失敗しました: {code} {detail}</translation>
+    </message>
+    <message>
+        <source>Package written: {path} ({copied} asset(s) copied, {omitted} omitted)</source>
+        <translation>パッケージを書き出しました: {path} (素材 {copied} 件コピー、{omitted} 件除外)</translation>
+    </message>
+    <message>
+        <source>Padding</source>
+        <translation>余白</translation>
+    </message>
+    <message>
+        <source>Padding Bottom</source>
+        <translation>下の余白</translation>
+    </message>
+    <message>
+        <source>Padding Left</source>
+        <translation>左の余白</translation>
+    </message>
+    <message>
+        <source>Padding Right</source>
+        <translation>右の余白</translation>
+    </message>
+    <message>
+        <source>Padding Top</source>
+        <translation>上の余白</translation>
+    </message>
+    <message>
+        <source>Padding bottom (px)</source>
+        <translation>下余白 (px)</translation>
+    </message>
+    <message>
+        <source>Padding left (px)</source>
+        <translation>左余白 (px)</translation>
+    </message>
+    <message>
+        <source>Padding right (px)</source>
+        <translation>右余白 (px)</translation>
+    </message>
+    <message>
+        <source>Padding top (px)</source>
+        <translation>上余白 (px)</translation>
+    </message>
+    <message>
+        <source>Page / Panel</source>
+        <translation>ページ / コマ</translation>
+    </message>
+    <message>
+        <source>Page Attributes</source>
+        <translation>ページ属性</translation>
+    </message>
+    <message>
+        <source>Page Content</source>
+        <translation>ページ内容</translation>
+    </message>
+    <message>
+        <source>Page Format Guides</source>
+        <translation>判型ガイド</translation>
+    </message>
+    <message>
+        <source>Page Format Guides...</source>
+        <translation>判型ガイド...</translation>
+    </message>
+    <message>
+        <source>Page Operation</source>
+        <translation>ページ操作</translation>
+    </message>
+    <message>
+        <source>Page Range</source>
+        <translation>ページ範囲</translation>
+    </message>
+    <message>
+        <source>Page Role</source>
+        <translation>ページの役割</translation>
+    </message>
+    <message>
+        <source>Page Structure</source>
+        <translation>ページ構成</translation>
+    </message>
+    <message>
+        <source>Page boundary</source>
+        <translation>ページ外周の辺</translation>
+    </message>
+    <message>
+        <source>Page boundary {number}</source>
+        <translation>ページ外周 {number}</translation>
+    </message>
+    <message>
+        <source>Page content could not be inspected.</source>
+        <translation>ページ内容を検査できませんでした。</translation>
+    </message>
+    <message>
+        <source>Page content was not loaded.</source>
+        <translation>ページ内容が読み込まれていません。</translation>
+    </message>
+    <message>
+        <source>Page display:</source>
+        <translation>ページ表示:</translation>
+    </message>
+    <message>
+        <source>Page front</source>
+        <translation>ページ前面</translation>
+    </message>
+    <message>
+        <source>Page is {width} x {height} px, below the minimum of {minimum} px.</source>
+        <translation>ページは {width} x {height} px で、最小 {minimum} px を下回っています。</translation>
+    </message>
+    <message>
+        <source>Page management panel</source>
+        <translation>ページ管理パネル</translation>
+    </message>
+    <message>
+        <source>Page number</source>
+        <translation>ページ番号</translation>
+    </message>
+    <message>
+        <source>Page plan blocked: {codes}</source>
+        <translation>ページ計画がブロック: {codes}</translation>
+    </message>
+    <message>
+        <source>Page plan ready: {count} panel(s)</source>
+        <translation>ページ計画が完了: {count} コマ</translation>
+    </message>
+    <message>
+        <source>Page range (e.g. 1-3,5)</source>
+        <translation>ページ範囲 (例: 1-3,5)</translation>
+    </message>
+    <message>
+        <source>Page size {width} x {height} px differs from the document's {expected_width} x {expected_height} px.</source>
+        <translation>ページサイズ {width} x {height} px がドキュメントの {expected_width} x {expected_height} px と異なります。</translation>
+    </message>
+    <message>
+        <source>Page {number}</source>
+        <translation>{number}ページ</translation>
+    </message>
+    <message>
+        <source>Page {page} could not be rendered; no PDF was written.</source>
+        <translation>ページ {page} を描画できなかったため、PDF は書き出されていません。</translation>
+    </message>
+    <message>
+        <source>Page:</source>
+        <translation>ページ:</translation>
+    </message>
+    <message>
+        <source>Pages</source>
+        <translation>ページ</translation>
+    </message>
+    <message>
+        <source>Pages Panel</source>
+        <translation>ページパネル</translation>
+    </message>
+    <message>
+        <source>Pages use different resolutions ({values} dpi).</source>
+        <translation>ページごとに解像度が異なります ({values} dpi)。</translation>
+    </message>
+    <message>
+        <source>Pages:</source>
+        <translation>対象:</translation>
+    </message>
+    <message>
+        <source>Paint Stroke</source>
+        <translation>ペイントストローク</translation>
+    </message>
+    <message>
+        <source>Paint edge</source>
+        <translation>この辺を加工</translation>
+    </message>
+    <message>
+        <source>Paint this edge</source>
+        <translation>この辺に描く</translation>
+    </message>
+    <message>
+        <source>Palette</source>
+        <translation>パレット</translation>
+    </message>
+    <message>
+        <source>Palette Only</source>
+        <translation>パレットのみ</translation>
+    </message>
+    <message>
+        <source>Panel &amp;Audit</source>
+        <translation>パネル監査(&amp;A)</translation>
+    </message>
+    <message>
+        <source>Panel gutter</source>
+        <translation>コマ間隔</translation>
+    </message>
+    <message>
+        <source>Panel ready.</source>
+        <translation>パネルの準備ができました。</translation>
+    </message>
+    <message>
+        <source>Panel {number}</source>
+        <translation>コマ {number}</translation>
+    </message>
+    <message>
+        <source>Panels</source>
+        <translation>コマ割り</translation>
+    </message>
+    <message>
+        <source>Paper Grain Size</source>
+        <translation>紙目の大きさ</translation>
+    </message>
+    <message>
+        <source>Paper Texture</source>
+        <translation>紙目の強さ</translation>
+    </message>
+    <message>
+        <source>Paragraph Flow</source>
+        <translation>段落フロー</translation>
+    </message>
+    <message>
+        <source>Paragraph Flow is available in Vertical Text tool.</source>
+        <translation>段落フローは縦書きツールでのみ利用できます。</translation>
+    </message>
+    <message>
+        <source>Paragraph columns (0: frame, 1: span)</source>
+        <translation>段落の段数 (0: 枠に従う、1: 段抜き)</translation>
+    </message>
+    <message>
+        <source>Paragraph style</source>
+        <translation>段落スタイル</translation>
+    </message>
+    <message>
+        <source>Parallelogram</source>
+        <translation>平行四辺形</translation>
+    </message>
+    <message>
+        <source>Parameter Name Keywords</source>
+        <translation>パラメーター名キーワード</translation>
+    </message>
+    <message>
+        <source>Parameters</source>
+        <translation>パラメーター</translation>
+    </message>
+    <message>
+        <source>Pass Through</source>
+        <translation>パススルー</translation>
+    </message>
+    <message>
+        <source>Paste</source>
+        <translation>貼り付け</translation>
+    </message>
+    <message>
+        <source>Paste from &amp;System Clipboard</source>
+        <translation>システムクリップボードから貼り付け(&amp;S)</translation>
+    </message>
+    <message>
+        <source>Pasted from the system clipboard as pixels (editable data was invalid).</source>
+        <translation>システムクリップボードからピクセルとして貼り付けました (編集可能データは無効でした)。</translation>
+    </message>
+    <message>
+        <source>Pasted from the system clipboard.</source>
+        <translation>システムクリップボードから貼り付けました。</translation>
+    </message>
+    <message>
+        <source>Path</source>
+        <translation>パス</translation>
+    </message>
+    <message>
+        <source>Path Edit</source>
+        <translation>パス編集</translation>
+    </message>
+    <message>
+        <source>Path Shape</source>
+        <translation>パスの形状</translation>
+    </message>
+    <message>
+        <source>Pattern</source>
+        <translation>パターン</translation>
+    </message>
+    <message>
+        <source>Pattern Along Path</source>
+        <translation>パスに沿って模様を配置</translation>
+    </message>
+    <message>
+        <source>Pattern Fill</source>
+        <translation>パターン塗りつぶし</translation>
+    </message>
+    <message>
+        <source>Pen</source>
+        <translation>ペン</translation>
+    </message>
+    <message>
+        <source>Pen Presets</source>
+        <translation>ペンプリセット</translation>
+    </message>
+    <message>
+        <source>Pen Settings</source>
+        <translation>ペン設定</translation>
+    </message>
+    <message>
+        <source>Pen Stroke</source>
+        <translation>ペンストローク</translation>
+    </message>
+    <message>
+        <source>Pen preset operation failed: {error}</source>
+        <translation>ペンプリセットの操作に失敗しました: {error}</translation>
+    </message>
+    <message>
+        <source>Pen taper could not be completed. The stroke was preserved.</source>
+        <translation>入り抜きを確定できませんでした。描画した線は保持されています。</translation>
+    </message>
+    <message>
+        <source>Pen taper editor</source>
+        <translation>入り抜きのグラフィック調整</translation>
+    </message>
+    <message>
+        <source>Pending</source>
+        <translation>待機中</translation>
+    </message>
+    <message>
+        <source>Pentagon</source>
+        <translation>五角形</translation>
+    </message>
+    <message>
+        <source>Perceptual</source>
+        <translation>知覚的</translation>
+    </message>
+    <message>
+        <source>Performance</source>
+        <translation>パフォーマンス</translation>
+    </message>
+    <message>
+        <source>Performance Settings</source>
+        <translation>パフォーマンス設定</translation>
+    </message>
+    <message>
+        <source>Permission Required</source>
+        <translation>権限が必要です</translation>
+    </message>
+    <message>
+        <source>Photoshop Brush (*.abr)</source>
+        <translation>Photoshop ブラシ (*.abr)</translation>
+    </message>
+    <message>
+        <source>Physical Size</source>
+        <translation>実寸</translation>
+    </message>
+    <message>
+        <source>Physical size:</source>
+        <translation>実寸:</translation>
+    </message>
+    <message>
+        <source>Pick Color...</source>
+        <translation>色を選択...</translation>
+    </message>
+    <message>
+        <source>Pick color from canvas</source>
+        <translation>キャンバスから色を取得</translation>
+    </message>
+    <message>
+        <source>Pin Light</source>
+        <translation>ピンライト</translation>
+    </message>
+    <message>
+        <source>Pixel Dimensions</source>
+        <translation>ピクセル寸法</translation>
+    </message>
+    <message>
+        <source>Pixel Perfect</source>
+        <translation>ピクセルパーフェクト</translation>
+    </message>
+    <message>
+        <source>Pixels</source>
+        <translation>ピクセル</translation>
+    </message>
+    <message>
+        <source>Place Image</source>
+        <translation>画像を配置</translation>
+    </message>
+    <message>
+        <source>Place Image…</source>
+        <translation>画像を配置…</translation>
+    </message>
+    <message>
+        <source>Placed</source>
+        <translation>配置</translation>
+    </message>
+    <message>
+        <source>Plan Book</source>
+        <translation>Book を計画</translation>
+    </message>
+    <message>
+        <source>Plan Page</source>
+        <translation>ページを計画</translation>
+    </message>
+    <message>
+        <source>Planned {pages} page(s), {panels} panel(s); revision {revision}</source>
+        <translation>{pages} ページ / {panels} コマを計画しました (revision {revision})</translation>
+    </message>
+    <message>
+        <source>Plates on: {plates}</source>
+        <translation>表示中の版: {plates}</translation>
+    </message>
+    <message>
+        <source>Plates:</source>
+        <translation>版:</translation>
+    </message>
+    <message>
+        <source>Play</source>
+        <translation>再生</translation>
+    </message>
+    <message>
+        <source>Please grant the required permissions to install this plugin.</source>
+        <translation>このプラグインをインストールするには必要な権限を許可してください。</translation>
+    </message>
+    <message>
+        <source>Please select at least one plugin to update.</source>
+        <translation>更新するプラグインを少なくとも 1 つ選択してください。</translation>
+    </message>
+    <message>
+        <source>Plugin ID</source>
+        <translation>プラグイン ID</translation>
+    </message>
+    <message>
+        <source>Plugin Information</source>
+        <translation>プラグイン情報</translation>
+    </message>
+    <message>
+        <source>Plugin Installation - {name}</source>
+        <translation>プラグインのインストール - {name}</translation>
+    </message>
+    <message>
+        <source>Plugin Manager</source>
+        <translation>プラグインマネージャー</translation>
+    </message>
+    <message>
+        <source>Plugin Updates Available</source>
+        <translation>利用可能なプラグイン更新</translation>
+    </message>
+    <message>
+        <source>Plugin ZIP (*.zip);;All Files (*.*)</source>
+        <translation>プラグイン ZIP (*.zip);;すべてのファイル (*.*)</translation>
+    </message>
+    <message>
+        <source>Plugin already disabled: {plugin_id}</source>
+        <translation>すでに無効です: {plugin_id}</translation>
+    </message>
+    <message>
+        <source>Plugin already enabled: {plugin_id}</source>
+        <translation>すでに有効です: {plugin_id}</translation>
+    </message>
+    <message>
+        <source>Plugin {plugin_id} not found.</source>
+        <translation>プラグイン {plugin_id} が見つかりません。</translation>
+    </message>
+    <message>
+        <source>Plugins</source>
+        <translation>プラグイン</translation>
+    </message>
+    <message>
+        <source>Plugins menu</source>
+        <translation>プラグインメニュー</translation>
+    </message>
+    <message>
+        <source>Point Text</source>
+        <translation>ポイントテキスト</translation>
+    </message>
+    <message>
+        <source>Point mode</source>
+        <translation>ポイントモード</translation>
+    </message>
+    <message>
+        <source>Polar</source>
+        <translation>極座標</translation>
+    </message>
+    <message>
+        <source>Polar divisions</source>
+        <translation>放射の分割数</translation>
+    </message>
+    <message>
+        <source>Polygon</source>
+        <translation>多角形</translation>
+    </message>
+    <message>
+        <source>Port:</source>
+        <translation>ポート:</translation>
+    </message>
+    <message>
+        <source>Position</source>
+        <translation>位置</translation>
+    </message>
+    <message>
+        <source>Position along stroke (%)</source>
+        <translation>線上の位置 (%)</translation>
+    </message>
+    <message>
+        <source>Precise vector pen</source>
+        <translation>高精度ベクターペン</translation>
+    </message>
+    <message>
+        <source>Preferences</source>
+        <translation>環境設定</translation>
+    </message>
+    <message>
+        <source>Preferred (em)</source>
+        <translation>標準アキ (em)</translation>
+    </message>
+    <message>
+        <source>Preflight found {count} fatal issue(s). Export anyway?</source>
+        <translation>プリフライトで致命的な問題が {count} 件見つかりました。それでも書き出しますか?</translation>
+    </message>
+    <message>
+        <source>Preparing CMYK conversion...</source>
+        <translation>CMYKへの変換を準備中...</translation>
+    </message>
+    <message>
+        <source>Preparing CMYK preview...</source>
+        <translation>CMYKの表示画像を準備中...</translation>
+    </message>
+    <message>
+        <source>Preparing canvas...</source>
+        <translation>キャンバスを準備中...</translation>
+    </message>
+    <message>
+        <source>Preparing filter preview…</source>
+        <translation>フィルターのプレビューを準備中…</translation>
+    </message>
+    <message>
+        <source>Preparing panel operation…</source>
+        <translation>コマの変更を処理中…</translation>
+    </message>
+    <message>
+        <source>Preparing preview…</source>
+        <translation>プレビューを準備中…</translation>
+    </message>
+    <message>
+        <source>Preserve page placement</source>
+        <translation>ページ上の配置を保持</translation>
+    </message>
+    <message>
+        <source>Preserve transparency</source>
+        <translation>透明度を保持</translation>
+    </message>
+    <message>
+        <source>Preset</source>
+        <translation>プリセット</translation>
+    </message>
+    <message>
+        <source>Preset DPI X</source>
+        <translation>保存用DPI X</translation>
+    </message>
+    <message>
+        <source>Preset DPI Y</source>
+        <translation>保存用DPI Y</translation>
+    </message>
+    <message>
+        <source>Preset Name</source>
+        <translation>プリセット名</translation>
+    </message>
+    <message>
+        <source>Preset library unavailable — use Export preset... instead</source>
+        <translation>プリセットライブラリを利用できません - 代わりに Export preset... を使ってください</translation>
+    </message>
+    <message>
+        <source>Preset name</source>
+        <translation>プリセット名</translation>
+    </message>
+    <message>
+        <source>Preset name is required.</source>
+        <translation>プリセット名は必須です。</translation>
+    </message>
+    <message>
+        <source>Preset name:</source>
+        <translation>プリセット名:</translation>
+    </message>
+    <message>
+        <source>Preset:</source>
+        <translation>プリセット:</translation>
+    </message>
+    <message>
+        <source>Preset: %s</source>
+        <translation>プリセット: %s</translation>
+    </message>
+    <message>
+        <source>Presets</source>
+        <translation>プリセット</translation>
+    </message>
+    <message>
+        <source>Press the new shortcut for &lt;b&gt;{label}&lt;/b&gt;.</source>
+        <translation>&lt;b&gt;{label}&lt;/b&gt; の新しいショートカットを入力してください。</translation>
+    </message>
+    <message>
+        <source>Pressure (%)</source>
+        <translation>筆圧 (%)</translation>
+    </message>
+    <message>
+        <source>Pressure Response</source>
+        <translation>筆圧</translation>
+    </message>
+    <message>
+        <source>Pressure Sensitive</source>
+        <translation>筆圧感知</translation>
+    </message>
+    <message>
+        <source>Preview</source>
+        <translation>プレビュー</translation>
+    </message>
+    <message>
+        <source>Preview Apply</source>
+        <translation>適用をプレビュー</translation>
+    </message>
+    <message>
+        <source>Preview Selection Inpaint</source>
+        <translation>選択インペイントをプレビュー生成</translation>
+    </message>
+    <message>
+        <source>Preview Trimmed Page</source>
+        <translation>仕上がり表示</translation>
+    </message>
+    <message>
+        <source>Preview boundary change</source>
+        <translation>境界変更をプレビュー</translation>
+    </message>
+    <message>
+        <source>Preview for job {job_id} is not available yet.</source>
+        <translation>ジョブ {job_id} のプレビューはまだ利用できません。</translation>
+    </message>
+    <message>
+        <source>Preview generation running...</source>
+        <translation>プレビュー生成中...</translation>
+    </message>
+    <message>
+        <source>Preview inclined boundary</source>
+        <translation>境界の傾きをプレビュー</translation>
+    </message>
+    <message>
+        <source>Preview length: {length} px</source>
+        <translation>プレビューの長さ: {length} px</translation>
+    </message>
+    <message>
+        <source>Preview panel position exchange</source>
+        <translation>コマの位置交換をプレビュー</translation>
+    </message>
+    <message>
+        <source>Preview result</source>
+        <translation>結果をプレビュー</translation>
+    </message>
+    <message>
+        <source>Preview split</source>
+        <translation>分割をプレビュー</translation>
+    </message>
+    <message>
+        <source>Preview submit</source>
+        <translation>プレビュー送信</translation>
+    </message>
+    <message>
+        <source>Preview template inclination</source>
+        <translation>テンプレートの傾きをプレビュー</translation>
+    </message>
+    <message>
+        <source>Print (monochrome)</source>
+        <translation>印刷 (モノクロ)</translation>
+    </message>
+    <message>
+        <source>Print marks</source>
+        <translation>印刷マーク</translation>
+    </message>
+    <message>
+        <source>Priority</source>
+        <translation>優先順位</translation>
+    </message>
+    <message>
+        <source>Production Control</source>
+        <translation>制作管理</translation>
+    </message>
+    <message>
+        <source>Production Control(incomplete)</source>
+        <translation>制作管理（未完成）</translation>
+    </message>
+    <message>
+        <source>Profile</source>
+        <translation>プロファイル</translation>
+    </message>
+    <message>
+        <source>Profile:</source>
+        <translation>プロファイル:</translation>
+    </message>
+    <message>
+        <source>Profile: {name} (rev {revision}, updated {date})</source>
+        <translation>プロファイル: {name} (rev {revision}、更新 {date})</translation>
+    </message>
+    <message>
+        <source>Progress</source>
+        <translation>進捗</translation>
+    </message>
+    <message>
+        <source>Progressive</source>
+        <translation>プログレッシブ</translation>
+    </message>
+    <message>
+        <source>Prohibited at line end</source>
+        <translation>行末禁則文字</translation>
+    </message>
+    <message>
+        <source>Prohibited at line start</source>
+        <translation>行頭禁則文字</translation>
+    </message>
+    <message>
+        <source>Project:</source>
+        <translation>プロジェクト:</translation>
+    </message>
+    <message>
+        <source>Projection was not imported because this scene exceeds the current software rendering limit.</source>
+        <translation>このシーンは現在のソフトウェア描画の対応範囲を超えているため、投影を取り込めませんでした。</translation>
+    </message>
+    <message>
+        <source>Prompt</source>
+        <translation>プロンプト</translation>
+    </message>
+    <message>
+        <source>Prompt (from Prompt Editor):</source>
+        <translation>プロンプト (Prompt Editor から):</translation>
+    </message>
+    <message>
+        <source>Prompt Components</source>
+        <translation>プロンプトコンポーネント</translation>
+    </message>
+    <message>
+        <source>Prompt Editor</source>
+        <translation>プロンプトエディター</translation>
+    </message>
+    <message>
+        <source>Prompt authoring panel with snippet and LLM integration</source>
+        <translation>スニペットと LLM 連携に対応したプロンプト編集パネル</translation>
+    </message>
+    <message>
+        <source>Prompt composed and emitted.</source>
+        <translation>プロンプトを生成して送信しました。</translation>
+    </message>
+    <message>
+        <source>Prompt copied to clipboard.</source>
+        <translation>プロンプトをクリップボードにコピーしました。</translation>
+    </message>
+    <message>
+        <source>Prompt input…</source>
+        <translation>プロンプト入力…</translation>
+    </message>
+    <message>
+        <source>Prompt is empty.</source>
+        <translation>プロンプトが空です。</translation>
+    </message>
+    <message>
+        <source>Prompt is required</source>
+        <translation>プロンプトは必須です</translation>
+    </message>
+    <message>
+        <source>Prompt reference</source>
+        <translation>プロンプト参照</translation>
+    </message>
+    <message>
+        <source>Prompt saved as snippet: {title}</source>
+        <translation>プロンプトをスニペット保存しました: {title}</translation>
+    </message>
+    <message>
+        <source>Prompt structure</source>
+        <translation>プロンプト構成</translation>
+    </message>
+    <message>
+        <source>Prompt submission failed: {error}</source>
+        <translation>プロンプト送信に失敗しました: {error}</translation>
+    </message>
+    <message>
+        <source>Prompt title</source>
+        <translation>プロンプトタイトル</translation>
+    </message>
+    <message>
+        <source>Prompt:</source>
+        <translation>プロンプト:</translation>
+    </message>
+    <message>
+        <source>Protect</source>
+        <translation>保護</translation>
+    </message>
+    <message>
+        <source>Protect Subject (BG Mask)</source>
+        <translation>被写体を保護 (背景マスク)</translation>
+    </message>
+    <message>
+        <source>Protect the subject: invert the mask and use it as the background generation mask</source>
+        <translation>被写体を保護: マスクを反転して背景生成マスクに接続</translation>
+    </message>
+    <message>
+        <source>Protocol:</source>
+        <translation>プロトコル:</translation>
+    </message>
+    <message>
+        <source>Provider</source>
+        <translation>プロバイダー</translation>
+    </message>
+    <message>
+        <source>Punctuation spacing</source>
+        <translation>約物のアキ</translation>
+    </message>
+    <message>
+        <source>Python requirement: {python_version}</source>
+        <translation>Python 要件: {python_version}</translation>
+    </message>
+    <message>
+        <source>Quadrilateral</source>
+        <translation>四角形</translation>
+    </message>
+    <message>
+        <source>Quality</source>
+        <translation>品質</translation>
+    </message>
+    <message>
+        <source>Quality:</source>
+        <translation>品質:</translation>
+    </message>
+    <message>
+        <source>Queue</source>
+        <translation>キュー</translation>
+    </message>
+    <message>
+        <source>Queue Workflow</source>
+        <translation>ワークフローをキューに追加</translation>
+    </message>
+    <message>
+        <source>Queue: {count}</source>
+        <translation>キュー: {count}</translation>
+    </message>
+    <message>
+        <source>Queued job: {job_id}...</source>
+        <translation>ジョブをキューに追加しました: {job_id}...</translation>
+    </message>
+    <message>
+        <source>RGB</source>
+        <translation>RGB</translation>
+    </message>
+    <message>
+        <source>RGB / 8 bit</source>
+        <translation>RGB / 8ビット</translation>
+    </message>
+    <message>
+        <source>Radial</source>
+        <translation>放射状</translation>
+    </message>
+    <message>
+        <source>Radius</source>
+        <translation>半径</translation>
+    </message>
+    <message>
+        <source>Random</source>
+        <translation>ランダム</translation>
+    </message>
+    <message>
+        <source>Random seed</source>
+        <translation>乱数シード</translation>
+    </message>
+    <message>
+        <source>Range</source>
+        <translation>範囲</translation>
+    </message>
+    <message>
+        <source>Range max</source>
+        <translation>範囲 max</translation>
+    </message>
+    <message>
+        <source>Range min</source>
+        <translation>範囲 min</translation>
+    </message>
+    <message>
+        <source>Range step</source>
+        <translation>範囲 step</translation>
+    </message>
+    <message>
+        <source>Range:</source>
+        <translation>範囲:</translation>
+    </message>
+    <message>
+        <source>Range: {min_val} to {max_val}</source>
+        <translation>範囲: {min_val} から {max_val}</translation>
+    </message>
+    <message>
+        <source>Raster Layer</source>
+        <translation>ラスターレイヤー</translation>
+    </message>
+    <message>
+        <source>Raster artwork: about {size} uncompressed.</source>
+        <translation>ラスター画像: 非圧縮で約 {size}。</translation>
+    </message>
+    <message>
+        <source>Rasterize Appearance</source>
+        <translation>外観をラスタライズ</translation>
+    </message>
+    <message>
+        <source>Rasterize edge</source>
+        <translation>この辺をピクセル化</translation>
+    </message>
+    <message>
+        <source>Rasterize layer?</source>
+        <translation>レイヤーをラスタライズしますか?</translation>
+    </message>
+    <message>
+        <source>Rasterize the layer transform before applying a filter.</source>
+        <translation>レイヤーの変形をラスタライズしてからフィルターを適用してください。</translation>
+    </message>
+    <message>
+        <source>Rasterize the layer transform before using Filter Pen.</source>
+        <translation>フィルターペンを使う前にレイヤーの変形をラスタライズしてください。</translation>
+    </message>
+    <message>
+        <source>Rasterized into a new layer.</source>
+        <translation>新しいレイヤーにラスタライズしました。</translation>
+    </message>
+    <message>
+        <source>Ratio</source>
+        <translation>比率</translation>
+    </message>
+    <message>
+        <source>Re-run SAM3 on this candidate to improve the mask (AI Refine)</source>
+        <translation>SAM3 で再推論してマスク品質を改善する (AI Refine)</translation>
+    </message>
+    <message>
+        <source>Read and write files on your computer</source>
+        <translation>コンピューター上のファイルを読み書きします</translation>
+    </message>
+    <message>
+        <source>Reading</source>
+        <translation>読み</translation>
+    </message>
+    <message>
+        <source>Reading order (top right to bottom left)</source>
+        <translation>読み順 (右上→左下)</translation>
+    </message>
+    <message>
+        <source>Ready</source>
+        <translation>準備完了</translation>
+    </message>
+    <message>
+        <source>Ready for new snippet.</source>
+        <translation>新規スニペットを作成できます。</translation>
+    </message>
+    <message>
+        <source>Ready to apply.</source>
+        <translation>適用できます。</translation>
+    </message>
+    <message>
+        <source>Rearrange panels</source>
+        <translation>割り直し・配置</translation>
+    </message>
+    <message>
+        <source>Reason</source>
+        <translation>理由</translation>
+    </message>
+    <message>
+        <source>Received response from LLM.</source>
+        <translation>LLM からの応答を受信しました。</translation>
+    </message>
+    <message>
+        <source>Received streaming output.</source>
+        <translation>ストリーミング出力を受信しました。</translation>
+    </message>
+    <message>
+        <source>Recent</source>
+        <translation>最近使用したファイル</translation>
+    </message>
+    <message>
+        <source>Recent:</source>
+        <translation>最近使った:</translation>
+    </message>
+    <message>
+        <source>Recently used</source>
+        <translation>最近使用</translation>
+    </message>
+    <message>
+        <source>Recipe</source>
+        <translation>レシピ</translation>
+    </message>
+    <message>
+        <source>Recipes</source>
+        <translation>レシピ</translation>
+    </message>
+    <message>
+        <source>Recommended action</source>
+        <translation>推奨対応</translation>
+    </message>
+    <message>
+        <source>Recompose FPS Limit</source>
+        <translation>再合成FPS上限</translation>
+    </message>
+    <message>
+        <source>Recontour</source>
+        <translation>描線を再調整</translation>
+    </message>
+    <message>
+        <source>Recontour Smoothness</source>
+        <translation>再調整の滑らかさ</translation>
+    </message>
+    <message>
+        <source>Recontour Smoothness (next stroke)</source>
+        <translation>再調整の滑らかさ (次のストローク)</translation>
+    </message>
+    <message>
+        <source>Recontour could not edit this stroke. The raster stroke was preserved.</source>
+        <translation>描線を再調整できませんでした。確定済みの描画は保持されています。</translation>
+    </message>
+    <message>
+        <source>RecontourSmoothness (next stroke)</source>
+        <translation>再調整の滑らかさ (次のストローク)</translation>
+    </message>
+    <message>
+        <source>Record</source>
+        <translation>記録</translation>
+    </message>
+    <message>
+        <source>Record, play and batch declarative macros</source>
+        <translation>宣言的マクロの記録・再生・一括実行</translation>
+    </message>
+    <message>
+        <source>Recording started. Run actions from this panel to add steps.</source>
+        <translation>記録を開始しました。このパネルからアクションを実行するとステップに追加されます。</translation>
+    </message>
+    <message>
+        <source>Recording: {count} step(s)</source>
+        <translation>記録中: {count} ステップ</translation>
+    </message>
+    <message>
+        <source>Rectangle</source>
+        <translation>矩形</translation>
+    </message>
+    <message>
+        <source>Rectangle selection tool</source>
+        <translation>矩形選択ツール</translation>
+    </message>
+    <message>
+        <source>Recto (front face)</source>
+        <translation>表面 (recto)</translation>
+    </message>
+    <message>
+        <source>Red</source>
+        <translation>赤</translation>
+    </message>
+    <message>
+        <source>Redo {operation} on {page} ({scope})</source>
+        <translation>{page}の{operation}をやり直す ({scope})</translation>
+    </message>
+    <message>
+        <source>Reduce the font size</source>
+        <translation>フォントサイズを小さくする</translation>
+    </message>
+    <message>
+        <source>Reference</source>
+        <translation>参照</translation>
+    </message>
+    <message>
+        <source>Reference area</source>
+        <translation>基準範囲</translation>
+    </message>
+    <message>
+        <source>Refine Mask</source>
+        <translation>マスクを調整</translation>
+    </message>
+    <message>
+        <source>Refine Mask...</source>
+        <translation>マスクを調整...</translation>
+    </message>
+    <message>
+        <source>Refresh</source>
+        <translation>更新</translation>
+    </message>
+    <message>
+        <source>Refresh Session Token</source>
+        <translation>セッショントークンを更新</translation>
+    </message>
+    <message>
+        <source>Refresh failed: {error}</source>
+        <translation>更新に失敗しました: {error}</translation>
+    </message>
+    <message>
+        <source>Refresh object info</source>
+        <translation>オブジェクト情報を更新</translation>
+    </message>
+    <message>
+        <source>Refresh saved server status</source>
+        <translation>保存済みサーバーの状態を更新</translation>
+    </message>
+    <message>
+        <source>Refresh the MCP session token?
+
+After refreshing the token, any agents registered to this LoomStroke MCP server must update their connection settings before they can connect again.</source>
+        <translation>MCP セッショントークンを更新しますか?
+
+トークンを更新すると、この LoomStroke MCP サーバーを登録しているエージェント側で接続設定を更新するまで再接続できなくなります。</translation>
+    </message>
+    <message>
+        <source>Regenerate</source>
+        <translation>再生成</translation>
+    </message>
+    <message>
+        <source>Regenerate clip</source>
+        <translation>クリップを再生成</translation>
+    </message>
+    <message>
+        <source>Regenerate clip from panel region</source>
+        <translation>コマ領域からクリップを再生成</translation>
+    </message>
+    <message>
+        <source>Region</source>
+        <translation>地域</translation>
+    </message>
+    <message>
+        <source>Region and Gaps</source>
+        <translation>領域・隙間</translation>
+    </message>
+    <message>
+        <source>Register Shape</source>
+        <translation>シェイプを登録</translation>
+    </message>
+    <message>
+        <source>Register Shapes</source>
+        <translation>シェイプを一括登録</translation>
+    </message>
+    <message>
+        <source>Register Tags</source>
+        <translation>タグを登録</translation>
+    </message>
+    <message>
+        <source>Register failed: %s</source>
+        <translation>登録失敗: %s</translation>
+    </message>
+    <message>
+        <source>Register failed: file missing after write (%s)</source>
+        <translation>登録失敗: 書き込み後にファイルが見つかりません (%s)</translation>
+    </message>
+    <message>
+        <source>Register failed: no workflow loaded</source>
+        <translation>登録失敗: workflow が読み込まれていません</translation>
+    </message>
+    <message>
+        <source>Register from selected text</source>
+        <translation>選択テキストの書式を登録</translation>
+    </message>
+    <message>
+        <source>Register is disabled: %s.</source>
+        <translation>登録は無効です: %s。</translation>
+    </message>
+    <message>
+        <source>Register style</source>
+        <translation>スタイルを登録</translation>
+    </message>
+    <message>
+        <source>Register to Manager</source>
+        <translation>Manager に登録</translation>
+    </message>
+    <message>
+        <source>Register: preset library unavailable in this session</source>
+        <translation>登録: このセッションではプリセットライブラリを利用できません</translation>
+    </message>
+    <message>
+        <source>Registered shape (style unified from the first selection).</source>
+        <translation>シェイプを登録しました（最初の選択からスタイルを統一）。</translation>
+    </message>
+    <message>
+        <source>Registered shape.</source>
+        <translation>図形を登録しました。</translation>
+    </message>
+    <message>
+        <source>Registered {} shape(s).</source>
+        <translation>{} 個の図形を登録しました。</translation>
+    </message>
+    <message>
+        <source>Registered {} shape(s). Some failed.</source>
+        <translation>{} 個の図形を登録しました。一部失敗しました。</translation>
+    </message>
+    <message>
+        <source>Registered: %s</source>
+        <translation>登録しました: %s</translation>
+    </message>
+    <message>
+        <source>Registration (CMYK 100%)</source>
+        <translation>レジストレーション (CMYK各100%)</translation>
+    </message>
+    <message>
+        <source>Registration marks</source>
+        <translation>レジスターマーク</translation>
+    </message>
+    <message>
+        <source>Relative Colorimetric</source>
+        <translation>相対的な色域を維持</translation>
+    </message>
+    <message>
+        <source>Release SAM Memory</source>
+        <translation>SAMメモリを解放</translation>
+    </message>
+    <message>
+        <source>Release VRAM</source>
+        <translation>VRAMを解放</translation>
+    </message>
+    <message>
+        <source>Release to apply. Esc cancels the drag.</source>
+        <translation>離すと確定します。Escでドラッグを取り消します。</translation>
+    </message>
+    <message>
+        <source>Relink...</source>
+        <translation>再リンク...</translation>
+    </message>
+    <message>
+        <source>Relinked {count} layer(s).</source>
+        <translation>{count} レイヤーを再リンクしました。</translation>
+    </message>
+    <message>
+        <source>Reload Fonts</source>
+        <translation>フォントを再読み込み</translation>
+    </message>
+    <message>
+        <source>Reload nodes</source>
+        <translation>ノードを再読み込み</translation>
+    </message>
+    <message>
+        <source>Reloaded {count} layer(s).</source>
+        <translation>{count} レイヤーを再読込しました。</translation>
+    </message>
+    <message>
+        <source>Remember drawing layer</source>
+        <translation>描画先として記録</translation>
+    </message>
+    <message>
+        <source>Remember zoom and pan per page</source>
+        <translation>ページごとに拡大率と表示位置を記憶する</translation>
+    </message>
+    <message>
+        <source>Remote ComfyUI uses the URL saved in Preferences; automatic startup is local only.</source>
+        <translation>遠隔ComfyUIにはPreferencesに保存したURLで接続します。自動起動はこのPCのみ対象です。</translation>
+    </message>
+    <message>
+        <source>Remove</source>
+        <translation>削除</translation>
+    </message>
+    <message>
+        <source>Remove cancelled.</source>
+        <translation>削除をキャンセルしました。</translation>
+    </message>
+    <message>
+        <source>Remove category '%s' from the sidebar? Presets are not deleted.</source>
+        <translation>カテゴリ '%s' をサイドバーから削除しますか? プリセットは削除されません。</translation>
+    </message>
+    <message>
+        <source>Remove character distribution</source>
+        <translation>字取りを解除</translation>
+    </message>
+    <message>
+        <source>Remove component</source>
+        <translation>コンポーネントを削除</translation>
+    </message>
+    <message>
+        <source>Remove emphasis</source>
+        <translation>圏点を解除</translation>
+    </message>
+    <message>
+        <source>Remove failed: {plugin_id} still exists.</source>
+        <translation>削除に失敗しました: {plugin_id} がまだ存在します。</translation>
+    </message>
+    <message>
+        <source>Remove from sidebar</source>
+        <translation>サイドバーから削除</translation>
+    </message>
+    <message>
+        <source>Remove light</source>
+        <translation>光源を削除</translation>
+    </message>
+    <message>
+        <source>Remove may be pending: {plugin_id}</source>
+        <translation>削除を処理中の可能性があります: {plugin_id}</translation>
+    </message>
+    <message>
+        <source>Remove point</source>
+        <translation>制御点を削除</translation>
+    </message>
+    <message>
+        <source>Remove ruby</source>
+        <translation>ルビを解除</translation>
+    </message>
+    <message>
+        <source>Remove selected rule</source>
+        <translation>選択規則を削除</translation>
+    </message>
+    <message>
+        <source>Remove small islands</source>
+        <translation>小さな飛び地を除去</translation>
+    </message>
+    <message>
+        <source>Remove source '%s' from the sidebar? Presets are not deleted.</source>
+        <translation>ソース '%s' をサイドバーから削除しますか? プリセットは削除されません。</translation>
+    </message>
+    <message>
+        <source>Remove swatch</source>
+        <translation>スウォッチを削除</translation>
+    </message>
+    <message>
+        <source>Remove tate-chu-yoko</source>
+        <translation>縦中横を解除</translation>
+    </message>
+    <message>
+        <source>Remove two-line note</source>
+        <translation>割注を解除</translation>
+    </message>
+    <message>
+        <source>Removed category '%s'.</source>
+        <translation>カテゴリ '%s' を削除しました。</translation>
+    </message>
+    <message>
+        <source>Removed custom font folder.</source>
+        <translation>カスタムフォントフォルダーを削除しました。</translation>
+    </message>
+    <message>
+        <source>Removed source '%s'.</source>
+        <translation>ソース '%s' を削除しました。</translation>
+    </message>
+    <message>
+        <source>Removed: {plugin_id}</source>
+        <translation>削除しました: {plugin_id}</translation>
+    </message>
+    <message>
+        <source>Rename Layer</source>
+        <translation>レイヤー名の変更</translation>
+    </message>
+    <message>
+        <source>Rename Page</source>
+        <translation>ページ名の変更</translation>
+    </message>
+    <message>
+        <source>Rename Shape</source>
+        <translation>シェイプ名変更</translation>
+    </message>
+    <message>
+        <source>Rename Template</source>
+        <translation>テンプレート名の変更</translation>
+    </message>
+    <message>
+        <source>Rename...</source>
+        <translation>名前を変更...</translation>
+    </message>
+    <message>
+        <source>Render</source>
+        <translation>レンダリング</translation>
+    </message>
+    <message>
+        <source>Render Settings</source>
+        <translation>レンダリング設定</translation>
+    </message>
+    <message>
+        <source>Rendering intent:</source>
+        <translation>レンダリングインテント:</translation>
+    </message>
+    <message>
+        <source>Repeat:</source>
+        <translation>繰り返し:</translation>
+    </message>
+    <message>
+        <source>Replace</source>
+        <translation>置換</translation>
+    </message>
+    <message>
+        <source>Replace Layer Mask with Candidate</source>
+        <translation>レイヤーマスクを候補で置換</translation>
+    </message>
+    <message>
+        <source>Replace Selection</source>
+        <translation>選択範囲を置換</translation>
+    </message>
+    <message>
+        <source>Replace existing files</source>
+        <translation>既存ファイルを置き換える</translation>
+    </message>
+    <message>
+        <source>Replace existing guides</source>
+        <translation>既存のガイドを置き換える</translation>
+    </message>
+    <message>
+        <source>Replace in all rows</source>
+        <translation>全行で置換</translation>
+    </message>
+    <message>
+        <source>Replace the font</source>
+        <translation>フォントを置き換える</translation>
+    </message>
+    <message>
+        <source>Replace with</source>
+        <translation>置換後の文字列</translation>
+    </message>
+    <message>
+        <source>Replace...</source>
+        <translation>差し替え...</translation>
+    </message>
+    <message>
+        <source>Report</source>
+        <translation>レポート</translation>
+    </message>
+    <message>
+        <source>Representative ICC Profiles</source>
+        <translation>代表的なICCプロファイル</translation>
+    </message>
+    <message>
+        <source>Required</source>
+        <translation>必須</translation>
+    </message>
+    <message>
+        <source>Required Permissions</source>
+        <translation>必要な権限</translation>
+    </message>
+    <message>
+        <source>Required text</source>
+        <translation>必須テキスト</translation>
+    </message>
+    <message>
+        <source>Resample image</source>
+        <translation>画像を再サンプル</translation>
+    </message>
+    <message>
+        <source>Rescan ABR</source>
+        <translation>ABR を再スキャン</translation>
+    </message>
+    <message>
+        <source>Reset</source>
+        <translation>リセット</translation>
+    </message>
+    <message>
+        <source>Reset All</source>
+        <translation>すべてリセット</translation>
+    </message>
+    <message>
+        <source>Reset Gateway icon for '%s'.</source>
+        <translation>'%s' の Gateway アイコンを既定に戻しました。</translation>
+    </message>
+    <message>
+        <source>Reset Shortcuts</source>
+        <translation>ショートカットをリセット</translation>
+    </message>
+    <message>
+        <source>Reset Width Profile</source>
+        <translation>線幅の調整をリセット</translation>
+    </message>
+    <message>
+        <source>Reset all shortcuts to their defaults?</source>
+        <translation>すべてのショートカットを既定に戻しますか？</translation>
+    </message>
+    <message>
+        <source>Reset filters</source>
+        <translation>フィルターをリセット</translation>
+    </message>
+    <message>
+        <source>Reset profile</source>
+        <translation>曲線をリセット</translation>
+    </message>
+    <message>
+        <source>Reset to Defaults</source>
+        <translation>既定に戻す</translation>
+    </message>
+    <message>
+        <source>Resize input area</source>
+        <translation>入力欄のサイズ変更</translation>
+    </message>
+    <message>
+        <source>Resolution</source>
+        <translation>解像度</translation>
+    </message>
+    <message>
+        <source>Resolution set to {dpi} dpi</source>
+        <translation>解像度を {dpi} dpi に変更しました</translation>
+    </message>
+    <message>
+        <source>Resolution {dpi} dpi is below the minimum of {minimum} dpi.</source>
+        <translation>解像度 {dpi} dpi は最小 {minimum} dpi を下回っています。</translation>
+    </message>
+    <message>
+        <source>Resource</source>
+        <translation>素材</translation>
+    </message>
+    <message>
+        <source>Response modality</source>
+        <translation>応答モード</translation>
+    </message>
+    <message>
+        <source>Restart</source>
+        <translation>再起動</translation>
+    </message>
+    <message>
+        <source>Restore</source>
+        <translation>復元</translation>
+    </message>
+    <message>
+        <source>Restore vector edge</source>
+        <translation>この辺をベクターに戻す</translation>
+    </message>
+    <message>
+        <source>Result retrieval failed: {error}</source>
+        <translation>結果の取得に失敗しました: {error}</translation>
+    </message>
+    <message>
+        <source>Retain the source tip contour only. Body and root connection are unchanged.</source>
+        <translation>元画像の先端付近の輪郭を残します。本体と付け根の接続は変更しません。</translation>
+    </message>
+    <message>
+        <source>Retry</source>
+        <translation>再試行</translation>
+    </message>
+    <message>
+        <source>Reveal</source>
+        <translation>場所を開く</translation>
+    </message>
+    <message>
+        <source>Reverse direction</source>
+        <translation>進行方向を反転</translation>
+    </message>
+    <message>
+        <source>Review</source>
+        <translation>校正</translation>
+    </message>
+    <message>
+        <source>Review changes, then confirm or cancel.</source>
+        <translation>変更を確認して確定、または取消します。</translation>
+    </message>
+    <message>
+        <source>Review terms / download page</source>
+        <translation>利用条件・ダウンロード案内</translation>
+    </message>
+    <message>
+        <source>Review the text fit and line-breaking settings.</source>
+        <translation>文字の収まりと改行設定を確認してください。</translation>
+    </message>
+    <message>
+        <source>Review:</source>
+        <translation>校正:</translation>
+    </message>
+    <message>
+        <source>Right</source>
+        <translation>右</translation>
+    </message>
+    <message>
+        <source>Right Binding</source>
+        <translation>右綴じ</translation>
+    </message>
+    <message>
+        <source>Right Side</source>
+        <translation>右側</translation>
+    </message>
+    <message>
+        <source>Right binding</source>
+        <translation>右綴じ</translation>
+    </message>
+    <message>
+        <source>Right binding (right-to-left)</source>
+        <translation>右綴じ (右から左)</translation>
+    </message>
+    <message>
+        <source>Right class</source>
+        <translation>後の文字クラス</translation>
+    </message>
+    <message>
+        <source>Right click</source>
+        <translation>右クリック</translation>
+    </message>
+    <message>
+        <source>Right drag</source>
+        <translation>右ドラッグ</translation>
+    </message>
+    <message>
+        <source>Rightward</source>
+        <translation>右方向</translation>
+    </message>
+    <message>
+        <source>Roles:</source>
+        <translation>役割:</translation>
+    </message>
+    <message>
+        <source>Rollback cancelled.</source>
+        <translation>ロールバックをキャンセルしました。</translation>
+    </message>
+    <message>
+        <source>Rollback completed: {plugin_id}</source>
+        <translation>ロールバックが完了しました: {plugin_id}</translation>
+    </message>
+    <message>
+        <source>Rollback failed: backup still exists for {plugin_id}</source>
+        <translation>ロールバックに失敗しました: {plugin_id} のバックアップがまだ残っています。</translation>
+    </message>
+    <message>
+        <source>Rollback may be pending: {plugin_id}</source>
+        <translation>ロールバックを処理中の可能性があります: {plugin_id}</translation>
+    </message>
+    <message>
+        <source>Rollback unavailable: no backup for {plugin_id}</source>
+        <translation>{plugin_id} のロールバック用バックアップがありません。</translation>
+    </message>
+    <message>
+        <source>Rollback...</source>
+        <translation>ロールバック...</translation>
+    </message>
+    <message>
+        <source>Root</source>
+        <translation>ルート</translation>
+    </message>
+    <message>
+        <source>Rotate</source>
+        <translation>回転</translation>
+    </message>
+    <message>
+        <source>Rotate Canvas</source>
+        <translation>キャンバスを回転</translation>
+    </message>
+    <message>
+        <source>Rotate Canvas &amp;180°</source>
+        <translation>キャンバスを180°回転(&amp;1)</translation>
+    </message>
+    <message>
+        <source>Rotate Canvas 90° &amp;CW</source>
+        <translation>キャンバスを90°回転(時計回り)(&amp;C)</translation>
+    </message>
+    <message>
+        <source>Rotate Canvas 90° C&amp;CW</source>
+        <translation>キャンバスを90°回転(反時計回り)(&amp;W)</translation>
+    </message>
+    <message>
+        <source>Rotate Latin/Digits</source>
+        <translation>英字・数字を回転</translation>
+    </message>
+    <message>
+        <source>Rotate letters along path</source>
+        <translation>パスに沿って文字を回転</translation>
+    </message>
+    <message>
+        <source>Rotation</source>
+        <translation>回転</translation>
+    </message>
+    <message>
+        <source>Round</source>
+        <translation>丸</translation>
+    </message>
+    <message>
+        <source>Row gutter</source>
+        <translation>行間隔</translation>
+    </message>
+    <message>
+        <source>Rows</source>
+        <translation>横の分割数</translation>
+    </message>
+    <message>
+        <source>Ruby alignment</source>
+        <translation>ルビの配置</translation>
+    </message>
+    <message>
+        <source>Ruby and tate-chu-yoko</source>
+        <translation>ルビ・縦中横</translation>
+    </message>
+    <message>
+        <source>Ruby may contain a whole tate-chu-yoko range; partial overlap is not supported.</source>
+        <translation>ルビは縦中横の範囲全体を含められます。部分的に重なる範囲には設定できません。</translation>
+    </message>
+    <message>
+        <source>Ruby, tate-chu-yoko and emphasis</source>
+        <translation>ルビ・縦中横・圏点</translation>
+    </message>
+    <message>
+        <source>Rule</source>
+        <translation>ルール</translation>
+    </message>
+    <message>
+        <source>Rule of thirds</source>
+        <translation>三分割</translation>
+    </message>
+    <message>
+        <source>Run</source>
+        <translation>実行</translation>
+    </message>
+    <message>
+        <source>Run Action...</source>
+        <translation>アクションを実行...</translation>
+    </message>
+    <message>
+        <source>Run Preflight</source>
+        <translation>プリフライトを実行</translation>
+    </message>
+    <message>
+        <source>Run the preflight to see issues.</source>
+        <translation>プリフライトを実行すると問題が表示されます。</translation>
+    </message>
+    <message>
+        <source>Run this macro?</source>
+        <translation>このマクロを実行しますか?</translation>
+    </message>
+    <message>
+        <source>Run {name} on {count} page(s) with policy {policy}?</source>
+        <translation>{name} を {count} ページに実行しますか? (失敗時: {policy})</translation>
+    </message>
+    <message>
+        <source>Run {title}? This cannot be previewed.</source>
+        <translation>{title} を実行しますか? プレビューはできません。</translation>
+    </message>
+    <message>
+        <source>Running</source>
+        <translation>実行中</translation>
+    </message>
+    <message>
+        <source>Runtime</source>
+        <translation>ランタイム</translation>
+    </message>
+    <message>
+        <source>S&amp;wap Foreground/Background Colors</source>
+        <translation>描画色と背景色を入れ替え(&amp;W)</translation>
+    </message>
+    <message>
+        <source>SAM 3.1</source>
+        <translation>SAM 3.1</translation>
+    </message>
+    <message>
+        <source>SAM 3.1 Ready</source>
+        <translation>SAM 3.1 準備完了</translation>
+    </message>
+    <message>
+        <source>SAM 3.1 root folder</source>
+        <translation>SAM 3.1 ルートフォルダー</translation>
+    </message>
+    <message>
+        <source>SAM 3.1 runtime and one-click setup for AI Select</source>
+        <translation>AI Select 用 SAM 3.1 ランタイムとワンクリックセットアップ</translation>
+    </message>
+    <message>
+        <source>SAM3 operation blocked</source>
+        <translation>SAM3 処理 中断</translation>
+    </message>
+    <message>
+        <source>SAM3 operation finished</source>
+        <translation>SAM3 処理 完了</translation>
+    </message>
+    <message>
+        <source>SAM3: no active layer to run on</source>
+        <translation>SAM3: 実行対象のレイヤーがありません</translation>
+    </message>
+    <message>
+        <source>SAM3: run blocked</source>
+        <translation>SAM3: 実行できません</translation>
+    </message>
+    <message>
+        <source>SAM3: the active layer is not a raster layer — select a raster layer and run again</source>
+        <translation>SAM3: 選択中のレイヤーはラスターレイヤーではありません — ラスターレイヤーを選択して再実行してください</translation>
+    </message>
+    <message>
+        <source>SSL</source>
+        <translation>SSL</translation>
+    </message>
+    <message>
+        <source>SVG (vector)</source>
+        <translation>SVG (ベクター)</translation>
+    </message>
+    <message>
+        <source>SVG Files (*.svg)</source>
+        <translation>SVG ファイル (*.svg)</translation>
+    </message>
+    <message>
+        <source>SVG Image (*.svg)</source>
+        <translation>SVG 画像 (*.svg)</translation>
+    </message>
+    <message>
+        <source>SVG import failed</source>
+        <translation>SVG のインポートに失敗しました</translation>
+    </message>
+    <message>
+        <source>Safe area</source>
+        <translation>セーフエリア</translation>
+    </message>
+    <message>
+        <source>Safe area margin</source>
+        <translation>セーフエリアの余白</translation>
+    </message>
+    <message>
+        <source>Safe bottom</source>
+        <translation>安全余白 下</translation>
+    </message>
+    <message>
+        <source>Safe left</source>
+        <translation>安全余白 左</translation>
+    </message>
+    <message>
+        <source>Safe right</source>
+        <translation>安全余白 右</translation>
+    </message>
+    <message>
+        <source>Safe top</source>
+        <translation>安全余白 上</translation>
+    </message>
+    <message>
+        <source>Sample</source>
+        <translation>サンプル</translation>
+    </message>
+    <message>
+        <source>Sampler:</source>
+        <translation>サンプラー:</translation>
+    </message>
+    <message>
+        <source>Sampling algorithm</source>
+        <translation>サンプリングアルゴリズム</translation>
+    </message>
+    <message>
+        <source>Saturation</source>
+        <translation>彩度</translation>
+    </message>
+    <message>
+        <source>Save</source>
+        <translation>保存</translation>
+    </message>
+    <message>
+        <source>Save &amp;As…</source>
+        <translation>名前を付けて保存(&amp;A)…</translation>
+    </message>
+    <message>
+        <source>Save As</source>
+        <translation>名前を付けて保存</translation>
+    </message>
+    <message>
+        <source>Save As...</source>
+        <translation>名前を付けて保存...</translation>
+    </message>
+    <message>
+        <source>Save Failed</source>
+        <translation>保存に失敗しました</translation>
+    </message>
+    <message>
+        <source>Save Format Preset</source>
+        <translation>判型プリセットを保存</translation>
+    </message>
+    <message>
+        <source>Save Image</source>
+        <translation>画像を保存</translation>
+    </message>
+    <message>
+        <source>Save New</source>
+        <translation>新規保存</translation>
+    </message>
+    <message>
+        <source>Save Page Template</source>
+        <translation>ページテンプレートを保存</translation>
+    </message>
+    <message>
+        <source>Save Params</source>
+        <translation>パラメータを保存</translation>
+    </message>
+    <message>
+        <source>Save Project</source>
+        <translation>プロジェクトを保存</translation>
+    </message>
+    <message>
+        <source>Save Prompt Snippet</source>
+        <translation>プロンプトをスニペット保存</translation>
+    </message>
+    <message>
+        <source>Save Selection</source>
+        <translation>選択を保存</translation>
+    </message>
+    <message>
+        <source>Save Unavailable</source>
+        <translation>保存不可</translation>
+    </message>
+    <message>
+        <source>Save Workflow</source>
+        <translation>ワークフローを保存</translation>
+    </message>
+    <message>
+        <source>Save Workflow As</source>
+        <translation>ワークフローを別名で保存</translation>
+    </message>
+    <message>
+        <source>Save as Template</source>
+        <translation>テンプレートとして保存</translation>
+    </message>
+    <message>
+        <source>Save current guides</source>
+        <translation>現在のガイドを保存</translation>
+    </message>
+    <message>
+        <source>Save failed: {error}</source>
+        <translation>保存に失敗しました: {error}</translation>
+    </message>
+    <message>
+        <source>Save macro</source>
+        <translation>マクロを保存</translation>
+    </message>
+    <message>
+        <source>Save new</source>
+        <translation>新規登録</translation>
+    </message>
+    <message>
+        <source>Save the document before packaging.</source>
+        <translation>パッケージの前にドキュメントを保存してください。</translation>
+    </message>
+    <message>
+        <source>Save this mask to the generation history (Gallery) for reuse</source>
+        <translation>マスクを生成履歴 (Gallery) に保存して再利用</translation>
+    </message>
+    <message>
+        <source>Save this preset directly into the AI Effects Manager (no file dialog).</source>
+        <translation>このプリセットを AI Effects Manager に直接保存します (ファイルダイアログなし)。</translation>
+    </message>
+    <message>
+        <source>Save user defaults</source>
+        <translation>ユーザー既定を保存</translation>
+    </message>
+    <message>
+        <source>Saved '{title}'.</source>
+        <translation>'{title}' を保存しました。</translation>
+    </message>
+    <message>
+        <source>Saved macro {name} ({count} step(s), {dropped} dropped)</source>
+        <translation>マクロ {name} を保存しました ({count} ステップ、{dropped} 件は記録不可)</translation>
+    </message>
+    <message>
+        <source>Saved previous document {name}</source>
+        <translation>以前のドキュメント {name} を保存しました</translation>
+    </message>
+    <message>
+        <source>Saved prompt '{title}'.</source>
+        <translation>プロンプト '{title}' を保存しました。</translation>
+    </message>
+    <message>
+        <source>Saved {name} — newer unsaved changes remain</source>
+        <translation>{name} を保存しました — より新しい未保存の変更が残っています</translation>
+    </message>
+    <message>
+        <source>Saved {name} — newer unsaved changes remain, close cancelled</source>
+        <translation>{name} を保存しました — より新しい未保存の変更が残っているため、終了を中止しました</translation>
+    </message>
+    <message>
+        <source>Saved: {name}</source>
+        <translation>保存しました: {name}</translation>
+    </message>
+    <message>
+        <source>Saving shape failed</source>
+        <translation>シェイプの保存に失敗しました</translation>
+    </message>
+    <message>
+        <source>Scale</source>
+        <translation>拡大縮小</translation>
+    </message>
+    <message>
+        <source>Scale X</source>
+        <translation>拡大率 X</translation>
+    </message>
+    <message>
+        <source>Scale Y</source>
+        <translation>拡大率 Y</translation>
+    </message>
+    <message>
+        <source>Scale positions proportionally</source>
+        <translation>位置をページサイズの比率で調整</translation>
+    </message>
+    <message>
+        <source>Scale:</source>
+        <translation>拡大率:</translation>
+    </message>
+    <message>
+        <source>Scatter</source>
+        <translation>散布</translation>
+    </message>
+    <message>
+        <source>Scatter and Variation</source>
+        <translation>散布・ばらつき</translation>
+    </message>
+    <message>
+        <source>Schema</source>
+        <translation>スキーマ</translation>
+    </message>
+    <message>
+        <source>Scheme is valid but raised the following warnings:</source>
+        <translation>スキームは有効ですが、次の警告があります:</translation>
+    </message>
+    <message>
+        <source>Scope</source>
+        <translation>スコープ</translation>
+    </message>
+    <message>
+        <source>Scope ID</source>
+        <translation>スコープ ID</translation>
+    </message>
+    <message>
+        <source>Scope:</source>
+        <translation>範囲:</translation>
+    </message>
+    <message>
+        <source>Screen</source>
+        <translation>スクリーン</translation>
+    </message>
+    <message>
+        <source>Screen &amp;Mode</source>
+        <translation>スクリーンモード(&amp;M)</translation>
+    </message>
+    <message>
+        <source>Screentone</source>
+        <translation>スクリーントーン</translation>
+    </message>
+    <message>
+        <source>Screentone layer created</source>
+        <translation>スクリーントーンレイヤーを作成しました</translation>
+    </message>
+    <message>
+        <source>Script files (*.csv *.json)</source>
+        <translation>台本ファイル (*.csv *.json)</translation>
+    </message>
+    <message>
+        <source>Search</source>
+        <translation>検索</translation>
+    </message>
+    <message>
+        <source>Search actions…</source>
+        <translation>アクションを検索…</translation>
+    </message>
+    <message>
+        <source>Search dialogue...</source>
+        <translation>台詞を検索...</translation>
+    </message>
+    <message>
+        <source>Search presets by name / tag / author...</source>
+        <translation>名前 / タグ / 作者でプリセットを検索...</translation>
+    </message>
+    <message>
+        <source>Search prompts...</source>
+        <translation>プロンプトを検索...</translation>
+    </message>
+    <message>
+        <source>Search...</source>
+        <translation>検索...</translation>
+    </message>
+    <message>
+        <source>Secondary eraser binding</source>
+        <translation>セカンダリ消しゴムバインド</translation>
+    </message>
+    <message>
+        <source>Security:</source>
+        <translation>セキュリティ:</translation>
+    </message>
+    <message>
+        <source>Seed</source>
+        <translation>シード</translation>
+    </message>
+    <message>
+        <source>Segments</source>
+        <translation>セグメント</translation>
+    </message>
+    <message>
+        <source>Select &amp;All</source>
+        <translation>すべて選択(&amp;A)</translation>
+    </message>
+    <message>
+        <source>Select &amp;All Vectors</source>
+        <translation>すべてのベクターを選択</translation>
+    </message>
+    <message>
+        <source>Select All</source>
+        <translation>すべて選択</translation>
+    </message>
+    <message>
+        <source>Select Font Folder</source>
+        <translation>フォルダーを選択</translation>
+    </message>
+    <message>
+        <source>Select Guide Cell</source>
+        <translation>ガイドのセルを選択</translation>
+    </message>
+    <message>
+        <source>Select Layout Directory</source>
+        <translation>レイアウトディレクトリを選択</translation>
+    </message>
+    <message>
+        <source>Select None</source>
+        <translation>選択解除</translation>
+    </message>
+    <message>
+        <source>Select SAM 3.1 root folder</source>
+        <translation>SAM 3.1 ルートフォルダーを選択</translation>
+    </message>
+    <message>
+        <source>Select a ComfyUI folder containing main.py.</source>
+        <translation>main.pyがあるComfyUIフォルダを指定してください。</translation>
+    </message>
+    <message>
+        <source>Select a ComfyUI server in the Editor tab.</source>
+        <translation>EditorタブでComfyUIサーバーを選択してください。</translation>
+    </message>
+    <message>
+        <source>Select a ComfyUI server.</source>
+        <translation>ComfyUIサーバーを選択してください。</translation>
+    </message>
+    <message>
+        <source>Select a balloon on the canvas to edit it.</source>
+        <translation>編集するフキダシをキャンバスで選択してください。</translation>
+    </message>
+    <message>
+        <source>Select a balloon or a dialogue row.</source>
+        <translation>フキダシまたはセリフ一覧の行を選択してください。</translation>
+    </message>
+    <message>
+        <source>Select a candidate on the left.</source>
+        <translation>左側で候補を選択してください。</translation>
+    </message>
+    <message>
+        <source>Select a comic project first.</source>
+        <translation>先にコミックプロジェクトを選択してください。</translation>
+    </message>
+    <message>
+        <source>Select a node to edit parameters</source>
+        <translation>パラメータを編集するノードを選択</translation>
+    </message>
+    <message>
+        <source>Select a page entry and open the page to link.</source>
+        <translation>リンクするページ項目を選び、対象ページを開いてください。</translation>
+    </message>
+    <message>
+        <source>Select a panel to edit its frame.</source>
+        <translation>コマを選択して枠線を編集します。</translation>
+    </message>
+    <message>
+        <source>Select a pen preset first.</source>
+        <translation>ペンプリセットを選択してください。</translation>
+    </message>
+    <message>
+        <source>Select a raster layer to apply a filter.</source>
+        <translation>フィルターを適用するラスターレイヤーを選択してください。</translation>
+    </message>
+    <message>
+        <source>Select a shape</source>
+        <translation>シェイプを選択</translation>
+    </message>
+    <message>
+        <source>Select a shape to delete.</source>
+        <translation>削除するシェイプを選択してください。</translation>
+    </message>
+    <message>
+        <source>Select a text object first.</source>
+        <translation>文字を選択してください。</translation>
+    </message>
+    <message>
+        <source>Select a tool to edit properties</source>
+        <translation>ツールを選択してプロパティを編集</translation>
+    </message>
+    <message>
+        <source>Select a vector object to convert to Area Text.</source>
+        <translation>ベクターオブジェクトを選択してエリアテキストに変換してください。</translation>
+    </message>
+    <message>
+        <source>Select a vector or text layer to rasterize.</source>
+        <translation>ラスタライズするベクターか文字レイヤーを選択してください。</translation>
+    </message>
+    <message>
+        <source>Select a vector path, a selection, or a raster layer.</source>
+        <translation>ベクターのパス・選択範囲・ラスターレイヤーを選んでください。</translation>
+    </message>
+    <message>
+        <source>Select an object or choose another reference area.</source>
+        <translation>オブジェクトを選択するか、別の基準範囲を選んでください。</translation>
+    </message>
+    <message>
+        <source>Select an unlocked single-path stroke with at most 64 width samples.</source>
+        <translation>ロックされていない単一パスの線を選択してください。線幅サンプルは64点まで対応します。</translation>
+    </message>
+    <message>
+        <source>Select at least 3 shapes to distribute.</source>
+        <translation>少なくとも 3 つのシェイプを選択して間隔を整列してください。</translation>
+    </message>
+    <message>
+        <source>Select at least one role.</source>
+        <translation>役割を 1 つ以上選んでください。</translation>
+    </message>
+    <message>
+        <source>Select at least two text frames.</source>
+        <translation>テキスト枠を2つ以上選択してください。</translation>
+    </message>
+    <message>
+        <source>Select contiguous colour regions</source>
+        <translation>隣接するカラー領域を選択</translation>
+    </message>
+    <message>
+        <source>Select layer:</source>
+        <translation>レイヤーを選択:</translation>
+    </message>
+    <message>
+        <source>Select one path on an editable, untransformed vector layer.</source>
+        <translation>変形されていない編集可能なベクターレイヤーでパスを1つ選択してください。</translation>
+    </message>
+    <message>
+        <source>Select prompt snippet...</source>
+        <translation>プロンプトスニペットを選択...</translation>
+    </message>
+    <message>
+        <source>Select system prompt...</source>
+        <translation>システムプロンプトを選択...</translation>
+    </message>
+    <message>
+        <source>Select text on the canvas to add or remove an annotation.</source>
+        <translation>キャンバス上の文字を選択すると、ルビ・縦中横を追加・解除できます。</translation>
+    </message>
+    <message>
+        <source>Select the new binding for &lt;b&gt;{label}&lt;/b&gt;.</source>
+        <translation>&lt;b&gt;{label}&lt;/b&gt; の新しいバインドを選択してください。</translation>
+    </message>
+    <message>
+        <source>Select this candidate as the target for Apply / AI Refine</source>
+        <translation>この候補を選択して Apply / AI Refine の対象にする</translation>
+    </message>
+    <message>
+        <source>Select user prompt...</source>
+        <translation>ユーザープロンプトを選択...</translation>
+    </message>
+    <message>
+        <source>Select vector shapes to apply.</source>
+        <translation>適用するベクター図形を選択してください。</translation>
+    </message>
+    <message>
+        <source>Select vector shapes to register.</source>
+        <translation>登録するベクター図形を選択してください。</translation>
+    </message>
+    <message>
+        <source>Selected balloon</source>
+        <translation>選択中のフキダシ</translation>
+    </message>
+    <message>
+        <source>Selected file: {file_name}</source>
+        <translation>選択中のファイル: {file_name}</translation>
+    </message>
+    <message>
+        <source>Selected object</source>
+        <translation>選択オブジェクト</translation>
+    </message>
+    <message>
+        <source>Selected object is already Area Text.</source>
+        <translation>選択したオブジェクトは既にエリアテキストです。</translation>
+    </message>
+    <message>
+        <source>Selected panel: {panel}</source>
+        <translation>選択中: {panel}</translation>
+    </message>
+    <message>
+        <source>Selected prompt content...</source>
+        <translation>選択したプロンプトの内容...</translation>
+    </message>
+    <message>
+        <source>Selection</source>
+        <translation>選択範囲</translation>
+    </message>
+    <message>
+        <source>Selection (Rect)</source>
+        <translation>選択 (矩形)</translation>
+    </message>
+    <message>
+        <source>Selection Edges</source>
+        <translation>選択範囲の境界</translation>
+    </message>
+    <message>
+        <source>Selection Tip</source>
+        <translation>選択範囲の先端</translation>
+    </message>
+    <message>
+        <source>Selection To Area</source>
+        <translation>選択範囲をエリアテキストに変換</translation>
+    </message>
+    <message>
+        <source>Selection bounding rectangle</source>
+        <translation>選択範囲の外接矩形</translation>
+    </message>
+    <message>
+        <source>Selection bounds unavailable.</source>
+        <translation>選択範囲の境界を取得できません。</translation>
+    </message>
+    <message>
+        <source>Selection snapshot failed</source>
+        <translation>選択範囲スナップショットの取得に失敗しました</translation>
+    </message>
+    <message>
+        <source>Selection snapshot is not available</source>
+        <translation>選択範囲スナップショットが利用できません</translation>
+    </message>
+    <message>
+        <source>Selection to &amp;Mask</source>
+        <translation>選択範囲をマスクに変換(&amp;M)</translation>
+    </message>
+    <message>
+        <source>Send &amp;Backward</source>
+        <translation>背面へ</translation>
+    </message>
+    <message>
+        <source>Send to &amp;Back</source>
+        <translation>最背面へ</translation>
+    </message>
+    <message>
+        <source>Separate X/Y spacing</source>
+        <translation>縦横別の間隔</translation>
+    </message>
+    <message>
+        <source>Separator</source>
+        <translation>区切り</translation>
+    </message>
+    <message>
+        <source>Sequential</source>
+        <translation>順次選択</translation>
+    </message>
+    <message>
+        <source>Series:</source>
+        <translation>シリーズ:</translation>
+    </message>
+    <message>
+        <source>Server</source>
+        <translation>サーバー</translation>
+    </message>
+    <message>
+        <source>Server did not respond with HTTP 200.</source>
+        <translation>サーバーがHTTP 200で応答しませんでした。</translation>
+    </message>
+    <message>
+        <source>Server:</source>
+        <translation>サーバー:</translation>
+    </message>
+    <message>
+        <source>Service</source>
+        <translation>サービス</translation>
+    </message>
+    <message>
+        <source>Service unavailable</source>
+        <translation>サービスを利用できません</translation>
+    </message>
+    <message>
+        <source>Sesame</source>
+        <translation>ゴマ</translation>
+    </message>
+    <message>
+        <source>Set Active</source>
+        <translation>アクティブにする</translation>
+    </message>
+    <message>
+        <source>Settings</source>
+        <translation>設定</translation>
+    </message>
+    <message>
+        <source>Setup</source>
+        <translation>セットアップ</translation>
+    </message>
+    <message>
+        <source>Severity</source>
+        <translation>重要度</translation>
+    </message>
+    <message>
+        <source>Shadow color</source>
+        <translation>シャドウ色</translation>
+    </message>
+    <message>
+        <source>Shape</source>
+        <translation>シェイプ</translation>
+    </message>
+    <message>
+        <source>Shape Align</source>
+        <translation>シェイプ整列</translation>
+    </message>
+    <message>
+        <source>Shape Center</source>
+        <translation>シェイプ中央揃え</translation>
+    </message>
+    <message>
+        <source>Shape Distribute</source>
+        <translation>シェイプ均等配置</translation>
+    </message>
+    <message>
+        <source>Shape Fit</source>
+        <translation>シェイプ合わせ</translation>
+    </message>
+    <message>
+        <source>Shape Manager</source>
+        <translation>シェイプマネージャー</translation>
+    </message>
+    <message>
+        <source>Shape not found.</source>
+        <translation>シェイプが見つかりません。</translation>
+    </message>
+    <message>
+        <source>Shared page coordinates</source>
+        <translation>ページ座標で共通表示</translation>
+    </message>
+    <message>
+        <source>Shared source</source>
+        <translation>共通表示の元データ</translation>
+    </message>
+    <message>
+        <source>Sharpen</source>
+        <translation>シャープ</translation>
+    </message>
+    <message>
+        <source>Sheet Format</source>
+        <translation>シート形式</translation>
+    </message>
+    <message>
+        <source>Sheet Power of Two</source>
+        <translation>シートを 2 の冪に</translation>
+    </message>
+    <message>
+        <source>Sheet Spacing (px)</source>
+        <translation>シート余白 (px)</translation>
+    </message>
+    <message>
+        <source>Sheet thickness (mm)</source>
+        <translation>用紙1枚の厚み (mm)</translation>
+    </message>
+    <message>
+        <source>Shift + left click</source>
+        <translation>Shift + 左クリック</translation>
+    </message>
+    <message>
+        <source>Shift + left drag</source>
+        <translation>Shift + 左ドラッグ</translation>
+    </message>
+    <message>
+        <source>Shift Mode</source>
+        <translation>シフトモード</translation>
+    </message>
+    <message>
+        <source>Shininess</source>
+        <translation>光沢</translation>
+    </message>
+    <message>
+        <source>Shinsho 103x182 (Color)</source>
+        <translation>新書 103x182 (カラー)</translation>
+    </message>
+    <message>
+        <source>Shinsho 103x182 (Monochrome)</source>
+        <translation>新書 103x182 (モノクロ)</translation>
+    </message>
+    <message>
+        <source>Shiroku 127x188 (Color)</source>
+        <translation>四六判 127x188 (カラー)</translation>
+    </message>
+    <message>
+        <source>Shiroku 127x188 (Monochrome)</source>
+        <translation>四六判 127x188 (モノクロ)</translation>
+    </message>
+    <message>
+        <source>Shortcut</source>
+        <translation>ショートカット</translation>
+    </message>
+    <message>
+        <source>Shortcut Scheme (*.json);;All Files (*.*)</source>
+        <translation>ショートカットスキーム (*.json);;すべてのファイル (*.*)</translation>
+    </message>
+    <message>
+        <source>Shortcut scheme is invalid:</source>
+        <translation>ショートカットスキームが無効です:</translation>
+    </message>
+    <message>
+        <source>Shortcut scheme is valid.</source>
+        <translation>ショートカットスキームは有効です。</translation>
+    </message>
+    <message>
+        <source>Shortcut: (none)</source>
+        <translation>ショートカット: (なし)</translation>
+    </message>
+    <message>
+        <source>Shortcut: {shortcut}</source>
+        <translation>ショートカット: {shortcut}</translation>
+    </message>
+    <message>
+        <source>Shortcuts</source>
+        <translation>ショートカット</translation>
+    </message>
+    <message>
+        <source>Shortcuts: {shortcuts}</source>
+        <translation>ショートカット: {shortcuts}</translation>
+    </message>
+    <message>
+        <source>Show &amp;Log Folder</source>
+        <translation>ログフォルダーを表示(&amp;L)</translation>
+    </message>
+    <message>
+        <source>Show All Instances</source>
+        <translation>全候補を表示 (オフ = 最良 1 件)</translation>
+    </message>
+    <message>
+        <source>Show ComfyUI console window</source>
+        <translation>ComfyUIのコンソールウィンドウを表示</translation>
+    </message>
+    <message>
+        <source>Show Guides</source>
+        <translation>ガイドを表示</translation>
+    </message>
+    <message>
+        <source>Show Status Bar</source>
+        <translation>ステータスバーを表示</translation>
+    </message>
+    <message>
+        <source>Show Toolbar</source>
+        <translation>ツールバーを表示</translation>
+    </message>
+    <message>
+        <source>Show binding danger zone in spread view</source>
+        <translation>見開き表示でノド危険域を表示</translation>
+    </message>
+    <message>
+        <source>Show grid</source>
+        <translation>グリッドを表示</translation>
+    </message>
+    <message>
+        <source>Show handles (root / middle / tip)</source>
+        <translation>ハンドルを表示 (付け根 / 中間 / 先端)</translation>
+    </message>
+    <message>
+        <source>Show handles (root / tip)</source>
+        <translation>ハンドルを表示 (付け根 / 先端)</translation>
+    </message>
+    <message>
+        <source>Show overlay</source>
+        <translation>オーバーレイ表示</translation>
+    </message>
+    <message>
+        <source>Show selected channel on canvas</source>
+        <translation>選択チャンネルをキャンバスに表示</translation>
+    </message>
+    <message>
+        <source>Show status bar</source>
+        <translation>ステータスバーを表示</translation>
+    </message>
+    <message>
+        <source>Show toolbar</source>
+        <translation>ツールバーを表示</translation>
+    </message>
+    <message>
+        <source>Show/Hide Guides</source>
+        <translation>ガイド表示/非表示</translation>
+    </message>
+    <message>
+        <source>Show:</source>
+        <translation>表示:</translation>
+    </message>
+    <message>
+        <source>Showing {shown} of {total}</source>
+        <translation>{total} 件中 {shown} 件を表示</translation>
+    </message>
+    <message>
+        <source>Sideways</source>
+        <translation>横倒し</translation>
+    </message>
+    <message>
+        <source>Single</source>
+        <translation>単ページ</translation>
+    </message>
+    <message>
+        <source>Single guide</source>
+        <translation>1本のガイド</translation>
+    </message>
+    <message>
+        <source>Single panel</source>
+        <translation>1コマ</translation>
+    </message>
+    <message>
+        <source>Six panels</source>
+        <translation>6コマ</translation>
+    </message>
+    <message>
+        <source>Size (pt)</source>
+        <translation>サイズ (pt)</translation>
+    </message>
+    <message>
+        <source>Size (px)</source>
+        <translation>大きさ (px)</translation>
+    </message>
+    <message>
+        <source>Size Pressure Curve</source>
+        <translation>サイズの筆圧カーブ</translation>
+    </message>
+    <message>
+        <source>Size Variation</source>
+        <translation>サイズのばらつき</translation>
+    </message>
+    <message>
+        <source>Size ratio</source>
+        <translation>文字サイズの比率</translation>
+    </message>
+    <message>
+        <source>Size:</source>
+        <translation>サイズ:</translation>
+    </message>
+    <message>
+        <source>Sketch</source>
+        <translation>スケッチ</translation>
+    </message>
+    <message>
+        <source>Skip additional confirmation dialogs</source>
+        <translation>追加の確認ダイアログを省略する</translation>
+    </message>
+    <message>
+        <source>Skip existing files</source>
+        <translation>既存ファイルをスキップ</translation>
+    </message>
+    <message>
+        <source>Skipped: {count}</source>
+        <translation>スキップ: {count} 件</translation>
+    </message>
+    <message>
+        <source>Small cards</source>
+        <translation>小カード</translation>
+    </message>
+    <message>
+        <source>Smooth</source>
+        <translation>滑らか</translation>
+    </message>
+    <message>
+        <source>Smoothing</source>
+        <translation>手ぶれ補正</translation>
+    </message>
+    <message>
+        <source>Snap to Canvas Center</source>
+        <translation>キャンバス中央に吸着</translation>
+    </message>
+    <message>
+        <source>Snap to Canvas Edges</source>
+        <translation>キャンバス端に吸着</translation>
+    </message>
+    <message>
+        <source>Snap to grid</source>
+        <translation>グリッドに吸着</translation>
+    </message>
+    <message>
+        <source>Snippet</source>
+        <translation>スニペット</translation>
+    </message>
+    <message>
+        <source>Snippet deleted.</source>
+        <translation>スニペットを削除しました。</translation>
+    </message>
+    <message>
+        <source>Snippet deleted: {title}</source>
+        <translation>スニペットを削除しました: {title}</translation>
+    </message>
+    <message>
+        <source>Snippet saved: {title}</source>
+        <translation>スニペットを保存しました: {title}</translation>
+    </message>
+    <message>
+        <source>Snippet selected: None</source>
+        <translation>選択したスニペット: なし</translation>
+    </message>
+    <message>
+        <source>Snippet selected: {title}</source>
+        <translation>選択したスニペット: {title}</translation>
+    </message>
+    <message>
+        <source>Snippet title</source>
+        <translation>スニペットタイトル</translation>
+    </message>
+    <message>
+        <source>Snippet updated: {title}</source>
+        <translation>スニペットを更新しました: {title}</translation>
+    </message>
+    <message>
+        <source>Snippets</source>
+        <translation>スニペット</translation>
+    </message>
+    <message>
+        <source>Soft Erase</source>
+        <translation>ソフト消去</translation>
+    </message>
+    <message>
+        <source>Soft Light</source>
+        <translation>ソフトライト</translation>
+    </message>
+    <message>
+        <source>Soft Proof</source>
+        <translation>ソフトプルーフ</translation>
+    </message>
+    <message>
+        <source>Soft proof could not be enabled for this profile.</source>
+        <translation>このプロファイルではソフトプルーフを有効にできませんでした。</translation>
+    </message>
+    <message>
+        <source>Soften</source>
+        <translation>ソフト化</translation>
+    </message>
+    <message>
+        <source>Solid Color</source>
+        <translation>単色</translation>
+    </message>
+    <message>
+        <source>Solid Fallback</source>
+        <translation>ベタ (簡易)</translation>
+    </message>
+    <message>
+        <source>Solid Flash</source>
+        <translation>ベタフラッシュ</translation>
+    </message>
+    <message>
+        <source>Some content bounds could not be verified for the bleed check.</source>
+        <translation>一部の描画範囲を確認できないため、塗り足しの検査は未完了です。</translation>
+    </message>
+    <message>
+        <source>Some older API key data could not be migrated to the system keyring. The old data has been kept for recovery. Check your API key settings and restart the app to try again.</source>
+        <translation>以前のAPIキーデータの一部をシステムのキーリングへ移行できませんでした。復旧できるように古いデータを保持しています。APIキーの設定を確認し、アプリを再起動して再試行してください。</translation>
+    </message>
+    <message>
+        <source>Some pages have no bleed; the whole canvas is the trim area.</source>
+        <translation>塗り足しのないページがあります (キャンバス全体を仕上がり領域として扱います)。</translation>
+    </message>
+    <message>
+        <source>Some text bounds could not be verified for the binding check.</source>
+        <translation>一部の文字範囲を確認できないため、ノド危険域の検査は未完了です。</translation>
+    </message>
+    <message>
+        <source>Some text cannot fit inside the shape.</source>
+        <translation>図形の中に収まらない文字があります。</translation>
+    </message>
+    <message>
+        <source>Sort:</source>
+        <translation>並び替え:</translation>
+    </message>
+    <message>
+        <source>Source</source>
+        <translation>ソース</translation>
+    </message>
+    <message>
+        <source>Source '%s' already exists.</source>
+        <translation>ソース '%s' はすでに存在します。</translation>
+    </message>
+    <message>
+        <source>Source fidelity: {value}%</source>
+        <translation>元画像の再現度: {value}%</translation>
+    </message>
+    <message>
+        <source>Source name:</source>
+        <translation>ソース名:</translation>
+    </message>
+    <message>
+        <source>Source profile: {name}</source>
+        <translation>ソースプロファイル: {name}</translation>
+    </message>
+    <message>
+        <source>Space</source>
+        <translation>空白</translation>
+    </message>
+    <message>
+        <source>Space + left click</source>
+        <translation>Space + 左クリック</translation>
+    </message>
+    <message>
+        <source>Space + left drag</source>
+        <translation>Space + 左ドラッグ</translation>
+    </message>
+    <message>
+        <source>Space after character</source>
+        <translation>文字後のアキ</translation>
+    </message>
+    <message>
+        <source>Space around</source>
+        <translation>均等 (前後にアキ)</translation>
+    </message>
+    <message>
+        <source>Space before character</source>
+        <translation>文字前のアキ</translation>
+    </message>
+    <message>
+        <source>Space between</source>
+        <translation>均等 (両端揃え)</translation>
+    </message>
+    <message>
+        <source>Spacing</source>
+        <translation>間隔</translation>
+    </message>
+    <message>
+        <source>Spacing (px)</source>
+        <translation>間隔 (px)</translation>
+    </message>
+    <message>
+        <source>Spacing must satisfy minimum ≤ preferred ≤ maximum.</source>
+        <translation>最小値 ≤ 標準値 ≤ 最大値となるように設定してください。</translation>
+    </message>
+    <message>
+        <source>Speaker styles</source>
+        <translation>話者書式</translation>
+    </message>
+    <message>
+        <source>Speaker:</source>
+        <translation>話者:</translation>
+    </message>
+    <message>
+        <source>Specified count</source>
+        <translation>回数指定</translation>
+    </message>
+    <message>
+        <source>Specify spine width directly</source>
+        <translation>背幅を直接指定</translation>
+    </message>
+    <message>
+        <source>Specular</source>
+        <translation>鏡面反射</translation>
+    </message>
+    <message>
+        <source>Speech Balloon (Cloud)</source>
+        <translation>雲形ふきだし</translation>
+    </message>
+    <message>
+        <source>Speech Balloon (Rect)</source>
+        <translation>角丸ふきだし</translation>
+    </message>
+    <message>
+        <source>Speech Balloon (Round)</source>
+        <translation>丸ふきだし</translation>
+    </message>
+    <message>
+        <source>Spiky Balloon</source>
+        <translation>トゲふきだし</translation>
+    </message>
+    <message>
+        <source>Spine width (mm)</source>
+        <translation>背幅 (mm)</translation>
+    </message>
+    <message>
+        <source>Spine {spine} mm; canvas {width} x {height} px. Saved templates appear in the Pages panel.</source>
+        <translation>背幅 {spine} mm、キャンバス {width} x {height} px。保存後はページパネルから追加できます。</translation>
+    </message>
+    <message>
+        <source>Split Disconnected Instances</source>
+        <translation>分離したオブジェクトを分割</translation>
+    </message>
+    <message>
+        <source>Split and duplicate panel content</source>
+        <translation>分割してコマの内容を複製する</translation>
+    </message>
+    <message>
+        <source>Split boundary</source>
+        <translation>分割境界の辺</translation>
+    </message>
+    <message>
+        <source>Split boundary {number}</source>
+        <translation>分割境界 {number}</translation>
+    </message>
+    <message>
+        <source>Split by ratio</source>
+        <translation>比率で分割</translation>
+    </message>
+    <message>
+        <source>Split horizontally</source>
+        <translation>横に2分割</translation>
+    </message>
+    <message>
+        <source>Split image handling</source>
+        <translation>分割時の画像の扱い</translation>
+    </message>
+    <message>
+        <source>Split panel</source>
+        <translation>コマを分割</translation>
+    </message>
+    <message>
+        <source>Split vertically</source>
+        <translation>縦に2分割</translation>
+    </message>
+    <message>
+        <source>Spread</source>
+        <translation>見開き</translation>
+    </message>
+    <message>
+        <source>Spread Facing Page Quality</source>
+        <translation>見開きの相手ページ画質</translation>
+    </message>
+    <message>
+        <source>Spread preview:</source>
+        <translation>見開きプレビュー:</translation>
+    </message>
+    <message>
+        <source>Spread {number}</source>
+        <translation>見開き{number}</translation>
+    </message>
+    <message>
+        <source>Spread {number}, {side}, {page}</source>
+        <translation>見開き{number}、{side}、{page}</translation>
+    </message>
+    <message>
+        <source>Square</source>
+        <translation>正方</translation>
+    </message>
+    <message>
+        <source>Square 148x148 (Color)</source>
+        <translation>正方形 148x148 (カラー)</translation>
+    </message>
+    <message>
+        <source>Square 148x148 (Monochrome)</source>
+        <translation>正方形 148x148 (モノクロ)</translation>
+    </message>
+    <message>
+        <source>Stabilization</source>
+        <translation>手ブレ補正</translation>
+    </message>
+    <message>
+        <source>Stamp Density</source>
+        <translation>スタンプ密度</translation>
+    </message>
+    <message>
+        <source>Standard</source>
+        <translation>標準</translation>
+    </message>
+    <message>
+        <source>Standard PDF</source>
+        <translation>標準 PDF</translation>
+    </message>
+    <message>
+        <source>Standard RGB PDF (not PDF/X). One logical page per PDF page, in reading order.</source>
+        <translation>標準 RGB PDF です (PDF/X ではありません)。論理順で 1 ページ = PDF 1 ページとして出力します。</translation>
+    </message>
+    <message>
+        <source>Start</source>
+        <translation>開始</translation>
+    </message>
+    <message>
+        <source>Start (%)</source>
+        <translation>開始位置 (%)</translation>
+    </message>
+    <message>
+        <source>Start Color</source>
+        <translation>開始色</translation>
+    </message>
+    <message>
+        <source>Start ComfyUI when LoomStroke starts</source>
+        <translation>LoomStroke起動時にComfyUIを自動起動</translation>
+    </message>
+    <message>
+        <source>Start SAM 3.1 server automatically</source>
+        <translation>SAM 3.1 サーバーを自動起動</translation>
+    </message>
+    <message>
+        <source>Start a new document or open an existing file.</source>
+        <translation>新しいドキュメントを作成するか、既存のファイルを開きます。</translation>
+    </message>
+    <message>
+        <source>Start body page:</source>
+        <translation>本文の開始面:</translation>
+    </message>
+    <message>
+        <source>Start color</source>
+        <translation>開始色</translation>
+    </message>
+    <message>
+        <source>Start continuous generation</source>
+        <translation>連続生成を開始</translation>
+    </message>
+    <message>
+        <source>Start position</source>
+        <translation>開始位置</translation>
+    </message>
+    <message>
+        <source>Started</source>
+        <translation>開始</translation>
+    </message>
+    <message>
+        <source>Starting</source>
+        <translation>起動中</translation>
+    </message>
+    <message>
+        <source>Starting ComfyUI…</source>
+        <translation>ComfyUIを起動しています…</translation>
+    </message>
+    <message>
+        <source>Starting setup...</source>
+        <translation>セットアップを開始しています...</translation>
+    </message>
+    <message>
+        <source>Startup failed</source>
+        <translation>起動失敗</translation>
+    </message>
+    <message>
+        <source>State</source>
+        <translation>状態</translation>
+    </message>
+    <message>
+        <source>Status Bar:</source>
+        <translation>ステータスバー:</translation>
+    </message>
+    <message>
+        <source>Status error</source>
+        <translation>状態取得エラー</translation>
+    </message>
+    <message>
+        <source>Status messages will appear here</source>
+        <translation>ステータスメッセージがここに表示されます</translation>
+    </message>
+    <message>
+        <source>Status messages will appear here...</source>
+        <translation>ステータスメッセージがここに表示されます...</translation>
+    </message>
+    <message>
+        <source>Steps:</source>
+        <translation>ステップ:</translation>
+    </message>
+    <message>
+        <source>Stochastic</source>
+        <translation>ランダム (FM)</translation>
+    </message>
+    <message>
+        <source>Stop</source>
+        <translation>停止</translation>
+    </message>
+    <message>
+        <source>Stop ComfyUI when LoomStroke exits</source>
+        <translation>LoomStroke終了時にComfyUIも終了する</translation>
+    </message>
+    <message>
+        <source>Stop Recording</source>
+        <translation>記録を停止</translation>
+    </message>
+    <message>
+        <source>Stopped or unreachable</source>
+        <translation>停止中または接続不可</translation>
+    </message>
+    <message>
+        <source>Stopped: {completed}</source>
+        <translation>停止: {completed}件完了</translation>
+    </message>
+    <message>
+        <source>Stops</source>
+        <translation>句読点</translation>
+    </message>
+    <message>
+        <source>Storage</source>
+        <translation>保存</translation>
+    </message>
+    <message>
+        <source>Store root</source>
+        <translation>保存先</translation>
+    </message>
+    <message>
+        <source>Story, dialogue and production management</source>
+        <translation>ネーム・台詞・制作進捗の管理</translation>
+    </message>
+    <message>
+        <source>Stream Lines</source>
+        <translation>流線</translation>
+    </message>
+    <message>
+        <source>Stream to Job Queue</source>
+        <translation>ジョブキューへストリーム送信</translation>
+    </message>
+    <message>
+        <source>Stream updates</source>
+        <translation>ストリーム更新</translation>
+    </message>
+    <message>
+        <source>Stream: {width} x {height} px, {count} slice(s), tallest {tallest} px</source>
+        <translation>ストリーム: {width} x {height} px、{count} スライス、最大高さ {tallest} px</translation>
+    </message>
+    <message>
+        <source>Streaming failed: {error}</source>
+        <translation>ストリーミングに失敗しました: {error}</translation>
+    </message>
+    <message>
+        <source>Stretch along edge</source>
+        <translation>辺に沿って伸縮</translation>
+    </message>
+    <message>
+        <source>Stretch edge pixels</source>
+        <translation>端の画素を引き伸ばす</translation>
+    </message>
+    <message>
+        <source>String</source>
+        <translation>文字列</translation>
+    </message>
+    <message>
+        <source>String snippet</source>
+        <translation>文字列スニペット</translation>
+    </message>
+    <message>
+        <source>Stroke</source>
+        <translation>境界線</translation>
+    </message>
+    <message>
+        <source>Stroke Color</source>
+        <translation>線の色</translation>
+    </message>
+    <message>
+        <source>Stroke Quality</source>
+        <translation>線の品質</translation>
+    </message>
+    <message>
+        <source>Stroke Shape</source>
+        <translation>線の形状</translation>
+    </message>
+    <message>
+        <source>Stroke Width</source>
+        <translation>線幅</translation>
+    </message>
+    <message>
+        <source>Strong</source>
+        <translation>強</translation>
+    </message>
+    <message>
+        <source>Structure</source>
+        <translation>構成</translation>
+    </message>
+    <message>
+        <source>Style</source>
+        <translation>種類</translation>
+    </message>
+    <message>
+        <source>Style name</source>
+        <translation>スタイル名</translation>
+    </message>
+    <message>
+        <source>Submission</source>
+        <translation>送信</translation>
+    </message>
+    <message>
+        <source>Submission failed: {error}</source>
+        <translation>送信に失敗しました: {error}</translation>
+    </message>
+    <message>
+        <source>Submit</source>
+        <translation>送信</translation>
+    </message>
+    <message>
+        <source>Submitted job to queue</source>
+        <translation>ジョブをキューに送信しました</translation>
+    </message>
+    <message>
+        <source>Submitted job {job_id}.</source>
+        <translation>ジョブ {job_id} を送信しました。</translation>
+    </message>
+    <message>
+        <source>Submitted job {job_id}: {prompt}</source>
+        <translation>ジョブ {job_id} を送信しました: {prompt}</translation>
+    </message>
+    <message>
+        <source>Substitute Font</source>
+        <translation>フォント置換</translation>
+    </message>
+    <message>
+        <source>Substitute with:</source>
+        <translation>置換先:</translation>
+    </message>
+    <message>
+        <source>Substitute...</source>
+        <translation>置換...</translation>
+    </message>
+    <message>
+        <source>Substituted {count} text object(s) on the current page.</source>
+        <translation>現在のページのテキストオブジェクト {count} 件を置換しました。</translation>
+    </message>
+    <message>
+        <source>Subtract</source>
+        <translation>減算</translation>
+    </message>
+    <message>
+        <source>Subtract from Selection</source>
+        <translation>選択範囲から除外</translation>
+    </message>
+    <message>
+        <source>Supports:</source>
+        <translation>対応:</translation>
+    </message>
+    <message>
+        <source>Swap foreground and background colors</source>
+        <translation>描画色と背景色を入れ替え</translation>
+    </message>
+    <message>
+        <source>Swap start and end</source>
+        <translation>開始点と終了点を入れ替える</translation>
+    </message>
+    <message>
+        <source>Symmetry, parallel / radial / concentric rulers and perspective</source>
+        <translation>対称描画・平行 / 放射 / 同心円定規・透視</translation>
+    </message>
+    <message>
+        <source>System</source>
+        <translation>システム</translation>
+    </message>
+    <message>
+        <source>System Default</source>
+        <translation>システム既定</translation>
+    </message>
+    <message>
+        <source>System Prompt</source>
+        <translation>システムプロンプト</translation>
+    </message>
+    <message>
+        <source>System Prompt (LLM)</source>
+        <translation>システムプロンプト (LLM)</translation>
+    </message>
+    <message>
+        <source>System prompt</source>
+        <translation>システムプロンプト</translation>
+    </message>
+    <message>
+        <source>TAC max {max:.1f}% / mean {mean:.1f}% / over {limit:.0f}%: {over:.2f}% of pixels</source>
+        <translation>TAC 最大 {max:.1f}% / 平均 {mean:.1f}% / {limit:.0f}%超: 画素の {over:.2f}%</translation>
+    </message>
+    <message>
+        <source>TIFF</source>
+        <translation>TIFF</translation>
+    </message>
+    <message>
+        <source>TIFF Image (*.tif *.tiff)</source>
+        <translation>TIFF 画像 (*.tif *.tiff)</translation>
+    </message>
+    <message>
+        <source>Tab Name</source>
+        <translation>タブ名</translation>
+    </message>
+    <message>
+        <source>Tag</source>
+        <translation>タグ</translation>
+    </message>
+    <message>
+        <source>Tag:</source>
+        <translation>タグ:</translation>
+    </message>
+    <message>
+        <source>Tags</source>
+        <translation>タグ</translation>
+    </message>
+    <message>
+        <source>Tags (comma separated)</source>
+        <translation>タグ (カンマ区切り)</translation>
+    </message>
+    <message>
+        <source>Tags (comma-separated):</source>
+        <translation>タグ (カンマ区切り):</translation>
+    </message>
+    <message>
+        <source>Tags:</source>
+        <translation>タグ:</translation>
+    </message>
+    <message>
+        <source>Tail tip fidelity: {value}%</source>
+        <translation>しっぽ先端の再現度: {value}%</translation>
+    </message>
+    <message>
+        <source>Taper End Length</source>
+        <translation>抜きの長さ</translation>
+    </message>
+    <message>
+        <source>Taper In</source>
+        <translation>入り</translation>
+    </message>
+    <message>
+        <source>Taper In Length</source>
+        <translation>入りの長さ</translation>
+    </message>
+    <message>
+        <source>Taper In Length (0: off)</source>
+        <translation>入りの長さ (0: 無効)</translation>
+    </message>
+    <message>
+        <source>Taper Out</source>
+        <translation>抜き</translation>
+    </message>
+    <message>
+        <source>Taper Out Length</source>
+        <translation>抜きの長さ</translation>
+    </message>
+    <message>
+        <source>Taper Out Length (0: off)</source>
+        <translation>抜きの長さ (0: 無効)</translation>
+    </message>
+    <message>
+        <source>Taper Start Length</source>
+        <translation>入りの長さ</translation>
+    </message>
+    <message>
+        <source>Taper ratio</source>
+        <translation>入り抜きの比率</translation>
+    </message>
+    <message>
+        <source>Target</source>
+        <translation>対象</translation>
+    </message>
+    <message>
+        <source>Target Roles</source>
+        <translation>対象の役割</translation>
+    </message>
+    <message>
+        <source>Target layer</source>
+        <translation>出力先レイヤー</translation>
+    </message>
+    <message>
+        <source>Target page</source>
+        <translation>対象ページ</translation>
+    </message>
+    <message>
+        <source>Target width:</source>
+        <translation>出力幅:</translation>
+    </message>
+    <message>
+        <source>Targets ({count} page(s))</source>
+        <translation>対象 (全 {count} ページ)</translation>
+    </message>
+    <message>
+        <source>Temperature</source>
+        <translation>温度</translation>
+    </message>
+    <message>
+        <source>Template</source>
+        <translation>テンプレート</translation>
+    </message>
+    <message>
+        <source>Template Category</source>
+        <translation>テンプレートのカテゴリ</translation>
+    </message>
+    <message>
+        <source>Template category:</source>
+        <translation>テンプレートのカテゴリ:</translation>
+    </message>
+    <message>
+        <source>Template name</source>
+        <translation>テンプレート名</translation>
+    </message>
+    <message>
+        <source>Template name:</source>
+        <translation>テンプレート名:</translation>
+    </message>
+    <message>
+        <source>Template not available.</source>
+        <translation>テンプレートがありません。</translation>
+    </message>
+    <message>
+        <source>Template:</source>
+        <translation>テンプレート:</translation>
+    </message>
+    <message>
+        <source>Test</source>
+        <translation>テスト</translation>
+    </message>
+    <message>
+        <source>Text</source>
+        <translation>テキスト</translation>
+    </message>
+    <message>
+        <source>Text Along Path</source>
+        <translation>パスに沿って配置</translation>
+    </message>
+    <message>
+        <source>Text Editor</source>
+        <translation>テキストエディター</translation>
+    </message>
+    <message>
+        <source>Text Files (*.txt);;All Files (*.*)</source>
+        <translation>テキストファイル (*.txt);;すべてのファイル (*.*)</translation>
+    </message>
+    <message>
+        <source>Text Font Panel</source>
+        <translation>テキストフォントパネル</translation>
+    </message>
+    <message>
+        <source>Text Layer {index}</source>
+        <translation>テキストレイヤー {index}</translation>
+    </message>
+    <message>
+        <source>Text Mode</source>
+        <translation>テキストモード</translation>
+    </message>
+    <message>
+        <source>Text Object</source>
+        <translation>テキストオブジェクト</translation>
+    </message>
+    <message>
+        <source>Text Spacing</source>
+        <translation>文字の間隔</translation>
+    </message>
+    <message>
+        <source>Text Tool</source>
+        <translation>テキストツール</translation>
+    </message>
+    <message>
+        <source>Text color</source>
+        <translation>文字色・不透明度</translation>
+    </message>
+    <message>
+        <source>Text does not fit its frame.</source>
+        <translation>テキストがフレームに収まっていません。</translation>
+    </message>
+    <message>
+        <source>Text exceeds the selected interval. The full text is retained.</source>
+        <translation>指定区間に収まらない文字があります。本文はすべて保持されています。</translation>
+    </message>
+    <message>
+        <source>Text extends outside its frame.</source>
+        <translation>テキストが枠からはみ出しています。</translation>
+    </message>
+    <message>
+        <source>Text formatting</source>
+        <translation>文字書式</translation>
+    </message>
+    <message>
+        <source>Text frames linked.</source>
+        <translation>テキスト枠を連結しました。</translation>
+    </message>
+    <message>
+        <source>Text layer could not be created.</source>
+        <translation>テキストレイヤーを作成できませんでした。</translation>
+    </message>
+    <message>
+        <source>Text layout was not verified (vertical area text).</source>
+        <translation>テキストのレイアウトは未検証です (縦書きエリアテキスト)。</translation>
+    </message>
+    <message>
+        <source>Text or balloon overlaps the binding danger zone.</source>
+        <translation>文字または吹き出しがノド危険域と重なっています。</translation>
+    </message>
+    <message>
+        <source>Text tool keeps output in horizontal writing.</source>
+        <translation>テキストツールは出力を横書きに維持します。</translation>
+    </message>
+    <message>
+        <source>Text+Image</source>
+        <translation>テキスト+画像</translation>
+    </message>
+    <message>
+        <source>Text:</source>
+        <translation>台詞:</translation>
+    </message>
+    <message>
+        <source>Textbox</source>
+        <translation>テキストボックス</translation>
+    </message>
+    <message>
+        <source>Texture and Mixing</source>
+        <translation>紙目・混色</translation>
+    </message>
+    <message>
+        <source>That file already exists; choose another name.</source>
+        <translation>同名のファイルがあります。別の名前を選んでください。</translation>
+    </message>
+    <message>
+        <source>The Editor workflow changed. Reopen it in the ComfyUI tab.</source>
+        <translation>Editorのワークフローが変わりました。ComfyUIタブで開き直してください。</translation>
+    </message>
+    <message>
+        <source>The PDF could not be written.</source>
+        <translation>PDF を書き出せませんでした。</translation>
+    </message>
+    <message>
+        <source>The alpha channel could not be created.</source>
+        <translation>αチャンネルを作成できませんでした。</translation>
+    </message>
+    <message>
+        <source>The alpha channel no longer exists.</source>
+        <translation>αチャンネルが見つかりません。</translation>
+    </message>
+    <message>
+        <source>The batch was not applied. A dialogue changed or a layer is locked. Reopen the editor.</source>
+        <translation>一括変更を反映できませんでした。元の内容が変更されたか、レイヤーがロックされています。編集画面を開き直してください。</translation>
+    </message>
+    <message>
+        <source>The body ink ring is too ambiguous to reconstruct safely.</source>
+        <translation>本体の輪郭線と内部を判別できないため、一体化できません。</translation>
+    </message>
+    <message>
+        <source>The book settings could not be stored in this document.</source>
+        <translation>この文書には作品設定を保存できませんでした。</translation>
+    </message>
+    <message>
+        <source>The brush tip could not be created.</source>
+        <translation>ブラシ先端を作成できませんでした。</translation>
+    </message>
+    <message>
+        <source>The brush tip image could not be read.</source>
+        <translation>ブラシ先端の画像を読み込めませんでした。</translation>
+    </message>
+    <message>
+        <source>The brush tip is too large for a pen preset.</source>
+        <translation>先端画像がペンプリセットの上限を超えています。</translation>
+    </message>
+    <message>
+        <source>The canvas did not accept the paste.</source>
+        <translation>キャンバスが貼り付けを受け付けませんでした。</translation>
+    </message>
+    <message>
+        <source>The change could not be saved.</source>
+        <translation>変更を保存できませんでした。</translation>
+    </message>
+    <message>
+        <source>The clipboard data from LoomStroke could not be read.</source>
+        <translation>LoomStroke のクリップボードデータを読めませんでした。</translation>
+    </message>
+    <message>
+        <source>The clipboard image could not be decoded.</source>
+        <translation>クリップボードの画像をデコードできませんでした。</translation>
+    </message>
+    <message>
+        <source>The clipboard image is too large to paste.</source>
+        <translation>クリップボードの画像が大きすぎて貼り付けられません。</translation>
+    </message>
+    <message>
+        <source>The cover page is not included.</source>
+        <translation>表紙ページが含まれていません。</translation>
+    </message>
+    <message>
+        <source>The current page has no instance of this master.</source>
+        <translation>現在のページにこのマスターの instance はありません。</translation>
+    </message>
+    <message>
+        <source>The current page has no vector layers to capture.</source>
+        <translation>現在のページに取り込めるベクターレイヤーがありません。</translation>
+    </message>
+    <message>
+        <source>The dialogue was not updated. The page or text may have changed.</source>
+        <translation>セリフを更新できませんでした。ページや元の文章が変更された可能性があります。</translation>
+    </message>
+    <message>
+        <source>The document changed. The prepared fill was cancelled.</source>
+        <translation>文書が変更されたため、準備中の塗りつぶしを取り消しました。</translation>
+    </message>
+    <message>
+        <source>The document changed. The vector erase was cancelled.</source>
+        <translation>文書が変更されたため、ベクター消去を取り消しました。</translation>
+    </message>
+    <message>
+        <source>The document has no ICC profile; pixels are assumed to be sRGB.</source>
+        <translation>ドキュメントに ICC プロファイルがないため、ピクセルを sRGB とみなして変換します。</translation>
+    </message>
+    <message>
+        <source>The document has no ICC profile; the file is exported untagged (treated as sRGB).</source>
+        <translation>ドキュメントに ICC プロファイルがないため、プロファイルなし (sRGB とみなす) で書き出します。</translation>
+    </message>
+    <message>
+        <source>The document has no pages.</source>
+        <translation>ドキュメントにページがありません。</translation>
+    </message>
+    <message>
+        <source>The document has no working colour profile.</source>
+        <translation>ドキュメントに作業用カラープロファイルがありません。</translation>
+    </message>
+    <message>
+        <source>The document profile is not a usable ICC profile.</source>
+        <translation>ドキュメントのプロファイルは ICC プロファイルとして使用できません。</translation>
+    </message>
+    <message>
+        <source>The editing target changed. Reopen the filter to continue.</source>
+        <translation>編集対象が変更されました。フィルターを開き直してください。</translation>
+    </message>
+    <message>
+        <source>The export report could not be written.</source>
+        <translation>export-report.json を書き込めませんでした。</translation>
+    </message>
+    <message>
+        <source>The file could not be read.</source>
+        <translation>ファイルを読み込めませんでした。</translation>
+    </message>
+    <message>
+        <source>The file could not be written.</source>
+        <translation>ファイルを書き込めませんでした。</translation>
+    </message>
+    <message>
+        <source>The file is not a usable ICC profile.</source>
+        <translation>このファイルは使用できる ICC プロファイルではありません。</translation>
+    </message>
+    <message>
+        <source>The file is not a valid ICC profile.</source>
+        <translation>有効な ICC プロファイルではありません。</translation>
+    </message>
+    <message>
+        <source>The file is not a valid macro.</source>
+        <translation>有効なマクロファイルではありません。</translation>
+    </message>
+    <message>
+        <source>The file location is unknown.</source>
+        <translation>ファイルの場所が不明です。</translation>
+    </message>
+    <message>
+        <source>The file was rejected: {codes}</source>
+        <translation>ファイルを受け付けませんでした: {codes}</translation>
+    </message>
+    <message>
+        <source>The fill could not be applied. The original pixels were preserved.</source>
+        <translation>塗りつぶしを反映できませんでした。元の画像を保持しました。</translation>
+    </message>
+    <message>
+        <source>The fill could not be prepared. The original pixels were preserved.</source>
+        <translation>塗りつぶしを準備できませんでした。元の画像を保持しました。</translation>
+    </message>
+    <message>
+        <source>The fill reference could not be read.</source>
+        <translation>塗りつぶしの参照画像を取得できませんでした。</translation>
+    </message>
+    <message>
+        <source>The filter could not be applied. The original pixels were preserved.</source>
+        <translation>フィルターを適用できませんでした。元の画素は保持されています。</translation>
+    </message>
+    <message>
+        <source>The filter returned an invalid image. The original pixels were preserved.</source>
+        <translation>フィルターの結果が無効でした。元の画素は保持されています。</translation>
+    </message>
+    <message>
+        <source>The filter stroke failed. Previously committed pixels were preserved.</source>
+        <translation>フィルター描画に失敗しました。確定済みの画素は保持されています。</translation>
+    </message>
+    <message>
+        <source>The font database is unavailable.</source>
+        <translation>フォントデータベースを利用できません。</translation>
+    </message>
+    <message>
+        <source>The layer changed. The pending filter stroke was stopped.</source>
+        <translation>レイヤーが変更されたため、処理中のフィルター描画を停止しました。</translation>
+    </message>
+    <message>
+        <source>The layer could not be rasterized. The original objects were preserved.</source>
+        <translation>レイヤーをラスタライズできませんでした。元のオブジェクトは保持されています。</translation>
+    </message>
+    <message>
+        <source>The linked page could not be opened.</source>
+        <translation>リンク先のページを開けませんでした。</translation>
+    </message>
+    <message>
+        <source>The local URL is occupied by a service other than ComfyUI.</source>
+        <translation>Local URLでComfyUI以外のサービスが動作しています。</translation>
+    </message>
+    <message>
+        <source>The manifest could not be written.</source>
+        <translation>webtoon_manifest.json を書き込めませんでした。</translation>
+    </message>
+    <message>
+        <source>The output profile could not be used: {error}</source>
+        <translation>出力プロファイルを使用できません: {error}</translation>
+    </message>
+    <message>
+        <source>The package could not be written: {codes}</source>
+        <translation>パッケージを書き出せませんでした: {codes}</translation>
+    </message>
+    <message>
+        <source>The page could not be loaded. Select it again to retry.</source>
+        <translation>ページを読み込めませんでした。もう一度選択すると再試行します。</translation>
+    </message>
+    <message>
+        <source>The page has no visible content.</source>
+        <translation>ページに表示される内容がありません。</translation>
+    </message>
+    <message>
+        <source>The palette could not be saved. Your last confirmed palette is still active.</source>
+        <translation>パレットを保存できませんでした。最後に確定したパレットを引き続き使用します。</translation>
+    </message>
+    <message>
+        <source>The palette file could not be loaded. It has not been overwritten.</source>
+        <translation>パレットファイルを読み込めませんでした。ファイルは上書きしていません。</translation>
+    </message>
+    <message>
+        <source>The palette file was saved, but its location setting could not be updated. The saved palette remains active in this session.</source>
+        <translation>パレットファイルは保存されましたが、保存先設定を更新できませんでした。現在のセッションでは保存済みのパレットを使用します。</translation>
+    </message>
+    <message>
+        <source>The panel drawing target is not editable.</source>
+        <translation>このコマの編集対象へはフィルターを適用できません。</translation>
+    </message>
+    <message>
+        <source>The pending filter stroke was cancelled because the editing target changed.</source>
+        <translation>編集対象が変わったため、処理中のフィルター描画を取り消しました。</translation>
+    </message>
+    <message>
+        <source>The preflight report is out of date; run Manga Preflight again.</source>
+        <translation>プリフライトの結果が古くなっています。漫画プリフライトを再実行してください。</translation>
+    </message>
+    <message>
+        <source>The previous filter stroke is still processing. Please wait.</source>
+        <translation>前のフィルター描画を処理中です。完了するまでお待ちください。</translation>
+    </message>
+    <message>
+        <source>The profile is not a CMYK profile.</source>
+        <translation>このプロファイルは CMYK ではありません。</translation>
+    </message>
+    <message>
+        <source>The profile references an unknown rule.</source>
+        <translation>プロファイルが未知のルールを参照しています。</translation>
+    </message>
+    <message>
+        <source>The project was changed elsewhere; it has been reloaded.</source>
+        <translation>プロジェクトが別の場所で変更されたため再読み込みしました。</translation>
+    </message>
+    <message>
+        <source>The reference area is unavailable.</source>
+        <translation>基準となる範囲がありません。</translation>
+    </message>
+    <message>
+        <source>The rule failed to run.</source>
+        <translation>ルールの実行に失敗しました。</translation>
+    </message>
+    <message>
+        <source>The scan was cancelled.</source>
+        <translation>検査はキャンセルされました。</translation>
+    </message>
+    <message>
+        <source>The selected filter is not available.</source>
+        <translation>選択されたフィルターは利用できません。</translation>
+    </message>
+    <message>
+        <source>The selected filter is unavailable.</source>
+        <translation>選択されたフィルターは利用できません。</translation>
+    </message>
+    <message>
+        <source>The selected layer changed. Reopen its node editor.</source>
+        <translation>選択レイヤーが変わりました。対象レイヤーのノード編集を開き直してください。</translation>
+    </message>
+    <message>
+        <source>The selected pen preset is unavailable.</source>
+        <translation>選択したペンプリセットが見つかりません。</translation>
+    </message>
+    <message>
+        <source>The server changed. Close and reopen the node editor.</source>
+        <translation>サーバーが変更されました。ノード編集画面を閉じて開き直してください。</translation>
+    </message>
+    <message>
+        <source>The shape library could not be loaded. Library changes cannot be saved.</source>
+        <translation>図形ライブラリを読み込めませんでした。ライブラリへの変更は保存できません。</translation>
+    </message>
+    <message>
+        <source>The system clipboard has no image to paste.</source>
+        <translation>システムクリップボードに貼り付けられる画像がありません。</translation>
+    </message>
+    <message>
+        <source>The template could not be saved. See the log for details.</source>
+        <translation>テンプレートを保存できませんでした。詳細はログを確認してください。</translation>
+    </message>
+    <message>
+        <source>The template produces duplicate file names (e.g. {name}).</source>
+        <translation>ファイル名が重複します (例: {name})。</translation>
+    </message>
+    <message>
+        <source>The text frames could not be linked.</source>
+        <translation>テキスト枠を連結できませんでした。</translation>
+    </message>
+    <message>
+        <source>The text object could not be created.</source>
+        <translation>テキストオブジェクトを作成できませんでした。</translation>
+    </message>
+    <message>
+        <source>The vector erase could not be prepared. The original strokes were preserved.</source>
+        <translation>ベクター消去を準備できませんでした。元の線を保持しました。</translation>
+    </message>
+    <message>
+        <source>The width edit could not be applied. The original stroke was preserved.</source>
+        <translation>線幅の変更を反映できませんでした。元の線を保持しました。</translation>
+    </message>
+    <message>
+        <source>Theme:</source>
+        <translation>テーマ:</translation>
+    </message>
+    <message>
+        <source>There is no selection to save.</source>
+        <translation>保存する選択範囲がありません。</translation>
+    </message>
+    <message>
+        <source>These frames already belong to the same text story.</source>
+        <translation>これらの枠はすでに同じ本文に連結されています。</translation>
+    </message>
+    <message>
+        <source>Thinking</source>
+        <translation>思考</translation>
+    </message>
+    <message>
+        <source>This document is already CMYK.</source>
+        <translation>この文書はCMYKです。</translation>
+    </message>
+    <message>
+        <source>This format cannot embed an ICC profile.</source>
+        <translation>この形式は ICC プロファイルを埋め込めません。</translation>
+    </message>
+    <message>
+        <source>This format does not store DPI metadata.</source>
+        <translation>この形式は DPI メタデータを保存しません。</translation>
+    </message>
+    <message>
+        <source>This node has no published text parameters.</source>
+        <translation>このノードには公開されたテキスト項目がありません。</translation>
+    </message>
+    <message>
+        <source>This plugin requires the following permissions to function:</source>
+        <translation>このプラグインを動作させるには次の権限が必要です:</translation>
+    </message>
+    <message>
+        <source>This stroke already has 64 width stops.</source>
+        <translation>線幅の調整点は64点までです。</translation>
+    </message>
+    <message>
+        <source>Thoughts</source>
+        <translation>思考過程</translation>
+    </message>
+    <message>
+        <source>Three panels</source>
+        <translation>3コマ</translation>
+    </message>
+    <message>
+        <source>Threshold</source>
+        <translation>しきい値</translation>
+    </message>
+    <message>
+        <source>Tile Size:</source>
+        <translation>タイルサイズ:</translation>
+    </message>
+    <message>
+        <source>Tilt Angle</source>
+        <translation>傾きを使用</translation>
+    </message>
+    <message>
+        <source>Tilt Shading</source>
+        <translation>傾きシェーディング</translation>
+    </message>
+    <message>
+        <source>Time</source>
+        <translation>時刻</translation>
+    </message>
+    <message>
+        <source>Timeout:</source>
+        <translation>タイムアウト:</translation>
+    </message>
+    <message>
+        <source>Tip</source>
+        <translation>チップ</translation>
+    </message>
+    <message>
+        <source>Tip import failed: {error}</source>
+        <translation>ブラシ先端の読み込みに失敗しました: {error}</translation>
+    </message>
+    <message>
+        <source>Tip: the Preferences → AI Effect tab controls retries, cache size and the default trigger.</source>
+        <translation>ヒント: Preferences → AI Effect タブで、再試行、キャッシュサイズ、既定トリガーを設定できます。</translation>
+    </message>
+    <message>
+        <source>Title</source>
+        <translation>タイトル</translation>
+    </message>
+    <message>
+        <source>Title, language and identifier are required.</source>
+        <translation>タイトル・言語・識別子は必須です。</translation>
+    </message>
+    <message>
+        <source>Title:</source>
+        <translation>タイトル:</translation>
+    </message>
+    <message>
+        <source>To</source>
+        <translation>生成先</translation>
+    </message>
+    <message>
+        <source>To Intersection</source>
+        <translation>交点まで</translation>
+    </message>
+    <message>
+        <source>Toggle &amp;Grid</source>
+        <translation>グリッド表示/非表示(&amp;G)</translation>
+    </message>
+    <message>
+        <source>Toggle Candidate Overlay</source>
+        <translation>候補オーバーレイを切り替え</translation>
+    </message>
+    <message>
+        <source>Toggle alpha lock</source>
+        <translation>透明度ロック切替</translation>
+    </message>
+    <message>
+        <source>Toggle layer lock</source>
+        <translation>レイヤーのロック切替</translation>
+    </message>
+    <message>
+        <source>Toggle layer visibility</source>
+        <translation>レイヤーの表示切替</translation>
+    </message>
+    <message>
+        <source>Tolerance</source>
+        <translation>許容値</translation>
+    </message>
+    <message>
+        <source>Tone Gamma</source>
+        <translation>トーンガンマ</translation>
+    </message>
+    <message>
+        <source>Tone Range</source>
+        <translation>トーン範囲</translation>
+    </message>
+    <message>
+        <source>Tone and Shading</source>
+        <translation>トーン・濃淡</translation>
+    </message>
+    <message>
+        <source>Tool Properties</source>
+        <translation>ツールプロパティ</translation>
+    </message>
+    <message>
+        <source>Tool Settings</source>
+        <translation>ツール設定</translation>
+    </message>
+    <message>
+        <source>Tool manager not available</source>
+        <translation>ツールマネージャーを利用できません</translation>
+    </message>
+    <message>
+        <source>Toolbar</source>
+        <translation>ツールバー</translation>
+    </message>
+    <message>
+        <source>Toolbar:</source>
+        <translation>ツールバー:</translation>
+    </message>
+    <message>
+        <source>Tools</source>
+        <translation>ツール</translation>
+    </message>
+    <message>
+        <source>Tools menu</source>
+        <translation>ツールメニュー</translation>
+    </message>
+    <message>
+        <source>Top</source>
+        <translation>上</translation>
+    </message>
+    <message>
+        <source>Touched Area</source>
+        <translation>触れた部分</translation>
+    </message>
+    <message>
+        <source>Tracking</source>
+        <translation>文字間</translation>
+    </message>
+    <message>
+        <source>Transfer</source>
+        <translation>転送</translation>
+    </message>
+    <message>
+        <source>Transfer to layer:</source>
+        <translation>レイヤーへ転送:</translation>
+    </message>
+    <message>
+        <source>Transform</source>
+        <translation>変形</translation>
+    </message>
+    <message>
+        <source>Transform X</source>
+        <translation>変形 X</translation>
+    </message>
+    <message>
+        <source>Transform Y</source>
+        <translation>変形 Y</translation>
+    </message>
+    <message>
+        <source>Transparency</source>
+        <translation>透明度</translation>
+    </message>
+    <message>
+        <source>Transparency (read only)</source>
+        <translation>透明度 (表示のみ)</translation>
+    </message>
+    <message>
+        <source>Transparency will be flattened onto the background.</source>
+        <translation>透明部分は背景色で塗りつぶされます。</translation>
+    </message>
+    <message>
+        <source>Transparent</source>
+        <translation>透明</translation>
+    </message>
+    <message>
+        <source>Trapezoid</source>
+        <translation>台形</translation>
+    </message>
+    <message>
+        <source>Triangle</source>
+        <translation>三角形</translation>
+    </message>
+    <message>
+        <source>Triangular</source>
+        <translation>三角</translation>
+    </message>
+    <message>
+        <source>Trigger</source>
+        <translation>トリガー</translation>
+    </message>
+    <message>
+        <source>Trim area</source>
+        <translation>仕上がり枠</translation>
+    </message>
+    <message>
+        <source>Trim height</source>
+        <translation>仕上がり高さ</translation>
+    </message>
+    <message>
+        <source>Trim width</source>
+        <translation>仕上がり幅</translation>
+    </message>
+    <message>
+        <source>Trim: {width} x {height} mm</source>
+        <translation>仕上がり: {width} x {height} mm</translation>
+    </message>
+    <message>
+        <source>Tune render and hardware options</source>
+        <translation>レンダリングとハードウェアの調整</translation>
+    </message>
+    <message>
+        <source>Two columns</source>
+        <translation>2コマ (横並び)</translation>
+    </message>
+    <message>
+        <source>Two rows</source>
+        <translation>2コマ (縦積み)</translation>
+    </message>
+    <message>
+        <source>Type</source>
+        <translation>種類</translation>
+    </message>
+    <message>
+        <source>Type '{plugin_id}' to confirm removal:</source>
+        <translation>削除を確認するには '{plugin_id}' と入力してください:</translation>
+    </message>
+    <message>
+        <source>Type '{plugin_id}' to confirm rollback:</source>
+        <translation>ロールバックを確認するには '{plugin_id}' と入力してください:</translation>
+    </message>
+    <message>
+        <source>Types</source>
+        <translation>種類</translation>
+    </message>
+    <message>
+        <source>UI Settings</source>
+        <translation>UI設定</translation>
+    </message>
+    <message>
+        <source>UI appearance and layout</source>
+        <translation>UIの外観とレイアウト</translation>
+    </message>
+    <message>
+        <source>URL</source>
+        <translation>URL</translation>
+    </message>
+    <message>
+        <source>URL: Not configured</source>
+        <translation>URL: 未設定</translation>
+    </message>
+    <message>
+        <source>URL: {url}</source>
+        <translation>URL: {url}</translation>
+    </message>
+    <message>
+        <source>Unable to apply selection.</source>
+        <translation>選択範囲を反映できませんでした。</translation>
+    </message>
+    <message>
+        <source>Unable to export image: {path}</source>
+        <translation>画像をエクスポートできません: {path}</translation>
+    </message>
+    <message>
+        <source>Unable to load document: {path}</source>
+        <translation>ドキュメントを読み込めません: {path}</translation>
+    </message>
+    <message>
+        <source>Unable to save document: {path}
+{error}</source>
+        <translation>ドキュメントを保存できません: {path}
+{error}</translation>
+    </message>
+    <message>
+        <source>Unavailable</source>
+        <translation>この候補では実行できません</translation>
+    </message>
+    <message>
+        <source>Undetermined UI (ComfyUI)</source>
+        <translation>判定不能 (ComfyUI)</translation>
+    </message>
+    <message>
+        <source>Undo Steps</source>
+        <translation>元に戻す回数</translation>
+    </message>
+    <message>
+        <source>Undo Steps:</source>
+        <translation>Undoステップ:</translation>
+    </message>
+    <message>
+        <source>Undo history cleared</source>
+        <translation>Undo履歴をクリアしました</translation>
+    </message>
+    <message>
+        <source>Undo history cleared after load</source>
+        <translation>読み込み後にUndo履歴をクリアしました</translation>
+    </message>
+    <message>
+        <source>Undo history cleared after save</source>
+        <translation>保存後にUndo履歴をクリアしました</translation>
+    </message>
+    <message>
+        <source>Undo {operation} on {page} ({scope})</source>
+        <translation>{page}の{operation}を元に戻す ({scope})</translation>
+    </message>
+    <message>
+        <source>Undo/Redo could not be completed. Check the document before continuing.</source>
+        <translation>元に戻す/やり直すを完了できませんでした。続ける前に原稿の状態を確認してください。</translation>
+    </message>
+    <message>
+        <source>Unexpected response to the VRAM release request.</source>
+        <translation>VRAM解放要求に対して予期しない応答がありました。</translation>
+    </message>
+    <message>
+        <source>Ungroup</source>
+        <translation>グループ解除</translation>
+    </message>
+    <message>
+        <source>Unit</source>
+        <translation>単位</translation>
+    </message>
+    <message>
+        <source>Unit:</source>
+        <translation>単位:</translation>
+    </message>
+    <message>
+        <source>Unknown</source>
+        <translation>不明</translation>
+    </message>
+    <message>
+        <source>Unknown Status</source>
+        <translation>不明な状態</translation>
+    </message>
+    <message>
+        <source>Unlink on Current Page</source>
+        <translation>現在のページでリンク解除</translation>
+    </message>
+    <message>
+        <source>Unlink text frames</source>
+        <translation>テキスト枠の連結を解除</translation>
+    </message>
+    <message>
+        <source>Unload Model</source>
+        <translation>モデルをアンロード</translation>
+    </message>
+    <message>
+        <source>Unload the SAM 3.1 model. It reloads automatically on next use.</source>
+        <translation>SAM 3.1のモデルをメモリから解放します。次回使用時に自動で再ロードします。</translation>
+    </message>
+    <message>
+        <source>Unlock guides before replacing them.</source>
+        <translation>ガイドのロックを解除してから置換してください。</translation>
+    </message>
+    <message>
+        <source>Unlock the layer and its parent groups before applying a filter.</source>
+        <translation>レイヤーと親グループのロックを解除してからフィルターを適用してください。</translation>
+    </message>
+    <message>
+        <source>Unnamed</source>
+        <translation>名称未設定</translation>
+    </message>
+    <message>
+        <source>Unnamed Workflow</source>
+        <translation>名称未設定のワークフロー</translation>
+    </message>
+    <message>
+        <source>Untagged (no profile)</source>
+        <translation>プロファイルなし</translation>
+    </message>
+    <message>
+        <source>Untagged (treated as sRGB)</source>
+        <translation>プロファイルなし (sRGB とみなす)</translation>
+    </message>
+    <message>
+        <source>Until stopped</source>
+        <translation>中止するまで (無限)</translation>
+    </message>
+    <message>
+        <source>Untitled</source>
+        <translation>無題</translation>
+    </message>
+    <message>
+        <source>Up</source>
+        <translation>上へ</translation>
+    </message>
+    <message>
+        <source>Update</source>
+        <translation>更新</translation>
+    </message>
+    <message>
+        <source>Update Plugin Package</source>
+        <translation>プラグインパッケージを更新</translation>
+    </message>
+    <message>
+        <source>Update Selected</source>
+        <translation>選択した項目を更新</translation>
+    </message>
+    <message>
+        <source>Update cancelled.</source>
+        <translation>更新をキャンセルしました。</translation>
+    </message>
+    <message>
+        <source>Update completed without version change: {plugin_id} (version {version})</source>
+        <translation>更新は完了しましたがバージョン変更はありません: {plugin_id} (バージョン {version})</translation>
+    </message>
+    <message>
+        <source>Update completed: {plugin_id}</source>
+        <translation>更新が完了しました: {plugin_id}</translation>
+    </message>
+    <message>
+        <source>Update failed: {plugin_id} not found.</source>
+        <translation>更新に失敗しました: {plugin_id} が見つかりません。</translation>
+    </message>
+    <message>
+        <source>Update from Current Page</source>
+        <translation>現在のページから更新</translation>
+    </message>
+    <message>
+        <source>Update from selected text</source>
+        <translation>選択テキストの書式で更新</translation>
+    </message>
+    <message>
+        <source>Update may be pending: {plugin_id}</source>
+        <translation>更新を処理中の可能性があります: {plugin_id}</translation>
+    </message>
+    <message>
+        <source>Update preset</source>
+        <translation>内容を更新</translation>
+    </message>
+    <message>
+        <source>Update requested ({plugin_id}): {path}</source>
+        <translation>更新を要求しました ({plugin_id}): {path}</translation>
+    </message>
+    <message>
+        <source>Update requested.</source>
+        <translation>更新を要求しました。</translation>
+    </message>
+    <message>
+        <source>Update requested: {plugin_id}</source>
+        <translation>更新を要求しました: {plugin_id}</translation>
+    </message>
+    <message>
+        <source>Update style details</source>
+        <translation>書式の登録情報を更新</translation>
+    </message>
+    <message>
+        <source>Update this master and refresh {count} page(s)?</source>
+        <translation>このマスターを更新し、{count} ページの instance を更新しますか?</translation>
+    </message>
+    <message>
+        <source>Update...</source>
+        <translation>更新...</translation>
+    </message>
+    <message>
+        <source>Updated</source>
+        <translation>更新日時</translation>
+    </message>
+    <message>
+        <source>Updated from local Production Control store.</source>
+        <translation>ローカルの Production Control store から更新しました。</translation>
+    </message>
+    <message>
+        <source>Upright</source>
+        <translation>正立</translation>
+    </message>
+    <message>
+        <source>Upscaling algorithm</source>
+        <translation>アップスケールアルゴリズム</translation>
+    </message>
+    <message>
+        <source>Urchin Flash</source>
+        <translation>ウニフラッシュ</translation>
+    </message>
+    <message>
+        <source>Use CMYK ink values</source>
+        <translation>CMYKのインク量で描画</translation>
+    </message>
+    <message>
+        <source>Use GPU</source>
+        <translation>GPUを使用</translation>
+    </message>
+    <message>
+        <source>Use GPU for performance optimization</source>
+        <translation>パフォーマンス最適化のために GPU を使用します</translation>
+    </message>
+    <message>
+        <source>Use Japanese typesetting</source>
+        <translation>日本語組版を使用</translation>
+    </message>
+    <message>
+        <source>Use Numba JIT</source>
+        <translation>Numba JIT を使用</translation>
+    </message>
+    <message>
+        <source>Use Output In Prompt</source>
+        <translation>出力をプロンプトに使用</translation>
+    </message>
+    <message>
+        <source>Use Selection as Inpaint Mask</source>
+        <translation>選択範囲をインペイントマスクに</translation>
+    </message>
+    <message>
+        <source>Use em character advance</source>
+        <translation>em を基準に字送り</translation>
+    </message>
+    <message>
+        <source>Use full loop</source>
+        <translation>全周を使用</translation>
+    </message>
+    <message>
+        <source>Use ruby-specific glyphs</source>
+        <translation>ルビ専用字形を使用</translation>
+    </message>
+    <message>
+        <source>Use secure connection (https/wss) - Note: ComfyUI typically runs on HTTP only, uncheck if connection fails</source>
+        <translation>安全な接続 (https/wss) を使用 - 注意: ComfyUI は通常 HTTP のみで動作します。接続に失敗する場合はチェックを外してください</translation>
+    </message>
+    <message>
+        <source>Use the OpenAI API key for GPT Image 2</source>
+        <translation>GPT Image 2 で OpenAI API キーを使用</translation>
+    </message>
+    <message>
+        <source>Use this managed layer's own controls to rasterize it.</source>
+        <translation>この管理レイヤーは専用の編集操作からラスタライズしてください。</translation>
+    </message>
+    <message>
+        <source>Use this mask as the AI Effect inpaint mask</source>
+        <translation>このマスクを AI Effect のインペイントマスクに接続</translation>
+    </message>
+    <message>
+        <source>Used by</source>
+        <translation>使用レイヤー</translation>
+    </message>
+    <message>
+        <source>Used by {count} text frames</source>
+        <translation>使用数: {count} テキスト枠</translation>
+    </message>
+    <message>
+        <source>User</source>
+        <translation>ユーザー</translation>
+    </message>
+    <message>
+        <source>User Filters</source>
+        <translation>ユーザーフィルター</translation>
+    </message>
+    <message>
+        <source>User Interface</source>
+        <translation>ユーザーインターフェース</translation>
+    </message>
+    <message>
+        <source>User Presets</source>
+        <translation>ユーザープリセット</translation>
+    </message>
+    <message>
+        <source>User Prompt</source>
+        <translation>ユーザープロンプト</translation>
+    </message>
+    <message>
+        <source>User Prompt (LLM)</source>
+        <translation>ユーザープロンプト (LLM)</translation>
+    </message>
+    <message>
+        <source>User prompt</source>
+        <translation>ユーザープロンプト</translation>
+    </message>
+    <message>
+        <source>User prompt is empty.</source>
+        <translation>ユーザープロンプトが空です。</translation>
+    </message>
+    <message>
+        <source>User-defined Filters</source>
+        <translation>ユーザー定義フィルター</translation>
+    </message>
+    <message>
+        <source>Uses Local URL below. Requires external services to be enabled. Background ComfyUI started by LoomStroke is automatically stopped on exit, including active generation. The stop option applies to console startup. Existing and remote servers remain running.</source>
+        <translation>起動には下のLocal URLと外部サービスの許可を使います。LoomStrokeがバックグラウンドで起動したComfyUIは、生成中でもLoomStroke終了時に自動で終了します。終了オプションはコンソール起動時に適用されます。既に起動していたサーバーと遠隔サーバーは終了しません。</translation>
+    </message>
+    <message>
+        <source>Uses Local URL below. Requires external services to be enabled. ComfyUI remains running after LoomStroke closes.</source>
+        <translation>下のLocal URLを使用します。外部サービスの許可が必要です。LoomStroke終了後もComfyUIは起動したままになります。</translation>
+    </message>
+    <message>
+        <source>Uses Local URL below. Requires external services to be enabled. On exit, only ComfyUI started by this LoomStroke instance can be stopped, including active generation. Existing and remote servers remain running.</source>
+        <translation>起動には下のLocal URLと外部サービスの許可を使います。終了オプションは今回のLoomStrokeが起動したComfyUIのみが対象で、生成中でも終了します。既に起動していたサーバーと遠隔サーバーは終了しません。</translation>
+    </message>
+    <message>
+        <source>Using OpenAI key</source>
+        <translation>OpenAI キーを使用中</translation>
+    </message>
+    <message>
+        <source>Using layer: {display}</source>
+        <translation>レイヤーを使用: {display}</translation>
+    </message>
+    <message>
+        <source>Using prompt: {title}</source>
+        <translation>使用中のプロンプト: {title}</translation>
+    </message>
+    <message>
+        <source>Using workflow: {workflow}</source>
+        <translation>ワークフローを使用: {workflow}</translation>
+    </message>
+    <message>
+        <source>Utility</source>
+        <translation>ユーティリティ</translation>
+    </message>
+    <message>
+        <source>V-Center</source>
+        <translation>垂直中央</translation>
+    </message>
+    <message>
+        <source>V-Distribute</source>
+        <translation>垂直分布</translation>
+    </message>
+    <message>
+        <source>VRAM release requested. Models will reload on the next generation.</source>
+        <translation>接続中のComfyUIにVRAM解放を要求しました。次回生成時にモデルを再読み込みします。</translation>
+    </message>
+    <message>
+        <source>Validate</source>
+        <translation>検証</translation>
+    </message>
+    <message>
+        <source>Validate Shortcut Scheme</source>
+        <translation>ショートカットスキームを検証</translation>
+    </message>
+    <message>
+        <source>Validate…</source>
+        <translation>検証…</translation>
+    </message>
+    <message>
+        <source>Validation Failed</source>
+        <translation>検証に失敗しました</translation>
+    </message>
+    <message>
+        <source>Validation Result</source>
+        <translation>検証結果</translation>
+    </message>
+    <message>
+        <source>Validation Status</source>
+        <translation>検証状態</translation>
+    </message>
+    <message>
+        <source>Value Types (image/number, etc.)</source>
+        <translation>値タイプ (image/number など)</translation>
+    </message>
+    <message>
+        <source>Values applied to this layer.</source>
+        <translation>このレイヤーに値を反映しました。</translation>
+    </message>
+    <message>
+        <source>Variation</source>
+        <translation>ばらつき</translation>
+    </message>
+    <message>
+        <source>Variation Seed</source>
+        <translation>ばらつきのシード</translation>
+    </message>
+    <message>
+        <source>Vector</source>
+        <translation>ベクター</translation>
+    </message>
+    <message>
+        <source>Vector Erase Mode</source>
+        <translation>ベクター消去方式</translation>
+    </message>
+    <message>
+        <source>Vector Erasing</source>
+        <translation>ベクター消去</translation>
+    </message>
+    <message>
+        <source>Vector Object</source>
+        <translation>ベクターオブジェクト</translation>
+    </message>
+    <message>
+        <source>Vector Path Edit Tool</source>
+        <translation>ベクターパス編集ツール</translation>
+    </message>
+    <message>
+        <source>Vector Path Tool</source>
+        <translation>ベクターパスツール</translation>
+    </message>
+    <message>
+        <source>Vector Pen (Precise)</source>
+        <translation>ベクターペン (高精度)</translation>
+    </message>
+    <message>
+        <source>Vector edge erase width</source>
+        <translation>枠線の部分消去幅</translation>
+    </message>
+    <message>
+        <source>Verify Hashes</source>
+        <translation>ハッシュを検証</translation>
+    </message>
+    <message>
+        <source>Verify TLS</source>
+        <translation>TLSを検証</translation>
+    </message>
+    <message>
+        <source>Version</source>
+        <translation>バージョン</translation>
+    </message>
+    <message>
+        <source>Version: {version}</source>
+        <translation>バージョン: {version}</translation>
+    </message>
+    <message>
+        <source>Verso (back face)</source>
+        <translation>裏面 (verso)</translation>
+    </message>
+    <message>
+        <source>Vertical</source>
+        <translation>垂直</translation>
+    </message>
+    <message>
+        <source>Vertical Text</source>
+        <translation>縦書きテキスト</translation>
+    </message>
+    <message>
+        <source>Vertical Text tool keeps output in vertical writing.</source>
+        <translation>縦書きツールは出力を縦書きに維持します。</translation>
+    </message>
+    <message>
+        <source>Vertical Writing</source>
+        <translation>縦書き</translation>
+    </message>
+    <message>
+        <source>Vertical center</source>
+        <translation>垂直中央線</translation>
+    </message>
+    <message>
+        <source>Vertical scale</source>
+        <translation>垂直比率</translation>
+    </message>
+    <message>
+        <source>Vertical spacing</source>
+        <translation>縦方向の間隔</translation>
+    </message>
+    <message>
+        <source>View</source>
+        <translation>表示</translation>
+    </message>
+    <message>
+        <source>View menu</source>
+        <translation>表示メニュー</translation>
+    </message>
+    <message>
+        <source>Viewport</source>
+        <translation>ビューポート</translation>
+    </message>
+    <message>
+        <source>Visible Layers</source>
+        <translation>表示レイヤー</translation>
+    </message>
+    <message>
+        <source>Visual QA</source>
+        <translation>表示の品質確認</translation>
+    </message>
+    <message>
+        <source>Visual QA reports</source>
+        <translation>Visual QA レポート</translation>
+    </message>
+    <message>
+        <source>Vivid Light</source>
+        <translation>ビビッドライト</translation>
+    </message>
+    <message>
+        <source>Volume:</source>
+        <translation>巻:</translation>
+    </message>
+    <message>
+        <source>Wait until generation is ready.</source>
+        <translation>生成の準備が完了するまでお待ちください。</translation>
+    </message>
+    <message>
+        <source>Wait until the generation queue is empty to release VRAM.</source>
+        <translation>生成キューが空になってからVRAMを解放してください。</translation>
+    </message>
+    <message>
+        <source>Wait until the generation queue is empty to switch servers.</source>
+        <translation>生成キューが空になってから接続先を切り替えてください。</translation>
+    </message>
+    <message>
+        <source>Waiting for SAM, then releasing memory...</source>
+        <translation>SAMの処理終了を待ってメモリを解放しています…</translation>
+    </message>
+    <message>
+        <source>Warning</source>
+        <translation>警告</translation>
+    </message>
+    <message>
+        <source>Warnings</source>
+        <translation>警告</translation>
+    </message>
+    <message>
+        <source>Warnings:</source>
+        <translation>警告:</translation>
+    </message>
+    <message>
+        <source>Warnings: {codes}</source>
+        <translation>警告: {codes}</translation>
+    </message>
+    <message>
+        <source>Weak</source>
+        <translation>弱</translation>
+    </message>
+    <message>
+        <source>WebP</source>
+        <translation>WebP</translation>
+    </message>
+    <message>
+        <source>WebP Image (*.webp)</source>
+        <translation>WebP 画像 (*.webp)</translation>
+    </message>
+    <message>
+        <source>Webtoon</source>
+        <translation>縦読み漫画</translation>
+    </message>
+    <message>
+        <source>Western crop marks</source>
+        <translation>海外式裁断マーク</translation>
+    </message>
+    <message>
+        <source>When checked, every generated output is written back into this AI Effect layer instead of creating a new layer above it. Input slot bindings are disabled while this is active.</source>
+        <translation>有効にすると、生成結果は上に新規レイヤーを作らず、この AI Effect レイヤーへ書き戻されます。有効中は入力スロットのバインドは無効になります。</translation>
+    </message>
+    <message>
+        <source>When disabled, network access to ComfyUI, LLM Gateway, and NanoBanana is blocked.</source>
+        <translation>無効にすると、ComfyUI・LLM Gateway・NanoBanana へのネットワークアクセスを遮断します。</translation>
+    </message>
+    <message>
+        <source>When enabled, GPT Image 2 generation uses the OpenAI API key row instead of the dedicated GPT Image 2 key.</source>
+        <translation>有効にすると、GPT Image 2 の生成は専用の GPT Image 2 キーではなく、OpenAI API キー行を使用します。</translation>
+    </message>
+    <message>
+        <source>Which face the first body page falls on. Auto keeps the current layout; Recto and Verso insert at most one blank facing slot to line the body up.</source>
+        <translation>本文の最初のページがどちらの面に来るかを決めます。自動は現在の配置のまま、表面 / 裏面を選ぶと面を揃えるために空きスロットを最大 1 つ挿入します。</translation>
+    </message>
+    <message>
+        <source>White</source>
+        <translation>白</translation>
+    </message>
+    <message>
+        <source>White fill</source>
+        <translation>白抜き</translation>
+    </message>
+    <message>
+        <source>Whole Stroke</source>
+        <translation>線全体</translation>
+    </message>
+    <message>
+        <source>Whole document</source>
+        <translation>ドキュメント全体</translation>
+    </message>
+    <message>
+        <source>Width</source>
+        <translation>幅</translation>
+    </message>
+    <message>
+        <source>Width (mm)</source>
+        <translation>幅 (mm)</translation>
+    </message>
+    <message>
+        <source>Width (px):</source>
+        <translation>幅 (px):</translation>
+    </message>
+    <message>
+        <source>Width at this position (px)</source>
+        <translation>この位置の線幅 (px)</translation>
+    </message>
+    <message>
+        <source>Width ratio</source>
+        <translation>太さの比率</translation>
+    </message>
+    <message>
+        <source>Width:</source>
+        <translation>幅:</translation>
+    </message>
+    <message>
+        <source>Window</source>
+        <translation>ウィンドウ</translation>
+    </message>
+    <message>
+        <source>Windows only. Applies to the next automatic startup. Shows ComfyUI output in a separate console window instead of the startup log. Closing the console stops ComfyUI.</source>
+        <translation>Windows専用です。次回の自動起動から、ComfyUIの出力を起動ログではなく別のコンソールウィンドウに表示します。コンソールを閉じるとComfyUIも終了します。</translation>
+    </message>
+    <message>
+        <source>Word Wrap</source>
+        <translation>折り返し</translation>
+    </message>
+    <message>
+        <source>Worker</source>
+        <translation>ワーカー</translation>
+    </message>
+    <message>
+        <source>Workflow</source>
+        <translation>ワークフロー</translation>
+    </message>
+    <message>
+        <source>Workflow Management</source>
+        <translation>ワークフロー管理</translation>
+    </message>
+    <message>
+        <source>Workflow Nodes</source>
+        <translation>ワークフローノード</translation>
+    </message>
+    <message>
+        <source>Workflow added to queue</source>
+        <translation>ワークフローをキューに追加しました</translation>
+    </message>
+    <message>
+        <source>Workflow executed successfully</source>
+        <translation>ワークフローが正常に実行されました</translation>
+    </message>
+    <message>
+        <source>Workflow files (*.json);;All files (*)</source>
+        <translation>Workflow files (*.json);;すべてのファイル (*)</translation>
+    </message>
+    <message>
+        <source>Workflow loaded</source>
+        <translation>ワークフローを読み込みました</translation>
+    </message>
+    <message>
+        <source>Workflow must be a JSON object.</source>
+        <translation>ワークフローはJSONオブジェクトである必要があります。</translation>
+    </message>
+    <message>
+        <source>Workflow transferred. Select parameters and outputs in the Editor tab, then register.</source>
+        <translation>ワークフローを転送しました。Editorタブで公開パラメーターと出力を選び、登録してください。</translation>
+    </message>
+    <message>
+        <source>Workflow:</source>
+        <translation>ワークフロー:</translation>
+    </message>
+    <message>
+        <source>Workflow: %s</source>
+        <translation>ワークフロー: %s</translation>
+    </message>
+    <message>
+        <source>Workflow: (no workflow loaded)</source>
+        <translation>Workflow: (workflow 未読み込み)</translation>
+    </message>
+    <message>
+        <source>Wrap</source>
+        <translation>自動折り返し</translation>
+    </message>
+    <message>
+        <source>Wrap selected text in a balloon</source>
+        <translation>選択した文字をフキダシにする</translation>
+    </message>
+    <message>
+        <source>Write Package</source>
+        <translation>パッケージを書き出す</translation>
+    </message>
+    <message>
+        <source>Write export-report.json</source>
+        <translation>export-report.json を書き出す</translation>
+    </message>
+    <message>
+        <source>Write webtoon_manifest.json</source>
+        <translation>webtoon_manifest.json を書き出す</translation>
+    </message>
+    <message>
+        <source>Writing</source>
+        <translation>文字方向</translation>
+    </message>
+    <message>
+        <source>Writing Direction</source>
+        <translation>文字の方向</translation>
+    </message>
+    <message>
+        <source>X</source>
+        <translation>X</translation>
+    </message>
+    <message>
+        <source>Y</source>
+        <translation>Y</translation>
+    </message>
+    <message>
+        <source>Yellow</source>
+        <translation>イエロー</translation>
+    </message>
+    <message>
+        <source>Your first AI Effect generation completed.</source>
+        <translation>初回の AI Effect 生成が完了しました。</translation>
+    </message>
+    <message>
+        <source>Zoom &amp;In</source>
+        <translation>拡大(&amp;I)</translation>
+    </message>
+    <message>
+        <source>Zoom &amp;Out</source>
+        <translation>縮小(&amp;O)</translation>
+    </message>
+    <message>
+        <source>Zoom:</source>
+        <translation>ズーム:</translation>
+    </message>
+    <message>
+        <source>[unlinked]</source>
+        <translation>[未リンク]</translation>
+    </message>
+    <message>
+        <source>accepted</source>
+        <translation>採用</translation>
+    </message>
+    <message>
+        <source>active</source>
+        <translation>アクティブ</translation>
+    </message>
+    <message>
+        <source>active_layer</source>
+        <translation>アクティブレイヤー</translation>
+    </message>
+    <message>
+        <source>all_layers</source>
+        <translation>すべてのレイヤー</translation>
+    </message>
+    <message>
+        <source>alpha: {alpha} / ICC: {icc} / DPI: {dpi}</source>
+        <translation>透明度: {alpha} / ICC: {icc} / DPI: {dpi}</translation>
+    </message>
+    <message>
+        <source>anchor</source>
+        <translation>アンカー</translation>
+    </message>
+    <message>
+        <source>applied</source>
+        <translation>適用済</translation>
+    </message>
+    <message>
+        <source>approved</source>
+        <translation>承認済</translation>
+    </message>
+    <message>
+        <source>area</source>
+        <translation>エリアテキスト</translation>
+    </message>
+    <message>
+        <source>balloon</source>
+        <translation>ふきだし</translation>
+    </message>
+    <message>
+        <source>balloon target is hidden or locked</source>
+        <translation>所属先のコマが非表示かロック中です</translation>
+    </message>
+    <message>
+        <source>basic</source>
+        <translation>基本図形</translation>
+    </message>
+    <message>
+        <source>blocked</source>
+        <translation>ブロック</translation>
+    </message>
+    <message>
+        <source>changed</source>
+        <translation>変更</translation>
+    </message>
+    <message>
+        <source>choose a panel with an edited content mask</source>
+        <translation>内容マスクを加工したコマを選択してください</translation>
+    </message>
+    <message>
+        <source>choose a split template first</source>
+        <translation>分割されたテンプレートを先に選択してください</translation>
+    </message>
+    <message>
+        <source>choose two different panels to exchange positions</source>
+        <translation>位置を交換する二つの異なるコマを選択してください</translation>
+    </message>
+    <message>
+        <source>choose whether to keep or delete panel content</source>
+        <translation>内容を残すか削除するかを選択してください</translation>
+    </message>
+    <message>
+        <source>comma-separated</source>
+        <translation>カンマ区切り</translation>
+    </message>
+    <message>
+        <source>comma-separated (enum only)</source>
+        <translation>カンマ区切り (enum のみ)</translation>
+    </message>
+    <message>
+        <source>concentric</source>
+        <translation>同心円定規</translation>
+    </message>
+    <message>
+        <source>constraint</source>
+        <translation>制約</translation>
+    </message>
+    <message>
+        <source>contain_whitespace</source>
+        <translation>全体表示の余白</translation>
+    </message>
+    <message>
+        <source>continue</source>
+        <translation>続行</translation>
+    </message>
+    <message>
+        <source>convex layout has unowned leaves</source>
+        <translation>所属先のないコマ領域があります</translation>
+    </message>
+    <message>
+        <source>convex layout leaf has multiple owners</source>
+        <translation>同じコマ領域に複数の所有者があります</translation>
+    </message>
+    <message>
+        <source>custom</source>
+        <translation>カスタム</translation>
+    </message>
+    <message>
+        <source>debounced</source>
+        <translation>遅延実行</translation>
+    </message>
+    <message>
+        <source>disable_snap</source>
+        <translation>スナップ無効</translation>
+    </message>
+    <message>
+        <source>disabled</source>
+        <translation>無効</translation>
+    </message>
+    <message>
+        <source>done</source>
+        <translation>完了</translation>
+    </message>
+    <message>
+        <source>draft</source>
+        <translation>下書き</translation>
+    </message>
+    <message>
+        <source>effect</source>
+        <translation>効果</translation>
+    </message>
+    <message>
+        <source>embedded</source>
+        <translation>埋め込み</translation>
+    </message>
+    <message>
+        <source>emboss</source>
+        <translation>エンボス</translation>
+    </message>
+    <message>
+        <source>enter a preset name</source>
+        <translation>プリセット名を入力</translation>
+    </message>
+    <message>
+        <source>exact</source>
+        <translation>利用可</translation>
+    </message>
+    <message>
+        <source>fallback</source>
+        <translation>欠落 (代替表示)</translation>
+    </message>
+    <message>
+        <source>family_only</source>
+        <translation>利用可 (スタイル代替)</translation>
+    </message>
+    <message>
+        <source>finish the text source filter edit first</source>
+        <translation>文字のフィルター編集を確定してください</translation>
+    </message>
+    <message>
+        <source>finish the text source transform first</source>
+        <translation>文字の変形を確定してください</translation>
+    </message>
+    <message>
+        <source>fits</source>
+        <translation>長さが一致</translation>
+    </message>
+    <message>
+        <source>frame corner has multiple owners</source>
+        <translation>同じ枠線の角に複数の所有者があります</translation>
+    </message>
+    <message>
+        <source>frame corner no longer matches its geometry</source>
+        <translation>枠線の角とコマの領域が一致しません</translation>
+    </message>
+    <message>
+        <source>frame edit has missing or cyclic ancestry</source>
+        <translation>コマまたは親レイヤーの参照を確認してください</translation>
+    </message>
+    <message>
+        <source>frame edit requires a materialized panel</source>
+        <translation>コマ枠レイヤーへ変換してください</translation>
+    </message>
+    <message>
+        <source>frame edit target has an unfinished transform</source>
+        <translation>コマの変形を確定してください</translation>
+    </message>
+    <message>
+        <source>frame edit target or ancestor is locked or has an unfinished mask edit</source>
+        <translation>コマまたは親レイヤーがロック中か、マスクを編集中です</translation>
+    </message>
+    <message>
+        <source>fully_clipped</source>
+        <translation>全体がコマ外</translation>
+    </message>
+    <message>
+        <source>generating</source>
+        <translation>生成中</translation>
+    </message>
+    <message>
+        <source>horizontal</source>
+        <translation>横書き</translation>
+    </message>
+    <message>
+        <source>img2img</source>
+        <translation>img2img</translation>
+    </message>
+    <message>
+        <source>img2img not yet implemented</source>
+        <translation>img2img は未実装です</translation>
+    </message>
+    <message>
+        <source>inactive</source>
+        <translation>非表示</translation>
+    </message>
+    <message>
+        <source>inch</source>
+        <translation>インチ</translation>
+    </message>
+    <message>
+        <source>inclining requires a materialized panel</source>
+        <translation>傾きを変更する前にコマ枠レイヤーへ変換してください</translation>
+    </message>
+    <message>
+        <source>ink</source>
+        <translation>ペン入れ</translation>
+    </message>
+    <message>
+        <source>inner</source>
+        <translation>内側ベベル</translation>
+    </message>
+    <message>
+        <source>installing missing SAM 3.1 packages requires external services; a local source copy does not supply runtime or build dependencies</source>
+        <translation>不足しているSAM 3.1パッケージの導入には外部サービスの許可が必要です。ソースだけでは実行時・ビルド時の依存は揃いません。</translation>
+    </message>
+    <message>
+        <source>invalid vector erase boundary</source>
+        <translation>枠線の消去座標が無効です</translation>
+    </message>
+    <message>
+        <source>invalid vector erase gesture</source>
+        <translation>枠線の消去操作が無効です</translation>
+    </message>
+    <message>
+        <source>invalid vector erase points</source>
+        <translation>枠線の消去位置が無効です</translation>
+    </message>
+    <message>
+        <source>layer name (for layer_by_name)</source>
+        <translation>レイヤー名 (layer_by_name 用)</translation>
+    </message>
+    <message>
+        <source>layer_by_name</source>
+        <translation>名前で指定したレイヤー</translation>
+    </message>
+    <message>
+        <source>left</source>
+        <translation>左方向</translation>
+    </message>
+    <message>
+        <source>lettering</source>
+        <translation>写植</translation>
+    </message>
+    <message>
+        <source>linear</source>
+        <translation>線形</translation>
+    </message>
+    <message>
+        <source>linked</source>
+        <translation>リンク</translation>
+    </message>
+    <message>
+        <source>load a workflow</source>
+        <translation>workflow を読み込み</translation>
+    </message>
+    <message>
+        <source>manual</source>
+        <translation>手動</translation>
+    </message>
+    <message>
+        <source>match</source>
+        <translation>一致</translation>
+    </message>
+    <message>
+        <source>merge inclined panels requires a convex ownership plan</source>
+        <translation>傾きコマの結合は未対応です。矩形の隣接コマを選択してください</translation>
+    </message>
+    <message>
+        <source>merged convex panel has missing layout leaves</source>
+        <translation>結合コマの元領域が見つかりません</translation>
+    </message>
+    <message>
+        <source>merged convex region overlaps another panel</source>
+        <translation>結合コマが別のコマに重なります</translation>
+    </message>
+    <message>
+        <source>merged region has no convex boundary provenance</source>
+        <translation>この傾きでは結合コマを凸形状として保持できません</translation>
+    </message>
+    <message>
+        <source>mirror</source>
+        <translation>ミラー</translation>
+    </message>
+    <message>
+        <source>missing</source>
+        <translation>未検出</translation>
+    </message>
+    <message>
+        <source>mm</source>
+        <translation>mm</translation>
+    </message>
+    <message>
+        <source>modified</source>
+        <translation>変更あり</translation>
+    </message>
+    <message>
+        <source>name</source>
+        <translation>ネーム</translation>
+    </message>
+    <message>
+        <source>needs_review</source>
+        <translation>要校正</translation>
+    </message>
+    <message>
+        <source>no</source>
+        <translation>未</translation>
+    </message>
+    <message>
+        <source>not verified</source>
+        <translation>未検証</translation>
+    </message>
+    <message>
+        <source>offline</source>
+        <translation>オフライン</translation>
+    </message>
+    <message>
+        <source>ok</source>
+        <translation>OK</translation>
+    </message>
+    <message>
+        <source>on_change</source>
+        <translation>変更時</translation>
+    </message>
+    <message>
+        <source>outer</source>
+        <translation>外側ベベル</translation>
+    </message>
+    <message>
+        <source>overrun</source>
+        <translation>線が余る</translation>
+    </message>
+    <message>
+        <source>p.{number}  [{status}]  {placed}/{total} placed</source>
+        <translation>p.{number}  [{status}]  配置 {placed}/{total}</translation>
+    </message>
+    <message>
+        <source>panel is locked</source>
+        <translation>コマがロックされています</translation>
+    </message>
+    <message>
+        <source>parallel</source>
+        <translation>平行定規</translation>
+    </message>
+    <message>
+        <source>partly_clipped</source>
+        <translation>一部がコマ外</translation>
+    </message>
+    <message>
+        <source>perspective</source>
+        <translation>透視定規</translation>
+    </message>
+    <message>
+        <source>pillow</source>
+        <translation>ピローエンボス</translation>
+    </message>
+    <message>
+        <source>planned</source>
+        <translation>計画済</translation>
+    </message>
+    <message>
+        <source>plugin update(s) available</source>
+        <translation>件のプラグイン更新があります</translation>
+    </message>
+    <message>
+        <source>point</source>
+        <translation>ポイントテキスト</translation>
+    </message>
+    <message>
+        <source>polygon</source>
+        <translation>多角形</translation>
+    </message>
+    <message>
+        <source>position exchange currently requires rectangular panel slots</source>
+        <translation>現在の位置交換は矩形のコマ配置に対応しています</translation>
+    </message>
+    <message>
+        <source>radial</source>
+        <translation>放射状</translation>
+    </message>
+    <message>
+        <source>ready</source>
+        <translation>準備完了</translation>
+    </message>
+    <message>
+        <source>ready (dry run only)</source>
+        <translation>実行可能 (ドライランのみ)</translation>
+    </message>
+    <message>
+        <source>rejected</source>
+        <translation>却下</translation>
+    </message>
+    <message>
+        <source>review</source>
+        <translation>レビュー</translation>
+    </message>
+    <message>
+        <source>right</source>
+        <translation>右方向</translation>
+    </message>
+    <message>
+        <source>rotational</source>
+        <translation>回転対称</translation>
+    </message>
+    <message>
+        <source>sRGB (assumed)</source>
+        <translation>sRGB (仮定)</translation>
+    </message>
+    <message>
+        <source>sRGB (built-in)</source>
+        <translation>sRGB (内蔵)</translation>
+    </message>
+    <message>
+        <source>select a Gateway</source>
+        <translation>Gateway を選択</translation>
+    </message>
+    <message>
+        <source>select a complete linked story before wrapping</source>
+        <translation>連結された文字は一体で選択してください</translation>
+    </message>
+    <message>
+        <source>select ordinary text to wrap in a balloon</source>
+        <translation>フキダシにする文字を選択してください</translation>
+    </message>
+    <message>
+        <source>shape</source>
+        <translation>シェイプ</translation>
+    </message>
+    <message>
+        <source>shared backgrounds must precede the remaining panel content</source>
+        <translation>共有する背景を、このコマのほかの内容より背面にまとめてください</translation>
+    </message>
+    <message>
+        <source>shared content cannot preserve the owner compositing</source>
+        <translation>親グループの合成を保てないため共有できません。独立コピーを選択してください</translation>
+    </message>
+    <message>
+        <source>shared content cannot preserve this clipping chain</source>
+        <translation>このクリッピング関係は共有できません</translation>
+    </message>
+    <message>
+        <source>shared content cannot split the original group compositing</source>
+        <translation>このグループの不透明度や合成を保つには、内容をまとめて共有してください</translation>
+    </message>
+    <message>
+        <source>short</source>
+        <translation>線が不足</translation>
+    </message>
+    <message>
+        <source>skip_blocked</source>
+        <translation>ブロックをスキップ</translation>
+    </message>
+    <message>
+        <source>split merged inclined panels requires a convex ownership plan</source>
+        <translation>結合した傾きコマの再分割は未対応です。矩形へ戻してから分割してください</translation>
+    </message>
+    <message>
+        <source>stop</source>
+        <translation>停止</translation>
+    </message>
+    <message>
+        <source>swap target is missing</source>
+        <translation>位置交換するコマが見つかりません</translation>
+    </message>
+    <message>
+        <source>tag1, tag2</source>
+        <translation>タグ1, タグ2</translation>
+    </message>
+    <message>
+        <source>text source has an independent blend mode</source>
+        <translation>文字または親レイヤーの合成モードが変更されています</translation>
+    </message>
+    <message>
+        <source>text source has an independent mask</source>
+        <translation>文字に独立したマスクが設定されています</translation>
+    </message>
+    <message>
+        <source>text source has inherited opacity</source>
+        <translation>文字または親レイヤーの不透明度が変更されています</translation>
+    </message>
+    <message>
+        <source>text source is hidden or locked</source>
+        <translation>文字または親レイヤーが非表示かロック中です</translation>
+    </message>
+    <message>
+        <source>this edge has no editable vector anchors</source>
+        <translation>この辺には編集できるベクター制御点がありません</translation>
+    </message>
+    <message>
+        <source>tick at least one output</source>
+        <translation>少なくとも 1 つの output にチェック</translation>
+    </message>
+    <message>
+        <source>tone</source>
+        <translation>トーン</translation>
+    </message>
+    <message>
+        <source>txt2img</source>
+        <translation>txt2img</translation>
+    </message>
+    <message>
+        <source>uncovered</source>
+        <translation>画像がコマを覆っていない</translation>
+    </message>
+    <message>
+        <source>unknown</source>
+        <translation>範囲を判定できない</translation>
+    </message>
+    <message>
+        <source>unknown type</source>
+        <translation>未知の種類</translation>
+    </message>
+    <message>
+        <source>unsafe</source>
+        <translation>安全でない</translation>
+    </message>
+    <message>
+        <source>unsupported</source>
+        <translation>未対応</translation>
+    </message>
+    <message>
+        <source>vector erase requires a derived edge mask</source>
+        <translation>手編集した枠線マスクを保持してから部分消去してください</translation>
+    </message>
+    <message>
+        <source>vector path editor is unavailable</source>
+        <translation>ベクターパス編集ツールを利用できません</translation>
+    </message>
+    <message>
+        <source>vertical</source>
+        <translation>縦書き</translation>
+    </message>
+    <message>
+        <source>visible</source>
+        <translation>表示範囲内</translation>
+    </message>
+    <message>
+        <source>yes</source>
+        <translation>可</translation>
+    </message>
+    <message>
+        <source>{DEFAULT_COMFYUI_HOST}:{DEFAULT_COMFYUI_PORT}</source>
+        <translation>{DEFAULT_COMFYUI_HOST}:{DEFAULT_COMFYUI_PORT}</translation>
+    </message>
+    <message>
+        <source>{action} requested</source>
+        <translation>{action} を要求しました</translation>
+    </message>
+    <message>
+        <source>{action} requested: {plugin_id}</source>
+        <translation>{action} を要求しました: {plugin_id}</translation>
+    </message>
+    <message>
+        <source>{aspect} ({width}x{height})</source>
+        <translation>{aspect} ({width}x{height})</translation>
+    </message>
+    <message>
+        <source>{chapters} chapter(s), {pages} page(s) ({linked} linked), {dialogues} line(s), {placed} placed, {review} need review.</source>
+        <translation>{chapters} 章、{pages} ページ ({linked} リンク済)、台詞 {dialogues} 件、配置 {placed} 件、要校正 {review} 件。</translation>
+    </message>
+    <message>
+        <source>{count} assist(s) on this page</source>
+        <translation>このページの補助: {count} 件</translation>
+    </message>
+    <message>
+        <source>{count} file(s) already exist and will be replaced. Continue?</source>
+        <translation>{count} 件のファイルが既に存在し、置き換えられます。続行しますか?</translation>
+    </message>
+    <message>
+        <source>{count} job</source>
+        <translation>{count} 件のジョブ</translation>
+    </message>
+    <message>
+        <source>{count} jobs</source>
+        <translation>{count} 件のジョブ</translation>
+    </message>
+    <message>
+        <source>{count} object(s) could not be outlined.</source>
+        <translation>{count} 件はアウトライン化できませんでした。</translation>
+    </message>
+    <message>
+        <source>{count} object(s) on other pages were left unchanged.</source>
+        <translation>他のページの {count} 件は変更していません。</translation>
+    </message>
+    <message>
+        <source>{count} page(s) in story order, page progression {progression}.</source>
+        <translation>{count} ページ (ストーリー順)、ページ進行方向 {progression}。</translation>
+    </message>
+    <message>
+        <source>{count} page(s) will be exported.</source>
+        <translation>{count} ページを書き出します。</translation>
+    </message>
+    <message>
+        <source>{count} pages -&gt; {names}</source>
+        <translation>{count} ページ → {names}</translation>
+    </message>
+    <message>
+        <source>{count} plugin(s) loaded</source>
+        <translation>{count} 個のプラグインを読み込みました</translation>
+    </message>
+    <message>
+        <source>{count} presets</source>
+        <translation>{count} 件のプリセット</translation>
+    </message>
+    <message>
+        <source>{count} resource(s), {attention} need attention</source>
+        <translation>素材 {count} 件、要確認 {attention} 件</translation>
+    </message>
+    <message>
+        <source>{count} workflow loaded</source>
+        <translation>{count} 件のワークフローを読み込みました</translation>
+    </message>
+    <message>
+        <source>{count} workflows loaded</source>
+        <translation>{count} 件のワークフローを読み込みました</translation>
+    </message>
+    <message>
+        <source>{fatal} fatal, {warning} warning(s), {info} info — {checked} rule(s) checked, {skipped} not checked.</source>
+        <translation>致命的 {fatal} 件、警告 {warning} 件、情報 {info} 件 — 検査したルール {checked}、未検査 {skipped}。</translation>
+    </message>
+    <message>
+        <source>{fonts} font(s), {missing} missing, {objects} text object(s).</source>
+        <translation>フォント {fonts} 件、欠落 {missing} 件、テキストオブジェクト {objects} 件。</translation>
+    </message>
+    <message>
+        <source>{handle}: {length} px</source>
+        <translation>{handle}: {length} px</translation>
+    </message>
+    <message>
+        <source>{message}: {error}</source>
+        <translation>{message}: {error}</translation>
+    </message>
+    <message>
+        <source>{name} (document)</source>
+        <translation>{name} (ドキュメント)</translation>
+    </message>
+    <message>
+        <source>{name} (file)</source>
+        <translation>{name} (ファイル)</translation>
+    </message>
+    <message>
+        <source>{name} (rev {revision}, {count} page(s))</source>
+        <translation>{name} (rev {revision}、{count} ページ)</translation>
+    </message>
+    <message>
+        <source>{name} already exists and will be replaced. Continue?</source>
+        <translation>{name} は既に存在し、置き換えられます。続行しますか?</translation>
+    </message>
+    <message>
+        <source>{name} has different content than the linked resource. Relink anyway?</source>
+        <translation>{name} の内容はリンク中の素材と異なります。それでも再リンクしますか?</translation>
+    </message>
+    <message>
+        <source>{name} is a symbolic link; place the real file instead.</source>
+        <translation>{name} はシンボリックリンクです。実ファイルを配置してください。</translation>
+    </message>
+    <message>
+        <source>{name} is not a supported image format.</source>
+        <translation>{name} は対応していない画像形式です。</translation>
+    </message>
+    <message>
+        <source>{pending} pending, {running} running</source>
+        <translation>{pending} 件待機中, {running} 件実行中</translation>
+    </message>
+    <message>
+        <source>{position:.3f} {unit}</source>
+        <translation>{position:.3f} {unit}</translation>
+    </message>
+    <message>
+        <source>{progress}/{total}</source>
+        <translation>{progress}/{total}</translation>
+    </message>
+    <message>
+        <source>{step}/{total}: {message}</source>
+        <translation>{step}/{total}: {message}</translation>
+    </message>
+    <message>
+        <source>{title} ({count} pages)</source>
+        <translation>{title} ({count} ページ)</translation>
+    </message>
+    <message>
+        <source>{width} x {height} px, {dpi} dpi ({mm_w} x {mm_h} mm)</source>
+        <translation>{width} x {height} px, {dpi} dpi ({mm_w} x {mm_h} mm)</translation>
+    </message>
+    <message>
+        <source>{width}x{height}</source>
+        <translation>{width}x{height}</translation>
+    </message>
+    <message>
+        <source>⚠️ Permissions Required</source>
+        <translation>⚠️ 権限が必要</translation>
+    </message>
+    <message>
+        <source>⚠️ Untrusted Source</source>
+        <translation>⚠️ 信頼されていない配布元</translation>
+    </message>
+    <message>
+        <source>✅ Valid</source>
+        <translation>✅ 有効</translation>
+    </message>
+    <message>
+        <source>❌ Incompatible Version</source>
+        <translation>❌ バージョン非互換</translation>
+    </message>
+    <message>
+        <source>❌ Invalid Manifest</source>
+        <translation>❌ マニフェスト不正</translation>
+    </message>
+    <message>
+        <source>❌ Invalid Signature</source>
+        <translation>❌ 署名が無効</translation>
+    </message>
+    <message>
+        <source>❌ Missing Dependencies</source>
+        <translation>❌ 依存関係不足</translation>
+    </message>
+    <message>
+        <source>ガイド表示/非表示</source>
+        <translation>ガイド表示/非表示</translation>
+    </message>
+</context>
+<context>
+    <name>app_ai_effect_generation_commit</name>
+    <message>
+        <source>Generated outputs could not be fully applied</source>
+        <translation>生成結果の一部を適用できませんでした</translation>
+    </message>
+</context>
+<context>
+    <name>candidate_list_panel</name>
+    <message>
+        <source>No candidates</source>
+        <translation>候補がありません</translation>
+    </message>
+    <message>
+        <source>{count} candidates</source>
+        <translation>候補 {count} 件</translation>
+    </message>
+    <message>
+        <source>Selected</source>
+        <translation>選択中</translation>
+    </message>
+    <message>
+        <source>Xor</source>
+        <translation>排他的論理和</translation>
+    </message>
+    <message>
+        <source>Union</source>
+        <translation>和集合</translation>
+    </message>
+    <message>
+        <source>Diff QA</source>
+        <translation>差分 QA</translation>
+    </message>
+    <message>
+        <source>Intersect</source>
+        <translation>交差</translation>
+    </message>
+    <message>
+        <source>Preview submit</source>
+        <translation>プレビュー送信</translation>
+    </message>
+    <message>
+        <source>Subtract</source>
+        <translation>減算</translation>
+    </message>
+</context>
+<context>
+    <name>candidate_list_widget</name>
+    <message>
+        <source>No candidates</source>
+        <translation>候補がありません</translation>
+    </message>
+    <message>
+        <source>{count} candidates</source>
+        <translation>候補 {count} 件</translation>
+    </message>
+    <message>
+        <source>Selected: {candidate_id}</source>
+        <translation>選択中: {candidate_id}</translation>
+    </message>
+    <message>
+        <source>Box</source>
+        <translation>範囲</translation>
+    </message>
+    <message>
+        <source>Blocked</source>
+        <translation>ブロック中</translation>
+    </message>
+    <message>
+        <source>Apply this mask as a clipping mask</source>
+        <translation>このマスクをクリッピングマスクとして適用</translation>
+    </message>
+    <message>
+        <source>Apply this mask as the active layer's layer mask</source>
+        <translation>このマスクをアクティブレイヤーのレイヤーマスクとして適用</translation>
+    </message>
+    <message>
+        <source>Copy everything except the mask (background) to a new layer</source>
+        <translation>マスク以外 (背景) を新規レイヤーに複製</translation>
+    </message>
+    <message>
+        <source>Copy the masked area (foreground) to a new layer</source>
+        <translation>マスク部分 (前景) を新規レイヤーに複製</translation>
+    </message>
+    <message>
+        <source>Cut the masked area to a new layer</source>
+        <translation>マスク部分を切り取って新規レイヤーへ</translation>
+    </message>
+    <message>
+        <source>Exclude this candidate (also removed from Next/Previous cycling)</source>
+        <translation>この候補を除外する (Next/Previous の巡回からも外れる)</translation>
+    </message>
+    <message>
+        <source>Generate one inpaint preview (result goes to the Gallery; the canvas is unchanged)</source>
+        <translation>インペイントのプレビューを 1 回生成 (結果は Gallery へ、キャンバスは不変)</translation>
+    </message>
+    <message>
+        <source>Protect the subject: invert the mask and use it as the background generation mask</source>
+        <translation>被写体を保護: マスクを反転して背景生成マスクに接続</translation>
+    </message>
+    <message>
+        <source>Re-run SAM3 on this candidate to improve the mask (AI Refine)</source>
+        <translation>SAM3 で再推論してマスク品質を改善する (AI Refine)</translation>
+    </message>
+    <message>
+        <source>Save this mask to the generation history (Gallery) for reuse</source>
+        <translation>マスクを生成履歴 (Gallery) に保存して再利用</translation>
+    </message>
+    <message>
+        <source>Select this candidate as the target for Apply / AI Refine</source>
+        <translation>この候補を選択して Apply / AI Refine の対象にする</translation>
+    </message>
+    <message>
+        <source>Unavailable</source>
+        <translation>この候補では実行できません</translation>
+    </message>
+    <message>
+        <source>Use this mask as the AI Effect inpaint mask</source>
+        <translation>このマスクを AI Effect のインペイントマスクに接続</translation>
+    </message>
+</context>
+<context>
+    <name>layer_panel_rename</name>
+    <message>
+        <source>Layer name:</source>
+        <translation>レイヤー名:</translation>
+    </message>
+    <message>
+        <source>Rename Layer</source>
+        <translation>レイヤー名の変更</translation>
+    </message>
+</context>
+<context>
+    <name>manga_mask_assistant_panel</name>
+    <message>
+        <source>Scorecard: {reason}</source>
+        <translation>検査結果: {reason}</translation>
+    </message>
+    <message>
+        <source>Scorecard: OK - {ready} ready / {accepted} accepted / {total} total</source>
+        <translation>検査結果: OK - 準備完了 {ready} / 採用済み {accepted} / 合計 {total}</translation>
+    </message>
+    <message>
+        <source>Scorecard: {ready} ready / {accepted} accepted / {total} total</source>
+        <translation>検査結果: 準備完了 {ready} / 採用済み {accepted} / 合計 {total}</translation>
+    </message>
+    <message>
+        <source>Build Package unavailable: {reason}</source>
+        <translation>パッケージを作成できません: {reason}</translation>
+    </message>
+    <message>
+        <source>No mask candidates</source>
+        <translation>マスク候補がありません</translation>
+    </message>
+    <message>
+        <source>{visible} visible / {total} total</source>
+        <translation>表示中 {visible} / 合計 {total}</translation>
+    </message>
+    <message>
+        <source>Speech Bubble Protection</source>
+        <translation>フキダシを保護</translation>
+    </message>
+    <message>
+        <source>Character Extraction</source>
+        <translation>キャラクターを抽出</translation>
+    </message>
+    <message>
+        <source>Background Extraction</source>
+        <translation>背景を抽出</translation>
+    </message>
+    <message>
+        <source>Inpaint Prep</source>
+        <translation>インペイントの準備</translation>
+    </message>
+    <message>
+        <source>All</source>
+        <translation>すべて</translation>
+    </message>
+    <message>
+        <source>Diff QA</source>
+        <translation>差分 QA</translation>
+    </message>
+    <message>
+        <source>Inpaint submit</source>
+        <translation>インペイント送信</translation>
+    </message>
+</context>
+<context>
+    <name>manga_mask_assistant_table_widget</name>
+    <message>
+        <source>No mask candidates</source>
+        <translation>マスク候補がありません</translation>
+    </message>
+    <message>
+        <source>{visible} visible / {total} total</source>
+        <translation>表示中 {visible} / 合計 {total}</translation>
+    </message>
+    <message>
+        <source>Row: {row_id}</source>
+        <translation>行: {row_id}</translation>
+    </message>
+    <message>
+        <source>Scope: {scope}</source>
+        <translation>対象: {scope}</translation>
+    </message>
+    <message>
+        <source>Panel: {panel_id}</source>
+        <translation>コマ: {panel_id}</translation>
+    </message>
+    <message>
+        <source>Candidate: {candidate_id}</source>
+        <translation>候補: {candidate_id}</translation>
+    </message>
+    <message>
+        <source>Category: {category}</source>
+        <translation>分類: {category}</translation>
+    </message>
+    <message>
+        <source>Score: {score}</source>
+        <translation>スコア: {score}</translation>
+    </message>
+    <message>
+        <source>Area: {area}</source>
+        <translation>面積: {area}</translation>
+    </message>
+    <message>
+        <source>Warnings: {warnings}</source>
+        <translation>警告: {warnings}</translation>
+    </message>
+    <message>
+        <source>Box: {box}</source>
+        <translation>範囲: {box}</translation>
+    </message>
+    <message>
+        <source>Panel box: {box}</source>
+        <translation>コマの範囲: {box}</translation>
+    </message>
+    <message>
+        <source>{label}: {blocked}</source>
+        <translation>{label}: {blocked}</translation>
+    </message>
+    <message>
+        <source>{label}: Unavailable</source>
+        <translation>{label}: 利用不可</translation>
+    </message>
+    <message>
+        <source>Select</source>
+        <translation>選択</translation>
+    </message>
+    <message>
+        <source>Inpaint</source>
+        <translation>インペイント</translation>
+    </message>
+    <message>
+        <source>Changeset</source>
+        <translation>変更内容</translation>
+    </message>
+    <message>
+        <source>Yes</source>
+        <translation>はい</translation>
+    </message>
+    <message>
+        <source>No</source>
+        <translation>いいえ</translation>
+    </message>
+    <message>
+        <source>Action</source>
+        <translation>アクション</translation>
+    </message>
+    <message>
+        <source>Export</source>
+        <translation>書き出し</translation>
+    </message>
+    <message>
+        <source>Protect</source>
+        <translation>保護</translation>
+    </message>
+</context>
+<context>
+    <name>tool</name>
+    <message>
+        <source>Previous</source>
+        <translation>前へ</translation>
+    </message>
+    <message>
+        <source>Next</source>
+        <translation>次へ</translation>
+    </message>
+    <message>
+        <source>Reject</source>
+        <translation>却下</translation>
+    </message>
+    <message>
+        <source>Apply as Layer Mask</source>
+        <translation>レイヤーマスクとして適用</translation>
+    </message>
+    <message>
+        <source>Use as Inpaint Mask</source>
+        <translation>インペイントマスクに使用</translation>
+    </message>
+    <message>
+        <source>Apply as Clipping Mask</source>
+        <translation>クリッピングマスクとして適用</translation>
+    </message>
+    <message>
+        <source>Cut to New Layer</source>
+        <translation>新規レイヤーに切り出す</translation>
+    </message>
+    <message>
+        <source>Extract Foreground</source>
+        <translation>前景を抽出</translation>
+    </message>
+    <message>
+        <source>Extract Background</source>
+        <translation>背景を抽出</translation>
+    </message>
+    <message>
+        <source>Save Mask Asset</source>
+        <translation>マスク素材を保存</translation>
+    </message>
+    <message>
+        <source>Refine</source>
+        <translation>調整</translation>
+    </message>
+    <message>
+        <source>Mask</source>
+        <translation>マスク</translation>
+    </message>
+    <message>
+        <source>Inpaint</source>
+        <translation>インペイント</translation>
+    </message>
+    <message>
+        <source>Clip</source>
+        <translation>クリッピング</translation>
+    </message>
+    <message>
+        <source>No candidate</source>
+        <translation>候補なし</translation>
+    </message>
+    <message>
+        <source>Candidate</source>
+        <translation>候補</translation>
+    </message>
+    <message>
+        <source>BG</source>
+        <translation>背景</translation>
+    </message>
+    <message>
+        <source>FG</source>
+        <translation>前景</translation>
+    </message>
+    <message>
+        <source>Blocked</source>
+        <translation>ブロック中</translation>
+    </message>
+    <message>
+        <source>Idle</source>
+        <translation>待機中</translation>
+    </message>
+    <message>
+        <source>AI Refine...</source>
+        <translation>AIで再調整...</translation>
+    </message>
+    <message>
+        <source>Add</source>
+        <translation>追加</translation>
+    </message>
+    <message>
+        <source>Add Candidate to Existing Mask</source>
+        <translation>既存マスクに候補を追加</translation>
+    </message>
+    <message>
+        <source>Apply</source>
+        <translation>適用</translation>
+    </message>
+    <message>
+        <source>Apply as Add</source>
+        <translation>追加で適用</translation>
+    </message>
+    <message>
+        <source>Apply as Intersect</source>
+        <translation>交差で適用</translation>
+    </message>
+    <message>
+        <source>Apply as Subtract</source>
+        <translation>減算で適用</translation>
+    </message>
+    <message>
+        <source>Combine Selected</source>
+        <translation>選択候補を合成</translation>
+    </message>
+    <message>
+        <source>Completed</source>
+        <translation>完了</translation>
+    </message>
+    <message>
+        <source>Cut</source>
+        <translation>切り取り</translation>
+    </message>
+    <message>
+        <source>Export All Candidates</source>
+        <translation>全候補を書き出し</translation>
+    </message>
+    <message>
+        <source>Export All...</source>
+        <translation>全候補を書き出し...</translation>
+    </message>
+    <message>
+        <source>Export PNG</source>
+        <translation>PNG 書き出し</translation>
+    </message>
+    <message>
+        <source>Export PNG...</source>
+        <translation>PNG 書き出し...</translation>
+    </message>
+    <message>
+        <source>Export Selection...</source>
+        <translation>選択範囲を書き出し...</translation>
+    </message>
+    <message>
+        <source>Export Sheet...</source>
+        <translation>シート書き出し...</translation>
+    </message>
+    <message>
+        <source>Export Sprite Sheet</source>
+        <translation>スプライトシート書き出し</translation>
+    </message>
+    <message>
+        <source>Failed</source>
+        <translation>失敗</translation>
+    </message>
+    <message>
+        <source>Intersect</source>
+        <translation>交差</translation>
+    </message>
+    <message>
+        <source>Layer Group</source>
+        <translation>レイヤーグループ化</translation>
+    </message>
+    <message>
+        <source>Preview</source>
+        <translation>プレビュー</translation>
+    </message>
+    <message>
+        <source>Preview Selection Inpaint</source>
+        <translation>選択インペイントをプレビュー生成</translation>
+    </message>
+    <message>
+        <source>Protect</source>
+        <translation>保護</translation>
+    </message>
+    <message>
+        <source>Protect Subject (BG Mask)</source>
+        <translation>被写体を保護 (背景マスク)</translation>
+    </message>
+    <message>
+        <source>Ready</source>
+        <translation>準備完了</translation>
+    </message>
+    <message>
+        <source>Refine Mask...</source>
+        <translation>マスクを調整...</translation>
+    </message>
+    <message>
+        <source>Replace</source>
+        <translation>置換</translation>
+    </message>
+    <message>
+        <source>Run</source>
+        <translation>実行</translation>
+    </message>
+    <message>
+        <source>Running</source>
+        <translation>実行中</translation>
+    </message>
+    <message>
+        <source>Save</source>
+        <translation>保存</translation>
+    </message>
+    <message>
+        <source>Subtract</source>
+        <translation>減算</translation>
+    </message>
+    <message>
+        <source>Toggle Candidate Overlay</source>
+        <translation>候補オーバーレイを切り替え</translation>
+    </message>
+    <message>
+        <source>Use Selection as Inpaint Mask</source>
+        <translation>選択範囲をインペイントマスクに</translation>
+    </message>
+</context>
+<context>
+    <name>AIEffectPage</name>
+    <message>
+        <source>OpenAI key not set</source>
+        <translation>OpenAI キー未設定</translation>
+    </message>
+    <message>
+        <source>Use the OpenAI API key for GPT Image 2</source>
+        <translation>GPT Image 2 で OpenAI API キーを使用</translation>
+    </message>
+    <message>
+        <source>Using OpenAI key</source>
+        <translation>OpenAI キーを使用中</translation>
+    </message>
+    <message>
+        <source>When enabled, GPT Image 2 generation uses the OpenAI API key row instead of the dedicated GPT Image 2 key.</source>
+        <translation>有効にすると、GPT Image 2 の生成は専用の GPT Image 2 キーではなく、OpenAI API キー行を使用します。</translation>
+    </message>
+</context>
+<context>
+    <name>BasicPenPlugin</name>
+    <message>
+        <source>...and {more_count} more</source>
+        <translation>さらに{more_count}件</translation>
+    </message>
+    <message>
+        <source>ABR</source>
+        <translation>ABR</translation>
+    </message>
+    <message>
+        <source>ABR import errors:</source>
+        <translation>ABR インポート時のエラー:</translation>
+    </message>
+    <message>
+        <source>Brush Manager</source>
+        <translation>ブラシマネージャー</translation>
+    </message>
+    <message>
+        <source>Failed to copy ABR: {error}</source>
+        <translation>ABR のコピーに失敗しました: {error}</translation>
+    </message>
+    <message>
+        <source>Import ABR</source>
+        <translation>ABR をインポート</translation>
+    </message>
+    <message>
+        <source>Import Tip Images</source>
+        <translation>チップ画像をインポート</translation>
+    </message>
+    <message>
+        <source>Imported {count} ABR tips</source>
+        <translation>{count}件のABR tipをインポートしました</translation>
+    </message>
+    <message>
+        <source>Imported {count} PNG tips</source>
+        <translation>{count}件のPNGチップをインポートしました</translation>
+    </message>
+    <message>
+        <source>Imported {count} PNG tips ({skipped} skipped)</source>
+        <translation>{count}件のPNGチップをインポートしました（{skipped}件スキップ）</translation>
+    </message>
+    <message>
+        <source>No PNG tips imported</source>
+        <translation>PNG チップがインポートされませんでした</translation>
+    </message>
+    <message>
+        <source>No PNG tips imported ({skipped} skipped)</source>
+        <translation>PNG チップがインポートされませんでした（{skipped}件スキップ）</translation>
+    </message>
+    <message>
+        <source>No active selection</source>
+        <translation>アクティブな選択範囲がありません</translation>
+    </message>
+    <message>
+        <source>No new ABR tips found</source>
+        <translation>新しいABR tipは見つかりませんでした</translation>
+    </message>
+    <message>
+        <source>No swatch selected</source>
+        <translation>スウォッチが選択されていません</translation>
+    </message>
+    <message>
+        <source>No tips extracted</source>
+        <translation>チップを抽出できませんでした</translation>
+    </message>
+    <message>
+        <source>PNG Images (*.png);;Image Files (*.png *.jpg *.jpeg *.bmp *.gif);;All Files (*.*)</source>
+        <translation>PNG 画像 (*.png);;画像ファイル (*.png *.jpg *.jpeg *.bmp *.gif);;すべてのファイル (*.*)</translation>
+    </message>
+    <message>
+        <source>Photoshop Brush (*.abr)</source>
+        <translation>Photoshop ブラシ (*.abr)</translation>
+    </message>
+    <message>
+        <source>Selection snapshot failed</source>
+        <translation>選択範囲スナップショットの取得に失敗しました</translation>
+    </message>
+    <message>
+        <source>Selection snapshot is not available</source>
+        <translation>選択範囲スナップショットが利用できません</translation>
+    </message>
+    <message>
+        <source>Tip</source>
+        <translation>チップ</translation>
+    </message>
+</context>
+<context>
+    <name>BrushTipPanel</name>
+    <message>
+        <source>Brush Tip</source>
+        <translation>ブラシ先端</translation>
+    </message>
+    <message>
+        <source>Create Tip from Selection</source>
+        <translation>選択範囲から先端を作成</translation>
+    </message>
+    <message>
+        <source>Import ABR</source>
+        <translation>ABR をインポート</translation>
+    </message>
+    <message>
+        <source>Import PNG</source>
+        <translation>PNG をインポート</translation>
+    </message>
+    <message>
+        <source>PNG Images (*.png)</source>
+        <translation>PNG画像 (*.png)</translation>
+    </message>
+    <message>
+        <source>Photoshop Brush (*.abr)</source>
+        <translation>Photoshop ブラシ (*.abr)</translation>
+    </message>
+    <message>
+        <source>Round</source>
+        <translation>丸</translation>
+    </message>
+    <message>
+        <source>Selection Tip</source>
+        <translation>選択範囲の先端</translation>
+    </message>
+</context>
+<context>
+    <name>ColorModeEditor</name>
+    <message>
+        <source>CMYK</source>
+        <translation>CMYK</translation>
+    </message>
+    <message>
+        <source>RGB</source>
+        <translation>RGB</translation>
+    </message>
+</context>
+<context>
+    <name>ColorSwatch</name>
+    <message>
+        <source>Background color (click to change)</source>
+        <translation>背景色 (クリックで変更)</translation>
+    </message>
+    <message>
+        <source>Default colors (black / white)</source>
+        <translation>初期設定の色 (黒 / 白)</translation>
+    </message>
+    <message>
+        <source>Foreground and background colors</source>
+        <translation>描画色と背景色</translation>
+    </message>
+    <message>
+        <source>Foreground color (click to change)</source>
+        <translation>描画色 (クリックで変更)</translation>
+    </message>
+    <message>
+        <source>Swap foreground and background colors</source>
+        <translation>描画色と背景色を入れ替え</translation>
+    </message>
+</context>
+<context>
+    <name>ComfyAuthorPanel</name>
+    <message>
+        <source>Edit a workflow here, then configure its exposed parameters and outputs.</source>
+        <translation>ここでワークフローを編集し、公開するパラメーターと出力を設定します。</translation>
+    </message>
+    <message>
+        <source>Effect editor is unavailable.</source>
+        <translation>エフェクトエディターを利用できません。</translation>
+    </message>
+    <message>
+        <source>Load workflow…</source>
+        <translation>ワークフローを読み込む…</translation>
+    </message>
+    <message>
+        <source>Open ComfyUI before releasing VRAM.</source>
+        <translation>VRAMを解放するには、先にComfyUIを開いてください。</translation>
+    </message>
+    <message>
+        <source>Open or load a workflow first.</source>
+        <translation>先にワークフローを開くか読み込んでください。</translation>
+    </message>
+    <message>
+        <source>Select a ComfyUI server in the Editor tab.</source>
+        <translation>EditorタブでComfyUIサーバーを選択してください。</translation>
+    </message>
+    <message>
+        <source>The Editor workflow changed. Reopen it in the ComfyUI tab.</source>
+        <translation>Editorのワークフローが変わりました。ComfyUIタブで開き直してください。</translation>
+    </message>
+    <message>
+        <source>Unexpected response to the VRAM release request.</source>
+        <translation>VRAM解放要求に対して予期しない応答がありました。</translation>
+    </message>
+    <message>
+        <source>VRAM release requested. Models will reload on the next generation.</source>
+        <translation>接続中のComfyUIにVRAM解放を要求しました。次回生成時にモデルを再読み込みします。</translation>
+    </message>
+    <message>
+        <source>Wait until the generation queue is empty to release VRAM.</source>
+        <translation>生成キューが空になってからVRAMを解放してください。</translation>
+    </message>
+    <message>
+        <source>Wait until the generation queue is empty to switch servers.</source>
+        <translation>生成キューが空になってから接続先を切り替えてください。</translation>
+    </message>
+    <message>
+        <source>Workflow must be a JSON object.</source>
+        <translation>ワークフローはJSONオブジェクトである必要があります。</translation>
+    </message>
+    <message>
+        <source>Workflow transferred. Select parameters and outputs in the Editor tab, then register.</source>
+        <translation>ワークフローを転送しました。Editorタブで公開パラメーターと出力を選び、登録してください。</translation>
+    </message>
+</context>
+<context>
+    <name>ComfyLayerPanel</name>
+    <message>
+        <source>An operation is in progress. Wait before reloading nodes.</source>
+        <translation>処理中です。完了してからノードを再読み込みしてください。</translation>
+    </message>
+    <message>
+        <source>Apply values before generating or changing layers. Only published parameters are applied.</source>
+        <translation>生成・レイヤー切替の前に値を反映してください。公開対象のパラメーターを反映します。</translation>
+    </message>
+    <message>
+        <source>Could not update the AI Effect layer.</source>
+        <translation>AI Effectレイヤーを更新できませんでした。</translation>
+    </message>
+    <message>
+        <source>Layer values changed while reading nodes. Reopen the node editor.</source>
+        <translation>読込中にレイヤーの値が変更されました。ノード編集を開き直してください。</translation>
+    </message>
+    <message>
+        <source>No published nodes were found in this workflow.</source>
+        <translation>このワークフローに公開対象のノードが見つかりません。</translation>
+    </message>
+    <message>
+        <source>Select a ComfyUI server.</source>
+        <translation>ComfyUIサーバーを選択してください。</translation>
+    </message>
+    <message>
+        <source>The selected layer changed. Reopen its node editor.</source>
+        <translation>選択レイヤーが変わりました。対象レイヤーのノード編集を開き直してください。</translation>
+    </message>
+    <message>
+        <source>Values applied to this layer.</source>
+        <translation>このレイヤーに値を反映しました。</translation>
+    </message>
+</context>
+<context>
+    <name>ComicDialogueEditor</name>
+    <message>
+        <source>Could not open this dialogue. Refresh the list and try again.</source>
+        <translation>セリフを開けませんでした。一覧を更新してやり直してください。</translation>
+    </message>
+    <message>
+        <source>Dialogue editing</source>
+        <translation>セリフ一覧の編集</translation>
+    </message>
+    <message>
+        <source>Double-click dialogue to edit. Enter: new line; Ctrl+Enter: apply; Esc: cancel. Double-click speaker to change its style. Double-click page or balloon to jump.</source>
+        <translation>セリフ欄をダブルクリックして編集。Enter: 改行、Ctrl+Enter: 確定、Esc: 取消。話者欄で話者書式を変更、ページ・フキダシ欄で該当箇所へ移動します。</translation>
+    </message>
+    <message>
+        <source>The dialogue was not updated. The page or text may have changed.</source>
+        <translation>セリフを更新できませんでした。ページや元の文章が変更された可能性があります。</translation>
+    </message>
+</context>
+<context>
+    <name>ComicFormatting</name>
+    <message>
+        <source>+ Selected text has style overrides</source>
+        <translation>+ 選択テキストに書式の上書きがあります</translation>
+    </message>
+    <message>
+        <source>Alignment</source>
+        <translation>文字揃え</translation>
+    </message>
+    <message>
+        <source>Apply batch</source>
+        <translation>まとめて反映</translation>
+    </message>
+    <message>
+        <source>Apply speaker to all rows</source>
+        <translation>全行に話者を適用</translation>
+    </message>
+    <message>
+        <source>Apply to selected balloon</source>
+        <translation>選択フキダシに適用</translation>
+    </message>
+    <message>
+        <source>Balloon: {id}</source>
+        <translation>対象: {id}</translation>
+    </message>
+    <message>
+        <source>Cancel</source>
+        <translation>キャンセル</translation>
+    </message>
+    <message>
+        <source>Center</source>
+        <translation>中央揃え</translation>
+    </message>
+    <message>
+        <source>Choose color</source>
+        <translation>色を選択</translation>
+    </message>
+    <message>
+        <source>Clear style overrides</source>
+        <translation>書式の上書きを解除</translation>
+    </message>
+    <message>
+        <source>Clear tag</source>
+        <translation>タグを解除</translation>
+    </message>
+    <message>
+        <source>Color tag</source>
+        <translation>色タグ</translation>
+    </message>
+    <message>
+        <source>Column flow</source>
+        <translation>縦書きの列方向</translation>
+    </message>
+    <message>
+        <source>Could not apply formatting. Reselect the balloon and try again.</source>
+        <translation>書式を反映できませんでした。フキダシを選び直してやり直してください。</translation>
+    </message>
+    <message>
+        <source>Could not open the selected dialogues. Refresh the list and try again.</source>
+        <translation>選択したセリフを開けませんでした。一覧を更新してやり直してください。</translation>
+    </message>
+    <message>
+        <source>Could not update speaker styles. Check the selection and locked layers.</source>
+        <translation>話者書式を更新できませんでした。選択状態とレイヤーのロックを確認してください。</translation>
+    </message>
+    <message>
+        <source>Default font</source>
+        <translation>既定のフォント</translation>
+    </message>
+    <message>
+        <source>Default for unregistered speakers</source>
+        <translation>未登録の話者に使う既定書式</translation>
+    </message>
+    <message>
+        <source>Default style</source>
+        <translation>標準</translation>
+    </message>
+    <message>
+        <source>Delete style</source>
+        <translation>書式を削除</translation>
+    </message>
+    <message>
+        <source>Dialogue</source>
+        <translation>セリフ</translation>
+    </message>
+    <message>
+        <source>Duplicate style</source>
+        <translation>書式を複製</translation>
+    </message>
+    <message>
+        <source>Edit selected dialogues</source>
+        <translation>選択したセリフを一括編集</translation>
+    </message>
+    <message>
+        <source>Edit the selected text in Font, then register or update its speaker style.</source>
+        <translation>Fontで選択テキストの書式を調整し、話者書式として登録・更新してください。</translation>
+    </message>
+    <message>
+        <source>Find text</source>
+        <translation>検索する文字列</translation>
+    </message>
+    <message>
+        <source>Font</source>
+        <translation>フォント</translation>
+    </message>
+    <message>
+        <source>Font style</source>
+        <translation>書体スタイル</translation>
+    </message>
+    <message>
+        <source>Horizontal</source>
+        <translation>横書き</translation>
+    </message>
+    <message>
+        <source>Justify</source>
+        <translation>両端揃え</translation>
+    </message>
+    <message>
+        <source>Left</source>
+        <translation>左揃え</translation>
+    </message>
+    <message>
+        <source>Leftward</source>
+        <translation>左方向</translation>
+    </message>
+    <message>
+        <source>Line height</source>
+        <translation>行間</translation>
+    </message>
+    <message>
+        <source>Load user defaults</source>
+        <translation>ユーザー既定を読み込み</translation>
+    </message>
+    <message>
+        <source>More formatting</source>
+        <translation>書式の詳細</translation>
+    </message>
+    <message>
+        <source>Off</source>
+        <translation>無効</translation>
+    </message>
+    <message>
+        <source>On</source>
+        <translation>有効</translation>
+    </message>
+    <message>
+        <source>Padding bottom (px)</source>
+        <translation>下余白 (px)</translation>
+    </message>
+    <message>
+        <source>Padding left (px)</source>
+        <translation>左余白 (px)</translation>
+    </message>
+    <message>
+        <source>Padding right (px)</source>
+        <translation>右余白 (px)</translation>
+    </message>
+    <message>
+        <source>Padding top (px)</source>
+        <translation>上余白 (px)</translation>
+    </message>
+    <message>
+        <source>Page</source>
+        <translation>ページ</translation>
+    </message>
+    <message>
+        <source>Register from selected text</source>
+        <translation>選択テキストの書式を登録</translation>
+    </message>
+    <message>
+        <source>Replace in all rows</source>
+        <translation>全行で置換</translation>
+    </message>
+    <message>
+        <source>Replace with</source>
+        <translation>置換後の文字列</translation>
+    </message>
+    <message>
+        <source>Right</source>
+        <translation>右揃え</translation>
+    </message>
+    <message>
+        <source>Rightward</source>
+        <translation>右方向</translation>
+    </message>
+    <message>
+        <source>Save user defaults</source>
+        <translation>ユーザー既定を保存</translation>
+    </message>
+    <message>
+        <source>Select a balloon or a dialogue row.</source>
+        <translation>フキダシまたはセリフ一覧の行を選択してください。</translation>
+    </message>
+    <message>
+        <source>Size (pt)</source>
+        <translation>サイズ (pt)</translation>
+    </message>
+    <message>
+        <source>Speaker</source>
+        <translation>話者</translation>
+    </message>
+    <message>
+        <source>Speaker ID</source>
+        <translation>話者ID</translation>
+    </message>
+    <message>
+        <source>Speaker name</source>
+        <translation>話者名</translation>
+    </message>
+    <message>
+        <source>Speaker styles</source>
+        <translation>話者書式</translation>
+    </message>
+    <message>
+        <source>Style name</source>
+        <translation>書式名</translation>
+    </message>
+    <message>
+        <source>Text color</source>
+        <translation>文字色・不透明度</translation>
+    </message>
+    <message>
+        <source>Text formatting</source>
+        <translation>文字書式</translation>
+    </message>
+    <message>
+        <source>The batch was not applied. A dialogue changed or a layer is locked. Reopen the editor.</source>
+        <translation>一括変更を反映できませんでした。元の内容が変更されたか、レイヤーがロックされています。編集画面を開き直してください。</translation>
+    </message>
+    <message>
+        <source>Tracking</source>
+        <translation>字間</translation>
+    </message>
+    <message>
+        <source>Update from selected text</source>
+        <translation>選択テキストの書式で更新</translation>
+    </message>
+    <message>
+        <source>Update style details</source>
+        <translation>書式の登録情報を更新</translation>
+    </message>
+    <message>
+        <source>Used by {count} text frames</source>
+        <translation>使用数: {count} テキスト枠</translation>
+    </message>
+    <message>
+        <source>Vertical</source>
+        <translation>縦書き</translation>
+    </message>
+    <message>
+        <source>Wrap</source>
+        <translation>自動折り返し</translation>
+    </message>
+    <message>
+        <source>Writing</source>
+        <translation>文字方向</translation>
+    </message>
+</context>
+<context>
+    <name>ComicPanelFrames</name>
+    <message>
+        <source>Adjust on canvas</source>
+        <translation>キャンバスで調整</translation>
+    </message>
+    <message>
+        <source>Adjust selected content on canvas</source>
+        <translation>選択した内容をキャンバスで調整</translation>
+    </message>
+    <message>
+        <source>All images in this panel</source>
+        <translation>このコマにすべて配置</translation>
+    </message>
+    <message>
+        <source>Allow selected content overflow</source>
+        <translation>選択した内容のはみ出しを許可</translation>
+    </message>
+    <message>
+        <source>Apply</source>
+        <translation>適用</translation>
+    </message>
+    <message>
+        <source>Apply template</source>
+        <translation>テンプレート適用</translation>
+    </message>
+    <message>
+        <source>Attach selected balloon</source>
+        <translation>選択フキダシをこのコマに所属</translation>
+    </message>
+    <message>
+        <source>Balloon</source>
+        <translation>フキダシ</translation>
+    </message>
+    <message>
+        <source>Balloons</source>
+        <translation>フキダシ</translation>
+    </message>
+    <message>
+        <source>Bottom</source>
+        <translation>下辺</translation>
+    </message>
+    <message>
+        <source>Boundary and content repair</source>
+        <translation>境界と内容を手直し</translation>
+    </message>
+    <message>
+        <source>Boundary slope</source>
+        <translation>境界の傾き</translation>
+    </message>
+    <message>
+        <source>Bounds could not be determined</source>
+        <translation>表示範囲を判定できません</translation>
+    </message>
+    <message>
+        <source>Bring selected content to page front</source>
+        <translation>選択した内容をページ前面へ</translation>
+    </message>
+    <message>
+        <source>Cancel</source>
+        <translation>取消</translation>
+    </message>
+    <message>
+        <source>Cannot group these balloons. The original layers have been kept.</source>
+        <translation>このフキダシはまとめられません。元のレイヤーは保持されています。</translation>
+    </message>
+    <message>
+        <source>Center in panel</source>
+        <translation>コマの中央へ移動</translation>
+    </message>
+    <message>
+        <source>Change boundary slope</source>
+        <translation>境界の傾きを変更</translation>
+    </message>
+    <message>
+        <source>Change panel gutter</source>
+        <translation>コマ間隔を変更</translation>
+    </message>
+    <message>
+        <source>Change ratio</source>
+        <translation>比率変更</translation>
+    </message>
+    <message>
+        <source>Change template slope</source>
+        <translation>全体の傾きを変更</translation>
+    </message>
+    <message>
+        <source>Choose a drawing layer in this panel first.</source>
+        <translation>このコマの描画先を一度指定してください。</translation>
+    </message>
+    <message>
+        <source>Clip region</source>
+        <translation>クリップ対象</translation>
+    </message>
+    <message>
+        <source>Clip selected content</source>
+        <translation>選択した内容を枠内に収める</translation>
+    </message>
+    <message>
+        <source>Confirm</source>
+        <translation>確定</translation>
+    </message>
+    <message>
+        <source>Confirm and paint this edge</source>
+        <translation>確定してこの辺を描く</translation>
+    </message>
+    <message>
+        <source>Confirm or cancel the current preview first.</source>
+        <translation>プレビューを確定または取消してから操作してください。</translation>
+    </message>
+    <message>
+        <source>Content to repair</source>
+        <translation>手直しする内容</translation>
+    </message>
+    <message>
+        <source>Contents</source>
+        <translation>内容</translation>
+    </message>
+    <message>
+        <source>Convert panel</source>
+        <translation>コマ枠レイヤーに変換</translation>
+    </message>
+    <message>
+        <source>Cover panel</source>
+        <translation>コマを埋める</translation>
+    </message>
+    <message>
+        <source>Delete panel</source>
+        <translation>コマ削除</translation>
+    </message>
+    <message>
+        <source>Delete panel and its content</source>
+        <translation>コマと所属する内容を削除する</translation>
+    </message>
+    <message>
+        <source>Delete panel and keep content</source>
+        <translation>コマを削除して内容を残す</translation>
+    </message>
+    <message>
+        <source>Destination</source>
+        <translation>割り当て先</translation>
+    </message>
+    <message>
+        <source>Dialogue</source>
+        <translation>セリフ一覧</translation>
+    </message>
+    <message>
+        <source>Distribute in reading order</source>
+        <translation>読み順で各コマに配布</translation>
+    </message>
+    <message>
+        <source>Drag to move or scale. Release to apply. Esc cancels the drag.</source>
+        <translation>ドラッグで移動・拡縮し、離すと確定します。Escでドラッグを取り消します。</translation>
+    </message>
+    <message>
+        <source>Drag to move. Drag the image corner to scale. Esc cancels the preview.</source>
+        <translation>ドラッグで移動、画像の角をドラッグして拡大縮小。Escでプレビューを取り消します。</translation>
+    </message>
+    <message>
+        <source>Draw here</source>
+        <translation>ここで描く</translation>
+    </message>
+    <message>
+        <source>Edit frame lines</source>
+        <translation>枠線を加工</translation>
+    </message>
+    <message>
+        <source>Edit vector edge</source>
+        <translation>この辺をベクター編集</translation>
+    </message>
+    <message>
+        <source>Equal overlap with child panels</source>
+        <translation>複数のコマと同じ面積で重なります</translation>
+    </message>
+    <message>
+        <source>Erase vector edge</source>
+        <translation>ベクターの枠線を部分消去する</translation>
+    </message>
+    <message>
+        <source>Exchange panel positions</source>
+        <translation>コマの位置を交換</translation>
+    </message>
+    <message>
+        <source>Exchange with</source>
+        <translation>位置交換するコマ</translation>
+    </message>
+    <message>
+        <source>Finish the current stroke or text composition first.</source>
+        <translation>描画または文字入力を完了してください。</translation>
+    </message>
+    <message>
+        <source>Fit whole image</source>
+        <translation>画像全体を収める</translation>
+    </message>
+    <message>
+        <source>Four panels (grid)</source>
+        <translation>4コマ (田型)</translation>
+    </message>
+    <message>
+        <source>Four-panel strip</source>
+        <translation>4コマ漫画</translation>
+    </message>
+    <message>
+        <source>Frame</source>
+        <translation>コマ枠</translation>
+    </message>
+    <message>
+        <source>Frame edge</source>
+        <translation>加工する辺</translation>
+    </message>
+    <message>
+        <source>Frame layers</source>
+        <translation>コマ枠レイヤー</translation>
+    </message>
+    <message>
+        <source>Frame line to repair</source>
+        <translation>手直しする辺</translation>
+    </message>
+    <message>
+        <source>Frame lines</source>
+        <translation>枠線</translation>
+    </message>
+    <message>
+        <source>Frame operation failed: {reason}</source>
+        <translation>コマ操作を実行できません: {reason}</translation>
+    </message>
+    <message>
+        <source>Go to source</source>
+        <translation>元データへ移動</translation>
+    </message>
+    <message>
+        <source>Group Balloon Objects</source>
+        <translation>フキダシをオブジェクトレイヤーにまとめる</translation>
+    </message>
+    <message>
+        <source>Gutter</source>
+        <translation>コマ間隔</translation>
+    </message>
+    <message>
+        <source>Image fit</source>
+        <translation>画像の収め方</translation>
+    </message>
+    <message>
+        <source>Image handling</source>
+        <translation>画像の扱い</translation>
+    </message>
+    <message>
+        <source>Images and balloons</source>
+        <translation>画像・フキダシ</translation>
+    </message>
+    <message>
+        <source>Independent copy</source>
+        <translation>独立コピー</translation>
+    </message>
+    <message>
+        <source>Item</source>
+        <translation>内容</translation>
+    </message>
+    <message>
+        <source>Keep edited clip</source>
+        <translation>加工済みクリップを保持</translation>
+    </message>
+    <message>
+        <source>Keep edited clip (stop automatic updates)</source>
+        <translation>加工済みクリップを保持 (自動更新を停止)</translation>
+    </message>
+    <message>
+        <source>Keep source pixels</source>
+        <translation>元の画素を保持</translation>
+    </message>
+    <message>
+        <source>Largest overlap with child panel</source>
+        <translation>最も広く重なるコマへ割り当て</translation>
+    </message>
+    <message>
+        <source>Left</source>
+        <translation>左辺</translation>
+    </message>
+    <message>
+        <source>Make shared view independent</source>
+        <translation>このコマの共通表示を独立させる</translation>
+    </message>
+    <message>
+        <source>Manually assigned</source>
+        <translation>手動で割り当て</translation>
+    </message>
+    <message>
+        <source>Merge with next</source>
+        <translation>次のコマと結合</translation>
+    </message>
+    <message>
+        <source>Move</source>
+        <translation>移動</translation>
+    </message>
+    <message>
+        <source>Move down</source>
+        <translation>読み順を下へ</translation>
+    </message>
+    <message>
+        <source>Move up</source>
+        <translation>読み順を上へ</translation>
+    </message>
+    <message>
+        <source>Multiple images</source>
+        <translation>複数画像の配置先</translation>
+    </message>
+    <message>
+        <source>New rough drawing</source>
+        <translation>新しくラフを描く</translation>
+    </message>
+    <message>
+        <source>Outside all child panels</source>
+        <translation>分割後のコマ外</translation>
+    </message>
+    <message>
+        <source>Overflow</source>
+        <translation>はみ出し</translation>
+    </message>
+    <message>
+        <source>Page boundary</source>
+        <translation>ページ外周の辺</translation>
+    </message>
+    <message>
+        <source>Page boundary {number}</source>
+        <translation>ページ外周 {number}</translation>
+    </message>
+    <message>
+        <source>Page front</source>
+        <translation>ページ前面</translation>
+    </message>
+    <message>
+        <source>Paint edge</source>
+        <translation>この辺を加工</translation>
+    </message>
+    <message>
+        <source>Paint this edge</source>
+        <translation>この辺に描く</translation>
+    </message>
+    <message>
+        <source>Panel gutter</source>
+        <translation>コマ間隔</translation>
+    </message>
+    <message>
+        <source>Panel {number}</source>
+        <translation>コマ {number}</translation>
+    </message>
+    <message>
+        <source>Panels</source>
+        <translation>コマ割り</translation>
+    </message>
+    <message>
+        <source>Pixels</source>
+        <translation>ピクセル</translation>
+    </message>
+    <message>
+        <source>Preparing panel operation…</source>
+        <translation>コマの変更を処理中…</translation>
+    </message>
+    <message>
+        <source>Preparing preview…</source>
+        <translation>プレビューを準備中…</translation>
+    </message>
+    <message>
+        <source>Preserve page placement</source>
+        <translation>ページ上の配置を保持</translation>
+    </message>
+    <message>
+        <source>Preview boundary change</source>
+        <translation>境界変更をプレビュー</translation>
+    </message>
+    <message>
+        <source>Preview inclined boundary</source>
+        <translation>境界の傾きをプレビュー</translation>
+    </message>
+    <message>
+        <source>Preview panel position exchange</source>
+        <translation>コマの位置交換をプレビュー</translation>
+    </message>
+    <message>
+        <source>Preview split</source>
+        <translation>分割をプレビュー</translation>
+    </message>
+    <message>
+        <source>Preview template inclination</source>
+        <translation>テンプレートの傾きをプレビュー</translation>
+    </message>
+    <message>
+        <source>Rasterize edge</source>
+        <translation>この辺をピクセル化</translation>
+    </message>
+    <message>
+        <source>Ratio</source>
+        <translation>比率</translation>
+    </message>
+    <message>
+        <source>Reading order (top right to bottom left)</source>
+        <translation>読み順 (右上→左下)</translation>
+    </message>
+    <message>
+        <source>Rearrange panels</source>
+        <translation>割り直し・配置</translation>
+    </message>
+    <message>
+        <source>Reason</source>
+        <translation>理由</translation>
+    </message>
+    <message>
+        <source>Regenerate clip</source>
+        <translation>クリップを再生成</translation>
+    </message>
+    <message>
+        <source>Regenerate clip from panel region</source>
+        <translation>コマ領域からクリップを再生成</translation>
+    </message>
+    <message>
+        <source>Release to apply. Esc cancels the drag.</source>
+        <translation>離すと確定します。Escでドラッグを取り消します。</translation>
+    </message>
+    <message>
+        <source>Remember drawing layer</source>
+        <translation>描画先として記録</translation>
+    </message>
+    <message>
+        <source>Restore vector edge</source>
+        <translation>この辺をベクターに戻す</translation>
+    </message>
+    <message>
+        <source>Review changes, then confirm or cancel.</source>
+        <translation>変更を確認して確定、または取消します。</translation>
+    </message>
+    <message>
+        <source>Right</source>
+        <translation>右辺</translation>
+    </message>
+    <message>
+        <source>Select a panel to edit its frame.</source>
+        <translation>コマを選択して枠線を編集します。</translation>
+    </message>
+    <message>
+        <source>Select a text object first.</source>
+        <translation>文字を選択してください。</translation>
+    </message>
+    <message>
+        <source>Selected panel: {panel}</source>
+        <translation>選択中: {panel}</translation>
+    </message>
+    <message>
+        <source>Shared page coordinates</source>
+        <translation>ページ座標で共通表示</translation>
+    </message>
+    <message>
+        <source>Shared source</source>
+        <translation>共通表示の元データ</translation>
+    </message>
+    <message>
+        <source>Single panel</source>
+        <translation>1コマ</translation>
+    </message>
+    <message>
+        <source>Six panels</source>
+        <translation>6コマ</translation>
+    </message>
+    <message>
+        <source>Split and duplicate panel content</source>
+        <translation>分割してコマの内容を複製する</translation>
+    </message>
+    <message>
+        <source>Split boundary</source>
+        <translation>分割境界の辺</translation>
+    </message>
+    <message>
+        <source>Split boundary {number}</source>
+        <translation>分割境界 {number}</translation>
+    </message>
+    <message>
+        <source>Split by ratio</source>
+        <translation>比率で分割</translation>
+    </message>
+    <message>
+        <source>Split horizontally</source>
+        <translation>横に2分割</translation>
+    </message>
+    <message>
+        <source>Split image handling</source>
+        <translation>分割時の画像の扱い</translation>
+    </message>
+    <message>
+        <source>Split panel</source>
+        <translation>コマを分割</translation>
+    </message>
+    <message>
+        <source>Split vertically</source>
+        <translation>縦に2分割</translation>
+    </message>
+    <message>
+        <source>Stretch along edge</source>
+        <translation>辺に沿って伸縮</translation>
+    </message>
+    <message>
+        <source>Three panels</source>
+        <translation>3コマ</translation>
+    </message>
+    <message>
+        <source>Top</source>
+        <translation>上辺</translation>
+    </message>
+    <message>
+        <source>Two columns</source>
+        <translation>2コマ (横並び)</translation>
+    </message>
+    <message>
+        <source>Two rows</source>
+        <translation>2コマ (縦積み)</translation>
+    </message>
+    <message>
+        <source>Vector</source>
+        <translation>ベクター</translation>
+    </message>
+    <message>
+        <source>Vector edge erase width</source>
+        <translation>枠線の部分消去幅</translation>
+    </message>
+    <message>
+        <source>Wrap selected text in a balloon</source>
+        <translation>選択した文字をフキダシにする</translation>
+    </message>
+    <message>
+        <source>balloon target is hidden or locked</source>
+        <translation>所属先のコマが非表示かロック中です</translation>
+    </message>
+    <message>
+        <source>choose a panel with an edited content mask</source>
+        <translation>内容マスクを加工したコマを選択してください</translation>
+    </message>
+    <message>
+        <source>choose a split template first</source>
+        <translation>分割されたテンプレートを先に選択してください</translation>
+    </message>
+    <message>
+        <source>choose two different panels to exchange positions</source>
+        <translation>位置を交換する二つの異なるコマを選択してください</translation>
+    </message>
+    <message>
+        <source>choose whether to keep or delete panel content</source>
+        <translation>内容を残すか削除するかを選択してください</translation>
+    </message>
+    <message>
+        <source>contain_whitespace</source>
+        <translation>全体表示の余白</translation>
+    </message>
+    <message>
+        <source>convex layout has unowned leaves</source>
+        <translation>所属先のないコマ領域があります</translation>
+    </message>
+    <message>
+        <source>convex layout leaf has multiple owners</source>
+        <translation>同じコマ領域に複数の所有者があります</translation>
+    </message>
+    <message>
+        <source>finish the text source filter edit first</source>
+        <translation>文字のフィルター編集を確定してください</translation>
+    </message>
+    <message>
+        <source>finish the text source transform first</source>
+        <translation>文字の変形を確定してください</translation>
+    </message>
+    <message>
+        <source>fits</source>
+        <translation>長さが一致</translation>
+    </message>
+    <message>
+        <source>frame corner has multiple owners</source>
+        <translation>同じ枠線の角に複数の所有者があります</translation>
+    </message>
+    <message>
+        <source>frame corner no longer matches its geometry</source>
+        <translation>枠線の角とコマの領域が一致しません</translation>
+    </message>
+    <message>
+        <source>frame edit has missing or cyclic ancestry</source>
+        <translation>コマまたは親レイヤーの参照を確認してください</translation>
+    </message>
+    <message>
+        <source>frame edit requires a materialized panel</source>
+        <translation>コマ枠レイヤーへ変換してください</translation>
+    </message>
+    <message>
+        <source>frame edit target has an unfinished transform</source>
+        <translation>コマの変形を確定してください</translation>
+    </message>
+    <message>
+        <source>frame edit target or ancestor is locked or has an unfinished mask edit</source>
+        <translation>コマまたは親レイヤーがロック中か、マスクを編集中です</translation>
+    </message>
+    <message>
+        <source>fully_clipped</source>
+        <translation>全体がコマ外</translation>
+    </message>
+    <message>
+        <source>inactive</source>
+        <translation>非表示</translation>
+    </message>
+    <message>
+        <source>inclining requires a materialized panel</source>
+        <translation>傾きを変更する前にコマ枠レイヤーへ変換してください</translation>
+    </message>
+    <message>
+        <source>invalid vector erase boundary</source>
+        <translation>枠線の消去座標が無効です</translation>
+    </message>
+    <message>
+        <source>invalid vector erase gesture</source>
+        <translation>枠線の消去操作が無効です</translation>
+    </message>
+    <message>
+        <source>invalid vector erase points</source>
+        <translation>枠線の消去位置が無効です</translation>
+    </message>
+    <message>
+        <source>merge inclined panels requires a convex ownership plan</source>
+        <translation>傾きコマの結合は未対応です。矩形の隣接コマを選択してください</translation>
+    </message>
+    <message>
+        <source>merged convex panel has missing layout leaves</source>
+        <translation>結合コマの元領域が見つかりません</translation>
+    </message>
+    <message>
+        <source>merged convex region overlaps another panel</source>
+        <translation>結合コマが別のコマに重なります</translation>
+    </message>
+    <message>
+        <source>merged region has no convex boundary provenance</source>
+        <translation>この傾きでは結合コマを凸形状として保持できません</translation>
+    </message>
+    <message>
+        <source>overrun</source>
+        <translation>線が余る</translation>
+    </message>
+    <message>
+        <source>panel is locked</source>
+        <translation>コマがロックされています</translation>
+    </message>
+    <message>
+        <source>partly_clipped</source>
+        <translation>一部がコマ外</translation>
+    </message>
+    <message>
+        <source>position exchange currently requires rectangular panel slots</source>
+        <translation>現在の位置交換は矩形のコマ配置に対応しています</translation>
+    </message>
+    <message>
+        <source>select a complete linked story before wrapping</source>
+        <translation>連結された文字は一体で選択してください</translation>
+    </message>
+    <message>
+        <source>select ordinary text to wrap in a balloon</source>
+        <translation>フキダシにする文字を選択してください</translation>
+    </message>
+    <message>
+        <source>shared backgrounds must precede the remaining panel content</source>
+        <translation>共有する背景を、このコマのほかの内容より背面にまとめてください</translation>
+    </message>
+    <message>
+        <source>shared content cannot preserve the owner compositing</source>
+        <translation>親グループの合成を保てないため共有できません。独立コピーを選択してください</translation>
+    </message>
+    <message>
+        <source>shared content cannot preserve this clipping chain</source>
+        <translation>このクリッピング関係は共有できません</translation>
+    </message>
+    <message>
+        <source>shared content cannot split the original group compositing</source>
+        <translation>このグループの不透明度や合成を保つには、内容をまとめて共有してください</translation>
+    </message>
+    <message>
+        <source>short</source>
+        <translation>線が不足</translation>
+    </message>
+    <message>
+        <source>split merged inclined panels requires a convex ownership plan</source>
+        <translation>結合した傾きコマの再分割は未対応です。矩形へ戻してから分割してください</translation>
+    </message>
+    <message>
+        <source>swap target is missing</source>
+        <translation>位置交換するコマが見つかりません</translation>
+    </message>
+    <message>
+        <source>text source has an independent blend mode</source>
+        <translation>文字または親レイヤーの合成モードが変更されています</translation>
+    </message>
+    <message>
+        <source>text source has an independent mask</source>
+        <translation>文字に独立したマスクが設定されています</translation>
+    </message>
+    <message>
+        <source>text source has inherited opacity</source>
+        <translation>文字または親レイヤーの不透明度が変更されています</translation>
+    </message>
+    <message>
+        <source>text source is hidden or locked</source>
+        <translation>文字または親レイヤーが非表示かロック中です</translation>
+    </message>
+    <message>
+        <source>this edge has no editable vector anchors</source>
+        <translation>この辺には編集できるベクター制御点がありません</translation>
+    </message>
+    <message>
+        <source>uncovered</source>
+        <translation>画像がコマを覆っていない</translation>
+    </message>
+    <message>
+        <source>unknown</source>
+        <translation>範囲を判定できない</translation>
+    </message>
+    <message>
+        <source>vector erase requires a derived edge mask</source>
+        <translation>手編集した枠線マスクを保持してから部分消去してください</translation>
+    </message>
+    <message>
+        <source>vector path editor is unavailable</source>
+        <translation>ベクターパス編集ツールを利用できません</translation>
+    </message>
+    <message>
+        <source>visible</source>
+        <translation>表示範囲内</translation>
+    </message>
+</context>
+<context>
+    <name>ComicPanelWorkflow</name>
+    <message>
+        <source>0: smooth outline. 100: retain body shape and line-width variation. Joint stays smooth; texture is not preserved.</source>
+        <translation>0: 滑らかに整える / 100: 本体の形と線幅の変化を残す。接続部は滑らかさを維持。色むら・かすれは再現しません。</translation>
+    </message>
+    <message>
+        <source>A closed ink ring is required for contour reconstruction.</source>
+        <translation>輪郭を一体化できる、閉じた本体の線が必要です。</translation>
+    </message>
+    <message>
+        <source>Advanced connection settings</source>
+        <translation>接続の詳細設定</translation>
+    </message>
+    <message>
+        <source>Asset registration / Delete</source>
+        <translation>素材登録・削除</translation>
+    </message>
+    <message>
+        <source>Body fidelity: {value}%</source>
+        <translation>本体の再現度: {value}%</translation>
+    </message>
+    <message>
+        <source>Continuous contour (standard)</source>
+        <translation>輪郭を一体化 (標準)</translation>
+    </message>
+    <message>
+        <source>Continuous contour preview: drag the root and tip, then confirm.{note}</source>
+        <translation>輪郭を一体化してプレビュー中。付け根と先端をドラッグし、「確定して変換」を押してください。{note}</translation>
+    </message>
+    <message>
+        <source>Continuous contour preview: drag the root, middle and tip, then confirm.{note}</source>
+        <translation>輪郭を一体化してプレビュー中。付け根・中間・先端をドラッグし、「確定して変換」を押してください。{note}</translation>
+    </message>
+    <message>
+        <source>Create a balloon</source>
+        <translation>フキダシを作成</translation>
+    </message>
+    <message>
+        <source>Dialogue</source>
+        <translation>セリフと文字</translation>
+    </message>
+    <message>
+        <source>Fine tuning / Diagnostics</source>
+        <translation>接続の微調整・診断</translation>
+    </message>
+    <message>
+        <source>Hand-drawn connection / Preview</source>
+        <translation>手描きの接続・プレビュー</translation>
+    </message>
+    <message>
+        <source>Retain the source tip contour only. Body and root connection are unchanged.</source>
+        <translation>元画像の先端付近の輪郭を残します。本体と付け根の接続は変更しません。</translation>
+    </message>
+    <message>
+        <source>Select a balloon on the canvas to edit it.</source>
+        <translation>編集するフキダシをキャンバスで選択してください。</translation>
+    </message>
+    <message>
+        <source>Selected balloon</source>
+        <translation>選択中のフキダシ</translation>
+    </message>
+    <message>
+        <source>Show handles (root / middle / tip)</source>
+        <translation>ハンドルを表示 (付け根 / 中間 / 先端)</translation>
+    </message>
+    <message>
+        <source>Show handles (root / tip)</source>
+        <translation>ハンドルを表示 (付け根 / 先端)</translation>
+    </message>
+    <message>
+        <source>Source fidelity: {value}%</source>
+        <translation>元画像の再現度: {value}%</translation>
+    </message>
+    <message>
+        <source>Speaker</source>
+        <translation>話者を設定</translation>
+    </message>
+    <message>
+        <source>Tail tip fidelity: {value}%</source>
+        <translation>しっぽ先端の再現度: {value}%</translation>
+    </message>
+    <message>
+        <source>The body ink ring is too ambiguous to reconstruct safely.</source>
+        <translation>本体の輪郭線と内部を判別できないため、一体化できません。</translation>
+    </message>
+</context>
+<context>
+    <name>ComicProjectPanel</name>
+    <message>
+        <source>#</source>
+        <translation>#</translation>
+    </message>
+    <message>
+        <source>(linked)</source>
+        <translation>(リンク済)</translation>
+    </message>
+    <message>
+        <source>(new line)</source>
+        <translation>(新しい台詞)</translation>
+    </message>
+    <message>
+        <source>(no project)</source>
+        <translation>(プロジェクトなし)</translation>
+    </message>
+    <message>
+        <source>(unassigned)</source>
+        <translation>(未割り当て)</translation>
+    </message>
+    <message>
+        <source>Add chapter</source>
+        <translation>章を追加</translation>
+    </message>
+    <message>
+        <source>Add dialogue</source>
+        <translation>台詞を追加</translation>
+    </message>
+    <message>
+        <source>Add page</source>
+        <translation>ページを追加</translation>
+    </message>
+    <message>
+        <source>Add {add} line(s), update {update}, unchanged {unchanged}, invalid {invalid}. Apply?</source>
+        <translation>追加 {add} 件、更新 {update} 件、変更なし {unchanged} 件、不正 {invalid} 件。適用しますか?</translation>
+    </message>
+    <message>
+        <source>Apply to dialogue</source>
+        <translation>台詞に反映</translation>
+    </message>
+    <message>
+        <source>Assign the line to a linked page first.</source>
+        <translation>先に台詞をリンク済みページへ割り当ててください。</translation>
+    </message>
+    <message>
+        <source>Chapter {number}</source>
+        <translation>第 {number} 章</translation>
+    </message>
+    <message>
+        <source>Chapters / pages</source>
+        <translation>章 / ページ</translation>
+    </message>
+    <message>
+        <source>Check links</source>
+        <translation>リンクを検査</translation>
+    </message>
+    <message>
+        <source>Comic Project</source>
+        <translation>コミックプロジェクト</translation>
+    </message>
+    <message>
+        <source>Comic Project Panel</source>
+        <translation>コミックプロジェクトパネル</translation>
+    </message>
+    <message>
+        <source>Create text object</source>
+        <translation>テキストを作成</translation>
+    </message>
+    <message>
+        <source>Delete dialogue</source>
+        <translation>台詞を削除</translation>
+    </message>
+    <message>
+        <source>Direction:</source>
+        <translation>方向:</translation>
+    </message>
+    <message>
+        <source>Export Script</source>
+        <translation>台本の書き出し</translation>
+    </message>
+    <message>
+        <source>Export...</source>
+        <translation>書き出し...</translation>
+    </message>
+    <message>
+        <source>Import Script</source>
+        <translation>台本の読み込み</translation>
+    </message>
+    <message>
+        <source>Import...</source>
+        <translation>読み込み...</translation>
+    </message>
+    <message>
+        <source>Link page to current</source>
+        <translation>現在のページにリンク</translation>
+    </message>
+    <message>
+        <source>Links: {unresolved_pages} missing page(s), {unplaced} unplaced, {unresolved_text_refs} lost text object(s), {duplicates} duplicate(s), {text_diffs} text difference(s).</source>
+        <translation>リンク: ページ欠落 {unresolved_pages}、未配置 {unplaced}、テキスト消失 {unresolved_text_refs}、重複 {duplicates}、本文差分 {text_diffs}。</translation>
+    </message>
+    <message>
+        <source>New Comic Project</source>
+        <translation>新しいコミックプロジェクト</translation>
+    </message>
+    <message>
+        <source>New...</source>
+        <translation>新規...</translation>
+    </message>
+    <message>
+        <source>Next needs review</source>
+        <translation>次の要校正</translation>
+    </message>
+    <message>
+        <source>Next unplaced</source>
+        <translation>次の未配置</translation>
+    </message>
+    <message>
+        <source>Not linked to a Comic Project.</source>
+        <translation>コミックプロジェクトにリンクされていません。</translation>
+    </message>
+    <message>
+        <source>Page</source>
+        <translation>ページ</translation>
+    </message>
+    <message>
+        <source>Page:</source>
+        <translation>ページ:</translation>
+    </message>
+    <message>
+        <source>Placed</source>
+        <translation>配置</translation>
+    </message>
+    <message>
+        <source>Project:</source>
+        <translation>プロジェクト:</translation>
+    </message>
+    <message>
+        <source>Review</source>
+        <translation>校正</translation>
+    </message>
+    <message>
+        <source>Review:</source>
+        <translation>校正:</translation>
+    </message>
+    <message>
+        <source>Script files (*.csv *.json)</source>
+        <translation>台本ファイル (*.csv *.json)</translation>
+    </message>
+    <message>
+        <source>Search dialogue...</source>
+        <translation>台詞を検索...</translation>
+    </message>
+    <message>
+        <source>Select a page entry and open the page to link.</source>
+        <translation>リンクするページ項目を選び、対象ページを開いてください。</translation>
+    </message>
+    <message>
+        <source>Speaker</source>
+        <translation>話者</translation>
+    </message>
+    <message>
+        <source>Speaker:</source>
+        <translation>話者:</translation>
+    </message>
+    <message>
+        <source>Story, dialogue and production management</source>
+        <translation>ネーム・台詞・制作進捗の管理</translation>
+    </message>
+    <message>
+        <source>Text</source>
+        <translation>台詞</translation>
+    </message>
+    <message>
+        <source>Text:</source>
+        <translation>台詞:</translation>
+    </message>
+    <message>
+        <source>The change could not be saved.</source>
+        <translation>変更を保存できませんでした。</translation>
+    </message>
+    <message>
+        <source>The file could not be read.</source>
+        <translation>ファイルを読み込めませんでした。</translation>
+    </message>
+    <message>
+        <source>The file could not be written.</source>
+        <translation>ファイルを書き込めませんでした。</translation>
+    </message>
+    <message>
+        <source>The file was rejected: {codes}</source>
+        <translation>ファイルを受け付けませんでした: {codes}</translation>
+    </message>
+    <message>
+        <source>The linked page could not be opened.</source>
+        <translation>リンク先のページを開けませんでした。</translation>
+    </message>
+    <message>
+        <source>The project was changed elsewhere; it has been reloaded.</source>
+        <translation>プロジェクトが別の場所で変更されたため再読み込みしました。</translation>
+    </message>
+    <message>
+        <source>The text object could not be created.</source>
+        <translation>テキストオブジェクトを作成できませんでした。</translation>
+    </message>
+    <message>
+        <source>Title:</source>
+        <translation>タイトル:</translation>
+    </message>
+    <message>
+        <source>approved</source>
+        <translation>承認済</translation>
+    </message>
+    <message>
+        <source>done</source>
+        <translation>完了</translation>
+    </message>
+    <message>
+        <source>draft</source>
+        <translation>下書き</translation>
+    </message>
+    <message>
+        <source>horizontal</source>
+        <translation>横書き</translation>
+    </message>
+    <message>
+        <source>ink</source>
+        <translation>ペン入れ</translation>
+    </message>
+    <message>
+        <source>lettering</source>
+        <translation>写植</translation>
+    </message>
+    <message>
+        <source>name</source>
+        <translation>ネーム</translation>
+    </message>
+    <message>
+        <source>needs_review</source>
+        <translation>要校正</translation>
+    </message>
+    <message>
+        <source>no</source>
+        <translation>未</translation>
+    </message>
+    <message>
+        <source>p.{number}  [{status}]  {placed}/{total} placed</source>
+        <translation>p.{number}  [{status}]  配置 {placed}/{total}</translation>
+    </message>
+    <message>
+        <source>review</source>
+        <translation>校正</translation>
+    </message>
+    <message>
+        <source>tone</source>
+        <translation>トーン</translation>
+    </message>
+    <message>
+        <source>vertical</source>
+        <translation>縦書き</translation>
+    </message>
+    <message>
+        <source>yes</source>
+        <translation>済</translation>
+    </message>
+    <message>
+        <source>{chapters} chapter(s), {pages} page(s) ({linked} linked), {dialogues} line(s), {placed} placed, {review} need review.</source>
+        <translation>{chapters} 章、{pages} ページ ({linked} リンク済)、台詞 {dialogues} 件、配置 {placed} 件、要校正 {review} 件。</translation>
+    </message>
+    <message>
+        <source>{title} ({count} pages)</source>
+        <translation>{title} ({count} ページ)</translation>
+    </message>
+</context>
+<context>
+    <name>ComicProjectTreeBuilder</name>
+    <message>
+        <source>(linked)</source>
+        <translation>(リンク済)</translation>
+    </message>
+    <message>
+        <source>p.{number}  [{status}]  {placed}/{total} placed</source>
+        <translation>p.{number}  [{status}]  配置 {placed}/{total}</translation>
+    </message>
+    <message>
+        <source>{title} ({count} pages)</source>
+        <translation>{title} ({count} ページ)</translation>
+    </message>
+</context>
+<context>
+    <name>DialogueTableBuilder</name>
+    <message>
+        <source>no</source>
+        <translation>未</translation>
+    </message>
+    <message>
+        <source>yes</source>
+        <translation>可</translation>
+    </message>
+</context>
+<context>
+    <name>DirectFilter</name>
+    <message>
+        <source>Apply to the current layer. Undo restores the original pixels.</source>
+        <translation>現在のレイヤーへ直接適用します。元の画像にはUndoで戻せます。</translation>
+    </message>
+    <message>
+        <source>Applying this filter requires rasterizing "{name}". The vector or text will no longer be editable after applying. Continue?</source>
+        <translation>このフィルターを適用するには「{name}」のラスタライズが必要です。適用後はベクターや文字として編集できなくなります。続行しますか?</translation>
+    </message>
+    <message>
+        <source>Canvas service is not available.</source>
+        <translation>キャンバスを利用できません。</translation>
+    </message>
+    <message>
+        <source>Filter Error</source>
+        <translation>フィルターエラー</translation>
+    </message>
+    <message>
+        <source>Filters cannot edit locked layers or layer masks.</source>
+        <translation>ロックされたレイヤーやレイヤーマスクにはフィルターを適用できません。</translation>
+    </message>
+    <message>
+        <source>Finish the current stroke or text edit first.</source>
+        <translation>描画中の線や文字編集を完了してください。</translation>
+    </message>
+    <message>
+        <source>Preparing filter preview…</source>
+        <translation>フィルターのプレビューを準備中…</translation>
+    </message>
+    <message>
+        <source>Rasterize layer?</source>
+        <translation>レイヤーをラスタライズしますか?</translation>
+    </message>
+    <message>
+        <source>Rasterize the layer transform before applying a filter.</source>
+        <translation>レイヤーの変形をラスタライズしてからフィルターを適用してください。</translation>
+    </message>
+    <message>
+        <source>Select a raster layer to apply a filter.</source>
+        <translation>フィルターを適用するラスターレイヤーを選択してください。</translation>
+    </message>
+    <message>
+        <source>Select a vector or text layer to rasterize.</source>
+        <translation>ラスタライズするベクターか文字レイヤーを選択してください。</translation>
+    </message>
+    <message>
+        <source>The editing target changed. Reopen the filter to continue.</source>
+        <translation>編集対象が変更されました。フィルターを開き直してください。</translation>
+    </message>
+    <message>
+        <source>The filter could not be applied. The original pixels were preserved.</source>
+        <translation>フィルターを適用できませんでした。元の画像は保持されています。</translation>
+    </message>
+    <message>
+        <source>The layer could not be rasterized. The original objects were preserved.</source>
+        <translation>レイヤーをラスタライズできませんでした。元のオブジェクトは保持されています。</translation>
+    </message>
+    <message>
+        <source>The panel drawing target is not editable.</source>
+        <translation>このコマの編集対象へはフィルターを適用できません。</translation>
+    </message>
+    <message>
+        <source>The selected filter is not available.</source>
+        <translation>選択されたフィルターは利用できません。</translation>
+    </message>
+    <message>
+        <source>Unlock the layer and its parent groups before applying a filter.</source>
+        <translation>レイヤーと親グループのロックを解除してからフィルターを適用してください。</translation>
+    </message>
+    <message>
+        <source>Use this managed layer's own controls to rasterize it.</source>
+        <translation>この管理レイヤーは専用の編集操作からラスタライズしてください。</translation>
+    </message>
+</context>
+<context>
+    <name>DrawingAssistPanel</name>
+    <message>
+        <source>Add</source>
+        <translation>追加</translation>
+    </message>
+    <message>
+        <source>Apply</source>
+        <translation>適用</translation>
+    </message>
+    <message>
+        <source>Drawing Assist</source>
+        <translation>作画補助</translation>
+    </message>
+    <message>
+        <source>Drawing Assist Panel</source>
+        <translation>作画補助パネル</translation>
+    </message>
+    <message>
+        <source>Enabled</source>
+        <translation>有効</translation>
+    </message>
+    <message>
+        <source>Not applied: {codes}</source>
+        <translation>適用できません: {codes}</translation>
+    </message>
+    <message>
+        <source>Refresh</source>
+        <translation>更新</translation>
+    </message>
+    <message>
+        <source>Remove</source>
+        <translation>削除</translation>
+    </message>
+    <message>
+        <source>Set Active</source>
+        <translation>アクティブにする</translation>
+    </message>
+    <message>
+        <source>Show overlay</source>
+        <translation>オーバーレイ表示</translation>
+    </message>
+    <message>
+        <source>Symmetry, parallel / radial / concentric rulers and perspective</source>
+        <translation>対称描画・平行 / 放射 / 同心円定規・透視</translation>
+    </message>
+    <message>
+        <source>active</source>
+        <translation>アクティブ</translation>
+    </message>
+    <message>
+        <source>concentric</source>
+        <translation>同心円定規</translation>
+    </message>
+    <message>
+        <source>disabled</source>
+        <translation>無効</translation>
+    </message>
+    <message>
+        <source>mirror</source>
+        <translation>ミラー</translation>
+    </message>
+    <message>
+        <source>parallel</source>
+        <translation>平行定規</translation>
+    </message>
+    <message>
+        <source>perspective</source>
+        <translation>透視定規</translation>
+    </message>
+    <message>
+        <source>radial</source>
+        <translation>放射定規</translation>
+    </message>
+    <message>
+        <source>rotational</source>
+        <translation>回転対称</translation>
+    </message>
+    <message>
+        <source>unknown type</source>
+        <translation>未知の種類</translation>
+    </message>
+    <message>
+        <source>{count} assist(s) on this page</source>
+        <translation>このページの補助: {count} 件</translation>
+    </message>
+</context>
+<context>
+    <name>EffectPen</name>
+    <message>
+        <source>Activate Filter Pen</source>
+        <translation>フィルターペンを選択</translation>
+    </message>
+    <message>
+        <source>Brightness</source>
+        <translation>明るさ</translation>
+    </message>
+    <message>
+        <source>Brightness / Contrast</source>
+        <translation>明るさ / コントラスト</translation>
+    </message>
+    <message>
+        <source>Brush Tip</source>
+        <translation>ブラシ先端</translation>
+    </message>
+    <message>
+        <source>Brushes</source>
+        <translation>ブラシ</translation>
+    </message>
+    <message>
+        <source>Close</source>
+        <translation>閉じる</translation>
+    </message>
+    <message>
+        <source>Contrast</source>
+        <translation>コントラスト</translation>
+    </message>
+    <message>
+        <source>Create Tip from Selection</source>
+        <translation>選択範囲から先端を作成</translation>
+    </message>
+    <message>
+        <source>Curve</source>
+        <translation>カーブ</translation>
+    </message>
+    <message>
+        <source>Curves</source>
+        <translation>トーンカーブ</translation>
+    </message>
+    <message>
+        <source>Delete selected stop</source>
+        <translation>選択した分岐点を削除</translation>
+    </message>
+    <message>
+        <source>Filter</source>
+        <translation>フィルター</translation>
+    </message>
+    <message>
+        <source>Filter Pen</source>
+        <translation>フィルターペン</translation>
+    </message>
+    <message>
+        <source>Filter Pen cannot paint a locked layer or a layer mask.</source>
+        <translation>ロックされたレイヤーやレイヤーマスクには描画できません。</translation>
+    </message>
+    <message>
+        <source>Filter Pen is unavailable.</source>
+        <translation>フィルターペンは利用できません。</translation>
+    </message>
+    <message>
+        <source>Filter Pen requires a raster layer.</source>
+        <translation>フィルターペンにはラスターレイヤーが必要です。</translation>
+    </message>
+    <message>
+        <source>Filter Settings</source>
+        <translation>フィルター設定</translation>
+    </message>
+    <message>
+        <source>Filter Settings…</source>
+        <translation>フィルター設定…</translation>
+    </message>
+    <message>
+        <source>Filter Strength</source>
+        <translation>適用量</translation>
+    </message>
+    <message>
+        <source>Flow</source>
+        <translation>フロー</translation>
+    </message>
+    <message>
+        <source>Gradient Map</source>
+        <translation>グラデーションマップ</translation>
+    </message>
+    <message>
+        <source>Hardness</source>
+        <translation>硬さ</translation>
+    </message>
+    <message>
+        <source>Import ABR</source>
+        <translation>ABRを読み込む</translation>
+    </message>
+    <message>
+        <source>Import PNG</source>
+        <translation>PNGを読み込む</translation>
+    </message>
+    <message>
+        <source>No active selection</source>
+        <translation>選択範囲がありません</translation>
+    </message>
+    <message>
+        <source>No adjustable parameters</source>
+        <translation>調整項目はありません</translation>
+    </message>
+    <message>
+        <source>No tips were found in this ABR file</source>
+        <translation>このABRファイルには先端がありません</translation>
+    </message>
+    <message>
+        <source>PNG Images (*.png)</source>
+        <translation>PNG画像 (*.png)</translation>
+    </message>
+    <message>
+        <source>Photoshop Brush (*.abr)</source>
+        <translation>Photoshopブラシ (*.abr)</translation>
+    </message>
+    <message>
+        <source>Pressure Sensitive</source>
+        <translation>筆圧を使用</translation>
+    </message>
+    <message>
+        <source>Rasterize the layer transform before using Filter Pen.</source>
+        <translation>フィルターペンを使う前にレイヤーの変形をラスタライズしてください。</translation>
+    </message>
+    <message>
+        <source>Recontour</source>
+        <translation>描線を再調整</translation>
+    </message>
+    <message>
+        <source>Recontour Smoothness</source>
+        <translation>再調整の滑らかさ</translation>
+    </message>
+    <message>
+        <source>Recontour could not edit this stroke. The raster stroke was preserved.</source>
+        <translation>描線を再調整できませんでした。確定済みの描画は保持されています。</translation>
+    </message>
+    <message>
+        <source>RecontourSmoothness (next stroke)</source>
+        <translation>再調整の滑らかさ (次のストローク)</translation>
+    </message>
+    <message>
+        <source>Round</source>
+        <translation>丸</translation>
+    </message>
+    <message>
+        <source>Selection Tip</source>
+        <translation>選択範囲の先端</translation>
+    </message>
+    <message>
+        <source>Selection snapshot is not available</source>
+        <translation>選択範囲を取得できません</translation>
+    </message>
+    <message>
+        <source>Size</source>
+        <translation>サイズ</translation>
+    </message>
+    <message>
+        <source>Stabilization</source>
+        <translation>手ぶれ補正</translation>
+    </message>
+    <message>
+        <source>Stamp Density</source>
+        <translation>スタンプ密度</translation>
+    </message>
+    <message>
+        <source>Strength</source>
+        <translation>適用量</translation>
+    </message>
+    <message>
+        <source>The brush tip image could not be read.</source>
+        <translation>ブラシ先端の画像を読み込めませんでした。</translation>
+    </message>
+    <message>
+        <source>The filter could not be applied. The original pixels were preserved.</source>
+        <translation>フィルターを適用できませんでした。元の画素は保持されています。</translation>
+    </message>
+    <message>
+        <source>The filter returned an invalid image. The original pixels were preserved.</source>
+        <translation>フィルターの結果が無効でした。元の画素は保持されています。</translation>
+    </message>
+    <message>
+        <source>The filter stroke failed. Previously committed pixels were preserved.</source>
+        <translation>フィルター描画に失敗しました。確定済みの画素は保持されています。</translation>
+    </message>
+    <message>
+        <source>The layer changed. The pending filter stroke was stopped.</source>
+        <translation>レイヤーが変更されたため、処理中のフィルター描画を停止しました。</translation>
+    </message>
+    <message>
+        <source>The pending filter stroke was cancelled because the editing target changed.</source>
+        <translation>編集対象が変わったため、処理中のフィルター描画を取り消しました。</translation>
+    </message>
+    <message>
+        <source>The previous filter stroke is still processing. Please wait.</source>
+        <translation>前のフィルター描画を処理中です。完了するまでお待ちください。</translation>
+    </message>
+    <message>
+        <source>The selected filter is not available.</source>
+        <translation>選択されたフィルターは利用できません。</translation>
+    </message>
+    <message>
+        <source>The selected filter is unavailable.</source>
+        <translation>選択されたフィルターは利用できません。</translation>
+    </message>
+    <message>
+        <source>Tilt Shading</source>
+        <translation>傾きによる濃淡</translation>
+    </message>
+    <message>
+        <source>Tip import failed: {error}</source>
+        <translation>ブラシ先端の読み込みに失敗しました: {error}</translation>
+    </message>
+    <message>
+        <source>Tone Gamma</source>
+        <translation>トーンガンマ</translation>
+    </message>
+    <message>
+        <source>Tone Range</source>
+        <translation>トーン範囲</translation>
+    </message>
+</context>
+<context>
+    <name>FidelityControl</name>
+    <message>
+        <source>0: smooth outline. 100: retain body shape and line-width variation. Joint stays smooth; texture is not preserved.</source>
+        <translation>0: 滑らかに整える / 100: 本体の形と線幅の変化を残す。接続部は滑らかさを維持。色むら・かすれは再現しません。</translation>
+    </message>
+    <message>
+        <source>Retain the source tip contour only. Body and root connection are unchanged.</source>
+        <translation>元画像の先端付近の輪郭を残します。本体と付け根の接続は変更しません。</translation>
+    </message>
+</context>
+<context>
+    <name>FilterPen</name>
+    <message>
+        <source>Activate Filter Pen</source>
+        <translation>フィルターペンを選択</translation>
+    </message>
+    <message>
+        <source>Brightness</source>
+        <translation>明るさ</translation>
+    </message>
+    <message>
+        <source>Brightness / Contrast</source>
+        <translation>明るさ / コントラスト</translation>
+    </message>
+    <message>
+        <source>Brush Tip</source>
+        <translation>ブラシ先端</translation>
+    </message>
+    <message>
+        <source>Brushes</source>
+        <translation>ブラシ</translation>
+    </message>
+    <message>
+        <source>Close</source>
+        <translation>閉じる</translation>
+    </message>
+    <message>
+        <source>Contrast</source>
+        <translation>コントラスト</translation>
+    </message>
+    <message>
+        <source>Create Tip from Selection</source>
+        <translation>選択範囲から先端を作成</translation>
+    </message>
+    <message>
+        <source>Curve</source>
+        <translation>カーブ</translation>
+    </message>
+    <message>
+        <source>Curves</source>
+        <translation>トーンカーブ</translation>
+    </message>
+    <message>
+        <source>Delete selected stop</source>
+        <translation>選択した分岐点を削除</translation>
+    </message>
+    <message>
+        <source>Filter</source>
+        <translation>フィルター</translation>
+    </message>
+    <message>
+        <source>Filter Pen</source>
+        <translation>フィルターペン</translation>
+    </message>
+    <message>
+        <source>Filter Pen cannot paint a locked layer or a layer mask.</source>
+        <translation>ロックされたレイヤーやレイヤーマスクには描画できません。</translation>
+    </message>
+    <message>
+        <source>Filter Pen is unavailable.</source>
+        <translation>フィルターペンは利用できません。</translation>
+    </message>
+    <message>
+        <source>Filter Pen requires a raster layer.</source>
+        <translation>フィルターペンにはラスターレイヤーが必要です。</translation>
+    </message>
+    <message>
+        <source>Filter Settings</source>
+        <translation>フィルター設定</translation>
+    </message>
+    <message>
+        <source>Filter Settings…</source>
+        <translation>フィルター設定…</translation>
+    </message>
+    <message>
+        <source>Filter Strength</source>
+        <translation>適用量</translation>
+    </message>
+    <message>
+        <source>Flow</source>
+        <translation>フロー</translation>
+    </message>
+    <message>
+        <source>Gradient Map</source>
+        <translation>グラデーションマップ</translation>
+    </message>
+    <message>
+        <source>Hardness</source>
+        <translation>硬さ</translation>
+    </message>
+    <message>
+        <source>Import ABR</source>
+        <translation>ABRを読み込む</translation>
+    </message>
+    <message>
+        <source>Import PNG</source>
+        <translation>PNGを読み込む</translation>
+    </message>
+    <message>
+        <source>No active selection</source>
+        <translation>選択範囲がありません</translation>
+    </message>
+    <message>
+        <source>No adjustable parameters</source>
+        <translation>調整項目はありません</translation>
+    </message>
+    <message>
+        <source>No tips were found in this ABR file</source>
+        <translation>このABRファイルには先端がありません</translation>
+    </message>
+    <message>
+        <source>PNG Images (*.png)</source>
+        <translation>PNG画像 (*.png)</translation>
+    </message>
+    <message>
+        <source>Photoshop Brush (*.abr)</source>
+        <translation>Photoshopブラシ (*.abr)</translation>
+    </message>
+    <message>
+        <source>Pressure Sensitive</source>
+        <translation>筆圧を使用</translation>
+    </message>
+    <message>
+        <source>Rasterize the layer transform before using Filter Pen.</source>
+        <translation>フィルターペンを使う前にレイヤーの変形をラスタライズしてください。</translation>
+    </message>
+    <message>
+        <source>Recontour</source>
+        <translation>描線を再調整</translation>
+    </message>
+    <message>
+        <source>Recontour Smoothness</source>
+        <translation>再調整の滑らかさ</translation>
+    </message>
+    <message>
+        <source>Recontour could not edit this stroke. The raster stroke was preserved.</source>
+        <translation>描線を再調整できませんでした。確定済みの描画は保持されています。</translation>
+    </message>
+    <message>
+        <source>RecontourSmoothness (next stroke)</source>
+        <translation>再調整の滑らかさ (次のストローク)</translation>
+    </message>
+    <message>
+        <source>Round</source>
+        <translation>丸</translation>
+    </message>
+    <message>
+        <source>Selection Tip</source>
+        <translation>選択範囲の先端</translation>
+    </message>
+    <message>
+        <source>Selection snapshot is not available</source>
+        <translation>選択範囲を取得できません</translation>
+    </message>
+    <message>
+        <source>Size</source>
+        <translation>サイズ</translation>
+    </message>
+    <message>
+        <source>Stabilization</source>
+        <translation>手ぶれ補正</translation>
+    </message>
+    <message>
+        <source>Stamp Density</source>
+        <translation>スタンプ密度</translation>
+    </message>
+    <message>
+        <source>Strength</source>
+        <translation>適用量</translation>
+    </message>
+    <message>
+        <source>The brush tip image could not be read.</source>
+        <translation>ブラシ先端の画像を読み込めませんでした。</translation>
+    </message>
+    <message>
+        <source>The filter could not be applied. The original pixels were preserved.</source>
+        <translation>フィルターを適用できませんでした。元の画素は保持されています。</translation>
+    </message>
+    <message>
+        <source>The filter returned an invalid image. The original pixels were preserved.</source>
+        <translation>フィルターの結果が無効でした。元の画素は保持されています。</translation>
+    </message>
+    <message>
+        <source>The filter stroke failed. Previously committed pixels were preserved.</source>
+        <translation>フィルター描画に失敗しました。確定済みの画素は保持されています。</translation>
+    </message>
+    <message>
+        <source>The layer changed. The pending filter stroke was stopped.</source>
+        <translation>レイヤーが変更されたため、処理中のフィルター描画を停止しました。</translation>
+    </message>
+    <message>
+        <source>The pending filter stroke was cancelled because the editing target changed.</source>
+        <translation>編集対象が変わったため、処理中のフィルター描画を取り消しました。</translation>
+    </message>
+    <message>
+        <source>The previous filter stroke is still processing. Please wait.</source>
+        <translation>前のフィルター描画を処理中です。完了するまでお待ちください。</translation>
+    </message>
+    <message>
+        <source>The selected filter is not available.</source>
+        <translation>選択されたフィルターは利用できません。</translation>
+    </message>
+    <message>
+        <source>The selected filter is unavailable.</source>
+        <translation>選択されたフィルターは利用できません。</translation>
+    </message>
+    <message>
+        <source>Tilt Shading</source>
+        <translation>傾きによる濃淡</translation>
+    </message>
+    <message>
+        <source>Tip import failed: {error}</source>
+        <translation>ブラシ先端の読み込みに失敗しました: {error}</translation>
+    </message>
+    <message>
+        <source>Tone Gamma</source>
+        <translation>トーンガンマ</translation>
+    </message>
+    <message>
+        <source>Tone Range</source>
+        <translation>トーン範囲</translation>
+    </message>
+</context>
+<context>
+    <name>FilterPenOptionsWidget</name>
+    <message>
+        <source>Filter</source>
+        <translation>フィルター</translation>
+    </message>
+</context>
+<context>
+    <name>FilterPenTool</name>
+    <message>
+        <source>Filter Settings…</source>
+        <translation>フィルター設定…</translation>
+    </message>
+</context>
+<context>
+    <name>ForegroundBackgroundSwatch</name>
+    <message>
+        <source>Foreground and background colors</source>
+        <translation>描画色と背景色</translation>
+    </message>
+</context>
+<context>
+    <name>FrameArrangementControls</name>
+    <message>
+        <source>Exchange panel positions</source>
+        <translation>コマの位置を交換</translation>
+    </message>
+    <message>
+        <source>Exchange with</source>
+        <translation>位置交換するコマ</translation>
+    </message>
+</context>
+<context>
+    <name>FrameFlowWidget</name>
+    <message>
+        <source>Balance columns</source>
+        <translation>段の末尾を揃える</translation>
+    </message>
+    <message>
+        <source>Empty text frame</source>
+        <translation>空のテキスト枠</translation>
+    </message>
+    <message>
+        <source>Link selected frames</source>
+        <translation>選択した枠を連結</translation>
+    </message>
+    <message>
+        <source>Link text frames</source>
+        <translation>テキスト枠を連結</translation>
+    </message>
+    <message>
+        <source>Link to selected frame</source>
+        <translation>一覧の選択先へ連結</translation>
+    </message>
+    <message>
+        <source>Next text frame</source>
+        <translation>連結先のテキスト枠</translation>
+    </message>
+    <message>
+        <source>Paragraph columns (0: frame, 1: span)</source>
+        <translation>段落の段数 (0: 枠に従う、1: 段抜き)</translation>
+    </message>
+    <message>
+        <source>Unlink text frames</source>
+        <translation>テキスト枠の連結を解除</translation>
+    </message>
+</context>
+<context>
+    <name>FrameGuides</name>
+    <message>
+        <source>Draw here</source>
+        <translation>ここで描く</translation>
+    </message>
+</context>
+<context>
+    <name>FrameRepairControls</name>
+    <message>
+        <source>Drag to move or scale. Release to apply. Esc cancels the drag.</source>
+        <translation>ドラッグで移動・拡縮し、離すと確定します。Escでドラッグを取り消します。</translation>
+    </message>
+</context>
+<context>
+    <name>GPTImage2PanelPlugin</name>
+    <message>
+        <source>Configure GPT Image 2 jobs</source>
+        <translation>GPT Image 2 ジョブを設定します</translation>
+    </message>
+    <message>
+        <source>Error: {error}</source>
+        <translation>エラー: {error}</translation>
+    </message>
+    <message>
+        <source>GPT Image 2</source>
+        <translation>GPT Image 2</translation>
+    </message>
+    <message>
+        <source>GPT Image 2 Panel</source>
+        <translation>GPT Image 2 パネル</translation>
+    </message>
+    <message>
+        <source>Job completed</source>
+        <translation>ジョブが完了しました</translation>
+    </message>
+    <message>
+        <source>Job failed</source>
+        <translation>ジョブが失敗しました</translation>
+    </message>
+    <message>
+        <source>Job {job_id} submitted</source>
+        <translation>ジョブ {job_id} を送信しました</translation>
+    </message>
+    <message>
+        <source>Service unavailable</source>
+        <translation>サービスを利用できません</translation>
+    </message>
+    <message>
+        <source>{step}/{total}: {message}</source>
+        <translation>{step}/{total}: {message}</translation>
+    </message>
+</context>
+<context>
+    <name>GuidePositionOverlay</name>
+    <message>
+        <source>{position:.3f} {unit}</source>
+        <translation>{position:.3f} {unit}</translation>
+    </message>
+</context>
+<context>
+    <name>LayerPanelAIEffectMenuBuilder</name>
+    <message>
+        <source>(No presets installed)</source>
+        <translation>(インストール済みのプリセットはありません)</translation>
+    </message>
+    <message>
+        <source>AI Effect</source>
+        <translation>AIエフェクト</translation>
+    </message>
+</context>
+<context>
+    <name>LayerRowControlGroup</name>
+    <message>
+        <source>Toggle alpha lock</source>
+        <translation>透明度ロック切替</translation>
+    </message>
+    <message>
+        <source>Toggle layer lock</source>
+        <translation>レイヤーのロック切替</translation>
+    </message>
+    <message>
+        <source>Toggle layer visibility</source>
+        <translation>レイヤーの表示切替</translation>
+    </message>
+</context>
+<context>
+    <name>LinkOrderDialog</name>
+    <message>
+        <source>Cancel linking</source>
+        <translation>連結を取り消す</translation>
+    </message>
+    <message>
+        <source>Check the numbered frame order before linking.</source>
+        <translation>番号順に本文が流れます。順番を確認して連結してください。</translation>
+    </message>
+    <message>
+        <source>Empty text frame</source>
+        <translation>空のテキスト枠</translation>
+    </message>
+    <message>
+        <source>Existing stories keep their internal frame order.</source>
+        <translation>すでに連結された枠同士の内部の順番は維持します。</translation>
+    </message>
+    <message>
+        <source>Link selected frames</source>
+        <translation>選択した枠を連結</translation>
+    </message>
+    <message>
+        <source>Link text frames</source>
+        <translation>テキスト枠を連結</translation>
+    </message>
+    <message>
+        <source>Move earlier</source>
+        <translation>前へ</translation>
+    </message>
+    <message>
+        <source>Move later</source>
+        <translation>後へ</translation>
+    </message>
+    <message>
+        <source>The text frames could not be linked.</source>
+        <translation>テキスト枠を連結できませんでした。</translation>
+    </message>
+</context>
+<context>
+    <name>LinksPanel</name>
+    <message>
+        <source>Choose the file</source>
+        <translation>ファイルを選択</translation>
+    </message>
+    <message>
+        <source>Embed</source>
+        <translation>埋め込む</translation>
+    </message>
+    <message>
+        <source>Embed a copy in the document</source>
+        <translation>コピーをドキュメントに埋め込む</translation>
+    </message>
+    <message>
+        <source>Embedded</source>
+        <translation>埋め込みました</translation>
+    </message>
+    <message>
+        <source>Embedded {count} layer(s).</source>
+        <translation>{count} レイヤーを埋め込みました。</translation>
+    </message>
+    <message>
+        <source>Go to Layer</source>
+        <translation>レイヤーへ移動</translation>
+    </message>
+    <message>
+        <source>Hash</source>
+        <translation>ハッシュ</translation>
+    </message>
+    <message>
+        <source>How should {name} be placed?</source>
+        <translation>{name} をどのように配置しますか?</translation>
+    </message>
+    <message>
+        <source>Kind</source>
+        <translation>種類</translation>
+    </message>
+    <message>
+        <source>Link to the file (stays external, can be reloaded)</source>
+        <translation>ファイルにリンク (外部のまま、再読込可能)</translation>
+    </message>
+    <message>
+        <source>Linked</source>
+        <translation>リンクしました</translation>
+    </message>
+    <message>
+        <source>Linked and embedded resources: status, relink, reload, embed</source>
+        <translation>リンク / 埋め込み素材の状態・再リンク・再読込・埋め込み</translation>
+    </message>
+    <message>
+        <source>Links</source>
+        <translation>リンク</translation>
+    </message>
+    <message>
+        <source>Links Panel</source>
+        <translation>リンクパネル</translation>
+    </message>
+    <message>
+        <source>Modified</source>
+        <translation>更新日時</translation>
+    </message>
+    <message>
+        <source>Name</source>
+        <translation>名前</translation>
+    </message>
+    <message>
+        <source>Nothing changed: {code}</source>
+        <translation>変更なし: {code}</translation>
+    </message>
+    <message>
+        <source>Place Image</source>
+        <translation>画像を配置</translation>
+    </message>
+    <message>
+        <source>Refresh</source>
+        <translation>更新</translation>
+    </message>
+    <message>
+        <source>Relink...</source>
+        <translation>再リンク...</translation>
+    </message>
+    <message>
+        <source>Relinked {count} layer(s).</source>
+        <translation>{count} レイヤーを再リンクしました。</translation>
+    </message>
+    <message>
+        <source>Reload</source>
+        <translation>再読込</translation>
+    </message>
+    <message>
+        <source>Reloaded {count} layer(s).</source>
+        <translation>{count} レイヤーを再読込しました。</translation>
+    </message>
+    <message>
+        <source>Replace...</source>
+        <translation>差し替え...</translation>
+    </message>
+    <message>
+        <source>Reveal</source>
+        <translation>場所を開く</translation>
+    </message>
+    <message>
+        <source>Status</source>
+        <translation>状態</translation>
+    </message>
+    <message>
+        <source>The file location is unknown.</source>
+        <translation>ファイルの場所が不明です。</translation>
+    </message>
+    <message>
+        <source>Used by</source>
+        <translation>使用レイヤー</translation>
+    </message>
+    <message>
+        <source>Verify Hashes</source>
+        <translation>ハッシュを検証</translation>
+    </message>
+    <message>
+        <source>changed</source>
+        <translation>変更</translation>
+    </message>
+    <message>
+        <source>embedded</source>
+        <translation>埋め込み</translation>
+    </message>
+    <message>
+        <source>linked</source>
+        <translation>リンク</translation>
+    </message>
+    <message>
+        <source>match</source>
+        <translation>一致</translation>
+    </message>
+    <message>
+        <source>missing</source>
+        <translation>見つからない</translation>
+    </message>
+    <message>
+        <source>modified</source>
+        <translation>変更あり</translation>
+    </message>
+    <message>
+        <source>not verified</source>
+        <translation>未検証</translation>
+    </message>
+    <message>
+        <source>offline</source>
+        <translation>オフライン</translation>
+    </message>
+    <message>
+        <source>ok</source>
+        <translation>OK</translation>
+    </message>
+    <message>
+        <source>unsafe</source>
+        <translation>安全でない</translation>
+    </message>
+    <message>
+        <source>unsupported</source>
+        <translation>未対応</translation>
+    </message>
+    <message>
+        <source>{count} resource(s), {attention} need attention</source>
+        <translation>素材 {count} 件、要確認 {attention} 件</translation>
+    </message>
+    <message>
+        <source>{name} has different content than the linked resource. Relink anyway?</source>
+        <translation>{name} の内容はリンク中の素材と異なります。それでも再リンクしますか?</translation>
+    </message>
+    <message>
+        <source>{name} is a symbolic link; place the real file instead.</source>
+        <translation>{name} はシンボリックリンクです。実ファイルを配置してください。</translation>
+    </message>
+    <message>
+        <source>{name} is not a supported image format.</source>
+        <translation>{name} は対応していない画像形式です。</translation>
+    </message>
+</context>
+<context>
+    <name>LoomStrokeMcpPage</name>
+    <message>
+        <source>Agent Approval</source>
+        <translation>エージェント操作の承認</translation>
+    </message>
+    <message>
+        <source>Allow all MCP agent actions</source>
+        <translation>MCPエージェント操作をすべて許可</translation>
+    </message>
+    <message>
+        <source>Ask before every MCP agent action</source>
+        <translation>MCPエージェント操作のたびに確認</translation>
+    </message>
+    <message>
+        <source>Ask only before external generation queues</source>
+        <translation>外部生成の実行前のみ確認</translation>
+    </message>
+    <message>
+        <source>Only active when Agent Approval is set to Allow all MCP agent actions. File roots, external-service permissions, and connection authentication still apply.</source>
+        <translation>エージェントの承認を「すべてのMCPエージェント操作を許可」にした場合のみ有効です。ファイルの許可フォルダー、外部サービスの許可、接続認証は引き続き適用されます。</translation>
+    </message>
+    <message>
+        <source>Refresh Session Token</source>
+        <translation>セッショントークンを更新</translation>
+    </message>
+    <message>
+        <source>Refresh the MCP session token?
+
+After refreshing the token, any agents registered to this LoomStroke MCP server must update their connection settings before they can connect again.</source>
+        <translation>MCP セッショントークンを更新しますか?
+
+トークンを更新すると、この LoomStroke MCP サーバーを登録しているエージェント側で接続設定を更新するまで再接続できなくなります。</translation>
+    </message>
+    <message>
+        <source>Skip additional confirmation dialogs</source>
+        <translation>追加の確認ダイアログを省略する</translation>
+    </message>
+</context>
+<context>
+    <name>MainWindowAIPresetMenuCoordinator</name>
+    <message>
+        <source>(No presets installed)</source>
+        <translation>(インストール済みのプリセットはありません)</translation>
+    </message>
+    <message>
+        <source>Failed to add AI effect layer</source>
+        <translation>AI エフェクトレイヤーを追加できませんでした</translation>
+    </message>
+    <message>
+        <source>Installed AI Presets</source>
+        <translation>インストール済み AI プリセット</translation>
+    </message>
+</context>
+<context>
+    <name>MainWindowActionShortcutCoordinator</name>
+    <message>
+        <source>Action ID: {action_id}</source>
+        <translation>アクションID: {action_id}</translation>
+    </message>
+    <message>
+        <source>Shortcut: (none)</source>
+        <translation>ショートカット: (なし)</translation>
+    </message>
+    <message>
+        <source>Shortcut: {shortcut}</source>
+        <translation>ショートカット: {shortcut}</translation>
+    </message>
+</context>
+<context>
+    <name>MainWindowCoreEventCoordinator</name>
+    <message>
+        <source>Undo history cleared</source>
+        <translation>Undo履歴をクリアしました</translation>
+    </message>
+    <message>
+        <source>Undo history cleared after load</source>
+        <translation>読み込み後にUndo履歴をクリアしました</translation>
+    </message>
+    <message>
+        <source>Undo history cleared after save</source>
+        <translation>保存後にUndo履歴をクリアしました</translation>
+    </message>
+</context>
+<context>
+    <name>MainWindowEditShapeActionsCoordinator</name>
+    <message>
+        <source>Shape Manager</source>
+        <translation>シェイプマネージャー</translation>
+    </message>
+</context>
+<context>
+    <name>MainWindowExportImageAction</name>
+    <message>
+        <source>Export Failed</source>
+        <translation>エクスポートに失敗しました</translation>
+    </message>
+    <message>
+        <source>Export Image</source>
+        <translation>画像をエクスポート</translation>
+    </message>
+    <message>
+        <source>Exported {name}</source>
+        <translation>{name} を書き出しました</translation>
+    </message>
+    <message>
+        <source>Unable to export image: {path}</source>
+        <translation>画像をエクスポートできません: {path}</translation>
+    </message>
+</context>
+<context>
+    <name>MainWindowFilterActionsCoordinator</name>
+    <message>
+        <source>Applying this filter requires rasterizing "{name}". The vector or text will no longer be editable after applying. Continue?</source>
+        <translation>このフィルターを適用するには「{name}」のラスタライズが必要です。適用後はベクターや文字として編集できなくなります。続行しますか?</translation>
+    </message>
+    <message>
+        <source>Filter Error</source>
+        <translation>フィルターエラー</translation>
+    </message>
+    <message>
+        <source>Rasterize layer?</source>
+        <translation>レイヤーをラスタライズしますか?</translation>
+    </message>
+</context>
+<context>
+    <name>MainWindowImageSizeAction</name>
+    <message>
+        <source>Image Size</source>
+        <translation>画像解像度</translation>
+    </message>
+    <message>
+        <source>Image resized to {width}x{height} px at {dpi} dpi</source>
+        <translation>画像を {width}x{height} px / {dpi} dpi にリサイズしました</translation>
+    </message>
+    <message>
+        <source>Resolution set to {dpi} dpi</source>
+        <translation>解像度を {dpi} dpi に変更しました</translation>
+    </message>
+</context>
+<context>
+    <name>MainWindowImageViewActionsCoordinator</name>
+    <message>
+        <source>Canvas Resize</source>
+        <translation>キャンバスのサイズ変更</translation>
+    </message>
+    <message>
+        <source>Canvas service is not available.</source>
+        <translation>キャンバスサービスが利用できません。</translation>
+    </message>
+    <message>
+        <source>Colour profile assigned: {name}</source>
+        <translation>カラープロファイルを割り当てました: {name}</translation>
+    </message>
+    <message>
+        <source>Colour profile removed (treated as sRGB)</source>
+        <translation>カラープロファイルを解除しました (sRGB とみなす)</translation>
+    </message>
+    <message>
+        <source>Comic Book Settings</source>
+        <translation>漫画作品の設定</translation>
+    </message>
+    <message>
+        <source>DPI updated to {dpi}</source>
+        <translation>DPI を {dpi} に更新しました</translation>
+    </message>
+    <message>
+        <source>Failed to assign the colour profile.</source>
+        <translation>カラープロファイルの割り当てに失敗しました。</translation>
+    </message>
+    <message>
+        <source>Failed to flip canvas.</source>
+        <translation>キャンバスの反転に失敗しました。</translation>
+    </message>
+    <message>
+        <source>Failed to resize canvas.</source>
+        <translation>キャンバスのリサイズに失敗しました。</translation>
+    </message>
+    <message>
+        <source>Failed to rotate canvas.</source>
+        <translation>キャンバスの回転に失敗しました。</translation>
+    </message>
+    <message>
+        <source>Failed to update DPI.</source>
+        <translation>DPI の更新に失敗しました。</translation>
+    </message>
+    <message>
+        <source>Flip Canvas</source>
+        <translation>キャンバスを反転</translation>
+    </message>
+    <message>
+        <source>Image Properties</source>
+        <translation>画像の設定</translation>
+    </message>
+    <message>
+        <source>Rotate Canvas</source>
+        <translation>キャンバスを回転</translation>
+    </message>
+    <message>
+        <source>The book settings could not be stored in this document.</source>
+        <translation>この文書には作品設定を保存できませんでした。</translation>
+    </message>
+</context>
+<context>
+    <name>MainWindowMenuBuilderCoordinator</name>
+    <message>
+        <source>(No Recent Files)</source>
+        <translation>(最近使用したファイルはありません)</translation>
+    </message>
+    <message>
+        <source>(Panels are in Window menu)</source>
+        <translation>(パネルはウィンドウメニューにあります)</translation>
+    </message>
+    <message>
+        <source>Not implemented</source>
+        <translation>未実装</translation>
+    </message>
+</context>
+<context>
+    <name>MainWindowScreentoneAction</name>
+    <message>
+        <source>New Screentone Layer</source>
+        <translation>新規スクリーントーンレイヤー</translation>
+    </message>
+    <message>
+        <source>No selection. Apply the screentone to the whole page?</source>
+        <translation>選択範囲がありません。ページ全体にスクリーントーンを適用しますか?</translation>
+    </message>
+    <message>
+        <source>Screentone layer created</source>
+        <translation>スクリーントーンレイヤーを作成しました</translation>
+    </message>
+</context>
+<context>
+    <name>MainWindowSoftProofController</name>
+    <message>
+        <source>Choose Proof Profile</source>
+        <translation>プルーフ用プロファイルを選択</translation>
+    </message>
+    <message>
+        <source>ICC Profile (*.icc *.icm);;All Files (*.*)</source>
+        <translation>ICC プロファイル (*.icc *.icm);;すべてのファイル (*.*)</translation>
+    </message>
+    <message>
+        <source>Soft Proof</source>
+        <translation>ソフトプルーフ</translation>
+    </message>
+    <message>
+        <source>Soft proof could not be enabled for this profile.</source>
+        <translation>このプロファイルではソフトプルーフを有効にできませんでした。</translation>
+    </message>
+    <message>
+        <source>The file is not a usable ICC profile.</source>
+        <translation>このファイルは使用できる ICC プロファイルではありません。</translation>
+    </message>
+</context>
+<context>
+    <name>MainWindowWindowSetupCoordinator</name>
+    <message>
+        <source>LoomStroke v{version}</source>
+        <translation>LoomStroke v{version}</translation>
+    </message>
+</context>
+<context>
+    <name>NamedStylesWidget</name>
+    <message>
+        <source>Character style</source>
+        <translation>文字スタイル</translation>
+    </message>
+    <message>
+        <source>Named styles</source>
+        <translation>名前付きスタイル</translation>
+    </message>
+    <message>
+        <source>Paragraph style</source>
+        <translation>段落スタイル</translation>
+    </message>
+    <message>
+        <source>Style name</source>
+        <translation>スタイル名</translation>
+    </message>
+</context>
+<context>
+    <name>NativeCmykConversionControls</name>
+    <message>
+        <source>Convert Document to CMYK</source>
+        <translation>文書をCMYKへ変換</translation>
+    </message>
+    <message>
+        <source>Convert all pages to editable CMYK with a CMYK ICC profile.</source>
+        <translation>CMYK ICCプロファイルを使い、すべてのページを編集可能なCMYKへ変換します。</translation>
+    </message>
+</context>
+<context>
+    <name>NativeCmykForegroundControls</name>
+    <message>
+        <source>Use CMYK ink values</source>
+        <translation>CMYKのインク量で描画</translation>
+    </message>
+</context>
+<context>
+    <name>NativeComfyUI</name>
+    <message>
+        <source>An operation is in progress. Wait before reloading nodes.</source>
+        <translation>処理中です。完了してからノードを再読み込みしてください。</translation>
+    </message>
+    <message>
+        <source>Apply changes to Editor</source>
+        <translation>変更をEditorに反映</translation>
+    </message>
+    <message>
+        <source>Apply to node</source>
+        <translation>ノードに適用</translation>
+    </message>
+    <message>
+        <source>Apply values</source>
+        <translation>値を反映</translation>
+    </message>
+    <message>
+        <source>Apply values before generating or changing layers. Only published parameters are applied.</source>
+        <translation>生成・レイヤー切替の前に値を反映してください。公開対象のパラメーターを反映します。</translation>
+    </message>
+    <message>
+        <source>Automatic startup requires a local HTTP URL without a path.</source>
+        <translation>自動起動には、このPCのHTTP URLをパスなしで指定してください。</translation>
+    </message>
+    <message>
+        <source>Basic widgets (Qt)</source>
+        <translation>基本ウィジェット (Qt)</translation>
+    </message>
+    <message>
+        <source>Browse…</source>
+        <translation>参照…</translation>
+    </message>
+    <message>
+        <source>Cancel</source>
+        <translation>キャンセル</translation>
+    </message>
+    <message>
+        <source>Checking saved server URLs…</source>
+        <translation>保存済みの接続先を確認しています…</translation>
+    </message>
+    <message>
+        <source>ComfyUI Folders</source>
+        <translation>ComfyUI Folders (フォルダ)</translation>
+    </message>
+    <message>
+        <source>ComfyUI did not finish loading. Check the server connection and reload nodes.</source>
+        <translation>ComfyUIの読み込みがタイムアウトしました。サーバーの接続状態を確認して、ノードを再読み込みしてください。</translation>
+    </message>
+    <message>
+        <source>ComfyUI error: %s</source>
+        <translation>ComfyUIエラー: %s</translation>
+    </message>
+    <message>
+        <source>ComfyUI exited during startup. See the ComfyUI console.</source>
+        <translation>ComfyUIが起動途中で終了しました。ComfyUIのコンソールを確認してください。</translation>
+    </message>
+    <message>
+        <source>ComfyUI exited during startup. See the ComfyUI startup log.</source>
+        <translation>ComfyUIが起動途中で終了しました。ComfyUIの起動ログを確認してください。</translation>
+    </message>
+    <message>
+        <source>ComfyUI folder containing main.py</source>
+        <translation>main.pyがあるComfyUIフォルダ</translation>
+    </message>
+    <message>
+        <source>ComfyUI is already running.</source>
+        <translation>ComfyUIはすでに起動しています。</translation>
+    </message>
+    <message>
+        <source>ComfyUI is ready.</source>
+        <translation>ComfyUIの起動が完了しました。</translation>
+    </message>
+    <message>
+        <source>ComfyUI page could not be loaded. Check the server URL.</source>
+        <translation>ComfyUIのページを読み込めませんでした。サーバーURLを確認してください。</translation>
+    </message>
+    <message>
+        <source>ComfyUI startup failed: %s</source>
+        <translation>ComfyUIの起動に失敗しました: %s</translation>
+    </message>
+    <message>
+        <source>ComfyUI startup timed out. See the ComfyUI console.</source>
+        <translation>ComfyUIの起動確認がタイムアウトしました。ComfyUIのコンソールを確認してください。</translation>
+    </message>
+    <message>
+        <source>ComfyUI startup timed out. See the ComfyUI startup log.</source>
+        <translation>ComfyUIの起動確認がタイムアウトしました。ComfyUIの起動ログを確認してください。</translation>
+    </message>
+    <message>
+        <source>Configure effect…</source>
+        <translation>エフェクトとして設定…</translation>
+    </message>
+    <message>
+        <source>Connected</source>
+        <translation>接続済み</translation>
+    </message>
+    <message>
+        <source>Connecting to ComfyUI…</source>
+        <translation>ComfyUIに接続中…</translation>
+    </message>
+    <message>
+        <source>Could not update the AI Effect layer.</source>
+        <translation>AI Effectレイヤーを更新できませんでした。</translation>
+    </message>
+    <message>
+        <source>Custom UI (ComfyUI)</source>
+        <translation>独自UIあり (ComfyUI)</translation>
+    </message>
+    <message>
+        <source>Edit a workflow here, then configure its exposed parameters and outputs.</source>
+        <translation>ここでワークフローを編集し、公開するパラメーターと出力を設定します。</translation>
+    </message>
+    <message>
+        <source>Edit native nodes</source>
+        <translation>ノードを編集</translation>
+    </message>
+    <message>
+        <source>Edit workflow in ComfyUI</source>
+        <translation>ComfyUIでワークフローを編集</translation>
+    </message>
+    <message>
+        <source>Effect editor is unavailable.</source>
+        <translation>エフェクトエディターを利用できません。</translation>
+    </message>
+    <message>
+        <source>Enable external services in Preferences to use ComfyUI.</source>
+        <translation>ComfyUIを使うにはPreferencesで外部サービスを許可してください。</translation>
+    </message>
+    <message>
+        <source>External services disabled</source>
+        <translation>外部サービスが無効です</translation>
+    </message>
+    <message>
+        <source>Invalid input schema</source>
+        <translation>入力定義を確認できませんでした</translation>
+    </message>
+    <message>
+        <source>Invalid widget information</source>
+        <translation>ウィジェット情報を確認できませんでした</translation>
+    </message>
+    <message>
+        <source>Layer values changed while reading nodes. Reopen the node editor.</source>
+        <translation>読込中にレイヤーの値が変更されました。ノード編集を開き直してください。</translation>
+    </message>
+    <message>
+        <source>Load workflow…</source>
+        <translation>ワークフローを読み込む…</translation>
+    </message>
+    <message>
+        <source>Missing input schema</source>
+        <translation>入力定義を取得できませんでした</translation>
+    </message>
+    <message>
+        <source>Missing widget information</source>
+        <translation>ウィジェット情報を取得できませんでした</translation>
+    </message>
+    <message>
+        <source>No embedded Python or ComfyUI virtual environment was found.</source>
+        <translation>同梱PythonまたはComfyUIの仮想環境が見つかりません。</translation>
+    </message>
+    <message>
+        <source>No published nodes were found in this workflow.</source>
+        <translation>このワークフローに公開対象のノードが見つかりません。</translation>
+    </message>
+    <message>
+        <source>Open ComfyUI</source>
+        <translation>ComfyUIを開く</translation>
+    </message>
+    <message>
+        <source>Open ComfyUI before releasing VRAM.</source>
+        <translation>VRAMを解放するには、先にComfyUIを開いてください。</translation>
+    </message>
+    <message>
+        <source>Open or load a workflow first.</source>
+        <translation>先にワークフローを開くか読み込んでください。</translation>
+    </message>
+    <message>
+        <source>Open this effect's workflow in the ComfyUI tab.</source>
+        <translation>このエフェクトのワークフローをComfyUIタブで開きます。</translation>
+    </message>
+    <message>
+        <source>Prompt input…</source>
+        <translation>プロンプト入力…</translation>
+    </message>
+    <message>
+        <source>Refresh saved server status</source>
+        <translation>保存済みサーバーの状態を更新</translation>
+    </message>
+    <message>
+        <source>Release VRAM</source>
+        <translation>VRAMを解放</translation>
+    </message>
+    <message>
+        <source>Reload nodes</source>
+        <translation>ノードを再読み込み</translation>
+    </message>
+    <message>
+        <source>Remote ComfyUI uses the URL saved in Preferences; automatic startup is local only.</source>
+        <translation>遠隔ComfyUIにはPreferencesに保存したURLで接続します。自動起動はこのPCのみ対象です。</translation>
+    </message>
+    <message>
+        <source>Running</source>
+        <translation>稼働中</translation>
+    </message>
+    <message>
+        <source>Select a ComfyUI folder containing main.py.</source>
+        <translation>main.pyがあるComfyUIフォルダを指定してください。</translation>
+    </message>
+    <message>
+        <source>Select a ComfyUI server in the Editor tab.</source>
+        <translation>EditorタブでComfyUIサーバーを選択してください。</translation>
+    </message>
+    <message>
+        <source>Select a ComfyUI server.</source>
+        <translation>ComfyUIサーバーを選択してください。</translation>
+    </message>
+    <message>
+        <source>Show ComfyUI console window</source>
+        <translation>ComfyUIのコンソールウィンドウを表示</translation>
+    </message>
+    <message>
+        <source>Start ComfyUI when LoomStroke starts</source>
+        <translation>LoomStroke起動時にComfyUIを自動起動</translation>
+    </message>
+    <message>
+        <source>Starting</source>
+        <translation>起動中</translation>
+    </message>
+    <message>
+        <source>Starting ComfyUI…</source>
+        <translation>ComfyUIを起動しています…</translation>
+    </message>
+    <message>
+        <source>Startup failed</source>
+        <translation>起動失敗</translation>
+    </message>
+    <message>
+        <source>Stop ComfyUI when LoomStroke exits</source>
+        <translation>LoomStroke終了時にComfyUIも終了する</translation>
+    </message>
+    <message>
+        <source>Stopped or unreachable</source>
+        <translation>停止中または接続不可</translation>
+    </message>
+    <message>
+        <source>The Editor workflow changed. Reopen it in the ComfyUI tab.</source>
+        <translation>Editorのワークフローが変わりました。ComfyUIタブで開き直してください。</translation>
+    </message>
+    <message>
+        <source>The local URL is occupied by a service other than ComfyUI.</source>
+        <translation>Local URLでComfyUI以外のサービスが動作しています。</translation>
+    </message>
+    <message>
+        <source>The selected layer changed. Reopen its node editor.</source>
+        <translation>選択レイヤーが変わりました。対象レイヤーのノード編集を開き直してください。</translation>
+    </message>
+    <message>
+        <source>The server changed. Close and reopen the node editor.</source>
+        <translation>サーバーが変更されました。ノード編集画面を閉じて開き直してください。</translation>
+    </message>
+    <message>
+        <source>This node has no published text parameters.</source>
+        <translation>このノードには公開されたテキスト項目がありません。</translation>
+    </message>
+    <message>
+        <source>Undetermined UI (ComfyUI)</source>
+        <translation>判定不能 (ComfyUI)</translation>
+    </message>
+    <message>
+        <source>Unexpected response to the VRAM release request.</source>
+        <translation>VRAM解放要求に対して予期しない応答がありました。</translation>
+    </message>
+    <message>
+        <source>Uses Local URL below. Requires external services to be enabled. Background ComfyUI started by LoomStroke is automatically stopped on exit, including active generation. The stop option applies to console startup. Existing and remote servers remain running.</source>
+        <translation>起動には下のLocal URLと外部サービスの許可を使います。LoomStrokeがバックグラウンドで起動したComfyUIは、生成中でもLoomStroke終了時に自動で終了します。終了オプションはコンソール起動時に適用されます。既に起動していたサーバーと遠隔サーバーは終了しません。</translation>
+    </message>
+    <message>
+        <source>Uses Local URL below. Requires external services to be enabled. ComfyUI remains running after LoomStroke closes.</source>
+        <translation>下のLocal URLを使用します。外部サービスの許可が必要です。LoomStroke終了後もComfyUIは起動したままになります。</translation>
+    </message>
+    <message>
+        <source>Uses Local URL below. Requires external services to be enabled. On exit, only ComfyUI started by this LoomStroke instance can be stopped, including active generation. Existing and remote servers remain running.</source>
+        <translation>起動には下のLocal URLと外部サービスの許可を使います。終了オプションは今回のLoomStrokeが起動したComfyUIのみが対象で、生成中でも終了します。既に起動していたサーバーと遠隔サーバーは終了しません。</translation>
+    </message>
+    <message>
+        <source>VRAM release requested. Models will reload on the next generation.</source>
+        <translation>接続中のComfyUIにVRAM解放を要求しました。次回生成時にモデルを再読み込みします。</translation>
+    </message>
+    <message>
+        <source>Values applied to this layer.</source>
+        <translation>このレイヤーに値を反映しました。</translation>
+    </message>
+    <message>
+        <source>Wait until the generation queue is empty to release VRAM.</source>
+        <translation>生成キューが空になってからVRAMを解放してください。</translation>
+    </message>
+    <message>
+        <source>Wait until the generation queue is empty to switch servers.</source>
+        <translation>生成キューが空になってから接続先を切り替えてください。</translation>
+    </message>
+    <message>
+        <source>Windows only. Applies to the next automatic startup. Shows ComfyUI output in a separate console window instead of the startup log. Closing the console stops ComfyUI.</source>
+        <translation>Windows専用です。次回の自動起動から、ComfyUIの出力を起動ログではなく別のコンソールウィンドウに表示します。コンソールを閉じるとComfyUIも終了します。</translation>
+    </message>
+    <message>
+        <source>Workflow must be a JSON object.</source>
+        <translation>ワークフローはJSONオブジェクトである必要があります。</translation>
+    </message>
+    <message>
+        <source>Workflow transferred. Select parameters and outputs in the Editor tab, then register.</source>
+        <translation>ワークフローを転送しました。Editorタブで公開パラメーターと出力を選び、登録してください。</translation>
+    </message>
+</context>
+<context>
+    <name>NativeLivePromptChoices</name>
+    <message>
+        <source>Could not update the AI Effect layer.</source>
+        <translation>AI Effectレイヤーを更新できませんでした。</translation>
+    </message>
+    <message>
+        <source>Layer values changed while reading nodes. Reopen the node editor.</source>
+        <translation>読込中にレイヤーの値が変更されました。ノード編集を開き直してください。</translation>
+    </message>
+</context>
+<context>
+    <name>NewDocumentColorControls</name>
+    <message>
+        <source>Choose a CMYK ICC profile to create a CMYK document.</source>
+        <translation>CMYK文書の作成に使用するCMYK ICCプロファイルを選択してください。</translation>
+    </message>
+    <message>
+        <source>Color Mode</source>
+        <translation>カラーモード</translation>
+    </message>
+</context>
+<context>
+    <name>PathText</name>
+    <message>
+        <source>0 keeps the original contour; higher values ignore smaller bumps.</source>
+        <translation>0では元の輪郭を使用し、値を上げるほど細かな凹凸を無視します。</translation>
+    </message>
+    <message>
+        <source>Alignment</source>
+        <translation>揃え</translation>
+    </message>
+    <message>
+        <source>Avoid overlapping letters</source>
+        <translation>文字の重なりを避ける</translation>
+    </message>
+    <message>
+        <source>Center</source>
+        <translation>中央</translation>
+    </message>
+    <message>
+        <source>Click a segment to add an anchor. Alt-click an anchor to delete. Drag anchors or handles to reshape. S: smooth, C: corner, B: break handles, M: symmetric. Esc to finish.</source>
+        <translation>線上クリックでアンカー追加、Alt+クリックで削除。アンカーやハンドルをドラッグして形状を変更できます。S: なめらか、C: 角、B: ハンドル分離、M: 対称。Escで終了します。</translation>
+    </message>
+    <message>
+        <source>Click or drag anchors and handles. Alt-click deletes an anchor.</source>
+        <translation>アンカーやハンドルをクリック・ドラッグして編集します。Alt+クリックでアンカーを削除できます。</translation>
+    </message>
+    <message>
+        <source>Contour</source>
+        <translation>輪郭</translation>
+    </message>
+    <message>
+        <source>Contour smoothing</source>
+        <translation>輪郭のなめらかさ</translation>
+    </message>
+    <message>
+        <source>Distance from path (px)</source>
+        <translation>パスからの距離 (px)</translation>
+    </message>
+    <message>
+        <source>Distribute</source>
+        <translation>均等配置</translation>
+    </message>
+    <message>
+        <source>Drag the start and end handles along the contour.</source>
+        <translation>開始・終了ハンドルを輪郭に沿ってドラッグできます。</translation>
+    </message>
+    <message>
+        <source>Edit path</source>
+        <translation>パスを編集</translation>
+    </message>
+    <message>
+        <source>Edit text</source>
+        <translation>本文を編集</translation>
+    </message>
+    <message>
+        <source>Edit text here. Ctrl+Enter to finish.</source>
+        <translation>ここで本文を編集できます。Ctrl+Enterで確定します。</translation>
+    </message>
+    <message>
+        <source>End</source>
+        <translation>終了</translation>
+    </message>
+    <message>
+        <source>End (%)</source>
+        <translation>終了位置 (%)</translation>
+    </message>
+    <message>
+        <source>Fit editable Bezier handles like the vector pen. 0 restores the path before correction.</source>
+        <translation>ベクターペンと同じ補正で、編集できるベジェハンドルを生成します。0で補正前のパスに戻ります。</translation>
+    </message>
+    <message>
+        <source>Handle smoothness</source>
+        <translation>ハンドルの滑らかさ</translation>
+    </message>
+    <message>
+        <source>No usable contour. Select an object or make a selection first.</source>
+        <translation>使用できる輪郭がありません。オブジェクトまたは選択範囲を指定してください。</translation>
+    </message>
+    <message>
+        <source>Reverse direction</source>
+        <translation>進行方向を反転</translation>
+    </message>
+    <message>
+        <source>Rotate letters along path</source>
+        <translation>パスに沿って文字を回転</translation>
+    </message>
+    <message>
+        <source>Select a vector path, a selection, or a raster layer.</source>
+        <translation>ベクターのパス・選択範囲・ラスターレイヤーを選んでください。</translation>
+    </message>
+    <message>
+        <source>Start</source>
+        <translation>開始</translation>
+    </message>
+    <message>
+        <source>Start (%)</source>
+        <translation>開始位置 (%)</translation>
+    </message>
+    <message>
+        <source>Swap start and end</source>
+        <translation>開始点と終了点を入れ替える</translation>
+    </message>
+    <message>
+        <source>Text</source>
+        <translation>本文</translation>
+    </message>
+    <message>
+        <source>Text Along Path</source>
+        <translation>パスに沿って配置</translation>
+    </message>
+    <message>
+        <source>Text exceeds the selected interval. The full text is retained.</source>
+        <translation>指定区間に収まらない文字があります。本文はすべて保持されています。</translation>
+    </message>
+    <message>
+        <source>Use full loop</source>
+        <translation>全周を使用</translation>
+    </message>
+</context>
+<context>
+    <name>PathTextController</name>
+    <message>
+        <source>No usable contour. Select an object or make a selection first.</source>
+        <translation>使用できる輪郭がありません。オブジェクトまたは選択範囲を指定してください。</translation>
+    </message>
+    <message>
+        <source>Select a vector path, a selection, or a raster layer.</source>
+        <translation>ベクターのパス・選択範囲・ラスターレイヤーを選んでください。</translation>
+    </message>
+</context>
+<context>
+    <name>PenPresets</name>
+    <message>
+        <source>Brushes</source>
+        <translation>ブラシ</translation>
+    </message>
+    <message>
+        <source>Drag the handles to adjust taper lengths. Left/Right adjust; Shift changes by 10 px; Up/Down choose a handle; Home turns off; End sets 2000 px.</source>
+        <translation>ハンドルをドラッグして入り抜きの長さを調整します。矢印キーで調整、Shiftで10 pxずつ、上下キーでハンドルを選択、Homeで無効、Endで2000 pxに設定します。</translation>
+    </message>
+    <message>
+        <source>Export</source>
+        <translation>書き出し</translation>
+    </message>
+    <message>
+        <source>Export Pen</source>
+        <translation>ペンを書き出す</translation>
+    </message>
+    <message>
+        <source>Finish the current stroke before changing pen settings.</source>
+        <translation>ペン設定を変更する前に描画を完了してください。</translation>
+    </message>
+    <message>
+        <source>Flow</source>
+        <translation>フロー</translation>
+    </message>
+    <message>
+        <source>Hardness</source>
+        <translation>硬さ</translation>
+    </message>
+    <message>
+        <source>Import</source>
+        <translation>読み込み</translation>
+    </message>
+    <message>
+        <source>Import Pen</source>
+        <translation>ペンを読み込む</translation>
+    </message>
+    <message>
+        <source>In: {length} px</source>
+        <translation>入り: {length} px</translation>
+    </message>
+    <message>
+        <source>LoomStroke Pen (*.lspn)</source>
+        <translation>LoomStroke ペン (*.lspn)</translation>
+    </message>
+    <message>
+        <source>Opacity</source>
+        <translation>不透明度</translation>
+    </message>
+    <message>
+        <source>Out: {length} px</source>
+        <translation>抜き: {length} px</translation>
+    </message>
+    <message>
+        <source>Pen</source>
+        <translation>ペン</translation>
+    </message>
+    <message>
+        <source>Pen Presets</source>
+        <translation>ペンプリセット</translation>
+    </message>
+    <message>
+        <source>Pen preset operation failed: {error}</source>
+        <translation>ペンプリセットの操作に失敗しました: {error}</translation>
+    </message>
+    <message>
+        <source>Pen taper could not be completed. The stroke was preserved.</source>
+        <translation>入り抜きを確定できませんでした。描画した線は保持されています。</translation>
+    </message>
+    <message>
+        <source>Pen taper editor</source>
+        <translation>入り抜きのグラフィック調整</translation>
+    </message>
+    <message>
+        <source>Preset Name</source>
+        <translation>プリセット名</translation>
+    </message>
+    <message>
+        <source>Pressure Sensitive</source>
+        <translation>筆圧を使用</translation>
+    </message>
+    <message>
+        <source>Preview length: {length} px</source>
+        <translation>プレビューの長さ: {length} px</translation>
+    </message>
+    <message>
+        <source>Recontour</source>
+        <translation>描線を再調整</translation>
+    </message>
+    <message>
+        <source>Recontour Smoothness (next stroke)</source>
+        <translation>再調整の滑らかさ (次のストローク)</translation>
+    </message>
+    <message>
+        <source>Save New</source>
+        <translation>新規保存</translation>
+    </message>
+    <message>
+        <source>Select a pen preset first.</source>
+        <translation>ペンプリセットを選択してください。</translation>
+    </message>
+    <message>
+        <source>Size</source>
+        <translation>サイズ</translation>
+    </message>
+    <message>
+        <source>Smoothing</source>
+        <translation>手ぶれ補正</translation>
+    </message>
+    <message>
+        <source>Stamp Density</source>
+        <translation>スタンプ密度</translation>
+    </message>
+    <message>
+        <source>Taper End Length</source>
+        <translation>抜きの長さ</translation>
+    </message>
+    <message>
+        <source>Taper In</source>
+        <translation>入り</translation>
+    </message>
+    <message>
+        <source>Taper In Length</source>
+        <translation>入りの長さ</translation>
+    </message>
+    <message>
+        <source>Taper In Length (0: off)</source>
+        <translation>入りの長さ (0: 無効)</translation>
+    </message>
+    <message>
+        <source>Taper Out</source>
+        <translation>抜き</translation>
+    </message>
+    <message>
+        <source>Taper Out Length</source>
+        <translation>抜きの長さ</translation>
+    </message>
+    <message>
+        <source>Taper Out Length (0: off)</source>
+        <translation>抜きの長さ (0: 無効)</translation>
+    </message>
+    <message>
+        <source>Taper Start Length</source>
+        <translation>入りの長さ</translation>
+    </message>
+    <message>
+        <source>The brush tip image could not be read.</source>
+        <translation>先端画像を読み込めませんでした。</translation>
+    </message>
+    <message>
+        <source>The brush tip is too large for a pen preset.</source>
+        <translation>先端画像がペンプリセットの上限を超えています。</translation>
+    </message>
+    <message>
+        <source>The selected pen preset is unavailable.</source>
+        <translation>選択したペンプリセットが見つかりません。</translation>
+    </message>
+    <message>
+        <source>Tilt Angle</source>
+        <translation>傾きを使用</translation>
+    </message>
+    <message>
+        <source>Tone Gamma</source>
+        <translation>トーンガンマ</translation>
+    </message>
+    <message>
+        <source>Tone Range</source>
+        <translation>トーン範囲</translation>
+    </message>
+    <message>
+        <source>Update</source>
+        <translation>更新</translation>
+    </message>
+    <message>
+        <source>{handle}: {length} px</source>
+        <translation>{handle}: {length} px</translation>
+    </message>
+</context>
+<context>
+    <name>PrintProfilePicker</name>
+    <message>
+        <source>Load ICC Profile...</source>
+        <translation>ICC プロファイルを読み込む...</translation>
+    </message>
+</context>
+<context>
+    <name>QtNodeForms</name>
+    <message>
+        <source>Could not update the AI Effect layer.</source>
+        <translation>AI Effectレイヤーを更新できませんでした。</translation>
+    </message>
+</context>
+<context>
+    <name>SAM3AISelect</name>
+    <message>
+        <source>AI Refine blocked</source>
+        <translation>AI Refine 中断</translation>
+    </message>
+    <message>
+        <source>AI Refine finished</source>
+        <translation>AI Refine 完了</translation>
+    </message>
+    <message>
+        <source>AI Refine running...</source>
+        <translation>AI Refine 処理中...</translation>
+    </message>
+    <message>
+        <source>AI Refine...</source>
+        <translation>AIで再調整...</translation>
+    </message>
+    <message>
+        <source>AI Select running...</source>
+        <translation>AI Select 実行中...</translation>
+    </message>
+    <message>
+        <source>Add</source>
+        <translation>追加</translation>
+    </message>
+    <message>
+        <source>Apply as Add</source>
+        <translation>追加で適用</translation>
+    </message>
+    <message>
+        <source>Apply as Intersect</source>
+        <translation>交差で適用</translation>
+    </message>
+    <message>
+        <source>Apply as Subtract</source>
+        <translation>減算で適用</translation>
+    </message>
+    <message>
+        <source>Apply on Candidate Click</source>
+        <translation>候補クリックで選択範囲に適用</translation>
+    </message>
+    <message>
+        <source>Apply this mask as a clipping mask</source>
+        <translation>このマスクをクリッピングマスクとして適用</translation>
+    </message>
+    <message>
+        <source>Apply this mask as the active layer's layer mask</source>
+        <translation>このマスクをアクティブレイヤーのレイヤーマスクとして適用</translation>
+    </message>
+    <message>
+        <source>Auto Mask Cleanup</source>
+        <translation>マスクを自動クリーンアップ</translation>
+    </message>
+    <message>
+        <source>Combine Mode</source>
+        <translation>合成モード</translation>
+    </message>
+    <message>
+        <source>Combine Selected</source>
+        <translation>選択候補を合成</translation>
+    </message>
+    <message>
+        <source>Combine the multi-selected candidates (Ctrl+click rows) into one mask using the Mode</source>
+        <translation>複数選択した候補 (行を Ctrl+クリック) を Mode の方式で 1 つのマスクに合成</translation>
+    </message>
+    <message>
+        <source>Contract</source>
+        <translation>収縮</translation>
+    </message>
+    <message>
+        <source>Copy everything except the mask (background) to a new layer</source>
+        <translation>マスク以外 (背景) を新規レイヤーに複製</translation>
+    </message>
+    <message>
+        <source>Copy the masked area (foreground) to a new layer</source>
+        <translation>マスク部分 (前景) を新規レイヤーに複製</translation>
+    </message>
+    <message>
+        <source>Could not release model memory ({error}).</source>
+        <translation>モデルのメモリを解放できませんでした ({error})。</translation>
+    </message>
+    <message>
+        <source>Cut each multi-selected candidate to its own layer inside a new layer group</source>
+        <translation>複数選択した候補をそれぞれレイヤー化して新規レイヤーグループにまとめる</translation>
+    </message>
+    <message>
+        <source>Cut the masked area to a new layer</source>
+        <translation>マスク部分を切り取って新規レイヤーへ</translation>
+    </message>
+    <message>
+        <source>Detection Threshold</source>
+        <translation>検出しきい値</translation>
+    </message>
+    <message>
+        <source>Diff QA</source>
+        <translation>差分 QA</translation>
+    </message>
+    <message>
+        <source>Exclude this candidate (also removed from Next/Previous cycling)</source>
+        <translation>この候補を除外する (Next/Previous の巡回からも外れる)</translation>
+    </message>
+    <message>
+        <source>Expand</source>
+        <translation>拡張</translation>
+    </message>
+    <message>
+        <source>Export All Candidates</source>
+        <translation>全候補を書き出し</translation>
+    </message>
+    <message>
+        <source>Export All...</source>
+        <translation>全候補を書き出し...</translation>
+    </message>
+    <message>
+        <source>Export PNG</source>
+        <translation>PNG 書き出し</translation>
+    </message>
+    <message>
+        <source>Export PNG...</source>
+        <translation>PNG 書き出し...</translation>
+    </message>
+    <message>
+        <source>Export Selection...</source>
+        <translation>選択範囲を書き出し...</translation>
+    </message>
+    <message>
+        <source>Export Sheet...</source>
+        <translation>シート書き出し...</translation>
+    </message>
+    <message>
+        <source>Export Sprite Sheet</source>
+        <translation>スプライトシート書き出し</translation>
+    </message>
+    <message>
+        <source>Feather</source>
+        <translation>ぼかし</translation>
+    </message>
+    <message>
+        <source>Fill holes</source>
+        <translation>穴を埋める</translation>
+    </message>
+    <message>
+        <source>Generate one inpaint preview (result goes to the Gallery; the canvas is unchanged)</source>
+        <translation>インペイントのプレビューを 1 回生成 (結果は Gallery へ、キャンバスは不変)</translation>
+    </message>
+    <message>
+        <source>Intersect</source>
+        <translation>交差</translation>
+    </message>
+    <message>
+        <source>Invert</source>
+        <translation>反転</translation>
+    </message>
+    <message>
+        <source>Layer Group</source>
+        <translation>レイヤーグループ化</translation>
+    </message>
+    <message>
+        <source>Manually adjust the selected candidate's mask (feather / expand / fill holes — no AI inference)</source>
+        <translation>選択中候補のマスクを手動調整 (ぼかし / 拡張 / 穴埋め — AI 推論なし)</translation>
+    </message>
+    <message>
+        <source>Min Candidate Score</source>
+        <translation>候補スコアの下限</translation>
+    </message>
+    <message>
+        <source>Model memory released. Reloads on next use.</source>
+        <translation>モデルのメモリを解放しました。次回使用時に再ロードします。</translation>
+    </message>
+    <message>
+        <source>Preview Selection Inpaint</source>
+        <translation>選択インペイントをプレビュー生成</translation>
+    </message>
+    <message>
+        <source>Preview generation running...</source>
+        <translation>プレビュー生成中...</translation>
+    </message>
+    <message>
+        <source>Preview submit</source>
+        <translation>プレビュー送信</translation>
+    </message>
+    <message>
+        <source>Protect</source>
+        <translation>保護</translation>
+    </message>
+    <message>
+        <source>Protect Subject (BG Mask)</source>
+        <translation>被写体を保護 (背景マスク)</translation>
+    </message>
+    <message>
+        <source>Protect the subject: invert the mask and use it as the background generation mask</source>
+        <translation>被写体を保護: マスクを反転して背景生成マスクに接続</translation>
+    </message>
+    <message>
+        <source>Re-run SAM3 on this candidate to improve the mask (AI Refine)</source>
+        <translation>SAM3 で再推論してマスク品質を改善する (AI Refine)</translation>
+    </message>
+    <message>
+        <source>Refine Mask</source>
+        <translation>マスクを調整</translation>
+    </message>
+    <message>
+        <source>Refine Mask...</source>
+        <translation>マスクを調整...</translation>
+    </message>
+    <message>
+        <source>Release SAM Memory</source>
+        <translation>SAMメモリを解放</translation>
+    </message>
+    <message>
+        <source>Remove small islands</source>
+        <translation>小さな飛び地を除去</translation>
+    </message>
+    <message>
+        <source>Replace</source>
+        <translation>置換</translation>
+    </message>
+    <message>
+        <source>SAM3 operation blocked</source>
+        <translation>SAM3 処理 中断</translation>
+    </message>
+    <message>
+        <source>SAM3 operation finished</source>
+        <translation>SAM3 処理 完了</translation>
+    </message>
+    <message>
+        <source>SAM3: no active layer to run on</source>
+        <translation>SAM3: 実行対象のレイヤーがありません</translation>
+    </message>
+    <message>
+        <source>SAM3: run blocked</source>
+        <translation>SAM3: 実行できません</translation>
+    </message>
+    <message>
+        <source>SAM3: the active layer is not a raster layer — select a raster layer and run again</source>
+        <translation>SAM3: 選択中のレイヤーはラスターレイヤーではありません — ラスターレイヤーを選択して再実行してください</translation>
+    </message>
+    <message>
+        <source>Save this mask to the generation history (Gallery) for reuse</source>
+        <translation>マスクを生成履歴 (Gallery) に保存して再利用</translation>
+    </message>
+    <message>
+        <source>Select this candidate as the target for Apply / AI Refine</source>
+        <translation>この候補を選択して Apply / AI Refine の対象にする</translation>
+    </message>
+    <message>
+        <source>Sheet Format</source>
+        <translation>シート形式</translation>
+    </message>
+    <message>
+        <source>Sheet Power of Two</source>
+        <translation>シートを 2 の冪に</translation>
+    </message>
+    <message>
+        <source>Sheet Spacing (px)</source>
+        <translation>シート余白 (px)</translation>
+    </message>
+    <message>
+        <source>Show All Instances</source>
+        <translation>全候補を表示 (オフ = 最良 1 件)</translation>
+    </message>
+    <message>
+        <source>Smooth</source>
+        <translation>平滑化</translation>
+    </message>
+    <message>
+        <source>Split Disconnected Instances</source>
+        <translation>分離したオブジェクトを分割</translation>
+    </message>
+    <message>
+        <source>Subtract</source>
+        <translation>減算</translation>
+    </message>
+    <message>
+        <source>Unavailable</source>
+        <translation>この候補では実行できません</translation>
+    </message>
+    <message>
+        <source>Unload the SAM 3.1 model. It reloads automatically on next use.</source>
+        <translation>SAM 3.1のモデルをメモリから解放します。次回使用時に自動で再ロードします。</translation>
+    </message>
+    <message>
+        <source>Use Selection as Inpaint Mask</source>
+        <translation>選択範囲をインペイントマスクに</translation>
+    </message>
+    <message>
+        <source>Use this mask as the AI Effect inpaint mask</source>
+        <translation>このマスクを AI Effect のインペイントマスクに接続</translation>
+    </message>
+    <message>
+        <source>Waiting for SAM, then releasing memory...</source>
+        <translation>SAMの処理終了を待ってメモリを解放しています…</translation>
+    </message>
+</context>
+<context>
+    <name>SAM3MangaMaskAssistant</name>
+    <message>
+        <source>Diff QA</source>
+        <translation>差分 QA</translation>
+    </message>
+    <message>
+        <source>Inpaint submit</source>
+        <translation>インペイント送信</translation>
+    </message>
+</context>
+<context>
+    <name>Sam3BusyStatusIndicator</name>
+    <message>
+        <source>SAM3 operation blocked</source>
+        <translation>SAM3 処理 中断</translation>
+    </message>
+    <message>
+        <source>SAM3 operation finished</source>
+        <translation>SAM3 処理 完了</translation>
+    </message>
+</context>
+<context>
+    <name>Sam3MaskRefineDialog</name>
+    <message>
+        <source>Contract</source>
+        <translation>縮小</translation>
+    </message>
+    <message>
+        <source>Expand</source>
+        <translation>拡張</translation>
+    </message>
+    <message>
+        <source>Feather</source>
+        <translation>ぼかし</translation>
+    </message>
+    <message>
+        <source>Fill holes</source>
+        <translation>穴を埋める</translation>
+    </message>
+    <message>
+        <source>Invert</source>
+        <translation>反転</translation>
+    </message>
+    <message>
+        <source>Refine Mask</source>
+        <translation>マスクを調整</translation>
+    </message>
+    <message>
+        <source>Remove small islands</source>
+        <translation>小さな飛び地を除去</translation>
+    </message>
+    <message>
+        <source>Smooth</source>
+        <translation>滑らか</translation>
+    </message>
+</context>
+<context>
+    <name>Sam3RuntimePage</name>
+    <message>
+        <source> MB</source>
+        <translation> MB</translation>
+    </message>
+    <message>
+        <source>Asset cache limit</source>
+        <translation>アセットキャッシュ上限</translation>
+    </message>
+    <message>
+        <source>Browse...</source>
+        <translation>参照...</translation>
+    </message>
+    <message>
+        <source>Cancel</source>
+        <translation>キャンセル</translation>
+    </message>
+    <message>
+        <source>Checkpoint</source>
+        <translation>チェックポイント</translation>
+    </message>
+    <message>
+        <source>Load Model</source>
+        <translation>モデルをロード</translation>
+    </message>
+    <message>
+        <source>Model</source>
+        <translation>モデル</translation>
+    </message>
+    <message>
+        <source>Point mode</source>
+        <translation>ポイントモード</translation>
+    </message>
+    <message>
+        <source>Ready</source>
+        <translation>準備完了</translation>
+    </message>
+    <message>
+        <source>Restart</source>
+        <translation>再起動</translation>
+    </message>
+    <message>
+        <source>Runtime</source>
+        <translation>ランタイム</translation>
+    </message>
+    <message>
+        <source>SAM 3.1 Ready</source>
+        <translation>SAM 3.1 準備完了</translation>
+    </message>
+    <message>
+        <source>SAM 3.1 root folder</source>
+        <translation>SAM 3.1 ルートフォルダー</translation>
+    </message>
+    <message>
+        <source>Select SAM 3.1 root folder</source>
+        <translation>SAM 3.1 ルートフォルダーを選択</translation>
+    </message>
+    <message>
+        <source>Setup</source>
+        <translation>セットアップ</translation>
+    </message>
+    <message>
+        <source>Start</source>
+        <translation>起動</translation>
+    </message>
+    <message>
+        <source>Start SAM 3.1 server automatically</source>
+        <translation>SAM 3.1 サーバーを自動起動</translation>
+    </message>
+    <message>
+        <source>Starting setup...</source>
+        <translation>セットアップを開始しています...</translation>
+    </message>
+    <message>
+        <source>Status</source>
+        <translation>状態</translation>
+    </message>
+    <message>
+        <source>Status error</source>
+        <translation>状態取得エラー</translation>
+    </message>
+    <message>
+        <source>Stop</source>
+        <translation>停止</translation>
+    </message>
+    <message>
+        <source>Unload Model</source>
+        <translation>モデルをアンロード</translation>
+    </message>
+    <message>
+        <source>Worker</source>
+        <translation>ワーカー</translation>
+    </message>
+    <message>
+        <source>missing</source>
+        <translation>未検出</translation>
+    </message>
+</context>
+<context>
+    <name>SpeakerStylesWidget</name>
+    <message>
+        <source>+ Selected text has style overrides</source>
+        <translation>+ 選択テキストに書式の上書きがあります</translation>
+    </message>
+    <message>
+        <source>Could not update speaker styles. Check the selection and locked layers.</source>
+        <translation>話者書式を更新できませんでした。選択状態とレイヤーのロックを確認してください。</translation>
+    </message>
+    <message>
+        <source>Default for unregistered speakers</source>
+        <translation>未登録の話者に使う既定書式</translation>
+    </message>
+    <message>
+        <source>Edit the selected text in Font, then register or update its speaker style.</source>
+        <translation>Fontで選択テキストの書式を調整し、話者書式として登録・更新してください。</translation>
+    </message>
+    <message>
+        <source>Used by {count} text frames</source>
+        <translation>使用数: {count} テキスト枠</translation>
+    </message>
+</context>
+<context>
+    <name>SpeakerTagWidget</name>
+    <message>
+        <source>Choose color</source>
+        <translation>色を選択</translation>
+    </message>
+    <message>
+        <source>Clear tag</source>
+        <translation>タグを解除</translation>
+    </message>
+    <message>
+        <source>Color tag</source>
+        <translation>色タグ</translation>
+    </message>
+</context>
+<context>
+    <name>SwatchTile</name>
+    <message>
+        <source>Remove swatch</source>
+        <translation>スウォッチを削除</translation>
+    </message>
+</context>
+<context>
+    <name>TextAnnotationsWidget</name>
+    <message>
+        <source>Ruby, tate-chu-yoko and emphasis</source>
+        <translation>ルビ・縦中横・圏点</translation>
+    </message>
+</context>
+<context>
+    <name>TextLinkPicker</name>
+    <message>
+        <source>Click the next text frame. Esc cancels linking.</source>
+        <translation>連結先のテキスト枠をクリックしてください。Escで取り消せます。</translation>
+    </message>
+    <message>
+        <source>Text frames linked.</source>
+        <translation>テキスト枠を連結しました。</translation>
+    </message>
+    <message>
+        <source>The text frames could not be linked.</source>
+        <translation>テキスト枠を連結できませんでした。</translation>
+    </message>
+</context>
+<context>
+    <name>TextTypography</name>
+    <message>
+        <source>A linked text frame is locked.</source>
+        <translation>連結先のテキスト枠がロックされています。</translation>
+    </message>
+    <message>
+        <source>A linked text frame is missing.</source>
+        <translation>連結先のテキスト枠が見つかりません。</translation>
+    </message>
+    <message>
+        <source>Add spacing rule</source>
+        <translation>アキ規則を追加</translation>
+    </message>
+    <message>
+        <source>After (below / left)</source>
+        <translation>後側 (下/左)</translation>
+    </message>
+    <message>
+        <source>Allowed overhang</source>
+        <translation>はみ出し量の上限</translation>
+    </message>
+    <message>
+        <source>Apply character distribution</source>
+        <translation>字取りを適用</translation>
+    </message>
+    <message>
+        <source>Apply emphasis</source>
+        <translation>圏点を適用</translation>
+    </message>
+    <message>
+        <source>Apply per-character ruby (readings separated by |)</source>
+        <translation>文字ごとのルビを適用 (読みを | で区切る)</translation>
+    </message>
+    <message>
+        <source>Apply ruby</source>
+        <translation>ルビを適用</translation>
+    </message>
+    <message>
+        <source>Apply style</source>
+        <translation>スタイルを適用</translation>
+    </message>
+    <message>
+        <source>Apply tate-chu-yoko</source>
+        <translation>縦中横を適用</translation>
+    </message>
+    <message>
+        <source>Apply two-line note</source>
+        <translation>割注を適用</translation>
+    </message>
+    <message>
+        <source>Automatic</source>
+        <translation>自動</translation>
+    </message>
+    <message>
+        <source>Balance columns</source>
+        <translation>段の末尾を揃える</translation>
+    </message>
+    <message>
+        <source>Baseline grid (0: off)</source>
+        <translation>行グリッド (0: 無効)</translation>
+    </message>
+    <message>
+        <source>Baseline shift</source>
+        <translation>ベースライン移動</translation>
+    </message>
+    <message>
+        <source>Before (above / right)</source>
+        <translation>前側 (上/右)</translation>
+    </message>
+    <message>
+        <source>Cancel linking</source>
+        <translation>連結を取り消す</translation>
+    </message>
+    <message>
+        <source>Center</source>
+        <translation>中央</translation>
+    </message>
+    <message>
+        <source>Character distribution width</source>
+        <translation>字取り幅</translation>
+    </message>
+    <message>
+        <source>Character style</source>
+        <translation>文字スタイル</translation>
+    </message>
+    <message>
+        <source>Check the numbered frame order before linking.</source>
+        <translation>番号順に本文が流れます。順番を確認して連結してください。</translation>
+    </message>
+    <message>
+        <source>Circle</source>
+        <translation>白丸</translation>
+    </message>
+    <message>
+        <source>Clear style</source>
+        <translation>書式を解除</translation>
+    </message>
+    <message>
+        <source>Click the next text frame. Esc cancels linking.</source>
+        <translation>連結先のテキスト枠をクリックしてください。Escで取り消せます。</translation>
+    </message>
+    <message>
+        <source>Closing punctuation</source>
+        <translation>閉じ括弧</translation>
+    </message>
+    <message>
+        <source>Closing punctuation at line end</source>
+        <translation>行末の閉じ約物</translation>
+    </message>
+    <message>
+        <source>Column gap</source>
+        <translation>段間</translation>
+    </message>
+    <message>
+        <source>Columns</source>
+        <translation>段数</translation>
+    </message>
+    <message>
+        <source>Compress spaces</source>
+        <translation>アキを詰める</translation>
+    </message>
+    <message>
+        <source>Contextual</source>
+        <translation>前後の文字に応じる</translation>
+    </message>
+    <message>
+        <source>Custom</source>
+        <translation>カスタム</translation>
+    </message>
+    <message>
+        <source>Custom line breaking and spacing</source>
+        <translation>禁則・アキの詳細設定</translation>
+    </message>
+    <message>
+        <source>Delete style</source>
+        <translation>登録を削除</translation>
+    </message>
+    <message>
+        <source>Dot</source>
+        <translation>ビュレット</translation>
+    </message>
+    <message>
+        <source>Each spacing class pair must be unique.</source>
+        <translation>同じ文字クラスの組み合わせは複数登録できません。</translation>
+    </message>
+    <message>
+        <source>Emphasis gap</source>
+        <translation>圏点の間隔</translation>
+    </message>
+    <message>
+        <source>Emphasis mark</source>
+        <translation>圏点の記号</translation>
+    </message>
+    <message>
+        <source>Emphasis position</source>
+        <translation>圏点の位置</translation>
+    </message>
+    <message>
+        <source>Emphasis size ratio</source>
+        <translation>圏点のサイズ比率</translation>
+    </message>
+    <message>
+        <source>Empty text frame</source>
+        <translation>空のテキスト枠</translation>
+    </message>
+    <message>
+        <source>End</source>
+        <translation>末尾</translation>
+    </message>
+    <message>
+        <source>End punctuation hangs outside the line.</source>
+        <translation>行末の約物を行の外へぶら下げています。</translation>
+    </message>
+    <message>
+        <source>Enter a reading and select characters within one paragraph.</source>
+        <translation>読みを入力し、同じ段落内の文字を選択してください。</translation>
+    </message>
+    <message>
+        <source>Existing stories keep their internal frame order.</source>
+        <translation>すでに連結された枠同士の内部の順番は維持します。</translation>
+    </message>
+    <message>
+        <source>Existing text keeps its layout until these settings are enabled.</source>
+        <translation>設定を有効にするまで、既存のテキストの配置を保ちます。</translation>
+    </message>
+    <message>
+        <source>First-line indent</source>
+        <translation>段落先頭の字下げ</translation>
+    </message>
+    <message>
+        <source>Full em</source>
+        <translation>全角</translation>
+    </message>
+    <message>
+        <source>Gap</source>
+        <translation>親文字とのアキ</translation>
+    </message>
+    <message>
+        <source>Half em</source>
+        <translation>半角</translation>
+    </message>
+    <message>
+        <source>Hang end punctuation</source>
+        <translation>行末の約物をぶら下げる</translation>
+    </message>
+    <message>
+        <source>Hanging characters</source>
+        <translation>ぶら下げ対象文字</translation>
+    </message>
+    <message>
+        <source>Horizontal scale</source>
+        <translation>水平比率</translation>
+    </message>
+    <message>
+        <source>Inline note line gap</source>
+        <translation>割注の行間</translation>
+    </message>
+    <message>
+        <source>Inline note size ratio</source>
+        <translation>割注の文字比率</translation>
+    </message>
+    <message>
+        <source>Inseparable repeated characters</source>
+        <translation>同じ文字の連続を分離しない文字</translation>
+    </message>
+    <message>
+        <source>Japanese</source>
+        <translation>和文</translation>
+    </message>
+    <message>
+        <source>Japanese prohibitions</source>
+        <translation>日本語の禁則</translation>
+    </message>
+    <message>
+        <source>Japanese standard</source>
+        <translation>日本語組版の標準</translation>
+    </message>
+    <message>
+        <source>Japanese typesetting</source>
+        <translation>日本語組版</translation>
+    </message>
+    <message>
+        <source>Japanese-Latin spacing</source>
+        <translation>和欧間隔</translation>
+    </message>
+    <message>
+        <source>Justify spaces</source>
+        <translation>アキを調整して両端揃え</translation>
+    </message>
+    <message>
+        <source>Latin</source>
+        <translation>欧文</translation>
+    </message>
+    <message>
+        <source>Latin in vertical text</source>
+        <translation>縦書き中の欧文</translation>
+    </message>
+    <message>
+        <source>Left class</source>
+        <translation>前の文字クラス</translation>
+    </message>
+    <message>
+        <source>Legacy layout</source>
+        <translation>従来の配置</translation>
+    </message>
+    <message>
+        <source>Line adjustment</source>
+        <translation>行調整</translation>
+    </message>
+    <message>
+        <source>Line breaking</source>
+        <translation>禁則処理</translation>
+    </message>
+    <message>
+        <source>Line breaking could not satisfy the selected prohibitions.</source>
+        <translation>指定した禁則を満たせない改行があります。</translation>
+    </message>
+    <message>
+        <source>Link selected frames</source>
+        <translation>選択した枠を連結</translation>
+    </message>
+    <message>
+        <source>Link text frames</source>
+        <translation>テキスト枠を連結</translation>
+    </message>
+    <message>
+        <source>Link to frame</source>
+        <translation>次の枠へ連結</translation>
+    </message>
+    <message>
+        <source>Link to selected frame</source>
+        <translation>一覧の選択先へ連結</translation>
+    </message>
+    <message>
+        <source>Linked frames must use the same writing direction.</source>
+        <translation>連結する枠の縦書き・横書きを揃えてください。</translation>
+    </message>
+    <message>
+        <source>Linking requires rectangular text frames.</source>
+        <translation>連結には長方形のテキスト枠を使用してください。</translation>
+    </message>
+    <message>
+        <source>Maximum (em)</source>
+        <translation>最大アキ (em)</translation>
+    </message>
+    <message>
+        <source>Maximum compression</source>
+        <translation>詰め量の上限</translation>
+    </message>
+    <message>
+        <source>Maximum expansion</source>
+        <translation>伸ばし量の上限</translation>
+    </message>
+    <message>
+        <source>Middle punctuation</source>
+        <translation>中点類</translation>
+    </message>
+    <message>
+        <source>Minimum (em)</source>
+        <translation>最小アキ (em)</translation>
+    </message>
+    <message>
+        <source>Move earlier</source>
+        <translation>前へ</translation>
+    </message>
+    <message>
+        <source>Move later</source>
+        <translation>後へ</translation>
+    </message>
+    <message>
+        <source>Named styles</source>
+        <translation>名前付きスタイル</translation>
+    </message>
+    <message>
+        <source>Next text frame</source>
+        <translation>連結先のテキスト枠</translation>
+    </message>
+    <message>
+        <source>None</source>
+        <translation>なし</translation>
+    </message>
+    <message>
+        <source>Opening bracket at line start</source>
+        <translation>行頭の開き括弧</translation>
+    </message>
+    <message>
+        <source>Opening punctuation</source>
+        <translation>開き括弧</translation>
+    </message>
+    <message>
+        <source>Other</source>
+        <translation>その他</translation>
+    </message>
+    <message>
+        <source>Paragraph columns (0: frame, 1: span)</source>
+        <translation>段落の段数 (0: 枠に従う、1: 段抜き)</translation>
+    </message>
+    <message>
+        <source>Paragraph style</source>
+        <translation>段落スタイル</translation>
+    </message>
+    <message>
+        <source>Position</source>
+        <translation>位置</translation>
+    </message>
+    <message>
+        <source>Preferred (em)</source>
+        <translation>標準アキ (em)</translation>
+    </message>
+    <message>
+        <source>Preset</source>
+        <translation>プリセット</translation>
+    </message>
+    <message>
+        <source>Priority</source>
+        <translation>優先順位</translation>
+    </message>
+    <message>
+        <source>Prohibited at line end</source>
+        <translation>行末禁則文字</translation>
+    </message>
+    <message>
+        <source>Prohibited at line start</source>
+        <translation>行頭禁則文字</translation>
+    </message>
+    <message>
+        <source>Punctuation spacing</source>
+        <translation>約物のアキ</translation>
+    </message>
+    <message>
+        <source>Reading</source>
+        <translation>読み</translation>
+    </message>
+    <message>
+        <source>Register style</source>
+        <translation>スタイルを登録</translation>
+    </message>
+    <message>
+        <source>Remove character distribution</source>
+        <translation>字取りを解除</translation>
+    </message>
+    <message>
+        <source>Remove emphasis</source>
+        <translation>圏点を解除</translation>
+    </message>
+    <message>
+        <source>Remove ruby</source>
+        <translation>ルビを解除</translation>
+    </message>
+    <message>
+        <source>Remove selected rule</source>
+        <translation>選択規則を削除</translation>
+    </message>
+    <message>
+        <source>Remove tate-chu-yoko</source>
+        <translation>縦中横を解除</translation>
+    </message>
+    <message>
+        <source>Remove two-line note</source>
+        <translation>割注を解除</translation>
+    </message>
+    <message>
+        <source>Review the text fit and line-breaking settings.</source>
+        <translation>文字の収まりと改行設定を確認してください。</translation>
+    </message>
+    <message>
+        <source>Right class</source>
+        <translation>後の文字クラス</translation>
+    </message>
+    <message>
+        <source>Ruby alignment</source>
+        <translation>ルビの配置</translation>
+    </message>
+    <message>
+        <source>Ruby and tate-chu-yoko</source>
+        <translation>ルビ・縦中横</translation>
+    </message>
+    <message>
+        <source>Ruby may contain a whole tate-chu-yoko range; partial overlap is not supported.</source>
+        <translation>ルビは縦中横の範囲全体を含められます。部分的に重なる範囲には設定できません。</translation>
+    </message>
+    <message>
+        <source>Ruby, tate-chu-yoko and emphasis</source>
+        <translation>ルビ・縦中横・圏点</translation>
+    </message>
+    <message>
+        <source>Select at least two text frames.</source>
+        <translation>テキスト枠を2つ以上選択してください。</translation>
+    </message>
+    <message>
+        <source>Select text on the canvas to add or remove an annotation.</source>
+        <translation>キャンバス上の文字を選択すると、ルビ・縦中横を追加・解除できます。</translation>
+    </message>
+    <message>
+        <source>Sesame</source>
+        <translation>ゴマ</translation>
+    </message>
+    <message>
+        <source>Sideways</source>
+        <translation>横倒し</translation>
+    </message>
+    <message>
+        <source>Size ratio</source>
+        <translation>文字サイズの比率</translation>
+    </message>
+    <message>
+        <source>Some text cannot fit inside the shape.</source>
+        <translation>図形の中に収まらない文字があります。</translation>
+    </message>
+    <message>
+        <source>Space</source>
+        <translation>空白</translation>
+    </message>
+    <message>
+        <source>Space after character</source>
+        <translation>文字後のアキ</translation>
+    </message>
+    <message>
+        <source>Space around</source>
+        <translation>均等 (前後にアキ)</translation>
+    </message>
+    <message>
+        <source>Space before character</source>
+        <translation>文字前のアキ</translation>
+    </message>
+    <message>
+        <source>Space between</source>
+        <translation>均等 (両端揃え)</translation>
+    </message>
+    <message>
+        <source>Spacing must satisfy minimum ≤ preferred ≤ maximum.</source>
+        <translation>最小値 ≤ 標準値 ≤ 最大値となるように設定してください。</translation>
+    </message>
+    <message>
+        <source>Start</source>
+        <translation>先頭</translation>
+    </message>
+    <message>
+        <source>Stops</source>
+        <translation>句読点</translation>
+    </message>
+    <message>
+        <source>Style name</source>
+        <translation>スタイル名</translation>
+    </message>
+    <message>
+        <source>Text extends outside its frame.</source>
+        <translation>テキストが枠からはみ出しています。</translation>
+    </message>
+    <message>
+        <source>Text frames linked.</source>
+        <translation>テキスト枠を連結しました。</translation>
+    </message>
+    <message>
+        <source>The text frames could not be linked.</source>
+        <translation>テキスト枠を連結できませんでした。</translation>
+    </message>
+    <message>
+        <source>These frames already belong to the same text story.</source>
+        <translation>これらの枠はすでに同じ本文に連結されています。</translation>
+    </message>
+    <message>
+        <source>Unlink text frames</source>
+        <translation>テキスト枠の連結を解除</translation>
+    </message>
+    <message>
+        <source>Upright</source>
+        <translation>正立</translation>
+    </message>
+    <message>
+        <source>Use Japanese typesetting</source>
+        <translation>日本語組版を使用</translation>
+    </message>
+    <message>
+        <source>Use em character advance</source>
+        <translation>em を基準に字送り</translation>
+    </message>
+    <message>
+        <source>Use ruby-specific glyphs</source>
+        <translation>ルビ専用字形を使用</translation>
+    </message>
+    <message>
+        <source>Vertical scale</source>
+        <translation>垂直比率</translation>
+    </message>
+</context>
+<context>
+    <name>VectorPathEditPlugin</name>
+    <message>
+        <source>Edit anchors/handles of vector paths</source>
+        <translation>ベクターパスのアンカーとハンドルを編集します。</translation>
+    </message>
+    <message>
+        <source>Vector Path Edit Tool</source>
+        <translation>ベクターパス編集ツール</translation>
+    </message>
+</context>
+<context>
+    <name>WorkflowEditButton</name>
+    <message>
+        <source>Edit workflow in ComfyUI</source>
+        <translation>ComfyUIでワークフローを編集</translation>
+    </message>
+    <message>
+        <source>Open this effect's workflow in the ComfyUI tab.</source>
+        <translation>このエフェクトのワークフローをComfyUIタブで開きます。</translation>
+    </message>
+</context>
+<context>
+    <name>comic_balloon_rows</name>
+    <message>
+        <source>Balloon</source>
+        <translation>フキダシ</translation>
+    </message>
+    <message>
+        <source>Cannot group these balloons. The original layers have been kept.</source>
+        <translation>このフキダシはまとめられません。元のレイヤーは保持されています。</translation>
+    </message>
+    <message>
+        <source>Group Balloon Objects</source>
+        <translation>フキダシをオブジェクトレイヤーにまとめる</translation>
+    </message>
+</context>
+<context>
+    <name>comic_frame_reference_row</name>
+    <message>
+        <source>Go to source</source>
+        <translation>元データへ移動</translation>
+    </message>
+</context>
+<context>
+    <name>dialogue_batch_actions</name>
+    <message>
+        <source>Could not open the selected dialogues. Refresh the list and try again.</source>
+        <translation>選択したセリフを開けませんでした。一覧を更新してやり直してください。</translation>
+    </message>
+    <message>
+        <source>Edit selected dialogues</source>
+        <translation>選択したセリフを一括編集</translation>
+    </message>
+</context>
+<context>
+    <name>dialogue_selection</name>
+    <message>
+        <source>Could not apply formatting. Reselect the balloon and try again.</source>
+        <translation>書式を反映できませんでした。フキダシを選び直してやり直してください。</translation>
+    </message>
+</context>
+<context>
+    <name>frame_controls_layout</name>
+    <message>
+        <source>Panel {number}</source>
+        <translation>コマ {number}</translation>
+    </message>
+    <message>
+        <source>Preparing panel operation…</source>
+        <translation>コマの変更を処理中…</translation>
+    </message>
+    <message>
+        <source>Release to apply. Esc cancels the drag.</source>
+        <translation>離すと確定します。Escでドラッグを取り消します。</translation>
+    </message>
+    <message>
+        <source>Select a panel to edit its frame.</source>
+        <translation>コマを選択して枠線を編集します。</translation>
+    </message>
+    <message>
+        <source>Selected panel: {panel}</source>
+        <translation>選択中: {panel}</translation>
+    </message>
+</context>
+<context>
+    <name>frame_flow_controller</name>
+    <message>
+        <source>The text frames could not be linked.</source>
+        <translation>テキスト枠を連結できませんでした。</translation>
+    </message>
+</context>
+<context>
+    <name>link_order_dialog</name>
+    <message>
+        <source>Select at least two text frames.</source>
+        <translation>テキスト枠を2つ以上選択してください。</translation>
+    </message>
+</context>
+<context>
+    <name>main_window_image_open</name>
+    <message>
+        <source>Load Failed</source>
+        <translation>読み込みに失敗しました</translation>
+    </message>
+    <message>
+        <source>Unable to load document: {path}</source>
+        <translation>ドキュメントを読み込めません: {path}</translation>
+    </message>
+</context>
+<context>
+    <name>onboarding_dialogs</name>
+    <message>
+        <source>AI Effect</source>
+        <translation>AIエフェクト</translation>
+    </message>
+    <message>
+        <source>AI Effect — no gateway</source>
+        <translation>AI Effect - Gateway なし</translation>
+    </message>
+    <message>
+        <source>AI Effect — no presets</source>
+        <translation>AI Effect - プリセットなし</translation>
+    </message>
+    <message>
+        <source>Drop a .lsfx file into the preset folder, then restart the panel to pick it up.</source>
+        <translation>.lsfx ファイルをプリセットフォルダーに入れてから、パネルを再起動して読み込んでください。</translation>
+    </message>
+    <message>
+        <source>No AI Effect presets are installed.</source>
+        <translation>AI Effect プリセットがインストールされていません。</translation>
+    </message>
+    <message>
+        <source>No AI backend is configured.</source>
+        <translation>AI バックエンドが設定されていません。</translation>
+    </message>
+    <message>
+        <source>Open Preferences → AI Effect and register a backend (e.g. a running ComfyUI instance) before generating.</source>
+        <translation>生成前に Preferences → AI Effect を開き、バックエンド (例: 起動中の ComfyUI インスタンス) を登録してください。</translation>
+    </message>
+    <message>
+        <source>Open preset folder</source>
+        <translation>プリセットフォルダーを開く</translation>
+    </message>
+    <message>
+        <source>Tip: the Preferences → AI Effect tab controls retries, cache size and the default trigger.</source>
+        <translation>ヒント: Preferences → AI Effect タブで、再試行、キャッシュサイズ、既定トリガーを設定できます。</translation>
+    </message>
+    <message>
+        <source>Your first AI Effect generation completed.</source>
+        <translation>初回の AI Effect 生成が完了しました。</translation>
+    </message>
+</context>
+<context>
+    <name>panel_speaker_styles</name>
+    <message>
+        <source>Speaker styles</source>
+        <translation>話者書式</translation>
+    </message>
+</context>
+<context>
+    <name>prompt_dialog</name>
+    <message>
+        <source>Layer values changed while reading nodes. Reopen the node editor.</source>
+        <translation>読込中にレイヤーの値が変更されました。ノード編集を開き直してください。</translation>
+    </message>
+    <message>
+        <source>Open or load a workflow first.</source>
+        <translation>先にワークフローを開くか読み込んでください。</translation>
+    </message>
+    <message>
+        <source>This node has no published text parameters.</source>
+        <translation>このノードには公開されたテキスト項目がありません。</translation>
+    </message>
 </context>
 </TS>

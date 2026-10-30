@@ -1,0 +1,1803 @@
+<!doctype html>
+<!-- Japanese source SHA-256: 6abc2d75844f04b5cf52ac916f1aa13e005046d9fbc7ae2636fe0ef8a16ef611 -->
+<html lang="zh-Hant" dir="ltr">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>LoomStroke 使用說明書</title>
+<link rel="stylesheet" href="languages.css">
+<style>
+:root {
+  --bg: #f7f7f9; --surface: #ffffff; --text: #1f2328; --muted: #5d6470;
+  --line: #dfe2e7; --accent: #7a5cd6; --accent-soft: #efeafd; --code: #f0f1f4;
+  --note: #fff7e0; --note-line: #e8c76a;
+}
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) {
+    --bg: #17181b; --surface: #1f2125; --text: #e6e7ea; --muted: #a2a7b0;
+    --line: #33363c; --accent: #a993f0; --accent-soft: #2b2540; --code: #2a2c31;
+    --note: #2e2a1c; --note-line: #7a6633;
+  }
+}
+:root[data-theme="dark"] {
+  --bg: #17181b; --surface: #1f2125; --text: #e6e7ea; --muted: #a2a7b0;
+  --line: #33363c; --accent: #a993f0; --accent-soft: #2b2540; --code: #2a2c31;
+  --note: #2e2a1c; --note-line: #7a6633;
+}
+* { box-sizing: border-box; }
+html { scroll-behavior: smooth; scroll-padding-top: 16px; }
+body {
+  margin: 0; background: var(--bg); color: var(--text);
+  font-family: "Yu Gothic UI", "Hiragino Sans", "Noto Sans JP", "Meiryo", sans-serif;
+  line-height: 1.75; font-size: 16px;
+}
+.layout { display: grid; grid-template-columns: 270px minmax(0, 1fr); max-width: 1360px; margin: 0 auto; }
+nav.toc {
+  position: sticky; top: 0; height: 100vh; overflow-y: auto; padding: 24px 16px 40px;
+  border-right: 1px solid var(--line); font-size: 14px;
+}
+nav.toc .brand { font-weight: 700; font-size: 18px; margin-bottom: 4px; }
+nav.toc .sub { color: var(--muted); font-size: 12px; margin-bottom: 16px; }
+nav.toc ol { list-style: none; margin: 0; padding: 0; }
+nav.toc li { margin: 1px 0; }
+nav.toc a { color: var(--text); text-decoration: none; display: block; padding: 2px 8px; border-radius: 6px; }
+nav.toc a:hover { background: var(--accent-soft); color: var(--accent); }
+nav.toc ol ol { padding-left: 12px; font-size: 13px; }
+nav.toc ol ol a { color: var(--muted); }
+main { padding: 32px 48px 80px; min-width: 0; }
+header.hero { margin-bottom: 32px; }
+header.hero h1 { font-size: 34px; margin: 0 0 8px; }
+header.hero p { color: var(--muted); margin: 0; }
+section { margin-top: 56px; }
+h2 { font-size: 26px; border-bottom: 2px solid var(--accent); padding-bottom: 6px; margin: 0 0 16px; }
+h3 { font-size: 21px; margin: 44px 0 10px; padding-top: 4px; border-top: 1px solid var(--line); }
+h4 { font-size: 16px; margin: 22px 0 6px; color: var(--accent); }
+p { margin: 8px 0; }
+a { color: var(--accent); }
+figure { margin: 16px 0 24px; background: var(--surface); border: 1px solid var(--line); border-radius: 10px; padding: 10px; }
+figure img { display: block; max-width: 100%; height: auto; margin: 0 auto; border-radius: 4px; cursor: zoom-in; }
+figure.narrow img { max-width: min(460px, 100%); width: auto; }
+figure.mid img { max-width: min(720px, 100%); width: auto; }
+figcaption { color: var(--muted); font-size: 13px; text-align: center; margin-top: 8px; }
+.grid2 { display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 16px; align-items: start; }
+.grid3 { display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 12px; align-items: start; }
+.grid2 figure, .grid3 figure { margin: 0; }
+.side { display: grid; grid-template-columns: minmax(240px, 380px) minmax(0, 1fr); gap: 20px; align-items: start; }
+.side > figure { margin: 0; }
+table { border-collapse: collapse; width: 100%; margin: 12px 0 20px; background: var(--surface); font-size: 14px; }
+th, td { border: 1px solid var(--line); padding: 6px 10px; text-align: left; vertical-align: top; }
+th { background: var(--accent-soft); white-space: nowrap; }
+td:first-child:not([colspan]) { white-space: nowrap; }
+.table-wrap { overflow-x: auto; }
+kbd { font-family: Consolas, monospace; font-size: 13px; background: var(--code); border: 1px solid var(--line); border-bottom-width: 2px; border-radius: 4px; padding: 0 5px; white-space: nowrap; }
+code { font-family: Consolas, monospace; background: var(--code); padding: 1px 5px; border-radius: 4px; font-size: 14px; }
+.note { background: var(--note); border-left: 4px solid var(--note-line); padding: 10px 14px; border-radius: 6px; margin: 14px 0; font-size: 15px; }
+.tag { display: inline-block; font-size: 12px; padding: 0 8px; border-radius: 10px; background: var(--accent-soft); color: var(--accent); margin-left: 6px; vertical-align: middle; }
+ol.steps { padding-left: 22px; }
+ol.steps li { margin: 6px 0; }
+ul.plain { padding-left: 20px; }
+.num { display: inline-block; min-width: 1.45em; height: 1.45em; line-height: 1.45em; border-radius: 50%; background: #eb283c; color: #fff; font-size: 12px; font-weight: 700; text-align: center; margin-right: 4px; vertical-align: 1px; }
+.legend { display: block; margin-top: 4px; }
+table.params td:nth-child(3), table.params td:nth-child(4) { font-size: 13px; }
+table.params td:nth-child(2) { white-space: normal; min-width: 8em; }
+.lightbox { position: fixed; inset: 0; background: rgba(0,0,0,.85); display: none; align-items: center; justify-content: center; z-index: 10; cursor: zoom-out; padding: 16px; }
+.lightbox.open { display: flex; }
+.lightbox img { max-width: 100%; max-height: 100%; }
+.theme-toggle { margin-top: 20px; font-size: 12px; background: none; border: 1px solid var(--line); color: var(--muted); border-radius: 6px; padding: 4px 8px; cursor: pointer; }
+.menu-toggle { display: none; }
+@media (max-width: 900px) {
+  .layout { grid-template-columns: 1fr; }
+  nav.toc { position: static; height: auto; border-right: none; border-bottom: 1px solid var(--line); padding: 16px; }
+  nav.toc .toc-body { display: none; }
+  nav.toc.open .toc-body { display: block; }
+  .menu-toggle { display: inline-block; margin-top: 8px; background: var(--accent-soft); color: var(--accent); border: none; border-radius: 6px; padding: 6px 12px; font-size: 14px; }
+  main { padding: 20px 16px 60px; }
+  header.hero h1 { font-size: 26px; }
+  .side { grid-template-columns: 1fr; }
+  td:first-child { white-space: normal; }
+}
+</style>
+</head>
+<body>
+<div class="layout">
+<nav class="toc" id="toc">
+  <!-- manual-languages:start -->
+  <div class="manual-languages" dir="ltr"><a href="index.html" lang="ja">日本語</a> · <a href="index_en.html" lang="en">English</a> · <a href="index_zh_CN.html" lang="zh-CN">简体中文</a> · <a href="index_zh_Hant.html" lang="zh-Hant" aria-current="page">繁體中文</a> · <a href="index_zh_TW.html" lang="zh-TW">台灣華語</a> · <a href="index_ko.html" lang="ko">한국어</a> · <a href="index_es.html" lang="es">Español</a> · <a href="index_ar.html" lang="ar">العربية</a> · <a href="index_hi.html" lang="hi">हिन्दी</a> · <a href="index_pt_BR.html" lang="pt-BR">Português (Brasil)</a> · <a href="index_bn.html" lang="bn">বাংলা</a> · <a href="index_ru.html" lang="ru">Русский</a></div>
+  <!-- manual-languages:end -->
+
+  <div class="brand">LoomStroke 使用說明書</div>
+  <div class="sub">相容 v0.3.0.7.21 / 帶螢幕截圖的完整指南</div>
+  <button class="menu-toggle" type="button" onclick="document.getElementById('toc').classList.toggle('open')">開啟目錄</button>
+  <div class="toc-body">
+  <ol>
+    <li><a href="#start">一、簡介</a>
+      <ol><li><a href="#whatsnew">自 v0.3 以來的主要變化</a></li><li><a href="#install">安裝和更新</a></li><li><a href="#launch">啟動和啟動螢幕</a></li><li><a href="#recovery">從自動儲存恢復</a></li><li><a href="#new-doc">新文件</a></li><li><a href="#screen">如何查看螢幕</a></li></ol></li>
+    <li><a href="#quickstart">2.我的第一張照片</a></li>
+    <li><a href="#tools">3. 工具</a>
+      <ol><li><a href="#tool-groups">工具列和群組</a></li><li><a href="#tool-pen">基本筆</a></li><li><a href="#tool-filter-pen">過濾筆</a></li><li><a href="#tool-eraser">橡皮擦</a></li><li><a href="#tool-fill">填充</a></li><li><a href="#tool-gradient">漸變</a></li><li><a href="#tool-pattern">圖案填充</a></li><li><a href="#tool-wand">魔杖</a></li><li><a href="#tool-ai">AI Select</a></li><li><a href="#tool-rect">選擇（矩形）</a></li><li><a href="#tool-move">移動</a></li><li><a href="#tool-vpen">向量筆（高精度）</a></li><li><a href="#tool-path">透過</a></li><li><a href="#tool-pathedit">編輯路徑</a></li><li><a href="#tool-text">文字</a></li><li><a href="#tool-vtext">垂直排文字</a></li><li><a href="#tool-eyedropper">滴管</a></li><li><a href="#tool-measure">測量</a></li><li><a href="#tool-comic">Comic</a></li></ol></li>
+    <li><a href="#layers">4. 圖層和濾鏡</a>
+      <ol><li><a href="#layer-panel">圖層面板</a></li><li><a href="#blend">圖層效果（合成）</a></li><li><a href="#layer-ctx">右鍵選單</a></li><li><a href="#channels">頻道</a></li><li><a href="#filters">所有類型的過濾層</a></li><li><a href="#fill-layers">填滿層</a></li><li><a href="#layer-styles">圖層樣式</a></li></ol></li>
+    <li><a href="#panels">5. 面板細節</a>
+      <ol><li><a href="#p-preview">預覽</a></li><li><a href="#p-color">顏色</a></li><li><a href="#p-brush">畫筆管理員</a></li><li><a href="#p-font">字體</a></li><li><a href="#p-shape">形狀管理器</a></li><li><a href="#p-transform">Transform</a></li><li><a href="#p-filter">過濾器</a></li><li><a href="#p-reference">Reference</a></li><li><a href="#p-pages">頁面</a></li><li><a href="#p-gallery">畫廊</a></li><li><a href="#p-aieffect">AI Effects Manager</a></li><li><a href="#p-nanobanana">NanoBanana</a></li><li><a href="#p-gptimage">GPT Image 2</a></li><li><a href="#p-prompt">提示編輯器</a></li><li><a href="#p-3d">3D Preview</a></li><li><a href="#p-aicand">AI Select Candidates</a></li><li><a href="#p-mangamask">Manga Mask Assistant</a></li><li><a href="#p-comic">Comic</a></li><li><a href="#p-comicassets">Comic Assets</a></li><li><a href="#p-comicproject">漫畫項目</a></li><li><a href="#p-comicworkflow">漫畫工作流程</a></li><li><a href="#p-assist">繪圖協助</a></li><li><a href="#p-actions">行動</a></li><li><a href="#p-links">連結</a></li><li><a href="#p-copilot">Canvas Assistant</a></li><li><a href="#p-production">Production Control</a></li></ol></li>
+    <li><a href="#menus">6. 菜單</a>
+      <ol><li><a href="#guides">指南和尺子</a></li><li><a href="#grid">網格設定</a></li><li><a href="#composition">作文指南</a></li><li><a href="#print-layout">格式/裝訂線/附加著色</a></li><li><a href="#cover-template">封面模板</a></li><li><a href="#ctx-canvas">右鍵點選畫布</a></li></ol></li>
+    <li><a href="#dialogs">7. 對話</a>
+      <ol><li><a href="#d-image">圖像/畫布</a></li><li><a href="#d-export">開始寫作</a></li><li><a href="#d-check">檢查/轉換</a></li></ol></li>
+    <li><a href="#prefs">8. 偏好</a></li>
+    <li><a href="#shortcuts">9. 快速鍵</a></li>
+    <li><a href="#faq">10.當你遇到困難時</a></li>
+    <li><a href="sam31_zh_Hant.html">分冊：SAM 3.1介紹指南</a></li>
+  </ol>
+  <button class="theme-toggle" type="button" id="themeBtn">明/暗切換</button>
+  </div>
+</nav>
+
+<main>
+<p class="translation-notice"><a href="index.html" hreflang="ja">機器翻譯。日語原文</a></p>
+<header class="hero">
+  <h1>LoomStroke 使用說明書</h1>
+  <p>我們將解釋如何使用繪畫應用程式 LoomStroke，該應用程式可以在一個螢幕上處理光柵繪圖、向量、文字、多頁、漫畫製作和 AI 協作以及實際螢幕。它涵蓋了所有工具、所有面板及其設定。</p>
+</header>
+
+<!-- ============================================================ -->
+<section id="start">
+<h2>一、簡介</h2>
+
+<h3 id="whatsnew">自 v0.3 以來的主要變化</h3>
+<p>自本手冊第一版（開發版本截至 2026-10-14）以來新增的主要功能及其說明位置。包中包含詳細更正清單。 <code>CHANGELOG.md</code> 請參考</p>
+<div class="table-wrap"><table>
+<tr><th>版本（日期）</th><th>改變</th><th>描述</th></tr>
+<tr><td>v0.3（10-21）</td><td>不使用 Git 更新到最新版本 <code>update.bat</code>。將脫離螢幕的浮動面板返回到螢幕內部。將集中線改為適合漫畫的錐形。在Qt輸入欄中顯示ComfyUI的基本節點。</td><td><a href="#install">安裝和更新</a> / <a href="#p-shape">形狀管理器</a> / <a href="#p-aieffect">AI Effects Manager</a></td></tr>
+<tr><td>v0.3.0.1〜0.3.0.4（10-22）</td><td>ComfyUI 的控制台顯示設定。文字<b>沿著路徑放置</b>。自動根據主文本命名文字圖層。無需人工智慧即可開始 <code>boot_LoomStroke_noAI.bat</code>。用Git引入的環境 <code>update.bat</code> 相容。</td><td><a href="#pref-ai">偏好設定 › AI 效果</a> / <a href="#text-path">沿著路徑放置</a> / <a href="#install">安裝和更新</a></td></tr>
+<tr><td>v0.3.0.5〜0.3.0.6（10-23）</td><td>「輪廓的平滑度」、「交換起點和終點」、「避免字元重疊」、使用「編輯路徑」和「手把的平滑度」對路徑文字進行錨點編輯。</td><td><a href="#text-path">沿著路徑放置</a></td></tr>
+<tr><td>v0.3.0.6.x（10-23〜10-28）</td><td>提高了儲存、切換頁面和撤銷時的安全性。在關閉/建立/開啟之前確認未儲存狀態。即使關閉恢復對話框後也留下建議。首次啟動時，使用作業系統顯示語言和標準佈局。</td><td><a href="#recovery">從自動儲存恢復</a> / <a href="#new-doc">新文件</a> / <a href="#pref-ui">介面</a></td></tr>
+<tr><td>v0.3.0.7.0〜0.3.0.7.10（10-28〜10-29）</td><td>指南、網格、構圖指南、測量工具、格式指南、填滿擴充功能、列印標記、流線型/閃光、沿路徑放置圖案、封面範本。<kbd>[</kbd> <kbd>]</kbd> 比例/加速尺寸變化。從DPI計算A尺寸和B尺寸的px數。</td><td><a href="#guides">指南和尺子</a> 其他 <a href="#menus">6. 菜單</a> / 的每個子句 <a href="#tool-measure">測量</a> / <a href="#d-export">開始寫作</a></td></tr>
+<tr><td>v0.3.0.7.9〜0.3.0.7.18（10-29）</td><td>即時提示的「隨機」、「順序選擇」和「組合枚舉」。 AI效應的「不斷生成」。環繞並變更即時提示欄位的高度。庫中的「複製完整提示」。將畫筆大小加速設定移至首選項 › 效能。</td><td><a href="#p-prompt">提示編輯器</a> / <a href="#p-aieffect">AI Effects Manager</a> / <a href="#p-gallery">畫廊</a> / <a href="#pref-perf">表現</a></td></tr>
+<tr><td>v0.3.0.7.19〜0.3.0.7.21（10-30）</td><td><code>install.bat</code> 引入了 NanoBanana 依賴項 (google-genai) 作為標準。完成所有 12 種語言的翻譯，並改進切換語言時保持輸入值的功能。</td><td><a href="#install">安裝和更新</a></td></tr>
+</table></div>
+<p>此外，還添加了切換繪圖顏色和背景顏色（在工具列末尾）、從過濾器選單直接應用、路徑編輯「在畫布上編輯線寬」、GPT Image 2輸入圖層和2.5系列模型以及視窗選單中的分類。</p>
+
+<h3 id="install">安裝與更新（Windows）</h3>
+<div class="table-wrap"><table>
+<tr><th>文件</th><th>如何使用</th></tr>
+<tr><td><code>install.bat</code></td><td>第一次設定。如果找不到 64 位元 Python 3.11 或更高版本，請在沒有管理員權限的資料夾中（<code>.runtime</code>) 準備Python。 NanoBanana 依賴項 (google-genai) 也作為標準安裝。完成後 <code>boot_LoomStroke.bat</code> 從 開始。</td></tr>
+<tr><td><code>update.bat</code></td><td>更新至最新版本。若以 ZIP 檔案安裝，則請在無 Git 的情況下取得公開版，並<code>user_data</code> 會保留原有的執行環境，僅更換主程式（舊主程式將 <code>.update-backups</code> 將暫存於此處，若失敗則會恢復）。若以 Git 安裝，僅在本地無變更時才可更新至最新版本。更新後 <code>install.bat</code> 將自動執行。</td></tr>
+<tr><td><code>boot_LoomStroke.bat</code></td><td>正常啟動。</td></tr>
+<tr><td><code>boot_LoomStroke_noAI.bat</code></td><td>啟動時不會載入 AI 功能（<code>--no-ai</code>）。AI Effects Manager、AI Select、提示編輯器、NanoBanana、GPT Image 2、ComfyUI、圖庫等面板，以及環境設定中的「AI 效果」、「SAM 3.1」、「LoomStroke MCP」頁面將不會顯示。此啟動不會儲存面板配置，因此通常啟動的配置不會改變。</td></tr>
+</table></div>
+<p>詳細步驟請參閱附贈的 <code>docs/user/INSTALL_AND_RUN.md</code> 請參閱應用程式標題欄（<code>LoomStroke v…</code>）與 <b>幫助 › 關於 LoomStroke</b> 可於此確認。</p>
+
+<h3 id="launch">啟動和啟動螢幕</h3>
+<p>Windows 上，請參閱安裝資料夾的 <code>boot_LoomStroke.bat</code> 雙擊即可啟動。啟動後，螢幕中央會出現「新建文件…」與「開啟…」並列的啟動畫面，並會列出最近使用的檔案。</p>
+<figure><img src="img/start.png" alt="啟動畫面" loading="lazy"><figcaption>啟動畫面　<span class="num">1</span>新檔…　<span class="num">2</span>開啟…</figcaption></figure>
+<p>首次啟動時，將根據 Windows 顯示語言的優先順序尋找對應語言來決定畫面語言（若無對應語言則使用英文）。面板配置將與「重新設定佈局」相同之標準配置。語言後續可 <a href="#pref-ui">環境設定 › 介面</a> 可於「語言」中更換。</p>
+<div class="note">若要使用筆電筆的壓力功能，請務必 <code>boot_LoomStroke.bat</code>（內部中 <code>python.exe</code> 請從此處啟動。<code>pythonw.exe</code> 若從此處啟動，筆電筆雖會被識別，但壓力值可能始終為 0。</div>
+
+<h3 id="recovery">從自動儲存恢復</h3>
+<div class="side">
+<figure><img src="img/dlg_recovery.png" alt="復原對話框" loading="lazy"><figcaption>LoomStroke — 恢復（圖像為英文顯示時的樣貌）</figcaption></figure>
+<div>
+<p>當應用程式被強制關閉或崩潰時，下次啟動時會出現此對話框。清單中會列出自動儲存的時間、檔名（若尚未儲存則為「(未儲存)」）以及會話 ID。</p>
+<table>
+<tr><th>按鈕</th><th>動作</th></tr>
+<tr><td>復原</td><td>請開啟所選的自動儲存檔案，以繼續工作。</td></tr>
+<tr><td>拋棄並重新開始</td><td>請處理掉未使用的舊自動儲存檔案，然後正常啟動。</td></tr>
+<tr><td>×（關閉）/ <kbd>Esc</kbd></td><td>不會刪除任何內容。候選項目將在下次也顯示，即使恢復失敗，候選項目仍會保留。</td></tr>
+</table>
+<p>自動儲存的開關與間隔設定在 <a href="#prefs">環境設定 › 檔案I/O</a> 請於此處設定。若關閉自動儲存，則在程式強制關閉或崩潰後將無法恢復未儲存的變更。</p>
+</div>
+</div>
+
+<h3 id="new-doc">新文件</h3>
+<p><b>檔案 › 新建</b>（<kbd>Ctrl</kbd>+<kbd>N</kbd>) 或開始畫面上的按鈕。</p>
+<div class="grid2">
+<figure><img src="img/dlg_new_document.png" alt="新文檔RGB" loading="lazy"><figcaption>RGB / 8 位元選擇</figcaption></figure>
+<figure><img src="img/dlg_new_document_cmyk.png" alt="新檔案CMYK" loading="lazy"><figcaption>如果選擇 CMYK / 8 位，則會出現 ICC 設定檔欄位。</figcaption></figure>
+</div>
+<div class="table-wrap"><table>
+<tr><th>專案</th><th>內容</th></tr>
+<tr><td><span class="num">1</span>類別</td><td>AI/A尺寸/B尺寸/桌面螢幕/手機螢幕/客製化。</td></tr>
+<tr><td><span class="num">1</span>預設</td><td>類別內的大小。在人工智慧類別中 <code>[SD1.5] 1:1 512 x 512</code>、<code>[SDXL/etc] 1:1 1024 x 1024</code> 我們為圖像生成模型提供了多種分辨率，例如</td></tr>
+<tr><td><span class="num">2</span>寬度/高度（像素）</td><td>1~16384 像素。按一下“新增至預設”，將目前尺寸儲存為您自己的預設。</td></tr>
+<tr><td><span class="num">3</span>DPI</td><td>1~1200。用於在匯出列印時計算最終尺寸。對於 A 尺寸和 B 尺寸預設，變更 DPI 將重新計算寬度和高度 px 數字（預設名稱的 px 顯示與 72dpi 時相同）。手動輸入的尺寸和 AI/螢幕/使用者預設保留 px 數字。</td></tr>
+<tr><td><span class="num">4</span>色彩模式</td><td><b>RGB / 8 bit</b>、<b>CMYK / 8 bit</b>、<b>CMYK / 16 bit</b>。如果您選擇 CMYK，則需要選擇 ICC 設定檔。</td></tr>
+<tr><td><span class="num">4</span>ICC 簡介（位於 CMYK）</td><td>從附帶的 ISO Coated v2 300% / ISO Coated v2 / PSO Uncoated ISO12647 / ISO Newspaper v4 26 / PSO LWC Improved / SC paper (basICColor) 和 APTEC Offset 2025 中進行選擇。透過「載入 ICC 設定檔...」新增您擁有的 .icc，然後透過「下載代表」開啟每個地區的官方分發頁面清單ICC 設定檔...」。</td></tr>
+<tr><td><span class="num">5</span>背景</td><td>透明/白色/自訂顏色（透過「選擇顏色...」指定）。</td></tr>
+</table></div>
+<p>建立新文件時，將初始化前一個文件中使用的排版指南的顯示。如果開啟的文件有未儲存的更改，則在建立新文件、開啟、關閉或退出之前，系統會要求您確認「未儲存的變更」（3 個選擇：儲存、放棄或取消。該按鈕可能以英文顯示）。如果儲存失敗或取消儲存目的地指定，原始文件將保留而不會關閉。</p>
+
+<h3 id="screen">如何查看螢幕</h3>
+<div class="note">在本手冊的螢幕截圖中，描述的位置以紅框和數字表示。文字和表格 <span class="num">1</span> 這些數字對應於影像編號。</div>
+<figure><img src="img/main.png" alt="主螢幕" loading="lazy"><figcaption>主畫面（打開插圖並添加筆和文字）</figcaption></figure>
+<div class="table-wrap"><table>
+<tr><th>地點</th><th>內容</th></tr>
+<tr><td><span class="num">1</span>頂部</td><td>功能表列（文件/編輯/圖像/視圖/圖層/濾鏡/視窗/幫助）</td></tr>
+<tr><td><span class="num">2</span>選單正下方</td><td><b>工具屬性列</b>。顯示所選工具的預設、主要設定和「工具設定」按鈕（詳細設定）。</td></tr>
+<tr><td><span class="num">3</span>左端</td><td><b>工具列</b>。工具按組排列（<a href="#tool-groups">稍後描述</a>）。最后，绘图颜色和背景颜色之间进行切换。</td></tr>
+<tr><td><span class="num">4</span>中心</td><td><b>畫布</b>。一個可以畫畫的地方。</td></tr>
+<tr><td><span class="num">5</span>畫布頂部</td><td><b>上下文工具列</b>。您可以根据工具（笔的大小、不透明度、硬度）现场更改设置。</td></tr>
+<tr><td><span class="num">6</span>右側</td><td>預覽圖層等面板。在底部的選項卡中切換到“字體”/“形狀管理器”/“提示編輯器”/“NanoBanana”等。</td></tr>
+<tr><td><span class="num">7</span>下側</td><td>頁面面板。將選項卡切換到圖庫/AI Effects Manager/畫筆管理員。</td></tr>
+</table></div>
+<p>可以通过拖动标题部分来移动、选项卡式或浮动面板。顯示/隱藏 <b>窗戶</b> 將選單類別（圖層/頁面/繪圖/漫畫/AI/其他）和排列方式返回初始狀態 <b>視窗 › 重置佈局</b>。<kbd>Tab</kbd> 螢幕模式隱藏面板，<kbd>F11</kbd> 將全螢幕顯示。標題列超出螢幕而無法再操作的浮動面板會自動回到螢幕內部。</p>
+</section>
+
+<!-- ============================================================ -->
+<section id="quickstart">
+<h2>2.我的第一張照片</h2>
+<p>本手册中的屏幕截图是通过打开单个插图并添加到其中来获取的。您可以按照相同的步骤体验基本操作。</p>
+<ol class="steps">
+  <li><b>檔案 › 打開</b>（<kbd>Ctrl</kbd>+<kbd>O</kbd>）打開 PNG 等影像。您将拥有一个与图像大小相同的画布，并且您的图像将是单层。</li>
+  <li>在圖層面板下 <b>＋</b>使用（添加）创建一个新图层，然后双击将名称更改为“绘图”之类的名称。如果您在与原始图片不同的图层上绘制，即使稍后删除或移动它也不会损坏原始图片。</li>
+  <li><b>基本筆</b>（<kbd>B</kbd>) 添加波浪線和星星。</li>
+  <li>新建一個圖層，用鋼筆畫一個圓，<b>填充</b>點擊內部以倒入顏色。</li>
+  <li><b>文字</b>（<kbd>T</kbd>）和<b>垂直排文字</b>點擊畫布並輸入文字。</li>
+  <li>選擇插圖圖層<b>過濾層</b>通过添加 ，您可以模糊或调整颜色，而无需重写原始图片。</li>
+  <li><b>檔案 › 保存</b>（<kbd>Ctrl</kbd>+<kbd>S</kbd>）在 <code>.lstroke</code> 儲存為格式，<b>檔案 › 匯出</b>（<kbd>Ctrl</kbd>+<kbd>E</kbd>）來創建 PNG 等圖像。</li>
+</ol>
+<div class="note">正常繪製是<b>在圖層面板中選擇圖層</b>（左側有紫色條的行）。<a href="#comic-frame-start">框架邊框層</a>现在，使用“在此处绘制”返回到该帧的绘制目的地。当您第一次绘制有效线条时，将为空白草图创建一个图层。</div>
+</section>
+
+<!-- ============================================================ -->
+<section id="tools">
+<h2>3. 工具</h2>
+
+<h3 id="tool-groups">工具列和群組</h3>
+<p>左邊的工具列是<b>工具組</b>按鈕按單元排列。右下角的小三角形按鈕有多種工具，<b>長按（約0.35秒）</b>彈出式選單將打開，您可以在它們之間進行切換。按鈕圖片是最後使用的工具。</p>
+<div class="grid3">
+<figure><img src="img/flyout_0.png" alt="筆組" loading="lazy"><figcaption>筆：基礎筆/濾鏡筆</figcaption></figure>
+<figure><img src="img/flyout_1.png" alt="選擇組" loading="lazy"><figcaption>選擇：魔棒/AI Select/選擇（矩形）</figcaption></figure>
+<figure><img src="img/flyout_2.png" alt="填充組" loading="lazy"><figcaption>填滿：填滿/漸層/圖案填充</figcaption></figure>
+<figure><img src="img/flyout_3.png" alt="向量組" loading="lazy"><figcaption>向量：向量筆（高精度）/路徑/路徑編輯</figcaption></figure>
+<figure><img src="img/flyout_4.png" alt="文字組" loading="lazy"><figcaption>文字：文字/直排文字</figcaption></figure>
+</div>
+<p>此外，作為獨立按鈕 <b>移動</b>、<b>橡皮擦</b>、<b>滴管</b>、<b>測量</b> 有。</p>
+<h4 id="fg-bg">繪圖顏色和背景顏色</h4>
+<p>在工具列的末尾，有用於繪圖顏色（左前）和背景顏色（右後）的方塊。</p>
+<table>
+<tr><td>點擊前面的方塊</td><td>變更繪圖顏色。</td></tr>
+<tr><td>點擊後面的方塊</td><td>變更背景顏色。下次啟動後背景顏色不變。</td></tr>
+<tr><td>右上箭頭 / <kbd>X</kbd></td><td>交換前景色和背景色（<b>編輯 › 交換前景色與背景色</b>）。</td></tr>
+<tr><td>左下小黑白/ <kbd>D</kbd></td><td>返回黑白（<b>編輯 › 將前景色和背景色重置為預設設置</b>）。</td></tr>
+</table>
+<p>當你選擇一個工具時，<b>工具屬性列</b>（菜單正下方）和<b>上下文工具列</b>該工具的設定將顯示（在畫布上）。您可以使用欄左端的「預設」來呼叫設定組合，並使用「儲存」和「刪除」來管理它們。<b>“工具設定”</b>（對於筆，請按「筆設定」）按鈕開啟可折疊的進階設定。在本手冊中，詳細設定以展開的所有部分顯示。</p>
+
+<!-- ペン -->
+<h3 id="tool-pen">基本筆 <span class="tag">B</span></h3>
+<figure><img src="img/use_pen.png" alt="用基本筆畫畫" loading="lazy"><figcaption>在「繪圖」圖層上用鋼筆繪製粉紅色的波浪線條和黃色的星星。頂部的大小、不透明度和硬度的上下文工具列。<span class="legend"><span class="num">1</span>選定的工具　<span class="num">2</span>屬性欄　<span class="num">3</span>上下文工具列　<span class="num">4</span>畫線</span></figcaption></figure>
+<p>支援鋼筆壓力和傾斜的光柵畫筆。可以使用「草圖」等預設，也可以從畫筆管理器匯入 Photoshop 的 ABR 畫筆和 PNG 影像畫筆筆尖。</p>
+
+<figure class="narrow"><img src="img/opt_pen.png" alt="筆設定" loading="lazy"><figcaption>筆設定（展開所有部分）</figcaption></figure>
+
+<!-- フィルターペン -->
+<h4>參數表（共27項）</h4><p>快捷方式：<kbd>B</kbd> / <kbd>Shift+B</kbd>　預設：草圖、墨跡、標記</p>
+<div class="table-wrap"><table class="params">
+<tr><th>分類</th><th>專案</th><th>範圍/選擇</th><th>初始值</th><th>描述</th></tr>
+<tr><td>基本的</td><td>尺寸</td><td>1〜128</td><td>12</td><td>畫筆直徑（像素）。<kbd>[</kbd> / <kbd>]</kbd> 但你可以改變它（它會根據當前大小按比例改變，如果你反覆按下它會變得更快。<a href="#pref-perf">加速度設定</a>）。</td></tr>
+<tr><td>基本的</td><td>不透明度</td><td>0〜1</td><td>1</td><td>一條線完全黑暗。</td></tr>
+<tr><td>基本的</td><td>硬度</td><td>0〜1</td><td>0.8</td><td>邊緣的銳度。 0表示模糊，1表示清楚。</td></tr>
+<tr><td>基本的</td><td>流量</td><td>0〜1</td><td>1</td><td>一張印章上的墨水量。如果它很低，當你分層時它會逐漸變暗。</td></tr>
+<tr><td>基本的</td><td>印章密度</td><td>0〜1</td><td>0.56</td><td>刷痕之間的間隔細度。它越高，線條越平滑，沒有明顯的接縫。</td></tr>
+<tr><td>基本的</td><td>影像穩定</td><td>0〜1</td><td>0</td><td>影像穩定的強度。設定越高，線條的波動越平滑（繪圖稍有延遲）。</td></tr>
+<tr><td>線條形狀</td><td>條目長度</td><td>0〜2000</td><td>0</td><td>繪圖開始處細化（進入）的長度。 0 禁用。</td></tr>
+<tr><td>線條形狀</td><td>提取長度</td><td>0〜2000</td><td>0</td><td>圖紙末端細化（切割）的長度。 0 禁用。</td></tr>
+<tr><td>線條形狀</td><td>Recontour</td><td>開/關</td><td>關閉</td><td>重塑成品線的輪廓（平滑任何擺動）。</td></tr>
+<tr><td>線條形狀</td><td>RecontourSmoothness（從下一筆開始應用）</td><td>0〜100</td><td>30</td><td>調整輪廓的力量。更改將反映在您繪製的下一條線上。</td></tr>
+<tr><td>筆壓</td><td>筆壓感應</td><td>開/關</td><td>上</td><td>線條粗細反映了數位板的筆壓。</td></tr>
+<tr><td>筆壓</td><td>尺寸壓力曲線</td><td>0.1〜4</td><td>1</td><td>筆壓與粗細的對應曲線。值為 1 表示成比例；大於 1 的值使其變薄，直到用力按壓為止；小於 1 的值則輕按則變厚。</td></tr>
+<tr><td>筆壓</td><td>筆壓大小下限</td><td>0〜1</td><td>0</td><td>壓力為0時的粗細百分比。如果為0，則線條在零壓力下消失，如果為0.3，則至少粗30%。</td></tr>
+<tr><td>筆壓</td><td>透過鋼筆壓力改變不透明度</td><td>開/關</td><td>關閉</td><td>筆壓也體現在線條的疏密程度。</td></tr>
+<tr><td>筆壓</td><td>不透明度壓力曲線</td><td>0.1〜4</td><td>1</td><td>筆壓與密度的對應曲線（思路與筆壓大小曲線相同）。</td></tr>
+<tr><td>筆壓</td><td>筆壓不透明度下限</td><td>0〜1</td><td>0</td><td>筆壓為 0 時的暗度百分比。</td></tr>
+<tr><td>筆壓</td><td>傾斜陰影</td><td>開/關</td><td>關閉</td><td>透過傾斜筆來添加光影（僅適用於支援傾斜檢測的平板電腦）。</td></tr>
+<tr><td>色調/陰影</td><td>亮度範圍</td><td>0〜1</td><td>1</td><td>色調（濃淡）表現的明度範圍。</td></tr>
+<tr><td>色調/陰影</td><td>亮度伽瑪</td><td>0.1〜2</td><td>0.6</td><td>色調表達的明暗曲線。</td></tr>
+<tr><td>紙紋/混色</td><td>紙紋強度</td><td>0〜1</td><td>0</td><td>紙張紋理（粗糙度）的影響。 0 禁用。</td></tr>
+<tr><td>紙紋/混色</td><td>紙張粒度</td><td>1〜64</td><td>4</td><td>紙樣的尺寸。</td></tr>
+<tr><td>紙紋/混色</td><td>與底色混合</td><td>0〜1</td><td>0</td><td>绘制颜色与已绘制的基础颜色的混合量。水彩/油画风格的混合颜色。</td></tr>
+<tr><td>传播/变异</td><td>噴塗</td><td>0〜3</td><td>0</td><td>画笔痕迹沿线条行进方向左右分散的量。</td></tr>
+<tr><td>传播/变异</td><td>尺寸變化</td><td>0〜1</td><td>0</td><td>每张邮票的尺寸随机变化。</td></tr>
+<tr><td>传播/变异</td><td>角度變化</td><td>0〜1</td><td>0</td><td>随机改变每个图章的方向（效果在除圆圈之外的尖端可见）。</td></tr>
+<tr><td>传播/变异</td><td>顏色變化</td><td>0〜1</td><td>0</td><td>隨機改變每個圖章的顏色。</td></tr>
+<tr><td>传播/变异</td><td>变异的种子</td><td>0〜2147483647</td><td>1</td><td>变异的随机种子。如果值相同，则每次的变化都相同。</td></tr>
+</table></div>
+
+<h3 id="tool-filter-pen">過濾筆</h3>
+<figure><img src="img/use_filter_pen.png" alt="過濾筆" loading="lazy"><figcaption>插图左下角的花朵是使用“马赛克”滤镜水平描绘的。仅将描出的部分制作成马赛克。<span class="legend"><span class="num">1</span>選定的工具　<span class="num">2</span>屬性欄　<span class="num">3</span>上下文工具列　<span class="num">4</span>被追蹤的地方</span></figcaption></figure>
+<p>此笔仅对绘制区域应用滤镜效果。当您想要部分模糊或马赛克时使用。</p>
+<figure class="narrow"><img src="img/opt_filter_pen.png" alt="過濾器設定" loading="lazy"><figcaption>“过滤器设置...”对话框</figcaption></figure>
+
+<!-- 消しゴム -->
+<h4>參數表（共13項）</h4>
+<div class="table-wrap"><table class="params">
+<tr><th>分類</th><th>專案</th><th>範圍/選擇</th><th>初始值</th><th>描述</th></tr>
+<tr><td>基本的</td><td>過濾器</td><td>高斯模糊/色阶校正/锐化/降噪/色相/饱和度/灰度反转/亮度/对比度/色调曲线/渐变贴图/马赛克/漫画画面色调</td><td>高斯模糊</td><td>应用于跟踪部分的过滤器。</td></tr>
+<tr><td>基本的</td><td>尺寸</td><td>1〜1000</td><td>24</td><td>畫筆直徑（像素）。<kbd>[</kbd> / <kbd>]</kbd> 但你可以改變它（它會根據當前大小按比例改變，如果你反覆按下它會變得更快。<a href="#pref-perf">加速度設定</a>）。</td></tr>
+<tr><td>基本的</td><td>申請金額</td><td>0〜1</td><td>1</td><td>過濾強度（施用量）。</td></tr>
+<tr><td>基本的</td><td>硬度</td><td>0〜1</td><td>1</td><td>邊緣的銳度。 0表示模糊，1表示清楚。</td></tr>
+<tr><td>基本的</td><td>印章密度</td><td>0〜1</td><td>0.6</td><td>刷痕之間的間隔細度。它越高，線條越平滑，沒有明顯的接縫。</td></tr>
+<tr><td>基本的</td><td>流量</td><td>0〜1</td><td>1</td><td>一張印章上的墨水量。如果它很低，當你分層時它會逐漸變暗。</td></tr>
+<tr><td>基本的</td><td>影像穩定</td><td>0〜1</td><td>0</td><td>影像穩定的強度。設定越高，線條的波動越平滑（繪圖稍有延遲）。</td></tr>
+<tr><td>線條形狀</td><td>重新调整绘制的线条</td><td>開/關</td><td>關閉</td><td>重塑成品線的輪廓（平滑任何擺動）。</td></tr>
+<tr><td>線條形狀</td><td>重新调整的平滑度（下一行程）</td><td>0〜100</td><td>30</td><td>調整輪廓的力量。更改將反映在您繪製的下一條線上。</td></tr>
+<tr><td>筆壓</td><td>使用壓力</td><td>開/關</td><td>上</td><td>以畫筆的粗細反映筆壓。</td></tr>
+<tr><td>筆壓</td><td>傾斜陰影</td><td>開/關</td><td>關閉</td><td>透過傾斜筆來調整強度。</td></tr>
+<tr><td>色調/陰影</td><td>音域</td><td>0〜1</td><td>1</td><td>色調（濃淡）表現的明度範圍。</td></tr>
+<tr><td>色調/陰影</td><td>色調伽瑪</td><td>0.1〜2</td><td>0.6</td><td>色調表達的明暗曲線。</td></tr>
+<tr><td>過濾器</td><td>過濾器設定...</td><td>按鈕</td><td>—</td><td>打开对话框并设置特定于所选滤镜的值（例如高斯模糊半径、马赛克单元格大小）和画笔笔尖（圆圈/“加载 PNG”、“加载 ABR”、“从选择创建笔尖”）。</td></tr>
+</table></div>
+<h4>操作按鈕</h4><table>
+<tr><td>過濾器</td><td>过滤器设置...（打开过滤器设置对话框）</td></tr>
+</table>
+
+<h3 id="tool-eraser">橡皮擦 <span class="tag">E</span></h3>
+<figure><img src="img/use_eraser.png" alt="橡皮擦" loading="lazy"><figcaption>部分粉色波浪线对角擦除<span class="legend"><span class="num">1</span>選定的工具　<span class="num">2</span>屬性欄　<span class="num">3</span>上下文工具列　<span class="num">4</span>它消失的地方</span></figcaption></figure>
+<figure class="narrow"><img src="img/opt_eraser.png" alt="橡皮擦設置" loading="lazy"><figcaption>工具設定（部署）</figcaption></figure>
+
+<!-- 塗りつぶし -->
+<h4>参数表（共6项）</h4><p>快捷方式：<kbd>E</kbd> / <kbd>Shift+E</kbd>　预设：软擦除、边缘调整</p>
+<div class="table-wrap"><table class="params">
+<tr><th>分類</th><th>專案</th><th>範圍/選擇</th><th>初始值</th><th>描述</th></tr>
+<tr><td>基本的</td><td>尺寸</td><td>1〜200</td><td>20</td><td>畫筆直徑（像素）。<kbd>[</kbd> / <kbd>]</kbd> 您可以以 2px 增量更改它（橡皮擦不成比例或加速）。</td></tr>
+<tr><td>基本的</td><td>實力</td><td>0〜1</td><td>1</td><td>抹去的力量。设置为 1 将其完全关闭，设置为 1 将其完全关闭，而设置为 1 将其完全关闭，设置为 1 只是使其变薄。</td></tr>
+<tr><td>基本的</td><td>硬度</td><td>0〜1</td><td>0.5</td><td>邊緣的銳度。 0表示模糊，1表示清楚。</td></tr>
+<tr><td>線路品質</td><td>間隔</td><td>0.01〜1</td><td>0.1</td><td>橡皮擦標記之間的間距（以直徑的百分比表示）。越小越光滑。</td></tr>
+<tr><td>線路品質</td><td>抗鋸齒</td><td>開/關</td><td>上</td><td>平滑擦除的邊緣。</td></tr>
+<tr><td>向量擦除</td><td>向量消除法</td><td>觸碰區域/整條線/直到交叉點</td><td>觸摸的部分</td><td>擦除向量圖層時的範圍。觸碰區域 = 僅摩擦區域，整條線 = 整條觸控線，直到交點 = 與另一條線的交點所隔開的部分。</td></tr>
+</table></div>
+
+<h3 id="tool-fill">填充</h3>
+<figure><img src="img/use_fill.png" alt="填充" loading="lazy"><figcaption>右上角紫色圓圈內側塗上淺紫色（單獨圖層「繪畫範例」）<span class="legend"><span class="num">1</span>選定的工具　<span class="num">2</span>屬性欄　<span class="num">4</span>畫圓</span></figcaption></figure>
+<p>繪製連接到單擊位置的相似顏色範圍。</p>
+<figure class="narrow"><img src="img/opt_fill_bucket.png" alt="填充設定" loading="lazy"><figcaption>工具設定（部署）</figcaption></figure>
+
+<!-- グラデーション -->
+<h4>參數表（共7項）</h4>
+<div class="table-wrap"><table class="params">
+<tr><th>分類</th><th>專案</th><th>範圍/選擇</th><th>初始值</th><th>描述</th></tr>
+<tr><td>基本的</td><td>填充方式</td><td>桶/封閉並油漆/油漆剩餘區域</td><td>桶</td><td>Bucket = 繪製連接到點選區域的區域。包圍並繪製=繪製拖曳包圍的區域。繪製未填滿區域=填滿用畫筆描繪的未填滿區域（線條之間的白色）。</td></tr>
+<tr><td>基本的</td><td>參考</td><td>活動層/顯示層</td><td>主動層</td><td>用於確定邊界的圖片。活动图层=仅选定的图层，可见图层=所有可见图层的合成（用于在查看线条绘制图层时在单独的图层上进行绘制）。</td></tr>
+<tr><td>基本的</td><td>色容差</td><td>0〜255</td><td>8</td><td>寬度被視為“相似顏色”。它越大，它就越會擴散到不同顏色的區域。</td></tr>
+<tr><td>面積/間隙</td><td>面積擴大/縮小</td><td>-16〜16</td><td>0</td><td>加寬 (+)/縮小 (-) 繪製區域的像素數。當你想填寫到該行的底部。</td></tr>
+<tr><td>面積/間隙</td><td>未上漆的筆刷尺寸</td><td>1〜256</td><td>32</td><td>用於「繪製未填充區域」的畫筆的大小。</td></tr>
+<tr><td>面積/間隙</td><td>緊密間隙 (px)</td><td>0〜10</td><td>0</td><td>假設線條的中斷被覆蓋到這個寬度來進行繪製。</td></tr>
+<tr><td>輸出</td><td>填充目標</td><td>活動層/新層</td><td>主動層</td><td>去哪裡畫畫。活動層或用於填滿的新層。</td></tr>
+</table></div>
+
+<h3 id="tool-gradient">漸變</h3>
+<figure><img src="img/use_gradient.png" alt="漸層編輯" loading="lazy"><figcaption>從左下角斜拖曳後立即的編輯狀態（從粉紅色到透明）。虛線是漸變的方向。<span class="legend"><span class="num">1</span>選定的工具　<span class="num">2</span>屬性欄　<span class="num">3</span>上下文工具列　<span class="num">4</span>漸層方向</span></figcaption></figure>
+<ol class="steps">
+  <li>在畫布上從起點拖曳到終點。目前還沒有<b>預覽</b>是的。</li>
+  <li>在上下文工具列上調整類型（線性/圓形）、開始/結束顏色、中間停止次數和抖動。</li>
+  <li>您可以拖曳線上的圖釘來變更其位置，或按一下線上以新增顏色中繼點（<kbd>Ctrl</kbd>+點選刪除）。</li>
+  <li><kbd>Enter</kbd> 或按一下遠離該線的某處進行確認。<kbd>Esc</kbd> 取消。</li>
+</ol>
+<figure class="narrow"><img src="img/opt_gradient.png" alt="漸變設定" loading="lazy"><figcaption>工具設定“中間顏色”</figcaption></figure>
+
+<!-- パターン -->
+<h4>參數表（共11項）</h4>
+<div class="table-wrap"><table class="params">
+<tr><th>分類</th><th>專案</th><th>範圍/選擇</th><th>初始值</th><th>描述</th></tr>
+<tr><td>基本的</td><td>類型</td><td>線性/徑向</td><td>線性</td><td>線性=直線方向，徑向=從中心向外展開。</td></tr>
+<tr><td>基本的</td><td>起始顏色</td><td>顏色</td><td>#000000</td><td>起點的顏色。</td></tr>
+<tr><td>基本的</td><td>結束顏色</td><td>顏色</td><td>#FFFFFF</td><td>終點的顏色。</td></tr>
+<tr><td>中性色</td><td>中間停止</td><td>0〜3</td><td>0</td><td>中間插入的顏色中繼點的數量。</td></tr>
+<tr><td>中性色</td><td>Stop 1 Pos</td><td>0〜1</td><td>0.25</td><td>中繼點 1 的位置（0 = 起點，1 = 終點）。</td></tr>
+<tr><td>中性色</td><td>Stop 1 Color</td><td>顏色</td><td>#808080</td><td>航點 1 的顏色。</td></tr>
+<tr><td>中性色</td><td>Stop 2 Pos</td><td>0〜1</td><td>0.5</td><td>航點 2 的位置。</td></tr>
+<tr><td>中性色</td><td>Stop 2 Color</td><td>顏色</td><td>#808080</td><td>航點 2 的顏色。</td></tr>
+<tr><td>中性色</td><td>Stop 3 Pos</td><td>0〜1</td><td>0.75</td><td>航點 3 的位置。</td></tr>
+<tr><td>中性色</td><td>Stop 3 Color</td><td>顏色</td><td>#808080</td><td>航點 3 的顏色。</td></tr>
+<tr><td>輸出品質</td><td>抖動</td><td>開/關</td><td>上</td><td>混合細顆粒以使色差（條帶）不那麼明顯。</td></tr>
+<tr><td>操作</td><td>線上固定</td><td>—</td><td>—</td><td>透過拖曳移動中繼點，透過點選線條新增中繼點，<kbd>Ctrl</kbd>+點選刪除。<kbd>Enter</kbd> 已確認<kbd>Esc</kbd> 取消與。</td></tr>
+</table></div>
+
+<h3 id="tool-pattern">圖案填充</h3>
+<figure><img src="img/use_pattern.png" alt="圖案填充" loading="lazy"><figcaption>底圈內側繪有格紋圖案<span class="legend"><span class="num">1</span>選定的工具　<span class="num">2</span>屬性欄　<span class="num">4</span>一個畫有圖案的圓圈</span></figcaption></figure>
+
+<!-- マジックワンド -->
+<h4>參數表（共4項）</h4>
+<div class="table-wrap"><table class="params">
+<tr><th>分類</th><th>專案</th><th>範圍/選擇</th><th>初始值</th><th>描述</th></tr>
+<tr><td>—</td><td>Pattern</td><td>Checkerboard / Horizontal Stripes / Vertical Stripes / Diagonal Stripes / Dots / Crosshatch</td><td>Checkerboard</td><td>要繪製的圖案。格子、橫條紋、豎條紋、斜條紋、圓點、交叉影線。</td></tr>
+<tr><td>—</td><td>縮放</td><td>0.1〜10</td><td>1</td><td>圖案尺寸的放大倍率。</td></tr>
+<tr><td>—</td><td>公差</td><td>0〜255</td><td>32</td><td>顏色的寬度決定了要繪製的區域。</td></tr>
+<tr><td>—</td><td>緊密間隙 (px)</td><td>0〜10</td><td>0</td><td>假設線條的中斷被覆蓋到這個寬度來進行繪製。</td></tr>
+</table></div>
+
+<h3 id="tool-wand">魔杖</h3>
+<figure><img src="img/use_magic_wand.png" alt="魔杖" loading="lazy"><figcaption>點擊插圖圖層的白色背景將其選取（虛線為選擇區域）<span class="legend"><span class="num">1</span>選定的工具　<span class="num">2</span>屬性欄　<span class="num">4</span>單擊的位置（白色背景）</span></figcaption></figure>
+<p>自動選擇與點選位置相似的色彩範圍。如果變更容差值，將重新選擇上次點選的位置。<kbd>Shift</kbd> 添加與，<kbd>Alt</kbd> 排除與，<kbd>Shift</kbd>+<kbd>Alt</kbd> 相交於。</p>
+
+<!-- AI Select -->
+<h4>參數表（共3項）</h4>
+<div class="table-wrap"><table class="params">
+<tr><th>分類</th><th>專案</th><th>範圍/選擇</th><th>初始值</th><th>描述</th></tr>
+<tr><td>—</td><td>公差</td><td>0〜255</td><td>32</td><td>被視為與單擊的顏色“相似顏色”的寬度。如果更改，將重新選擇先前的單擊位置。</td></tr>
+<tr><td>—</td><td>相鄰的</td><td>開/關</td><td>上</td><td>開 = 僅選擇與單擊位置相連的範圍，關 = 選擇整個影像中的所有相似顏色。</td></tr>
+<tr><td>—</td><td>操作</td><td>替換/新增/刪除/公共部分</td><td>Replace</td><td>與現有選擇合併（替換/新增/刪除/交集）。</td></tr>
+</table></div>
+
+<h3 id="tool-ai">AI Select</h3>
+<figure><img src="img/use_ai_select.png" alt="AI Select" loading="lazy"><figcaption>目前選擇的是 AI Select。運行/上一個/下一個/應用以及頂部的每個選單。<span class="legend"><span class="num">1</span>選定的工具　<span class="num">2</span>屬性欄　<span class="num">3</span>上下文工具列</span></figcaption></figure>
+<p>使用 SAM 3.1 的 AI 分割可讓您根據文字提示（例如「頭髮」、「人」）或點擊建立選擇。<b>候選人</b>我將供使用 <a href="#prefs">首選項 › SAM 3.1</a> 需要設定。 （介紹方法是 <a href="sam31_zh_Hant.html">SAM 3.1 安裝指南</a>）</p>
+<h4>上下文工具列操作</h4>
+<table>
+<tr><th>操作</th><th>內容</th></tr>
+<tr><td>提示/模式/來源/操作</td><td>屬性欄。要尋找的內容、是提示或點擊、目標內容（例如活動圖層）以及如何與現有選擇組合。</td></tr>
+<tr><td>Run</td><td>運行發現。當沒有提示輸入時 <code>Blocked: prompt_text_required</code> 顯示。</td></tr>
+<tr><td>Previous / Next</td><td>循環候選者（0/0 是候選者的數量）。</td></tr>
+<tr><td>候選運算/計算/應用方法</td><td>用於選擇候選項的合成/選擇範圍以及如何將它們套用為蒙版的選單。</td></tr>
+<tr><td>Apply</td><td>應用當前建議作為選擇。</td></tr>
+<tr><td>生成/匯出</td><td>一個選單，允許您將候選物件用作人工智慧生成的蒙版，將其匯出為剪切材料或精靈等。</td></tr>
+</table>
+<figure class="narrow"><img src="img/opt_ai_select.png" alt="AI Select設定" loading="lazy"><figcaption>工具設定（部署）</figcaption></figure>
+
+<!-- 矩形選択 -->
+<h4>參數表（共24項）</h4>
+<div class="table-wrap"><table class="params">
+<tr><th>分類</th><th>專案</th><th>範圍/選擇</th><th>初始值</th><th>描述</th></tr>
+<tr><td>基本的</td><td>Prompt</td><td>字串</td><td>（空）</td><td>指定您想要在文字中尋找的內容（例如頭髮、人、手杖）。在提示模式下使用。</td></tr>
+<tr><td>基本的</td><td>模式</td><td>prompt / click / box / exemplar / mixed</td><td>prompt</td><td>如何指導候選人。提示=文本，點選=點選的點（<kbd>Shift</kbd> 添加與，<kbd>Alt</kbd> )，box = 拖曳的方塊，exemplar = 樣本影像，mixed = 點和方塊的組合。</td></tr>
+<tr><td>基本的</td><td>Source</td><td>active_layer / visible_composite / selection_bounds / page</td><td>active_layer</td><td>要分析的圖像。 active_layer = 選定的圖層，visible_composite = 顯示的合成結果，selection_bounds = 在選擇範圍內，page = 整個頁面。</td></tr>
+<tr><td>基本的</td><td>計算</td><td>replace / add / subtract / intersect</td><td>replace</td><td>應用候選作為選擇時的複合方法（替換/添加/減去/相交）。</td></tr>
+<tr><td>偵測</td><td>Max Candidates</td><td>1〜64</td><td>16</td><td>一次提交的最大候選人數。</td></tr>
+<tr><td>偵測</td><td>考生分數下限</td><td>0〜1</td><td>0.2</td><td>置信度低於此的候選者將不會顯示。</td></tr>
+<tr><td>偵測</td><td>檢測閾值</td><td>0.05〜0.95</td><td>0.5</td><td>確認掩模的靈敏度。如果它低，則裁剪得更寬；如果它高，則裁剪得更窄。</td></tr>
+<tr><td>偵測</td><td>分割單獨的對象</td><td>開/關</td><td>上</td><td>將相距較遠的部分分成單獨的候選項。</td></tr>
+<tr><td>預覽</td><td>顯示所有建議（關閉 = 最佳 1）</td><td>開/關</td><td>上</td><td>將所有候選人顯示在彼此之上。只有最好的之一。</td></tr>
+<tr><td>預覽</td><td>Preview Color Mode</td><td>single / instance / heat</td><td>instance</td><td>候選人的顏色編碼。 single = 1 種顏色，instance = 每個候選者的顏色編碼，heat = 可靠性等級。</td></tr>
+<tr><td>預覽</td><td>Overlay Opacity</td><td>0〜1</td><td>0.45</td><td>候選者的顏色強度。</td></tr>
+<tr><td>點擊時的行為</td><td>Run on Click</td><td>開/關</td><td>上</td><td>點擊立即運行發現。</td></tr>
+<tr><td>點擊時的行為</td><td>Click Accumulate Apply</td><td>開/關</td><td>上</td><td>每次點擊都會將結果堆疊到選擇中。</td></tr>
+<tr><td>點擊時的行為</td><td>適用於候選人點擊選擇</td><td>開/關</td><td>上</td><td>點擊候選人以使其成為選擇。</td></tr>
+<tr><td>選擇邊界</td><td>自動面罩清理</td><td>開/關</td><td>上</td><td>自動清除小污垢和孔洞。</td></tr>
+<tr><td>選擇邊界</td><td>複合模式</td><td>union / subtract / intersect / xor</td><td>union</td><td>組合多個候選的方法（並=組合/減=減/相交=重疊/異或=非重疊）。</td></tr>
+<tr><td>選擇邊界</td><td>Apply Edge Feather (px)</td><td>0〜16</td><td>1</td><td>應用時羽化邊框的寬度 (px)。</td></tr>
+<tr><td>選擇邊界</td><td>Apply Edge Smooth (px)</td><td>0〜16</td><td>1</td><td>應用時平滑鋸齒狀邊緣的寬度 (px)。</td></tr>
+<tr><td>選擇邊界</td><td>Edge Tightness</td><td>-16〜16</td><td>0</td><td>向內 (-)/向外 (+) 移動邊框的量 (px)。</td></tr>
+<tr><td>開始寫作</td><td>Export Padding (px)</td><td>0〜64</td><td>0</td><td>導出時在切口周圍添加的邊距 (px)。</td></tr>
+<tr><td>開始寫作</td><td>Export Source</td><td>active_layer / composite</td><td>active_layer</td><td>要導出的圖像的來源。 active_layer = 目前選定的圖層，composite = 目前顯示的合成結果。</td></tr>
+<tr><td>開始寫作</td><td>圖紙邊距（像素）</td><td>0〜16</td><td>2</td><td>精靈表中材質之間留出的空間。</td></tr>
+<tr><td>開始寫作</td><td>將工作表設為 2 的冪</td><td>開/關</td><td>關閉</td><td>將精靈表的高度和寬度對齊到 2 的冪（256、512、1024...）（對於遊戲引擎）。</td></tr>
+<tr><td>開始寫作</td><td>表格格式</td><td>png / webp</td><td>png</td><td>精靈表格式 (png/webp)。</td></tr>
+</table></div>
+
+<h3 id="tool-rect">選擇（矩形）</h3>
+<figure><img src="img/use_select_rect.png" alt="矩形選擇" loading="lazy"><figcaption>透過拖曳建立矩形選取範圍時，會出現用於移動、縮放、旋轉、翻轉、套用和取消的欄位。<span class="legend"><span class="num">1</span>選定的工具　<span class="num">2</span>屬性欄　<span class="num">3</span>上下文工具列　<span class="num">4</span>選擇範圍</span></figcaption></figure>
+<p>屬性欄包括模式（矩形/向量範圍）、像素完美、剪貼簿（複製/剪切/貼上）、蒙版操作、翻轉、擴展/收縮/模糊、轉換/變換/移動/縮放/旋轉/水平翻轉等。上下文工具列可讓您設定操作（替換/新增/排除/相交）和模糊（模糊半徑）。取消選擇 <kbd>Ctrl</kbd>+<kbd>D</kbd>。</p>
+<figure class="narrow"><img src="img/opt_select_rect.png" alt="選擇設定" loading="lazy"><figcaption>工具設定（部署）</figcaption></figure>
+
+<!-- 移動 -->
+<h4>參數表（共11項）</h4>
+<div class="table-wrap"><table class="params">
+<tr><th>分類</th><th>專案</th><th>範圍/選擇</th><th>初始值</th><th>描述</th></tr>
+<tr><td>基本的</td><td>模式</td><td>矩形/向量/橢圓/套索/多邊形</td><td>長方形</td><td>形式的選擇。矩形/橢圓 = 透過拖曳形成正方形或圓形，套索 = 透過拖曳繪製形狀，多邊形 = 透過點選放置頂點的形狀，向量 = 按範圍選擇向量物件。</td></tr>
+<tr><td>基本的</td><td>計算</td><td>替換/添加/減去/相交</td><td>更換</td><td>與現有選擇合併。替換/添加 (<kbd>Shift</kbd>)/減法(<kbd>Alt</kbd>)/交集(<kbd>Shift</kbd>+<kbd>Alt</kbd>）。</td></tr>
+<tr><td>基本的</td><td>像素完美</td><td>開/關</td><td>關閉</td><td>將選取範圍邊框與整數像素對齊。</td></tr>
+<tr><td>選擇邊界</td><td>模糊</td><td>開/關</td><td>關閉</td><td>模糊選區的邊緣。</td></tr>
+<tr><td>選擇邊界</td><td>模糊半徑</td><td>0〜128</td><td>0</td><td>模糊寬度 (px)。</td></tr>
+<tr><td>選擇邊界</td><td>光罩半徑</td><td>0〜128</td><td>8</td><td>用於擴大/縮小/模糊「遮罩操作」的寬度（px）。</td></tr>
+<tr><td>變形</td><td>轉型X</td><td>-10000〜10000</td><td>0</td><td>變形過程中的橫向移動量。</td></tr>
+<tr><td>變形</td><td>變形Y</td><td>-10000〜10000</td><td>0</td><td>變形過程中的垂直移動量。</td></tr>
+<tr><td>變形</td><td>放大倍率X</td><td>0.01〜100</td><td>1</td><td>變換過程中的水平放大。</td></tr>
+<tr><td>變形</td><td>放大倍率Y</td><td>0.01〜100</td><td>1</td><td>變換過程中的垂直放大。</td></tr>
+<tr><td>變形</td><td>旋轉</td><td>-180〜180</td><td>0</td><td>變形時的旋轉角度。</td></tr>
+</table></div>
+<h4>操作按鈕</h4><table>
+<tr><td>剪貼簿</td><td>Copy（複製選擇）、Cut（剪下選擇）、Paste（貼上）</td></tr>
+<tr><td>遮罩操作</td><td>Invert（反轉所選範圍）、Expand（依蒙版半徑加寬）、Reduce（依蒙版半徑縮小）、Blur（依蒙版半徑模糊）、Convert（將所選範圍轉換為蒙版等）</td></tr>
+<tr><td>變形</td><td>Move（移動選擇範圍的內容）、Scale（放大/縮小）、Rotate（旋轉）、Fliphorizontal（水平翻轉）、Flipvertical（垂直翻轉）、Reset（撤銷變換）、Apply（確認變換）、Cancel（取消變換）</td></tr>
+</table>
+
+<h3 id="tool-move">移動 <span class="tag">V</span></h3>
+<figure><img src="img/use_move.png" alt="移動" loading="lazy"><figcaption>使用移動工具拖曳「繪圖」圖層（波浪線和星形）（顯示變形手柄）<span class="legend"><span class="num">1</span>選定的工具　<span class="num">2</span>屬性欄　<span class="num">3</span>上下文工具列　<span class="num">4</span>移動層</span></figcaption></figure>
+<p>拖曳選定的圖層以移動它。如果有選定區域，則剪切該部分並移動/變換它。向量和文字逐個移動對象，雙擊可切換到路徑編輯或文字編輯。</p>
+
+<!-- ベクター -->
+<h4>參數表（共3項）</h4><p>快捷方式：<kbd>V</kbd></p>
+<div class="table-wrap"><table class="params">
+<tr><th>分類</th><th>專案</th><th>範圍/選擇</th><th>初始值</th><th>描述</th></tr>
+<tr><td>—</td><td>像素完美</td><td>開/關</td><td>上</td><td>將移動量調整為整數像素（防止點圖和線條模糊）。</td></tr>
+<tr><td>—</td><td>Grid Snap</td><td>開/關</td><td>關閉</td><td>移動時它會黏在網格上。</td></tr>
+<tr><td>—</td><td>Grid Size</td><td>1〜1024</td><td>32</td><td>要捕捉的網格間距 (px)。</td></tr>
+</table></div>
+
+<h3 id="tool-vpen">向量筆（高精度） <span class="tag">P</span></h3>
+<figure><img src="img/use_vector_precise.png" alt="向量筆" loading="lazy"><figcaption>徒手繪製的線條轉換為帶有錨點的貝塞爾曲線<span class="legend"><span class="num">1</span>選定的工具　<span class="num">2</span>屬性欄　<span class="num">3</span>上下文工具列　<span class="num">4</span>轉換線</span></figcaption></figure>
+<figure class="narrow"><img src="img/opt_vector_pen_precise.png" alt="向量筆設定" loading="lazy"><figcaption>工具設定</figcaption></figure>
+<h4>參數表（共8項）</h4><p>快捷方式：<kbd>P</kbd></p>
+<div class="table-wrap"><table class="params">
+<tr><th>分類</th><th>專案</th><th>範圍/選擇</th><th>初始值</th><th>描述</th></tr>
+<tr><td>基本的</td><td>編輯模式</td><td>錨/形狀</td><td>錨</td><td>畫完後如何編輯。錨點 = 直接移動點和手柄，形狀 = 視為整體形狀。</td></tr>
+<tr><td>基本的</td><td>線寬</td><td>0.1〜64</td><td>2</td><td>線條粗細。</td></tr>
+<tr><td>基本的</td><td>線條顏色</td><td>顏色</td><td>#000000</td><td>線條顏色。</td></tr>
+<tr><td>填充</td><td>啟用填充</td><td>開/關</td><td>關閉</td><td>繪製封閉形狀的內部。</td></tr>
+<tr><td>填充</td><td>填滿顏色</td><td>顏色</td><td>—（未設定）</td><td>內部填滿顏色。</td></tr>
+<tr><td>路徑形狀</td><td>自動關閉</td><td>開/關</td><td>上</td><td>當您在起點附近完成繪製時，它會變成一條閉合路徑。</td></tr>
+<tr><td>路徑形狀</td><td>錨定密度</td><td>0.1〜1</td><td>1</td><td>許多錨都是由手繪線製成的。等級越低，點數越少，越流暢。</td></tr>
+<tr><td>路徑形狀</td><td>手柄的光滑度</td><td>0〜5</td><td>0</td><td>光滑的弧形手柄。</td></tr>
+</table></div>
+
+<h3 id="tool-path">透過</h3>
+<figure><img src="img/use_vector_path_drawing.png" alt="創建路徑" loading="lazy"><figcaption>點擊以放置四個錨點。<kbd>Enter</kbd> 用 確認。<span class="legend"><span class="num">1</span>選定的工具　<span class="num">2</span>屬性欄　<span class="num">3</span>上下文工具列　<span class="num">4</span>錨點放置</span></figcaption></figure>
+<p>點擊以放置錨點並拖曳以連接彎曲手柄。當您返回起點附近時，它將自動關閉。<kbd>Enter</kbd> 已確認<kbd>Esc</kbd> 被丟棄。</p>
+<figure class="narrow"><img src="img/opt_vector_path_tool.png" alt="路徑設定" loading="lazy"><figcaption>工具設定</figcaption></figure>
+<h4>参数表（共6项）</h4>
+<div class="table-wrap"><table class="params">
+<tr><th>分類</th><th>專案</th><th>範圍/選擇</th><th>初始值</th><th>描述</th></tr>
+<tr><td>基本的</td><td>線寬</td><td>0.1〜64</td><td>2</td><td>線條粗細。</td></tr>
+<tr><td>基本的</td><td>線條顏色</td><td>顏色</td><td>#000000</td><td>線條顏色。</td></tr>
+<tr><td>基本的</td><td>啟用填充</td><td>開/關</td><td>關閉</td><td>繪製封閉形狀的內部。</td></tr>
+<tr><td>填充</td><td>填滿顏色</td><td>顏色</td><td>—（未設定）</td><td>內部填滿顏色。</td></tr>
+<tr><td>路徑形狀</td><td>換檔模式</td><td>約束/捕捉已停用</td><td>限制條件</td><td><kbd>Shift</kbd> 當您按下 時會發生什麼。約束=固定角度，捕捉停用=吸力暫時關閉。</td></tr>
+<tr><td>路徑形狀</td><td>自動關閉容差 (px)</td><td>0〜64</td><td>8</td><td>在距離起點的此距離內點選將建立一條閉合路徑。</td></tr>
+</table></div>
+
+<h3 id="tool-pathedit">編輯路徑</h3>
+<figure><img src="img/use_vector_edit.png" alt="編輯路徑" loading="lazy"><figcaption>當您按一下向量線時，會出現一個錨點，您可以修改形狀。<span class="legend"><span class="num">1</span>選定的工具　<span class="num">2</span>屬性欄　<span class="num">3</span>上下文工具列　<span class="num">4</span>正在編輯的路徑</span></figcaption></figure>
+<p>拖曳錨點來移動它，並使用手柄來調整彎曲程度。<kbd>Alt</kbd>+拖曳複製，<kbd>Ctrl</kbd> 暫時禁用捕捉。可以使用特殊手柄對保持原樣（未轉換）的基本形狀進行圓角、頂點數等編輯。</p>
+<table>
+<tr><td>Simplify / Smooth / Straighten / Offset</td><td>減少錨點/平滑曲線/拉直/使用移動的線建立重複項。</td></tr>
+<tr><td>編輯/重置線寬調整</td><td>編輯並初始化每個線位置的粗細（可變線寬）。</td></tr>
+</table>
+<p><b>編輯畫布上的線寬</b>開啟後，您可以透過拖曳線條的中心線來建立粗細調整點，並透過拖曳調整點或左右把手來變更粗細（0 至 512 px）。<kbd>Alt</kbd>+拖曳時點選以刪除調整點 <kbd>Esc</kbd> 取消與。路徑形狀和錨點保持不變，每次拖曳都是撤銷。目標為單一未鎖定路徑，調整點最多為 64 個點（複合路徑、參數形狀和字元不適用）。</p>
+
+<!-- テキスト -->
+<h4>參數表（共5項）</h4>
+<div class="table-wrap"><table class="params">
+<tr><th>分類</th><th>專案</th><th>範圍/選擇</th><th>初始值</th><th>描述</th></tr>
+<tr><td>—</td><td>編輯畫布上的線寬</td><td>開/關</td><td>關閉</td><td>啟用後，透過在畫布上拖曳來調整線寬（見上文）。</td></tr>
+<tr><td>—</td><td>線條顏色</td><td>顏色</td><td>#000000</td><td>線條顏色。</td></tr>
+<tr><td>—</td><td>線寬</td><td>0.1〜128</td><td>2</td><td>線條粗細。</td></tr>
+<tr><td>—</td><td>啟用填充</td><td>開/關</td><td>關閉</td><td>繪製封閉形狀的內部。</td></tr>
+<tr><td>—</td><td>填滿顏色</td><td>顏色</td><td>—（未設定）</td><td>內部填滿顏色。</td></tr>
+</table></div>
+
+<h3 id="tool-text">文字 <span class="tag">T</span></h3>
+<figure><img src="img/use_text.png" alt="文字輸入" loading="lazy"><figcaption>點選並輸入“Hello LoomStroke”。在頂部，您可以變更字體、大小、顏色、行距、邊距等。<span class="legend"><span class="num">1</span>選定的工具　<span class="num">2</span>屬性欄　<span class="num">3</span>上下文工具列　<span class="num">4</span>您輸入的字符</span></figcaption></figure>
+<p>點選 1 行<b>點文</b>，透過拖曳將其包裹在框架內<b>區域文字</b>我將使其支援日文輸入（IME），並且當您鍵入時，文字圖層會新增至圖層面板。確認後，圖層名稱將自動從文字的前 10 個字元新增（您指定的名稱不會變更）。 「將選取範圍轉換為區域文字」可讓您將文字插入形狀和選取範圍。</p>
+<figure class="narrow"><img src="img/opt_text_tool.png" alt="文字設定" loading="lazy"><figcaption>工具設定（部署）</figcaption></figure>
+<p>可以使用上下文工具列或變更字體、樣式、位置、顏色、不透明度等 <a href="#p-font">字體面板</a> 設定為 .</p>
+<h4>參數表（共8項）</h4><p>快捷方式：<kbd>T</kbd></p>
+<div class="table-wrap"><table class="params">
+<tr><th>分類</th><th>專案</th><th>範圍/選擇</th><th>初始值</th><th>描述</th></tr>
+<tr><td>基本的</td><td>字體大小（磅）</td><td>1〜512</td><td>32</td><td>字體大小（磅）。</td></tr>
+<tr><td>基本的</td><td>回頭</td><td>開/關</td><td>上</td><td>區域文字在框架邊緣換行。</td></tr>
+<tr><td>字元間距</td><td>字裡行間</td><td>0.5〜4</td><td>1</td><td>行間距（字體大小的放大倍率）。</td></tr>
+<tr><td>字元間距</td><td>字元間距</td><td>-64〜128</td><td>0</td><td>字母之間的間距。用減號包裝它。</td></tr>
+<tr><td>幀邊距</td><td>上邊距</td><td>0〜256</td><td>0</td><td>文字框上方的內邊距。</td></tr>
+<tr><td>幀邊距</td><td>右邊距</td><td>0〜256</td><td>0</td><td>右內緣。</td></tr>
+<tr><td>幀邊距</td><td>下邊距</td><td>0〜256</td><td>0</td><td>底部內邊距。</td></tr>
+<tr><td>幀邊距</td><td>左邊距</td><td>0〜256</td><td>0</td><td>左內邊距。</td></tr>
+</table></div>
+<h4>操作按鈕</h4><table>
+<tr><td>轉換</td><td>将选择范围转换为区域文本（创建区域文本，使文本流入形状像选择范围的框架中）/沿路径放置（见下文）</td></tr>
+</table>
+<h4 id="text-path">沿著路徑放置</h4>
+<p>工具设置或上下文工具栏中的“转换”。<b>沿著路徑放置</b>，沿著線條或形狀的輪廓排列字母。要使用的輪廓按以下順序決定：</p>
+<ol class="steps">
+<li>选定的矢量（开放路径或闭合形状都可以接受。即使对于粗线也使用中心线）</li>
+<li>如果沒有選擇向量，則選擇輪廓</li>
+<li>如果两者都不存在，则所选栅格图层的不透明部分的外部轮廓（不使用孔）</li>
+</ol>
+<p>如果仅选择文本或缺少轮廓，状态栏中会显示原因。创建时的轮廓是复制的，因此即使稍后移动原始形状，文本也不会跟随。限水平書寫。 “沿路径放置”窗口将打开，您可以在画布或“正文”字段中键入内容。<kbd>Ctrl</kbd>+<kbd>Enter</kbd> 用 確認。</p>
+<div class="table-wrap"><table class="params">
+<tr><th>專案</th><th>範圍/選擇</th><th>初始值</th><th>描述</th></tr>
+<tr><td>起始位置 (%) / 結束位置 (%)</td><td>0〜100</td><td>0 / 100</td><td>文字在輪廓上的放置位置。您还可以通过沿轮廓拖动开始和结束手柄来更改画布上的开始和结束手柄。</td></tr>
+<tr><td>距路徑的距離 (px)</td><td>-10000〜10000</td><td>0</td><td>文字與線條的分隔距離。</td></tr>
+<tr><td>反轉行駛方向</td><td>開/關</td><td>關閉</td><td>反轉文字方向。</td></tr>
+<tr><td>到處使用</td><td>開/關</td><td>以閉合形式打開</td><td>使用闭合形状的整个圆周（只能在形状闭合时选择）。</td></tr>
+<tr><td>沿路徑旋轉文字</td><td>開/關</td><td>上</td><td>傾斜文字以匹配線條的方向。</td></tr>
+<tr><td>對準</td><td>開始/中心/結束/均勻分佈</td><td>開始</td><td>如何在一個區間內排列字元。</td></tr>
+<tr><td>輪廓</td><td>候選人名單</td><td>—</td><td>当有多个轮廓时，选择创建时要使用的轮廓。</td></tr>
+<tr><td>輪廓平滑度</td><td>0〜100</td><td>0</td><td>值越高，忽略的细小不规则现象就越多。釋放時，反映為一次“撤消”，0 時則返回原始輪廓。</td></tr>
+<tr><td>避免字元重疊</td><td>開/關</td><td>關閉</td><td>如果由於急轉彎而導致字元重疊，則先發送後面的字元。</td></tr>
+<tr><td>交換起點和終點</td><td>按鈕</td><td>—</td><td>僅交換末端。再按一次即可恢復正常。</td></tr>
+<tr><td>編輯路徑</td><td>按鈕（開/關）</td><td>—</td><td>透過點擊該線來新增錨點，<kbd>Alt</kbd>+ 单击以删除，拖动锚点或手柄以更改形状。<kbd>S</kbd> 光滑/ <kbd>C</kbd> 角/ <kbd>B</kbd> 手柄分離 / <kbd>M</kbd> 對稱性。<kbd>Esc</kbd> 結束於。原始影像或形狀保持不變。</td></tr>
+<tr><td>手柄的光滑度</td><td>0 至 5（0.1 增量）</td><td>0</td><td>建立可以使用與向量筆相同的校正進行編輯的貝塞爾圖柄。 0 返回校正前。</td></tr>
+<tr><td>編輯文字</td><td>按鈕</td><td>—</td><td>移至「內文」字段。長文字將以列寬度包裹顯示（不包括換行符）。</td></tr>
+</table></div>
+<p>如果存在不適合指定間隔的字符，則會顯示訊息「存在不適合指定間隔的字符。」所有文字均保留。顯示“”。突出的字元不會被繪製，而是保留在正文中。即使在完成文字後，您也可以透過點擊文字在此視窗中重新編輯它。</p>
+
+<h3 id="tool-vtext">垂直排文字</h3>
+<figure><img src="img/use_text_vertical.png" alt="豎立" loading="lazy"><figcaption>我在右側垂直輸入「花魔杖嚮導」。<span class="legend"><span class="num">1</span>選定的工具　<span class="num">2</span>屬性欄　<span class="num">3</span>上下文工具列　<span class="num">4</span>您輸入的字符</span></figcaption></figure>
+<p>這是一款專門用於豎排書寫的文字工具。自動更正標點符號的位置並旋轉長音符。</p>
+<figure class="narrow"><img src="img/opt_text_tool_vertical.png" alt="豎排書寫設置" loading="lazy"><figcaption>工具設定（部署）</figcaption></figure>
+<h4>參數表（共10項）</h4>
+<div class="table-wrap"><table class="params">
+<tr><th>分類</th><th>專案</th><th>範圍/選擇</th><th>初始值</th><th>描述</th></tr>
+<tr><td>基本的</td><td>字體大小（磅）</td><td>1〜512</td><td>32</td><td>字體大小（磅）。</td></tr>
+<tr><td>基本的</td><td>回頭</td><td>開/關</td><td>上</td><td>區域文字在框架邊緣換行。</td></tr>
+<tr><td>字元方向</td><td>段落流</td><td>左方向/右方向</td><td>向左方向</td><td>發送線路的方向。左方向（普通日文垂直）/右方向。</td></tr>
+<tr><td>字元方向</td><td>旋轉字母和數字</td><td>開/關</td><td>關閉</td><td>在垂直文字中垂直顯示半角字母數字字元（關閉時，它們會水平顯示）。</td></tr>
+<tr><td>字元間距</td><td>字裡行間</td><td>0.5〜4</td><td>1</td><td>行間距（字體大小的放大倍率）。</td></tr>
+<tr><td>字元間距</td><td>字元間距</td><td>-64〜128</td><td>0</td><td>字母之間的間距。用減號包裝它。</td></tr>
+<tr><td>幀邊距</td><td>上邊距</td><td>0〜256</td><td>0</td><td>文字框上方的內邊距。</td></tr>
+<tr><td>幀邊距</td><td>右邊距</td><td>0〜256</td><td>0</td><td>右內緣。</td></tr>
+<tr><td>幀邊距</td><td>下邊距</td><td>0〜256</td><td>0</td><td>底部內邊距。</td></tr>
+<tr><td>幀邊距</td><td>左邊距</td><td>0〜256</td><td>0</td><td>左內邊距。</td></tr>
+</table></div>
+<h4>操作按鈕</h4><table>
+<tr><td>轉換</td><td>將選擇範圍轉換為區域文本（建立區域文本，使文本流入形狀像選擇範圍的框架中）</td></tr>
+</table>
+
+<h3 id="tool-eyedropper">滴管 <span class="tag">I</span></h3>
+<figure><img src="img/use_eyedropper.png" alt="滴管" loading="lazy"><figcaption>點擊頭髮顏色使其成為繪圖顏色<span class="legend"><span class="num">1</span>選定的工具　<span class="num">2</span>屬性欄　<span class="num">4</span>你點擊的地方</span></figcaption></figure>
+<p>點擊畫布上的顏色使其成為繪圖顏色。有諸如“參考”之類的預設，您可以使用“啟用滴管”來切換行為。</p>
+</section>
+<h4>參數表（共1項）</h4><p>快捷方式：<kbd>I</kbd> / <kbd>Shift+I</kbd>　預設：匹配參考，僅限調色板</p>
+<div class="table-wrap"><table class="params">
+<tr><th>分類</th><th>專案</th><th>範圍/選擇</th><th>初始值</th><th>描述</th></tr>
+<tr><td>—</td><td>啟用吸管</td><td>開/關</td><td>關閉</td><td>打開後，將透過點擊畫布來拾取顏色。</td></tr>
+</table></div>
+
+<h3 id="tool-measure">測量</h3>
+<p>測量兩點之間的距離、角度和垂直/水平差異的工具。當您在畫布上拖曳時，會顯示一條黃線和「距離：…|角度：…°|ΔX：…|ΔY：…」。角度為-180°至180°，0°指向右側，正指向下方。單位為頁面標尺的單位，使用文件的DPI進行轉換（預設值為px）。端點將附加到指南/構圖指南，如果打開“對齊網格”，它們也將附加到網格。<kbd>Esc</kbd> 或透過切換頁面來關閉顯示。測量結果不會記錄在歷史記錄中，也沒有設定項目。</p>
+
+<h3 id="tool-comic">Comic</h3>
+<p>這是一個允許您直接操作畫布上的框架邊框和氣球的工具。<a href="#p-comic">漫畫面板</a>與 結合使用，您可以拖曳並調整框架邊框、氣球和尾部的邊框。當您使用移動工具雙擊框架或氣球時，它也會自動切換。該工具本身沒有任何設定；設置在漫畫面板中進行。</p>
+
+<!-- ============================================================ -->
+<section id="layers">
+<h2>4. 圖層和濾鏡</h2>
+
+<h3 id="layer-panel">圖層面板</h3>
+<div class="side">
+<figure><img src="img/panel_layers.png" alt="圖層面板" loading="lazy"><figcaption>圖層面板（圖層選項卡）</figcaption></figure>
+<div>
+<p>它們按照從上到下的順序依序顯示。左側有紫色條的線是要繪製的線。</p>
+<table>
+<tr><th>部分</th><th>內容</th></tr>
+<tr><td><span class="num">1</span>圖層效果</td><td>如何將此層與下面的層結合（<a href="#blend">清單</a>）。</td></tr>
+<tr><td><span class="num">2</span>不透明度</td><td>層的總體密度 (0-100%)。</td></tr>
+<tr><td><span class="num">3</span>層/通道</td><td>切換顯示的選項卡（<a href="#channels">頻道</a>）。</td></tr>
+<tr><td><span class="num">4</span>按一下一行</td><td>繪圖的目標。<kbd>Ctrl</kbd>/<kbd>Shift</kbd>+ 點選以選擇多個。</td></tr>
+<tr><td><span class="num">4</span>按兩下</td><td>重命名。</td></tr>
+<tr><td><span class="num">4</span>拖曳一行</td><td>更改堆疊順序，新增/刪除群組中的項目。</td></tr>
+<tr><td><span class="num">6</span>該行右側的圖標</td><td>當您將滑鼠懸停在它上面時，它就會出現。<b>透明部件的保護</b>（Alpha鎖：只能畫在你畫的地方），<b>鎖</b>（禁止編輯），<b>顯示切換</b>（眼睛）。</td></tr>
+<tr><td>類型標記</td><td>文字 <b>T</b>, 向量 <b>V</b> 等等</td></tr>
+</table>
+<h4><span class="num">5</span>底部按鈕（左起）</h4>
+<table>
+<tr><td>添加</td><td>新的柵格層。</td></tr>
+<tr><td>刪除</td><td>刪除選定的圖層。</td></tr>
+<tr><td>繁殖</td><td>複製選定的圖層。</td></tr>
+<tr><td>Mask</td><td>新增圖層蒙版（如果已存在則刪除）。</td></tr>
+<tr><td>新增過濾層</td><td>調整圖層/濾鏡圖層/填滿圖層選單（<a href="#filters">稍後描述</a>）。</td></tr>
+<tr><td>Add AI Effect Layer</td><td>從已安裝的 AI 效果預設中新增圖層（如果未安裝，則顯示「未安裝預設」）。</td></tr>
+<tr><td>群組</td><td>將兩個或多個選定圖層分組。</td></tr>
+<tr><td>Add Vector Layer</td><td>新的向量圖層。</td></tr>
+</table>
+</div>
+</div>
+<div class="grid2">
+<figure><img src="img/menu_add_filter.png" alt="新增濾鏡圖層選單" loading="lazy"><figcaption>“新增濾鏡層”選單</figcaption></figure>
+<figure><img src="img/menu_add_ai_effect.png" alt="AI效果附加選單" loading="lazy"><figcaption>「新增AI效果層」（未安裝預設時）</figcaption></figure>
+</div>
+
+<h3 id="blend">圖層效果（合成方式）</h3>
+<p>這是在「圖層效果」欄位中與下面的圖層選擇的分層方法。圖片本身不會被重寫，只會改變它的外觀。不透明度會影響此複合結果的強度。</p>
+<div class="table-wrap"><table>
+<tr><th>分類</th><th>模式</th><th>特點</th></tr>
+<tr><td>正常</td><td>正常/抖動合成</td><td>按原樣分層。抖動使半透明區域看起來有顆粒感。</td></tr>
+<tr><td>比較（深色）</td><td>比較（深色）/正片疊底/顏色加深/加深（線性）/顏色比較（深色）</td><td>變暗系統。用於分層陰影、線條圖和紙張紋理。乘法是最容易使用的標準。</td></tr>
+<tr><td>比較（光）</td><td>比較（淺）/螢幕/顏色減淡/減淡（線性）/添加/顏色比較（淺）</td><td>提亮型。用於光、高光和冷光錶達。</td></tr>
+<tr><td>對比</td><td>疊加/柔光/硬光/鮮豔光/線性光/針光/硬混合</td><td>增強明暗差異的系統。用於強調紋理和陰影。</td></tr>
+<tr><td>反轉</td><td>差的絕對值/排除/減法/除法</td><td>一個能夠帶來差異的系統。用於檢查對齊和特殊效果。</td></tr>
+<tr><td>Component</td><td>色相/飽和度/色彩/亮度</td><td>僅替換顏色組件。用於向灰色陰影（顏色）等添加顏色。</td></tr>
+</table></div>
+<p>除此之外，對於圖層群組，您可以選擇「穿過」（組合包括下面組外的圖片）。</p>
+
+<h3 id="layer-ctx">圖層右鍵選單</h3>
+<div class="side">
+<figure><img src="img/ctx_layer.png" alt="右鍵點選圖層" loading="lazy"><figcaption>右鍵點選圖層行</figcaption></figure>
+<div><table>
+<tr><td>Add Layer / Duplicate Layer / Delete Layer</td><td>新增/複製/刪除。</td></tr>
+<tr><td>重新命名</td><td>更改名稱。</td></tr>
+<tr><td>Merge Down</td><td>合併到下面的圖層。</td></tr>
+<tr><td>Merge Visible</td><td>將顯示的圖層合併為一個。</td></tr>
+<tr><td>Rasterize</td><td>將向量、文字等轉換為普通圖片（光柵）。</td></tr>
+<tr><td>Convert to Vector</td><td>將未轉換的形狀轉換為常規向量。</td></tr>
+<tr><td>Group Layers / Ungroup</td><td>進行多項選擇時分組/取消分組。</td></tr>
+<tr><td>Create / Release Clipping Mask</td><td>僅顯示在下面的圖層中繪製的區域（剪輯）。</td></tr>
+<tr><td>新增圖層蒙版</td><td>添加了面具。新增後，變為編輯/刪除項目。</td></tr>
+<tr><td>在圖層上建立 SAM3 蒙版/切換候選疊加</td><td>從 AI Select 候選建立遮罩（有候選時有效）。</td></tr>
+<tr><td>新增過濾器</td><td>新增僅適用於此圖層的濾鏡（色階/色相/飽和度/反轉/亮度/對比度/曲線/漸變圖/高斯模糊/銳利化/降噪/馬賽克/漫畫螢幕色調）。</td></tr>
+<tr><td>圖層樣式...</td><td>陰影等<a href="#layer-styles">風格</a>設定。</td></tr>
+<tr><td>Load as Selection / Invert Transparency</td><td>僅在蒙版層上可見。載入蒙版作為選擇/反轉透明部分。</td></tr>
+</table></div>
+</div>
+
+<h3 id="channels">頻道</h3>
+<div class="side">
+<figure><img src="img/panel_layers_tab1.png" alt="頻道選項卡" loading="lazy"><figcaption>“圖層”面板中的“通道”選項卡</figcaption></figure>
+<div>
+<p><span class="num">1</span>依顏色分量處理選定的圖層。對於 RGB 文檔，排列為 RGB / Red / Green / Blue / Transparency（僅顯示），對於 CMYK 文檔，排列為 C / M / Y / K。如果選擇特定組件並繪製它，則只有該組件會發生變化。</p>
+<table>
+<tr><td><span class="num">2</span>在畫布上顯示選定的通道</td><td>僅以黑白方式顯示所選成分。</td></tr>
+<tr><td><span class="num">3</span>替換/新增/排除/交叉選擇</td><td>使用“載入選擇”時的合成方法。</td></tr>
+<tr><td><span class="num">4</span>α創造</td><td>建立一個命名的 Alpha 頻道（選擇儲存位置）。</td></tr>
+<tr><td><span class="num">4</span>儲存選擇/載入選擇</td><td>将当前选择保存到 Alpha/从 Alpha 恢复选择。</td></tr>
+<tr><td><span class="num">4</span>複製/重命名/刪除/反轉</td><td>Alpha 通道管理。</td></tr>
+</table>
+</div>
+</div>
+
+<h3 id="filters">所有類型的過濾層</h3>
+<div class="note"><b>直接從過濾器選單應用：</b><b>過濾器</b> 選單中的「最後一個濾鏡」下列出了 11 種濾鏡（電平校正、色調/飽和度、灰階反轉、高斯模糊、銳利化、雜訊消除、馬賽克、漫畫螢幕色調等）。選擇它將打開一個帶有預覽的設定螢幕，然後單擊“確定”將其直接應用到所選圖層（它不會創建過濾圖層。如果有選擇，它只會在該範圍內。您可以通過單個“撤消”撤消它）。 「最後一個過濾器」（<kbd>Ctrl</kbd>+<kbd>Alt</kbd>+<kbd>F</kbd>) 重新套用先前的設定。对于矢量和文本图层，系统会询问您是否要栅格化图层。如果继续，应用后您将无法将其编辑为矢量或字符，但您可以通过单个“撤消”一次性恢复光栅化和过滤器。無法套用於鎖定圖層或圖層蒙版。</div>
+<p>不要用“添加滤镜图层”或者右键图层“添加滤镜”来重写原图。<b>無損濾網</b>可以添加。選擇新增的濾鏡層，<a href="#p-filter">過濾面板</a>顯示參數並可隨時調整或刪除。下图显示了将每个滤镜添加到插图图层上方时的面板和结果。</p>
+
+<h4>調整圖層</h4>
+<div class="grid2">
+<figure><img src="img/filter_levels.png" alt="電平校正" loading="lazy"><figcaption><b>電平校正</b>：输入（黑色）0 至 255/输入（白色）0 至 255/伽玛 0.01 至 9.99/输出（黑色）/输出（白色）。使用直方圖上的三角形進行調整。</figcaption></figure>
+<figure><img src="img/filter_hue_saturation.png" alt="色調/飽和度" loading="lazy"><figcaption><b>色調/飽和度</b>：色相-180~180 / 饱和度-100~100 / 亮度-100~100</figcaption></figure>
+<figure><img src="img/filter_invert.png" alt="反轉音調" loading="lazy"><figcaption><b>反轉音調</b>：強度0-100%</figcaption></figure>
+<figure><img src="img/filter_brightness_contrast.png" alt="亮度/對比度" loading="lazy"><figcaption><b>Brightness / Contrast</b>：Brightness -100〜100 / Contrast -100〜100</figcaption></figure>
+<figure><img src="img/filter_curves.png" alt="色調曲線" loading="lazy"><figcaption><b>曲線（色調曲線）</b>：单击线条添加点，然后拖动以更改亮度/暗度。</figcaption></figure>
+<figure><img src="img/filter_gradient_map.png" alt="梯度圖" loading="lazy"><figcaption><b>Gradient Map</b>：根據亮度指定漸層顏色。底部的三角形为颜色分支点（用“-”删除）</figcaption></figure>
+</div>
+<h4>過濾層</h4>
+<div class="grid2">
+<figure><img src="img/filter_gaussian_blur.png" alt="高斯模糊" loading="lazy"><figcaption><b>高斯模糊</b>：半徑0~250</figcaption></figure>
+<figure><img src="img/filter_sharpen.png" alt="鋒利的" loading="lazy"><figcaption><b>鋒利的</b>：數量 0~500 / 半徑 0.1~50 / 閾值 0~255</figcaption></figure>
+<figure><img src="img/filter_noise_reduction.png" alt="消除噪音" loading="lazy"><figcaption><b>消除噪音</b>：強度 1~40 / 顏色強度 1~40</figcaption></figure>
+<figure><img src="img/filter_mosaic.png" alt="馬賽克" loading="lazy"><figcaption><b>馬賽克</b>：單元尺寸 2-256</figcaption></figure>
+<figure><img src="img/filter_manga_screentone.png" alt="卡通螢幕色調" loading="lazy"><figcaption><b>卡通螢幕色調</b>（見下表）</figcaption></figure>
+</div>
+<table>
+<tr><th colspan="2">漫畫畫面色調設定</th></tr>
+<tr><td>圖案</td><td>圓形/橢圓形/直線/十字/隨機 (FM)</td></tr>
+<tr><td>行數 (LPI)</td><td>半色調網點的細度（5 至 200）。相當於列印中的「行數」。</td></tr>
+<tr><td>濃度(%)</td><td>色調的深淺 (0-100)。</td></tr>
+<tr><td>角度</td><td>網的方向（-180 至 180°）。</td></tr>
+<tr><td>半色調網點的縱橫比</td><td>點被壓碎的程度（0.25 到 4）。</td></tr>
+<tr><td>起源</td><td>網路參考位置：頁面/圖層/自訂。</td></tr>
+<tr><td>種子</td><td>隨機 (FM) 隨機數種子。</td></tr>
+<tr><td>預覽</td><td>準確/莫爾條紋抑制/堅固（簡單）。僅更改螢幕上的外觀。</td></tr>
+</table>
+<h4>申請結果範例</h4>
+<div class="grid3">
+<figure><img src="img/filtercanvas_gaussian_blur.png" alt="" loading="lazy"><figcaption>高斯模糊</figcaption></figure>
+<figure><img src="img/filtercanvas_invert.png" alt="" loading="lazy"><figcaption>反轉音調</figcaption></figure>
+<figure><img src="img/filtercanvas_mosaic.png" alt="" loading="lazy"><figcaption>馬賽克</figcaption></figure>
+<figure><img src="img/filtercanvas_gradient_map.png" alt="" loading="lazy"><figcaption>梯度圖</figcaption></figure>
+<figure><img src="img/filtercanvas_manga_screentone.png" alt="" loading="lazy"><figcaption>卡通螢幕色調</figcaption></figure>
+<figure><img src="img/filtercanvas_hue_saturation.png" alt="" loading="lazy"><figcaption>色相/飽和度（預設值）</figcaption></figure>
+</div>
+<div class="note"><b>圖層 › 新的 Screentone 圖層</b>透過使用 ，您可以直接建立一個圖層，並將網色調貼到選取範圍的形狀中。如果沒有選擇，系統會詢問您「是否要將螢幕色調應用於整個頁面？」建立後更改濾鏡面板中的色調設定。</div>
+<div class="grid2">
+<figure><img src="img/use_screentone_layer.png" alt="網屏色調層" loading="lazy"><figcaption>選擇矩形並執行「新網色調圖層」的結果<span class="legend"><span class="num">1</span>已貼上色調的選定區域</span></figcaption></figure>
+<figure><img src="img/dlg_screentone.png" alt="檢查螢幕色調" loading="lazy"><figcaption>無選擇範圍時的確認</figcaption></figure>
+</div>
+
+<h3 id="fill-layers">填滿層</h3>
+<p>從「新增濾鏡圖層&gt;填滿圖層」中，您可以建立一個以單一顏色、漸層或圖案填滿整個表面的圖層。建立圖層時會打開“編輯填充”，稍後您可以通過右鍵單擊圖層來更改它（編輯填充...）。</p>
+<div class="grid3">
+<figure><img src="img/dlg_fill_solid.png" alt="單色" loading="lazy"><figcaption>單色：顏色/不透明度</figcaption></figure>
+<figure><img src="img/dlg_fill_gradient.png" alt="漸變" loading="lazy"><figcaption>漸層：形狀（線性/徑向）/起始顏色/結束顏色/角度/中心/不透明度</figcaption></figure>
+<figure><img src="img/dlg_fill_pattern.png" alt="圖案" loading="lazy"><figcaption>圖案：圖案（格子/條紋/圓點）/尺寸/角度/前景/背景/不透明度</figcaption></figure>
+</div>
+<figure class="mid"><img src="img/panel_layers_fills.png" alt="填滿層" loading="lazy"><figcaption>新增了純色、漸層和圖案填滿圖層的圖層面板</figcaption></figure>
+
+<h3 id="layer-styles">圖層樣式</h3>
+<div class="side">
+<figure><img src="img/dlg_layer_styles.png" alt="圖層樣式" loading="lazy"><figcaption>圖層樣式</figcaption></figure>
+<div>
+<p>右鍵點選圖層 › 圖層樣式... 將其開啟。您可以稍後在圖片上新增和刪除陰影和邊框。</p>
+<table>
+<tr><td>類型</td><td>投影/外發光/顏色疊加/邊框。</td></tr>
+<tr><td>添加/刪除/向上/向下</td><td>堆疊樣式並更改其順序。</td></tr>
+<tr><td>有效</td><td>暫時打開/關閉。</td></tr>
+<tr><td>柵格化外觀</td><td>將外觀，包括風格，燒成一張普通的圖片。</td></tr>
+<tr><td>申請/關閉</td><td>應用更改/關閉。</td></tr>
+</table>
+</div>
+</div>
+</section>
+
+<!-- ============================================================ -->
+<section id="panels">
+<h2>5. 面板細節</h2>
+<p>面板是 <b>窗戶</b> 您可以從選單類別（圖層頁面/繪圖/漫畫/AI/其他）中顯示/隱藏它（正在開發的Canvas Assistant和Production Control不會出現在選單中）。本節逐個選項卡描述每個面板中的所有項目。</p>
+
+<h3 id="p-preview">預覽</h3>
+<div class="side">
+<figure><img src="img/panel_preview.png" alt="預覽" loading="lazy"><figcaption>預覽</figcaption></figure>
+<div><p><span class="num">1</span>這是整個畫布的縮小視圖。即使使用放大倍率，您也可以檢查整體平衡。</p>
+<table>
+<tr><td><span class="num">2</span>變焦</td><td>預覽顯示放大倍率（10-500%）。</td></tr>
+<tr><td><span class="num">3</span>適合</td><td>設定放大倍率以適合面板上的整個影像。</td></tr>
+<tr><td><span class="num">3</span>100%</td><td>實際尺寸顯示。</td></tr>
+</table></div>
+</div>
+
+<h3 id="p-color">顏色</h3>
+<div class="side">
+<figure><img src="img/panel_color.png" alt="彩色面板" loading="lazy"><figcaption>顏色</figcaption></figure>
+<div><table>
+<tr><td><span class="num">1</span>色輪</td><td>使用外環選擇色調，使用內三角選擇飽和度和亮度。</td></tr>
+<tr><td><span class="num">2</span>HSV</td><td>色調 0~359° / 飽和度 0~100% / 亮度 0~100%。</td></tr>
+<tr><td><span class="num">3</span>RGB</td><td>0~255 各。</td></tr>
+<tr><td><span class="num">4</span>Hex</td><td><code>#RRGGBB</code> 直接按格式輸入。</td></tr>
+<tr><td><span class="num">6</span>托盤</td><td>初始註冊為黑色/白色/紅色/綠色/藍色/青色/洋紅色/黃色。按一下可變更繪圖顏色。</td></tr>
+<tr><td><span class="num">5</span>添加到調色板</td><td>將當前顏色註冊到調色板。</td></tr>
+</table></div>
+</div>
+
+<h3 id="p-brush">畫筆管理員</h3>
+<div class="grid2">
+<figure><img src="img/panel_brush_manager.png" alt="畫筆選項卡" loading="lazy"><figcaption>“畫筆”選項卡</figcaption></figure>
+<figure><img src="img/panel_brush_manager_tab1.png" alt="筆選項卡" loading="lazy"><figcaption>「筆」選項卡</figcaption></figure>
+</div>
+<h4>畫筆選項卡</h4>
+<p><span class="num">1</span>在「畫筆」和「筆」標籤之間切換　<span class="num">2</span>刷機清單　<span class="num">3</span>操作按鈕</p>
+<p>從清單中選擇畫筆筆尖（墨跡/標記/圓形/草圖等）。雙擊更改名稱。</p>
+<table>
+<tr><td>創建一個晶片</td><td>從畫布上的選區創建畫筆筆尖。</td></tr>
+<tr><td>儲存參數</td><td>將目前畫筆設定儲存到該畫筆。</td></tr>
+<tr><td>重新掃描 ABR</td><td>重新讀取 ABR 庫資料夾。</td></tr>
+<tr><td>進口ABR</td><td>匯入 Photoshop .abr 畫筆。</td></tr>
+<tr><td>導入 PNG</td><td>導入圖像作為畫筆筆尖。</td></tr>
+<tr><td>刪除</td><td>刪除選取的畫筆。</td></tr>
+</table>
+<h4>筆選項卡</h4>
+<p>在大螢幕上調整所有筆設定。可以透過點擊標題來開啟或關閉各個部分。</p>
+<div class="grid3">
+<figure><img src="img/section_brush_pen_shape.png" alt="" loading="lazy"><figcaption>線形：用手把調整開合</figcaption></figure>
+<figure><img src="img/section_brush_pen_pressure.png" alt="" loading="lazy"><figcaption>筆壓：以圖形方式調整曲線</figcaption></figure>
+<figure><img src="img/section_brush_pen_tone.png" alt="" loading="lazy"><figcaption>色調/陰影</figcaption></figure>
+</div>
+<table>
+<tr><th colspan="2">基本的</th></tr>
+<tr><td>尺寸/硬度/不透明度/流量/印章密度/影像穩定</td><td>基本筆設定（大小 0.1-1000 px，其他單位為 %）。</td></tr>
+<tr><th colspan="2">線條形狀</th></tr>
+<tr><td>進入/退出編輯器</td><td>拖曳手柄可調整進入和退出的長度。用方向鍵微調，<kbd>Shift</kbd> 以 10 像素為增量，<kbd>Home</kbd> 無效，<kbd>End</kbd> 2000 像素處。</td></tr>
+<tr><td>進入長度/拔出長度</td><td>0 到 2000 px（0 停用）。</td></tr>
+<tr><td>重新調整平滑度/重新調整畫線</td><td>重新調整所畫線條的輪廓（從下一筆開始）。</td></tr>
+<tr><th colspan="2">筆壓</th></tr>
+<tr><td>使用筆壓力/使用傾斜</td><td>打開/關閉筆壓力和傾斜的反射。</td></tr>
+<tr><td>筆壓曲線編輯器</td><td>中心手柄是曲線，左側手柄是下限。用左右鍵選擇，用上下鍵調整，<kbd>Home</kbd> 初始值，<kbd>Esc</kbd> 取消拖曳。</td></tr>
+<tr><td>筆壓大小曲線 / 筆壓大小下限</td><td>您也可以指定一個數值。</td></tr>
+<tr><td>隨著筆壓力改變不透明度/不透明度筆壓力曲線/下限</td><td>筆壓力對密度的反映。</td></tr>
+<tr><th colspan="2">色調/陰影</th></tr>
+<tr><td>色調範圍/色調伽瑪</td><td>音調強度設定（0.1 至 2.0）。</td></tr>
+<tr><th colspan="2">筆預設</th></tr>
+<tr><td>預設名稱/儲存新/更新/載入/匯出</td><td>用名稱儲存筆設定、覆蓋它們以及輸入/輸出檔案。</td></tr>
+</table>
+
+<h3 id="p-font">字體</h3>
+<div class="grid3">
+<figure><img src="img/panel_text_font.png" alt="字體面板" loading="lazy"><figcaption>字體（基本）</figcaption></figure>
+<figure><img src="img/section_font_jp.png" alt="日文排版" loading="lazy"><figcaption>開發“日文排版”</figcaption></figure>
+<figure><img src="img/section_font_ruby.png" alt="紅寶石" loading="lazy"><figcaption>擴展“紅寶石、立中橫子、延天”</figcaption></figure>
+</div>
+<h4>基本的</h4>
+<table>
+<tr><td>回頭</td><td>在框架邊緣環繞區域文字。</td></tr>
+<tr><td>字體系列/字體樣式</td><td>安裝的字體及其樣式（例如常規）。</td></tr>
+<tr><td>字體大小（磅）</td><td>1〜512。</td></tr>
+<tr><td>豎立/段落流</td><td>垂直書寫切換和行發送方向（左/右）。</td></tr>
+<tr><td>安排</td><td>水平書寫：左/中/右/對齊，垂直寫：上/中/下/對齊。</td></tr>
+<tr><td>行間距/字元間距</td><td>0.5~4.0倍/-64~128。</td></tr>
+<tr><td>邊距（上、下、右、左）</td><td>文本框架的內邊距 (0-256)。</td></tr>
+<tr><td>顏色/不透明度</td><td>字體顏色（點擊以選擇顏色）和暗度。</td></tr>
+</table>
+<h4>日文排版</h4>
+<p>在啟用該設定之前，現有文字的對齊方式將保持不變。</p>
+<table>
+<tr><td>預設</td><td>傳統排列/日本排版標準/客製化。</td></tr>
+<tr><td>使用基於em的日文排版/轉發</td><td>啟用排版規則並根據全角寬度 (em) 進行追蹤。</td></tr>
+<tr><td>約定的亞希</td><td>標點符號/括號前後的空格：取決於前後/全角/半角的字元。</td></tr>
+<tr><td>左括號位於行首/右標點位於行尾</td><td>行首和行尾括號的寬度（半角/全角）。</td></tr>
+<tr><td>日歐區間</td><td>日文字元和字母數字字元之間的空格 (0-1 em)。</td></tr>
+<tr><td>避頭尾處理/將標點符號掛在行尾</td><td>諸如不在行首放置標點符號（日文禁止/無）以及標點符號超出行尾等規則。</td></tr>
+<tr><td>避頭尾/阿藝的詳細設置</td><td>用於詳細設定禁止字元和空格的對話框。</td></tr>
+<tr><td>線路調整/填充上限/拉伸量</td><td>如何調整一行的長度（減少空格/無空格/透過調整空格來調整空格）及其限制。</td></tr>
+<tr><td>段落開頭縮排</td><td>0〜10 em。</td></tr>
+<tr><td>歐洲字元豎立</td><td>側臥/直立。</td></tr>
+</table>
+<h4>紅寶石，立中橫子，強調點</h4>
+<p>使用前選擇畫布上的文字。</p>
+<table>
+<tr><td>閱讀/位置/紅寶石排列</td><td>Ruby 文字、側面（正面 = 上/右，背面 = 下/左）和對齊方式（中心/開始/結束/偶數）。</td></tr>
+<tr><td>字元大小比例/與父字元的間距/突出量的上限/使用Ruby特定的字形</td><td>紅寶石尺寸、間距、突出和特殊字形形狀。</td></tr>
+<tr><td>字元寬度</td><td>所選字元以指定寬度 (em) 均勻分佈。</td></tr>
+<tr><td>Warichu 字元比例 / Warichu 行距</td><td>Warichu 設定將兩個小音符排成一行。</td></tr>
+<tr><td>標記點符號/位置/大小比例/間隔</td><td>強調點（自動/芝麻/項目符號/白圈）。</td></tr>
+<tr><td>應用/取消按鈕</td><td>分別應用/取消 ruby、tatechuyoko、kenten、warichu 和 jidori。 “為每個角色應用 ruby” <code>|</code> 用 分隔，一次加入一個字元。</td></tr>
+</table>
+<h4>樣式/詳細資料格式/列/串聯</h4>
+<table>
+<tr><td>字元樣式/段落樣式</td><td>命名並註冊格式，並將其應用於其他字元（註冊/應用/取消格式/刪除註冊）。</td></tr>
+<tr><td>水平比例/垂直比例</td><td>長/扁字元（0.1 至 4 倍）。</td></tr>
+<tr><td>基線移動/字元之前/之後的空間</td><td>字元的垂直位置及其前後的空格 (em)。</td></tr>
+<tr><td>列數/列間距/線網格/對齊列端/段落列數</td><td>將文字框架分為多個列的列設定。</td></tr>
+<tr><td>連接文字框架/連接選定的框架/連接到清單選擇/取消連接</td><td>將溢出文字流到下一幀的串聯。</td></tr>
+<tr><td>自訂字體資料夾</td><td>新增/刪除資料夾/重新載入字體（TTF/OTF/TTC/OTC）。</td></tr>
+</table>
+
+<h3 id="p-shape">形狀管理器</h3>
+<div class="grid2">
+<figure><img src="img/panel_shape_manager.png" alt="形狀管理器" loading="lazy"><figcaption>“形狀管理器”選項卡</figcaption></figure>
+<figure><img src="img/panel_shape_manager_tab1.png" alt="基本形狀" loading="lazy"><figcaption>“基本形狀”選項卡</figcaption></figure>
+</div>
+<table>
+<tr><th colspan="2">形狀管理器選項卡</th></tr>
+<tr><td>頂部按鈕</td><td>導入（SVG）/新增形狀（註冊選定的向量）/刪除。</td></tr>
+<tr><td>搜尋/類別/標籤</td><td>過濾註冊的形狀。</td></tr>
+<tr><td>名稱/類別/標籤</td><td>編輯所選形狀的資訊（標籤以逗號分隔）。</td></tr>
+<tr><td>對齊標準</td><td>畫布/選擇。</td></tr>
+<tr><td>對齊按鈕</td><td>適合/拉伸/中心/頂部/垂直中心/底部/左/水平中心/右/水平分佈/垂直分佈。</td></tr>
+<tr><th colspan="2">基本形狀選項卡</th></tr>
+<tr><td colspan="2">將形狀拖曳到畫布上來新增形狀。右鍵點選可顯示變換手把。包括對話氣泡（尖峰、圓形、圓角、雲彩等）、效果（焦點線圓形/矩形、流線、實心閃光、海膽閃光）、基本形狀（梯形、平行四邊形、橢圓形、圓角矩形）和多邊形（三角形到十邊形）。</td></tr>
+<tr><td>濃度線</td><td>這是一條向中心逐漸變細的卡通風格的線。使用右鍵時出現的手柄進行調整：白色=內部空白半徑，紅色=數字（8到200，初始90），藍色=外部厚度，綠色=內部厚度（指向0），橙色（底部的菱形）=長度變化（初始0.6），紫色=消失點。</td></tr>
+<tr><td>流線/實閃/海膽閃</td><td>將其拖曳到畫布上以開啟「效果線」畫面。指定範圍（矩形，如果有選擇範圍則為外接矩形）和左、上、右、下。流線具有方向（度）、線數（1 到 512，初始 32）、長度變化、粗細比、進入/退出比率和隨機數種子。 Flash具有中心X/Y運動比、內徑/外徑比、線數（3至256，初始64）、變化、隨機數種子和白色輪廓。如果取消，則不會新增任何內容。</td></tr>
+</table>
+
+<h3 id="p-transform">Transform</h3>
+<div class="side">
+<figure><img src="img/panel_transform_panel.png" alt="Transform" loading="lazy"><figcaption>Transform</figcaption></figure>
+<div><table>
+<tr><td>X / Y</td><td>位置（-99999 到 99999）。</td></tr>
+<tr><td>W / H</td><td>寬度/高度（僅限向量）。</td></tr>
+<tr><td>角度</td><td>-360〜360°。</td></tr>
+</table><p>目標類型（柵格圖層等）顯示在底部。對於柵格圖層，只能編輯位置。</p></div>
+</div>
+
+<h3 id="p-filter">過濾器</h3>
+<div class="side">
+<figure><img src="img/panel_effect_panel.png" alt="過濾面板" loading="lazy"><figcaption>未選擇過濾器時</figcaption></figure>
+<div><p>在“圖層”面板中選擇一個濾鏡圖層以顯示其參數。更改會立即反映在畫布上並且可以撤消。每個過濾器的項目是 <a href="#filters">所有類型的過濾層</a> 請參考</p></div>
+</div>
+
+<h3 id="p-reference">Reference</h3>
+<div class="side">
+<figure><img src="img/panel_reference_viewer.png" alt="Reference" loading="lazy"><figcaption>Reference</figcaption></figure>
+<div><table>
+<tr><td>Open</td><td>載入文件圖像（允許多個圖像）。</td></tr>
+<tr><td>&lt; / &gt;</td><td>切換載入的圖片（0/0為圖片數量）。</td></tr>
+<tr><td>Remove</td><td>刪除顯示的影像。</td></tr>
+<tr><td>Opacity</td><td>文件影像的密度。</td></tr>
+</table></div>
+</div>
+
+<h3 id="p-pages">頁面</h3>
+<figure><img src="img/panel_pages.png" alt="頁面" loading="lazy"><figcaption>頁面</figcaption></figure>
+<table>
+<tr><td><span class="num">1</span>＋</td><td>新增頁面。從選單中，您可以選擇基本（與目前頁面相同的空白頁/具有預設圖層的空白頁）、漫畫（B5/A5/A4 正文單色/彩色）、「將目前頁面另存為範本」、「管理範本」和「管理母版」。</td></tr>
+<tr><td><span class="num">1</span>Dup / Del</td><td>複製/刪除頁面。</td></tr>
+<tr><td><span class="num">1</span>Up / Down</td><td>按頁面順序移動。</td></tr>
+<tr><td><span class="num">2</span>顯示</td><td>單頁/跨頁。</td></tr>
+<tr><td><span class="num">3</span>裝訂方向</td><td>左裝訂/右裝訂（即使更改頁序也不會改變）。</td></tr>
+<tr><td><span class="num">4</span>頁面列表</td><td>編號、姓名、未儲存標記 (*)。雙擊或 <kbd>F2</kbd> 更改名稱。</td></tr>
+</table>
+
+<h3 id="p-gallery">畫廊</h3>
+<figure class="mid"><img src="img/panel_gallery.png" alt="畫廊" loading="lazy"><figcaption>畫廊（世代歷史）</figcaption></figure>
+<p>影像產生歷史記錄（ComfyUI / GPT Image 2 / NanoBanana / AI Effect）以縮圖顯示。<span class="num">3</span>右上角是案例數。</p>
+<table>
+<tr><td><span class="num">1</span>狀態過濾器</td><td>全部/已完成/失敗/已取消。</td></tr>
+<tr><td><span class="num">2</span>服務過濾器</td><td>所有服務 / ComfyUI / GPT Image 2 / NanoBanana。</td></tr>
+<tr><td><span class="num">4</span>縮圖</td><td>您可以將過去的結果作為圖層重複使用並檢查生成條件。</td></tr>
+<tr><td>詳情欄目</td><td>按一下某個項目以查看預覽和產生資訊（服務、型號、提示全文、種子、大小、持續時間、狀態、時間、錯誤）。可以選擇文字並部分複製。</td></tr>
+<tr><td>複製/重新產生/恢復/刪除完整提示</td><td>它們在詳細資料列下方排成一行。按原樣複製，包括換行符和空格。僅當該服務可用時才能按下重新產生/恢復（恢復也恢復 GPT Image 2 模型和輸入層）。</td></tr>
+<tr><td>傳輸到圖層： / 傳輸</td><td>將結果傳送到新圖層或現有圖層。</td></tr>
+</table>
+
+<h3 id="p-aieffect">AI Effects Manager</h3>
+<div class="grid2">
+<figure><img src="img/panel_ai_effect_manager.png" alt="主管" loading="lazy"><figcaption>經理選項卡</figcaption></figure>
+<figure><img src="img/panel_ai_effect_manager_tab1.png" alt="ComfyUI" loading="lazy"><figcaption>“ComfyUI”選項卡</figcaption></figure>
+</div>
+<p><code>.lsfx</code> 以格式管理 AI 效果預設，並將它們作為 AI 效果圖層放置在畫布上。</p>
+<table>
+<tr><th colspan="2">經理選項卡</th></tr>
+<tr><td>搜尋</td><td>按名稱/標籤/作者搜尋預設。</td></tr>
+<tr><td>顯示切換</td><td>網格視圖/清單視圖/小卡片。</td></tr>
+<tr><td>📂 導入/+ 新</td><td>導入 .lsfx / 建立新預設。</td></tr>
+<tr><td>類別</td><td>全部/分析/產生/轉換（用+添加）。</td></tr>
+<tr><td>Gateway</td><td>按 ComfyUI / NanoBanana / GPT Image 2 過濾（使用 ✎ 變更圖示）。</td></tr>
+<tr><td>來源</td><td>內建/使用者（用+新增）。</td></tr>
+<tr><td>排序</td><td>最近/名稱 (A-Z)/類別/建立日期。</td></tr>
+<tr><th colspan="2">ComfyUI 標籤</th></tr>
+<tr><td colspan="2">編輯 ComfyUI 工作流程並設定參數和輸出以作為預設發布。</td></tr>
+<tr><td>連接目的地</td><td>已註冊伺服器（初始值Local — http://127.0.0.1:8188）。</td></tr>
+<tr><td>開啟ComfyUI</td><td>開啟 ComfyUI 螢幕。</td></tr>
+<tr><td>載入工作流程...</td><td>載入工作流程 JSON。</td></tr>
+<tr><td>在編輯器中反映更改</td><td>將 ComfyUI 側的變更匯入效果編輯器。</td></tr>
+<tr><td>釋放顯存</td><td>從 GPU 記憶體卸載模型 ComfyUI。</td></tr>
+</table>
+<p>AI效果圖層流程：右鍵點選預設並將其新增為圖層→將原始圖層指派到圖層面板中的輸入槽→調整濾鏡面板中的參數→使用圖層面板中的生成行按鈕產生。對於產生的結果，透過一次「撤銷」只會返回影像和位置；提示和設定將不會被撤銷。如果沒有預設，會顯示“未安裝AI效果預設”，點擊“開啟預設資料夾”即可開啟位置。</p>
+<figure class="mid"><img src="img/dlg_ai_presets.png" alt="無預設" loading="lazy"><figcaption>濾鏡 › AI 效果預設...（未安裝時。圖像以英文顯示）</figcaption></figure>
+<h4 id="ai-batch">不斷產生</h4>
+<p>在 AI Effect 圖層的濾鏡面板中的「觸發器」下。等待上一代完成並一次產生一個項目。</p>
+<table>
+<tr><td>指定次數/直到一個循環/直到停止（無限）</td><td>次數可以指定為 1 到 1,000,000 次（初始 10 次）。一輪計算考生完成現場提示的「順序選擇」和「組合枚舉」所有選項的次數（計算中不包括隨機）。</td></tr>
+<tr><td>開始/停止連續發電</td><td>進度顯示為「已完成 n / 總計」。</td></tr>
+<tr><td>停止條件</td><td>停止按鈕、產生失敗、變更所選圖層/頁面/文件/預設/連線目的地/即時提示配置、關閉外部服務權限。</td></tr>
+</table>
+<p>連續生成期間，不接受該層的自動觸發和單次生成。設定不與文件一起儲存。</p>
+<h4 id="ai-comfy-node">ComfyUI的AI效果層</h4>
+<p>在過濾器面板中編輯節點時，節點類型顯示為「基本小工具（Qt）」（顯示在LoomStroke的輸入欄位中）、「具有獨特的UI（ComfyUI）」和「未確定（ComfyUI）」（在ComfyUI0004KXZ）。使用“提示輸入...”為所選節點的字元項設定即時提示並“應用於節點”。直接重寫在 ComfyUI 一側的字元優先。在ComfyUI的AI效果圖層中，產生影像的縮圖並沒有出現在濾鏡面板中。</p>
+
+<h3 id="p-nanobanana">NanoBanana</h3>
+<div class="side">
+<figure><img src="img/panel_nano_banana.png" alt="NanoBanana" loading="lazy"><figcaption>NanoBanana（Google Gemini）</figcaption></figure>
+<div><table>
+<tr><td>提示（即時提示）</td><td>選擇已儲存的配置（以「（無）」開頭，↻更新配置，+ 新增零件）。點選某個部件時，可以選擇「隨機」、「順序選擇」或「組合枚舉」（<a href="#p-prompt">提示編輯器</a>）。長部分可以環繞欄位的寬度，並且可以透過拖曳欄位的底部邊緣來變更高度（高度對於所有即時提示都是通用的，甚至在重新啟動後仍然保留）。</td></tr>
+<tr><td>分隔符號：</td><td>部分分隔符號（初始值為換行符 <code>\n</code>）。</td></tr>
+<tr><td>提示輸入字段</td><td>寫入您要產生的內容。</td></tr>
+<tr><td>輸入層（最多 14 個）</td><td>參考層（無/每層）。</td></tr>
+<tr><td>模型</td><td>Gemini 2.5 Flash / Gemini 3.1 Flash / Gemini 3 Pro。</td></tr>
+<tr><td>思考</td><td>最低/最高。</td></tr>
+<tr><td>情態</td><td>文字+圖像/圖像。</td></tr>
+<tr><td>尺寸</td><td>自動/512/1K/2K/4K。</td></tr>
+<tr><td>縱橫比</td><td>14 種類型（具有像素尺寸），從 1:1 (1024x1024) 到 21:9 (1536x672)。</td></tr>
+<tr><td>輸出層</td><td>&lt;新層&gt; / 現有層。</td></tr>
+<tr><td>思考過程/搜尋</td><td>包含想法/使用 Google 搜尋。</td></tr>
+<tr><td>世代</td><td>執行。結果將顯示在下面的狀態列中。</td></tr>
+</table></div>
+</div>
+
+<h3 id="p-gptimage">GPT Image 2</h3>
+<div class="side">
+<figure><img src="img/panel_gptimage2.png" alt="GPT Image 2" loading="lazy"><figcaption>GPT Image 2（OpenAI）</figcaption></figure>
+<div><table>
+<tr><td>提示符/分隔符號/輸入字段</td><td>與 NanoBanana 相同。</td></tr>
+<tr><td>輸入層（最多 16 個）</td><td>依照選擇的順序指定要引用的圖層（向量也可以接受，每個圖層必須小於 50MiB）。如果沒有指定，則產生新影像，如果有，則對影像進行編輯。</td></tr>
+<tr><td>模型</td><td>GPT Image 2 / GPT Image 2 (2026-04-21) / GPT Image 2.5 Sunburst / GPT Image 2.5 Flare 及其各自的 (2026-09-08) 版本。</td></tr>
+<tr><td>品質</td><td>自動/低/中/高。</td></tr>
+<tr><td>尺寸</td><td>自動 / 1024x1024 / 1024x1536 / 1536x1024 / 1536x864 / 864x1536 / 2048x2048 / 2048x1152 / 1152x2048 / 3840x2160 / 2160x3840。</td></tr>
+<tr><td>格式/壓縮</td><td>PNG/JPEG/WebP 及其壓縮率（0 到 100）。</td></tr>
+<tr><td>背景</td><td>自動/不透明。</td></tr>
+<tr><td>節制</td><td>自動/低。</td></tr>
+<tr><td>輸出層</td><td>&lt;新層&gt; / 現有層。</td></tr>
+<tr><td>世代</td><td>執行。</td></tr>
+</table></div>
+</div>
+
+<h3 id="p-prompt">提示編輯器</h3>
+<div class="grid3">
+<figure><img src="img/panel_prompt_editor.png" alt="創造" loading="lazy"><figcaption>建立選項卡</figcaption></figure>
+<figure><img src="img/panel_prompt_editor_tab1.png" alt="圖書館" loading="lazy"><figcaption>庫選項卡</figcaption></figure>
+<figure><img src="img/panel_prompt_editor_tab2.png" alt="LLM" loading="lazy"><figcaption>“法學碩士”選項卡</figcaption></figure>
+</div>
+<table>
+<tr><th colspan="2">創造</th></tr>
+<tr><td>組件</td><td>將字串/列表/文字/提示部分拖曳到下面的即時提示中。</td></tr>
+<tr><td>即時提示</td><td>透過排列各個部分來組裝提示（以 + 添加）。點選某個零件可開啟編輯欄位。</td></tr>
+<tr><td>隨機/順序選擇/組合枚舉</td><td>如何為每個部分選擇候選者（僅選擇一個，全部固定為關閉）。對於建議，清單是項目，字串/提示是與標籤相符的片段，文字是 <code>{a|b|c}</code> 每個候選人。每一代都會推進一項，預覽、複製和保存不會推進它。組合枚舉從右側部分開始。僅當面板開啟時才會保留進度，並在變更配置時返回開頭。用於GPT Image 2、NanoBanana和ComfyUI的即時提示以及所選AI效果的產生。</td></tr>
+<tr><td>分離/複製</td><td>部分分隔符，複製到剪貼簿。</td></tr>
+<tr><td>儲存（標題/標籤）</td><td>新建/儲存/另存為。</td></tr>
+<tr><th colspan="2">圖書館</th></tr>
+<tr><td>搜尋/標籤/類型</td><td>搜尋已儲存的零件。類型：提示/字串/清單/系統提示（LLM）/使用者提示（LLM）。</td></tr>
+<tr><td>詳情</td><td>編輯標題、標籤、元件類型和預覽。</td></tr>
+<tr><td>底部按鈕</td><td>載入/複製/刪除/匯出/更新以建立選項卡。</td></tr>
+<tr><th colspan="2">LLM</th></tr>
+<tr><td>供應商/型號</td><td>Anthropic / Gemini / Openai 以及各型號。</td></tr>
+<tr><td>溫度/最大令牌數</td><td>0.0〜2.0 / 0〜32000。</td></tr>
+<tr><td>期望架構/JSON 回應</td><td>當您希望以固定格式給出答案時。</td></tr>
+<tr><td>串流更新</td><td>按順序顯示回應。</td></tr>
+<tr><td>系統提示/使用者提示</td><td>從已儲存的文件中選擇或直接輸入。</td></tr>
+<tr><td>傳送/取消/清除</td><td>執行控制。結果顯示在輸出。</td></tr>
+</table>
+
+<h3 id="p-3d">3D Preview</h3>
+<div class="side">
+<figure><img src="img/panel_generated_3d_preview.png" alt="3D Preview" loading="lazy"><figcaption>3D Preview</figcaption></figure>
+<div><table>
+<tr><td>顯示方式</td><td>Solid / Wireframe / Textured / Normal Map。</td></tr>
+<tr><td>Fit / + / -</td><td>全視圖/放大/縮小。</td></tr>
+<tr><td>Rotate / Turntable</td><td>旋轉/自動旋轉。</td></tr>
+<tr><td>Add 3D Layer</td><td>以 3D 圖層新增至畫布。</td></tr>
+<tr><td>Import Projection</td><td>透過將其投影到畫布上來捕捉 3D 外觀。</td></tr>
+</table></div>
+</div>
+
+<h3 id="p-aicand">AI Select Candidates</h3>
+<div class="side">
+<figure><img src="img/panel_sam3_ai_select_candidates.png" alt="AI Select Candidates" loading="lazy"><figcaption>AI Select Candidates</figcaption></figure>
+<div><p>找到 AI Select 的候選清單。</p><table>
+<tr><td>Candidate List</td><td>候選人/州/分數/方框/行動。線 <kbd>Ctrl</kbd>+ 點選以選擇多個。</td></tr>
+<tr><td>Mode</td><td>並集/減法/交集/異或。</td></tr>
+<tr><td>合併選拔候選人</td><td>使用 Mode 方法將多個候選者組合成一個遮罩。</td></tr>
+<tr><td>圖層分組</td><td>將多個候選人分層並將他們組織成組。</td></tr>
+<tr><td>調整面罩...</td><td>手動調整候選蒙版（模糊/擴展/填充孔，無人工智慧推理）。</td></tr>
+<tr><td>釋放 SAM 記憶體</td><td>從記憶體中卸載SAM 3.1模型（下次會自動重新載入）。</td></tr>
+</table></div>
+</div>
+
+<h3 id="p-mangamask">Manga Mask Assistant</h3>
+<div class="side">
+<figure><img src="img/panel_sam3_ai_select_manga_mask_assistant.png" alt="Manga Mask Assistant" loading="lazy"><figcaption>Manga Mask Assistant</figcaption></figure>
+<div><p>這是一個輔助面板，用於從漫畫頁面創建框架、氣球和人物等蒙版（需要 SAM 3.1）。</p><table>
+<tr><td>Category</td><td>Comic panel / Speech bubble / Caption box / Character / Face / Eyes / Hands / Hair / Clothes / Weapon / Prop / Background / Sound effect text / Speed lines / Screen tone region。</td></tr>
+<tr><td>Preset</td><td>All / Speech Bubble Protection / Character Extraction / Background Extraction / Inpaint Prep。</td></tr>
+<tr><td>Panel source</td><td>none/comic_panels/vector_rectangles（面板來源）。</td></tr>
+<tr><td>Build Package / Cancel Preview</td><td>建立一組蒙版/取消預覽。</td></tr>
+<tr><td>清單</td><td>Scope / Panel / Category / Score / Area / Accepted / Warnings / Actions。</td></tr>
+</table></div>
+</div>
+
+<h3 id="p-comic">Comic</h3>
+<p>操縱框架邊框：<a href="#comic-frame-start">基礎知識和術語</a> ／ <a href="#comic-frame-roles">4個部門</a> ／ <a href="#comic-sec-images">圖片/氣球</a> ／ <a href="#comic-frame-edges">處理框線</a> ／ <a href="#comic-frame-split">重新分配/安排</a> ／ <a href="#comic-sec-repair">調整邊界和內容</a> ／ <a href="#comic-frame-grayout">無法按/錯誤</a> ／ <a href="#comic-frame-layers">如何查看圖層</a> ／ <a href="#comic-frame-tutorial">練習</a></p>
+<div class="grid2">
+<figure><img src="img/panel_comic_tools.png" alt="幀劃分" loading="lazy"><figcaption>“幀分割”選項卡</figcaption></figure>
+<figure><img src="img/panel_comic_tools_tab1.png" alt="氣球" loading="lazy"><figcaption>“氣球”選項卡</figcaption></figure>
+<figure><img src="img/panel_comic_tools_tab2.png" alt="線路列表" loading="lazy"><figcaption>「行列表」標籤</figcaption></figure>
+<figure><img src="img/panel_comic_tools_tab3.png" alt="揚聲器格式" loading="lazy"><figcaption>揚聲器格式選項卡</figcaption></figure>
+</div>
+<h4>框架佈局（基本）</h4>
+<p>這些是“框架分割”選項卡頂部的基本操作。在頁面上建立框架並決定如何劃分它們。</p>
+<table>
+<tr><td>模板/應用模板</td><td>1 格/2 格（水平/垂直）/3 格/4 格（tagata）/4 格漫畫/6 格。對於還沒有框架的頁面，應用程式後將立即建立框架邊框層（您可以透過單一「撤銷」恢復它）。當在有內容的頁面上使用時，內容會自動分佈並反映在新的框架中。</td></tr>
+<tr><td>垂直一分為二/水平一分為二</td><td>將選定的框架分成兩半。對於幀邊界層上的幀，內容也按照下面「重新分配/排列」中的「分割時影像的處理」進行排序。</td></tr>
+<tr><td>比率/按比率分割/更改比率</td><td>依指定比例（0.05 至 0.95）分割或變更現有分割位置。</td></tr>
+<tr><td>框架間距/應用</td><td>幀之間的寬度 (0-200)。</td></tr>
+<tr><td>與下一幀合併/刪除幀</td><td>連接/擦除框架。 「刪除一幀」是保留內容的刪除（與下面的「刪除一幀並保留內容」相同）。</td></tr>
+<tr><td>閱讀順序（右上→左下）/閱讀順序上/下</td><td>檢查並重新排列幀的閱讀順序。多個圖像也將按此順序分發。</td></tr>
+</table>
+<p>除非選擇了幀，否則無法按下「與下一幀合併」、「刪除幀」、「更改比例」和「上/下移動閱讀順序」。</p>
+
+<!-- コマ枠の操作説明：2026-10-20 に src の実装と照合して全面改訂 -->
+<h4 id="comic-frame-start">框架邊框層的基礎知識 <span class="tag">考試中</span></h4>
+<div class="note">操作框架邊框層是目前正在測試的功能。<b>在重要的手稿上嘗試之前，請複製該文件（以不同的名稱保存），然後</b>請操作。本節中的步驟是根據程式實作編寫的，並非所有步驟都經過實際螢幕驗證。螢幕語言遵循您的偏好。有些錯誤沒有日文​​翻譯，而是以英文顯示。</div>
+<figure class="narrow"><img src="img/panel_comic_frames_compact.png" alt="漫畫面板的開頭是基本面板佈局，附加操作折疊成 4 個部分" loading="lazy"><figcaption>顯示正常。必要時打開“圖像/氣球”、“處理邊框線”、“重畫/排列”和“調整邊框和內容”。您可以在選項卡內捲動。</figcaption></figure>
+
+<h5>首先要知道的事情</h5>
+<div class="table-wrap"><table>
+<tr><th>話</th><th>意義</th></tr>
+<tr><td>框架面積</td><td>這是顯示內容的範圍。形狀透過劃分或改變邊界而改變。</td></tr>
+<tr><td>框線</td><td>這是一條視覺線。它分為上、右、下、左四面，您只能擦除或重畫一側。即使刪除邊框，邊框區域也將保持原樣。</td></tr>
+<tr><td>框架的內容</td><td>這些是屬於該框架的圖像、粗糙的演講和氣球。在圖層面板中，框架內的「內容」被組織起來。劃分時，內容也會被分配到新的幀中。</td></tr>
+<tr><td>剪輯</td><td>這是隱藏框架區域外部的顯示。隱藏的像素並沒有消失，所以如果你將它們移回去，它們將再次變得可見。</td></tr>
+<tr><td>轉換為框架邊框層</td><td>透過應用範本建立的框架從一開始就是框架邊框層。選擇舊文檔等中的框架。<b>轉換為框架邊框層</b>當它出現時按下。大多數附加操作無法在顯示此按鈕的框架上按下。刪除或合併影像時，會自動轉換必要的影格。</td></tr>
+</table></div>
+
+<p><b>「選擇」分為三種類型。</b>首先選擇哪個按鈕取決於按鈕。</p>
+<div class="table-wrap"><table>
+<tr><th>選擇類型</th><th>如何選擇</th><th>去哪裡檢查</th><th>使用按鈕的範例</th></tr>
+<tr><td>① 框架的選擇</td><td>使用漫畫工具點擊畫布上的框架或從閱讀順序清單中選擇它。</td><td>面板上的「選定：第 N 幀」。如果未選擇，“選擇框架並編輯邊框。”</td><td>幾乎所有按鈕</td></tr>
+<tr><td>② 選擇圖層面板</td><td>點選圖層面板中的行。</td><td>在圖層面板中選擇的行</td><td>記錄為繪圖目標，將所選內容保留在框架內，允許突出，移動到頁面前面，使該框架的公共顯示獨立</td></tr>
+<tr><td>③ 畫布上的選擇</td><td>使用漫畫工具點擊氣球。選擇畫布上的文字本身（僅選擇圖層行並不會選擇它）。</td><td>選擇顯示在畫布上</td><td>使選定的氣球屬於此框架並使選定的文本成為氣球</td></tr>
+</table></div>
+
+<p><b>與普通影像圖層的區別：</b>簡單放置在圖層面板中的影像不屬於任何框架。沒有被剪裁，即使分割也無法排序。對於要放入框架中的圖像，請開啟圖像檔案。<b>落至框架</b>請。丟棄的圖像進入幀的“內容”並被剪切，允許您使用構圖調整，例如“填充幀”和“適合整個圖像”。構圖調整僅適用於使用水滴放置的影像。</p>
+
+<p><b>沒有確認按鈕。</b>分割、更改邊界、編輯等操作將在按下按鈕（或釋放拖曳按鈕時）立即反映出來。對於大頁面，需要時間準備，在此期間會顯示訊息「正在處理面板變更...」並且無法按下所有按鈕。如果您不喜歡結果<b>撤銷</b>（<kbd>Ctrl</kbd>+<kbd>Z</kbd>）返回它。如果你被拖曳 <kbd>Esc</kbd> 取消拖曳。</p>
+
+<h5>選擇框架時出現的按鈕</h5>
+<div class="table-wrap"><table>
+<tr><th>功能</th><th>何時使用</th><th>首先選擇什麼</th><th>操作</th><th>結果</th><th>如何返回</th></tr>
+<tr><td>轉換為框架邊框層</td><td>當該按鈕出現在所選畫面上時</td><td>① 頂部</td><td>按</td><td>框架成為具有內容和邊框的框架邊框層，並且可以使用附加操作。</td><td>撤銷</td></tr>
+<tr><td>畫在這裡</td><td>當你想在那個框架上畫一幅畫時</td><td>① 頂部</td><td>按下然後用筆等進行繪製。</td><td>對於空幀，將在該幀的“內容”中提供粗略的繪製目標。當您繪製第一條線時，就會建立一個圖層。對於包含內容的幀，返回記錄的繪圖目的地。筆和畫筆設定保持不變。</td><td>如果是空幀，則一次undo後會傳回第一條線和粗圖層的創建</td></tr>
+<tr><td>畫一個新的草圖</td><td>當您想要保留現有繪圖並繪製另一張草圖時</td><td>① 頂部</td><td>按下然後繪製</td><td>將為該幀的“內容”準備一個新的繪圖目標。</td><td>畫線之前空層不會增加。</td></tr>
+</table></div>
+<p>繪圖目的地記錄是僅在工作期間使用的資訊。如果重新啟動等後出現「請指定此框架的繪圖目的地一次」訊息，請按一下下方的按鈕。<b>記錄為繪圖目的地</b>再次指定。如果出現訊息「請完成您的繪圖或文字輸入」。出現時，請在完成繪製線條或輸入文字後按該按鈕。</p>
+
+<h5 id="comic-frame-roles">四大類的作用</h5>
+<div class="table-wrap"><table>
+<tr><th>分類</th><th>該怎麼辦</th><th>主要是你先選擇什麼</th><th>典型按鈕</th></tr>
+<tr><td><a href="#comic-sec-images">圖片/氣球</a></td><td>將影像、氣球和草圖插入框架中。變更內容的顯示方式（在框架內/擴充頁面/在頁面頂部）。</td><td>① 框架 + ② 圖層或 ③ 氣球/文字</td><td>記錄為繪圖目標，使選定的氣球屬於該框架，允許選定的內容突出</td></tr>
+<tr><td><a href="#comic-frame-edges">處理框線</a></td><td>僅將框架線的一側繪製或擦除為像素，或將其部分擦除為向量。</td><td>① 工件+待加工面</td><td>像素化這一面，處理這一面，部分擦除向量邊框</td></tr>
+<tr><td><a href="#comic-frame-split">重新分配/安排</a></td><td>輸入內容後，分割、傾斜、取代或刪除框架。</td><td>① 頂部</td><td>分割框架、更改邊界坡度、交換框架位置</td></tr>
+<tr><td><a href="#comic-sec-repair">調整邊界和內容</a></td><td>修正因重新分佈而損壞的影像的構圖，或不再匹配長度的框架線。更改框架間距。</td><td>從清單中選擇內容/側面（針對整個頁面）</td><td>填充框架，在畫布上調整，在此處繪製</td></tr>
+</table></div>
+
+<h4 id="comic-sec-images">圖片/氣球</h4>
+<div class="table-wrap"><table>
+<tr><th>功能</th><th>何時使用</th><th>首先選擇什麼</th><th>操作</th><th>結果</th><th>如何返回</th></tr>
+<tr><td>如何儲存影像</td><td>刪除影像前</td><td>無</td><td>選擇“填滿框架”或“適合整個影像”</td><td>它將用於下一個要刪除的圖像。<b>填寫框架</b>在保持縱橫比的同時覆蓋框架，並夾住突出部分。<b>適合整個影像</b>整個影像是可見的，根據寬高比有一些邊距。已經放置的圖像不會改變。</td><td>重新選擇</td></tr>
+<tr><td>在哪裡放置多個影像</td><td>在一次刪除多個影像之前</td><td>無</td><td>選擇“全部放置在此面板上”或“按閱讀順序分發到每個面板”</td><td>分發時，會依照從掉幀開始讀取的順序放置一篇。</td><td>重新選擇</td></tr>
+<tr><td>刪除圖像文件</td><td>當您想要將影像插入框架時</td><td>無（以放置目標區塊為目標）</td><td>將映像檔從資源管理器等拖放到框架上</td><td>影像進入幀的“內容”，幀的外部被剪掉。原始影像的像素被保留。轉換前的影格將自動轉換。如果沒有足夠的棋子可供分發，則會出現錯誤（以英文顯示）並且不會放置任何棋子。</td><td>撤銷（1 滴）</td></tr>
+<tr><td>記錄為繪圖目的地</td><td>當您想要使用現有繪圖圖層作為「在此處繪製」的返回目標時</td><td>① 框架 + ② 框架內的繪圖層</td><td>按</td><td>之後，使用“在此處繪製”返回到該圖層。</td><td>重新錄製另一層</td></tr>
+<tr><td>將選定的氣球分配給該框架</td><td>當您想要使用您創建的氣球作為框架的內容時</td><td>① 框架 + ③ 附漫畫工具的氣球</td><td>確保“選定：幀 N”是所需的幀並按下它。</td><td>氣球的主體、文字和尾部構成了這個畫面的內容。</td><td>撤銷</td></tr>
+<tr><td>將選定的角色製作為氣球</td><td>當您想用氣球包圍輸入的字元時</td><td>① 框架 + ③ 畫布上的人物</td><td>按</td><td>創建圍繞角色的氣球並屬於該幀。如果文字被隱藏或鎖定、正在變換或濾鏡編輯、或具有混合模式或不透明度，則會顯示原因並且文字將停止。請選擇所有相連的字母。</td><td>撤銷</td></tr>
+<tr><td>使選定的內容適合框架</td><td>恢復超出頁面或將其帶到頁面前面的內容時</td><td>① 面板 + ② 包含其內容的線條（整組氣球）</td><td>按</td><td>返回到在框架區域中剪輯的顯示</td><td>撤銷</td></tr>
+<tr><td>允許所選內容溢出</td><td>當您想要在畫面外移動手、音效等時</td><td>與上面相同</td><td>按</td><td>內容將顯示在框架之外。堆疊順序與該幀保持相同，且所屬幀不會改變。</td><td>撤銷或“框架”</td></tr>
+<tr><td>將選定的內容置於頁面前面</td><td>當您想在下一幀之前堆疊一幀時</td><td>與上面相同</td><td>按</td><td>顯示在所有幀之前。你所屬的棋子不會改變。</td><td>撤銷或“框架”</td></tr>
+<tr><td>使該框架的公共顯示獨立</td><td>當您想要僅針對該框架單獨編輯使用「使用頁面座標的公開顯示」分割的影像。</td><td>① 邊框 + ② 公共顯示線</td><td>按</td><td>該幀成為獨立副本，編輯不會影響其他幀。</td><td>撤銷</td></tr>
+</table></div>
+<p>如果您在切換內容顯示時出現英文錯誤，主要含義如下：“選擇此面板中的整個內容單元”=您沒有選擇此面板的全部內容，“內容或所屬面板被隱藏或鎖定”=內容或面板被隱藏或鎖定，“內容已使用此顯示策略”=它已經在該顯示中，“首先選擇共享來源”=您沒有選擇公共顯示行。</p>
+
+<h4 id="comic-frame-edges">處理框線</h4>
+<p>在「要加工的邊」中選擇邊，然後進行操作。該清單是“頂部”、“右側”、“底部”和“左側”。對於傾斜框架，數字將顯示為「頁面外緣」和「分割邊界邊緣」。除了選定的邊之外，沒有任何變化。</p>
+<div class="table-wrap"><table>
+<tr><th>功能</th><th>何時使用</th><th>首先選擇什麼</th><th>操作</th><th>結果</th><th>如何返回</th></tr>
+<tr><td>像素化該區域</td><td>當您想要用畫筆添加邊框線或建立手繪風格時</td><td>① 工件+待加工面</td><td>按</td><td>只有那一側變成像素（在圖層面板中 <b>P</b>）。另一邊是向量 (<b>V</b>）仍然存在。</td><td>撤消或“將此區域返回到向量”</td></tr>
+<tr><td>處理該區域</td><td>新增或刪除像素化邊緣時</td><td>① 框架+像素化邊緣</td><td>按下然後用筆或橡皮擦畫</td><td>該區域周圍的圖層將是繪圖目標。向量邊或鎖定邊會出現錯誤。</td><td>撤銷每個筆畫</td></tr>
+<tr><td>將這個區域返迴向量</td><td>當您想要將像素化邊緣回到向量線時</td><td>① 框架+像素化邊緣</td><td>按</td><td>儲存的向量線將返回以符合當前框架形狀。新增和刪除將從顯示中刪除，但處理後的像素會作為隱藏/鎖定圖層保留在幀中（它們不會透過追蹤線自動轉換）。</td><td>撤銷</td></tr>
+<tr><td>向量編輯該區域</td><td>當您想要使用控制點修改向量邊的形狀時</td><td>① 框架+向量邊</td><td>按</td><td>切換到路徑編輯工具並選擇最近的控制點。編輯完成後，您將自動返回漫畫工具。</td><td>撤銷</td></tr>
+<tr><td>幀線部分擦除寬度</td><td>部分向量刪除前</td><td>無</td><td>指定 1 到 1000 px（初始值 12）</td><td>這是下一個部分擦除的寬度</td><td>改變值</td></tr>
+<tr><td>部分擦除向量邊框</td><td>當您想要從向量中刪除部分線條時（例如氣球或人上的線條）</td><td>① 框架+向量邊</td><td>按下並拖曳要使用漫畫工具擦除的畫布部分</td><td>當你釋放它時它會反映出來。每按一次就是一次拖曳。如果想再刪除，請再按一次。</td><td>撤銷</td></tr>
+</table></div>
+<p>即使刪除所有邊框，框架區域和影像剪輯也會保留，讓您可以繼續「在此處繪圖」並排列內容。對於由於調整大小而長度不再匹配的邊，<a href="#comic-sec-repair">調整邊界和內容</a>我會解決它。</p>
+
+<h4 id="comic-frame-split">重新分配/安排</h4>
+<p>即使添加內容後，您也可以重新排列框架。拆分時，每個內容都是<b>重疊最大的新框架</b>分配給.具有相同重疊的項目、完全在框架之外的項目以及無法確定範圍的項目保留在原始框架一側。沒有手動更改分佈的清單。如果結果不同，請使用圖層面板撤銷或移動內容。</p>
+<div class="table-wrap"><table>
+<tr><th>分割時處理影像</th><th>結果</th></tr>
+<tr><td>移動</td><td>將內容移動到目標框架。原始影像及其在頁面上的位置將保留並顯示在新的幀範圍中。</td></tr>
+<tr><td>獨立副本</td><td>建立新建立的框架的獨立副本。如果您稍後編輯其中一項，另一項將不會更改。</td></tr>
+<tr><td>使用頁面座標進行通用顯示</td><td>在多個訊框中顯示一個來源資料。編輯將反映在所有框架上。當您只想修復一側時<b>使該框架的公共顯示獨立</b>使用。與常用顯示不對應的構圖和結構將顯示原因並停止。</td></tr>
+</table></div>
+<div class="table-wrap"><table>
+<tr><th>功能</th><th>何時使用</th><th>首先選擇什麼</th><th>操作</th><th>結果</th><th>如何返回</th></tr>
+<tr><td>分割框架</td><td>當您想要將包含內容的框架分為兩部分時</td><td>① 框架+分割時影像的處理</td><td>按</td><td>與「垂直一分為二」相同的方向分成兩半，並分佈並反映內容。</td><td>撤銷（1 次）</td></tr>
+<tr><td>分割和複製框架的內容</td><td>當您想要在兩個框架中放置相同的圖片時</td><td>① 頂部</td><td>按</td><td>無論處理設定如何，都將所有內容分割為獨立副本</td><td>撤銷</td></tr>
+<tr><td>邊界坡度/改變邊界坡度</td><td>當您想要讓所選幀的分割線對角線時</td><td>① 頂部</td><td>輸入斜率（-0.9 至 0.9）並按 <kbd>Enter</kbd></td><td>邊框將傾斜以反映內容，邊框將適應新的形狀。</td><td>撤銷</td></tr>
+<tr><td>改變整體傾斜度</td><td>當您希望頁面上的所有分割線具有相同的斜率時</td><td>無（每頁 2 個或更多框架）</td><td>傾斜並按下</td><td>整個頁面邊框傾斜</td><td>撤銷</td></tr>
+<tr><td>交換位置的框架/交換框架的位置</td><td>當你想交換兩個框架的位置時</td><td>① 棋子+對手棋子</td><td>選擇合作夥伴並按</td><td>交換內容和邊框。只有矩形件才符合資格。對手清單是使用內部識別名稱顯示的，因此如果您無法確定它是哪一幀，請在交換後檢查螢幕，如果不同，請將其返回到原始螢幕。</td><td>撤銷</td></tr>
+<tr><td>刪除框架並保留內容</td><td>當您想要停止使用相框但保留圖片時</td><td>① 頂部</td><td>按</td><td>框架將消失，內容將保留為頁面上的正常圖層/群組。剪輯和加工過的蒙版也將保留。</td><td>撤銷</td></tr>
+<tr><td>刪除框架及其所屬內容</td><td>當您不需要框架或內容時</td><td>① 頂部</td><td>按</td><td>一次刪除框架及其所屬內容。</td><td>撤銷</td></tr>
+</table></div>
+<p>連接對應於矩形中的相鄰塊。不支援的組合，例如組合傾斜框架或重新劃分組合傾斜框架，將顯示原因並在變更之前停止。</p>
+
+<h4 id="comic-sec-repair">調整邊界和內容</h4>
+<p>此類別清單不是圖層面板選擇。<b>整個當前頁面</b>它是由.當您按下每個按鈕時，它會立即反映出來。</p>
+<div class="table-wrap"><table>
+<tr><th>功能</th><th>何時使用</th><th>首先選擇什麼</th><th>操作</th><th>結果</th><th>如何返回</th></tr>
+<tr><td>幀間隔/更改幀間隔</td><td>當您想要更改幀之間的間隙時</td><td>無</td><td>輸入 0-1000 px 並按 <kbd>Enter</kbd></td><td>差距會改變，內容和邊界會一起反映。調整構圖（填滿框架、移動到中心、在畫布上調整）時無法按下它。</td><td>撤銷</td></tr>
+<tr><td>待修改內容</td><td>搜尋損壞的內容時</td><td>無</td><td>從清單中選擇</td><td>依“名稱：狀態”排序。狀態為「整個影像在框外」、「部分在框外」、「影像未覆蓋框」、「整個顯示的邊距」、「在顯示範圍內」、「隱藏」和「無法確定範圍」。</td><td>—</td></tr>
+<tr><td>填充框架/適合整個影像</td><td>當您想要自動重新構圖時</td><td>待修改內容（水滴放置的圖像）</td><td>按</td><td>重新定位它，使其覆蓋框架，或讓您可以看到全部。使用 drop 以外的方法放置圖像將導致錯誤（以英文顯示）。</td><td>撤銷</td></tr>
+<tr><td>移動到框架的中心</td><td>當您想要將內容放置在框架的中央時</td><td>待修改內容</td><td>按</td><td>內容移動到框架的中心。</td><td>撤銷</td></tr>
+<tr><td>在畫布上調整</td><td>當您想要手動調整位置或大小時</td><td>待修改內容</td><td>打開它並將其拖曳到畫布上</td><td>在內容內拖曳進行移動，拖曳右下角進行縮放（僅透過拖曳放置影像）。當你釋放它時，它就會反映出來，並且調整將繼續。再按一次即可結束。您也可以透過雙擊漫畫工具中放置的圖像來開始。</td><td>拖曳時 <kbd>Esc</kbd>，然後釋放後放回去</td></tr>
+<tr><td>剪輯目標/保留已處理的剪輯/重新產生剪輯</td><td>使用您自己編輯的幀更改剪輯的邊框時</td><td>剪輯目標</td><td>按任一</td><td><b>保留</b>將保留已處理的剪輯並停止自動更新。<b>再生</b>將從框架區域重建（加工將失去）。</td><td>撤銷</td></tr>
+<tr><td>需要返工的區域</td><td>調整大小後框線長度不符時</td><td>無</td><td>從清單中選擇</td><td>像素化邊緣排列為「缺少線條 n px」、「多餘線條 n px」和「長度匹配」。</td><td>—</td></tr>
+<tr><td>保留原始像素/沿邊緣拉伸</td><td>修復長度不匹配的邊時</td><td>需要返工的區域</td><td>按任一</td><td><b>保留原始像素</b>將保留處理後的線條原樣（長度不會自動調整。如有必要，請使用“在此處繪製”來添加缺少的部分）。<b>沿著邊緣拉伸</b>拉伸線條以匹配長度。</td><td>撤銷</td></tr>
+<tr><td>在這裡畫畫</td><td>當你自己加入缺失的部分時</td><td>需要返工的區域</td><td>按下然後用筆畫</td><td>該區域周圍的圖層將是繪圖目標。</td><td>撤銷每個筆畫</td></tr>
+</table></div>
+<p>如果清單為空，則無法按該按鈕：如果剪輯中沒有已編輯的幀，則兩個剪輯幀將為灰色，如果幀沒有內容，則四個合成幀將為灰色，如果沒有像素化邊緣，則三個邊緣幀將為灰色。</p>
+
+<h4 id="comic-frame-grayout">當無法按下按鈕或發生錯誤時</h4>
+<p>“它是灰色的，我無法按它。”和“我可以按它，但面板不工作。”<b>無法執行計件操作：原因</b>」可能會出現。前者是前提不充分的情況，後者是按下時條件不滿足的情況。</p>
+<div class="table-wrap"><table>
+<tr><th>症狀</th><th>必要的假設</th><th>去哪裡檢查</th><th>應付</th></tr>
+<tr><td>灰色：所有按鈕</td><td>處理已完成</td><td>面板上的“正在處理幀更改...”</td><td>等到顯示消失</td></tr>
+<tr><td>灰色：大部分附加操作</td><td>所選框架必須是框架邊框圖層</td><td>是否未顯示“轉換為框架邊框圖層”按鈕？</td><td>選擇一個框架，<b>轉換為框架邊框層</b>按</td></tr>
+<tr><td>灰色：合併、刪除、改變比例、閱讀順序</td><td>選擇框架</td><td>“選定：N 幀”</td><td>使用漫畫工具點擊框架或從閱讀順序清單中選擇它</td></tr>
+<tr><td>灰色：在這裡畫畫/畫一個新的草圖</td><td>不是在調整畫布上的構圖時</td><td>“釋放確認。按 Esc 鍵取消拖曳。 ”和麵板上的“取消”。</td><td>調整完成後<b>取消</b>按（反映的調整將保留）</td></tr>
+<tr><td>灰色：改變整體傾斜度</td><td>必須有 2 頁或更多頁</td><td>閱讀順序列表</td><td>先分開</td></tr>
+<tr><td>灰色：交換棋子的位置</td><td>選擇一個棋子並確保你的對手有一個棋子</td><td>“交換位置的棋子”</td><td>選擇框架/製作 2 個或更多框架</td></tr>
+<tr><td>灰色：每個按鈕都需要重新設計</td><td>目標清單不為空</td><td>“要修改的內容”“剪輯目標”“要修改的區域”</td><td>插入內容、像素化邊緣等，無目標時無需使用</td></tr>
+<tr><td>灰色：更改幀間隔（返工）</td><td>成分沒有調整。</td><td>面板“取消”</td><td>調整構圖後<b>取消</b>按</td></tr>
+<tr><td>錯誤：請確認或取消預覽，然後再繼續。</td><td>影像未處理或正在調整構圖（字樣仍為舊顯示，但沒有確認按鈕）</td><td>面板上的“正在處理幀更改...”和“取消”</td><td>等待該過程完成或完成調整構圖。<b>取消</b></td></tr>
+<tr><td>錯誤：請完成您的繪圖或文字輸入。</td><td>行和字元輸入已完成。</td><td>畫布</td><td>確認輸入然後按</td></tr>
+<tr><td>錯誤：請指定該訊框的繪圖目標一次。</td><td>在圖層面板中選擇該畫面的繪圖圖層。</td><td>圖層面板</td><td>選擇框架內的繪圖層，<b>記錄為繪圖目的地</b></td></tr>
+<tr><td>錯誤：請選擇一個字元。</td><td>選擇畫布上的文字本身</td><td>畫布</td><td>選擇畫布上的文字而不是圖層行</td></tr>
+<tr><td>錯誤：框架或父圖層已鎖定或正在編輯蒙版</td><td>框架或父組不得被鎖定。</td><td>圖層面板鍵/蒙版編輯</td><td>解鎖並完成蒙版編輯</td></tr>
+<tr><td>錯誤：請確認框架的變換</td><td>頂部改造完成。</td><td>畫布</td><td>確認改造</td></tr>
+<tr><td>錯誤：出現英文句子</td><td>（沒有日文翻譯的錯誤）</td><td>面板顯示</td><td>請參閱上面每個部分的解釋。範例：「沒有足夠的面板…」表示分發目的地沒有足夠的幀，「選擇導入的影像…」不是透過 drop 放置的影像</td></tr>
+</table></div>
+
+<h4 id="comic-frame-layers">圖層面板中看到的內容和邊框</h4>
+<div class="table-wrap"><table>
+<tr><th>顯示</th><th>意義</th></tr>
+<tr><td>框架 1、框架 2...</td><td>框架的集合。顯示/鎖定也在本機中處理。</td></tr>
+<tr><td>內容</td><td>要在框架內顯示的內容，例如圖像、草圖和氣球。對於氣球，將主體和文字作為一組傳輸。</td></tr>
+<tr><td>框線</td><td>上緣、右邊緣、下緣、左邊緣或頁面週長/分區邊界。<b>V</b> 是一個向量，<b>P</b> 是一個像素。</td></tr>
+<tr><td>擠出/正面</td><td>框架之外的內容。在頁面正面的參考線或公開顯示中<b>轉到原始數據</b>編輯來自 的實體。它不用於拖曳和複製參考行本身。</td></tr>
+</table></div>
+<p>用於復原的備份和訊框的內部資料不會出現在正常清單中。影像從屬關係和剪輯從內容側控制，線條處理從幀線側控制。儲存時保留編輯訊息 <code>.lstroke</code> 請使用</p>
+
+<h4 id="comic-frame-tutorial">練習：4步</h4>
+<div class="note">練習是新文件嗎？<b>重複的文件</b>請去那裡。每個程式都是根據實作編寫的，有些部分還沒有在螢幕上確認。如果途中出現不同的顯示，請按一下<a href="#comic-frame-grayout">當無法按下按鈕或發生錯誤時</a>請檢查。</div>
+
+<h5>練習 1：創建第一頁</h5>
+<ol class="steps">
+<li>建立一個新文件，<b>視窗 › 漫畫 › 漫畫</b> ，然後開啟「框架分割」標籤。</li>
+<li>選擇“3幀”等作為模板，<b>應用程式模板</b>按下“Frame 1”將在圖層面板中建立。</li>
+<li>將工具設為漫畫並點擊第一幀。確認面板上出現「選定：幀 1」。</li>
+<li><b>畫在這裡</b>用筆按下並畫出一個粗略的草圖。突出的部分將隱藏在框架之外。</li>
+<li>當你想重畫的時候<b>撤銷</b>。當你想重疊另一個粗糙時<b>畫一個新的草圖</b>新聞</li>
+</ol>
+
+<h5>練習 2：刪除多個影像</h5>
+<ol class="steps">
+<li>在練習 1 頁上，<b>圖片/氣球</b>打開。</li>
+<li>《如何儲存影像》<b>填寫框架</b>, “放置多個影像”<b>按閱讀順序分發到每組</b>我會成功的。</li>
+<li>在資源管理器中選擇 3 張影像並將它們組合起來<b>框架1</b>將其拖曳到 .從第 1 格開始按閱讀順序一次插入一張紙。</li>
+<li>如果要重新定位圖像，請使用漫畫工具雙擊圖像，或者<b>調整邊界和內容</b>選擇內容<b>在畫布上調整</b>打開並拖曳。</li>
+<li>如果出現幀數不足的錯誤，請減少影像數量或將放置目標設為上一幀。什麼都沒有留下，所以你可以重新開始。</li>
+</ol>
+
+<h5>練習3：插入圖片然後分割</h5>
+<ol class="steps">
+<li>選擇包含圖像的框架。</li>
+<li><b>重新分配/安排</b>，然後選擇“分割時處理影像”。如果你迷路了<b>移動</b>我會成功的。</li>
+<li><b>分割框架</b>按下 當「正在處理幀變化...」消失時將會反映出來。</li>
+<li>如果影像僅出現在一幀中或被隱藏，<b>調整邊界和內容</b>在「要修改的內容」下，選擇「整個內容都在框架之外」等。<b>填寫框架</b>雅<b>在畫布上調整</b>我會解決它。</li>
+<li>如果你不喜歡整件事情<b>撤銷</b>返回分割前的狀態，改變處理方式，重新分割。</li>
+</ol>
+
+<h5>練習 4：編輯部分邊框</h5>
+<ol class="steps">
+<li>選擇一個框架，<b>處理框線</b>打開並在“要處理的邊緣”中選擇邊緣。</li>
+<li>將零件提取為向量時：<b>部分擦除向量邊框</b>使用漫畫工具按住並拖曳要擦除的部分。若要刪除更多內容，請再次按下該按鈕。</li>
+<li>添加時：<b>像素化該區域</b>按下後<b>處理該區域</b>用筆或橡皮壓並繪製。</li>
+<li>如果您稍後更改框架的大小並且線條的長度不再匹配，<b>調整邊界和內容</b>選擇“要返工的面”，<b>沿著邊緣拉伸</b>或者<b>在這裡畫畫</b>我會解決它。</li>
+<li>當你想戒菸時<b>將這個區域返迴向量</b>新聞</li>
+</ol>
+<h4>氣球</h4>
+<div class="grid2">
+<figure><img src="img/section_comic_speaker.png" alt="" loading="lazy"><figcaption>設定揚聲器</figcaption></figure>
+<figure><img src="img/section_comic_tail.png" alt="" loading="lazy"><figcaption>進階連線設定</figcaption></figure>
+<figure><img src="img/section_comic_assets_reg.png" alt="" loading="lazy"><figcaption>資料登記/刪除</figcaption></figure>
+<figure><img src="img/section_comic_textfmt.png" alt="" loading="lazy"><figcaption>字元格式</figcaption></figure>
+</div>
+<table>
+<tr><td>選定的氣球</td><td>畫布上所選的氣球將成為目標。</td></tr>
+<tr><td>創建一個氣球</td><td>選擇橢圓/圓角矩形/雲狀（思考）/鋸齒狀（尖叫）並“創建氣球”。</td></tr>
+<tr><td>將 Body/Tail 圖層轉換為氣球</td><td>從不同的圖層建立一個氣球，並分別繪製主體和尾部。</td></tr>
+<tr><td>轉換手繪氣球</td><td>將手繪氣球（選區或圖層）轉換為可編輯氣球。</td></tr>
+<tr><td>襯線/垂直書寫/自動調整大小以適合文字/反映對話</td><td>輸入並反映裡面的字元。</td></tr>
+<tr><td>設定揚聲器</td><td>新增演講者姓名（顯示名稱）和演講者 ID。</td></tr>
+<tr><td>打開尾巴根部的氣球</td><td>開：在尾巴根部剪出輪廓，當尾巴移動時，開口也會跟著移動。</td></tr>
+<tr><td>讓底座跟隨尖端</td><td>開：當您移動尖端時，底座會沿著氣球的外圓週移動。</td></tr>
+<tr><td>自動連接尾線和氣球線</td><td>平滑地連接線的末端。</td></tr>
+<tr><td>尾距</td><td>底座與外周距離（0表示緊密接觸，負值表示咬合）。</td></tr>
+<tr><td>將選定的氣球註冊到材質面板/刪除氣球</td><td><a href="#p-comicassets">Comic Assets</a> 保存/刪除。</td></tr>
+<tr><td>字元格式</td><td>字體/大小/字元方向/行距/字元間距/格式詳細資訊。</td></tr>
+</table>
+<h4>線路列表</h4>
+<p>頁面、面板、揚聲器、線路和狀態的清單。雙擊對話框即可現場編輯（<kbd>Enter</kbd> 換行符，<kbd>Ctrl</kbd>+<kbd>Enter</kbd> 已確認，<kbd>Esc</kbd> （取消）。編輯文字欄位不會將您移至另一頁。更改演講者欄位中的演講者格式，並移至頁面/氣球列中的相關位置。 “更新清單”和“批次編輯選定行”。</p>
+<h4>揚聲器格式</h4>
+<p>註冊每個發言者的文字格式（字體、顏色等）並自動將其應用到對話中。設定格式名稱、發言者 ID、發言者姓名、顏色標籤（選擇顏色/取消標籤）和“未註冊發言者使用的預設格式”，並導入透過“註冊/更新所選文字格式”在字體面板中調整的所選文字的格式。其他：更新格式註冊資訊/複製/刪除/套用於選定的氣球/取消格式覆蓋/儲存並載入使用者預設值。</p>
+
+<h3 id="p-comicassets">Comic Assets</h3>
+<div class="side">
+<figure><img src="img/panel_comic_assets.png" alt="Comic Assets" loading="lazy"><figcaption>Comic Assets</figcaption></figure>
+<div><table>
+<tr><td>氣球選項卡</td><td>已註冊氣球材料清單。</td></tr>
+<tr><td>註冊選定的氣球</td><td>將「漫畫」面板中所選的氣球儲存為材質。</td></tr>
+<tr><td>重新命名/刪除/重新加載</td><td>物料管理。</td></tr>
+</table></div>
+</div>
+
+<h3 id="p-comicproject">漫畫項目</h3>
+<figure><img src="img/panel_comic_project.png" alt="漫畫項目" loading="lazy"><figcaption>漫畫項目</figcaption></figure>
+<table>
+<tr><td>項目/新建.../導入.../匯出...</td><td>腳本項目的選擇、建立、輸入/輸出。</td></tr>
+<tr><td>章節/頁（左）</td><td>章節和頁面組織樹。</td></tr>
+<tr><td>線路列表（中心）</td><td>#/演講者/對話/頁面/校對/放置。在上列中搜尋一行。</td></tr>
+<tr><td>演講者/對話/校對/指導/頁面</td><td>編輯選定的行。校對：草稿/需要校對/批准，方向：垂直/水平。與「對話中反映」確認。</td></tr>
+<tr><td>新增章節/新增頁面/新增對話/刪除對話</td><td>編輯配置。</td></tr>
+<tr><td>在當前頁面上建立連結/文本</td><td>將對話連接到當前頁面並將其作為文字放置在畫布上。</td></tr>
+<tr><td>下一個未放置/需要下一個校準</td><td>跳到您剩下要處理的行。</td></tr>
+<tr><td>檢查連結</td><td>檢查對話與頁面的對應關係沒有問題。</td></tr>
+</table>
+
+<h3 id="p-comicworkflow">漫畫工作流程</h3>
+<figure><img src="img/panel_comic_workflow.png" alt="漫畫工作流程" loading="lazy"><figcaption>漫畫工作流程</figcaption></figure>
+<table>
+<tr><td>計劃/驗證項目/預訂</td><td>從漫畫項目中規劃一本書的整個結構並檢查問題。</td></tr>
+<tr><td>清單</td><td>頁面/框架/狀態/對話。</td></tr>
+<tr><td>計劃頁面/預覽應用程式/應用程式到頁面</td><td>規劃所選頁面的面板佈局和對話位置，檢查並套用。</td></tr>
+</table>
+
+<h3 id="p-assist">繪圖協助</h3>
+<div class="side">
+<figure><img src="img/panel_drawing_assist.png" alt="繪圖協助" loading="lazy"><figcaption>繪圖協助</figcaption></figure>
+<div><table>
+<tr><td>鍵入/新增/刪除</td><td>新增/移除鏡像/旋轉對稱/平行標尺/徑向標尺/同心圓標尺/透視標尺。</td></tr>
+<tr><td>啟用設定</td><td>使用選取的輔助工具進行繪圖。</td></tr>
+<tr><td>啟用/疊加顯示</td><td>開啟/關閉輔助並顯示引導線。</td></tr>
+<tr><td>應用程式/更新</td><td>反映設定/更新清單。底部有“此頁面有N個幫助”。</td></tr>
+</table></div>
+</div>
+
+<h3 id="p-actions">行動</h3>
+<div class="side">
+<figure><img src="img/panel_actions.png" alt="行動" loading="lazy"><figcaption>行動</figcaption></figure>
+<div><table>
+<tr><td>行動清單</td><td>可以執行的操作（將頁面匯出為圖像、新增/刪除/複製圖層等）。</td></tr>
+<tr><td>採取行動.../記錄</td><td>執行所選操作/記錄操作並將其設為巨集。</td></tr>
+<tr><td>宏</td><td>記錄的巨集清單。</td></tr>
+<tr><td>播放/批量運行.../試運行</td><td>執行巨集/在多個頁面或文件上批次執行/嘗試不進行任何變更。</td></tr>
+<tr><td>刪除/匯入.../匯出...</td><td>宏觀管理。執行日誌將出現在下面的欄位中。</td></tr>
+</table></div>
+</div>
+
+<h3 id="p-links">連結</h3>
+<figure><img src="img/panel_links.png" alt="連結" loading="lazy"><figcaption>連結</figcaption></figure>
+<p>這是使用“放置圖像”對作為外部文件放置的圖像進行管理。清單：狀態/名稱/類型/使用的層/更新日期/哈希。</p>
+<table>
+<tr><td>更新/驗證哈希值</td><td>更新清單/檢查檔案是否已更改。</td></tr>
+<tr><td>開放位置</td><td>開啟包含該文件的資料夾。</td></tr>
+<tr><td>重新連結.../重新載入/替換...</td><td>重新指定/重新讀取移動的檔案/將其替換為另一個檔案。</td></tr>
+<tr><td>嵌入</td><td>停止外部引用並將其合併到文件中。</td></tr>
+<tr><td>轉到圖層</td><td>選擇您正在使用的圖層。</td></tr>
+</table>
+
+<h3 id="p-copilot">Canvas Assistant <span class="tag">開發中</span></h3>
+<div class="side">
+<figure><img src="img/panel_canvas_copilot.png" alt="Canvas Assistant" loading="lazy"><figcaption>Canvas Assistant(incomplete)</figcaption></figure>
+<div><p>這是一項功能（目前正在開發中），您可以寫下想要進行的編輯，人工智慧將規劃步驟並將其應用到畫布上。它目前未出現在視窗選單中。</p><table>
+<tr><td>Refresh</td><td>重新讀取畫布的狀態。</td></tr>
+<tr><td>輸入欄位/計劃</td><td>在「描述畫布編輯...」中寫入內容並建立計劃。</td></tr>
+<tr><td>Context</td><td>頁面/圖層/選擇/可見/外部（允許外部服務）。</td></tr>
+<tr><td>Plan</td><td>Status / Intent / Target / Approval / Run。</td></tr>
+<tr><td>Next</td><td>Preview / Apply / Discard / Undo / Verify。</td></tr>
+</table></div>
+</div>
+
+<h3 id="p-production">Production Control <span class="tag">開發中</span></h3>
+<figure><img src="img/panel_production_control.png" alt="Production Control" loading="lazy"><figcaption>生產控制（不完整）-“概述”選項卡</figcaption></figure>
+<p>這是一個正在開發的面板，可透過 MCP 管理生產作業、材料和配方。它目前未出現在視窗選單中。 LoomStroke 如果MCP伺服器未運行，將顯示「刷新失敗」。標籤：概述（功能數量/人工智慧效果預設/工件/作業/聖經條目/視覺 QA 報告/匯出檔案/食譜/生產配方/商店根目錄/外部服務）、目錄、工件、作業、聖經、視覺 QA、匯出、食譜、譜系。</p>
+</section>
+
+<!-- ============================================================ -->
+<section id="menus">
+<h2>6. 菜單</h2>
+<div class="grid2">
+<figure><img src="img/menu_0.png" alt="文件" loading="lazy"><figcaption>文件</figcaption></figure>
+<div><table>
+<tr><td>建立新的…/開啟…/載入…</td><td>新文件 / 開啟 .lStroke/PSD/image / 將影像匯入為圖層。</td></tr>
+<tr><td>放置圖片...</td><td>將圖像作為外部文件的連結（<a href="#p-links">連結</a>（由面板管理）。</td></tr>
+<tr><td>開啟最近的文件</td><td>從歷史中打開。</td></tr>
+<tr><td>關閉/儲存/另存為</td><td>以 .llines 格式儲存。</td></tr>
+<tr><td>開始寫... ~ 數位漫畫包</td><td><a href="#d-export">開始寫作</a>參考。</td></tr>
+<tr><td>漫畫預檢.../字體診斷...</td><td><a href="#d-check">檢查</a>參考。</td></tr>
+<tr><td>打包您的物品...</td><td>將它們合併到一個資料夾中，包括字體和連結的圖像（您需要先儲存它們）。</td></tr>
+<tr><td>文檔模式...</td><td>檢查並轉換顏色模式。</td></tr>
+</table></div>
+<figure><img src="img/menu_1.png" alt="編輯" loading="lazy"><figcaption>編輯：撤消（顯示上一次操作的名稱）/重做/剪切/複製/貼上/從系統剪貼簿貼上/全選/選擇所有向量/取消選擇/畫布大小/交換前景色和背景色（<kbd>X</kbd>) / 將前景色和背景色恢復為預設值(<kbd>D</kbd>)/首選項（圖片為新增前）</figcaption></figure>
+<figure><img src="img/menu_2.png" alt="影像" loading="lazy"><figcaption>圖片：畫布水平/垂直翻轉、90°/180°旋轉、圖像解析度、圖像設定、漫畫工作設置</figcaption></figure>
+<figure><img src="img/menu_3.png" alt="顯示" loading="lazy"><figcaption>顯示：放大/縮小/重置縮放/適合展開/網格/軟打樣（列印顏色的模擬顯示）/選擇打樣設定檔（ICC用於模擬）/面板/ <a href="#grid">網格設定...</a> / <a href="#guides">指南</a> / <a href="#composition">作文指導...</a>（圖片為新增前）</figcaption></figure>
+<figure><img src="img/menu_4.png" alt="層" loading="lazy"><figcaption>圖層：新建/新螢幕色調/複製/刪除/與底部合併/合併可見圖層/合併影像/將選擇轉換為遮罩/分組/堆疊順序/光柵化</figcaption></figure>
+<figure><img src="img/menu_layer_arrange.png" alt="堆疊順序" loading="lazy"><figcaption>圖層 › 堆疊順序： 到前面 / 到前面 / 到後面 / 到後面</figcaption></figure>
+<figure><img src="img/menu_5.png" alt="過濾器" loading="lazy"><figcaption>過濾器：最後一個過濾器（重新套用）/ <a href="#filters">直接套用每個濾鏡</a> /已安裝AI預設/AI效果預設...（圖片為新增前）</figcaption></figure>
+<figure><img src="img/menu_6.png" alt="窗戶" loading="lazy"><figcaption>視窗：全螢幕顯示/螢幕模式/重置佈局/顯示指南/隱藏（切換標尺顯示）/工具列/面板類別（圖層/頁面/繪圖/漫畫/AI/其他）（圖像為分類前）</figcaption></figure>
+<figure><img src="img/menu_window_toolbar.png" alt="工具列" loading="lazy"><figcaption>視窗 › 工具列：工具屬性/主要/工具</figcaption></figure>
+<figure><img src="img/menu_7.png" alt="幫助" loading="lazy"><figcaption>幫助：關於LoomStroke（版本、授權、第三方授權）</figcaption></figure>
+</div>
+
+<h3 id="guides">指南和尺子</h3>
+<p><b>查看 › 指南</b> 指南操作總結在 中。統治者是 <b>視窗 › 顯示/隱藏參考線</b>（<kbd>R</kbd>）。</p>
+<div class="table-wrap"><table>
+<tr><th>專案</th><th>內容</th></tr>
+<tr><td>顯示指南/鎖定指南</td><td>顯示（初始開啟）和鎖定（初始關閉）。鎖定後，指南無法移動，也無法擦除或更換。</td></tr>
+<tr><td>吸附到畫布邊緣/吸附到畫布中心</td><td>將參考線連接到畫布的邊緣（初始開啟）或中心（初始關閉）。</td></tr>
+<tr><td>清除所有指南</td><td>刪除本頁的指南和構圖指南。</td></tr>
+<tr><td>指南模板...</td><td>輸入“名稱”和“儲存目前指南”。將已儲存的範本套用到「目標頁面」（所有頁面/每個頁面）。您可以選擇「按頁面尺寸比例調整位置」或「取代現有指南」。</td></tr>
+<tr><td>裝訂線邊距... / 格式指南... / 完成顯示/ 擴充填滿...</td><td><a href="#print-layout">格式/裝訂線/附加著色</a>瞧。</td></tr>
+<tr><td>封面模板...</td><td><a href="#cover-template">封面模板</a>瞧。</td></tr>
+</table></div>
+<h4>創建指南</h4>
+<p>右鍵點選標尺<b>創建指南</b>選擇。一旦更改設置，畫布上就會顯示臨時指南，您可以透過「確定」、「取消」或「放置」來放置它<kbd>Esc</kbd>・關閉以擦除臨時顯示。打開設定畫面後，拖曳臨時參考線來移動它，<kbd>Shift</kbd>+您可以拖曳來旋轉。</p>
+<div class="table-wrap"><table class="params">
+<tr><th>專案</th><th>範圍/選擇</th><th>描述</th></tr>
+<tr><td>如何創建</td><td>一份指南/批量創建/柱狀網格</td><td>一次只建立一條分割線、邊距和中心線，或建立一個柱（框架）框架。</td></tr>
+<tr><td>方向/位置</td><td>垂直/水平/數字</td><td>使用一本指南時。</td></tr>
+<tr><td>單位</td><td>px / mm / inch</td><td>數值單位。</td></tr>
+<tr><td>垂直分割數/水平分割數</td><td>1〜1000</td><td>用於批量創建/列網格。</td></tr>
+<tr><td>列間距/行間距</td><td>數值</td><td>使用多列網格時。</td></tr>
+<tr><td>建立邊距參考線（左/上/右/下）</td><td>開/關</td><td>建立外邊緣線。</td></tr>
+<tr><td>垂直中心線/水平中心線</td><td>開/關</td><td>批次創建時。</td></tr>
+<tr><td>替換現有指南</td><td>開/關</td><td>刪除現有指南並建立一個。</td></tr>
+<tr><td>參考範圍</td><td>畫布/選擇範圍/選擇對象</td><td>放置指南的範圍。選擇物件是所選向量的輪廓。</td></tr>
+<tr><td>旋轉/位置差X・Y</td><td>-360〜360° / px</td><td>要建立的指南的旋轉和移動量。</td></tr>
+</table></div>
+<p>行動指南<b>移動</b>用工具來做。點擊參考線以選擇它，拖曳它以移動它，<kbd>Delete</kbd> 刪除或拖曳 <kbd>Esc</kbd> 將其返回到原來的位置。當您將其釋放到畫布之外時，它將被刪除。您也可以從標尺拖曳來建立新參考線。旋轉導軌還支援繪圖、吸附、保存和重新加載。</p>
+<p>筆、橡皮擦、效果筆、向量筆和路徑吸附到參考線和構圖參考線。被吸住的指南用明亮的粗線突出顯示。右鍵點選畫布<b>選擇引導單元格</b>如果選擇 ，則選擇將是圍繞單擊位置的參考線（和畫布邊緣）的矩形。</p>
+
+<h3 id="grid">網格設定</h3>
+<p><b>查看 › 網格設定...</b> 打開它。您可以在畫布開啟時對其進行操作，然後按「確定」套用更改，按「取消」放棄更改（不會暫時顯示網格）。</p>
+<div class="table-wrap"><table class="params">
+<tr><th>專案</th><th>範圍/選擇</th><th>初始值</th><th>描述</th></tr>
+<tr><td>網格型</td><td>正方形/主副線/縱橫間距/等距/三角形/六角形/極座標/行距</td><td>廣場</td><td>網格形狀。</td></tr>
+<tr><td>水平間距/垂直間距</td><td>1〜5000</td><td>32 / 32</td><td>垂直方向時為「縱橫間距」。水平方向與環境設定中的「網格間距」設定相同。</td></tr>
+<tr><td>主線間距</td><td>1〜1000</td><td>5</td><td>使用主線和輔助線時，主線應該畫幾個方格？</td></tr>
+<tr><td>旋轉角度</td><td>-360〜360</td><td>0</td><td>網格旋轉。</td></tr>
+<tr><td>輻射分區數</td><td>3〜360</td><td>12</td><td>當在極座標中時。</td></tr>
+<tr><td>前導間距/起始位置/前導單位</td><td>0.1~5000 / 數值 / px・mm</td><td>20 / 0 / —</td><td>當開始一條線時。</td></tr>
+<tr><td>遵循標尺原點</td><td>開/關</td><td>關閉</td><td>根據統治者的起源排列。</td></tr>
+<tr><td>顯示網格</td><td>開/關</td><td>關閉</td><td><kbd>G</kbd> 一樣。</td></tr>
+<tr><td>吸附到網格</td><td>開/關</td><td>關閉</td><td>將移動、路徑編輯、文字、矩形選擇和測量附加到網格點（與移動工具網格捕捉相同的設定）。</td></tr>
+</table></div>
+<p>密集的網格會使顯示變薄，但使用所有網格點進行捕捉。</p>
+
+<h3 id="composition">作文指南</h3>
+<p><b>查看 › 構圖指南...</b> 相互疊加顯示第三分區/黃金比例/黃金螺旋/對角線/中心十字/安全區域。參考範圍為畫布/成品框（<a href="#print-layout">格式指南</a>) / 選擇範圍 / 選擇對象，安全區域邊距為 0 到 49%（初始 10）。旋轉和位置X/Y之間的差異、暫時顯示、移動/拖曳<kbd>Shift</kbd>+拖曳旋轉和確定/取消操作與建立參考線相同。</p>
+<p>使用移動工具拖曳構圖線來移動構圖，<kbd>Delete</kbd> 隱藏它（當指南被鎖定或隱藏時不可能）。構圖指南是顯示設置，不會記錄在歷史記錄中。當您建立新的時，它將被初始化。</p>
+
+<h3 id="print-layout">格式/裝訂線/附加著色</h3>
+<div class="table-wrap"><table>
+<tr><th>顯示 › 指南項目</th><th>內容</th></tr>
+<tr><td>格式指南...</td><td>使用預設（B5 正文 / A5 正文 / A4 正文 / B6 / A6 平裝本 / Shinsho / 46 格式 / 方形。（單色）600dpi /（彩色）350dpi）或自訂指定裝訂寬度/高度、附加（初始 3mm）、安全） 350dpi）或自訂指定裝訂寬度/高度、附加（初始 3mm）、安全邊距）單位以參考邊界線（初始裝訂 5mm）。您可以使用「儲存格式預設」儲存自己的預設。畫布大小不會改變，因此如果大小與目前畫布不匹配，就會出現錯誤。使用「所有頁面」在所有頁面上建立。</td></tr>
+<tr><td>喉緣...</td><td>裝訂面的邊距寬度（0 至 100 毫米）。如果啟用“在雙頁跨頁視圖中顯示裝訂線危險區域”，裝訂接縫附近的區域將在雙頁跨頁視圖中顯示為紅色。</td></tr>
+<tr><td>成品展示</td><td>將完成線的外側顯示得更暗。</td></tr>
+<tr><td>延伸補充...</td><td>僅使用「拉伸邊緣像素」或「鏡像邊緣像素」填滿所選柵格圖層完成線的外部。表面的像素保持不變。這是整個畫布的常規、未鎖定的柵格圖層，適用於具有格式指南的頁面。您可以恢復它。</td></tr>
+</table></div>
+<p><b>文件 › 漫畫預檢...</b> 如果文字或氣球與裝訂線危險區域重疊，或圖案到達終點線但未到達填滿區域，「列印（單色）」將警告您。</p>
+
+<h3 id="cover-template">封面模板</h3>
+<p><b>查看 › 指南 › 封面模板...</b> 現在，為封面建立一個頁面模板，其中表 1、書脊、表 4 和袖子對齊。指定模板名稱、裝訂方向（右裝訂/左裝訂）、完成的一側寬度/高度（毫米）、正文頁數、一張紙的厚度、兩側袖子寬度、附加填充和 DPI。書脊寬度的計算方式為“正文頁數 ÷ 2（向上舍入）x 一張紙的厚度”，也可以使用“直接指定書脊寬度”手動輸入。書脊寬度和畫布像素大小顯示在螢幕底部。儲存後，它就變成了頁面模板，<a href="#p-pages">頁面面板</a>您可以新增自（僅儲存頁面不會增加）。</p>
+<h3 id="ctx-canvas">畫布右鍵選單</h3>
+<div class="side">
+<figure><img src="img/ctx_canvas.png" alt="右鍵點選畫布" loading="lazy"><figcaption>右鍵點選畫布</figcaption></figure>
+<div><p>除了常用的編輯和檢視項目外，還有以下項目。</p><table>
+<tr><td>顯示/隱藏指南</td><td><kbd>R</kbd>。切換標尺顯示。</td></tr>
+<tr><td>選擇引導單元格</td><td>使選擇範圍成為圍繞單擊位置的引導矩形（<a href="#guides">指南和尺子</a>）。</td></tr>
+<tr><td>沿路徑放置圖案</td><td>沿著選定路徑（在未變換的可編輯向量圖層上）以相等的間隔排列形狀（橢圓形/圓角矩形/三角形）。指定路徑方向的大小（初始 12 像素）、間距（初始 32 像素）、變化、隨機數種子和旋轉（初始開啟）。</td></tr>
+<tr><td>Register Shape / Register Shapes</td><td>將選定的向量註冊到形狀管理器（一個/全部）。</td></tr>
+<tr><td>Convert to Vector</td><td>將形狀轉換為規則向量。</td></tr>
+<tr><td>Fill to Selection</td><td>用繪圖顏色填滿選取範圍。</td></tr>
+</table></div>
+</div>
+</section>
+
+<!-- ============================================================ -->
+<section id="dialogs">
+<h2>7. 對話</h2>
+
+<h3 id="d-image">圖像/畫布</h3>
+<div class="grid2">
+<figure><img src="img/dlg_canvas_size.png" alt="畫布尺寸" loading="lazy"><figcaption><b>畫布尺寸</b>（編輯選單）：更改紙張尺寸而不更改圖片尺寸。預設、寬度/高度（鎖定以固定縱橫比）、錨點（向哪個方向展開）。</figcaption></figure>
+<figure><img src="img/dlg_image_size.png" alt="影像解析度" loading="lazy"><figcaption><b>影像解析度</b>（圖像選單）：放大或縮小每張圖片</figcaption></figure>
+</div>
+<table>
+<tr><th colspan="2">影像解析度</th></tr>
+<tr><td><span class="num">1</span>像素尺寸</td><td>寬度/高度 (px)、放大率 (%)。</td></tr>
+<tr><td><span class="num">2</span>實際尺寸</td><td>指定寬度和高度（以毫米/英吋為單位）。</td></tr>
+<tr><td><span class="num">3</span>解析度</td><td>DPI（1〜1200）。</td></tr>
+<tr><td><span class="num">4</span>修復縱橫比/重新取樣影像</td><td>關閉重採樣時，僅變更實際大小 (DPI)，而不變更像素。</td></tr>
+<tr><td><span class="num">4</span>插值法</td><td>最近鄰/雙線性/雙三次（建議）/Lanczos（最適合減少）/Hamming/Box（整數減少）。</td></tr>
+<tr><td><span class="num">4</span>估計取消的內存</td><td>用於使此更改可逆的內存量。</td></tr>
+</table>
+<div class="grid2">
+<figure><img src="img/dlg_image_props.png" alt="影像設定" loading="lazy"><figcaption><b>影像設定</b>：<span class="num">1</span>畫布尺寸（僅顯示）　<span class="num">2</span>DPI與實際尺寸　<span class="num">3</span>顏色設定檔（未載入設定檔/sRGB/ICC）</figcaption></figure>
+<figure><img src="img/dlg_comic_book.png" alt="漫畫作品設定" loading="lazy"><figcaption><b>漫畫作品設定</b></figcaption></figure>
+</div>
+<table>
+<tr><th colspan="2">漫畫作品設定</th></tr>
+<tr><td>裝訂方向</td><td>左裝訂/右裝訂（順序不變）。</td></tr>
+<tr><td>正文開始</td><td>自動/前（右）/後（反）。最多插入一張空白頁以對齊兩側。</td></tr>
+<tr><td>頁面展示</td><td>單頁/跨頁。</td></tr>
+<tr><td>號碼起始號碼/前綴</td><td>頁碼的起始值 (1-9999) 和前綴字元。</td></tr>
+<tr><td>不顯示號碼頁的作用</td><td>從封面/封底/門/主體/版權頁中選擇。</td></tr>
+<tr><td>傳播預覽</td><td>您可以檢查頁面的組合。</td></tr>
+</table>
+
+<h3 id="d-export">開始寫作</h3>
+<figure class="mid"><img src="img/dlg_export.png" alt="匯出影像" loading="lazy"><figcaption><b>開始寫...</b>（<kbd>Ctrl</kbd>+<kbd>E</kbd>）</figcaption></figure>
+<table>
+<tr><td><span class="num">1</span>格式</td><td>PNG/JPEG/TIFF/WebP/BMP/PSD（含圖層）/SVG（向量）。將顯示每種格式的透明度、ICC 和 DPI 相容性。</td></tr>
+<tr><td><span class="num">2</span>顏色設定檔</td><td>嵌入文件設定檔/無設定檔/轉換為 sRGB 並嵌入。</td></tr>
+<tr><td><span class="num">3</span>透明度</td><td>保留透明度/填滿顏色並合併（指定顏色）。</td></tr>
+<tr><td><span class="num">4</span>格式選項</td><td>PNG 壓縮等級（0-9）、JPEG 品質等。</td></tr>
+<tr><td><span class="num">5</span>匯出內容</td><td>活動頁面顯示圖層合成結果。不包括參考線、選擇邊框和工具顯示。</td></tr>
+<tr><td><span class="num">6</span>警告</td><td>如果有需要注意的地方就會顯示。</td></tr>
+</table>
+<div class="grid2">
+<figure><img src="img/dlg_export_pages.png" alt="批量匯出頁面" loading="lazy"><figcaption><b>批量匯出頁面</b></figcaption></figure>
+<figure><img src="img/dlg_export_print.png" alt="導出用於印刷" loading="lazy"><figcaption><b>導出用於印刷</b></figcaption></figure>
+</div>
+<table>
+<tr><th colspan="2">批量匯出頁面</th></tr>
+<tr><td>目標/範圍/角色</td><td>全部/頁面範圍（例如 <code>1-4, 7</code>) / 目前 / 奇數 / 偶數 / 依角色選擇（封面、門、正文等）。</td></tr>
+<tr><td>格式/輸出目的地/檔案名</td><td>PNG/JPEG/TIFF/WebP，儲存資料夾，命名約定（<code>{document_name}_{index}</code>，序號中的位數）。</td></tr>
+<tr><td>現有文件</td><td>覆蓋前確認/替換/跳過/儲存序號。</td></tr>
+<tr><td>匯出export-report.json</td><td>留下匯出結果的記錄。</td></tr>
+<tr><th colspan="2">導出用於印刷</th></tr>
+<tr><td>輸出</td><td>標準 PDF / PDF/X-1a / PDF/X-4 / CMYK TIFF 序號 / 灰階 K TIFF 序號。</td></tr>
+<tr><td>畫一隻蜻蜓</td><td>標記切割位置（初始開啟）。</td></tr>
+<tr><td>列印標記（用於標準 PDF）</td><td>類型：日式方蜻蜓（常規）/日式雙蜻蜓/海外式切標。切割標記（初始開啟）/附加標記/註冊標記/中心標記。線寬 0.01 至 5pt（初始 0.25），距填充外部的距離 0 至 144pt（初始 3），標記顏色：常規黑色（RGB）/僅 K（100%）/註冊（CMYK 各 100%）。</td></tr>
+<tr><td>頁邊距資訊（適用於標準 PDF）</td><td>在頁邊空白處插入檔案名稱/頁碼/日期/時間/顏色模式/色條/灰色條（最初全部關閉）。</td></tr>
+<tr><td>預覽</td><td>確認成品尺寸和附加油漆。如果沒有尺寸指南，整個畫布將被視為成品（沒有額外的填充）。</td></tr>
+</table>
+<div class="grid2">
+<figure><img src="img/dlg_export_webtoon.png" alt="Webtoon" loading="lazy"><figcaption><b>匯出網路漫畫</b>：連接和分割垂直滾動漫畫的頁面</figcaption></figure>
+<figure><img src="img/dlg_export_digital.png" alt="數位漫畫包" loading="lazy"><figcaption><b>數位漫畫包</b>：對於電子書</figcaption></figure>
+</div>
+<table>
+<tr><th colspan="2">匯出網路漫畫</th></tr>
+<tr><td>段</td><td>選擇並預覽要匯出的頁面。</td></tr>
+<tr><td>輸出寬度/最大切片高度/頁面之間的邊距</td><td>寬度（64-16384 像素）、最大單頁高度和頁間隙。發布前請檢查每個網站的最新條款和條件。</td></tr>
+<tr><td>格式/檔案名稱/現有文件/清單</td><td>PNG/JPEG/WebP、命名約定、覆蓋方法、webtoon_manifest.json 輸出。</td></tr>
+<tr><th colspan="2">數位漫畫包</th></tr>
+<tr><td>格式</td><td>CBZ / 固定佈局 EPUB 3 / 影像包 + 清單。</td></tr>
+<tr><td>圖片/裝訂方向</td><td>PNG/JPEG/WebP，右裝訂（由右到左）/左裝訂。</td></tr>
+<tr><td>書目資訊</td><td>標題/語言/標識符（必填，由“生成”自動生成）/作者/系列/卷/描述。</td></tr>
+<tr><td>頁/封面</td><td>指定記錄頁數和封面。</td></tr>
+</table>
+
+<h3 id="d-check">檢查/轉換</h3>
+<div class="grid2">
+<figure><img src="img/dlg_preflight.png" alt="卡通飛行前" loading="lazy"><figcaption><b>卡通飛行前</b>：選擇設定檔（數位漫畫/網路漫畫/印刷（單色））和目標並執行。重要性、頁面、規則、原因和建議操作的清單。印刷中<a href="#print-layout">喉嚨危險區域和充盈不足</a>還要檢查一下。</figcaption></figure>
+<figure><img src="img/dlg_font_diag.png" alt="字體診斷" loading="lazy"><figcaption><b>字體診斷</b>：使用的字體和缺少的字體清單。對於遺失的字體，「替換...」或「轉換為輪廓...」。</figcaption></figure>
+</div>
+<figure><img src="img/dlg_document_mode.png" alt="文件模式" loading="lazy"><figcaption><b>文件模式</b></figcaption></figure>
+<table>
+<tr><td>模式列表</td><td>支援rgba8 / Gray8 / mono1 / rgba16 / cmyk8 / cmyk16的位元、通道、保存、刷子和導出狀態。</td></tr>
+<tr><td>目的地/阿爾法保護區</td><td>當您選擇目標模式時，下面將顯示估計結果（記憶體/警告）。</td></tr>
+<tr><td>印版C/M/Y/K・估算油墨覆蓋率</td><td>檢查CMYK的墨水總量。</td></tr>
+<tr><td>將文件轉換為 CMYK</td><td>選擇 ICC 設定檔和位元深度 (8 / 16) 將所有頁面轉換為可編輯的 CMYK。</td></tr>
+</table>
+<div class="grid2">
+<figure><img src="img/dlg_package.png" alt="打包項目" loading="lazy"><figcaption>打包工程：如果沒有保存，會要求您先保存。</figcaption></figure>
+<figure><img src="img/dlg_about.png" alt="關於LoomStroke" loading="lazy"><figcaption>關於LoomStroke</figcaption></figure>
+</div>
+</section>
+
+<!-- ============================================================ -->
+<section id="prefs">
+<h2>8. 偏好</h2>
+<p><b>編輯 › 偏好設定</b>（<kbd>Ctrl</kbd>+<kbd>,</kbd>) 打開它。使用左側清單切換頁面，<b>OK</b>（儲存並關閉）/<b>取消</b>（放棄更改）/<b>適用</b>（儲存而不關閉）確認。下表中的初始值為剛安裝後的狀態。</p>
+<h3 id="pref-perf">表現</h3>
+<figure><img src="img/dlg_preferences.png" alt="表現" loading="lazy"></figure>
+<div class="table-wrap"><table class="params">
+<tr><th>專案</th><th>範圍/選擇</th><th>初始值</th><th>描述</th></tr>
+<tr><td>啟用 Numba 優化</td><td>開/關</td><td>上</td><td>我們使用加速數值運算的機制（Numba）。通常保持開啟狀態。</td></tr>
+<tr><td>快取大小</td><td>10~10000 條</td><td>100 件</td><td>記住繪圖結果等的項目數量。增加它可能會加快速度，但會佔用更多記憶體。</td></tr>
+<tr><td>撤銷次數</td><td>10〜1000</td><td>50</td><td><kbd>Ctrl</kbd>+<kbd>Z</kbd> 可以傳回的最大移動數。增加的越多，使用的記憶體就越多。</td></tr>
+<tr><td>記憶體映射閾值</td><td>1〜1000 MB</td><td>10 MB</td><td>大於此大小的影像資料透過磁碟（記憶體映射）進行處理，以減少記憶體使用。</td></tr>
+<tr><td>重組FPS上限</td><td>10〜120 fps</td><td>60 fps</td><td>螢幕重繪次數的上限。降低它會減少大畫布上的 CPU 負載。</td></tr>
+<tr><td>放大時清晰顯示向量</td><td>開/關</td><td>上</td><td>放大後，無論圖層順序如何，向量和文字都可以在螢幕解析度下清晰顯示。</td></tr>
+<tr><td>雙頁跨頁中另一頁的圖像質量</td><td>全/平衡/低</td><td>滿</td><td>在兩頁跨頁視圖中出現在您旁邊的其他頁面的顯示解析度。降低它會節省 GPU 記憶體（正在編輯的頁面總是滿的）。</td></tr>
+<tr><td>[ ] 鍵畫筆大小加速</td><td>關/弱/標準/強（4 級滑桿）</td><td>標準</td><td><kbd>[</kbd> / <kbd>]</kbd> 如何在按住或重複按下時加速。關閉時，每次變化相同的百分比（約 10%）。尺寸滑桿上的滑鼠滾輪也會以相同的增量變化。橡皮鍵操作不適用。</td></tr>
+</table></div>
+<h3 id="pref-ui">介面</h3>
+<figure><img src="img/dlg_preferences_p0.png" alt="介面" loading="lazy"></figure>
+<div class="table-wrap"><table class="params">
+<tr><th>專案</th><th>範圍/選擇</th><th>初始值</th><th>描述</th></tr>
+<tr><td>語言</td><td>系統預設 / 英文 / 日文 / 日文 / 簡體中文 / 中文（簡體） / 繁體中文 / 中文（繁體） / 台灣國語 / 한국어 / 韓文 / Español / 西班牙語 / 阿拉伯語 / हद / नद / न / / /葡萄牙語（巴西） / বাংলা / 孟加拉語 / Русский / 俄語</td><td>系統預設</td><td>螢幕顯示語言。系統預設是按照優先順序檢查Windows的顯示語言並使用第一個支援的語言（如果沒有，則使用英語）。如果您指定一種語言，則該規範將優先。</td></tr>
+<tr><td>顏色主題</td><td>暗/亮/系統</td><td>黑暗</td><td>螢幕配色。</td></tr>
+<tr><td>顯示工具列</td><td>開/關</td><td>上</td><td>顯示左側工具列。</td></tr>
+<tr><td>顯示狀態列</td><td>開/關</td><td>上</td><td>狀態顯示在視窗底部。</td></tr>
+<tr><td>網格間距</td><td>1〜5000 px</td><td>32 px</td><td><kbd>G</kbd> 要顯示的網格的間距。</td></tr>
+<tr><td>記住每頁的放大倍率和顯示位置</td><td>開/關</td><td>關閉</td><td>每個頁面都保留其上次查看的放大倍率和位置。關閉時，整個工作將使用一種顯示狀態。</td></tr>
+<tr><td>允許外部AI服務（ComfyUI、LLM網關、NanoBanana）</td><td>開/關</td><td>關閉</td><td>關閉時，與 ComfyUI、LLM 閘道、NanoBanana 等的通訊被封鎖。開啟以使用 AI 生成。</td></tr>
+<tr><td>選單：顯示選單/圖層選單/濾鏡選單</td><td>開/關</td><td>上</td><td>是否在選單列中顯示各個選單。</td></tr>
+<tr><td>選單：工具選單/插件選單</td><td>開/關</td><td>關閉</td><td>是否在選單列中顯示各個選單。</td></tr>
+<tr><td>遮罩疊加顏色（選擇顏色...）</td><td>顏色</td><td>青色 (#00FFFF)</td><td>編輯蒙版或顯示選取範圍時要疊加的顏色。</td></tr>
+<tr><td>遮罩疊加不透明度</td><td>0〜255</td><td>128</td><td>分層顏色的深度。</td></tr>
+</table></div>
+<h3 id="pref-io">文件輸入/輸出</h3>
+<figure><img src="img/dlg_preferences_p1.png" alt="文件輸入/輸出" loading="lazy"></figure>
+<div class="table-wrap"><table class="params">
+<tr><th>專案</th><th>範圍/選擇</th><th>初始值</th><th>描述</th></tr>
+<tr><td>啟用自動儲存（重新啟動後啟用）</td><td>開/關</td><td>上</td><td>定期以及在崩潰或強制退出後自動保存您的工作<a href="#recovery">復原</a>我會讓它成為可能。如果關閉，則無法恢復。</td></tr>
+<tr><td>自動儲存間隔（重新啟動後啟用）</td><td>30~3600秒</td><td>300秒</td><td>自動保存間隔。</td></tr>
+<tr><td>壓縮質量</td><td>1〜100</td><td>95</td><td>儲存和導出時的壓縮質量。數值越高，影像品質越好，檔案越大。</td></tr>
+<tr><td>版面目錄（參見...）</td><td>資料夾</td><td>LoomStroke的user_data資料夾</td><td>儲存面板排列（佈局）的目的地。</td></tr>
+</table></div>
+<h3 id="pref-mcp">LoomStroke MCP</h3>
+<figure><img src="img/dlg_preferences_p2.png" alt="LoomStroke MCP" loading="lazy"><figcaption>會話令牌值隱藏在影像中</figcaption></figure>
+<p>這是針對僅在此電腦 (127.0.0.1) 內運行的 MCP 伺服器的設置，以便從外部 AI 代理程式（例如 Claude）操作 LoomStroke。</p>
+<div class="table-wrap"><table class="params">
+<tr><th>專案</th><th>範圍/選擇</th><th>初始值</th><th>描述</th></tr>
+<tr><td>Enable local LoomStroke MCP server</td><td>開/關</td><td>關閉</td><td>啟用 MCP 伺服器（僅偵聽 127.0.0.1）。</td></tr>
+<tr><td>Start on launch</td><td>開/關</td><td>關閉</td><td>LoomStroke 啟動時自動啟動伺服器。</td></tr>
+<tr><td>Port</td><td>0〜65535</td><td>37645</td><td>監聽連接埠號。若設定為 0，將自動使用空號碼。</td></tr>
+<tr><td>Endpoint URL（Copy）</td><td>僅顯示</td><td>Not running</td><td>為代理程式設定的目標 URL。停止時不運轉。</td></tr>
+<tr><td>Session Token（Copy / Refresh）</td><td>僅顯示</td><td>自動生成</td><td>連線需要身份驗證令牌。使用刷新重新建立它。<b>請不要告訴其他人。</b></td></tr>
+<tr><td>刷新（狀態）</td><td>按鈕</td><td>—</td><td>更新並顯示伺服器的運作狀態。</td></tr>
+<tr><td>Allowed Origins</td><td>逗號分隔的 URL</td><td>（空）= http://127.0.0.1:PORT, http://localhost:PORT</td><td>可以呼叫伺服器的連接來源。</td></tr>
+<tr><td>File Roots（Browse…）</td><td>以分號分隔的資料夾</td><td>（空）= 使用者資料夾</td><td>允許 MCP 寫入檔案的資料夾。</td></tr>
+<tr><td>批准代理業務</td><td>允許所有MCP代理操作/僅在執行外部產生之前確認/每次MCP代理操作時確認</td><td>每次操作 MCP 代理程式時檢查</td><td>在執行代理操作之前何時顯示確認對話方塊。</td></tr>
+<tr><td>跳過額外的確認對話框</td><td>開/關</td><td>關閉</td><td>僅當「全部允許」時有效。資料夾限制、外部服務權限和連線身份驗證仍然適用。</td></tr>
+</table></div>
+<h3 id="pref-sam">SAM 3.1</h3>
+<div class="note">首次使用的準備步驟位於單獨的頁面上。 <a href="sam31_zh_Hant.html">SAM 3.1 安裝指南</a> 其總結為</div>
+<figure><img src="img/dlg_preferences_p3.png" alt="SAM 3.1" loading="lazy"></figure>
+<div class="table-wrap"><table class="params">
+<tr><th>專案</th><th>範圍/選擇</th><th>初始值</th><th>描述</th></tr>
+<tr><td>SAM 3.1 根資料夾（請參閱...）</td><td>資料夾</td><td>（空）</td><td><a href="#tool-ai">AI Select</a> SAM 3.1所使用的安裝位置。</td></tr>
+<tr><td>SAM 3.1 自動啟動伺服器</td><td>開/關</td><td>關閉</td><td>當 LoomStroke 啟動時啟動 SAM 3.1 伺服器。</td></tr>
+<tr><td>條件</td><td>僅顯示</td><td>—</td><td>運行時（設定狀態）、檢查點（模型檔案）、工作人員（伺服器）、模型（載入狀態）。</td></tr>
+<tr><td>設定/取消</td><td>按鈕</td><td>—</td><td>準備SAM 3.1的執行環境/取消準備。</td></tr>
+<tr><td>啟動/停止/重新啟動</td><td>按鈕</td><td>—</td><td>SAM 3.1 伺服器操作。</td></tr>
+<tr><td>載入模型/卸載模型</td><td>按鈕</td><td>—</td><td>將模型載入/卸載到 GPU 記憶體中。</td></tr>
+<tr><td>日誌字段</td><td>僅顯示</td><td>—</td><td>顯示設定和啟動的進度。</td></tr>
+<tr><td>資源快取限制</td><td>64〜262144 MB</td><td>2048 MB</td><td>儲存分析結果（掩模等）的上限。</td></tr>
+</table></div>
+<h3 id="pref-keys">捷徑</h3>
+<figure><img src="img/dlg_preferences_p4.png" alt="捷徑" loading="lazy"></figure>
+<div class="table-wrap"><table class="params">
+<tr><th>專案</th><th>範圍/選擇</th><th>初始值</th><th>描述</th></tr>
+<tr><td>左樹</td><td>類別/所有者</td><td>所有快捷方式</td><td>依類別（檔案、編輯、工具等）和擁有者（LoomStroke 核心、工具）縮小顯示範圍。</td></tr>
+<tr><td>過濾器（搜尋操作.../清除）</td><td>字串</td><td>（空）</td><td>按操作名稱搜尋。</td></tr>
+<tr><td>僅已分配</td><td>開/關</td><td>關閉</td><td>僅顯示指派了鍵的操作。</td></tr>
+<tr><td>限競賽</td><td>開/關</td><td>關閉</td><td>僅顯示同一鍵被分配多次的那些。</td></tr>
+<tr><td>重置過濾器</td><td>按鈕</td><td>—</td><td>清除過濾器。項目數量將在底部顯示為「顯示 N 個項目中的 N 個」。</td></tr>
+<tr><td>清單</td><td>操作/快捷方式/類別/所有者/狀態</td><td>—</td><td>所有操作的列表。狀態中可能會出現「衝突」（<a href="#shortcuts">完整列表</a>）。</td></tr>
+<tr><td>更改.../重置/全部重置</td><td>按鈕</td><td>—</td><td>變更所選操作的鍵/重設為初始值/重設全部為初始值。</td></tr>
+<tr><td>導入…/匯出…</td><td>按鈕</td><td>—</td><td>從檔案載入捷徑設定/儲存到檔案。</td></tr>
+<tr><td>驗證...</td><td>按鈕</td><td>—</td><td>檢查是否有衝突和其他問題。</td></tr>
+</table></div>
+<h3 id="pref-ai">人工智慧效果</h3>
+<figure><img src="img/dlg_preferences_p5.png" alt="AI Effect" loading="lazy"></figure>
+<div class="table-wrap"><table class="params">
+<tr><th>專案</th><th>範圍/選擇</th><th>初始值</th><th>描述</th></tr>
+<tr><td>Disable cache for manual regenerate</td><td>開/關</td><td>上</td><td>手動重新生成時，不要使用緩存，每次都重新生成。</td></tr>
+<tr><td>Show first-generation banner</td><td>開/關</td><td>上</td><td>第一代完成時顯示資訊橫幅。</td></tr>
+<tr><td>Register on-change / debounced generations in Gallery</td><td>開/關</td><td>關閉</td><td>自動執行的結果（更改時/去抖）也記錄在圖庫中。如果關閉，則僅註冊手動產生。</td></tr>
+<tr><td>Default trigger</td><td>Manual / On change / Debounced</td><td>Manual</td><td>如何開始產生 AI 效果圖層。手動 = 按下按鈕時，更改時 = 每次輸入更改時，去抖 = 更改停止後一定時間後。</td></tr>
+<tr><td>Debounce delay</td><td>0〜60000 ms</td><td>2000 ms</td><td>是時候等待去抖了。</td></tr>
+<tr><td>Generation timeout</td><td>10〜86400 sec</td><td>600 sec</td><td>花費比這更長的時間的世代將作為失敗而中止。</td></tr>
+<tr><td>Cache entries per layer</td><td>1〜500 entries</td><td>20 entries</td><td>每個 AI 效果圖層要記住的生成結果的數量。</td></tr>
+<tr><td>Auto-retries on 'on change' trigger</td><td>0〜10</td><td>1</td><td>On Change 失敗時自動重試的次數。</td></tr>
+<tr><td>Retry delay</td><td>0〜60000 ms</td><td>2000 ms</td><td>重試之前需要等待一段時間。</td></tr>
+<tr><td>ComfyUI 資料夾：main.py 所在的 ComfyUI 資料夾（請參閱...）</td><td>資料夾</td><td>（空）</td><td>安裝 ComfyUI 的資料夾。</td></tr>
+<tr><td>啟動LoomStroke時自動啟動ComfyUI</td><td>開/關</td><td>關閉</td><td>使用下面的本機 URL 和「允許外部 AI 服務」啟動 ComfyUI。</td></tr>
+<tr><td>顯示ComfyUI的控制台窗口</td><td>開/關</td><td>關閉</td><td>僅適用於 Windows。下次自動啟動時在單獨的控制台視窗中顯示 ComfyUI 的輸出。關閉控制台也會關閉 ComfyUI。</td></tr>
+<tr><td>當LoomStroke結束時，ComfyUI也結束</td><td>開/關</td><td>關閉</td><td>這是用於以控制台顯示啟動的 ComfyUI 的設置，僅當控制台顯示打開時才可以選擇。無論此設定如何，LoomStroke 在背景啟動的 ComfyUI 最終都會停止（這不適用於最初啟動的或遠端伺服器）。</td></tr>
+<tr><td>更新已儲存的伺服器狀態</td><td>按鈕</td><td>—</td><td>檢查是否可以連接到註冊的連接目的地。</td></tr>
+<tr><td>ComfyUI Servers：Local URL</td><td>URL</td><td>（空）= http://127.0.0.1:8188</td><td>在此電腦上執行的 ComfyUI 的 URL。</td></tr>
+<tr><td>ComfyUI Servers：External URL（＋ / Name）</td><td>名稱和網址</td><td>（無）</td><td>從另一台電腦新增 ComfyUI 並指定名稱（忽略空白行）。</td></tr>
+<tr><td>API Keys：NanoBanana (Google Gemini) / GPT Image 2 (OpenAI) / OpenAI / Anthropic (Claude) / Google Gemini</td><td>Change… / Clear</td><td>未設定</td><td>註冊/刪除每個服務的 API 金鑰。如果已註冊，則會顯示「✓已配置」。密鑰儲存在作業系統的憑證儲存中。</td></tr>
+<tr><td>將 OpenAI API 金鑰與 GPT Image 2 結合使用</td><td>開/關</td><td>關閉</td><td>使用OpenAI行金鑰代替專用金鑰產生GPT Image 2。</td></tr>
+</table></div>
+</section>
+
+<!-- ============================================================ -->
+<section id="shortcuts">
+<h2>9. 快速鍵</h2>
+<p>這是預設註冊的主要快捷方式的清單。您可以在首選項 › 快捷方式中查看所有最新更新。 「—」未分配，您可以從首選項中分配您喜歡的任何鍵。</p>
+<div class="grid2">
+<table><tr><th colspan="2">滑鼠操作</th></tr><tr><td>滑鼠：上下文選單</td><td><kbd>右クリック</kbd></td></tr><tr><td>滑鼠：平移</td><td><kbd>Space </kbd> + <kbd> 左ドラッグ</kbd></td></tr></table>
+<table><tr><th colspan="2">編輯</th></tr><tr><td>Fill to Selection</td><td>—</td></tr><tr><td>選擇所有向量</td><td><kbd>Ctrl</kbd> + <kbd>L</kbd></td></tr><tr><td>選擇全部</td><td><kbd>Ctrl</kbd> + <kbd>A</kbd></td></tr><tr><td>重做</td><td><kbd>Ctrl</kbd> + <kbd>Y</kbd></td></tr><tr><td>畫布尺寸...</td><td>—</td></tr><tr><td>複製</td><td><kbd>Ctrl</kbd> + <kbd>C</kbd></td></tr><tr><td>從系統剪貼簿貼上</td><td><kbd>Ctrl</kbd> + <kbd>Shift</kbd> + <kbd>V</kbd></td></tr><tr><td>撤銷</td><td><kbd>Ctrl</kbd> + <kbd>Z</kbd></td></tr><tr><td>剪掉</td><td><kbd>Ctrl</kbd> + <kbd>X</kbd></td></tr><tr><td>貼上</td><td><kbd>Ctrl</kbd> + <kbd>V</kbd></td></tr><tr><td>取消選擇</td><td><kbd>Ctrl</kbd> + <kbd>D</kbd></td></tr><tr><td>交換前景色和背景色</td><td><kbd>X</kbd></td></tr><tr><td>將前景色和背景色重置為預設設定</td><td><kbd>D</kbd></td></tr></table>
+<table><tr><th colspan="2">文件</th></tr><tr><td>進口…</td><td><kbd>Ctrl</kbd> + <kbd>Shift</kbd> + <kbd>I</kbd></td></tr><tr><td>匯出網路漫畫...</td><td>—</td></tr><tr><td>匯出數位漫畫包...</td><td>—</td></tr><tr><td>文檔模式...</td><td>—</td></tr><tr><td>字體診斷...</td><td>—</td></tr><tr><td>打包您的物品...</td><td>—</td></tr><tr><td>批量匯出頁面...</td><td>—</td></tr><tr><td>儲存</td><td><kbd>Ctrl</kbd> + <kbd>S</kbd></td></tr><tr><td>導出列印...</td><td>—</td></tr><tr><td>另存為...</td><td><kbd>Ctrl</kbd> + <kbd>Shift</kbd> + <kbd>S</kbd></td></tr><tr><td>建立新...</td><td><kbd>Ctrl</kbd> + <kbd>N</kbd></td></tr><tr><td>開始寫...</td><td><kbd>Ctrl</kbd> + <kbd>E</kbd> <span class="tag">競爭</span></td></tr><tr><td>漫畫預檢...</td><td>—</td></tr><tr><td>偏好設定...</td><td><kbd>Ctrl</kbd> + <kbd>,</kbd></td></tr><tr><td>放置圖片...</td><td>—</td></tr><tr><td>結束</td><td><kbd>Ctrl</kbd> + <kbd>Q</kbd></td></tr><tr><td>關閉</td><td><kbd>Ctrl</kbd> + <kbd>W</kbd></td></tr><tr><td>開啟…</td><td><kbd>Ctrl</kbd> + <kbd>O</kbd></td></tr></table>
+<table><tr><th colspan="2">過濾器</th></tr><tr><td>AI效果預設...</td><td>—</td></tr><tr><td>各過濾器（11種）</td><td>—</td></tr><tr><td>最後一個過濾器</td><td><kbd>Ctrl</kbd> + <kbd>Alt</kbd> + <kbd>F</kbd></td></tr></table>
+<table><tr><th colspan="2">影像</th></tr><tr><td>將畫布旋轉 180°</td><td>—</td></tr><tr><td>將畫布旋轉 90°（逆時針）</td><td>—</td></tr><tr><td>將畫布旋轉 90°（順時針）</td><td>—</td></tr><tr><td>垂直翻轉畫布</td><td>—</td></tr><tr><td>水平翻轉畫布</td><td>—</td></tr><tr><td>漫畫工作設定...</td><td>—</td></tr><tr><td>圖像設定...</td><td>—</td></tr><tr><td>影像解析度...</td><td>—</td></tr></table>
+<table><tr><th colspan="2">層</th></tr><tr><td>合併影像</td><td><kbd>Ctrl</kbd> + <kbd>Alt</kbd> + <kbd>E</kbd></td></tr><tr><td>將選區轉換為蒙版</td><td>—</td></tr><tr><td>光柵化</td><td><kbd>Shift</kbd> + <kbd>R</kbd></td></tr><tr><td>圖層群組</td><td><kbd>Ctrl</kbd> + <kbd>G</kbd></td></tr><tr><td>與下面的圖層合併</td><td><kbd>Ctrl</kbd> + <kbd>E</kbd> <span class="tag">競爭</span></td></tr><tr><td>刪除</td><td><kbd>Del</kbd></td></tr><tr><td>新的螢幕色調圖層...</td><td>—</td></tr><tr><td>新層</td><td><kbd>Ctrl</kbd> + <kbd>Shift</kbd> + <kbd>N</kbd></td></tr><tr><td>合併可見圖層</td><td><kbd>Ctrl</kbd> + <kbd>Shift</kbd> + <kbd>E</kbd></td></tr><tr><td>繁殖</td><td><kbd>Ctrl</kbd> + <kbd>J</kbd></td></tr></table>
+<table><tr><th colspan="2">外掛</th></tr><tr><td>Convert to Vector</td><td>—</td></tr><tr><td>Register Shape</td><td>—</td></tr><tr><td>Register Shapes</td><td>—</td></tr></table>
+<table><tr><th colspan="2">工具</th></tr><tr><td>向量筆（高精度）</td><td><kbd>P</kbd></td></tr><tr><td>橡皮擦</td><td><kbd>E</kbd></td></tr><tr><td>橡皮擦（輔助）</td><td><kbd>Shift</kbd> + <kbd>E</kbd></td></tr><tr><td>移動</td><td><kbd>V</kbd></td></tr><tr><td>顏色</td><td><kbd>I</kbd></td></tr><tr><td>顏色（次要）</td><td><kbd>Shift</kbd> + <kbd>I</kbd></td></tr><tr><td>文字</td><td><kbd>T</kbd></td></tr><tr><td>基本筆</td><td><kbd>B</kbd></td></tr><tr><td>基本筆（中學）</td><td><kbd>Shift</kbd> + <kbd>B</kbd></td></tr></table>
+<table><tr><th colspan="2">顯示</th></tr><tr><td>選擇用於打樣的設定檔...</td><td>—</td></tr><tr><td>軟打樣</td><td>—</td></tr><tr><td>顯示/隱藏網格</td><td><kbd>G</kbd></td></tr><tr><td>重設變焦</td><td><kbd>Ctrl</kbd> + <kbd>0</kbd></td></tr><tr><td>展開</td><td><kbd>Ctrl</kbd> + <kbd>=</kbd></td></tr><tr><td>減少</td><td><kbd>Ctrl</kbd> + <kbd>-</kbd></td></tr><tr><td>適合傳播</td><td><kbd>Ctrl</kbd> + <kbd>Shift</kbd> + <kbd>F</kbd></td></tr></table>
+<table><tr><th colspan="2">窗戶</th></tr><tr><td>顯示/隱藏指南（標尺）</td><td><kbd>R</kbd></td></tr></table>
+</div>
+<h3>使用工具時的按鍵</h3><table><tr><td><kbd>[</kbd> / <kbd>]</kbd></td><td>減小/增大畫筆尺寸（與目前尺寸成比例。重複按可加速。橡皮擦以 2 像素增量）</td></tr><tr><td><kbd>Enter</kbd> / <kbd>Esc</kbd></td><td>確認/取消漸層、路徑等。</td></tr><tr><td><kbd>Shift</kbd> / <kbd>Alt</kbd> / <kbd>Shift</kbd>+<kbd>Alt</kbd>（選取工具）</td><td>新增/排除/相交選擇</td></tr><tr><td>滑鼠滾輪</td><td>放大/縮小（在尺寸滑桿上 <kbd>[</kbd> / <kbd>]</kbd> ）</td></tr><tr><td><kbd>Space</kbd>+左拖曳</td><td>移動顯示位置（平移）</td></tr><tr><td>右鍵單擊</td><td>內容選單</td></tr></table>
+<div class="note">在初始設定中<b>開始寫作</b>和<b>與下面的圖層合併</b>對雙方 <kbd>Ctrl</kbd>+<kbd>E</kbd> 已指派並顯示為“衝突”。如果您想確保使用其中一個，請檢查首選項 › 捷徑並將指派變更為「僅限衝突」。</div>
+</section>
+
+<!-- ============================================================ -->
+<section id="faq">
+<h2>10.當你遇到困難時</h2>
+<table>
+<tr><th>症狀</th><th>要檢查的事情</th></tr>
+<tr><td>當我在單獨的圖層上繪製/繪製時，線條不出現</td><td>檢查是否在圖層面板中選擇了目標圖層，且該圖層未被隱藏、鎖定或透明部分受到保護。如果所選範圍仍然存在，則無法在該範圍之外進行繪製。 <kbd>Ctrl</kbd>+<kbd>D</kbd> 用 取消。確保您沒有在通道標籤中僅選擇特定成分。</td></tr>
+<tr><td>筆壓不起作用</td><td><code>boot_LoomStroke.bat</code> 檢查它是否從 運行，以及筆設定中的“筆壓力靈敏度”是否打開。</td></tr>
+<tr><td>面板遺失/放錯位置</td><td><b>窗戶</b> 開啟選單類別（圖層頁面/繪圖/漫畫/AI/其他）中的顯示，或<b>視窗 › 重置佈局</b>。<kbd>Tab</kbd> 確保它不是處於螢幕模式。</td></tr>
+<tr><td>AI功能無法使用</td><td>在“偏好設定”&gt;“介面”中勾選“允許外部AI服務”，並在AI效果頁面中勾選API金鑰和ComfyUI的連線目的地。 AI Select 需要設定 SAM 3.1。<code>boot_LoomStroke_noAI.bat</code> 如果以 啟動，則不會顯示 AI 相關面板和設定頁面。<code>boot_LoomStroke.bat</code> 重新啟動。</td></tr>
+<tr><td>漸層和路徑不固定</td><td>拖曳後，處於編輯狀態。<kbd>Enter</kbd> 用 確認。</td></tr>
+<tr><td>啟動時出現“LoomStroke — 恢復”</td><td>這是上次被迫結束的徵兆。如果有必要，“恢復”，如果沒有，“丟棄並重新開始”。如果用×關閉，則不會刪除任何內容，下次會再次顯示。</td></tr>
+<tr><td>螢幕上的語言與我想像的不同</td><td>首次符合Windows的顯示語言。<a href="#pref-ui">環境設定 › 介面</a> 請在「語言」中註明。</td></tr>
+<tr><td>更新/安裝失敗</td><td><code>install.bat</code> 再次運行它。郵編版本 <code>update.bat</code> 如果發生故障，將恢復到舊的主機。當手邊有變更時，Git 版本會停止更新。</td></tr>
+<tr><td>當我嘗試撤消時，我收到“無法完成”</td><td>在繼續之前，請按照狀態列中的說明檢查文件的狀態，如有必要，請將其儲存為其他名稱。</td></tr>
+<tr><td>字體將被替換並顯示。</td><td>檢查文件 › 字體診斷中是否有缺少的字體，並替換或概述它們。</td></tr>
+<tr><td>我找不到框架邊框操作。</td><td><b>視窗 › 漫畫 › 漫畫</b> ，然後選擇“框架分割”標籤。您可以透過在標籤內捲動來查看操作欄和閱讀順序清單。<a href="#comic-frame-start">框架邊框圖層步驟</a>請參考</td></tr>
+<tr><td>換幀後影像和粗糙影像消失</td><td>它可能隱藏在新區域之外。<a href="#comic-sec-repair">調整邊界和內容</a>在“要修改的內容”下，選擇一個對象，例如“整個圖像在框外”，然後使用“填充框”或“在畫布上調整”來校正位置和構圖。請確保框架未分為單獨的框架，且框架/內容未隱藏。如果您想返回，請按一下「撤銷」。</td></tr>
+<tr><td>調整大小後邊框過短/過大</td><td>如果選擇“保留原始像素”，則線長不會自動重畫。<a href="#comic-sec-repair">調整邊界和內容</a>在「要修改的邊緣」中選擇邊緣，然後使用「沿邊緣拉伸」或「在此邊緣上繪製」。</td></tr>
+<tr><td>當我修正公共顯示影像時，其他畫面也發生了變化。</td><td>這是因為它們共享一個來源資料。如果只想更改目標框架，請使用「使該框架的公共顯示獨立」。</td></tr>
+<tr><td>幀分割按鈕呈灰色且無法按下/出現「無法執行幀操作」訊息。</td><td>確保選擇了一個框架，並且所選框架不顯示“轉換為框架邊框圖層”，並且不顯示“正在處理對框架的變更...”。了解更多詳情<a href="#comic-frame-grayout">當無法按下按鈕或發生錯誤時</a>請參考</td></tr>
+</table>
+</section>
+
+<p style="color:var(--muted);font-size:13px;margin-top:48px;">正文調整為LoomStroke v0.3.0.7.21（2026-10-30）的內容。許多螢幕截圖是使用 v0.1（2026 年 10 月 12 日至 14 日的開發版本，日語 UI）拍攝的，之後添加的項目或翻譯成日語的顯示可能在圖像中不可見。範例插圖是使用者提供的圖像。未來版本中的螢幕可能會發生變化。</p>
+</main>
+</div>
+
+<div class="lightbox" id="lightbox" role="dialog" aria-label="放大顯示"><img alt=""></div>
+<script>
+(function () {
+  var lb = document.getElementById('lightbox'), lbImg = lb.querySelector('img');
+  document.querySelectorAll('figure img').forEach(function (img) {
+    img.addEventListener('click', function () { lbImg.src = img.src; lbImg.alt = img.alt; lb.classList.add('open'); });
+  });
+  lb.addEventListener('click', function () { lb.classList.remove('open'); });
+  document.addEventListener('keydown', function (e) { if (e.key === 'Escape') lb.classList.remove('open'); });
+  var root = document.documentElement, btn = document.getElementById('themeBtn');
+  try { var saved = localStorage.getItem('ls-manual-theme'); if (saved) root.setAttribute('data-theme', saved); } catch (e) {}
+  btn.addEventListener('click', function () {
+    var dark = root.getAttribute('data-theme') ? root.getAttribute('data-theme') === 'dark'
+      : window.matchMedia('(prefers-color-scheme: dark)').matches;
+    var next = dark ? 'light' : 'dark';
+    root.setAttribute('data-theme', next);
+    try { localStorage.setItem('ls-manual-theme', next); } catch (e) {}
+  });
+})();
+</script>
+</body>
+</html>

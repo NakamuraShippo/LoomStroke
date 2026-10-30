@@ -29,9 +29,11 @@ from .palette_feedback_strings import PALETTE_FEEDBACK_JA
 from .panel_locale_fallbacks import NON_JA_PANEL_FALLBACK_TRANSLATIONS
 from .path_text_translations import PATH_TEXT_JA
 from .pen_preset_translations import PEN_PRESET_JA
+from .shared_catalog_translator import translate_exact_context
 from .shared_locale_fallbacks import NON_JA_SHARED_FALLBACK_TRANSLATIONS
 from .text_typography_translations import TEXT_TYPOGRAPHY_JA
 from .tool_locale_fallbacks import NON_JA_TOOL_FALLBACK_TRANSLATIONS
+from .ui_gap_translations import UI_GAP_JA
 
 TranslatorFn = Callable[[str], str]
 
@@ -851,7 +853,7 @@ _JA_FALLBACK_TRANSLATIONS: dict[str, dict[str, str]] = {
             "Only active when Agent Approval is set to Allow all MCP agent actions. "
             "File roots, external-service permissions, and connection authentication still apply."
         ): (
-            "Agent Approval を全許可にした場合のみ有効です。"
+            "エージェントの承認を「すべてのMCPエージェント操作を許可」にした場合のみ有効です。"
             "ファイルの許可フォルダー、外部サービスの許可、接続認証は引き続き適用されます。"
         ),
         "Agent Approval": "エージェント操作の承認",
@@ -3792,6 +3794,8 @@ for _language, _messages in NON_JA_SHARED_FALLBACK_TRANSLATIONS.items():
     _catalog.setdefault("__shared__", {}).update(_messages)
 
 
+_JA_FALLBACK_TRANSLATIONS.setdefault("__shared__", {}).update(UI_GAP_JA)
+
 for _domain, _messages in PAINTING_TOOL_JA.items():
     _JA_FALLBACK_TRANSLATIONS.setdefault(_domain, {}).update(_messages)
 
@@ -3887,8 +3891,8 @@ def translate_with_fallback(domain: str, source_text: str) -> str:
         localized = localized_catalog.get(domain, {}).get(source_text)
         if localized is not None:
             return localized
-    translated = QCoreApplication.translate(domain, source_text)
-    if translated != source_text:
+    translated = translate_exact_context(domain, source_text)
+    if translated and translated != source_text:
         return translated
     for language in _current_language_candidates():
         localized_catalog = _RUNTIME_FALLBACK_TRANSLATIONS.get(language)
@@ -3897,10 +3901,17 @@ def translate_with_fallback(domain: str, source_text: str) -> str:
         localized = localized_catalog.get(domain, {}).get(source_text)
         if localized is not None:
             return localized
+    shared_translated = QCoreApplication.translate("__shared__", source_text)
+    if shared_translated and shared_translated != source_text:
+        return shared_translated
+    for language in _current_language_candidates():
+        localized_catalog = _RUNTIME_FALLBACK_TRANSLATIONS.get(language)
+        if localized_catalog is None:
+            continue
         shared_localized = localized_catalog.get("__shared__", {}).get(source_text)
         if shared_localized is not None:
             return shared_localized
-    return translated
+    return translated or source_text
 
 
 def _current_language_setting() -> str:

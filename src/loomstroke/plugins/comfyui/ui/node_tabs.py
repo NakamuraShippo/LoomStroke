@@ -32,6 +32,7 @@ from PySide6.QtWidgets import (
     QWidget,
 )
 
+from loomstroke.ui.widget_translations import bind_widget_text
 from loomstroke.ui.widgets.spinbox_sizing import fit_spinbox_to_values
 
 from ..object_info_spec import COMBO_HEAD, combo_choices, split_input_spec
@@ -1184,7 +1185,10 @@ class NodeParameterWidget(NodePromptSelectorMixin, NodeChoiceSelectorMixin, QWid
     def _add_output_layer_selector(self, layout: QFormLayout) -> None:
         """Append a layer selection widget for SaveImage nodes."""
         self.output_layer_widget = OutputLayerWidget(host_api=self.host_api, parent=self)
-        layout.addRow("Output Layer:", self.output_layer_widget)
+        layout.addRow(
+            bind_widget_text(QLabel(), "Output Layer:", domain="NodeParameterWidget"),
+            self.output_layer_widget,
+        )
 
     def get_output_layer_target(self) -> LayerRef | None:
         """Return the selected layer for SaveImage outputs, if any."""
@@ -1201,7 +1205,10 @@ class NodeParameterWidget(NodePromptSelectorMixin, NodeChoiceSelectorMixin, QWid
             create_new_layer_label="(Create new 3D layer)",
             parent=self,
         )
-        layout.addRow("3D Output Layer:", self.output_3d_layer_widget)
+        layout.addRow(
+            bind_widget_text(QLabel(), "3D Output Layer:", domain="NodeParameterWidget"),
+            self.output_3d_layer_widget,
+        )
 
     def get_output_3d_layer_target(self) -> LayerRef | None:
         """Return the selected layer for Save 3D Model outputs, if any."""
@@ -1657,8 +1664,11 @@ class NodeTabsWidget(QWidget):
             placeholder_layout = QVBoxLayout(placeholder)
             placeholder_layout.setContentsMargins(6, 6, 6, 6)
             placeholder_layout.setSpacing(4)
-            error_label = QLabel(
-                f"Failed to render parameters for node: {getattr(node, 'type', node_id)}"
+            error_label = bind_widget_text(
+                QLabel(),
+                "Failed to render parameters for node: {node}",
+                domain="NodeTabsWidget",
+                node=getattr(node, "type", node_id),
             )
             error_label.setWordWrap(True)
             placeholder_layout.addWidget(error_label)

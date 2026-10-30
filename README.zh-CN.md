@@ -73,7 +73,7 @@ Python 和虚拟环境会在安装时准备，模型权重和用户数据不包�
 安装完成后，请双击 `update.bat`，等待更新到最新版本后，
 再使用 `boot_LoomStroke.bat` 启动。
 
-可使用 `install.bat --nanobanana` 启用 NanoBanana 的附加依赖。
+`install.bat` 默认也会安装 NanoBanana 的附加依赖（`google-genai`）。原有的 `--nanobanana` 选项仍可使用。
 自动执行时可添加 `--no-pause`；如需指定创建新虚拟环境所用的 Python，
 请添加 `--python "C:\path\python.exe"`。
 使用 `--no-python-download` 可禁用 Python 自动下载。
@@ -109,6 +109,8 @@ AI Selection 所需的 SAM3.1 运行环境和模型权重不随应用附带，�
 ## 说明文档
 
 - [用户指南入口](docs/user/index.html)
+- [图文使用手册（12种语言）](docs/user/manual/index_zh_CN.html)
+- [SAM 3.1安装指南（12种语言）](docs/user/manual/sam31_zh_CN.html)
 - [日文手册](docs/user/index_ja.html)
 - [安装与启动](docs/user/INSTALL_AND_RUN.md)
 - [启动方法与故障排除](docs/user/RUN_INSTRUCTIONS.md)

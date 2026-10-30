@@ -17,6 +17,8 @@ from PySide6.QtWidgets import (
     QWidget,
 )
 
+from loomstroke.ui.widget_translations import bind_widget_text
+
 from .. import __version__
 from .dialogs.menu_telemetry_dialog import MenuTelemetryDialog
 from .theme import image_asset_path, text_logo_filename_for_theme
@@ -75,7 +77,12 @@ class MainWindowHelpActionCoordinator:
 
     def _create_about_dialog(self) -> QDialog:
         dlg = QDialog(self._window)
-        dlg.setWindowTitle("About LoomStroke")
+        bind_widget_text(
+            dlg,
+            "About LoomStroke",
+            domain="MainWindowHelpActionCoordinator",
+            attribute="windowTitle",
+        )
         favicon_path = image_asset_path("favicon.png")
         if favicon_path.exists():
             dlg.setWindowIcon(QIcon(str(favicon_path)))
@@ -106,13 +113,16 @@ class MainWindowHelpActionCoordinator:
         layout.addWidget(logo_row)
 
     def _add_about_info(self, layout: QVBoxLayout) -> None:
-        info = QLabel(
-            f"<p style='margin:2px 0'>Version {__version__}</p>"
-            f"<p style='margin:2px 0'>Plugin-first paint application with AI integration.</p>"
-            f"<p style='margin:2px 0'>Copyright NakamuraShippo. All rights reserved.</p>"
-            f"<p style='margin:2px 0'>Contact: "
-            f'<a href="mailto:nakamurashippo@gmail.com">'
-            f"nakamurashippo@gmail.com</a></p>"
+        info = bind_widget_text(
+            QLabel(),
+            "<p style='margin:2px 0'>Version {version}</p>"
+            "<p style='margin:2px 0'>Plugin-first paint application with AI integration.</p>"
+            "<p style='margin:2px 0'>Copyright NakamuraShippo. All rights reserved.</p>"
+            "<p style='margin:2px 0'>Contact: "
+            '<a href="mailto:nakamurashippo@gmail.com">'
+            "nakamurashippo@gmail.com</a></p>",
+            domain="MainWindowHelpActionCoordinator",
+            version=__version__,
         )
         info.setTextFormat(Qt.TextFormat.RichText)
         info.setOpenExternalLinks(True)
@@ -179,7 +189,9 @@ class MainWindowHelpActionCoordinator:
         )
         btn_row.addStretch()
 
-        close_btn = QPushButton("Close")
+        close_btn = bind_widget_text(
+            QPushButton(), "Close", domain="MainWindowHelpActionCoordinator"
+        )
         close_btn.clicked.connect(dlg.close)
         btn_row.addWidget(close_btn)
 
@@ -207,14 +219,24 @@ class MainWindowHelpActionCoordinator:
             if _license_visible:
                 license_text.setVisible(False)
                 lang_btn.setVisible(False)
-                license_btn.setText("License")
+                bind_widget_text(
+                    license_btn,
+                    "License",
+                    domain="MainWindowHelpActionCoordinator",
+                    attribute="text",
+                )
                 _license_visible = False
                 dlg.adjustSize()
             else:
                 _load_license(_license_lang)
                 license_text.setVisible(True)
                 lang_btn.setVisible(True)
-                license_btn.setText("Hide License")
+                bind_widget_text(
+                    license_btn,
+                    "Hide License",
+                    domain="MainWindowHelpActionCoordinator",
+                    attribute="text",
+                )
                 _license_visible = True
 
         def _switch_lang() -> None:
@@ -222,7 +244,9 @@ class MainWindowHelpActionCoordinator:
             _load_license(new_lang)
             lang_btn.setText("EN" if new_lang == "Japanese" else "JA")
 
-        license_btn = QPushButton("License")
+        license_btn = bind_widget_text(
+            QPushButton(), "License", domain="MainWindowHelpActionCoordinator"
+        )
         license_btn.clicked.connect(_toggle_license)
         btn_row.addWidget(license_btn)
 
@@ -246,7 +270,12 @@ class MainWindowHelpActionCoordinator:
             nonlocal _tp_visible
             if _tp_visible:
                 third_party_text.setVisible(False)
-                tp_btn.setText("Third-Party Licenses")
+                bind_widget_text(
+                    tp_btn,
+                    "Third-Party Licenses",
+                    domain="MainWindowHelpActionCoordinator",
+                    attribute="text",
+                )
                 _tp_visible = False
                 dlg.adjustSize()
             else:
@@ -254,10 +283,17 @@ class MainWindowHelpActionCoordinator:
                     self._read_about_text(third_party_file, "File not found.")
                 )
                 third_party_text.setVisible(True)
-                tp_btn.setText("Hide Third-Party")
+                bind_widget_text(
+                    tp_btn,
+                    "Hide Third-Party",
+                    domain="MainWindowHelpActionCoordinator",
+                    attribute="text",
+                )
                 _tp_visible = True
 
-        tp_btn = QPushButton("Third-Party Licenses")
+        tp_btn = bind_widget_text(
+            QPushButton(), "Third-Party Licenses", domain="MainWindowHelpActionCoordinator"
+        )
         tp_btn.clicked.connect(_toggle_tp)
         btn_row.addWidget(tp_btn)
 

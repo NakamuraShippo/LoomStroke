@@ -19,6 +19,7 @@ from loomstroke.plugins.common.layer_bridge import (
     LayerSnapshot,
     LayerTransferBridge,
 )
+from loomstroke.ui.widget_translations import bind_widget_text
 
 if TYPE_CHECKING:
     from loomstroke.host_api import HostAPI
@@ -134,7 +135,7 @@ class LayerSelector(QWidget):
 
         layout = QVBoxLayout()
 
-        layout.addWidget(QLabel("Select Layer:"))
+        layout.addWidget(bind_widget_text(QLabel(), "Select Layer:", domain="LayerSelector"))
 
         self.layer_combo = QComboBox()
         self.layer_combo.currentIndexChanged.connect(self.on_selection_changed)

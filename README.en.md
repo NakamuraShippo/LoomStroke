@@ -73,7 +73,7 @@ On failure, the installer leaves the error visible and exits without deleting or
 After installation, double-click `update.bat` and wait until the update to the latest version finishes,
 then launch with `boot_LoomStroke.bat`.
 
-Use `install.bat --nanobanana` to enable NanoBanana's additional dependencies.
+`install.bat` installs NanoBanana's additional dependencies (`google-genai`) by default. The existing `--nanobanana` option remains supported.
 For automated execution, add `--no-pause`. To choose the Python used to create a new virtual environment,
 add `--python "C:\path\python.exe"`.
 Use `--no-python-download` to disable automatic Python downloads.
@@ -109,6 +109,8 @@ The SAM3.1 runtime and model weights for AI Selection are not bundled; prepare t
 ## Documentation
 
 - [User guide entry point](docs/user/index.html)
+- [Illustrated manual (12 languages)](docs/user/manual/index_en.html)
+- [SAM 3.1 installation guide (12 languages)](docs/user/manual/sam31_en.html)
 - [Japanese manual](docs/user/index_ja.html)
 - [Installation and launch](docs/user/INSTALL_AND_RUN.md)
 - [Launch instructions and troubleshooting](docs/user/RUN_INSTRUCTIONS.md)

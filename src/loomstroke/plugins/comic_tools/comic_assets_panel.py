@@ -28,7 +28,11 @@ from PySide6.QtWidgets import (
 )
 
 from loomstroke.ui.comic_assets_feedback_strings import LOAD_FAILED
-from loomstroke.ui.translations import translated_literal_domain
+from loomstroke.ui.translations import (
+    TranslationBinder,
+    translate_with_fallback,
+    translated_literal_domain,
+)
 
 from .comic_assets import ASSET_MIME, CATEGORY_BALLOON, CATEGORY_LABELS, ComicAsset, drop_payload
 from .comic_assets_listing import read_assets_for_panel, unavailable_listing
@@ -75,6 +79,9 @@ class ComicAssetsPanelWidget(QWidget):
     def __init__(self, tool: ComicToolsPlugin, parent: QWidget | None = None) -> None:
         super().__init__(parent)
         self._tool = tool
+        self._translations = TranslationBinder(self._ts)
+        self._status_source: str | None = None
+        self._status_values: dict[str, str] = {}
         layout = QVBoxLayout(self)
         layout.setContentsMargins(4, 4, 4, 4)
         self.tabs = QTabWidget()
@@ -106,15 +113,22 @@ class ComicAssetsPanelWidget(QWidget):
         page_layout.addWidget(listing, 1)
         buttons = QHBoxLayout()
         if category == CATEGORY_BALLOON:
-            register_btn = QPushButton("選択中のフキダシを登録")
-            register_btn.setToolTip("Comic パネルで選択中のフキダシをこのタブの素材として保存")
+            register_btn = QPushButton()
+            self._translations.register(register_btn.setText, "Register Selected Balloon")
+            self._translations.register(
+                register_btn.setToolTip,
+                "Save the balloon selected in the Comic panel as an asset in this tab.",
+            )
             register_btn.clicked.connect(self._register_selected_balloon)
             buttons.addWidget(register_btn)
-        rename_btn = QPushButton("名前変更")
+        rename_btn = QPushButton()
+        self._translations.register(rename_btn.setText, "Rename")
         rename_btn.clicked.connect(lambda _c=False, cat=category: self._rename_current(cat))
-        delete_btn = QPushButton("削除")
+        delete_btn = QPushButton()
+        self._translations.register(delete_btn.setText, "Delete")
         delete_btn.clicked.connect(lambda _c=False, cat=category: self._delete_current(cat))
-        reload_btn = QPushButton("再読込")
+        reload_btn = QPushButton()
+        self._translations.register(reload_btn.setText, "Reload")
         reload_btn.clicked.connect(self.refresh)
         buttons.addWidget(rename_btn)
         buttons.addWidget(delete_btn)
@@ -122,7 +136,22 @@ class ComicAssetsPanelWidget(QWidget):
         buttons.addWidget(reload_btn)
         page_layout.addLayout(buttons)
         self.lists[category] = listing
-        self.tabs.addTab(page, CATEGORY_LABELS.get(category, category))
+        self.tabs.addTab(page, self._category_label(category))
+
+    def _ts(self, source: str) -> str:
+        return translate_with_fallback("ComicAssetsPanel", source)
+
+    def _category_label(self, category: str) -> str:
+        return (
+            self._ts("Balloons")
+            if category == CATEGORY_BALLOON
+            else CATEGORY_LABELS.get(category, category)
+        )
+
+    def _asset_tooltip(self, name: str, asset_id: str) -> str:
+        return self._ts("{name}\n{asset_id}\nDrag onto the canvas to place").format(
+            name=name, asset_id=asset_id
+        )
 
     # ── data ──────────────────────────────────────────────────────────
     def refresh(self) -> None:
@@ -148,7 +177,7 @@ class ComicAssetsPanelWidget(QWidget):
             for asset in assets:
                 item = QListWidgetItem(asset.name)
                 item.setData(Qt.ItemDataRole.UserRole, asset.asset_id)
-                item.setToolTip(f"{asset.name}\n{asset.asset_id}\nドラッグでキャンバスへ配置")
+                item.setToolTip(self._asset_tooltip(asset.name, asset.asset_id))
                 icon = _icon_from_png(asset.thumbnail_png)
                 if icon is not None:
                     item.setIcon(icon)
@@ -167,19 +196,34 @@ class ComicAssetsPanelWidget(QWidget):
             )
         elif clear:
             label.setText("")
+            self._status_source = None
+            self._status_values = {}
 
     def _asset_category_available(self, category: str) -> bool:
         return category not in getattr(self, "_asset_failed_categories", ())
 
-    def _set_asset_action_status(self, message: str) -> None:
+    def _set_asset_action_status(self, message: str, **values: str) -> None:
+        self._status_source = message
+        self._status_values = values
         if getattr(self, "_asset_load_failed", False):
             self._refresh_asset_load_notice()
         else:
-            self.status_label.setText(message)
+            self.status_label.setText(self._ts(message).format(**values))
 
     def changeEvent(self, event: QEvent) -> None:  # noqa: N802 - Qt override
         super().changeEvent(event)
         if event.type() == QEvent.Type.LanguageChange:
+            if hasattr(self, "status_label"):
+                self._translations.retranslate()
+                for index, (category, listing) in enumerate(self.lists.items()):
+                    self.tabs.setTabText(index, self._category_label(category))
+                    for row in range(listing.count()):
+                        item = listing.item(row)
+                        item.setToolTip(
+                            self._asset_tooltip(item.text(), item.data(Qt.ItemDataRole.UserRole))
+                        )
+                if self._status_source is not None:
+                    self._set_asset_action_status(self._status_source, **self._status_values)
             self._refresh_asset_load_notice()
 
     def _current(self, category: str) -> tuple[AssetListWidget, str | None]:
@@ -192,12 +236,10 @@ class ComicAssetsPanelWidget(QWidget):
     def _register_selected_balloon(self) -> None:
         asset: ComicAsset | None = self._tool.register_selected_balloon_as_asset()
         if asset is None:
-            self._set_asset_action_status(
-                "登録できません: Comic パネルでフキダシを選択してください"
-            )
+            self._set_asset_action_status("Cannot register: select a balloon in the Comic panel.")
             return
         self.refresh()
-        self._set_asset_action_status(f"登録しました: {asset.name}")
+        self._set_asset_action_status("Registered: {name}", name=asset.name)
         self.tabs.setCurrentIndex(list(self.lists).index(asset.category))
 
     def _rename_current(self, category: str) -> None:
@@ -207,7 +249,9 @@ class ComicAssetsPanelWidget(QWidget):
         if asset_id is None:
             return
         current_name = listing.currentItem().text()
-        name, ok = QInputDialog.getText(self, "名前変更", "素材名:", text=current_name)
+        name, ok = QInputDialog.getText(
+            self, self._ts("Rename"), self._ts("Asset name:"), text=current_name
+        )
         if not ok or not name.strip() or not self._asset_category_available(category):
             return
         self._tool.asset_store.rename(category, asset_id, name.strip())
@@ -220,7 +264,9 @@ class ComicAssetsPanelWidget(QWidget):
         if asset_id is None:
             return
         name = listing.currentItem().text()
-        answer = QMessageBox.question(self, "素材の削除", f"「{name}」を削除しますか?")
+        answer = QMessageBox.question(
+            self, self._ts("Delete Asset"), self._ts('Delete "{name}"?').format(name=name)
+        )
         if answer != QMessageBox.StandardButton.Yes or not self._asset_category_available(category):
             return
         self._tool.asset_store.delete(category, asset_id)
@@ -239,7 +285,7 @@ class ComicAssetsPanelWidget(QWidget):
             return
         balloon_id = self._tool.place_asset(category, asset_id, None)
         self._set_asset_action_status(
-            "ページ中央に配置しました" if balloon_id else "配置できませんでした (キャンバスなし)"
+            "Placed at the page center." if balloon_id else "Could not place the asset (no canvas)."
         )
 
 

@@ -1,0 +1,345 @@
+<!doctype html>
+<!-- Japanese source SHA-256: 71f657e44e0f049727f94fb41635536283a7cb1dbc18f34c795c9227e037fa04 -->
+<html lang="bn" dir="ltr">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>SAM 3.1 প্রবেশ নির্দেশিকা</title>
+<link rel="stylesheet" href="languages.css">
+<style>
+:root {
+  --bg: #f7f7f9; --surface: #ffffff; --text: #1f2328; --muted: #5d6470;
+  --line: #dfe2e7; --accent: #7a5cd6; --accent-soft: #efeafd; --code: #f0f1f4;
+  --note: #fff7e0; --note-line: #e8c76a;
+}
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) {
+    --bg: #17181b; --surface: #1f2125; --text: #e6e7ea; --muted: #a2a7b0;
+    --line: #33363c; --accent: #a993f0; --accent-soft: #2b2540; --code: #2a2c31;
+    --note: #2e2a1c; --note-line: #7a6633;
+  }
+}
+:root[data-theme="dark"] {
+  --bg: #17181b; --surface: #1f2125; --text: #e6e7ea; --muted: #a2a7b0;
+  --line: #33363c; --accent: #a993f0; --accent-soft: #2b2540; --code: #2a2c31;
+  --note: #2e2a1c; --note-line: #7a6633;
+}
+* { box-sizing: border-box; }
+html { scroll-behavior: smooth; scroll-padding-top: 16px; }
+body {
+  margin: 0; background: var(--bg); color: var(--text);
+  font-family: "Yu Gothic UI", "Hiragino Sans", "Noto Sans JP", "Meiryo", sans-serif;
+  line-height: 1.75; font-size: 16px;
+}
+.layout { display: grid; grid-template-columns: 270px minmax(0, 1fr); max-width: 1360px; margin: 0 auto; }
+nav.toc {
+  position: sticky; top: 0; height: 100vh; overflow-y: auto; padding: 24px 16px 40px;
+  border-right: 1px solid var(--line); font-size: 14px;
+}
+nav.toc .brand { font-weight: 700; font-size: 18px; margin-bottom: 4px; }
+nav.toc .sub { color: var(--muted); font-size: 12px; margin-bottom: 16px; }
+nav.toc ol { list-style: none; margin: 0; padding: 0; }
+nav.toc li { margin: 1px 0; }
+nav.toc a { color: var(--text); text-decoration: none; display: block; padding: 2px 8px; border-radius: 6px; }
+nav.toc a:hover { background: var(--accent-soft); color: var(--accent); }
+nav.toc ol ol { padding-left: 12px; font-size: 13px; }
+nav.toc ol ol a { color: var(--muted); }
+main { padding: 32px 48px 80px; min-width: 0; }
+header.hero { margin-bottom: 32px; }
+header.hero h1 { font-size: 34px; margin: 0 0 8px; }
+header.hero p { color: var(--muted); margin: 0; }
+section { margin-top: 56px; }
+h2 { font-size: 26px; border-bottom: 2px solid var(--accent); padding-bottom: 6px; margin: 0 0 16px; }
+h3 { font-size: 21px; margin: 44px 0 10px; padding-top: 4px; border-top: 1px solid var(--line); }
+h4 { font-size: 16px; margin: 22px 0 6px; color: var(--accent); }
+p { margin: 8px 0; }
+a { color: var(--accent); }
+figure { margin: 16px 0 24px; background: var(--surface); border: 1px solid var(--line); border-radius: 10px; padding: 10px; }
+figure img { display: block; max-width: 100%; height: auto; margin: 0 auto; border-radius: 4px; cursor: zoom-in; }
+figure.narrow img { max-width: min(460px, 100%); width: auto; }
+figure.mid img { max-width: min(720px, 100%); width: auto; }
+figcaption { color: var(--muted); font-size: 13px; text-align: center; margin-top: 8px; }
+.grid2 { display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 16px; align-items: start; }
+.grid3 { display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 12px; align-items: start; }
+.grid2 figure, .grid3 figure { margin: 0; }
+.side { display: grid; grid-template-columns: minmax(240px, 380px) minmax(0, 1fr); gap: 20px; align-items: start; }
+.side > figure { margin: 0; }
+table { border-collapse: collapse; width: 100%; margin: 12px 0 20px; background: var(--surface); font-size: 14px; }
+th, td { border: 1px solid var(--line); padding: 6px 10px; text-align: left; vertical-align: top; }
+th { background: var(--accent-soft); white-space: nowrap; }
+td:first-child:not([colspan]) { white-space: nowrap; }
+.table-wrap { overflow-x: auto; }
+kbd { font-family: Consolas, monospace; font-size: 13px; background: var(--code); border: 1px solid var(--line); border-bottom-width: 2px; border-radius: 4px; padding: 0 5px; white-space: nowrap; }
+code { font-family: Consolas, monospace; background: var(--code); padding: 1px 5px; border-radius: 4px; font-size: 14px; }
+.note { background: var(--note); border-left: 4px solid var(--note-line); padding: 10px 14px; border-radius: 6px; margin: 14px 0; font-size: 15px; }
+.tag { display: inline-block; font-size: 12px; padding: 0 8px; border-radius: 10px; background: var(--accent-soft); color: var(--accent); margin-left: 6px; vertical-align: middle; }
+ol.steps { padding-left: 22px; }
+ol.steps li { margin: 6px 0; }
+ul.plain { padding-left: 20px; }
+.num { display: inline-block; min-width: 1.45em; height: 1.45em; line-height: 1.45em; border-radius: 50%; background: #eb283c; color: #fff; font-size: 12px; font-weight: 700; text-align: center; margin-right: 4px; vertical-align: 1px; }
+.legend { display: block; margin-top: 4px; }
+table.params td:nth-child(3), table.params td:nth-child(4) { font-size: 13px; }
+table.params td:nth-child(2) { white-space: normal; min-width: 8em; }
+.lightbox { position: fixed; inset: 0; background: rgba(0,0,0,.85); display: none; align-items: center; justify-content: center; z-index: 10; cursor: zoom-out; padding: 16px; }
+.lightbox.open { display: flex; }
+.lightbox img { max-width: 100%; max-height: 100%; }
+.theme-toggle { margin-top: 20px; font-size: 12px; background: none; border: 1px solid var(--line); color: var(--muted); border-radius: 6px; padding: 4px 8px; cursor: pointer; }
+.menu-toggle { display: none; }
+@media (max-width: 900px) {
+  .layout { grid-template-columns: 1fr; }
+  nav.toc { position: static; height: auto; border-right: none; border-bottom: 1px solid var(--line); padding: 16px; }
+  nav.toc .toc-body { display: none; }
+  nav.toc.open .toc-body { display: block; }
+  .menu-toggle { display: inline-block; margin-top: 8px; background: var(--accent-soft); color: var(--accent); border: none; border-radius: 6px; padding: 6px 12px; font-size: 14px; }
+  main { padding: 20px 16px 60px; }
+  header.hero h1 { font-size: 26px; }
+  .side { grid-template-columns: 1fr; }
+  td:first-child { white-space: normal; }
+}
+pre { background: var(--code); border: 1px solid var(--line); border-radius: 8px; padding: 10px 14px; overflow-x: auto; font-size: 13px; line-height: 1.6; }
+pre code { background: none; padding: 0; }
+</style>
+</head>
+<body>
+<div class="layout">
+<nav class="toc" id="toc">
+  <!-- manual-languages:start -->
+  <div class="manual-languages" dir="ltr"><a href="sam31.html" lang="ja">日本語</a> · <a href="sam31_en.html" lang="en">English</a> · <a href="sam31_zh_CN.html" lang="zh-CN">简体中文</a> · <a href="sam31_zh_Hant.html" lang="zh-Hant">繁體中文</a> · <a href="sam31_zh_TW.html" lang="zh-TW">台灣華語</a> · <a href="sam31_ko.html" lang="ko">한국어</a> · <a href="sam31_es.html" lang="es">Español</a> · <a href="sam31_ar.html" lang="ar">العربية</a> · <a href="sam31_hi.html" lang="hi">हिन्दी</a> · <a href="sam31_pt_BR.html" lang="pt-BR">Português (Brasil)</a> · <a href="sam31_bn.html" lang="bn" aria-current="page">বাংলা</a> · <a href="sam31_ru.html" lang="ru">Русский</a></div>
+  <!-- manual-languages:end -->
+
+  <div class="brand">SAM 3.1 প্রবেশ নির্দেশিকা</div>
+  <div class="sub">LoomStroke গাইড অতিরিক্ত পৃষ্ঠ</div>
+  <button class="menu-toggle" type="button" onclick="document.getElementById('toc').classList.toggle('open')">সূচি খুলুন</button>
+  <div class="toc-body">
+  <ol>
+    <li><a href="#about">1. SAM 3.1 কি?</a></li>
+    <li><a href="#require">2. প্রয়োজনীয় বিষয়</a></li>
+    <li><a href="#steps">3. গাইড প্রক্রিয়া</a>
+      <ol><li><a href="#step1">পাইথন যোগ করুন</a></li><li><a href="#step2"> ফোল্ডার তৈরি করুন</a></li><li><a href="#step3"> মডেল পাওয়া যায়</a></li><li><a href="#step4">নেটওয়ার্ক অনুমতি দিন</a></li><li><a href="#step5"> সেটআপ চালান</a></li><li><a href="#step6"> কাজ পরীক্ষা করা</a></li></ol></li>
+    <li><a href="#screen">4. SAM 3.1 সেটিংস পেজ</a></li>
+    <li><a href="#layout">5. ফোল্ডারের ভিতরের কন্টেন্ট</a></li>
+    <li><a href="#memory">6. GPU মেমোরির ব্যবহার</a></li>
+    <li><a href="#trouble">7. কাজ হয়না হলে</a></li>
+    <li><a href="#offline">8. অফলাইন প্রবেশ ও মুছে ফেলা</a></li>
+  </ol>
+  <p style="margin-top:16px"><a href="index_bn.html">← বিবরণ পুনরায় প্রদর্শন</a></p>
+  <button class="theme-toggle" type="button" id="themeBtn">লাইট/ডার্ক স্বিচ</button>
+  </div>
+</nav>
+
+<main>
+<p class="translation-notice"><a href="sam31.html" hreflang="ja">যান্ত্রিক অনুবাদ। জাপানি মূল</a></p>
+<header class="hero">
+  <h1>SAM 3.1 প্রবেশ নির্দেশিকা</h1>
+  <p>LoomStroke এর <b>AI Select</b> আমরা SAM 3.1 ব্যবহারের জন্য প্রস্তুত করার পদ্ধতি ব্যাখ্যা করব। প্রক্রিয়াটি প্রায় 30 মিনিট থেকে 1 ঘন্টা নিতে পারে (আপনার ইন্টারনেট স্পিডের উপর নির্ভর করে এটি আরও দীর্ঘ হতে পারে)।</p>
+</header>
+
+<section id="about">
+<h2>1. SAM 3.1 কি?</h2>
+<p>SAM 3.1 হল মেটা দ্বারা প্রকাশিত একটি ইমেজ সেগমেন্টেশন AI। নিম্নলিখিত ফাংশনগুলি LoomStroke-এ এটিকে ব্যবহার করে:</p>
+<ul class="plain">
+  <li><a href="index_bn.html#tool-ai">AI Select টুল</a>: Creates candidate selections for the selected range by typing words such as 'hair' or 'person' or by clicking.</li>
+  <li><a href="index_bn.html#p-aicand">AI Select Candidates প্যানেল</a>: পাওয়া গেল প্রস্তাবের সংযোজন এবং লেয়ার করা।</li>
+  <li><a href="index_bn.html#p-mangamask">Manga Mask Assistant প্যানেল</a>：ম্যানুয়াল পেজ থেকে কমা, ফুকিদাশি, মানুষ ইত্যাদির মাস্ক একত্রে তৈরি করুন।</li>
+</ul>
+<p>SAM 3.1 হলো LoomStroke এর মূল প্রোগ্রামের বাইরে একটি আলাদা,<b>স্পেশাল রান পরিবেশ</b>(আপনার পিসির ভিতরে একটি ছোট সার্ভার চালানো হয়)। LoomStroke-এর "সেটআপ" বাটনটি এই পরিবেশটি স্বয়ংক্রিয়ভাবে তৈরি করে।<b>মডেলের মূল (চেকপয়েন্ট) নিজের দিয়ে ডাউনলোড করে রাখুন</b> প্রয়োজন আছে। LoomStroke মডেলগুলি স্বয়ংক্রিয়ভাবে ডাউনলোড করে না।</p>
+<div class="note">SAM 3.1 আপনার নিজের প্যাস এর মধ্যে ইমেজ পাঠায় না এবং এটি আপনার কম্পিউটারে পূর্ণ প্রক্রিয়া করে। আপনি ইন্টারনেট ব্যবহার করেন শুধুমাত্র ইনস্টলেশনের জন্য (PyTorch ইত্যাদি) এবং মডেল পাওয়ার জন্য।</div>
+</section>
+
+<section id="require">
+<h2>2. প্রয়োজনীয় বিষয়</h2>
+<div class="table-wrap"><table>
+<tr><th>প্রবেশ</th><th> সামগ্রী</th></tr>
+<tr><td>OS</td><td> Windows 10 / 11（64 bit）</td></tr>
+<tr><td>GPU</td><td><b> NVIDIA প্রস্তাবিত GPU (CUDA সমর্থন) অত্যন্ত প্রতিশ্রুতি দেয়</b>. উন্নয়ন পরীক্ষার সময় (RTX 4090) একটি চিত্র প্রসেস করার জন্য প্রায় 4.6 জিবি গ্যাপ মেমরি ব্যবহার করা হয়েছিল। এর জন্য কমপক্ষে 8 জিবি গ্যাপ মেমরি থাকা উচিত।<br>GPU না থাকলেও ইনস্টলেশন প্রক্রিয়া চলবে, কিন্তু শেষ অপারেশন পরীক্ষায় একটি সন্দেহ দেখাবে যে "CUDA ব্যবহার করা যাবে না" এবং বন্ধ হয় (মাত্র সিপিইউ প্রায় ব্যবহারযোগ্য হবে না)।</td></tr>
+<tr><td>NVIDIA ড্রাইভার</td><td> নতুন ড্রাইভার। CUDA 13.0 এর পাইটর সংস্করণ সেট করার জন্য কমান্ড প্রম্পট ব্যবহার করুন। <code>nvidia-smi</code> করে ডান উপরের 'CUDA Version' যা <b>13.0 এর চেয়ে বেশি</b> আপনি নিশ্চিত হতে হবে। যদি এটি অনুপস্থিত হয়, তবে আপনার নভেল ওয়েবসাইট থেকে ড্রাইভার আপডেট করুন।</td></tr>
+<tr><td>Python</td><td><b> Python 3.12 এর উপর</b>（3.13 প্রতিশ্রুতি করা হয়েছে）。LoomStroke এর বাইরে কম্পিউটারে স্থানান্তরিত হওয়া দরকার (<a href="#step1">স্টেপ 1</a>）。</td></tr>
+<tr><td>ডিস্কের খালি জায়গা</td><td>সীমা <b>15 GB এর বেশি</b>（মডেল প্রায় 3.5 GB + PyTorch ইত্যাদি কয়েক GB + কাজের জন্য）。</td></tr>
+<tr><td>ইন্টারনেট</td><td> প্রবেশের সময় প্রয়োজন (PyTorch এর মধ্যে কিছু জায়গা ডাউনলোড হবে)।</td></tr>
+<tr><td>Hugging Face অ্যাকাউন্ট</td><td> মডেল পাওয়ার জন্য প্রয়োজন (মুক্ত)।</td></tr>
+</table></div>
+</section>
+
+<section id="steps">
+<h2>3. গাইড প্রক্রিয়া</h2>
+
+<h3 id="step1">স্টেপ 1: Python 3.12 এর উপরে ইনস্টল করুন</h3>
+<ol class="steps">
+  <li><a href="https://www.python.org/downloads/windows/" target="_blank" rel="noopener">python.org</a> পাইথন 3.13 (অথবা 3.12) এর জন্য ওয়ার্ড প্রোগ্রামের ইনস্টলার ডাউনলোড করুন এখন থেকে।</li>
+  <li>ইনস্টলার চালানো এবং<b>「py launcher」</b>（Python ল্যান্চার） যে সেটিং থাকবে তা সেই অবস্থায় ইনস্টল করুন।</li>
+  <li>কমান্ড প্রম্পটে নিচের কাজ করুন এবং<code>Python 3.13.x</code> এভাবে প্রদর্শিত হলে সম্পূর্ণ হয়ে যাবে।
+<pre><code>py -3.13 --version</code></pre></li>
+</ol>
+<p>সেটআপ হবে <code>py -3.13</code> → <code>py -3.12</code> → <code>py -3</code> → <code>python</code> প্রতিটি অনুসারে পাইথন খুঁজে পাবে, যেখানে 3.12 এর উপরের প্রথমটি ব্যবহার হবে।</p>
+
+<h3 id="step2">স্টেপ 2: SAM 3.1 এর জন্য ফোল্ডার তৈরি করুন</h3>
+<p>মডেল এবং রান পরিবেশ রাখুন<b> রুট ফোল্ডার</b> তৈরি করা হবে। বেশি ফাইল স্পেস রাখা দ্রুত ড্রাইভে,<b>শুধুমাত্র হালকা অক্ষর ও সংখ্যা বিশিষ্ট পাথ</b> সেখানে তৈরি করা উচিত।</p>
+<pre><code>例：D:\SAM31</code></pre>
+<p>এই ফোল্ডারে, ধাপ 3 এ মডেল রাখুন এবং ধাপ 5 এর সেটআপে রান করার জন্য পরিবেশ (<code>runtime</code> ফোল্ডার) স্বয়ংক্রিয়ভাবে তৈরি হয়।</p>
+
+<h3 id="step3">স্টেপ 3: মডেল (চেকপয়েন্ট) পাওয়া যায়</h3>
+<p>SAM 3.1 এর মডেলগুলি হলো Hugging Face এর <a href="https://huggingface.co/facebook/sam3.1" target="_blank" rel="noopener">facebook/sam3.1</a> এখানে প্রকাশিত হয়েছে। এই পৃষ্ঠটি হল<b> অনুমতি প্রয়োজন (গেট সহ)</b>হয়।</p>
+<ol class="steps">
+  <li><a href="https://huggingface.co/" target="_blank" rel="noopener">Hugging Face</a> একটি অ্যাকাউন্ট তৈরি করে লগইন করুন।</li>
+  <li><a href="https://huggingface.co/facebook/sam3.1" target="_blank" rel="noopener">facebook/sam3.1</a> থাম্ব খুলুন, ব্যবহারের শর্তগুলি পড়ুন, আপনার যোগাযোগ শেয়ার করার সম্মতি দিন এবং অ্যাক্সেস চান। অনুমতির জন্য কিছু সময় প্রয়োজন হতে পারে।</li>
+  <li>অনুমোদন পাওয়ার পর 'Files and versions' ট্যাব থেকে <b>রিপোজিটরির ফাইল সমস্ত</b>（<code>sam3.1_multiplex.pt</code>(প্রায় 3.5 GB) এবং <code>config.json</code> যেমন সেটিংস ফাইলগুলি) ডাউনলোড করে পদক্ষেপ 2 এর ফোল্ডারে রাখুন।</li>
+</ol>
+<p>আপনি যদি কমান্ডের সাথে পরিচিত হন, তবে আপনি হাউজিং ফেসের অফিসিয়াল টুল দিয়ে সবকিছু একসাথে পাবেন (ব্রাউজারে অ্যাকেস অথোরাইজেশন পেয়ে পরে চালানো হবে)।</p>
+<pre><code>py -3.13 -m pip install -U huggingface_hub
+hf auth login
+hf download facebook/sam3.1 --local-dir D:\SAM31</code></pre>
+<p><code>hf auth login</code> এখন, হিউগ ফেসের সেটিংস স্ক্রিনে তৈরি করা হওয়া রিড টোকেন কপি করুন (অ্যাকেস টোকেন)।<code>hf</code> কমান্ড খুঁজে পাওয়া যাচ্ছে না? পাইথন ইনস্টল করার সময় 'Add python.exe to PATH' অবস্থায় সক্রিয় করে আবার চেষ্টা করুন, বা ব্রাউজারে ডাউনলোড করুন।</p>
+<p class="note">মডেলটি রুট ফোল্ডারের নিচে বা <code>checkpoints</code>・<code>model</code> সাব ফোল্ডারে রাখা যেতে পারে। ফাইলের নাম যদি <code>sam3.1_multiplex.pt</code> যদি তা ব্যবহার করা যায়, অন্য নামে হলে <code>.pt</code> এটি এমন ক্ষেত্রে ব্যবহার করা হয় যখন একটি ফাইল থাকে (যদি একাধিক থাকে, তবে এটি নির্ধারণ করা যায় না এবং "নাই ফাইন্ড" হিসাবে দেখানো হবে)। LoomStroke মডেলগুলি কপি করে না বা স্থানান্তর করে না।</p>
+
+<h3 id="step4">স্টেপ 4: LoomStroke এ বাইরের সার্ভিসের সংযোগ অনুমতি দিন</h3>
+<p>সেটআপের সময় PyTorch এর মতো কিছু ডাউনলোড করার জন্য কমিউনিকেশন অনুমতি দিন।</p>
+<figure><img src="img/sam_pref_ui.png" alt="বাইরের AI সার্ভিস অনুমতি দিন" loading="lazy"><figcaption><span class="num">1</span> ইন্টারফেস　<span class="num">2</span> বাইরের AI সার্ভিস অনুমতি দিন　<span class="num">3</span> প্রয়োগ করুন</figcaption></figure>
+<ol class="steps">
+  <li><b>সম্পাদনা › সেটিংস</b>（<kbd>Ctrl</kbd>+<kbd>,</kbd>) খুলুন,<span class="num">1</span>« ইন্টারফেস » নির্বাচন করুন।</li>
+  <li><span class="num">2</span>"বাইরের AI সেবা (ComfyUI, LLM Gateway, NanoBanana) অনুমতি দিন" অনুমতি দিন।</li>
+  <li><span class="num">3</span><b> সংরক্ষণের জন্য 'প্রয়োগ' ক্লিক করুন।</b>সেটআপ সংরক্ষিত সেটিংস দেখে, তাই যদি আপনি শুধুমাত্র চালু করেন কিন্তু তা প্রয়োগ করেন না, তবে এটি "নেটওয়ার্ক অনুমতি প্রয়োজন" এ থাকবে।</li>
+</ol>
+
+<h3 id="step5">স্টেপ 5: সেটআপ করুন</h3>
+<figure><img src="img/sam_pref_sam.png" alt="SAM 3.1 সেটিংস" loading="lazy"><figcaption>পরিবেশ সেটিং › SAM 3.1 (অনুষ্ঠিত না)</figcaption></figure>
+<ol class="steps">
+  <li>প্রতি প্রতিক্রিয়ার বাম পাশের লিস্টে <b>SAM 3.1</b> সেট করা হবে।</li>
+  <li><span class="num">1</span>"SAM 3.1 Root Folder" এর জন্য "Browse..." এ স্টেপ 2 এর ফোল্ডারটি নির্বাচন করুন।<span class="num">3</span> স্টেটে 'চেকপয়েন্ট' এ ফাইলের নাম দেখা যায় তবে মডেল পাওয়া হয়েছে।</li>
+  <li><span class="num">4</span><b>« সেটআপ »</b>প্রেস করুন।<span class="num">7</span> লগ স্পেসে প্রগতি প্রবাহিত হয় এবং পরবর্তী 10 পর্যায় স্বাভাবিকভাবে প্রবাহিত হয়।</li>
+</ol>
+<div class="table-wrap"><table>
+<tr><th>স্তর</th><th> সামগ্রী</th><th>সময়ের অনুমান</th></tr>
+<tr><td>1. ফোল্ডার পরিবেশন</td><td> রুট ফোল্ডার থাকা এবং লিখে দেওয়া যায় কিনা নিশ্চিত করুন, এবং<code>runtime</code>・<code>logs</code>・<code>state</code> ফোল্ডার তৈরি করবে।</td><td>ব্রেক</td></tr>
+<tr><td>2. Python পরিষ্কার করুন</td><td> পাইথন 3.12 এর উপরে খুঁজে বের করা হবে।</td><td>ব্রেক</td></tr>
+<tr><td>3. পরিবেশের তৈরি</td><td>SAM 3.1 এর জন্য ভাবিত পরিবেশ (<code>runtime\venv</code>) তৈরি করা হবে। LoomStroke মূল পরিবেশে প্রবেশ করবে না।</td><td>1 মিনিট পর্যন্ত</td></tr>
+<tr><td>4. pip প্রস্তুত করা</td><td>পার্ট যোগ করার উপকরণ (pip) প্রস্তুত করা হবে।</td><td>ব্রেক</td></tr>
+<tr><td>5. PyTorch এর প্রবেশ</td><td> NVIDIA GPU অনুসন্ধান করা হলে CUDA সংস্করণটি ডাউনলোড করুন, না হলে CPU সংস্করণের PyTorch ডাউনলোড করে ইনস্টল করুন।</td><td><b>কয়েক মিনিট থেকে কয়েক দশক মিনিট</b>（কয়েক জিবি）</td></tr>
+<tr><td>6. SAM 3.1 এর প্রবেশ</td><td> প্রয়োজনীয় অংশ এবং SAM 3 প্রোগ্রাম (facebookresearch/sam3 গিটহাবে) যোগ করুন।</td><td>কয়েক মিনিট</td></tr>
+<tr><td>7. মডেলের যাচাই</td><td> মডেল রুট ফোল্ডারে থাকছে কিনা চেক করুন (ডাউনলোড করবে না)।</td><td>ব্রেক</td></tr>
+<tr><td>8. কাজের পরীক্ষা</td><td>মডেল লোড করুন এবং যাচাই করুন যে এটি SAM 3.1 এর মডেল এবং GPU (CUDA) ব্যবহার করা যায়।</td><td>কয়েক মিনিট</td></tr>
+<tr><td>9. ওয়ারকার স্টার্ট করা</td><td>SAM 3.1 এর প্রক্রিয়াকারী (ওয়ারকার) চালু করুন।</td><td>কয়েক সেকেন্ড</td></tr>
+<tr><td>10. প্রতিক্রিয়া যাচাই</td><td> ওয়ারকার যথাযথভাবে প্রতিক্রিয়া দেয় কিনা তা যাচাই করুন।</td><td>ব্রেক</td></tr>
+</table></div>
+<p>লগের শেষে <b>「SAM 3.1 Ready」</b>এটি দেখা গেলে সম্পূর্ণ হয়ে যাবে।<span class="num">3</span> স্ট্যাটাস কলামে অবস্থা হবে "Runtime: Ready", "Checkpoint: sam3.1_multiplex.pt", "Worker: running", এবং GPU নাম (CUDA) এর প্রদর্শন হবে।<b>OK</b> সেটিংস বন্ধ করে দিন।</p>
+<div class="note">অনেক সময় ব্যর্থ হয় বা<span class="num">4</span> ক্যানসেল করা হলেও আবার সেটআপ ক্লিক করলে হবে,<b>সম্পূর্ণ হওয়া অংশগুলি স্কিপ করে পরবর্তী অংশ থেকে শুরু করুন</b> আবার শুরু করুন। প্রথম থেকে শুরু করা হবে না।</div>
+
+<h3 id="step6">ধাপ 6: কাজ পরীক্ষা করুন</h3>
+<ol class="steps">
+  <li>ক্যানভাসে ইমেজ খুলুন এবং টুলবার থেকে <a href="index_bn.html#tool-ai">AI Select</a> সেট করুন (সিলেকশন গ্রুপ বাটনে দীর্ঘ চাপুন)।</li>
+  <li>প্রপার্টি বারের 'Prompt' এ খুঁজবে যা খুঁজছে (যেমন:<code>hair</code>、<code>person</code>、<code>flower</code>)</li>
+  <li>যদি প্রস্তাব রঙে দেখায় তবে সফল হয়। 'Apply' দিয়ে সিলেকশন অংশ হবে।</li>
+</ol>
+<p>প্রথম চালানো অনেক সময় নেবে কারণ মডেল (প্রায় 3.5 GB) গ্যাপ এর উপরে লোড হবে। যদি কাজটি বন্ধ করা হয়, তবে চালানোর সময় স্বয়ংক্রিয়ভাবে শুরু হবে।</p>
+</section>
+
+<section id="screen">
+<h2>4. SAM 3.1 সেটিংস পেজ</h2>
+<p>পরিবেশ সেটিং › SAM 3.1 এর প্রতিটি প্যারামিটার (সংখ্যা হল<a href="#step5"> স্টেপ 5</a> যে ছবির জন্য সামর্থ্য রয়েছে)।</p>
+<div class="table-wrap"><table class="params">
+<tr><th>প্রবেশ</th><th> সামগ্রী</th></tr>
+<tr><td><span class="num">1</span> SAM 3.1 মূল ফোল্ডার</td><td> মডেল এবং রান পরিবেশ রাখার ফোল্ডার (সংযোগ করুন... দিয়ে নির্বাচন করুন)।</td></tr>
+<tr><td><span class="num">2</span> SAM 3.1 সার্ভার স্বয়ংক্রিয়ভাবে শুরু করুন</td><td> সক্রিয় হলে, লুমস্ট্রোক শুরু হওয়ার সাথে সাথে কাজটি শুরু হবে (মডেলটি কাজের সময় পর্যন্ত লোড হবে না)। প্রারম্ভিক মান অক্ষম। যদিও এটি অক্ষম হয়, তবুও এই কাজটি করা হয় যখন AI Select করা হয়।</td></tr>
+<tr><td><span class="num">3</span> স্থিতি</td><td>
+<b>রাউন্টাইম</b>：সংস্থাপন সম্পন্ন হলে Ready। যদি কোন কিছু অনুপস্থিত থাকে তবে কারণের কোড দেখানো হবে (<a href="#trouble">সম্পূর্ণ তালিকা</a>）。<br>
+<b>চেকপয়েন্ট</b>ঃ আবিষ্কৃত মডেলের ফাইলের নাম (না থাকলে 'অনুসন্ধান করা হয়নি')।<br>
+<b>কাজকর্তা</b>ঃ running (চালানো হচ্ছে) / stopped (স্টপ হয়েছে)।<br>
+<b>মডেল</b>： লোড করা (GPU এ লোড করা হয়েছে) / লোড না করা (লোড না করা হয়েছে)।<br>
+<b>CUDA</b>ঃ ওয়ার্কার শুরু হওয়ার সময়, ব্যবহার করা GPU এর নাম দেখাবে।</td></tr>
+<tr><td><span class="num">4</span> সেট আপ / ক্যানসেল</td><td> রান পরিবেশ প্রস্তুত করা / অর্ধেক বন্ধ করা</td></tr>
+<tr><td><span class="num">5</span> স্টার্ট / স্টপ / রিস্টার্ট</td><td> কাজকারীকে হাতে কাজ করুন।</td></tr>
+<tr><td><span class="num">6</span> মডেল লোড / মডেল অ্যানলোড</td><td> মডেল গ্যাপ মেমরি তে লোড করুন/গ্যাপ মেমরি থেকে অ্যান্ড করুন (ওয়ার্কারগুলি চলছে)।</td></tr>
+<tr><td><span class="num">7</span> লগ সেকশন</td><td> সেটআপ এবং শুরুর প্রক্রিয়া, ত্রুটির বিষয় এবং সমাধান প্রদর্শন করে।</td></tr>
+<tr><td><span class="num">8</span> অ্যাসেট কেশ সীমা</td><td>বিশ্লেষণের ফলাফল (মাস্ক ইত্যাদি) সংরক্ষণের উপরিস্থান। 64 থেকে 262144 MB, প্রারম্ভিক মান 2048 MB।</td></tr>
+</table></div>
+</section>
+
+<section id="layout">
+<h2>5. ফোল্ডারের ভিতরের কন্টেন্ট</h2>
+<pre><code>D:\SAM31\                      ← ルートフォルダー（手順 2）
+├ sam3.1_multiplex.pt          ← モデル（手順 3 で自分で置く）
+├ config.json ほか              ← モデルの設定ファイル（同上）
+├ checkpoints\ / model\        ← （直下に置かない場合のモデルの置き場所）
+└ runtime\                     ← セットアップが自動で作成
+   ├ venv\                     ← SAM 3.1 専用の Python 環境
+   ├ sam3-src\                 ← （任意）オフライン導入用の SAM 3 ソース
+   ├ logs\setup.log            ← セットアップのログ
+   ├ logs\worker.log           ← ワーカーのログ
+   └ state\</code></pre>
+</section>
+
+<section id="memory">
+<h2>6. GPU মেমোরির ব্যবহার</h2>
+<p>SAM 3.1 মডেলটি GPU মেমোরি এ লোড করে এবং এটি ব্যবহার করে। যদি আপনি অন্য কোনও GPU এর সাথে কাজ করেন যেমন ComfyUI, তবে এটি বেশি স্থায়ী হবে যদি আপনি এটি ব্যবহার শেষ করে কিছু মেমোরি মুক্ত করেন।</p>
+<table>
+<tr><td>AI Select Candidates প্যানেলের 'SAM মেমরি মুক্ত করুন'</td><td>মডেলটি GPU মেমোরি থেকে নিচ্ছে। পরবর্তী ব্যবহারে স্বয়ংক্রিয়ভাবে পুনরায় লোড করা হবে।</td></tr>
+<tr><td>পরিবেশ সেটিংস › SAM 3.1 এর 'মডেল ডিসলোড'</td><td>সেই স্থানে।</td></tr>
+<tr><td>এনভায়রনমেন্ট সেটিংস › SAM 3.1 এর 'স্টপ'</td><td>ওয়ারকার নিজেকে বন্ধ করুন (পরবর্তী চালানোর সময় স্বয়ংক্রিয়ভাবে চালু হবে)।</td></tr>
+</table>
+</section>
+
+<section id="trouble">
+<h2>7. কাজ হয়না হলে</h2>
+<p>ব্যর্থ হলে লগ স্থানে <code>[コード] 内容</code> এবং সমাধানের উপায় দেখানো হবে। বিস্তারিত লগ হবে <code>ルートフォルダー\runtime\logs\setup.log</code>（সেটআপ） এবং <code>worker.log</code>(রান করার সময়) থাকে।</p>
+<div class="table-wrap"><table>
+<tr><th>কোড</th><th> অর্থ</th><th> সমাধান</th></tr>
+<tr><td>ROOT_NOT_CONFIGURED</td><td> রুট ফোল্ডার নির্ধারিত না হয়েছে</td><td>পরিবেশ সেটিংস › SAM 3.1 এ রুট ফোল্ডার নির্বাচন করুন।</td></tr>
+<tr><td>ROOT_INVALID</td><td> ফোল্ডার নেই / লিখা যায় না</td><td>প্রায় আছে এবং লেখা যোগ্য ফোল্ডার নির্বাচন করুন।</td></tr>
+<tr><td>SETUP_REQUIRED</td><td> অবস্থান অবস্থা আবেদন করা হয়নি</td><td>সেটআপ চালান।</td></tr>
+<tr><td>CHECKPOINT_MISSING</td><td> মডেল খুঁজে পাওয়া যায়না / SAM 3.1 এর জন্য মডেল নয়</td><td><a href="#step3">স্টেপ 3</a> সেই পদ্ধতির মতো <code>sam3.1_multiplex.pt</code> এবং সেটিং ফাইলগুলি রুট ফোল্ডারে রাখুন।<code>.pt</code> যদি বহু থাকে তবে অপ্রয়োজনীয়গুলি সরানো হবে।</td></tr>
+<tr><td>PYTHON_UNSUPPORTED</td><td> পাইথন 3.12 এর উপরে পাওয়া যায় না</td><td><a href="#step1">স্টেপ 1</a> পাইথন যোগ করা হয় (py launcher থেকে খুঁজে পাওয়া হবে প্রয়োজন)।</td></tr>
+<tr><td>NETWORK_CONSENT_REQUIRED</td><td> ডাউনলোডের অনুমতি নেই</td><td><a href="#step4"> স্টেপ 4</a> যেখানে 'বাইরের AI সার্ভিস অনুমতি' অন করে<b>প্রয়োগ করুন</b> এবং তারপর আবার সেট করুন (সন্দেহ হলে "Privacy" বলে আছে কিন্তু সেটিংস ইন্টারফেসের একটি পেজে আছে)।</td></tr>
+<tr><td>VENV_CREATE_FAILED</td><td> স্পেশাল পরিবেশ তৈরি করা যাবে না</td><td>ডিস্কের খালি জায়গা এবং ফোল্ডারের অধিকার নিশ্চিত করে আবার চালান।</td></tr>
+<tr><td>PIP_FAILED</td><td> পিপ প্রস্তুত করা যায় না</td><td>আবার সেট আপ করুন।</td></tr>
+<tr><td>TORCH_INSTALL_FAILED</td><td> PyTorch এর প্রবেশে ব্যর্থতা</td><td>নেটওয়ার্ক এবং setup.log নিশ্চিত করে আবার চালান।</td></tr>
+<tr><td>SAM31_INSTALL_FAILED</td><td> SAM 3 এর প্রবেশ বা কাজের পরীক্ষা ব্যর্থ</td><td> setup.log দেখুন। অফলাইন প্রবেশ হল<a href="#offline"> 8 অধ্যায়</a>。</td></tr>
+<tr><td>CUDA_UNAVAILABLE</td><td> GPU (CUDA) ব্যবহার করা যাবে না</td><td>আপনার NVIDIA GPU এবং ড্রাইভারগুলি চেক করুন। কেবল CPU একটি প্রাকৃতিক গতি দেয় না।</td></tr>
+<tr><td>CUDA_MISMATCH</td><td> PyTorch এবং CUDA ড্রাইভার একত্রে কাজ করে না</td><td>Update the NVIDIA driver and then run the setup again.</td></tr>
+<tr><td>WORKER_START_FAILED</td><td> ওয়ারকার স্টার্ট হয় না</td><td>worker.log দেখুন।</td></tr>
+<tr><td>HEALTH_FAILED</td><td> স্টার্ট হয়েছে কিন্তু প্রতিক্রিয়া নেই</td><td> পুনরায় চালানো চেষ্টা করুন, যদি কাজ না হয় তবে worker.log চেক করুন।</td></tr>
+<tr><td>MODEL_LOAD_FAILED</td><td> মডেল লোড হয় না</td><td>worker.log চেক করুন। মডেল ফাইল ভাঙা হলে পুনরায় নিয়ে আসুন।</td></tr>
+<tr><td>OOM</td><td> GPU মেমোরি অপর্যাপ্ত</td><td> অন্যান্য GPU ব্যবহার করে অ্যাপস (যেমন ComfyUI) বন্ধ করুন বা তাদের মেমরি মুক্ত করে আবার চেষ্টা করুন।</td></tr>
+<tr><td>COMPATIBILITY_UNSUPPORTED</td><td> যোগ করা SAM 3 এর সংস্করণটি অসম্পূর্ণ</td><td> LoomStroke এর আপডেট অপেক্ষা করুন বা উন্নয়কদের কাছে রিপোর্ট করুন।</td></tr>
+<tr><td>CANCELLED</td><td> সেটআপ বন্ধ করা হয়</td><td>আবার 'সেটআপ' ক্লিক করলে পরবর্তী অংশ থেকে আবার শুরু হবে।</td></tr>
+</table></div>
+<p>যদি আপনি AI Select ব্যবহার করার সময় 'SAM 3.1 সেট আপ হয়নি' এর মতো একটি মেসেজ পান, তবে এটি উপরের তালিকার কোডের সাথেও সংযুক্ত। পরিবেশ সেটিংস › SAM 3.1 এর অবস্থার কলামটি চেক করুন।</p>
+</section>
+
+<section id="offline">
+<h2>8. অফলাইন প্রবেশ ও মুছে ফেলা</h2>
+<h3>SAM 3 এর অফলাইন প্রবেশ</h3>
+<p>GitHub এর <a href="https://github.com/facebookresearch/sam3" target="_blank" rel="noopener">facebookresearch/sam3</a> এক সম্পূর্ণ সংস্করণ (<code>pyproject.toml</code> যা ফোল্ডারে রয়েছে তার মধ্যে) কে <code>ルートフォルダー\runtime\sam3-src</code> ", SAM 3 এর শরীরটি সেখান থেকে ইনস্টল হবে। তবে পার্টস যেমন PyTorch নেটওয়ার্ক থেকে ডাউনলোড করা হবে।"</p>
+<h3>হারিয়ে ফেলা</h3>
+<ol class="steps">
+  <li>Environment Settings › In SAM 3.1, press 'Stop' to stop the worker.</li>
+  <li>সমস্ত রুট ফোল্ডার মুছে ফেলুন (স্পেশাল পরিবেশ এবং মডেল এই ফোল্ডারে রয়েছে, এবং লুম স্ট্রোক এবং অন্যান্য পাইথনের প্রভাব না দেবে)।</li>
+  <li>পরিবেশ সেট আপ › SAM 3.1 এর রুট ফোল্ডার ফিল্ড খালি করে OK বাটন দেখান।</li>
+</ol>
+<p class="note">SAM 3.1 মডেলের ব্যবহারের শর্তগুলি চেক করুন হুজিং ফেসবুক/সাম3.1 পেজে।</p>
+</section>
+
+<p style="color:var(--muted);font-size:13px;margin-top:48px;">2026-10-16 এর লুমস্ট্রোক ডেভেলপমেন্ট ভার্শনের বিকাশের ভিত্তিতে তৈরি করা হয়েছে।<a href="index_bn.html">ইনস্ট্রাকশনে ফিরে যান</a></p>
+</main>
+</div>
+
+<div class="lightbox" id="lightbox" role="dialog" aria-label="বিস্তারিত দেখানো"><img alt=""></div>
+<script>
+(function () {
+  var lb = document.getElementById('lightbox'), lbImg = lb.querySelector('img');
+  document.querySelectorAll('figure img').forEach(function (img) {
+    img.addEventListener('click', function () { lbImg.src = img.src; lbImg.alt = img.alt; lb.classList.add('open'); });
+  });
+  lb.addEventListener('click', function () { lb.classList.remove('open'); });
+  document.addEventListener('keydown', function (e) { if (e.key === 'Escape') lb.classList.remove('open'); });
+  var root = document.documentElement, btn = document.getElementById('themeBtn');
+  try { var saved = localStorage.getItem('ls-manual-theme'); if (saved) root.setAttribute('data-theme', saved); } catch (e) {}
+  btn.addEventListener('click', function () {
+    var dark = root.getAttribute('data-theme') ? root.getAttribute('data-theme') === 'dark'
+      : window.matchMedia('(prefers-color-scheme: dark)').matches;
+    var next = dark ? 'light' : 'dark';
+    root.setAttribute('data-theme', next);
+    try { localStorage.setItem('ls-manual-theme', next); } catch (e) {}
+  });
+})();
+</script>
+</body>
+</html>

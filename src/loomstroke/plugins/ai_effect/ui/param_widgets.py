@@ -59,6 +59,7 @@ from PySide6.QtWidgets import (
     QWidget,
 )
 
+from loomstroke.ui.widget_translations import bind_combo_texts, bind_widget_text
 from loomstroke.ui.widgets.spinbox_sizing import fit_spinbox_to_values
 
 logger = logging.getLogger(__name__)
@@ -799,11 +800,14 @@ class SeedParamWidget(ParamWidget):
         mode_row = QHBoxLayout()
         mode_row.setContentsMargins(0, 0, 0, 0)
         mode_row.setSpacing(4)
-        mode_label = QLabel("mode:", self)
+        mode_label = bind_widget_text(QLabel(self), "mode:", domain="SeedParamWidget")
         mode_row.addWidget(mode_label)
         self._mode_combo = QComboBox(self)
         for value, label in _SEED_MODE_CHOICES:
             self._mode_combo.addItem(label, value)
+        bind_combo_texts(
+            self._mode_combo, [label for _, label in _SEED_MODE_CHOICES], domain="SeedParamWidget"
+        )
         self._mode_combo.setCurrentIndex(0)
         self._mode_combo.currentIndexChanged.connect(lambda _i: self._on_mode_changed())
         mode_row.addWidget(self._mode_combo, stretch=1)

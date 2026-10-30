@@ -1,0 +1,345 @@
+<!doctype html>
+<!-- Japanese source SHA-256: 71f657e44e0f049727f94fb41635536283a7cb1dbc18f34c795c9227e037fa04 -->
+<html lang="zh-Hant" dir="ltr">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>SAM 3.1 安裝指南</title>
+<link rel="stylesheet" href="languages.css">
+<style>
+:root {
+  --bg: #f7f7f9; --surface: #ffffff; --text: #1f2328; --muted: #5d6470;
+  --line: #dfe2e7; --accent: #7a5cd6; --accent-soft: #efeafd; --code: #f0f1f4;
+  --note: #fff7e0; --note-line: #e8c76a;
+}
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) {
+    --bg: #17181b; --surface: #1f2125; --text: #e6e7ea; --muted: #a2a7b0;
+    --line: #33363c; --accent: #a993f0; --accent-soft: #2b2540; --code: #2a2c31;
+    --note: #2e2a1c; --note-line: #7a6633;
+  }
+}
+:root[data-theme="dark"] {
+  --bg: #17181b; --surface: #1f2125; --text: #e6e7ea; --muted: #a2a7b0;
+  --line: #33363c; --accent: #a993f0; --accent-soft: #2b2540; --code: #2a2c31;
+  --note: #2e2a1c; --note-line: #7a6633;
+}
+* { box-sizing: border-box; }
+html { scroll-behavior: smooth; scroll-padding-top: 16px; }
+body {
+  margin: 0; background: var(--bg); color: var(--text);
+  font-family: "Yu Gothic UI", "Hiragino Sans", "Noto Sans JP", "Meiryo", sans-serif;
+  line-height: 1.75; font-size: 16px;
+}
+.layout { display: grid; grid-template-columns: 270px minmax(0, 1fr); max-width: 1360px; margin: 0 auto; }
+nav.toc {
+  position: sticky; top: 0; height: 100vh; overflow-y: auto; padding: 24px 16px 40px;
+  border-right: 1px solid var(--line); font-size: 14px;
+}
+nav.toc .brand { font-weight: 700; font-size: 18px; margin-bottom: 4px; }
+nav.toc .sub { color: var(--muted); font-size: 12px; margin-bottom: 16px; }
+nav.toc ol { list-style: none; margin: 0; padding: 0; }
+nav.toc li { margin: 1px 0; }
+nav.toc a { color: var(--text); text-decoration: none; display: block; padding: 2px 8px; border-radius: 6px; }
+nav.toc a:hover { background: var(--accent-soft); color: var(--accent); }
+nav.toc ol ol { padding-left: 12px; font-size: 13px; }
+nav.toc ol ol a { color: var(--muted); }
+main { padding: 32px 48px 80px; min-width: 0; }
+header.hero { margin-bottom: 32px; }
+header.hero h1 { font-size: 34px; margin: 0 0 8px; }
+header.hero p { color: var(--muted); margin: 0; }
+section { margin-top: 56px; }
+h2 { font-size: 26px; border-bottom: 2px solid var(--accent); padding-bottom: 6px; margin: 0 0 16px; }
+h3 { font-size: 21px; margin: 44px 0 10px; padding-top: 4px; border-top: 1px solid var(--line); }
+h4 { font-size: 16px; margin: 22px 0 6px; color: var(--accent); }
+p { margin: 8px 0; }
+a { color: var(--accent); }
+figure { margin: 16px 0 24px; background: var(--surface); border: 1px solid var(--line); border-radius: 10px; padding: 10px; }
+figure img { display: block; max-width: 100%; height: auto; margin: 0 auto; border-radius: 4px; cursor: zoom-in; }
+figure.narrow img { max-width: min(460px, 100%); width: auto; }
+figure.mid img { max-width: min(720px, 100%); width: auto; }
+figcaption { color: var(--muted); font-size: 13px; text-align: center; margin-top: 8px; }
+.grid2 { display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 16px; align-items: start; }
+.grid3 { display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 12px; align-items: start; }
+.grid2 figure, .grid3 figure { margin: 0; }
+.side { display: grid; grid-template-columns: minmax(240px, 380px) minmax(0, 1fr); gap: 20px; align-items: start; }
+.side > figure { margin: 0; }
+table { border-collapse: collapse; width: 100%; margin: 12px 0 20px; background: var(--surface); font-size: 14px; }
+th, td { border: 1px solid var(--line); padding: 6px 10px; text-align: left; vertical-align: top; }
+th { background: var(--accent-soft); white-space: nowrap; }
+td:first-child:not([colspan]) { white-space: nowrap; }
+.table-wrap { overflow-x: auto; }
+kbd { font-family: Consolas, monospace; font-size: 13px; background: var(--code); border: 1px solid var(--line); border-bottom-width: 2px; border-radius: 4px; padding: 0 5px; white-space: nowrap; }
+code { font-family: Consolas, monospace; background: var(--code); padding: 1px 5px; border-radius: 4px; font-size: 14px; }
+.note { background: var(--note); border-left: 4px solid var(--note-line); padding: 10px 14px; border-radius: 6px; margin: 14px 0; font-size: 15px; }
+.tag { display: inline-block; font-size: 12px; padding: 0 8px; border-radius: 10px; background: var(--accent-soft); color: var(--accent); margin-left: 6px; vertical-align: middle; }
+ol.steps { padding-left: 22px; }
+ol.steps li { margin: 6px 0; }
+ul.plain { padding-left: 20px; }
+.num { display: inline-block; min-width: 1.45em; height: 1.45em; line-height: 1.45em; border-radius: 50%; background: #eb283c; color: #fff; font-size: 12px; font-weight: 700; text-align: center; margin-right: 4px; vertical-align: 1px; }
+.legend { display: block; margin-top: 4px; }
+table.params td:nth-child(3), table.params td:nth-child(4) { font-size: 13px; }
+table.params td:nth-child(2) { white-space: normal; min-width: 8em; }
+.lightbox { position: fixed; inset: 0; background: rgba(0,0,0,.85); display: none; align-items: center; justify-content: center; z-index: 10; cursor: zoom-out; padding: 16px; }
+.lightbox.open { display: flex; }
+.lightbox img { max-width: 100%; max-height: 100%; }
+.theme-toggle { margin-top: 20px; font-size: 12px; background: none; border: 1px solid var(--line); color: var(--muted); border-radius: 6px; padding: 4px 8px; cursor: pointer; }
+.menu-toggle { display: none; }
+@media (max-width: 900px) {
+  .layout { grid-template-columns: 1fr; }
+  nav.toc { position: static; height: auto; border-right: none; border-bottom: 1px solid var(--line); padding: 16px; }
+  nav.toc .toc-body { display: none; }
+  nav.toc.open .toc-body { display: block; }
+  .menu-toggle { display: inline-block; margin-top: 8px; background: var(--accent-soft); color: var(--accent); border: none; border-radius: 6px; padding: 6px 12px; font-size: 14px; }
+  main { padding: 20px 16px 60px; }
+  header.hero h1 { font-size: 26px; }
+  .side { grid-template-columns: 1fr; }
+  td:first-child { white-space: normal; }
+}
+pre { background: var(--code); border: 1px solid var(--line); border-radius: 8px; padding: 10px 14px; overflow-x: auto; font-size: 13px; line-height: 1.6; }
+pre code { background: none; padding: 0; }
+</style>
+</head>
+<body>
+<div class="layout">
+<nav class="toc" id="toc">
+  <!-- manual-languages:start -->
+  <div class="manual-languages" dir="ltr"><a href="sam31.html" lang="ja">日本語</a> · <a href="sam31_en.html" lang="en">English</a> · <a href="sam31_zh_CN.html" lang="zh-CN">简体中文</a> · <a href="sam31_zh_Hant.html" lang="zh-Hant" aria-current="page">繁體中文</a> · <a href="sam31_zh_TW.html" lang="zh-TW">台灣華語</a> · <a href="sam31_ko.html" lang="ko">한국어</a> · <a href="sam31_es.html" lang="es">Español</a> · <a href="sam31_ar.html" lang="ar">العربية</a> · <a href="sam31_hi.html" lang="hi">हिन्दी</a> · <a href="sam31_pt_BR.html" lang="pt-BR">Português (Brasil)</a> · <a href="sam31_bn.html" lang="bn">বাংলা</a> · <a href="sam31_ru.html" lang="ru">Русский</a></div>
+  <!-- manual-languages:end -->
+
+  <div class="brand">SAM 3.1 安裝指南</div>
+  <div class="sub">LoomStroke 使用說明書分冊</div>
+  <button class="menu-toggle" type="button" onclick="document.getElementById('toc').classList.toggle('open')">開啟目錄</button>
+  <div class="toc-body">
+  <ol>
+    <li><a href="#about">1.SAM 3.1是什麼？</a></li>
+    <li><a href="#require">2.你需要什麼</a></li>
+    <li><a href="#steps">3.安裝步驟</a>
+      <ol><li><a href="#step1">插入Python</a></li><li><a href="#step2">建立一個資料夾</a></li><li><a href="#step3">取得模型</a></li><li><a href="#step4">允許網路</a></li><li><a href="#step5">運行設定</a></li><li><a href="#step6">檢查操作</a></li></ol></li>
+    <li><a href="#screen">4. SAM 3.1設定畫面</a></li>
+    <li><a href="#layout">5. 資料夾內容</a></li>
+    <li><a href="#memory">6. 處理GPU記憶體</a></li>
+    <li><a href="#trouble">7.當事情進展不順利時</a></li>
+    <li><a href="#offline">8. 離線安裝/刪除</a></li>
+  </ol>
+  <p style="margin-top:16px"><a href="index_zh_Hant.html">← 回傳說明</a></p>
+  <button class="theme-toggle" type="button" id="themeBtn">明/暗切換</button>
+  </div>
+</nav>
+
+<main>
+<p class="translation-notice"><a href="sam31.html" hreflang="ja">機器翻譯。日語原文</a></p>
+<header class="hero">
+  <h1>SAM 3.1 安裝指南</h1>
+  <p>LoomStroke <b>AI Select</b>我們將解釋如何準備SAM 3.1來使用（AI自動選擇）。該過程大約需要 30 分鐘到 1 小時（可能需要更長時間，具體取決於您的網路速度）。</p>
+</header>
+
+<section id="about">
+<h2>1.SAM 3.1是什麼？</h2>
+<p>SAM 3.1是Meta發布的影像分割AI。以下函數在 LoomStroke 中使用此功能：</p>
+<ul class="plain">
+  <li><a href="index_zh_Hant.html#tool-ai">AI Select 工具</a>：根據單字和點擊（例如“頭髮”和“人”）建立選擇範圍候選。</li>
+  <li><a href="index_zh_Hant.html#p-aicand">AI Select Candidates面板</a>：合併並分層找到的候選人。</li>
+  <li><a href="index_zh_Hant.html#p-mangamask">Manga Mask Assistant面板</a>：從漫畫頁面創建框架、氣球和人物等蒙版。</li>
+</ul>
+<p>SAM 3.1 與 LoomStroke 主體分離。<b>專用執行環境</b>（作為在您的 PC 內運行的小型伺服器運行）。 LoomStroke上的「設定」按鈕會自動建立此環境，<b>僅下載模型本身（檢查點）並自行放置。</b>有需要。 LoomStroke 不會自動下載模型。</p>
+<div class="note">SAM 3.1 不會向外部發送影像並完全在您自己的 PC 內處理它們。您唯一使用網路的時間是下載用於安裝的零件（PyTorch 等）並取得型號。</div>
+</section>
+
+<section id="require">
+<h2>2.你需要什麼</h2>
+<div class="table-wrap"><table>
+<tr><th>專案</th><th>內容</th></tr>
+<tr><td>OS</td><td>Windows 10 / 11（64 bit）</td></tr>
+<tr><td>GPU</td><td><b>強烈推薦 NVIDIA GPU（相容 CUDA）</b>。在開發測試（RTX 4090）期間，最多使用約 4.6 GB 的 GPU 記憶體來處理一張影像。最好至少有 8 GB GPU 記憶體。<br>即使沒有GPU，安裝本身也會繼續進行，但最終的運行測試會顯示「CUDA無法使用」的訊息並停止（僅靠CPU將無法達到實際速度）。</td></tr>
+<tr><td>英偉達驅動程式</td><td>新司機。若要設定 PyTorch 的 CUDA 13.0 版本，請使用命令提示字元。 <code>nvidia-smi</code> 執行，右上角「CUDA Version」為 <b>13.0或更高</b> 請確認是這樣。如果缺少，請從 NVIDIA 官方網站更新驅動程式。</td></tr>
+<tr><td>Python</td><td><b>Python 3.12或更高版本</b>（3.13 建議）。它必須與 LoomStroke 分開安裝在您的 PC 上（<a href="#step1">步驟1</a>）。</td></tr>
+<tr><td>磁碟空間</td><td>指南 <b>15 GB 或更多</b>（型號約 3.5 GB + 幾個 GB，例如 PyTorch + 用於工作）。</td></tr>
+<tr><td>網際網路</td><td>僅在安裝過程中需要（PyTorch 有幾個 GB 的下載量）。</td></tr>
+<tr><td>Hugging Face帳號</td><td>需要取得模型（免費）。</td></tr>
+</table></div>
+</section>
+
+<section id="steps">
+<h2>3.安裝步驟</h2>
+
+<h3 id="step1">步驟1：插入Python 3.12或更高版本</h3>
+<ol class="steps">
+  <li><a href="https://www.python.org/downloads/windows/" target="_blank" rel="noopener">python.org</a> 從下列位置下載 Python 3.13（或 3.12）的 Windows 安裝程式。</li>
+  <li>啟動安裝程式並<b>「py launcher」</b>使用包含（Python Launcher）的設定進行安裝。</li>
+  <li>在命令提示字元下執行以下命令，<code>Python 3.13.x</code> 如果顯示成這樣就完成了。
+<pre><code>py -3.13 --version</code></pre></li>
+</ol>
+<p>設定是 <code>py -3.13</code> → <code>py -3.12</code> → <code>py -3</code> → <code>python</code> 搜尋 Python 並使用找到的第一個 3.12 或更高版本。</p>
+
+<h3 id="step2">步驟2 建立SAM 3.1的資料夾</h3>
+<p>放置模型和執行環境<b>根資料夾</b>我將在有大量可用空間的驅動器上，<b>僅包含半角字母數字字元的路徑</b>建議您使用</p>
+<pre><code>例：D:\SAM31</code></pre>
+<p>在此資料夾中，您放置了步驟 3 中的模型並設定了執行環境（<code>runtime</code> 資料夾）將自動建立。</p>
+
+<h3 id="step3">第三步：取得模型（檢查點）</h3>
+<p>SAM 3.1的型號是Hugging Face的型號。 <a href="https://huggingface.co/facebook/sam3.1" target="_blank" rel="noopener">facebook/sam3.1</a> 發佈於本頁<b>訪問需要同意（門禁）</b>是的。</p>
+<ol class="steps">
+  <li><a href="https://huggingface.co/" target="_blank" rel="noopener">Hugging Face</a> 建立帳戶並登入。</li>
+  <li><a href="https://huggingface.co/facebook/sam3.1" target="_blank" rel="noopener">facebook/sam3.1</a> 開啟 ，閱讀使用條款，同意分享您的聯絡人，並要求存取權限。可能需要短暫等待批准。</li>
+  <li>批准後，從“文件和版本”選項卡 <b>一組儲存庫文件</b>（<code>sam3.1_multiplex.pt</code>（約 3.5 GB）和 <code>config.json</code> config 檔案）並將其放入步驟 2 中的資料夾中。</li>
+</ol>
+<p>如果你熟悉指令，用Hugging Face的官方工具（在瀏覽器中取得存取授權後執行）就可以一次搞定。</p>
+<pre><code>py -3.13 -m pip install -U huggingface_hub
+hf auth login
+hf download facebook/sam3.1 --local-dir D:\SAM31</code></pre>
+<p><code>hf auth login</code> 現在，貼上在 Hugging Face 設定畫面（存取權杖）上建立的讀取令牌。<code>hf</code> 如果找不到該指令，請在安裝 Python 時開啟「將 python.exe 新增至 PATH」並重試，或在瀏覽器中下載。</p>
+<p class="note">此模型直接位於根資料夾下或 <code>checkpoints</code>・<code>model</code> 可以將其放置在子資料夾中。檔案名稱是 <code>sam3.1_multiplex.pt</code> 如果是這樣，請使用它，如果它有不同的名稱，請使用 <code>.pt</code> 僅當只有一個文件時使用（如果超過一個則無法確定，將被視為“未找到”）。 LoomStroke 不會複製或移動模型。</p>
+
+<h3 id="step4">步驟 4 允許 LoomStroke 連接到外部服務</h3>
+<p>設定期間允許通訊下載 PyTorch 等。</p>
+<figure><img src="img/sam_pref_ui.png" alt="允許外部AI服務" loading="lazy"><figcaption><span class="num">1</span>介面　<span class="num">2</span>允許外部AI服務　<span class="num">3</span>適用</figcaption></figure>
+<ol class="steps">
+  <li><b>編輯 › 偏好設定</b>（<kbd>Ctrl</kbd>+<kbd>,</kbd>），打開<span class="num">1</span>選擇“接口”。</li>
+  <li><span class="num">2</span>開啟「允許外部AI服務（ComfyUI、LLM網關、NanoBanana）」。</li>
+  <li><span class="num">3</span><b>按“應用”儲存。</b>該設定會查看已儲存的設置，因此如果您只是將其打開但不應用它，它將停止在「需要網路權限」。</li>
+</ol>
+
+<h3 id="step5">第 5 步：運行設置</h3>
+<figure><img src="img/sam_pref_sam.png" alt="SAM 3.1設定" loading="lazy"><figcaption>環境設定 › SAM 3.1（未設定狀態）</figcaption></figure>
+<ol class="steps">
+  <li>在首選項左側的清單中 <b>SAM 3.1</b> 選擇。</li>
+  <li><span class="num">1</span>在「瀏覽...」中的「SAM 3.1 根資料夾」中，選擇步驟 2 中的資料夾。<span class="num">3</span>如果狀態「檢查點」中顯示檔案名，則表示已找到該模型。</li>
+  <li><span class="num">4</span><b>“設定”</b>新聞<span class="num">7</span>進度將顯示在日誌欄位中，接下來的 10 個步驟將按順序進行。</li>
+</ol>
+<div class="table-wrap"><table>
+<tr><th>舞台</th><th>內容</th><th>大約花費的時間</th></tr>
+<tr><td>1.檢查資料夾</td><td>檢查根資料夾是否存在並且可以寫入，<code>runtime</code>・<code>logs</code>・<code>state</code> 建立一個資料夾。</td><td>立即</td></tr>
+<tr><td>2、Python確認</td><td>尋找 Python 3.12 或更高版本。</td><td>立即</td></tr>
+<tr><td>3. 創造環境</td><td>SAM 3.1 專用虛擬環境（<code>runtime\venv</code>）。 LoomStroke主機的環境未被觸及。</td><td>約1分鐘</td></tr>
+<tr><td>4. 準備點</td><td>準備插入零件的工具（pip）。</td><td>立即</td></tr>
+<tr><td>5、PyTorch介紹</td><td>如果偵測到NVIDIA GPU，則下載CUDA版本，如果沒有偵測到，則下載並安裝CPU版本PyTorch。</td><td><b>幾分鐘到幾十分鐘</b>（幾GB）</td></tr>
+<tr><td>6、SAM 3.1介紹</td><td>插入必要的部分和 SAM 3 程式（GitHub 上的 facebookresearch/sam3）。</td><td>幾分鐘</td></tr>
+<tr><td>7. 檢查型號</td><td>檢查模型是否位於根資料夾中（不要下載）。</td><td>立即</td></tr>
+<tr><td>8. 運行測試</td><td>載入模型並檢查是否為SAM 3.1的模型並且可以使用GPU（CUDA）。</td><td>幾分鐘</td></tr>
+<tr><td>9. 啟動worker</td><td>啟動 SAM 3.1 處理器。</td><td>幾十秒</td></tr>
+<tr><td>10. 回覆確認</td><td>驗證工作人員的回應是否正確。</td><td>立即</td></tr>
+</table></div>
+<p>在日誌的末尾 <b>「SAM 3.1 Ready」</b>如果顯示就完成了。<span class="num">3</span>狀態列將是“Runtime：Ready”、“Checkpoint：sam3.1_ Multiplex.pt”、“Worker：running”，並且還會顯示GPU名稱（CUDA）。<b>OK</b> 關閉首選項。</p>
+<div class="note">一路走來失敗<span class="num">4</span>即使按“取消”停止，如果再次按“設定”，<b>跳過已完成的步驟並繼續</b>我會再試一次。你不必重新開始。</div>
+
+<h3 id="step6">步驟6 檢查運轉狀況</h3>
+<ol class="steps">
+  <li>在畫布上和從工具列打開圖像 <a href="index_zh_Hant.html#tool-ai">AI Select</a> （按住所選組的按鈕）。</li>
+  <li>您想要在屬性列上的「提示」中尋找的內容（例如<code>hair</code>、<code>person</code>、<code>flower</code>）並按“運行”。</li>
+  <li>如果候選人以彩色顯示，則表示成功。按一下“應用”以選擇範圍。</li>
+</ol>
+<p>第一次運行將需要一些時間，因為它將模型（大約 3.5 GB）載入到 GPU 上。如果工作執行緒停止，它將在運行時自動啟動。</p>
+</section>
+
+<section id="screen">
+<h2>4. SAM 3.1設定畫面</h2>
+<p>環境設定 › SAM 3.1 的每一項（編號為<a href="#step5">步驟5</a> ）。</p>
+<div class="table-wrap"><table class="params">
+<tr><th>專案</th><th>內容</th></tr>
+<tr><td><span class="num">1</span>SAM 3.1 根資料夾</td><td>放置模型和執行環境的資料夾（使用「瀏覽...」進行選擇）。</td></tr>
+<tr><td><span class="num">2</span>SAM 3.1 自動啟動伺服器</td><td>開啟後，worker也會在LoomStroke啟動時啟動（實際使用時才會載入模型）。初始值關閉。即使關閉，執行AI Select時也會自動啟動。</td></tr>
+<tr><td><span class="num">3</span>條件</td><td>
+<b>運行時</b>: 準備好了就準備好了。如果缺少某些內容，將顯示原因代碼（<a href="#trouble">清單</a>）。<br>
+<b>檢查站</b>：找到的模型的檔案名稱（如果沒有，則「找不到」）。<br>
+<b>勞工</b>：運轉（啟動）/停止（停止）。<br>
+<b>模型</b>:loaded（載入到GPU）/unloaded（未載入）。<br>
+<b>CUDA</b>：顯示啟動worker時所使用的GPU的名稱。</td></tr>
+<tr><td><span class="num">4</span>設定/取消</td><td>準備執行環境/中途停止準備。</td></tr>
+<tr><td><span class="num">5</span>啟動/停止/重新啟動</td><td>手動操縱工人。</td></tr>
+<tr><td><span class="num">6</span>載入模型/卸載模型</td><td>將模型載入到 GPU 記憶體/從 GPU 記憶體中卸載（工作執行緒保持運行）。</td></tr>
+<tr><td><span class="num">7</span>日誌字段</td><td>顯示設定和啟動的進度，以及錯誤詳細資訊和解決方案。</td></tr>
+<tr><td><span class="num">8</span>資源快取限制</td><td>儲存分析結果（掩模等）的上限。 64 至 262144 MB，初始值 2048 MB。</td></tr>
+</table></div>
+</section>
+
+<section id="layout">
+<h2>5. 資料夾內容</h2>
+<pre><code>D:\SAM31\                      ← ルートフォルダー（手順 2）
+├ sam3.1_multiplex.pt          ← モデル（手順 3 で自分で置く）
+├ config.json ほか              ← モデルの設定ファイル（同上）
+├ checkpoints\ / model\        ← （直下に置かない場合のモデルの置き場所）
+└ runtime\                     ← セットアップが自動で作成
+   ├ venv\                     ← SAM 3.1 専用の Python 環境
+   ├ sam3-src\                 ← （任意）オフライン導入用の SAM 3 ソース
+   ├ logs\setup.log            ← セットアップのログ
+   ├ logs\worker.log           ← ワーカーのログ
+   └ state\</code></pre>
+</section>
+
+<section id="memory">
+<h2>6. 處理GPU記憶體</h2>
+<p>SAM 3.1 將模型載入到 GPU 記憶體中並使用它。如果同時使用ComfyUI等其他GPU，使用完後釋放一些記憶體會更穩定。</p>
+<table>
+<tr><td>AI Select Candidates 面板上的“空閒 SAM 記憶體”</td><td>從 GPU 記憶體卸載模型。下次使用時會自動重新載入。</td></tr>
+<tr><td>首選項 › SAM 3.1 的“卸載模型”</td><td>與上面相同。</td></tr>
+<tr><td>首選項 › “停止”SAM 3.1</td><td>停止工作執行緒本身（在下次執行時自動啟動）。</td></tr>
+</table>
+</section>
+
+<section id="trouble">
+<h2>7.當事情進展不順利時</h2>
+<p>如果失敗，則會顯示在日誌欄位中。 <code>[コード] 内容</code> 並將顯示要做什麼。詳細日誌是 <code>ルートフォルダー\runtime\logs\setup.log</code>（設定）和 <code>worker.log</code>（在運行時）。</p>
+<div class="table-wrap"><table>
+<tr><th>程式碼</th><th>意義</th><th>應付</th></tr>
+<tr><td>ROOT_NOT_CONFIGURED</td><td>根資料夾未設定</td><td>在首選項 › SAM 3.1 中選擇根資料夾。</td></tr>
+<tr><td>ROOT_INVALID</td><td>沒有資料夾/無法寫入</td><td>選擇現有的可寫資料夾。</td></tr>
+<tr><td>SETUP_REQUIRED</td><td>還沒有執行環境</td><td>運行“設定”。</td></tr>
+<tr><td>CHECKPOINT_MISSING</td><td>找不到型號/不是 SAM 3.1 的型號</td><td><a href="#step3">步驟3</a> 根據 <code>sam3.1_multiplex.pt</code> 以及根資料夾中的設定檔。<code>.pt</code> 如果有多個項目，請移動不需要的項目。</td></tr>
+<tr><td>PYTHON_UNSUPPORTED</td><td>未找到 Python 3.12 或更高版本</td><td><a href="#step1">步驟1</a> 並放入 Python （必須從 py 啟動器中找到）。</td></tr>
+<tr><td>NETWORK_CONSENT_REQUIRED</td><td>沒有下載權限</td><td><a href="#step4">步驟4</a> 開啟“允許外部AI服務”<b>適用</b>然後再次設定（訊息顯示“隱私”，但設定位於介面的頁面上）。</td></tr>
+<tr><td>VENV_CREATE_FAILED</td><td>無法創建專用環境</td><td>檢查可用磁碟空間和資料夾權限，然後重試。</td></tr>
+<tr><td>PIP_FAILED</td><td>無法準備點</td><td>重新設定一下。</td></tr>
+<tr><td>TORCH_INSTALL_FAILED</td><td>PyTorch安裝失敗</td><td>檢查您的網路和 setup.log，然後再試一次。</td></tr>
+<tr><td>SAM31_INSTALL_FAILED</td><td>SAM 3 主機安裝或操作測試失敗</td><td>檢查安裝日誌。線下實施<a href="#offline">第8章</a>。</td></tr>
+<tr><td>CUDA_UNAVAILABLE</td><td>無法使用GPU（CUDA）</td><td>檢查您的 NVIDIA GPU 和驅動程式。僅 CPU 不足以提供實際速度。</td></tr>
+<tr><td>CUDA_MISMATCH</td><td>PyTorch和驅動CUDA不匹配</td><td>更新您的 NVIDIA 驅動程序，然後再次嘗試設定。</td></tr>
+<tr><td>WORKER_START_FAILED</td><td>工人沒有啟動</td><td>檢查worker.log。</td></tr>
+<tr><td>HEALTH_FAILED</td><td>啟動但沒有響應</td><td>嘗試“重新啟動”，如果不起作用，請檢查worker.log。</td></tr>
+<tr><td>MODEL_LOAD_FAILED</td><td>載入模型失敗</td><td>檢查worker.log。如果模型檔案已損壞，請重新安裝。</td></tr>
+<tr><td>OOM</td><td>GPU 記憶體不足</td><td>關閉其他 GPU 密集型應用程序，例如 ComfyUI，或釋放其記憶體並重試。</td></tr>
+<tr><td>COMPATIBILITY_UNSUPPORTED</td><td>不支援安裝的 SAM 3 版本。</td><td>請等待LoomStroke的更新或向開發者回報。</td></tr>
+<tr><td>CANCELLED</td><td>設定已取消</td><td>再次按下「設定」即可從上次中斷的位置繼續。</td></tr>
+</table></div>
+<p>如果在使用具有 AI Select 的工具時收到類似「SAM 3.1 未設定」的訊息，它也對應於上表中的程式碼。環境設定 › 檢查SAM 3.1 的狀態列。</p>
+</section>
+
+<section id="offline">
+<h2>8. 離線安裝/刪除</h2>
+<h3>離線安裝 SAM 3 裝置</h3>
+<p>GitHub <a href="https://github.com/facebookresearch/sam3" target="_blank" rel="noopener">facebookresearch/sam3</a> 一組 (<code>pyproject.toml</code> 資料夾包含） <code>ルートフォルダー\runtime\sam3-src</code> ，SAM 3 主體將從那裡安裝。但是，PyTorch 等零件需要從網路下載。</p>
+<h3>刪除</h3>
+<ol class="steps">
+  <li>按下首選項 › SAM 3.1 中的「停止」以停止工作器。</li>
+  <li>刪除整個根資料夾（專用環境和模型僅在該資料夾中，不會影響LoomStroke本身或其他Python）。</li>
+  <li>首選項 › 清除 SAM 3.1 的根資料夾字段，然後按 OK。</li>
+</ol>
+<p class="note">請在 Hugging Face facebook/sam3.1 頁面上查看 SAM 3.1 型號的使用條款。</p>
+</section>
+
+<p style="color:var(--muted);font-size:13px;margin-top:48px;">基於截至 2026 年 10 月 16 日的 LoomStroke 開發版本的實作而創建。<a href="index_zh_Hant.html">返回說明</a></p>
+</main>
+</div>
+
+<div class="lightbox" id="lightbox" role="dialog" aria-label="放大顯示"><img alt=""></div>
+<script>
+(function () {
+  var lb = document.getElementById('lightbox'), lbImg = lb.querySelector('img');
+  document.querySelectorAll('figure img').forEach(function (img) {
+    img.addEventListener('click', function () { lbImg.src = img.src; lbImg.alt = img.alt; lb.classList.add('open'); });
+  });
+  lb.addEventListener('click', function () { lb.classList.remove('open'); });
+  document.addEventListener('keydown', function (e) { if (e.key === 'Escape') lb.classList.remove('open'); });
+  var root = document.documentElement, btn = document.getElementById('themeBtn');
+  try { var saved = localStorage.getItem('ls-manual-theme'); if (saved) root.setAttribute('data-theme', saved); } catch (e) {}
+  btn.addEventListener('click', function () {
+    var dark = root.getAttribute('data-theme') ? root.getAttribute('data-theme') === 'dark'
+      : window.matchMedia('(prefers-color-scheme: dark)').matches;
+    var next = dark ? 'light' : 'dark';
+    root.setAttribute('data-theme', next);
+    try { localStorage.setItem('ls-manual-theme', next); } catch (e) {}
+  });
+})();
+</script>
+</body>
+</html>

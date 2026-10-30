@@ -1,0 +1,84 @@
+/* Shared layout for offline language navigation, including Arabic. */
+.manual-languages {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 4px 8px;
+  margin-block-end: 16px;
+  font-family: system-ui, sans-serif;
+  font-size: 13px;
+  line-height: 1.6;
+}
+.manual-languages a[aria-current="page"] {
+  font-weight: bold;
+  text-decoration: underline;
+}
+.translation-notice {
+  color: var(--muted);
+  font-size: 13px;
+  margin-block-end: 16px;
+}
+html:not(:lang(ja)) main {
+  overflow-wrap: anywhere;
+}
+html:not(:lang(ja)) th,
+html:not(:lang(ja)) td:first-child:not([colspan]) {
+  white-space: normal;
+}
+html:not(:lang(ja)) .side > * {
+  min-width: 0;
+}
+html:lang(ko) body {
+  font-family: "Malgun Gothic", system-ui, sans-serif;
+}
+html:lang(zh-CN) body {
+  font-family: "Microsoft YaHei", system-ui, sans-serif;
+}
+html:lang(zh-Hant) body,
+html:lang(zh-TW) body {
+  font-family: "Microsoft JhengHei", system-ui, sans-serif;
+}
+html:lang(hi) body,
+html:lang(bn) body {
+  font-family: "Nirmala UI", system-ui, sans-serif;
+}
+html[dir="rtl"] body {
+  font-family: "Segoe UI", Tahoma, sans-serif;
+}
+html[dir="rtl"] nav.toc {
+  border-right: 0;
+  border-left: 1px solid var(--line);
+}
+html[dir="rtl"] nav.toc ol ol {
+  padding-left: 0;
+  padding-right: 12px;
+}
+html[dir="rtl"] th,
+html[dir="rtl"] td {
+  text-align: start;
+}
+html[dir="rtl"] td[dir="ltr"] {
+  text-align: end;
+}
+html[dir="rtl"] code,
+html[dir="rtl"] kbd,
+html[dir="rtl"] pre {
+  direction: ltr;
+  unicode-bidi: isolate;
+}
+html[dir="rtl"] ol.steps,
+html[dir="rtl"] ul.plain {
+  padding-left: 0;
+  padding-right: 22px;
+}
+html[dir="rtl"] .note {
+  border-left: 0;
+  border-right: 4px solid var(--note-line);
+}
+html[dir="rtl"] pre {
+  text-align: left;
+}
+@media (max-width: 900px) {
+  html[dir="rtl"] nav.toc {
+    border-left: 0;
+  }
+}

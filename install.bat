@@ -2,7 +2,7 @@
 setlocal EnableExtensions DisableDelayedExpansion
 set "INSTALL_ROOT=%~dp0"
 set "PAUSE_ON_EXIT=1"
-set "WITH_NANOBANANA=0"
+set "WITH_NANOBANANA=1"
 set "BASE_PYTHON="
 set "EXIT_CODE=1"
 set "ALLOW_PYTHON_DOWNLOAD=1"
@@ -85,7 +85,7 @@ if not exist "%VENV_PYTHON%" (
 "%VENV_PYTHON%" -c "import struct, sys; sys.exit(0 if sys.version_info >= (3, 11) and struct.calcsize('P') == 8 else 1)"
 if errorlevel 1 goto :python_error
 echo Using "%VENV_PYTHON%"
-echo Installing LoomStroke and its dependencies, including wgpu...
+echo Installing LoomStroke and its dependencies, including wgpu and google-genai...
 set "PACKAGE=."
 if "%WITH_NANOBANANA%"=="1" set "PACKAGE=.[nanobanana]"
 "%VENV_PYTHON%" -m pip install -e "%PACKAGE%"
@@ -113,6 +113,7 @@ goto :done
 :help
 echo Usage: install.bat [--nanobanana] [--python "C:\path\python.exe"] [--no-python-download] [--no-pause]
 echo Creates .venv, or reuses an existing .venv or venv.
+echo Includes NanoBanana dependencies by default. --nanobanana remains supported.
 echo Downloads a verified private Python when no usable Python is found.
 echo Requires 64-bit Windows and an internet connection. No administrator rights needed.
 set "EXIT_CODE=0"

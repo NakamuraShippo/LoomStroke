@@ -4,6 +4,7 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>LoomStroke 説明書</title>
+<link rel="stylesheet" href="languages.css">
 <style>
 :root {
   --bg: #f7f7f9; --surface: #ffffff; --text: #1f2328; --muted: #5d6470;
@@ -99,21 +100,25 @@ table.params td:nth-child(2) { white-space: normal; min-width: 8em; }
 <body>
 <div class="layout">
 <nav class="toc" id="toc">
+  <!-- manual-languages:start -->
+  <div class="manual-languages" dir="ltr"><a href="index.html" lang="ja" aria-current="page">日本語</a> · <a href="index_en.html" lang="en">English</a> · <a href="index_zh_CN.html" lang="zh-CN">简体中文</a> · <a href="index_zh_Hant.html" lang="zh-Hant">繁體中文</a> · <a href="index_zh_TW.html" lang="zh-TW">台灣華語</a> · <a href="index_ko.html" lang="ko">한국어</a> · <a href="index_es.html" lang="es">Español</a> · <a href="index_ar.html" lang="ar">العربية</a> · <a href="index_hi.html" lang="hi">हिन्दी</a> · <a href="index_pt_BR.html" lang="pt-BR">Português (Brasil)</a> · <a href="index_bn.html" lang="bn">বাংলা</a> · <a href="index_ru.html" lang="ru">Русский</a></div>
+  <!-- manual-languages:end -->
   <div class="brand">LoomStroke 説明書</div>
-  <div class="sub">v0.1 / スクリーンショット付き 完全ガイド</div>
+  <div class="sub">v0.3.0.7.21 対応 / スクリーンショット付き 完全ガイド</div>
   <button class="menu-toggle" type="button" onclick="document.getElementById('toc').classList.toggle('open')">目次を開く</button>
   <div class="toc-body">
   <ol>
     <li><a href="#start">1. はじめに</a>
-      <ol><li><a href="#launch">起動とスタート画面</a></li><li><a href="#recovery">自動保存からの復元</a></li><li><a href="#new-doc">新規ドキュメント</a></li><li><a href="#screen">画面の見かた</a></li></ol></li>
+      <ol><li><a href="#whatsnew">v0.3 以降の主な変更</a></li><li><a href="#install">インストールと更新</a></li><li><a href="#launch">起動とスタート画面</a></li><li><a href="#recovery">自動保存からの復元</a></li><li><a href="#new-doc">新規ドキュメント</a></li><li><a href="#screen">画面の見かた</a></li></ol></li>
     <li><a href="#quickstart">2. はじめての1枚</a></li>
     <li><a href="#tools">3. ツール</a>
-      <ol><li><a href="#tool-groups">ツールバーとグループ</a></li><li><a href="#tool-pen">ベーシックペン</a></li><li><a href="#tool-filter-pen">フィルターペン</a></li><li><a href="#tool-eraser">消しゴム</a></li><li><a href="#tool-fill">塗りつぶし</a></li><li><a href="#tool-gradient">グラデーション</a></li><li><a href="#tool-pattern">パターンフィル</a></li><li><a href="#tool-wand">マジックワンド</a></li><li><a href="#tool-ai">AI Select</a></li><li><a href="#tool-rect">選択（矩形）</a></li><li><a href="#tool-move">移動</a></li><li><a href="#tool-vpen">ベクターペン（高精度）</a></li><li><a href="#tool-path">パス</a></li><li><a href="#tool-pathedit">パス編集</a></li><li><a href="#tool-text">テキスト</a></li><li><a href="#tool-vtext">縦書きテキスト</a></li><li><a href="#tool-eyedropper">スポイト</a></li><li><a href="#tool-comic">Comic</a></li></ol></li>
+      <ol><li><a href="#tool-groups">ツールバーとグループ</a></li><li><a href="#tool-pen">ベーシックペン</a></li><li><a href="#tool-filter-pen">フィルターペン</a></li><li><a href="#tool-eraser">消しゴム</a></li><li><a href="#tool-fill">塗りつぶし</a></li><li><a href="#tool-gradient">グラデーション</a></li><li><a href="#tool-pattern">パターンフィル</a></li><li><a href="#tool-wand">マジックワンド</a></li><li><a href="#tool-ai">AI Select</a></li><li><a href="#tool-rect">選択（矩形）</a></li><li><a href="#tool-move">移動</a></li><li><a href="#tool-vpen">ベクターペン（高精度）</a></li><li><a href="#tool-path">パス</a></li><li><a href="#tool-pathedit">パス編集</a></li><li><a href="#tool-text">テキスト</a></li><li><a href="#tool-vtext">縦書きテキスト</a></li><li><a href="#tool-eyedropper">スポイト</a></li><li><a href="#tool-measure">計測</a></li><li><a href="#tool-comic">Comic</a></li></ol></li>
     <li><a href="#layers">4. レイヤーとフィルター</a>
       <ol><li><a href="#layer-panel">レイヤーパネル</a></li><li><a href="#blend">レイヤーエフェクト（合成）</a></li><li><a href="#layer-ctx">右クリックメニュー</a></li><li><a href="#channels">チャンネル</a></li><li><a href="#filters">フィルターレイヤー全種</a></li><li><a href="#fill-layers">塗りつぶしレイヤー</a></li><li><a href="#layer-styles">レイヤースタイル</a></li></ol></li>
     <li><a href="#panels">5. パネル詳細</a>
       <ol><li><a href="#p-preview">プレビュー</a></li><li><a href="#p-color">色</a></li><li><a href="#p-brush">ブラシマネージャー</a></li><li><a href="#p-font">フォント</a></li><li><a href="#p-shape">シェイプマネージャー</a></li><li><a href="#p-transform">Transform</a></li><li><a href="#p-filter">フィルター</a></li><li><a href="#p-reference">Reference</a></li><li><a href="#p-pages">ページ</a></li><li><a href="#p-gallery">ギャラリー</a></li><li><a href="#p-aieffect">AI Effects Manager</a></li><li><a href="#p-nanobanana">NanoBanana</a></li><li><a href="#p-gptimage">GPT Image 2</a></li><li><a href="#p-prompt">プロンプトエディター</a></li><li><a href="#p-3d">3D Preview</a></li><li><a href="#p-aicand">AI Select Candidates</a></li><li><a href="#p-mangamask">Manga Mask Assistant</a></li><li><a href="#p-comic">Comic</a></li><li><a href="#p-comicassets">Comic Assets</a></li><li><a href="#p-comicproject">コミックプロジェクト</a></li><li><a href="#p-comicworkflow">コミックワークフロー</a></li><li><a href="#p-assist">作画補助</a></li><li><a href="#p-actions">アクション</a></li><li><a href="#p-links">リンク</a></li><li><a href="#p-copilot">Canvas Assistant</a></li><li><a href="#p-production">Production Control</a></li></ol></li>
-    <li><a href="#menus">6. メニュー</a></li>
+    <li><a href="#menus">6. メニュー</a>
+      <ol><li><a href="#guides">ガイドと定規</a></li><li><a href="#grid">グリッド設定</a></li><li><a href="#composition">構図ガイド</a></li><li><a href="#print-layout">判型・ノド・塗り足し</a></li><li><a href="#cover-template">表紙テンプレート</a></li><li><a href="#ctx-canvas">キャンバスの右クリック</a></li></ol></li>
     <li><a href="#dialogs">7. ダイアログ</a>
       <ol><li><a href="#d-image">画像・キャンバス</a></li><li><a href="#d-export">書き出し</a></li><li><a href="#d-check">チェック・変換</a></li></ol></li>
     <li><a href="#prefs">8. 環境設定</a></li>
@@ -135,20 +140,46 @@ table.params td:nth-child(2) { white-space: normal; min-width: 8em; }
 <section id="start">
 <h2>1. はじめに</h2>
 
+<h3 id="whatsnew">v0.3 以降の主な変更</h3>
+<p>この説明書の初版（2026-10-14 時点の開発版）以降に加わった主な機能と、説明している場所です。細かな修正の一覧は同梱の <code>CHANGELOG.md</code> を参照してください。</p>
+<div class="table-wrap"><table>
+<tr><th>版（日付）</th><th>変更</th><th>説明</th></tr>
+<tr><td>v0.3（10-21）</td><td>Git なしで最新版に更新する <code>update.bat</code>。画面外に出たフローティングパネルを画面内へ戻す。集中線を漫画向けの先細り形状に変更。ComfyUI の基本ノードを Qt の入力欄で表示。</td><td><a href="#install">インストールと更新</a> / <a href="#p-shape">シェイプマネージャー</a> / <a href="#p-aieffect">AI Effects Manager</a></td></tr>
+<tr><td>v0.3.0.1〜0.3.0.4（10-22）</td><td>ComfyUI のコンソール表示設定。テキストを<b>パスに沿って配置</b>。テキストレイヤー名を本文から自動命名。AI 無しで起動する <code>boot_LoomStroke_noAI.bat</code>。Git で導入した環境の <code>update.bat</code> 対応。</td><td><a href="#pref-ai">環境設定 › AIエフェクト</a> / <a href="#text-path">パスに沿って配置</a> / <a href="#install">インストールと更新</a></td></tr>
+<tr><td>v0.3.0.5〜0.3.0.6（10-23）</td><td>パステキストの「輪郭のなめらかさ」「開始点と終了点を入れ替える」「文字の重なりを避ける」、「パスを編集」によるアンカー編集と「ハンドルの滑らかさ」。</td><td><a href="#text-path">パスに沿って配置</a></td></tr>
+<tr><td>v0.3.0.6.x（10-23〜10-28）</td><td>保存・ページ切替・元に戻すの安全性向上。閉じる／新規作成／開く前の未保存確認。復元ダイアログを閉じても候補を残す。初回起動時は OS の表示言語と標準レイアウトを使う。</td><td><a href="#recovery">自動保存からの復元</a> / <a href="#new-doc">新規ドキュメント</a> / <a href="#pref-ui">インターフェース</a></td></tr>
+<tr><td>v0.3.0.7.0〜0.3.0.7.10（10-28〜10-29）</td><td>ガイド・グリッド・構図ガイド・計測ツール・判型ガイド・塗り足し延長・印刷マーク・流線／フラッシュ・パスに沿って模様を配置・表紙テンプレート。<kbd>[</kbd> <kbd>]</kbd> の比例・加速サイズ変更。A判・B判のpx数を DPI から計算。</td><td><a href="#guides">ガイドと定規</a> ほか <a href="#menus">6. メニュー</a> の各節 / <a href="#tool-measure">計測</a> / <a href="#d-export">書き出し</a></td></tr>
+<tr><td>v0.3.0.7.9〜0.3.0.7.18（10-29）</td><td>ライブプロンプトの「ランダム」「順次選択」「組み合わせ列挙」。AI Effect の「連続生成」。ライブプロンプト欄の折り返しと高さ変更。ギャラリーの「プロンプト全文をコピー」。ブラシサイズ加速の設定を環境設定 › パフォーマンスへ移動。</td><td><a href="#p-prompt">プロンプトエディター</a> / <a href="#p-aieffect">AI Effects Manager</a> / <a href="#p-gallery">ギャラリー</a> / <a href="#pref-perf">パフォーマンス</a></td></tr>
+<tr><td>v0.3.0.7.19〜0.3.0.7.21（10-30）</td><td><code>install.bat</code> が NanoBanana の依存（google-genai）を標準で導入。全12言語の訳の補完と、言語切替時に入力値を保つ改善。</td><td><a href="#install">インストールと更新</a></td></tr>
+</table></div>
+<p>このほか、描画色・背景色の切替（ツールバー末尾）、フィルターメニューからの直接適用、パス編集の「キャンバス上で線幅を編集」、GPT Image 2 の入力レイヤーと 2.5 系モデル、ウィンドウメニューのカテゴリ分けが加わっています。</p>
+
+<h3 id="install">インストールと更新（Windows）</h3>
+<div class="table-wrap"><table>
+<tr><th>ファイル</th><th>使いかた</th></tr>
+<tr><td><code>install.bat</code></td><td>初回のセットアップ。64bit の Python 3.11 以上が見つからない場合は、管理者権限なしでフォルダー内（<code>.runtime</code>）に Python を用意します。NanoBanana の依存（google-genai）も標準で導入します。完了後は <code>boot_LoomStroke.bat</code> で起動します。</td></tr>
+<tr><td><code>update.bat</code></td><td>最新版への更新。ZIP で導入した場合は Git なしで公開版を取得し、<code>user_data</code> と実行環境を残したまま本体を置き換えます（旧本体は <code>.update-backups</code> に退避し、失敗時は戻します）。Git で導入した場合は、手元に変更がないときだけ最新版へ進めます。更新後に <code>install.bat</code> を自動で実行します。</td></tr>
+<tr><td><code>boot_LoomStroke.bat</code></td><td>通常の起動。</td></tr>
+<tr><td><code>boot_LoomStroke_noAI.bat</code></td><td>AI 機能を読み込まずに起動します（<code>--no-ai</code>）。AI Effects Manager・AI Select・プロンプトエディター・NanoBanana・GPT Image 2・ComfyUI・ギャラリーなどのパネルと、環境設定の「AIエフェクト」「SAM 3.1」「LoomStroke MCP」ページが表示されません。この起動ではパネル配置を保存しないので、通常起動の配置は変わりません。</td></tr>
+</table></div>
+<p>詳しい手順は同梱の <code>docs/user/INSTALL_AND_RUN.md</code> を参照してください。アプリの版はタイトルバー（<code>LoomStroke v…</code>）と <b>ヘルプ › LoomStroke について</b> で確認できます。</p>
+
 <h3 id="launch">起動とスタート画面</h3>
 <p>Windows では、インストールフォルダの <code>boot_LoomStroke.bat</code> をダブルクリックすると起動します。起動直後は、中央に「新規ドキュメント…」と「開く…」が並んだスタート画面が出ます。最近使ったファイルもここに一覧表示されます。</p>
 <figure><img src="img/start.png" alt="スタート画面" loading="lazy"><figcaption>スタート画面　<span class="num">1</span>新規ドキュメント…　<span class="num">2</span>開く…</figcaption></figure>
+<p>初めて起動したときは、Windows の表示言語の優先順に対応言語を探して画面の言語を決めます（対応言語がなければ英語）。パネル配置は「レイアウトをリセット」と同じ標準配置になります。言語は後から <a href="#pref-ui">環境設定 › インターフェース</a> の「言語」で変えられます。</p>
 <div class="note">ペンタブレットの筆圧を使う場合は、必ず <code>boot_LoomStroke.bat</code>（内部で <code>python.exe</code> を使用）から起動してください。<code>pythonw.exe</code> から起動すると、タブレットは認識されても筆圧が常に 0 になることがあります。</div>
 
 <h3 id="recovery">自動保存からの復元</h3>
 <div class="side">
-<figure><img src="img/dlg_recovery.png" alt="復元ダイアログ" loading="lazy"><figcaption>LoomStroke — Recovery</figcaption></figure>
+<figure><img src="img/dlg_recovery.png" alt="復元ダイアログ" loading="lazy"><figcaption>LoomStroke — 復元（画像は英語表示時のもの）</figcaption></figure>
 <div>
-<p>アプリが強制終了・クラッシュした場合、次回起動時にこのダイアログが出ます。一覧には自動保存された日時・ファイル名（保存前なら「未保存」）・セッション ID が並びます。</p>
+<p>アプリが強制終了・クラッシュした場合、次回起動時にこのダイアログが出ます。一覧には自動保存された日時・ファイル名（保存前なら「(未保存)」）・セッション ID が並びます。</p>
 <table>
 <tr><th>ボタン</th><th>動作</th></tr>
 <tr><td>復元</td><td>選択した自動保存ファイルを開いて作業を再開します。</td></tr>
-<tr><td>破棄して新規開始</td><td>自動保存ファイルを削除し、通常どおり起動します。</td></tr>
+<tr><td>破棄して新規開始</td><td>使われていない古い自動保存ファイルを片づけて、通常どおり起動します。</td></tr>
+<tr><td>×（閉じる）/ <kbd>Esc</kbd></td><td>何も削除しません。候補は次回も表示されます。復元に失敗した場合も候補は残ります。</td></tr>
 </table>
 <p>自動保存の有効/無効と間隔は <a href="#prefs">環境設定 › ファイルI/O</a> で設定します。自動保存をオフにすると、クラッシュ後に未保存の変更を復元できません。</p>
 </div>
@@ -165,11 +196,12 @@ table.params td:nth-child(2) { white-space: normal; min-width: 8em; }
 <tr><td><span class="num">1</span>カテゴリ</td><td>AI / A判 / B判 / デスクトップ画面 / モバイル画面 / カスタム。</td></tr>
 <tr><td><span class="num">1</span>プリセット</td><td>カテゴリ内のサイズ。AI カテゴリには <code>[SD1.5] 1:1 512 x 512</code>、<code>[SDXL/etc] 1:1 1024 x 1024</code> など、画像生成モデル向けの解像度が揃っています。</td></tr>
 <tr><td><span class="num">2</span>幅 / 高さ (px)</td><td>1〜16384 px。「プリセットに追加」で今のサイズを自分用プリセットとして保存します。</td></tr>
-<tr><td><span class="num">3</span>DPI</td><td>1〜1200。印刷用書き出しで仕上がり寸法の計算に使われます。</td></tr>
+<tr><td><span class="num">3</span>DPI</td><td>1〜1200。印刷用書き出しで仕上がり寸法の計算に使われます。A判・B判のプリセットでは、DPI を変えると幅・高さの px 数を計算し直します（プリセット名の px 表示は 72dpi 時のまま）。手入力した寸法や AI・画面・ユーザーのプリセットは px 数を保ちます。</td></tr>
 <tr><td><span class="num">4</span>カラーモード</td><td><b>RGB / 8 bit</b>、<b>CMYK / 8 bit</b>、<b>CMYK / 16 bit</b>。CMYK を選ぶと ICC プロファイルの選択が必須になります。</td></tr>
 <tr><td><span class="num">4</span>ICC プロファイル（CMYK時）</td><td>同梱の ISO Coated v2 300% / ISO Coated v2 / PSO Uncoated ISO12647 / ISO Newspaper v4 26 / PSO LWC Improved / SC paper（basICColor）と APTEC Offset 2025 から選択。「ICC プロファイルを読み込む…」で手持ちの .icc を追加、「代表的なICCプロファイルのダウンロード…」で各地域の公式配布ページの一覧を開きます。</td></tr>
 <tr><td><span class="num">5</span>背景</td><td>透明 / 白 / カスタムカラー（「色を選択…」で指定）。</td></tr>
 </table></div>
+<p>新規作成すると、前の文書で使っていた構図ガイドの表示は初期化されます。開いている文書に未保存の変更があると、新規作成・開く・閉じる・終了の前に「未保存の変更」の確認が出ます（保存する・破棄する・キャンセルの3択。ボタンは英語表示の場合があります）。保存に失敗したり保存先の指定を取り消したりした場合は、元の文書を閉じずに残します。</p>
 
 <h3 id="screen">画面の見かた</h3>
 <div class="note">この説明書のスクリーンショットでは、説明している場所を赤い枠と番号で示しています。本文や表の <span class="num">1</span> などの番号が、画像の番号に対応します。</div>
@@ -178,13 +210,13 @@ table.params td:nth-child(2) { white-space: normal; min-width: 8em; }
 <tr><th>場所</th><th>内容</th></tr>
 <tr><td><span class="num">1</span>最上部</td><td>メニューバー（ファイル・編集・画像・表示・レイヤー・フィルター・ウィンドウ・ヘルプ）</td></tr>
 <tr><td><span class="num">2</span>メニュー直下</td><td><b>ツールプロパティバー</b>。選択中ツールのプリセットと主な設定、「ツール設定」ボタン（詳細設定）が並びます。</td></tr>
-<tr><td><span class="num">3</span>左端</td><td><b>ツールバー</b>。ツールはグループ単位で並びます（<a href="#tool-groups">後述</a>）。</td></tr>
+<tr><td><span class="num">3</span>左端</td><td><b>ツールバー</b>。ツールはグループ単位で並びます（<a href="#tool-groups">後述</a>）。末尾に描画色・背景色の切替があります。</td></tr>
 <tr><td><span class="num">4</span>中央</td><td><b>キャンバス</b>。絵を描く場所です。</td></tr>
 <tr><td><span class="num">5</span>キャンバス上部</td><td><b>コンテキストツールバー</b>。ツールに応じた設定（ペンならサイズ・不透明度・硬さ）をその場で変えられます。</td></tr>
 <tr><td><span class="num">6</span>右側</td><td>プレビュー・レイヤーなどのパネル。下部のタブでフォント / シェイプマネージャー / プロンプトエディター / NanoBanana などに切り替えます。</td></tr>
 <tr><td><span class="num">7</span>下側</td><td>ページパネル。タブでギャラリー / AI Effects Manager / ブラシマネージャーに切り替えます。</td></tr>
 </table></div>
-<p>パネルはタイトル部分をドラッグして移動・タブ結合・フローティングできます。表示/非表示は <b>ウィンドウ</b> メニュー、配置を初期状態に戻すには <b>ウィンドウ › レイアウトをリセット</b>。<kbd>Tab</kbd> でパネルを隠すスクリーンモード、<kbd>F11</kbd> で全画面表示になります。</p>
+<p>パネルはタイトル部分をドラッグして移動・タブ結合・フローティングできます。表示/非表示は <b>ウィンドウ</b> メニューのカテゴリ（レイヤー・ページ / 描画 / コミック / AI / その他）、配置を初期状態に戻すには <b>ウィンドウ › レイアウトをリセット</b>。<kbd>Tab</kbd> でパネルを隠すスクリーンモード、<kbd>F11</kbd> で全画面表示になります。タイトルバーが画面外に出て操作できなくなったフローティングパネルは、自動で画面内へ戻ります。</p>
 </section>
 
 <!-- ============================================================ -->
@@ -216,7 +248,15 @@ table.params td:nth-child(2) { white-space: normal; min-width: 8em; }
 <figure><img src="img/flyout_3.png" alt="ベクターグループ" loading="lazy"><figcaption>ベクター：ベクターペン（高精度）/ パス / パス編集</figcaption></figure>
 <figure><img src="img/flyout_4.png" alt="テキストグループ" loading="lazy"><figcaption>テキスト：テキスト / 縦書きテキスト</figcaption></figure>
 </div>
-<p>このほか単独ボタンとして <b>移動</b>、<b>消しゴム</b>、<b>スポイト</b> があります。</p>
+<p>このほか単独ボタンとして <b>移動</b>、<b>消しゴム</b>、<b>スポイト</b>、<b>計測</b> があります。</p>
+<h4 id="fg-bg">描画色と背景色</h4>
+<p>ツールバーの末尾に、描画色（左手前）と背景色（右奥）の四角があります。</p>
+<table>
+<tr><td>手前の四角をクリック</td><td>描画色を変更します。</td></tr>
+<tr><td>奥の四角をクリック</td><td>背景色を変更します。背景色は次回起動後も残ります。</td></tr>
+<tr><td>右上の矢印 / <kbd>X</kbd></td><td>描画色と背景色を入れ替えます（<b>編集 › 描画色と背景色を入れ替え</b>）。</td></tr>
+<tr><td>左下の小さな白黒 / <kbd>D</kbd></td><td>黒と白に戻します（<b>編集 › 描画色と背景色を初期設定に戻す</b>）。</td></tr>
+</table>
 <p>ツールを選ぶと、<b>ツールプロパティバー</b>（メニュー直下）と<b>コンテキストツールバー</b>（キャンバス上）にそのツールの設定が表示されます。バー左端の「プリセット」で設定の組み合わせを呼び出し、「保存」「削除」で管理できます。<b>「ツール設定」</b>（ペンは「ペン設定」）ボタンを押すと、折りたたみ式の詳細設定が開きます。この説明書では、詳細設定はすべてのセクションを展開した状態で掲載しています。</p>
 
 <!-- ペン -->
@@ -230,7 +270,7 @@ table.params td:nth-child(2) { white-space: normal; min-width: 8em; }
 <h4>パラメーター一覧（全 27 項目）</h4><p>ショートカット：<kbd>B</kbd> / <kbd>Shift+B</kbd>　プリセット：スケッチ、インキング、マーカー</p>
 <div class="table-wrap"><table class="params">
 <tr><th>分類</th><th>項目</th><th>範囲・選択肢</th><th>初期値</th><th>説明</th></tr>
-<tr><td>基本</td><td>サイズ</td><td>1〜128</td><td>12</td><td>ブラシの直径 (px)。<kbd>[</kbd> / <kbd>]</kbd> でも変えられます。</td></tr>
+<tr><td>基本</td><td>サイズ</td><td>1〜128</td><td>12</td><td>ブラシの直径 (px)。<kbd>[</kbd> / <kbd>]</kbd> でも変えられます（今のサイズに比例して変わり、続けて押すと速くなります。<a href="#pref-perf">加速の設定</a>）。</td></tr>
 <tr><td>基本</td><td>不透明度</td><td>0〜1</td><td>1</td><td>1 本の線全体の濃さ。</td></tr>
 <tr><td>基本</td><td>硬さ</td><td>0〜1</td><td>0.8</td><td>ふちのくっきり具合。0 でぼんやり、1 でくっきり。</td></tr>
 <tr><td>基本</td><td>流量</td><td>0〜1</td><td>1</td><td>1 回のスタンプで置くインクの量。低いと重ね塗りで少しずつ濃くなります。</td></tr>
@@ -269,7 +309,7 @@ table.params td:nth-child(2) { white-space: normal; min-width: 8em; }
 <div class="table-wrap"><table class="params">
 <tr><th>分類</th><th>項目</th><th>範囲・選択肢</th><th>初期値</th><th>説明</th></tr>
 <tr><td>基本</td><td>フィルター</td><td>ガウスぼかし / レベル補正 / シャープ / ノイズ除去 / 色相/彩度 / 階調の反転 / 明るさ / コントラスト / トーンカーブ / グラデーションマップ / モザイク / 漫画スクリーントーン</td><td>ガウスぼかし</td><td>なぞった部分にかけるフィルター。</td></tr>
-<tr><td>基本</td><td>サイズ</td><td>1〜1000</td><td>24</td><td>ブラシの直径 (px)。<kbd>[</kbd> / <kbd>]</kbd> でも変えられます。</td></tr>
+<tr><td>基本</td><td>サイズ</td><td>1〜1000</td><td>24</td><td>ブラシの直径 (px)。<kbd>[</kbd> / <kbd>]</kbd> でも変えられます（今のサイズに比例して変わり、続けて押すと速くなります。<a href="#pref-perf">加速の設定</a>）。</td></tr>
 <tr><td>基本</td><td>適用量</td><td>0〜1</td><td>1</td><td>フィルターをかける強さ（適用量）。</td></tr>
 <tr><td>基本</td><td>硬さ</td><td>0〜1</td><td>1</td><td>ふちのくっきり具合。0 でぼんやり、1 でくっきり。</td></tr>
 <tr><td>基本</td><td>スタンプ密度</td><td>0〜1</td><td>0.6</td><td>ブラシ跡を打つ間隔の細かさ。高いほど点の継ぎ目が目立たない滑らかな線になります。</td></tr>
@@ -295,7 +335,7 @@ table.params td:nth-child(2) { white-space: normal; min-width: 8em; }
 <h4>パラメーター一覧（全 6 項目）</h4><p>ショートカット：<kbd>E</kbd> / <kbd>Shift+E</kbd>　プリセット：ソフト消去、エッジ調整</p>
 <div class="table-wrap"><table class="params">
 <tr><th>分類</th><th>項目</th><th>範囲・選択肢</th><th>初期値</th><th>説明</th></tr>
-<tr><td>基本</td><td>サイズ</td><td>1〜200</td><td>20</td><td>ブラシの直径 (px)。<kbd>[</kbd> / <kbd>]</kbd> でも変えられます。</td></tr>
+<tr><td>基本</td><td>サイズ</td><td>1〜200</td><td>20</td><td>ブラシの直径 (px)。<kbd>[</kbd> / <kbd>]</kbd> で 2px ずつ変えられます（消しゴムは比例・加速しません）。</td></tr>
 <tr><td>基本</td><td>強さ</td><td>0〜1</td><td>1</td><td>消す強さ。1 で完全に消し、低いと薄くなるだけ。</td></tr>
 <tr><td>基本</td><td>硬さ</td><td>0〜1</td><td>0.5</td><td>ふちのくっきり具合。0 でぼんやり、1 でくっきり。</td></tr>
 <tr><td>線の品質</td><td>間隔</td><td>0.01〜1</td><td>0.1</td><td>消しゴム跡の間隔（直径に対する割合）。小さいほど滑らか。</td></tr>
@@ -498,11 +538,13 @@ table.params td:nth-child(2) { white-space: normal; min-width: 8em; }
 <tr><td>Simplify / Smooth / Straighten / Offset</td><td>アンカーを減らす / 曲線をならす / 直線化 / 線をずらした複製を作る。</td></tr>
 <tr><td>線幅の調整を編集 / リセット</td><td>線の場所ごとの太さ（可変線幅）を編集・初期化します。</td></tr>
 </table>
+<p><b>キャンバス上で線幅を編集</b>をオンにすると、線の中心線をドラッグして太さの調整点を作り、調整点や左右のハンドルをドラッグして太さ（0〜512 px）を変えられます。<kbd>Alt</kbd>+クリックで調整点を削除、ドラッグ中の <kbd>Esc</kbd> で取り消し。パスの形やアンカーは変わらず、1回のドラッグが1回の「元に戻す」になります。対象はロックされていない単一のパスで、調整点は64点までです（複合パス・パラメトリック図形・文字は対象外）。</p>
 
 <!-- テキスト -->
-<h4>パラメーター一覧（全 4 項目）</h4>
+<h4>パラメーター一覧（全 5 項目）</h4>
 <div class="table-wrap"><table class="params">
 <tr><th>分類</th><th>項目</th><th>範囲・選択肢</th><th>初期値</th><th>説明</th></tr>
+<tr><td>—</td><td>キャンバス上で線幅を編集</td><td>オン / オフ</td><td>オフ</td><td>オンの間、キャンバス上のドラッグで線幅を調整します（上記）。</td></tr>
 <tr><td>—</td><td>線の色</td><td>色</td><td>#000000</td><td>線の色。</td></tr>
 <tr><td>—</td><td>線幅</td><td>0.1〜128</td><td>2</td><td>線の太さ。</td></tr>
 <tr><td>—</td><td>塗りを有効化</td><td>オン / オフ</td><td>オフ</td><td>閉じた形の内側を塗ります。</td></tr>
@@ -511,7 +553,7 @@ table.params td:nth-child(2) { white-space: normal; min-width: 8em; }
 
 <h3 id="tool-text">テキスト <span class="tag">T</span></h3>
 <figure><img src="img/use_text.png" alt="テキスト入力" loading="lazy"><figcaption>クリックして「Hello LoomStroke」と入力中。上部でフォント・サイズ・色・行間・余白などを変更できる。<span class="legend"><span class="num">1</span>選択中のツール　<span class="num">2</span>プロパティバー　<span class="num">3</span>コンテキストツールバー　<span class="num">4</span>入力した文字</span></figcaption></figure>
-<p>クリックで 1 行の<b>ポイントテキスト</b>、ドラッグで枠の中で折り返す<b>エリアテキスト</b>を作ります。日本語入力（IME）に対応し、入力するとレイヤーパネルにテキストレイヤーが追加されます。「選択範囲をエリアテキストに変換」で図形や選択範囲の形に文字を流し込めます。</p>
+<p>クリックで 1 行の<b>ポイントテキスト</b>、ドラッグで枠の中で折り返す<b>エリアテキスト</b>を作ります。日本語入力（IME）に対応し、入力するとレイヤーパネルにテキストレイヤーが追加されます。レイヤー名は確定時に本文の先頭10文字から自動で付きます（自分で付けた名前は変わりません）。「選択範囲をエリアテキストに変換」で図形や選択範囲の形に文字を流し込めます。</p>
 <figure class="narrow"><img src="img/opt_text_tool.png" alt="テキスト設定" loading="lazy"><figcaption>ツール設定（展開）</figcaption></figure>
 <p>フォント・スタイル・配置・色・不透明度などはコンテキストツールバーまたは <a href="#p-font">フォントパネル</a> で設定します。</p>
 <h4>パラメーター一覧（全 8 項目）</h4><p>ショートカット：<kbd>T</kbd></p>
@@ -527,8 +569,33 @@ table.params td:nth-child(2) { white-space: normal; min-width: 8em; }
 <tr><td>枠の余白</td><td>左の余白</td><td>0〜256</td><td>0</td><td>左の内側余白。</td></tr>
 </table></div>
 <h4>操作ボタン</h4><table>
-<tr><td>変換</td><td>選択範囲をエリアテキストに変換（選択範囲の形の枠に文字を流し込むエリアテキストを作成）</td></tr>
+<tr><td>変換</td><td>選択範囲をエリアテキストに変換（選択範囲の形の枠に文字を流し込むエリアテキストを作成）/ パスに沿って配置（下記）</td></tr>
 </table>
+<h4 id="text-path">パスに沿って配置</h4>
+<p>ツール設定の「変換」、またはコンテキストツールバーの<b>パスに沿って配置</b>で、線や形の輪郭に沿って文字を並べます。使う輪郭は次の順に決まります。</p>
+<ol class="steps">
+<li>選択中のベクター（開いたパス・閉じた形のどちらも可。太い線でも中心線を使います）</li>
+<li>ベクターを選んでいなければ、選択範囲の輪郭</li>
+<li>どちらもなければ、選択中のラスターレイヤーの不透明部分の外側の輪郭（穴は使いません）</li>
+</ol>
+<p>文字だけを選んでいる場合や輪郭が見つからない場合は、ステータスバーに理由が出ます。作成時の輪郭を写し取るので、後から元の図形を動かしても文字は追従しません。横書きのみです。「パスに沿って配置」ウィンドウが開き、キャンバスまたは「本文」欄で入力します。<kbd>Ctrl</kbd>+<kbd>Enter</kbd> で確定します。</p>
+<div class="table-wrap"><table class="params">
+<tr><th>項目</th><th>範囲・選択肢</th><th>初期値</th><th>説明</th></tr>
+<tr><td>開始位置 (%) / 終了位置 (%)</td><td>0〜100</td><td>0 / 100</td><td>輪郭のどこからどこまでに文字を置くか。キャンバス上の開始・終了ハンドルを輪郭に沿ってドラッグしても変えられます。</td></tr>
+<tr><td>パスからの距離 (px)</td><td>-10000〜10000</td><td>0</td><td>線から文字を離す距離。</td></tr>
+<tr><td>進行方向を反転</td><td>オン / オフ</td><td>オフ</td><td>文字の進む向きを逆にします。</td></tr>
+<tr><td>全周を使用</td><td>オン / オフ</td><td>閉じた形でオン</td><td>閉じた形の一周すべてを使います（閉じた形のときだけ選べます）。</td></tr>
+<tr><td>パスに沿って文字を回転</td><td>オン / オフ</td><td>オン</td><td>線の向きに合わせて文字を傾けます。</td></tr>
+<tr><td>揃え</td><td>開始 / 中央 / 終了 / 均等配置</td><td>開始</td><td>区間内での文字の寄せ方。</td></tr>
+<tr><td>輪郭</td><td>候補の一覧</td><td>—</td><td>輪郭が複数あるとき、作成時に使う輪郭を選びます。</td></tr>
+<tr><td>輪郭のなめらかさ</td><td>0〜100</td><td>0</td><td>値を上げるほど細かな凹凸を無視します。離したときに1回の「元に戻す」として反映、0 で元の輪郭に戻ります。</td></tr>
+<tr><td>文字の重なりを避ける</td><td>オン / オフ</td><td>オフ</td><td>急な曲がりで文字が重なる場合、後ろの文字を先へ送ります。</td></tr>
+<tr><td>開始点と終了点を入れ替える</td><td>ボタン</td><td>—</td><td>両端だけを入れ替えます。もう一度押すと元に戻ります。</td></tr>
+<tr><td>パスを編集</td><td>ボタン（オン/オフ）</td><td>—</td><td>線上クリックでアンカー追加、<kbd>Alt</kbd>+クリックで削除、アンカーやハンドルのドラッグで形を変えます。<kbd>S</kbd> なめらか / <kbd>C</kbd> 角 / <kbd>B</kbd> ハンドル分離 / <kbd>M</kbd> 対称。<kbd>Esc</kbd> で終了。元の画像や図形は変わりません。</td></tr>
+<tr><td>ハンドルの滑らかさ</td><td>0〜5（0.1刻み）</td><td>0</td><td>ベクターペンと同じ補正で、編集できるベジェハンドルを作ります。0 で補正前に戻ります。</td></tr>
+<tr><td>本文を編集</td><td>ボタン</td><td>—</td><td>「本文」欄に移ります。長い本文は欄の幅で折り返して表示します（改行は入りません）。</td></tr>
+</table></div>
+<p>区間に収まらない文字があると「指定区間に収まらない文字があります。本文はすべて保持されています。」と表示されます。はみ出した文字は描かれませんが、本文には残っています。確定後も、文字をクリックするとこのウィンドウで再編集できます。</p>
 
 <h3 id="tool-vtext">縦書きテキスト</h3>
 <figure><img src="img/use_text_vertical.png" alt="縦書き" loading="lazy"><figcaption>右端に「花の杖の魔法使い」と縦書きで入力したところ<span class="legend"><span class="num">1</span>選択中のツール　<span class="num">2</span>プロパティバー　<span class="num">3</span>コンテキストツールバー　<span class="num">4</span>入力した文字</span></figcaption></figure>
@@ -561,6 +628,9 @@ table.params td:nth-child(2) { white-space: normal; min-width: 8em; }
 <tr><th>分類</th><th>項目</th><th>範囲・選択肢</th><th>初期値</th><th>説明</th></tr>
 <tr><td>—</td><td>スポイトを有効化</td><td>オン / オフ</td><td>オフ</td><td>オンにするとキャンバスのクリックで色を拾います。</td></tr>
 </table></div>
+
+<h3 id="tool-measure">計測</h3>
+<p>2点間の距離・角度・縦横の差を測るツールです。キャンバス上をドラッグすると黄色の線と「距離: … | 角度: …° | ΔX: … | ΔY: …」が表示されます。角度は右向きを 0°、下向きを正とした -180〜180° です。単位はページの定規の単位で、文書の DPI を使って換算します（初期値は px）。端点はガイド・構図ガイドに吸着し、「グリッドに吸着」がオンならグリッドにも吸着します。<kbd>Esc</kbd> またはページの切替で表示を消します。計測は履歴に残らず、設定項目もありません。</p>
 
 <h3 id="tool-comic">Comic</h3>
 <p>キャンバス上でコマ枠やフキダシを直接操作するツールです。<a href="#p-comic">Comic パネル</a>と連動し、コマ枠の境界やフキダシ・しっぽをドラッグして調整します。移動ツールでコマやフキダシをダブルクリックしたときなどにも自動で切り替わります。このツール自体に設定項目はなく、設定は Comic パネルで行います。</p>
@@ -652,6 +722,7 @@ table.params td:nth-child(2) { white-space: normal; min-width: 8em; }
 </div>
 
 <h3 id="filters">フィルターレイヤー全種</h3>
+<div class="note"><b>フィルターメニューから直接かける：</b><b>フィルター</b> メニューの「最後のフィルター」の下に、フィルター 11 種（レベル補正・色相/彩度・階調の反転・ガウスぼかし・シャープ・ノイズ除去・モザイク・漫画スクリーントーンなど）が並びます。選ぶとプレビュー付きの設定画面が開き、OK で選択中のレイヤーへ直接適用します（フィルターレイヤーは作りません。選択範囲があればその中だけ。1回の「元に戻す」で戻せます）。「最後のフィルター」（<kbd>Ctrl</kbd>+<kbd>Alt</kbd>+<kbd>F</kbd>）は直前の設定で再適用します。ベクターや文字のレイヤーでは「レイヤーをラスタライズしますか?」と確認が出ます。続けると適用後はベクター・文字として編集できなくなりますが、ラスタライズとフィルターは1回の「元に戻す」でまとめて戻せます。ロックされたレイヤーやレイヤーマスクには適用できません。</div>
 <p>「フィルターレイヤーを追加」またはレイヤー右クリックの「フィルターを追加」で、元の絵を書き換えない<b>非破壊のフィルター</b>を追加できます。追加したフィルターレイヤーを選ぶと、<a href="#p-filter">フィルターパネル</a>にパラメーターが表示され、いつでも調整・削除できます。下の画像は、各フィルターをイラストのレイヤーの上に追加したときのパネルと結果です。</p>
 
 <h4>調整レイヤー</h4>
@@ -725,7 +796,7 @@ table.params td:nth-child(2) { white-space: normal; min-width: 8em; }
 <!-- ============================================================ -->
 <section id="panels">
 <h2>5. パネル詳細</h2>
-<p>すべてのパネルは <b>ウィンドウ</b> メニューから表示/非表示を切り替えられます。ここでは各パネルのすべての項目を、タブごとに説明します。</p>
+<p>パネルは <b>ウィンドウ</b> メニューのカテゴリ（レイヤー・ページ / 描画 / コミック / AI / その他）から表示/非表示を切り替えられます（開発中の Canvas Assistant と Production Control はメニューに出ません）。ここでは各パネルのすべての項目を、タブごとに説明します。</p>
 
 <h3 id="p-preview">プレビュー</h3>
 <div class="side">
@@ -856,7 +927,9 @@ table.params td:nth-child(2) { white-space: normal; min-width: 8em; }
 <tr><td>整列基準</td><td>キャンバス / 選択範囲。</td></tr>
 <tr><td>整列ボタン</td><td>収める / 引き伸ばす / 中央 / 上 / 垂直中央 / 下 / 左 / 水平中央 / 右 / 水平分布 / 垂直分布。</td></tr>
 <tr><th colspan="2">基本シェイプ タブ</th></tr>
-<tr><td colspan="2">キャンバスへドラッグして図形を追加します。右クリックで変形ハンドルを表示。吹き出し（トゲ・丸・角丸・雲など）、効果（Focus Lines Circle / Rect＝集中線）、基本図形（台形・平行四辺形・楕円・角丸長方形）、多角形（三角形〜十角形）が揃っています。</td></tr>
+<tr><td colspan="2">キャンバスへドラッグして図形を追加します。右クリックで変形ハンドルを表示。吹き出し（トゲ・丸・角丸・雲など）、効果（集中線〔Focus Lines Circle / Rect〕・流線・ベタフラッシュ・ウニフラッシュ）、基本図形（台形・平行四辺形・楕円・角丸長方形）、多角形（三角形〜十角形）が揃っています。</td></tr>
+<tr><td>集中線</td><td>中心へ向かって細くなる漫画風の線です。右クリックで出るハンドルで調整します：白＝内側の空白の半径、赤＝本数（8〜200、初期 90）、青＝外側の太さ、緑＝内側の太さ（0 で尖る）、オレンジ（下辺のひし形）＝長さのばらつき（初期 0.6）、紫＝消失点。</td></tr>
+<tr><td>流線 / ベタフラッシュ / ウニフラッシュ</td><td>キャンバスへドラッグすると「効果線」画面が開きます。範囲（矩形、選択範囲があればその外接矩形）と左・上・右・下を指定します。流線は方向（度）・線の本数（1〜512、初期 32）・長さのばらつき・太さの比率・入り抜きの比率・乱数シード。フラッシュは中心X/Yの移動比率・内径／外径の比率・線の本数（3〜256、初期 64）・ばらつき・乱数シード・白抜き。キャンセルすると何も追加しません。</td></tr>
 </table>
 
 <h3 id="p-transform">Transform</h3>
@@ -904,6 +977,9 @@ table.params td:nth-child(2) { white-space: normal; min-width: 8em; }
 <tr><td><span class="num">1</span>状態フィルター</td><td>すべて / 完了 / 失敗 / キャンセル済み。</td></tr>
 <tr><td><span class="num">2</span>サービスフィルター</td><td>すべてのサービス / ComfyUI / GPT Image 2 / NanoBanana。</td></tr>
 <tr><td><span class="num">4</span>サムネイル</td><td>過去の結果をレイヤーとして再利用したり、生成条件を確認したりできます。</td></tr>
+<tr><td>詳細欄</td><td>項目をクリックすると、プレビューと生成情報（サービス・モデル・プロンプト全文・シード・サイズ・所要時間・ステータス・時刻・エラー）が出ます。文字は選択して部分的にコピーできます。</td></tr>
+<tr><td>プロンプト全文をコピー / 再生成 / 復元 / 削除</td><td>詳細欄の下の1行に並びます。コピーは改行・空白も含めてそのままコピーします。再生成・復元はそのサービスが使えるときだけ押せます（復元は GPT Image 2 のモデルや入力レイヤーも戻します）。</td></tr>
+<tr><td>レイヤーへ転送: / 転送</td><td>結果を新規レイヤーまたは既存レイヤーへ送ります。</td></tr>
 </table>
 
 <h3 id="p-aieffect">AI Effects Manager</h3>
@@ -929,15 +1005,25 @@ table.params td:nth-child(2) { white-space: normal; min-width: 8em; }
 <tr><td>変更をEditorに反映</td><td>ComfyUI 側の変更をエフェクトエディターへ取り込みます。</td></tr>
 <tr><td>VRAMを解放</td><td>ComfyUI のモデルを GPU メモリから降ろします。</td></tr>
 </table>
-<p>AI Effect レイヤーの流れ：プリセットを右クリックしてレイヤーとして追加 → レイヤーパネルで入力スロットに元のレイヤーを割り当て → フィルターパネルでパラメーターを調整して生成。プリセットが 1 つもないときは「AI Effect プリセットがインストールされていません」と表示され、「プリセットフォルダーを開く」で配置先を開けます。</p>
-<figure class="mid"><img src="img/dlg_ai_presets.png" alt="プリセットなし" loading="lazy"><figcaption>フィルター › AI Effect Presets...（未導入時）</figcaption></figure>
+<p>AI Effect レイヤーの流れ：プリセットを右クリックしてレイヤーとして追加 → レイヤーパネルで入力スロットに元のレイヤーを割り当て → フィルターパネルでパラメーターを調整 → レイヤーパネルの行の生成ボタンで生成。生成結果は画像と配置だけが1回の「元に戻す」で戻り、プロンプトや設定は巻き戻りません。プリセットが 1 つもないときは「AI Effect プリセットがインストールされていません」と表示され、「プリセットフォルダーを開く」で配置先を開けます。</p>
+<figure class="mid"><img src="img/dlg_ai_presets.png" alt="プリセットなし" loading="lazy"><figcaption>フィルター › AI エフェクトプリセット...（未導入時。画像は英語表示時のもの）</figcaption></figure>
+<h4 id="ai-batch">連続生成</h4>
+<p>AI Effect レイヤーのフィルターパネルで、「トリガー」の下にあります。前の生成が終わるのを待って1件ずつ生成します。</p>
+<table>
+<tr><td>回数指定 / 一巡するまで / 中止するまで (無限)</td><td>回数指定は 1〜1,000,000 回（初期 10）。一巡は、ライブプロンプトの「順次選択」「組み合わせ列挙」の候補をすべて回る回数を計算します（ランダムは計算に入りません）。</td></tr>
+<tr><td>連続生成を開始 / 停止</td><td>進捗は「完了 n / 合計」で表示されます。</td></tr>
+<tr><td>止まる条件</td><td>停止ボタン、生成の失敗、選択レイヤー・ページ・文書・プリセット・接続先・ライブプロンプト構成の変更、外部サービスの許可オフ。</td></tr>
+</table>
+<p>連続生成中は、そのレイヤーの自動トリガーと単発の生成は受け付けません。設定は文書に保存されません。</p>
+<h4 id="ai-comfy-node">ComfyUI の AI Effect レイヤー</h4>
+<p>フィルターパネルのノード編集では、ノードの種類が「基本ウィジェット (Qt)」（LoomStroke の入力欄で表示）、「独自UIあり (ComfyUI)」「判定不能 (ComfyUI)」（ComfyUI の画面で編集）と表示されます。「プロンプト入力…」で、選択中のノードの文字項目にライブプロンプトを設定し「ノードに適用」します。ComfyUI 側で直接書き換えた文字はそちらを優先します。ComfyUI の AI Effect レイヤーでは、フィルターパネルに生成画像のサムネイルは出ません。</p>
 
 <h3 id="p-nanobanana">NanoBanana</h3>
 <div class="side">
 <figure><img src="img/panel_nano_banana.png" alt="NanoBanana" loading="lazy"><figcaption>NanoBanana（Google Gemini）</figcaption></figure>
 <div><table>
-<tr><td>Prompt</td><td>保存済みの構成プロンプトを選択（↻ 更新、＋ で部品追加）。</td></tr>
-<tr><td>Separator</td><td>部品の区切り文字（初期値は改行 <code>\n</code>）。</td></tr>
+<tr><td>プロンプト（ライブプロンプト）</td><td>保存済みの構成を選択（先頭は「（なし）」、↻ 構成を更新、＋ で部品追加）。部品をクリックすると「ランダム」「順次選択」「組み合わせ列挙」を選べます（<a href="#p-prompt">プロンプトエディター</a>）。長い部品は欄の幅で折り返し、欄の下端をドラッグして高さを変えられます（高さは全ライブプロンプト共通で、再起動後も残ります）。</td></tr>
+<tr><td>区切り文字:</td><td>部品の区切り文字（初期値は改行 <code>\n</code>）。</td></tr>
 <tr><td>プロンプト入力欄</td><td>生成したい内容を書きます。</td></tr>
 <tr><td>入力レイヤー (最大 14)</td><td>参考にさせるレイヤー（なし / 各レイヤー）。</td></tr>
 <tr><td>モデル</td><td>Gemini 2.5 Flash / Gemini 3.1 Flash / Gemini 3 Pro。</td></tr>
@@ -955,10 +1041,11 @@ table.params td:nth-child(2) { white-space: normal; min-width: 8em; }
 <div class="side">
 <figure><img src="img/panel_gptimage2.png" alt="GPT Image 2" loading="lazy"><figcaption>GPT Image 2（OpenAI）</figcaption></figure>
 <div><table>
-<tr><td>プロンプト / Separator / 入力欄</td><td>NanoBanana と同じ。</td></tr>
-<tr><td>モデル</td><td>GPT Image 2 / GPT Image 2 (2026-04-21)。</td></tr>
+<tr><td>プロンプト / 区切り文字 / 入力欄</td><td>NanoBanana と同じ。</td></tr>
+<tr><td>入力レイヤー (最大 16)</td><td>参考にさせるレイヤーを選んだ順に指定します（ベクターも可、1枚 50MiB 未満）。指定がなければ新規生成、あれば画像編集になります。</td></tr>
+<tr><td>モデル</td><td>GPT Image 2 / GPT Image 2 (2026-04-21) / GPT Image 2.5 Sunburst / GPT Image 2.5 Flare と、それぞれの (2026-09-08) 版。</td></tr>
 <tr><td>品質</td><td>自動 / 低 / 中 / 高。</td></tr>
-<tr><td>サイズ</td><td>自動 / 1024x1024 / 1024x1536 / 1536x1024。</td></tr>
+<tr><td>サイズ</td><td>自動 / 1024x1024 / 1024x1536 / 1536x1024 / 1536x864 / 864x1536 / 2048x2048 / 2048x1152 / 1152x2048 / 3840x2160 / 2160x3840。</td></tr>
 <tr><td>形式 / 圧縮</td><td>PNG / JPEG / WebP と、その圧縮率（0〜100）。</td></tr>
 <tr><td>背景</td><td>自動 / 不透明。</td></tr>
 <tr><td>モデレーション</td><td>自動 / 低。</td></tr>
@@ -976,8 +1063,9 @@ table.params td:nth-child(2) { white-space: normal; min-width: 8em; }
 <table>
 <tr><th colspan="2">作成</th></tr>
 <tr><td>コンポーネント</td><td>文字列 / リスト / テキスト / プロンプト の部品を、下のライブプロンプトへドラッグ。</td></tr>
-<tr><td>ライブプロンプト</td><td>部品を並べてプロンプトを組み立てます（＋で追加）。</td></tr>
-<tr><td>区切り / 作成 / コピー</td><td>部品の区切り文字、組み立て実行、クリップボードへコピー。</td></tr>
+<tr><td>ライブプロンプト</td><td>部品を並べてプロンプトを組み立てます（＋で追加）。部品をクリックすると編集欄が開きます。</td></tr>
+<tr><td>ランダム / 順次選択 / 組み合わせ列挙</td><td>部品ごとの候補の選び方（1つだけ選択、すべてオフで固定）。候補は、リストは項目、文字列・プロンプトはタグに合うスニペット、テキストは <code>{a|b|c}</code> の各候補です。生成のたびに1件進み、プレビュー・コピー・保存では進みません。組み合わせ列挙は右側の部品から進みます。進み具合はパネルを開いている間だけ保持され、構成を変えると最初に戻ります。GPT Image 2・NanoBanana・ComfyUI のライブプロンプトと、選択中の AI Effect の生成で使われます。</td></tr>
+<tr><td>区切り / コピー</td><td>部品の区切り文字、クリップボードへコピー。</td></tr>
 <tr><td>保存（タイトル / タグ）</td><td>新規 / 保存 / 名前を付けて保存。</td></tr>
 <tr><th colspan="2">ライブラリ</th></tr>
 <tr><td>検索 / タグ / 種別</td><td>保存済みの部品を検索。種別：プロンプト / 文字列 / リスト / システムプロンプト (LLM) / ユーザープロンプト (LLM)。</td></tr>
@@ -1195,7 +1283,7 @@ table.params td:nth-child(2) { white-space: normal; min-width: 8em; }
 
 <h5>練習1：最初の1ページを作る</h5>
 <ol class="steps">
-<li>新しいファイルを作り、<b>ウィンドウ</b> メニューから「Comic」を表示して「コマ割り」タブを開きます。</li>
+<li>新しいファイルを作り、<b>ウィンドウ › コミック › Comic</b> で表示して「コマ割り」タブを開きます。</li>
 <li>テンプレートで「3コマ」などを選び、<b>テンプレート適用</b>を押します。レイヤーパネルに「コマ 1」…が作られます。</li>
 <li>ツールを Comic にして、1つ目のコマをクリックします。パネルに「選択中: コマ 1」と出ることを確認します。</li>
 <li><b>ここで描く</b>を押し、ペンでラフを描きます。はみ出した部分はコマの外で隠れます。</li>
@@ -1322,7 +1410,7 @@ table.params td:nth-child(2) { white-space: normal; min-width: 8em; }
 <h3 id="p-copilot">Canvas Assistant <span class="tag">開発中</span></h3>
 <div class="side">
 <figure><img src="img/panel_canvas_copilot.png" alt="Canvas Assistant" loading="lazy"><figcaption>Canvas Assistant(incomplete)</figcaption></figure>
-<div><p>やりたい編集を文章で書くと、AI が手順を計画してキャンバスに適用する機能です（開発中）。</p><table>
+<div><p>やりたい編集を文章で書くと、AI が手順を計画してキャンバスに適用する機能です（開発中）。現在はウィンドウメニューに表示されません。</p><table>
 <tr><td>Refresh</td><td>キャンバスの状態を読み直します。</td></tr>
 <tr><td>入力欄 / Plan</td><td>「Describe the canvas edit...」に内容を書き、計画を作成。</td></tr>
 <tr><td>Context</td><td>Page / Layer / Selection / Visible / External（外部サービス許可）。</td></tr>
@@ -1333,7 +1421,7 @@ table.params td:nth-child(2) { white-space: normal; min-width: 8em; }
 
 <h3 id="p-production">Production Control <span class="tag">開発中</span></h3>
 <figure><img src="img/panel_production_control.png" alt="Production Control" loading="lazy"><figcaption>Production Control(incomplete) — Overview タブ</figcaption></figure>
-<p>MCP 経由の制作ジョブ・素材・レシピを管理する開発中のパネルです。LoomStroke MCP サーバーが動いていないと「Refresh failed」と表示されます。タブ：Overview（Features / AI Effect presets / Artifacts / Jobs / Bible entries / Visual QA reports / Export profiles / Recipes / Production recipes / Store root / External services の件数）、Catalog、Artifacts、Jobs、Bible、Visual QA、Export、Recipes、Lineage。</p>
+<p>MCP 経由の制作ジョブ・素材・レシピを管理する開発中のパネルです。現在はウィンドウメニューに表示されません。LoomStroke MCP サーバーが動いていないと「Refresh failed」と表示されます。タブ：Overview（Features / AI Effect presets / Artifacts / Jobs / Bible entries / Visual QA reports / Export profiles / Recipes / Production recipes / Store root / External services の件数）、Catalog、Artifacts、Jobs、Bible、Visual QA、Export、Recipes、Lineage。</p>
 </section>
 
 <!-- ============================================================ -->
@@ -1342,7 +1430,7 @@ table.params td:nth-child(2) { white-space: normal; min-width: 8em; }
 <div class="grid2">
 <figure><img src="img/menu_0.png" alt="ファイル" loading="lazy"><figcaption>ファイル</figcaption></figure>
 <div><table>
-<tr><td>新規作成… / 開く… / Import…</td><td>新規文書 / .lstroke・PSD・画像を開く / 画像をレイヤーとして取り込む。</td></tr>
+<tr><td>新規作成… / 開く… / 読み込み…</td><td>新規文書 / .lstroke・PSD・画像を開く / 画像をレイヤーとして取り込む。</td></tr>
 <tr><td>画像を配置…</td><td>外部ファイルへのリンクとして画像を配置（<a href="#p-links">リンク</a>パネルで管理）。</td></tr>
 <tr><td>最近使ったファイルを開く</td><td>履歴から開く。</td></tr>
 <tr><td>閉じる / 保存 / 名前を付けて保存</td><td>.lstroke 形式で保存。</td></tr>
@@ -1351,21 +1439,85 @@ table.params td:nth-child(2) { white-space: normal; min-width: 8em; }
 <tr><td>プロジェクトをパッケージ…</td><td>フォントやリンク画像を含めて 1 フォルダーにまとめます（先に保存が必要）。</td></tr>
 <tr><td>ドキュメントモード…</td><td>カラーモードの確認と変換。</td></tr>
 </table></div>
-<figure><img src="img/menu_1.png" alt="編集" loading="lazy"><figcaption>編集：元に戻す（直前の操作名を表示）/ やり直し / 切り取り / コピー / 貼り付け / システムクリップボードから貼り付け / すべて選択 / すべてのベクターを選択 / 選択解除 / キャンバスサイズ / 環境設定</figcaption></figure>
+<figure><img src="img/menu_1.png" alt="編集" loading="lazy"><figcaption>編集：元に戻す（直前の操作名を表示）/ やり直し / 切り取り / コピー / 貼り付け / システムクリップボードから貼り付け / すべて選択 / すべてのベクターを選択 / 選択解除 / キャンバスサイズ / 描画色と背景色を入れ替え（<kbd>X</kbd>）/ 描画色と背景色を初期設定に戻す（<kbd>D</kbd>）/ 環境設定（画像は追加前のもの）</figcaption></figure>
 <figure><img src="img/menu_2.png" alt="画像" loading="lazy"><figcaption>画像：キャンバスの左右・上下反転、90°・180°回転、画像解像度、画像の設定、漫画作品の設定</figcaption></figure>
-<figure><img src="img/menu_3.png" alt="表示" loading="lazy"><figcaption>表示：拡大 / 縮小 / ズームをリセット / 見開きに合わせる / グリッド / Soft Proof（印刷色の模擬表示）/ Choose Proof Profile（模擬に使う ICC）</figcaption></figure>
-<figure><img src="img/menu_4.png" alt="レイヤー" loading="lazy"><figcaption>レイヤー：新規 / 新規スクリーントーン / 複製 / 削除 / 下と結合 / 表示レイヤーを結合 / Flatten All / Selection to Mask / グループ化 / 重ね順 / ラスタライズ</figcaption></figure>
+<figure><img src="img/menu_3.png" alt="表示" loading="lazy"><figcaption>表示：拡大 / 縮小 / ズームをリセット / 見開きに合わせる / グリッド / ソフトプルーフ（印刷色の模擬表示）/ プルーフ用プロファイルを選択（模擬に使う ICC）/ パネル / <a href="#grid">グリッド設定...</a> / <a href="#guides">ガイド</a> / <a href="#composition">構図ガイド...</a>（画像は追加前のもの）</figcaption></figure>
+<figure><img src="img/menu_4.png" alt="レイヤー" loading="lazy"><figcaption>レイヤー：新規 / 新規スクリーントーン / 複製 / 削除 / 下と結合 / 表示レイヤーを結合 / 画像を統合 / 選択範囲をマスクに変換 / グループ化 / 重ね順 / ラスタライズ</figcaption></figure>
 <figure><img src="img/menu_layer_arrange.png" alt="重ね順" loading="lazy"><figcaption>レイヤー › 重ね順：最前面へ / 前面へ / 背面へ / 最背面へ</figcaption></figure>
-<figure><img src="img/menu_5.png" alt="フィルター" loading="lazy"><figcaption>フィルター：最後のフィルター（再適用）/ Installed AI Presets / AI Effect Presets...</figcaption></figure>
-<figure><img src="img/menu_6.png" alt="ウィンドウ" loading="lazy"><figcaption>ウィンドウ：全画面表示 / スクリーンモード / レイアウトをリセット / ガイド表示 / ツールバー / 各パネル</figcaption></figure>
+<figure><img src="img/menu_5.png" alt="フィルター" loading="lazy"><figcaption>フィルター：最後のフィルター（再適用）/ <a href="#filters">各フィルターの直接適用</a> / インストール済み AI プリセット / AI エフェクトプリセット...（画像は追加前のもの）</figcaption></figure>
+<figure><img src="img/menu_6.png" alt="ウィンドウ" loading="lazy"><figcaption>ウィンドウ：全画面表示 / スクリーンモード / レイアウトをリセット / ガイド表示/非表示（定規の表示切替）/ ツールバー / パネルのカテゴリ（レイヤー・ページ / 描画 / コミック / AI / その他）（画像はカテゴリ分け前のもの）</figcaption></figure>
 <figure><img src="img/menu_window_toolbar.png" alt="ツールバー" loading="lazy"><figcaption>ウィンドウ › ツールバー：ツールプロパティ / メイン / ツール</figcaption></figure>
 <figure><img src="img/menu_7.png" alt="ヘルプ" loading="lazy"><figcaption>ヘルプ：LoomStroke について（バージョン、ライセンス、第三者ライセンス）</figcaption></figure>
 </div>
+
+<h3 id="guides">ガイドと定規</h3>
+<p><b>表示 › ガイド</b> にガイドの操作がまとまっています。定規は <b>ウィンドウ › ガイド表示/非表示</b>（<kbd>R</kbd>）で表示します。</p>
+<div class="table-wrap"><table>
+<tr><th>項目</th><th>内容</th></tr>
+<tr><td>ガイドを表示 / ガイドをロック</td><td>表示（初期オン）とロック（初期オフ）。ロック中はガイドを動かせず、消去や置換もできません。</td></tr>
+<tr><td>キャンバス端に吸着 / キャンバス中央に吸着</td><td>ガイドをキャンバスの端（初期オン）・中央（初期オフ）に吸着させます。</td></tr>
+<tr><td>ガイドをすべて消去</td><td>このページのガイドと構図ガイドを消します。</td></tr>
+<tr><td>ガイドテンプレート...</td><td>「名前」を入れて「現在のガイドを保存」。保存したテンプレートを「対象ページ」（全ページ / 各ページ）へ適用します。「位置をページサイズの比率で調整」「既存のガイドを置き換える」を選べます。</td></tr>
+<tr><td>ノド余白... / 判型ガイド... / 仕上がり表示 / 塗り足しを延長...</td><td><a href="#print-layout">判型・ノド・塗り足し</a>を参照。</td></tr>
+<tr><td>表紙テンプレート...</td><td><a href="#cover-template">表紙テンプレート</a>を参照。</td></tr>
+</table></div>
+<h4>ガイドを作成</h4>
+<p>定規を右クリックして<b>ガイドを作成</b>を選びます。設定を変えるとキャンバスに仮のガイドがすぐ表示され、OK で配置、キャンセル・<kbd>Esc</kbd>・閉じるで仮表示を消します。設定画面を開いたまま、仮のガイドをドラッグで移動、<kbd>Shift</kbd>+ドラッグで回転できます。</p>
+<div class="table-wrap"><table class="params">
+<tr><th>項目</th><th>範囲・選択肢</th><th>説明</th></tr>
+<tr><td>作成方法</td><td>1本のガイド / 一括作成 / 段組みグリッド</td><td>1本だけ、分割線・マージン・中央線をまとめて、または段（コマ）の枠を作ります。</td></tr>
+<tr><td>方向 / 位置</td><td>垂直・水平 / 数値</td><td>1本のガイドのとき。</td></tr>
+<tr><td>単位</td><td>px / mm / inch</td><td>数値の単位。</td></tr>
+<tr><td>縦の分割数 / 横の分割数</td><td>1〜1000</td><td>一括作成・段組みグリッドのとき。</td></tr>
+<tr><td>列間隔 / 行間隔</td><td>数値</td><td>段組みグリッドのとき。</td></tr>
+<tr><td>マージンガイドを作成（左 / 上 / 右 / 下）</td><td>オン / オフ</td><td>外側の余白線を作ります。</td></tr>
+<tr><td>垂直中央線 / 水平中央線</td><td>オン / オフ</td><td>一括作成のとき。</td></tr>
+<tr><td>既存のガイドを置き換える</td><td>オン / オフ</td><td>今あるガイドを消してから作ります。</td></tr>
+<tr><td>基準範囲</td><td>キャンバス / 選択範囲 / 選択オブジェクト</td><td>ガイドを配置する範囲。選択オブジェクトは選択中のベクターの外枠です。</td></tr>
+<tr><td>回転 / 位置の差 X・Y</td><td>-360〜360° / px</td><td>作るガイドの回転と移動量。</td></tr>
+</table></div>
+<p>ガイドの移動は<b>移動</b>ツールで行います。ガイドをクリックして選び、ドラッグで移動、<kbd>Delete</kbd> で削除、ドラッグ中の <kbd>Esc</kbd> で元の位置へ戻します。キャンバスの外で離すと削除されます。定規からドラッグしても新しいガイドを作れます。回転したガイドも描画・吸着・保存・再読み込みに対応します。</p>
+<p>ペン・消しゴム・エフェクトペン・ベクターペン・パスはガイドと構図ガイドに吸着します。吸着中のガイドは明るい太線で強調されます。キャンバスを右クリックして<b>ガイドのセルを選択</b>を選ぶと、クリックした場所を囲むガイド（とキャンバス端）の矩形が選択範囲になります。</p>
+
+<h3 id="grid">グリッド設定</h3>
+<p><b>表示 › グリッド設定...</b> で開きます。開いたままキャンバスを操作でき、OK で反映、キャンセルで変更を捨てます（グリッドの仮表示はありません）。</p>
+<div class="table-wrap"><table class="params">
+<tr><th>項目</th><th>範囲・選択肢</th><th>初期値</th><th>説明</th></tr>
+<tr><td>グリッドの種類</td><td>正方 / 主線と補助線 / 縦横別の間隔 / アイソメトリック / 三角 / 六角 / 極座標 / 行送り</td><td>正方</td><td>グリッドの形。</td></tr>
+<tr><td>横方向の間隔 / 縦方向の間隔</td><td>1〜5000</td><td>32 / 32</td><td>縦方向は「縦横別の間隔」のとき。横方向は環境設定の「グリッド間隔」と同じ設定です。</td></tr>
+<tr><td>主線の間隔</td><td>1〜1000</td><td>5</td><td>主線と補助線のとき、何マスごとに主線を引くか。</td></tr>
+<tr><td>回転角</td><td>-360〜360</td><td>0</td><td>グリッドの回転。</td></tr>
+<tr><td>放射の分割数</td><td>3〜360</td><td>12</td><td>極座標のとき。</td></tr>
+<tr><td>行送り間隔 / 開始位置 / 行送りの単位</td><td>0.1〜5000 / 数値 / px・mm</td><td>20 / 0 / —</td><td>行送りのとき。</td></tr>
+<tr><td>ルーラー原点に追従</td><td>オン / オフ</td><td>オフ</td><td>定規の原点を基準に並べます。</td></tr>
+<tr><td>グリッドを表示</td><td>オン / オフ</td><td>オフ</td><td><kbd>G</kbd> と同じ。</td></tr>
+<tr><td>グリッドに吸着</td><td>オン / オフ</td><td>オフ</td><td>移動・パス編集・テキスト・矩形選択・計測を格子点に吸着させます（移動ツールの Grid Snap と同じ設定）。</td></tr>
+</table></div>
+<p>密なグリッドは表示を間引きますが、吸着にはすべての格子点を使います。</p>
+
+<h3 id="composition">構図ガイド</h3>
+<p><b>表示 › 構図ガイド...</b> で、三分割 / 黄金比 / 黄金螺旋 / 対角線 / 中心十字 / セーフエリア を重ねて表示します。基準範囲は キャンバス / 仕上がり枠（<a href="#print-layout">判型ガイド</a>が必要）/ 選択範囲 / 選択オブジェクト、セーフエリアの余白は 0〜49%（初期 10）。回転と位置の差 X・Y、仮表示、ドラッグで移動・<kbd>Shift</kbd>+ドラッグで回転、OK・キャンセルの動きはガイド作成と同じです。</p>
+<p>移動ツールで構図の線をドラッグするとその構図を動かし、<kbd>Delete</kbd> で非表示にします（ガイドのロック中・非表示中は不可）。構図ガイドは表示用の設定で、履歴には残りません。新規作成すると初期化されます。</p>
+
+<h3 id="print-layout">判型・ノド・塗り足し</h3>
+<div class="table-wrap"><table>
+<tr><th>表示 › ガイド の項目</th><th>内容</th></tr>
+<tr><td>判型ガイド...</td><td>プリセット（B5 本文 / A5 本文 / A4 本文 / B6 / A6 文庫 / 新書 / 四六判 / 正方形。それぞれ (モノクロ) 600dpi・(カラー) 350dpi）またはカスタムで、仕上がり幅・高さ、塗り足し（初期 3mm）、安全余白（初期 5mm）、ノド余白を mm で指定してガイドを作ります。「判型プリセットを保存」で自分用プリセットを保存できます。キャンバスサイズは変えないので、判型が今のキャンバスに合わない場合はエラーになります。「全ページ」で全ページに作成します。</td></tr>
+<tr><td>ノド余白...</td><td>綴じ側の余白の幅（0〜100mm）。「見開き表示でノド危険域を表示」をオンにすると、見開き表示で綴じ目付近を赤く示します。</td></tr>
+<tr><td>仕上がり表示</td><td>仕上がり線の外側を暗く表示します。</td></tr>
+<tr><td>塗り足しを延長...</td><td>選択中のラスターレイヤーの、仕上がり線の外側だけを「端の画素を引き伸ばす」または「端の画素を鏡像にする」で埋めます。仕上がり内の画素は変わりません。キャンバス全体のロックされていない通常のラスターレイヤーで、判型ガイドがあるページが対象です。元に戻せます。</td></tr>
+</table></div>
+<p><b>ファイル › 漫画プリフライト…</b> の「印刷 (モノクロ)」では、文字やフキダシがノド危険域に重なっている場合と、絵柄が仕上がり線に届いているのに塗り足しまで届いていない場合に警告します。</p>
+
+<h3 id="cover-template">表紙テンプレート</h3>
+<p><b>表示 › ガイド › 表紙テンプレート...</b> で、表1・背・表4・袖を並べた表紙用のページテンプレートを作ります。テンプレート名、綴じ方向（右綴じ / 左綴じ）、片面の仕上がり幅・高さ（mm）、本文ページ数、用紙1枚の厚み、両側の袖幅、塗り足し、DPI を指定します。背幅は「本文ページ数 ÷ 2（切り上げ）× 用紙1枚の厚み」で計算され、「背幅を直接指定」で手入力もできます。画面下に背幅とキャンバスの px サイズが表示されます。保存するとページテンプレートになり、<a href="#p-pages">ページパネル</a>から追加できます（保存しただけではページは増えません）。</p>
 <h3 id="ctx-canvas">キャンバスの右クリックメニュー</h3>
 <div class="side">
 <figure><img src="img/ctx_canvas.png" alt="キャンバス右クリック" loading="lazy"><figcaption>キャンバスを右クリック</figcaption></figure>
 <div><p>編集・表示のよく使う項目に加えて、次の項目があります。</p><table>
-<tr><td>ガイド表示/非表示</td><td><kbd>R</kbd>。</td></tr>
+<tr><td>ガイド表示/非表示</td><td><kbd>R</kbd>。定規の表示を切り替えます。</td></tr>
+<tr><td>ガイドのセルを選択</td><td>クリックした場所を囲むガイドの矩形を選択範囲にします（<a href="#guides">ガイドと定規</a>）。</td></tr>
+<tr><td>パスに沿って模様を配置</td><td>選択中のパス（変形していない編集可能なベクターレイヤー上の1本）に沿って、図形（楕円 / 角丸矩形 / 三角形）を等間隔に並べます。大きさ（初期 12px）、間隔（初期 32px）、ばらつき、乱数シード、パスの向きに回転（初期オン）を指定します。</td></tr>
 <tr><td>Register Shape / Register Shapes</td><td>選択中のベクターをシェイプマネージャーに登録（1 つ / まとめて）。</td></tr>
 <tr><td>Convert to Vector</td><td>図形を通常のベクターに変換。</td></tr>
 <tr><td>Fill to Selection</td><td>選択範囲を描画色で塗ります。</td></tr>
@@ -1427,8 +1579,10 @@ table.params td:nth-child(2) { white-space: normal; min-width: 8em; }
 <tr><td>export-report.json を書き出す</td><td>書き出し結果の記録を残します。</td></tr>
 <tr><th colspan="2">印刷用に書き出し</th></tr>
 <tr><td>出力</td><td>標準 PDF / PDF/X-1a / PDF/X-4 / CMYK TIFF 連番 / グレースケール K TIFF 連番。</td></tr>
-<tr><td>トンボを描く</td><td>裁断位置の目印を付けます。</td></tr>
-<tr><td>プレビュー</td><td>仕上がり寸法と塗り足しの確認。</td></tr>
+<tr><td>トンボを描く</td><td>裁断位置の目印を付けます（初期オン）。</td></tr>
+<tr><td>印刷マーク（標準 PDF のとき）</td><td>種類：日本式角トンボ (従来) / 日本式ダブルトンボ / 海外式裁断マーク。裁断マーク（初期オン）/ 塗り足しマーク / レジスターマーク / センタートンボ。線幅 0.01〜5pt（初期 0.25）、塗り足し外側からの距離 0〜144pt（初期 3）、マークの色：従来の黒 (RGB) / Kのみ (100%) / レジストレーション (CMYK各100%)。</td></tr>
+<tr><td>余白情報（標準 PDF のとき）</td><td>ファイル名 / ページ番号 / 日時 / カラーモード / カラーバー / グレーバー を余白に入れます（すべて初期オフ）。</td></tr>
+<tr><td>プレビュー</td><td>仕上がり寸法と塗り足しの確認。判型ガイドがない場合は、キャンバス全体を仕上がりとして扱います（塗り足しなし）。</td></tr>
 </table>
 <div class="grid2">
 <figure><img src="img/dlg_export_webtoon.png" alt="Webtoon" loading="lazy"><figcaption><b>Webtoon を書き出し</b>：縦スクロール漫画用に、ページをつなげて分割</figcaption></figure>
@@ -1448,7 +1602,7 @@ table.params td:nth-child(2) { white-space: normal; min-width: 8em; }
 
 <h3 id="d-check">チェック・変換</h3>
 <div class="grid2">
-<figure><img src="img/dlg_preflight.png" alt="漫画プリフライト" loading="lazy"><figcaption><b>漫画プリフライト</b>：プロファイル（デジタル漫画 / Webtoon / 印刷 (モノクロ)）と対象を選んで実行。重要度・ページ・ルール・理由・推奨対応の一覧。</figcaption></figure>
+<figure><img src="img/dlg_preflight.png" alt="漫画プリフライト" loading="lazy"><figcaption><b>漫画プリフライト</b>：プロファイル（デジタル漫画 / Webtoon / 印刷 (モノクロ)）と対象を選んで実行。重要度・ページ・ルール・理由・推奨対応の一覧。印刷では<a href="#print-layout">ノド危険域と塗り足し不足</a>も確認します。</figcaption></figure>
 <figure><img src="img/dlg_font_diag.png" alt="フォント診断" loading="lazy"><figcaption><b>フォント診断</b>：使用フォントと欠落の一覧。欠落フォントを別フォントに「置換...」または「アウトライン化...」。</figcaption></figure>
 </div>
 <figure><img src="img/dlg_document_mode.png" alt="ドキュメントモード" loading="lazy"><figcaption><b>ドキュメントモード</b></figcaption></figure>
@@ -1477,14 +1631,15 @@ table.params td:nth-child(2) { white-space: normal; min-width: 8em; }
 <tr><td>元に戻す回数</td><td>10〜1000</td><td>50</td><td><kbd>Ctrl</kbd>+<kbd>Z</kbd> で戻れる最大の手数。増やすほどメモリを使います。</td></tr>
 <tr><td>メモリマップ閾値</td><td>1〜1000 MB</td><td>10 MB</td><td>これより大きな画像データはディスク経由（メモリマップ）で扱い、メモリ使用量を抑えます。</td></tr>
 <tr><td>再合成FPS上限</td><td>10〜120 fps</td><td>60 fps</td><td>画面を描き直す回数の上限。下げると大きなキャンバスでの CPU 負荷が軽くなります。</td></tr>
-<tr><td>Enable sharp vector rendering (zoom)</td><td>オン / オフ</td><td>オン</td><td>拡大表示したとき、ベクターやテキストをレイヤーの順序に関係なく画面の解像度でくっきり表示します。</td></tr>
-<tr><td>見開き 相手ページの画質</td><td>フル / バランス / 低</td><td>フル</td><td>見開き表示で隣に出る相手ページの表示解像度。下げるほど GPU メモリを節約できます（編集中のページは常にフル）。</td></tr>
+<tr><td>拡大時にベクターをくっきり表示する</td><td>オン / オフ</td><td>オン</td><td>拡大表示したとき、ベクターやテキストをレイヤーの順序に関係なく画面の解像度でくっきり表示します。</td></tr>
+<tr><td>見開きの相手ページ画質</td><td>フル / バランス / 低</td><td>フル</td><td>見開き表示で隣に出る相手ページの表示解像度。下げるほど GPU メモリを節約できます（編集中のページは常にフル）。</td></tr>
+<tr><td>[ ] キーのブラシサイズ加速</td><td>オフ / 弱 / 標準 / 強（4段階スライダー）</td><td>標準</td><td><kbd>[</kbd> / <kbd>]</kbd> を押し続けたり連打したりしたときの速まり方。オフでは毎回同じ割合（約10%）で変わります。サイズスライダー上のマウスホイールも同じ刻みで変わります。消しゴムのキー操作は対象外です。</td></tr>
 </table></div>
 <h3 id="pref-ui">インターフェース</h3>
 <figure><img src="img/dlg_preferences_p0.png" alt="インターフェース" loading="lazy"></figure>
 <div class="table-wrap"><table class="params">
 <tr><th>項目</th><th>範囲・選択肢</th><th>初期値</th><th>説明</th></tr>
-<tr><td>言語</td><td>システム既定 / English / 日本語 / Japanese / 简体中文 / Chinese (Simplified) / 繁體中文 / Chinese (Traditional) / 台灣華語 / Taiwan Mandarin / 한국어 / Korean / Español / Spanish / العربية / Arabic / हिन्दी / Hindi / Português (Brasil) / Portuguese (Brazil) / বাংলা / Bengali / Русский / Russian</td><td>システム既定</td><td>画面の表示言語。システム既定は Windows の言語設定に従います。</td></tr>
+<tr><td>言語</td><td>システム既定 / English / 日本語 / Japanese / 简体中文 / Chinese (Simplified) / 繁體中文 / Chinese (Traditional) / 台灣華語 / Taiwan Mandarin / 한국어 / Korean / Español / Spanish / العربية / Arabic / हिन्दी / Hindi / Português (Brasil) / Portuguese (Brazil) / বাংলা / Bengali / Русский / Russian</td><td>システム既定</td><td>画面の表示言語。システム既定は Windows の表示言語を優先順に調べ、対応している最初の言語を使います（なければ英語）。言語を指定した場合はその指定が優先されます。</td></tr>
 <tr><td>カラーテーマ</td><td>ダーク / ライト / システム</td><td>ダーク</td><td>画面の配色。</td></tr>
 <tr><td>ツールバーを表示</td><td>オン / オフ</td><td>オン</td><td>左のツールバーの表示。</td></tr>
 <tr><td>ステータスバーを表示</td><td>オン / オフ</td><td>オン</td><td>ウィンドウ最下部の状態表示。</td></tr>
@@ -1493,8 +1648,8 @@ table.params td:nth-child(2) { white-space: normal; min-width: 8em; }
 <tr><td>外部AIサービス (ComfyUI, LLM Gateway, NanoBanana) を許可</td><td>オン / オフ</td><td>オフ</td><td>オフの間は ComfyUI・LLM Gateway・NanoBanana などへの通信を遮断します。AI 生成を使うときはオンにします。</td></tr>
 <tr><td>メニュー：表示メニュー / レイヤーメニュー / フィルターメニュー</td><td>オン / オフ</td><td>オン</td><td>メニューバーに各メニューを表示するか。</td></tr>
 <tr><td>メニュー：ツールメニュー / プラグインメニュー</td><td>オン / オフ</td><td>オフ</td><td>メニューバーに各メニューを表示するか。</td></tr>
-<tr><td>Mask overlay color（Pick Color...）</td><td>色</td><td>シアン（#00FFFF）</td><td>マスク編集中や選択範囲の表示に重ねる色。</td></tr>
-<tr><td>Mask overlay opacity</td><td>0〜255</td><td>128</td><td>その重ね色の濃さ。</td></tr>
+<tr><td>マスクのオーバーレイ色（色を選択...）</td><td>色</td><td>シアン（#00FFFF）</td><td>マスク編集中や選択範囲の表示に重ねる色。</td></tr>
+<tr><td>マスクのオーバーレイ不透明度</td><td>0〜255</td><td>128</td><td>その重ね色の濃さ。</td></tr>
 </table></div>
 <h3 id="pref-io">ファイルI/O</h3>
 <figure><img src="img/dlg_preferences_p1.png" alt="ファイルI/O" loading="lazy"></figure>
@@ -1549,7 +1704,7 @@ table.params td:nth-child(2) { white-space: normal; min-width: 8em; }
 <tr><td>インポート… / エクスポート…</td><td>ボタン</td><td>—</td><td>ショートカット設定をファイルから読み込む / ファイルに保存する。</td></tr>
 <tr><td>検証…</td><td>ボタン</td><td>—</td><td>競合などの問題がないか検査します。</td></tr>
 </table></div>
-<h3 id="pref-ai">AI Effect</h3>
+<h3 id="pref-ai">AIエフェクト</h3>
 <figure><img src="img/dlg_preferences_p5.png" alt="AI Effect" loading="lazy"></figure>
 <div class="table-wrap"><table class="params">
 <tr><th>項目</th><th>範囲・選択肢</th><th>初期値</th><th>説明</th></tr>
@@ -1564,7 +1719,8 @@ table.params td:nth-child(2) { white-space: normal; min-width: 8em; }
 <tr><td>Retry delay</td><td>0〜60000 ms</td><td>2000 ms</td><td>再試行までの待ち時間。</td></tr>
 <tr><td>ComfyUI Folders：main.pyがあるComfyUIフォルダ（参照…）</td><td>フォルダー</td><td>（空）</td><td>ComfyUI をインストールしたフォルダー。</td></tr>
 <tr><td>LoomStroke起動時にComfyUIを自動起動</td><td>オン / オフ</td><td>オフ</td><td>下の Local URL と「外部AIサービスを許可」を使って ComfyUI を起動します。</td></tr>
-<tr><td>LoomStroke終了時にComfyUIも終了する</td><td>オン / オフ</td><td>オフ</td><td>LoomStroke が起動した ComfyUI だけを、生成中でも終了します（元から起動していたものや遠隔サーバーは対象外）。</td></tr>
+<tr><td>ComfyUIのコンソールウィンドウを表示</td><td>オン / オフ</td><td>オフ</td><td>Windows 専用。次回の自動起動から、ComfyUI の出力を別のコンソールウィンドウに表示します。コンソールを閉じると ComfyUI も終了します。</td></tr>
+<tr><td>LoomStroke終了時にComfyUIも終了する</td><td>オン / オフ</td><td>オフ</td><td>コンソール表示で起動した ComfyUI に使う設定で、コンソール表示がオンのときだけ選べます。LoomStroke がバックグラウンドで起動した ComfyUI は、この設定に関係なく終了時に止まります（元から起動していたものや遠隔サーバーは対象外）。</td></tr>
 <tr><td>保存済みサーバーの状態を更新</td><td>ボタン</td><td>—</td><td>登録した接続先に接続できるか確認します。</td></tr>
 <tr><td>ComfyUI Servers：Local URL</td><td>URL</td><td>（空）＝ http://127.0.0.1:8188</td><td>このパソコンで動く ComfyUI の URL。</td></tr>
 <tr><td>ComfyUI Servers：External URL（＋ / Name）</td><td>名前と URL</td><td>（なし）</td><td>別のパソコンの ComfyUI を名前付きで追加します（空の行は無視）。</td></tr>
@@ -1576,20 +1732,20 @@ table.params td:nth-child(2) { white-space: normal; min-width: 8em; }
 <!-- ============================================================ -->
 <section id="shortcuts">
 <h2>9. ショートカット</h2>
-<p>初期設定で登録されている全 71 件の一覧です（環境設定 › ショートカット の内容と同じ）。「—」は未割り当てで、環境設定から好きなキーを割り当てられます。</p>
+<p>初期設定で登録されている主なショートカットの一覧です。最新の全件は 環境設定 › ショートカット で確認できます。「—」は未割り当てで、環境設定から好きなキーを割り当てられます。</p>
 <div class="grid2">
 <table><tr><th colspan="2">マウス操作</th></tr><tr><td>マウス: コンテキストメニュー</td><td><kbd>右クリック</kbd></td></tr><tr><td>マウス: パン操作</td><td><kbd>Space </kbd> + <kbd> 左ドラッグ</kbd></td></tr></table>
-<table><tr><th colspan="2">編集</th></tr><tr><td>Fill to Selection</td><td>—</td></tr><tr><td>すべてのベクターを選択</td><td><kbd>Ctrl</kbd> + <kbd>L</kbd></td></tr><tr><td>すべて選択</td><td><kbd>Ctrl</kbd> + <kbd>A</kbd></td></tr><tr><td>やり直し</td><td><kbd>Ctrl</kbd> + <kbd>Y</kbd></td></tr><tr><td>キャンバスサイズ...</td><td>—</td></tr><tr><td>コピー</td><td><kbd>Ctrl</kbd> + <kbd>C</kbd></td></tr><tr><td>システムクリップボードから貼り付け</td><td><kbd>Ctrl</kbd> + <kbd>Shift</kbd> + <kbd>V</kbd></td></tr><tr><td>元に戻す</td><td><kbd>Ctrl</kbd> + <kbd>Z</kbd></td></tr><tr><td>切り取り</td><td><kbd>Ctrl</kbd> + <kbd>X</kbd></td></tr><tr><td>貼り付け</td><td><kbd>Ctrl</kbd> + <kbd>V</kbd></td></tr><tr><td>選択解除</td><td><kbd>Ctrl</kbd> + <kbd>D</kbd></td></tr></table>
+<table><tr><th colspan="2">編集</th></tr><tr><td>Fill to Selection</td><td>—</td></tr><tr><td>すべてのベクターを選択</td><td><kbd>Ctrl</kbd> + <kbd>L</kbd></td></tr><tr><td>すべて選択</td><td><kbd>Ctrl</kbd> + <kbd>A</kbd></td></tr><tr><td>やり直し</td><td><kbd>Ctrl</kbd> + <kbd>Y</kbd></td></tr><tr><td>キャンバスサイズ...</td><td>—</td></tr><tr><td>コピー</td><td><kbd>Ctrl</kbd> + <kbd>C</kbd></td></tr><tr><td>システムクリップボードから貼り付け</td><td><kbd>Ctrl</kbd> + <kbd>Shift</kbd> + <kbd>V</kbd></td></tr><tr><td>元に戻す</td><td><kbd>Ctrl</kbd> + <kbd>Z</kbd></td></tr><tr><td>切り取り</td><td><kbd>Ctrl</kbd> + <kbd>X</kbd></td></tr><tr><td>貼り付け</td><td><kbd>Ctrl</kbd> + <kbd>V</kbd></td></tr><tr><td>選択解除</td><td><kbd>Ctrl</kbd> + <kbd>D</kbd></td></tr><tr><td>描画色と背景色を入れ替え</td><td><kbd>X</kbd></td></tr><tr><td>描画色と背景色を初期設定に戻す</td><td><kbd>D</kbd></td></tr></table>
 <table><tr><th colspan="2">ファイル</th></tr><tr><td>インポート…</td><td><kbd>Ctrl</kbd> + <kbd>Shift</kbd> + <kbd>I</kbd></td></tr><tr><td>Webtoon を書き出し…</td><td>—</td></tr><tr><td>デジタル漫画パッケージを書き出し…</td><td>—</td></tr><tr><td>ドキュメントモード…</td><td>—</td></tr><tr><td>フォント診断…</td><td>—</td></tr><tr><td>プロジェクトをパッケージ…</td><td>—</td></tr><tr><td>ページを一括書き出し…</td><td>—</td></tr><tr><td>保存</td><td><kbd>Ctrl</kbd> + <kbd>S</kbd></td></tr><tr><td>印刷用に書き出し…</td><td>—</td></tr><tr><td>名前を付けて保存…</td><td><kbd>Ctrl</kbd> + <kbd>Shift</kbd> + <kbd>S</kbd></td></tr><tr><td>新規作成…</td><td><kbd>Ctrl</kbd> + <kbd>N</kbd></td></tr><tr><td>書き出し…</td><td><kbd>Ctrl</kbd> + <kbd>E</kbd> <span class="tag">競合</span></td></tr><tr><td>漫画プリフライト…</td><td>—</td></tr><tr><td>環境設定…</td><td><kbd>Ctrl</kbd> + <kbd>,</kbd></td></tr><tr><td>画像を配置…</td><td>—</td></tr><tr><td>終了</td><td><kbd>Ctrl</kbd> + <kbd>Q</kbd></td></tr><tr><td>閉じる</td><td><kbd>Ctrl</kbd> + <kbd>W</kbd></td></tr><tr><td>開く…</td><td><kbd>Ctrl</kbd> + <kbd>O</kbd></td></tr></table>
-<table><tr><th colspan="2">フィルター</th></tr><tr><td>AI Effect Presets...</td><td>—</td></tr><tr><td>最後のフィルター</td><td><kbd>Ctrl</kbd> + <kbd>Alt</kbd> + <kbd>F</kbd></td></tr></table>
+<table><tr><th colspan="2">フィルター</th></tr><tr><td>AI エフェクトプリセット...</td><td>—</td></tr><tr><td>各フィルター（11種）</td><td>—</td></tr><tr><td>最後のフィルター</td><td><kbd>Ctrl</kbd> + <kbd>Alt</kbd> + <kbd>F</kbd></td></tr></table>
 <table><tr><th colspan="2">画像</th></tr><tr><td>キャンバスを180°回転</td><td>—</td></tr><tr><td>キャンバスを90°回転(反時計回り)</td><td>—</td></tr><tr><td>キャンバスを90°回転(時計回り)</td><td>—</td></tr><tr><td>キャンバスを上下反転</td><td>—</td></tr><tr><td>キャンバスを左右反転</td><td>—</td></tr><tr><td>漫画作品の設定...</td><td>—</td></tr><tr><td>画像の設定...</td><td>—</td></tr><tr><td>画像解像度...</td><td>—</td></tr></table>
-<table><tr><th colspan="2">レイヤー</th></tr><tr><td>Flatten All</td><td><kbd>Ctrl</kbd> + <kbd>Alt</kbd> + <kbd>E</kbd></td></tr><tr><td>Selection to Mask</td><td>—</td></tr><tr><td>ラスタライズ</td><td><kbd>Shift</kbd> + <kbd>R</kbd></td></tr><tr><td>レイヤーをグループ化</td><td><kbd>Ctrl</kbd> + <kbd>G</kbd></td></tr><tr><td>下のレイヤーと結合</td><td><kbd>Ctrl</kbd> + <kbd>E</kbd> <span class="tag">競合</span></td></tr><tr><td>削除</td><td><kbd>Del</kbd></td></tr><tr><td>新規スクリーントーンレイヤー...</td><td>—</td></tr><tr><td>新規レイヤー</td><td><kbd>Ctrl</kbd> + <kbd>Shift</kbd> + <kbd>N</kbd></td></tr><tr><td>表示レイヤーを結合</td><td><kbd>Ctrl</kbd> + <kbd>Shift</kbd> + <kbd>E</kbd></td></tr><tr><td>複製</td><td><kbd>Ctrl</kbd> + <kbd>J</kbd></td></tr></table>
+<table><tr><th colspan="2">レイヤー</th></tr><tr><td>画像を統合</td><td><kbd>Ctrl</kbd> + <kbd>Alt</kbd> + <kbd>E</kbd></td></tr><tr><td>選択範囲をマスクに変換</td><td>—</td></tr><tr><td>ラスタライズ</td><td><kbd>Shift</kbd> + <kbd>R</kbd></td></tr><tr><td>レイヤーをグループ化</td><td><kbd>Ctrl</kbd> + <kbd>G</kbd></td></tr><tr><td>下のレイヤーと結合</td><td><kbd>Ctrl</kbd> + <kbd>E</kbd> <span class="tag">競合</span></td></tr><tr><td>削除</td><td><kbd>Del</kbd></td></tr><tr><td>新規スクリーントーンレイヤー...</td><td>—</td></tr><tr><td>新規レイヤー</td><td><kbd>Ctrl</kbd> + <kbd>Shift</kbd> + <kbd>N</kbd></td></tr><tr><td>表示レイヤーを結合</td><td><kbd>Ctrl</kbd> + <kbd>Shift</kbd> + <kbd>E</kbd></td></tr><tr><td>複製</td><td><kbd>Ctrl</kbd> + <kbd>J</kbd></td></tr></table>
 <table><tr><th colspan="2">プラグイン</th></tr><tr><td>Convert to Vector</td><td>—</td></tr><tr><td>Register Shape</td><td>—</td></tr><tr><td>Register Shapes</td><td>—</td></tr></table>
 <table><tr><th colspan="2">ツール</th></tr><tr><td>ベクターペン (高精度)</td><td><kbd>P</kbd></td></tr><tr><td>消しゴム</td><td><kbd>E</kbd></td></tr><tr><td>消しゴム (Secondary)</td><td><kbd>Shift</kbd> + <kbd>E</kbd></td></tr><tr><td>移動</td><td><kbd>V</kbd></td></tr><tr><td>色</td><td><kbd>I</kbd></td></tr><tr><td>色 (Secondary)</td><td><kbd>Shift</kbd> + <kbd>I</kbd></td></tr><tr><td>テキスト</td><td><kbd>T</kbd></td></tr><tr><td>ベーシックペン</td><td><kbd>B</kbd></td></tr><tr><td>ベーシックペン (Secondary)</td><td><kbd>Shift</kbd> + <kbd>B</kbd></td></tr></table>
-<table><tr><th colspan="2">表示</th></tr><tr><td>Choose Proof Profile...</td><td>—</td></tr><tr><td>Soft Proof</td><td>—</td></tr><tr><td>グリッド表示/非表示</td><td><kbd>G</kbd></td></tr><tr><td>ズームをリセット</td><td><kbd>Ctrl</kbd> + <kbd>0</kbd></td></tr><tr><td>拡大</td><td><kbd>Ctrl</kbd> + <kbd>=</kbd></td></tr><tr><td>縮小</td><td><kbd>Ctrl</kbd> + <kbd>-</kbd></td></tr><tr><td>見開きに合わせる</td><td><kbd>Ctrl</kbd> + <kbd>Shift</kbd> + <kbd>F</kbd></td></tr></table>
-<table><tr><th colspan="2">ウィンドウ</th></tr><tr><td>ガイド表示/非表示</td><td><kbd>R</kbd></td></tr></table>
+<table><tr><th colspan="2">表示</th></tr><tr><td>プルーフ用プロファイルを選択...</td><td>—</td></tr><tr><td>ソフトプルーフ</td><td>—</td></tr><tr><td>グリッド表示/非表示</td><td><kbd>G</kbd></td></tr><tr><td>ズームをリセット</td><td><kbd>Ctrl</kbd> + <kbd>0</kbd></td></tr><tr><td>拡大</td><td><kbd>Ctrl</kbd> + <kbd>=</kbd></td></tr><tr><td>縮小</td><td><kbd>Ctrl</kbd> + <kbd>-</kbd></td></tr><tr><td>見開きに合わせる</td><td><kbd>Ctrl</kbd> + <kbd>Shift</kbd> + <kbd>F</kbd></td></tr></table>
+<table><tr><th colspan="2">ウィンドウ</th></tr><tr><td>ガイド表示/非表示（定規）</td><td><kbd>R</kbd></td></tr></table>
 </div>
-<h3>ツール使用中のキー</h3><table><tr><td><kbd>[</kbd> / <kbd>]</kbd></td><td>ブラシサイズを小さく / 大きく</td></tr><tr><td><kbd>Enter</kbd> / <kbd>Esc</kbd></td><td>グラデーション・パスなどの確定 / 取り消し</td></tr><tr><td><kbd>Shift</kbd> / <kbd>Alt</kbd> / <kbd>Shift</kbd>+<kbd>Alt</kbd>（選択ツール）</td><td>選択範囲に追加 / 除外 / 交差</td></tr><tr><td>マウスホイール</td><td>拡大 / 縮小</td></tr><tr><td><kbd>Space</kbd>+左ドラッグ</td><td>表示位置の移動（パン）</td></tr><tr><td>右クリック</td><td>コンテキストメニュー</td></tr></table>
+<h3>ツール使用中のキー</h3><table><tr><td><kbd>[</kbd> / <kbd>]</kbd></td><td>ブラシサイズを小さく / 大きく（今のサイズに比例。続けて押すと加速。消しゴムは 2px ずつ）</td></tr><tr><td><kbd>Enter</kbd> / <kbd>Esc</kbd></td><td>グラデーション・パスなどの確定 / 取り消し</td></tr><tr><td><kbd>Shift</kbd> / <kbd>Alt</kbd> / <kbd>Shift</kbd>+<kbd>Alt</kbd>（選択ツール）</td><td>選択範囲に追加 / 除外 / 交差</td></tr><tr><td>マウスホイール</td><td>拡大 / 縮小（サイズスライダーの上では <kbd>[</kbd> / <kbd>]</kbd> と同じ刻みでサイズ変更）</td></tr><tr><td><kbd>Space</kbd>+左ドラッグ</td><td>表示位置の移動（パン）</td></tr><tr><td>右クリック</td><td>コンテキストメニュー</td></tr></table>
 <div class="note">初期設定では<b>書き出し</b>と<b>下のレイヤーと結合</b>の両方に <kbd>Ctrl</kbd>+<kbd>E</kbd> が割り当てられ、「競合」と表示されます。片方を確実に使いたい場合は、環境設定 › ショートカット の「競合のみ」で確認して割り当てを変更してください。</div>
 </section>
 
@@ -1600,12 +1756,15 @@ table.params td:nth-child(2) { white-space: normal; min-width: 8em; }
 <tr><th>症状</th><th>確認すること</th></tr>
 <tr><td>描いても線が出ない／別のレイヤーに描かれる</td><td>レイヤーパネルで対象レイヤーが選ばれているか、非表示・ロック・透明部分の保護になっていないかを確認します。選択範囲が残っていると範囲外には描けないので <kbd>Ctrl</kbd>+<kbd>D</kbd> で解除します。チャンネルタブで特定の成分だけを選んでいないかも確認してください。</td></tr>
 <tr><td>筆圧が効かない</td><td><code>boot_LoomStroke.bat</code> から起動しているか、ペン設定の「筆圧感知」がオンか確認します。</td></tr>
-<tr><td>パネルが見当たらない／配置が崩れた</td><td><b>ウィンドウ</b> メニューで表示をオンにするか、<b>ウィンドウ › レイアウトをリセット</b>。<kbd>Tab</kbd> でスクリーンモードになっていないかも確認。</td></tr>
-<tr><td>AI 機能が使えない</td><td>環境設定 › インターフェース の「外部AIサービスを許可」、AI Effect ページの API キーと ComfyUI の接続先を確認します。AI Select は SAM 3.1 のセットアップが必要です。</td></tr>
+<tr><td>パネルが見当たらない／配置が崩れた</td><td><b>ウィンドウ</b> メニューのカテゴリ（レイヤー・ページ / 描画 / コミック / AI / その他）で表示をオンにするか、<b>ウィンドウ › レイアウトをリセット</b>。<kbd>Tab</kbd> でスクリーンモードになっていないかも確認。</td></tr>
+<tr><td>AI 機能が使えない</td><td>環境設定 › インターフェース の「外部AIサービスを許可」、AI Effect ページの API キーと ComfyUI の接続先を確認します。AI Select は SAM 3.1 のセットアップが必要です。<code>boot_LoomStroke_noAI.bat</code> で起動した場合は AI 関連のパネルと設定ページが表示されないので、<code>boot_LoomStroke.bat</code> で起動し直します。</td></tr>
 <tr><td>グラデーションやパスが確定しない</td><td>ドラッグ後は編集状態です。<kbd>Enter</kbd> で確定します。</td></tr>
-<tr><td>起動時に「Recovery」が出る</td><td>前回が強制終了した印です。必要なら「復元」、不要なら「破棄して新規開始」。</td></tr>
+<tr><td>起動時に「LoomStroke — 復元」が出る</td><td>前回が強制終了した印です。必要なら「復元」、不要なら「破棄して新規開始」。×で閉じた場合は何も削除せず、次回また表示されます。</td></tr>
+<tr><td>画面の言語が意図と違う</td><td>初回は Windows の表示言語に合わせます。<a href="#pref-ui">環境設定 › インターフェース</a> の「言語」で指定してください。</td></tr>
+<tr><td>更新・導入に失敗した</td><td><code>install.bat</code> を実行し直します。ZIP 版の <code>update.bat</code> は失敗時に旧本体へ戻します。Git 版は手元に変更があると更新を止めます。</td></tr>
+<tr><td>元に戻すで「完了できませんでした」と出る</td><td>ステータスバーの案内どおり、続ける前に原稿の状態を確認し、必要なら別名で保存してください。</td></tr>
 <tr><td>フォントが置き換わって表示される</td><td>ファイル › フォント診断 で欠落フォントを確認し、置換またはアウトライン化します。</td></tr>
-<tr><td>コマ枠の操作が見当たらない</td><td><b>ウィンドウ</b> メニューから「Comic」を表示し、「コマ割り」タブを選びます。操作欄と読み順一覧はタブ内のスクロールで確認できます。<a href="#comic-frame-start">コマ枠レイヤーの手順</a>を参照してください。</td></tr>
+<tr><td>コマ枠の操作が見当たらない</td><td><b>ウィンドウ › コミック › Comic</b> で表示し、「コマ割り」タブを選びます。操作欄と読み順一覧はタブ内のスクロールで確認できます。<a href="#comic-frame-start">コマ枠レイヤーの手順</a>を参照してください。</td></tr>
 <tr><td>コマを変更したら画像やラフが消えた</td><td>新しい領域の外に隠れている場合があります。<a href="#comic-sec-repair">境界と内容を手直し</a>の「手直しする内容」で「全体がコマ外」などの対象を選び、「コマを埋める」や「キャンバスで調整」で位置・構図を直します。分割で別のコマへ振り分けられていないか、コマ・内容が非表示でないかも確認してください。戻したいときは「元に戻す」です。</td></tr>
 <tr><td>サイズ変更後の枠線が短い／余る</td><td>「元の画素を保持」の場合は、線の長さを自動で描き直しません。<a href="#comic-sec-repair">境界と内容を手直し</a>の「手直しする辺」で辺を選び、「辺に沿って伸縮」か「この辺に描く」を使います。</td></tr>
 <tr><td>共通表示の画像を直したら別コマも変わった</td><td>一つの元データを共有しているためです。対象コマだけ変えたい場合は「このコマの共通表示を独立させる」を使います。</td></tr>
@@ -1613,7 +1772,7 @@ table.params td:nth-child(2) { white-space: normal; min-width: 8em; }
 </table>
 </section>
 
-<p style="color:var(--muted);font-size:13px;margin-top:48px;">スクリーンショットは LoomStroke v0.1（2026-10-12〜14 時点の開発版、日本語 UI）で撮影したものです。作例のイラストはユーザー提供の画像です。今後のバージョンで画面が変わることがあります。</p>
+<p style="color:var(--muted);font-size:13px;margin-top:48px;">本文は LoomStroke v0.3.0.7.21（2026-10-30）の内容に合わせています。スクリーンショットの多くは v0.1（2026-10-12〜14 時点の開発版、日本語 UI）で撮影したもので、その後に加わった項目や日本語化された表示は画像に写っていない場合があります。作例のイラストはユーザー提供の画像です。今後のバージョンで画面が変わることがあります。</p>
 </main>
 </div>
 

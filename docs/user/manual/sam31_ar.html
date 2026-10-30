@@ -1,0 +1,345 @@
+<!doctype html>
+<!-- Japanese source SHA-256: 71f657e44e0f049727f94fb41635536283a7cb1dbc18f34c795c9227e037fa04 -->
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>دليل تثبيت SAM <bdi class="manual-number" dir="ltr">3.1</bdi></title>
+<link rel="stylesheet" href="languages.css">
+<style>
+:root {
+  --bg: #f7f7f9; --surface: #ffffff; --text: #1f2328; --muted: #5d6470;
+  --line: #dfe2e7; --accent: #7a5cd6; --accent-soft: #efeafd; --code: #f0f1f4;
+  --note: #fff7e0; --note-line: #e8c76a;
+}
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) {
+    --bg: #17181b; --surface: #1f2125; --text: #e6e7ea; --muted: #a2a7b0;
+    --line: #33363c; --accent: #a993f0; --accent-soft: #2b2540; --code: #2a2c31;
+    --note: #2e2a1c; --note-line: #7a6633;
+  }
+}
+:root[data-theme="dark"] {
+  --bg: #17181b; --surface: #1f2125; --text: #e6e7ea; --muted: #a2a7b0;
+  --line: #33363c; --accent: #a993f0; --accent-soft: #2b2540; --code: #2a2c31;
+  --note: #2e2a1c; --note-line: #7a6633;
+}
+* { box-sizing: border-box; }
+html { scroll-behavior: smooth; scroll-padding-top: 16px; }
+body {
+  margin: 0; background: var(--bg); color: var(--text);
+  font-family: "Yu Gothic UI", "Hiragino Sans", "Noto Sans JP", "Meiryo", sans-serif;
+  line-height: 1.75; font-size: 16px;
+}
+.layout { display: grid; grid-template-columns: 270px minmax(0, 1fr); max-width: 1360px; margin: 0 auto; }
+nav.toc {
+  position: sticky; top: 0; height: 100vh; overflow-y: auto; padding: 24px 16px 40px;
+  border-right: 1px solid var(--line); font-size: 14px;
+}
+nav.toc .brand { font-weight: 700; font-size: 18px; margin-bottom: 4px; }
+nav.toc .sub { color: var(--muted); font-size: 12px; margin-bottom: 16px; }
+nav.toc ol { list-style: none; margin: 0; padding: 0; }
+nav.toc li { margin: 1px 0; }
+nav.toc a { color: var(--text); text-decoration: none; display: block; padding: 2px 8px; border-radius: 6px; }
+nav.toc a:hover { background: var(--accent-soft); color: var(--accent); }
+nav.toc ol ol { padding-left: 12px; font-size: 13px; }
+nav.toc ol ol a { color: var(--muted); }
+main { padding: 32px 48px 80px; min-width: 0; }
+header.hero { margin-bottom: 32px; }
+header.hero h1 { font-size: 34px; margin: 0 0 8px; }
+header.hero p { color: var(--muted); margin: 0; }
+section { margin-top: 56px; }
+h2 { font-size: 26px; border-bottom: 2px solid var(--accent); padding-bottom: 6px; margin: 0 0 16px; }
+h3 { font-size: 21px; margin: 44px 0 10px; padding-top: 4px; border-top: 1px solid var(--line); }
+h4 { font-size: 16px; margin: 22px 0 6px; color: var(--accent); }
+p { margin: 8px 0; }
+a { color: var(--accent); }
+figure { margin: 16px 0 24px; background: var(--surface); border: 1px solid var(--line); border-radius: 10px; padding: 10px; }
+figure img { display: block; max-width: 100%; height: auto; margin: 0 auto; border-radius: 4px; cursor: zoom-in; }
+figure.narrow img { max-width: min(460px, 100%); width: auto; }
+figure.mid img { max-width: min(720px, 100%); width: auto; }
+figcaption { color: var(--muted); font-size: 13px; text-align: center; margin-top: 8px; }
+.grid2 { display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 16px; align-items: start; }
+.grid3 { display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 12px; align-items: start; }
+.grid2 figure, .grid3 figure { margin: 0; }
+.side { display: grid; grid-template-columns: minmax(240px, 380px) minmax(0, 1fr); gap: 20px; align-items: start; }
+.side > figure { margin: 0; }
+table { border-collapse: collapse; width: 100%; margin: 12px 0 20px; background: var(--surface); font-size: 14px; }
+th, td { border: 1px solid var(--line); padding: 6px 10px; text-align: left; vertical-align: top; }
+th { background: var(--accent-soft); white-space: nowrap; }
+td:first-child:not([colspan]) { white-space: nowrap; }
+.table-wrap { overflow-x: auto; }
+kbd { font-family: Consolas, monospace; font-size: 13px; background: var(--code); border: 1px solid var(--line); border-bottom-width: 2px; border-radius: 4px; padding: 0 5px; white-space: nowrap; }
+code { font-family: Consolas, monospace; background: var(--code); padding: 1px 5px; border-radius: 4px; font-size: 14px; }
+.note { background: var(--note); border-left: 4px solid var(--note-line); padding: 10px 14px; border-radius: 6px; margin: 14px 0; font-size: 15px; }
+.tag { display: inline-block; font-size: 12px; padding: 0 8px; border-radius: 10px; background: var(--accent-soft); color: var(--accent); margin-left: 6px; vertical-align: middle; }
+ol.steps { padding-left: 22px; }
+ol.steps li { margin: 6px 0; }
+ul.plain { padding-left: 20px; }
+.num { display: inline-block; min-width: 1.45em; height: 1.45em; line-height: 1.45em; border-radius: 50%; background: #eb283c; color: #fff; font-size: 12px; font-weight: 700; text-align: center; margin-right: 4px; vertical-align: 1px; }
+.legend { display: block; margin-top: 4px; }
+table.params td:nth-child(3), table.params td:nth-child(4) { font-size: 13px; }
+table.params td:nth-child(2) { white-space: normal; min-width: 8em; }
+.lightbox { position: fixed; inset: 0; background: rgba(0,0,0,.85); display: none; align-items: center; justify-content: center; z-index: 10; cursor: zoom-out; padding: 16px; }
+.lightbox.open { display: flex; }
+.lightbox img { max-width: 100%; max-height: 100%; }
+.theme-toggle { margin-top: 20px; font-size: 12px; background: none; border: 1px solid var(--line); color: var(--muted); border-radius: 6px; padding: 4px 8px; cursor: pointer; }
+.menu-toggle { display: none; }
+@media (max-width: 900px) {
+  .layout { grid-template-columns: 1fr; }
+  nav.toc { position: static; height: auto; border-right: none; border-bottom: 1px solid var(--line); padding: 16px; }
+  nav.toc .toc-body { display: none; }
+  nav.toc.open .toc-body { display: block; }
+  .menu-toggle { display: inline-block; margin-top: 8px; background: var(--accent-soft); color: var(--accent); border: none; border-radius: 6px; padding: 6px 12px; font-size: 14px; }
+  main { padding: 20px 16px 60px; }
+  header.hero h1 { font-size: 26px; }
+  .side { grid-template-columns: 1fr; }
+  td:first-child { white-space: normal; }
+}
+pre { background: var(--code); border: 1px solid var(--line); border-radius: 8px; padding: 10px 14px; overflow-x: auto; font-size: 13px; line-height: 1.6; }
+pre code { background: none; padding: 0; }
+</style>
+</head>
+<body>
+<div class="layout">
+<nav class="toc" id="toc">
+  <!-- manual-languages:start -->
+  <div class="manual-languages" dir="ltr"><a href="sam31.html" lang="ja">日本語</a> · <a href="sam31_en.html" lang="en">English</a> · <a href="sam31_zh_CN.html" lang="zh-CN">简体中文</a> · <a href="sam31_zh_Hant.html" lang="zh-Hant">繁體中文</a> · <a href="sam31_zh_TW.html" lang="zh-TW">台灣華語</a> · <a href="sam31_ko.html" lang="ko">한국어</a> · <a href="sam31_es.html" lang="es">Español</a> · <a href="sam31_ar.html" lang="ar" aria-current="page">العربية</a> · <a href="sam31_hi.html" lang="hi">हिन्दी</a> · <a href="sam31_pt_BR.html" lang="pt-BR">Português (Brasil)</a> · <a href="sam31_bn.html" lang="bn">বাংলা</a> · <a href="sam31_ru.html" lang="ru">Русский</a></div>
+  <!-- manual-languages:end -->
+
+  <div class="brand">دليل تثبيت SAM <bdi class="manual-number" dir="ltr">3.1</bdi></div>
+  <div class="sub">مذكرة توضيحية لـ LoomStroke</div>
+  <button class="menu-toggle" type="button" onclick="document.getElementById('toc').classList.toggle('open')">فتح المحتويات</button>
+  <div class="toc-body">
+  <ol>
+    <li><a href="#about">1. ما هو SAM <bdi class="manual-number" dir="ltr">3.1</bdi></a></li>
+    <li><a href="#require">2. المُطلوب</a></li>
+    <li><a href="#steps">3. إجراءات التثبيت</a>
+      <ol><li><a href="#step1">إدخال Python</a></li><li><a href="#step2"> إنشاء مجلد</a></li><li><a href="#step3"> الحصول على النموذج</a></li><li><a href="#step4"> إذن للاتصال بالشبكة</a></li><li><a href="#step5"> إطلاق التثبيت</a></li><li><a href="#step6"> التحقق من العمل</a></li></ol></li>
+    <li><a href="#screen">4. شاشة إعدادات SAM <bdi class="manual-number" dir="ltr">3.1</bdi></a></li>
+    <li><a href="#layout">5. محتوى المجلد</a></li>
+    <li><a href="#memory">6. إدارة ذاكرة GPU</a></li>
+    <li><a href="#trouble">7. في حال عدم التوافق</a></li>
+    <li><a href="#offline">8. التثبيت والحذف بالكامل دون اتصال بالإنترنت</a></li>
+  </ol>
+  <p style="margin-top:16px"><a href="index_ar.html">← العودة إلى الدليل</a></p>
+  <button class="theme-toggle" type="button" id="themeBtn">التبديل بين الوضع الفاتح والظليل</button>
+  </div>
+</nav>
+
+<main>
+<p class="translation-notice"><a href="sam31.html" hreflang="ja">ترجمة آلية. الأصل الياباني</a></p>
+<header class="hero">
+  <h1>دليل تثبيت SAM <bdi class="manual-number" dir="ltr">3.1</bdi></h1>
+  <p>لـ LoomStroke <b>AI Select</b> سنتوضّح كيفية إعداد SAM <bdi class="manual-number" dir="ltr">3.1</bdi> للاستخدام (الاختيار التلقائي من خلال الذكاء الاصطناعي). سيستغرق العملية تقريبًا 30 دقيقة إلى ساعة (قد يستغرق وقتًا أطول حسب سرعة الإنترنت الخاصة بك).</p>
+</header>
+
+<section id="about">
+<h2>1. ما هو SAM <bdi class="manual-number" dir="ltr">3.1</bdi></h2>
+<p>SAM <bdi class="manual-number" dir="ltr">3.1</bdi> هو الذكاء الاصطناعي للتمييز في الصور (التمييز المكاني) الذي أصدرته شركة Meta. يستخدم LoomStroke الوظائف التالية من هذا النظام.</p>
+<ul class="plain">
+  <li><a href="index_ar.html#tool-ai">أداة الاختيار بالذكاء الاصطناعي</a>: من كلمات مثل 'الشعر' أو 'الإنسان' أو من خلال النقر، يُنشئ اقتراحات لمنطقة الاختيار.</li>
+  <li><a href="index_ar.html#p-aicand">مربع اختيار النماذج الذكية (AI Select Candidates)</a>؛ تجميع المُقترحات المُكتشفة ودمجها في طبقة واحدة.</li>
+  <li><a href="index_ar.html#p-mangamask">مربع مساعد الماسكات للرسومات (Manga Mask Assistant)</a>يُستخدم لجمع مساحات التغطية من صفحات الرسوم المتحركة مثل الأجزاء، التفاصيل، الأشخاص إلخ.</li>
+</ul>
+<p>SAM <bdi class="manual-number" dir="ltr">3.1</bdi> هو برنامج منفصل عن LoomStroke نفسه،<b>بيئة تشغيل مخصصة</b> يُشغل كخادم صغير يعمل على جهازك الشخصي. يُنشئ زر 'الإعداد' في LoomStroke هذا البيئة تلقائيًا، ولكن<b> يجب أن تُحمّل النموذج نفسه (النقطة المُختارة) من قبلك</b> يوجد حاجة. لا يقوم LoomStroke بتنزيل النماذج تلقائيًا.</p>
+<div class="note">يُعالج SAM <bdi class="manual-number" dir="ltr">3.1</bdi> الصورة داخل جهازك دون إرسالها إلى خارج الجهاز. يستخدم الإنترنت فقط أثناء تثبيت المكونات (مثل PyTorch) وعند تحميل النموذج.</div>
+</section>
+
+<section id="require">
+<h2>2. المُطلوب</h2>
+<div class="table-wrap"><table>
+<tr><th>العنصر</th><th> المحتوى</th></tr>
+<tr><td>OS</td><td dir="ltr"> Windows 10 / 11（64 bit）</td></tr>
+<tr><td>GPU</td><td><b> نوصي بشدة باستخدام بطاقات GPU من NVIDIA (مدعومة بـ CUDA)</b>أثناء اختبارات التطوير (RTX 4090)، استُخدمت كمية تصل إلى حوالي <bdi class="manual-number" dir="ltr">4.6</bdi> جيجابايت من ذاكرة GPU لمعالجة صورة واحدة. من الأفضل أن تمتلك على الأقل 8 جيجابايت من ذاكرة GPU.<br>رغم أن الجهاز لا يحتوي على GPU، يمكن تثبيت البرنامج، ولكن في اختبار الأداء الأخير سيُعرض "لا يمكن استخدام CUDA" ويُوقف التثبيت (لن يُمكن استخدام المعالجات فقط بسرعة مُلائمة للتطبيق).</td></tr>
+<tr><td>مُشغل NVIDIA</td><td> مُشغل جديد. يتم التثبيت من خلال إدخال PyTorch <bdi class="manual-number" dir="ltr">13.0</bdi> لـ CUDA، لذا افتح موجه الأوامر و <code>nvidia-smi</code> قم بتشغيله حتى تظهر القيمة في 'CUDA Version' في الزاوية العلوية اليمنى <b><bdi class="manual-number" dir="ltr">13.0</bdi> فما فوق</b> تأكد من ذلك. إذا لم يكن متوفرًا، قم بتحديث برنامج NVIDIA من الموقع الرسمي.</td></tr>
+<tr><td>Python</td><td><b><bdi class="manual-number" dir="ltr"> 3.12</bdi> أو أحدث</b> مُوصى به (<bdi class="manual-number" dir="ltr">3.13</bdi>). يجب أن يكون متاحًا على جهاز الكمبيوتر الخاص بك (بخلاف LoomStroke)<a href="#step1">الخطوة 1</a>）。</td></tr>
+<tr><td>مُساحة التخزين المتوفرة</td><td> مُعيار <b>أكثر من 15 جيجابايت</b>（النموذج حوالي <bdi class="manual-number" dir="ltr">3.5</bdi> جيجا بايت + PyTorch وما إلى ذلك بكميات متعددة + مساحة العمل).</td></tr>
+<tr><td>الإنترنت</td><td> مطلوب فقط عند التثبيت (يتم تحميل ملاذ بحجم ملاذات مئات الميغابايت باستخدام PyTorch).</td></tr>
+<tr><td>حساب Hugging Face</td><td> مطلوب للحصول على النموذج (مجانًا).</td></tr>
+</table></div>
+</section>
+
+<section id="steps">
+<h2>3. إجراءات التثبيت</h2>
+
+<h3 id="step1">الخطوة 1: تثبيت Python <bdi class="manual-number" dir="ltr">3.12</bdi> أو أحدث</h3>
+<ol class="steps">
+  <li><a href="https://www.python.org/downloads/windows/" target="_blank" rel="noopener">python.org</a> قم بتنزيل مُثبت Windows لـ Python <bdi class="manual-number" dir="ltr">3.13</bdi> (أو <bdi class="manual-number" dir="ltr">3.12</bdi>).</li>
+  <li>تشغيل المُثبت، و<b>「py launcher」</b>أبقِ الإعدادات التي تحتوي على (مُشغل Python) كما هي عند التثبيت.</li>
+  <li>قم بتنفيذ ما يلي في واجهة الأوامر،<code>Python 3.13.x</code> سيكون هذا مكتملًا إذا عُرض كما في المثال.
+<pre><code>py -3.13 --version</code></pre></li>
+</ol>
+<p>التركيب هو <code>py -3.13</code> → <code>py -3.12</code> → <code>py -3</code> → <code>python</code> بمُتابعة التسلسل، يُبحث عن بايثون، ويُستخدم أول نسخة تصل إلى <bdi class="manual-number" dir="ltr">3.12</bdi> أو أعلى.</p>
+
+<h3 id="step2">الخطوة 2: إنشاء مجلد لـ SAM <bdi class="manual-number" dir="ltr">3.1</bdi></h3>
+<p>وضع النموذج والبيئة التشغيلية<b> المجلد الرئيسي</b> سيتم إنشاؤه على محرك يحتوي على مساحة فارغة كبيرة،<b>مسار يحتوي فقط على أرقام وحروف إنجليزية</b> يُوصى بعملها باستخدام.</p>
+<pre><code>例：D:\SAM31</code></pre>
+<p>يُوضع هذا المجلد فيه نموذج من خطوة 3، ويُستخدم في إعداد خطوة 5 لبيئة التنفيذ (<code>runtime</code> سيُنشأ المجلد (المسار) تلقائيًا.</p>
+
+<h3 id="step3">الخطوة 3: الحصول على النموذج (النقطة المُحددة)</h3>
+<p>نموذج SAM <bdi class="manual-number" dir="ltr">3.1</bdi> موجود على Hugging Face <a href="https://huggingface.co/facebook/sam3.1" target="_blank" rel="noopener">facebook/sam3.1</a> مُتاح للجمهور. هذه الصفحة هي<b> يجب الموافقة على الوصول (مُحمي ببوابة)</b>إذًا.</p>
+<ol class="steps">
+  <li><a href="https://huggingface.co/" target="_blank" rel="noopener">Hugging Face</a> قم بإنشاء حساب وتسجيل الدخول.</li>
+  <li><a href="https://huggingface.co/facebook/sam3.1" target="_blank" rel="noopener">facebook/sam3.1</a> وأقر بشروط الاستخدام، ووافق على مشاركة بيانات الاتصال، ثم اطلب الوصول. قد يستغرق الأمر بعض الوقت حتى يتم الموافقة.</li>
+  <li>بعد الموافقة، من خلال علامة التبويب "الملفات والنسخ"، <b>كل الملفات من المُخزن</b>（<code>sam3.1_multiplex.pt</code>(حوالي <bdi class="manual-number" dir="ltr">3.5</bdi> جيجابايت) و <code>config.json</code> تنزيل الملفات المُحددة (مثل ملفات الإعداد) ووضعها في المجلد المذكور في الخطوة 2.</li>
+</ol>
+<p>إذا كنت مُعتادًا على الأوامر، يمكنك جمع المفاتيح من خلال الأداة الرسمية من Hugging Face (أعد التحقق من التصريح عبر المتصفح قبل تنفيذه).</p>
+<pre><code>py -3.13 -m pip install -U huggingface_hub
+hf auth login
+hf download facebook/sam3.1 --local-dir D:\SAM31</code></pre>
+<p><code>hf auth login</code> الآن، لصق الرمز المخصص للقراءة الذي أنشأته في إعدادات Hugging Face (Access Tokens).<code>hf</code> إذا لم يتم العثور على الأمر، فقم بتفعيل خيار "Add python.exe to PATH" أثناء تثبيت Python، ثم أعد التثبيت، أو قم بتنزيله من خلال المتصفح.</p>
+<p class="note">يُوضع النموذج في مستوى الجذر أو في مستوى تحته مباشرةً <code>checkpoints</code>·<code>model</code> يمكن وضعه في مجلد فرعي. اسم الملف هو <code>sam3.1_multiplex.pt</code> إذا كان ذلك، فاستخدمه، وإذا كان باسم مختلف فـ <code>.pt</code> يُستخدم فقط عندما يكون هناك ملف واحد (إذا كان هناك أكثر من ملف، فلا يمكن تحديده وسيُعامل كـ "غير موجود"). لا يقوم LoomStroke بنسخ أو نقل النماذج.</p>
+
+<h3 id="step4">الخطوة 4: ترخيص الاتصال مع الخدمات الخارجية في LoomStroke</h3>
+<p>يُسمح بالاتصال لتنزيل أدوات مثل PyTorch أثناء إعداد النظام.</p>
+<figure><img src="img/sam_pref_ui.png" alt="إذن لخدمات الذكاء الاصطناعي الخارجية" loading="lazy"><figcaption><span class="num">1</span> الواجهة　<span class="num">2</span> إذن لخدمات الذكاء الاصطناعي الخارجية　<span class="num">3</span> التطبيق</figcaption></figure>
+<ol class="steps">
+  <li><b>تحرير › إعدادات البيئة</b>（<kbd>Ctrl</kbd>+<kbd>,</kbd>افتح )،<span class="num">1</span> اختر "الواجهة".</li>
+  <li><span class="num">2</span> أعد تفعيل 'السماح بخدمات الذكاء الاصطناعي الخارجية (ComfyUI، بوابة LLM، NanoBanana)'.</li>
+  <li><span class="num">3</span><b> انقر على 'تطبيق' لحفظه.</b>يُعرض التثبيت على الإعدادات المحفوظة، لذا يجب تفعيله فقط دون تطبيقه، وإلا سيتوقف عند رسالة "يُطلب ترخيص الشبكة".</li>
+</ol>
+
+<h3 id="step5">الخطوة 5: ابدأ التثبيت</h3>
+<figure><img src="img/sam_pref_sam.png" alt="إعدادات SAM 3.1" loading="lazy"><figcaption>إعداد البيئة › SAM <bdi class="manual-number" dir="ltr">3.1</bdi> (الحالة غير محددة)</figcaption></figure>
+<ol class="steps">
+  <li>القائمة اليسرى في إعدادات البيئة <b>SAM 3.1</b> نختار ذلك.</li>
+  <li><span class="num">1</span> في "الاستكشاف..." لـ "مجلد جذر SAM <bdi class="manual-number" dir="ltr">3.1</bdi>"، اختر المجلد كما في الخطوة 2.<span class="num">3</span> إذا ظهر اسم الملف في حالة 'النقطة المُحددة'، فهذا يعني أن النموذج تم العثور عليه.</li>
+  <li><span class="num">4</span><b> الإعداد</b> نضغط على هذا.<span class="num">7</span> يُظهر مسار التقدم في شريط السجل، ويُنتقل تدريجيًا إلى 10 مراحل متتالية.</li>
+</ol>
+<div class="table-wrap"><table>
+<tr><th>المرحلة</th><th> المحتوى</th><th> مدة التقدير</th></tr>
+<tr><td>1. التحقق من المجلد</td><td> تحقق من وجود المجلد الرئيسي وتمكينه من الكتابة إليه,<code>runtime</code>·<code>logs</code>·<code>state</code> نُسَبُ فولدر.</td><td>مباشرًا</td></tr>
+<tr><td>2. التحقق من Python</td><td> يُبحث عن Python <bdi class="manual-number" dir="ltr">3.12</bdi> أو أحدث.</td><td>مباشرًا</td></tr>
+<tr><td>3. إنشاء البيئة</td><td> أدخل بيئة افتراضية مخصصة لـ SAM <bdi class="manual-number" dir="ltr">3.1</bdi> (<code>runtime\venv</code> يُنشأ هذا. لا يُؤثر على بيئة LoomStroke الأساسية.</td><td>بمدة تصل إلى دقيقة واحدة</td></tr>
+<tr><td>4. إعداد pip</td><td> يُستعد أداة التثبيت (pip) لوضع المكونات.</td><td>مباشرًا</td></tr>
+<tr><td>5. تثبيت PyTorch</td><td> إذا تم اكتشاف رقاقة NVIDIA، فقم بتنزيل الإصدار الذي يعتمد على CUDA، وإلا فقم بتنزيل وتركيب إصدار CPU من PyTorch.</td><td><b>من بضع دقائق إلى بضع عشرات من الدقائق</b>（بعدد ملايين جيجابايت）</td></tr>
+<tr><td>6. تثبيت SAM <bdi class="manual-number" dir="ltr">3.1</bdi></td><td> أدخل المكونات المطلوبة، وبرنامج SAM 3 (مُستند على GitHub من facebookresearch/sam3).</td><td>بضع دقائق</td></tr>
+<tr><td>7. التحقق من النموذج</td><td> يُتحقق من وجود النموذج في مجلد الجذر (لا يتم تحميله).</td><td>مباشرًا</td></tr>
+<tr><td>8. اختبار التشغيل</td><td> قم بتحميل النموذج وتأكد من أن النموذج مخصص لـ SAM <bdi class="manual-number" dir="ltr">3.1</bdi> ويدعم GPU (CUDA).</td><td>بضع دقائق</td></tr>
+<tr><td>9. تشغيل العامل</td><td> يُبدأ وحدة المعالجة (الـ Worker) الخاصة بـ SAM <bdi class="manual-number" dir="ltr">3.1</bdi>.</td><td>ثواني قليلة</td></tr>
+<tr><td>10. التحقق من الاستجابة</td><td> تأكد من أن العامل يرد بشكل صحيح.</td><td>مباشرًا</td></tr>
+</table></div>
+<p>في نهاية السجل <b>「SAM 3.1 Ready」</b>سيُعرض هذا كمُكتمل.<span class="num">3</span> يظهر شريط الحالة على الشكل التالي: "التشغيل: جاهز"، "النقطة المُختارة: sam3.1_multiplex.pt"، "العامل: يعمل"، كما يُعرض اسم وحدة المعالجة (CUDA).<b>OK</b> لإغلاق إعدادات البيئة.</p>
+<div class="note">إذا فشل أو توقف أثناء العملية<span class="num"> 4</span>"حتى لو أردت إلغاء العملية بضغط \"إلغاء\"، فإن الضغط على \"الإعداد\" مرة أخرى"<b>القفز إلى المرحلة التي انتهت، وبدء من المرحلة التالية</b> نعيد المحاولة. لا يُعاد البدء من البداية.</div>
+
+<h3 id="step6">الخطوة 6: التحقق من العمل</h3>
+<ol class="steps">
+  <li>افتح الصورة على لوحة العمل، ثم اختر من شريط الأدوات <a href="index_ar.html#tool-ai">AI Select</a> اخترها (انقر وثبّت على زر المجموعة المختارة).</li>
+  <li>في شريط الخصائص، في الحقل "Prompt"، يُكتب ما ترغب في إيجاده (مثلاً:<code>hair</code>、<code>person</code>、<code>flower</code>)، ثم اضغط على "تشغيل".</li>
+  <li>إذا عُرضت الاقتراحات بوضع لون، فهذا يعني النجاح. عند الضغط على 'Apply'، تصبح المنطقة المختارة مُختارة.</li>
+</ol>
+<p>في المرة الأولى للتشغيل، يتم تحميل النموذج (حوالي <bdi class="manual-number" dir="ltr">3.5</bdi> جيجابايت) إلى وحدة GPU، مما يستغرق وقتًا قصيرًا. إذا توقفت الوحدة، فإنها تُعاد تشغيلها تلقائيًا أثناء التنفيذ.</p>
+</section>
+
+<section id="screen">
+<h2>4. شاشة إعدادات SAM <bdi class="manual-number" dir="ltr">3.1</bdi></h2>
+<p>إعدادات البيئة › كل ميزة في SAM <bdi class="manual-number" dir="ltr">3.1</bdi> (الرقم هو<a href="#step5"> الخطوة 5</a> لصور محددة).</p>
+<div class="table-wrap"><table class="params">
+<tr><th>العنصر</th><th> المحتوى</th></tr>
+<tr><td><span class="num">1</span> مجلد الجذر لـ SAM <bdi class="manual-number" dir="ltr">3.1</bdi></td><td> مجلد يُوضع فيه النموذج والبيئة التشغيلية (اختر من خلال "اختر..." ).</td></tr>
+<tr><td><span class="num">2</span> تشغيل خادم SAM <bdi class="manual-number" dir="ltr">3.1</bdi> تلقائيًا</td><td> عند التفعيل، يُبدأ العامل في تشغيل LoomStroke عند بدء التشغيل (لا يتم تحميل النموذج قبل استخدامه فعليًا). القيمة الافتراضية هي مُعطّلة. حتى في الحالة المُعطّلة، يُبدأ العامل تلقائيًا عند تنفيذ AI Select.</td></tr>
+<tr><td><span class="num">3</span> الحالة</td><td>
+<b>التشغيل الزمني</b>: جاهز إذا كنت جاهزًا. إذا كان هناك شيء مفقود، سيُعرض رمز سبب (<a href="#trouble">قائمة</a>）。<br>
+<b>نقطة التحقق</b> اسم ملف النموذج المُكتشف (إذا لم يُكتشف، فسيكون: غير مكتشف).<br>
+<b>العامل</b> مُشغل (مُشغل) / مُوقف (مُوقف).<br>
+<b>النموذج</b> مُحمَّل (تم تحميله على GPU) / غير مُحمَّل (لم يُحمَّل بعد)<br>
+<b>CUDA</b>: يُعرض اسم الرقابة المستخدمة أثناء تشغيل العامل.</td></tr>
+<tr><td><span class="num">4</span> تثبيت / إلغاء</td><td> استعد بيئة التنفيذ / توقف التحضير في أي وقت.</td></tr>
+<tr><td><span class="num">5</span> البدء / التوقف / إعادة البدء</td><td> قم بتشغيل العامل يدويًا.</td></tr>
+<tr><td><span class="num">6</span> تحميل النموذج / إزالة النموذج</td><td> تحميل النموذج إلى/إزالةه من ذاكرة GPU (تبقى العمال مُشغلين).</td></tr>
+<tr><td><span class="num">7</span> مُدخل السجل</td><td> يعرض تفاصيل الإعدادات والبدء، وتفاصيل الأخطاء وطرق التعامل معها.</td></tr>
+<tr><td><span class="num">8</span> الحد الأقصى لخزينة الموارد</td><td> الحد الأقصى لسعة التخزين لنتائج التحليل (مثل المُستشعرات إلخ). 64 إلى 262144 ميغابايت، القيمة الافتراضية 2048 ميغابايت.</td></tr>
+</table></div>
+</section>
+
+<section id="layout">
+<h2>5. محتوى المجلد</h2>
+<pre><code>D:\SAM31\                      ← ルートフォルダー（手順 2）
+├ sam3.1_multiplex.pt          ← モデル（手順 3 で自分で置く）
+├ config.json ほか              ← モデルの設定ファイル（同上）
+├ checkpoints\ / model\        ← （直下に置かない場合のモデルの置き場所）
+└ runtime\                     ← セットアップが自動で作成
+   ├ venv\                     ← SAM 3.1 専用の Python 環境
+   ├ sam3-src\                 ← （任意）オフライン導入用の SAM 3 ソース
+   ├ logs\setup.log            ← セットアップのログ
+   ├ logs\worker.log           ← ワーカーのログ
+   └ state\</code></pre>
+</section>
+
+<section id="memory">
+<h2>6. إدارة ذاكرة GPU</h2>
+<p>يستخدم SAM <bdi class="manual-number" dir="ltr">3.1</bdi> نموذجًا في ذاكرة GPU. عند إجراء عمليات أخرى على GPU مثل ComfyUI، يجب أن تُفرغ الذاكرة بعد الانتهاء لضمان الاستقرار.</p>
+<table>
+<tr><td>إلغاء تحميل SAM من الذاكرة في لوحة اختيار الذكاء الاصطناعي</td><td> يُنزل النموذج من ذاكرة GPU. ويُحمَّل تلقائيًا عند الاستخدام التالي.</td></tr>
+<tr><td>إعدادات البيئة › SAM <bdi class="manual-number" dir="ltr">3.1</bdi>: إلغاء تحميل النموذج</td><td> نفسه</td></tr>
+<tr><td>إعدادات البيئة › إيقاف SAM <bdi class="manual-number" dir="ltr">3.1</bdi></td><td> يُوقف الوحدة نفسها (سيتم تفعيلها تلقائيًا في التنفيذ التالي).</td></tr>
+</table>
+</section>
+
+<section id="trouble">
+<h2>7. في حال عدم التوافق</h2>
+<p>إذا فشل، سيظهر في مربع السجل <code>[コード] 内容</code> سيتم عرض طريقة التعامل معها وطريقة التصرف. تفصيل السجلات في <code>ルートフォルダー\runtime\logs\setup.log</code> بشكل (التثبيت) و <code>worker.log</code> موجود في (التشغيل).</p>
+<div class="table-wrap"><table>
+<tr><th>الكود</th><th> المعنى</th><th> التعامل</th></tr>
+<tr><td>ROOT_NOT_CONFIGURED</td><td> الدليل الرئيسي غير مُحدد</td><td> إعدادات البيئة › اختر مجلد الجذر في SAM <bdi class="manual-number" dir="ltr">3.1</bdi>.</td></tr>
+<tr><td>ROOT_INVALID</td><td> الدليل غير موجود أو لا يمكن الكتابة فيه</td><td> اختر مجلدًا موجودًا وقابلًا للكتابة.</td></tr>
+<tr><td>SETUP_REQUIRED</td><td> البيئة التشغيلية غير متوفرة بعد</td><td> سيتم تنفيذ عملية التثبيت.</td></tr>
+<tr><td>CHECKPOINT_MISSING</td><td> النموذج غير مُكتشف / ليس نموذجًا مخصصًا لـ SAM <bdi class="manual-number" dir="ltr">3.1</bdi></td><td><a href="#step3"> الخطوة 3</a> كما هو مطلوب <code>sam3.1_multiplex.pt</code> وأضع ملف الإعدادات في مجلد الجذر.<code>.pt</code> إذا كانت هناك أكثر من واحدة، يُنقل العناصر غير الضرورية.</td></tr>
+<tr><td>PYTHON_UNSUPPORTED</td><td> لم يتم العثور على Python <bdi class="manual-number" dir="ltr">3.12</bdi> أو أحدث</td><td><a href="#step1"> الخطوة 1</a> أدخل Python من خلاله (يجب أن يكون متوفرًا من خلال py launcher).</td></tr>
+<tr><td>NETWORK_CONSENT_REQUIRED</td><td> لا يُسمح بالتنزيل</td><td><a href="#step4"> الخطوة 4</a> وتفعيل 'إذن خدمة الذكاء الاصطناعي الخارجية' في<b> التطبيق</b> قم بذلك، ثم أعد التكوين مرة أخرى (سيُظهر الرسالة "الخصوصية"، لكن الإعدادات موجودة في صفحة الواجهة).</td></tr>
+<tr><td>VENV_CREATE_FAILED</td><td> لا يمكن إنشاء بيئة مخصصة</td><td> تحقق من مساحة التخزين المتوفرة وصلاحيات المجلد ثم أعد تشغيل البرنامج.</td></tr>
+<tr><td>PIP_FAILED</td><td> لا يمكن التحضير لـ pip</td><td> قم بتثبيت مرة أخرى.</td></tr>
+<tr><td>TORCH_INSTALL_FAILED</td><td> فشل في تثبيت PyTorch</td><td> تحقق من الشبكة وملف setup.log ثم أعد تشغيل البرنامج.</td></tr>
+<tr><td>SAM31_INSTALL_FAILED</td><td> فشل في تثبيت SAM نفسه أو اختبار تشغيله</td><td> يُتحقق من ملف setup.log. أما التثبيت دون اتصال،<a href="#offline">الفصل 8</a>。</td></tr>
+<tr><td>CUDA_UNAVAILABLE</td><td> لا يمكن استخدام GPU (CUDA)</td><td>تحقق من رقاقة NVIDIA وبرامجها. لا يكفي معالج CPU وحده لتقديم سرعة عملية.</td></tr>
+<tr><td>CUDA_MISMATCH</td><td> لا تتوافق PyTorch مع دрайвер CUDA</td><td> قم بتحديث برنامج NVIDIA ثم أعد التثبيت.</td></tr>
+<tr><td>WORKER_START_FAILED</td><td> لا يُمكن تشغيل العامل</td><td> تحقق من ملف worker.log.</td></tr>
+<tr><td>HEALTH_FAILED</td><td> يُشغل ولكن لا يُستجيب</td><td> جرب إعادة التشغيل، وإذا لم ينجح، فتحقق من ملف worker.log.</td></tr>
+<tr><td>MODEL_LOAD_FAILED</td><td> فشل في تحميل النموذج</td><td> تحقق من ملف worker.log. إذا كان ملف النموذج مُتحوّل، فأعد تثبيته.</td></tr>
+<tr><td>OOM</td><td> نقص في ذاكرة GPU</td><td> أغلق تطبيقات مثل ComfyUI أو تطبيقات أخرى تستخدم الرسومات المُعتمدة على GPU، أو أطلق مساحة ذاكرة مُخصصة لها ثم أعد تشغيله.</td></tr>
+<tr><td>COMPATIBILITY_UNSUPPORTED</td><td> النسخة المدخلة من SAM 3 غير مدعومة</td><td> انتظر تحديث LoomStroke، أو ابلغ المطورين.</td></tr>
+<tr><td>CANCELLED</td><td> تم إلغاء التثبيت</td><td> إذا أردت، يمكنك الضغط مجددًا على "الإعداد" لاستئناف العملية من حيث التقدم.</td></tr>
+</table></div>
+<p>إذا ظهرت رسائل مثل "SAM <bdi class="manual-number" dir="ltr">3.1</bdi> is not set up" عند استخدام أداة في AI Select، فإنها تُوافق على الجدول المذكور أعلاه. يُرجى التحقق من حالة SAM <bdi class="manual-number" dir="ltr">3.1</bdi> في إعدادات البيئة &gt; حالة SAM <bdi class="manual-number" dir="ltr">3.1</bdi>.</p>
+</section>
+
+<section id="offline">
+<h2>8. التثبيت والحذف بالكامل دون اتصال بالإنترنت</h2>
+<h3>إدخال SAM 3 بشكل أونلاين</h3>
+<p>على GitHub <a href="https://github.com/facebookresearch/sam3" target="_blank" rel="noopener">facebookresearch/sam3</a> الكامل (<code>pyproject.toml</code> المجلدات التي تحتوي على <code>ルートフォルダー\runtime\sam3-src</code> إذا أُدرج في هذا المكان، فإن SAM 3 سيُستخرج من هذا المكان. ولكن يجب تنزيل المكونات مثل PyTorch من الشبكة.</p>
+<h3>حذف</h3>
+<ol class="steps">
+  <li>إعدادات البيئة › في SAM <bdi class="manual-number" dir="ltr">3.1</bdi>، اضغط على 'إيقاف' لوقف العامل.</li>
+  <li>يُحذف المجلد الجذري بالكامل (يحتوي فقط على بيئة مخصصة ونماذج، ولا يؤثر على LoomStroke أو أي برمجيات بيئة بيئة برمجة أخرى).</li>
+  <li>الإعدادات &gt; مسار SAM <bdi class="manual-number" dir="ltr">3.1</bdi>، وقم بمسح الحقل وانقر على 'موافق'.</li>
+</ol>
+<p class="note">يُرجى التحقق من شروط استخدام نموذج SAM <bdi class="manual-number" dir="ltr">3.1</bdi> على صفحة facebook/sam3.1 في Hugging Face.</p>
+</section>
+
+<p style="color:var(--muted);font-size:13px;margin-top:48px;">تم إعداد هذا الدليل بناءً على تنفيذ إصدار LoomStroke التطويري بتاريخ <bdi class="manual-number" dir="ltr">2026-10-16</bdi>.<a href="index_ar.html">العودة إلى الدليل</a></p>
+</main>
+</div>
+
+<div class="lightbox" id="lightbox" role="dialog" aria-label="عرض التكبير"><img alt=""></div>
+<script>
+(function () {
+  var lb = document.getElementById('lightbox'), lbImg = lb.querySelector('img');
+  document.querySelectorAll('figure img').forEach(function (img) {
+    img.addEventListener('click', function () { lbImg.src = img.src; lbImg.alt = img.alt; lb.classList.add('open'); });
+  });
+  lb.addEventListener('click', function () { lb.classList.remove('open'); });
+  document.addEventListener('keydown', function (e) { if (e.key === 'Escape') lb.classList.remove('open'); });
+  var root = document.documentElement, btn = document.getElementById('themeBtn');
+  try { var saved = localStorage.getItem('ls-manual-theme'); if (saved) root.setAttribute('data-theme', saved); } catch (e) {}
+  btn.addEventListener('click', function () {
+    var dark = root.getAttribute('data-theme') ? root.getAttribute('data-theme') === 'dark'
+      : window.matchMedia('(prefers-color-scheme: dark)').matches;
+    var next = dark ? 'light' : 'dark';
+    root.setAttribute('data-theme', next);
+    try { localStorage.setItem('ls-manual-theme', next); } catch (e) {}
+  });
+})();
+</script>
+</body>
+</html>

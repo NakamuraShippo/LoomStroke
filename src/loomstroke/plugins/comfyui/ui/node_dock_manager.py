@@ -309,7 +309,14 @@ class NodeDockManager(QWidget):
         proxy = QWidget()
         layout = QVBoxLayout()
 
-        info_label = QPushButton(f"📋 {title}\n\nClick to show as panel")
+        from loomstroke.ui.widget_translations import bind_widget_text  # noqa: PLC0415
+
+        info_label = bind_widget_text(
+            QPushButton(),
+            "📋 {title}\n\nClick to show as panel",
+            domain="NodeDockManager",
+            title=title,
+        )
         info_label.setStyleSheet("""
             QPushButton {
                 border: 1px solid #555;

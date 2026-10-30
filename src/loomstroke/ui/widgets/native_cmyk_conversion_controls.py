@@ -40,8 +40,8 @@ class NativeCmykConversionControls(QWidget):
         self.picker = PrintProfilePicker(self.registry, parent=self)
         layout.addWidget(self.picker)
         self.bits = QComboBox(self)
-        self.bits.addItem("8 bit", 8)
-        self.bits.addItem("16 bit", 16)
+        self.bits.addItem(self._ts("8 bit"), 8)
+        self.bits.addItem(self._ts("16 bit"), 16)
         layout.addWidget(self.bits)
         self.convert_button = QPushButton(self)
         self._translations.register(self.convert_button.setText, "Convert Document to CMYK")
@@ -59,6 +59,8 @@ class NativeCmykConversionControls(QWidget):
 
     def refresh(self):
         self._translations.retranslate()
+        self.bits.setItemText(0, self._ts("8 bit"))
+        self.bits.setItemText(1, self._ts("16 bit"))
         if self._status_source:
             self.status.setText(self._ts(self._status_source))
         available = (

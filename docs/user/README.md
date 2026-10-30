@@ -1,5 +1,20 @@
 # LoomStroke User Guide — Full Translation Package
 
+## Illustrated manual
+
+Open the [illustrated manual](manual/index.html) or the
+[SAM 3.1 installation guide](manual/sam31.html). Both have links to all 12
+application language choices and work offline with shared screenshots.
+For example, the English pages are [the manual](manual/index_en.html) and
+[the SAM 3.1 guide](manual/sam31_en.html).
+
+The Japanese pages are the sources. The other pages are machine translations;
+their notice links back to the original. Screenshots retain Japanese UI labels.
+Traditional Chinese and Taiwan Mandarin currently share the same draft.
+Native-speaker review of all translated prose is still pending.
+
+## Earlier guide and setup
+
 This package contains static HTML pages for all 12 language choices. Open
 [index.html](index.html) to choose a language, or [index_ja.html](index_ja.html)
 for the Japanese guide. The detailed illustrated manual is in `manual/`.

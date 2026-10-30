@@ -10,6 +10,8 @@ from typing import Any, cast
 from PySide6.QtCore import Qt
 from PySide6.QtWidgets import QDockWidget, QLabel, QListWidget
 
+from loomstroke.ui.widget_translations import bind_widget_text
+
 from .foreground_background_colors import ForegroundBackgroundColors, bind_color_swatch
 from .main_window_channels_panel import MainWindowChannelsPanelBootstrap
 from .panels.layer_panel import LayerPanel
@@ -148,7 +150,14 @@ class MainWindowDefaultPanelsCoordinator:
             logger.info("Using PreviewPanel implementation")
         except ImportError as exc:
             logger.warning("PreviewPanel import failed: %s", exc)
-            preview_widget = cast("Any", QLabel("Preview Area\n(ComfyUI preview will appear here)"))
+            preview_widget = cast(
+                "Any",
+                bind_widget_text(
+                    QLabel(),
+                    "Preview Area\n(ComfyUI preview will appear here)",
+                    domain="MainWindowDefaultPanelsCoordinator",
+                ),
+            )
             preview_widget.setAlignment(Qt.AlignmentFlag.AlignCenter)
             preview_widget.setStyleSheet("background-color: #333; color: #aaa;")
             logger.info("Using placeholder for Preview panel")

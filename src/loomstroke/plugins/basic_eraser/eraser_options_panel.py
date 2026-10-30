@@ -1,6 +1,8 @@
 # Eraser options panel
 from PySide6.QtCore import Qt, Signal
-from PySide6.QtWidgets import QFormLayout, QSlider, QWidget
+from PySide6.QtWidgets import QFormLayout, QLabel, QSlider, QWidget
+
+from loomstroke.ui.widget_translations import bind_widget_text
 
 __all__ = ["EraserOptionsPanel", "create_eraser_panel"]
 
@@ -26,9 +28,13 @@ class EraserOptionsPanel(QWidget):
         self.strength.setValue(int(saved.get("opacity", 1.0) * 100))
         self.hardness.setValue(int(saved.get("hardness", 0.5) * 100))
 
-        lay.addRow("Size", self.size)
-        lay.addRow("Strength", self.strength)
-        lay.addRow("Hardness", self.hardness)
+        lay.addRow(bind_widget_text(QLabel(), "Size", domain="EraserOptionsPanel"), self.size)
+        lay.addRow(
+            bind_widget_text(QLabel(), "Strength", domain="EraserOptionsPanel"), self.strength
+        )
+        lay.addRow(
+            bind_widget_text(QLabel(), "Hardness", domain="EraserOptionsPanel"), self.hardness
+        )
 
         for w in (self.size, self.strength, self.hardness):
             w.valueChanged.connect(self._emit_changed)

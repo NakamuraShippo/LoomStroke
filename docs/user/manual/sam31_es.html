@@ -1,0 +1,345 @@
+<!doctype html>
+<!-- Japanese source SHA-256: 71f657e44e0f049727f94fb41635536283a7cb1dbc18f34c795c9227e037fa04 -->
+<html lang="es" dir="ltr">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Guía de instalación de SAM 3.1</title>
+<link rel="stylesheet" href="languages.css">
+<style>
+:root {
+  --bg: #f7f7f9; --surface: #ffffff; --text: #1f2328; --muted: #5d6470;
+  --line: #dfe2e7; --accent: #7a5cd6; --accent-soft: #efeafd; --code: #f0f1f4;
+  --note: #fff7e0; --note-line: #e8c76a;
+}
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) {
+    --bg: #17181b; --surface: #1f2125; --text: #e6e7ea; --muted: #a2a7b0;
+    --line: #33363c; --accent: #a993f0; --accent-soft: #2b2540; --code: #2a2c31;
+    --note: #2e2a1c; --note-line: #7a6633;
+  }
+}
+:root[data-theme="dark"] {
+  --bg: #17181b; --surface: #1f2125; --text: #e6e7ea; --muted: #a2a7b0;
+  --line: #33363c; --accent: #a993f0; --accent-soft: #2b2540; --code: #2a2c31;
+  --note: #2e2a1c; --note-line: #7a6633;
+}
+* { box-sizing: border-box; }
+html { scroll-behavior: smooth; scroll-padding-top: 16px; }
+body {
+  margin: 0; background: var(--bg); color: var(--text);
+  font-family: "Yu Gothic UI", "Hiragino Sans", "Noto Sans JP", "Meiryo", sans-serif;
+  line-height: 1.75; font-size: 16px;
+}
+.layout { display: grid; grid-template-columns: 270px minmax(0, 1fr); max-width: 1360px; margin: 0 auto; }
+nav.toc {
+  position: sticky; top: 0; height: 100vh; overflow-y: auto; padding: 24px 16px 40px;
+  border-right: 1px solid var(--line); font-size: 14px;
+}
+nav.toc .brand { font-weight: 700; font-size: 18px; margin-bottom: 4px; }
+nav.toc .sub { color: var(--muted); font-size: 12px; margin-bottom: 16px; }
+nav.toc ol { list-style: none; margin: 0; padding: 0; }
+nav.toc li { margin: 1px 0; }
+nav.toc a { color: var(--text); text-decoration: none; display: block; padding: 2px 8px; border-radius: 6px; }
+nav.toc a:hover { background: var(--accent-soft); color: var(--accent); }
+nav.toc ol ol { padding-left: 12px; font-size: 13px; }
+nav.toc ol ol a { color: var(--muted); }
+main { padding: 32px 48px 80px; min-width: 0; }
+header.hero { margin-bottom: 32px; }
+header.hero h1 { font-size: 34px; margin: 0 0 8px; }
+header.hero p { color: var(--muted); margin: 0; }
+section { margin-top: 56px; }
+h2 { font-size: 26px; border-bottom: 2px solid var(--accent); padding-bottom: 6px; margin: 0 0 16px; }
+h3 { font-size: 21px; margin: 44px 0 10px; padding-top: 4px; border-top: 1px solid var(--line); }
+h4 { font-size: 16px; margin: 22px 0 6px; color: var(--accent); }
+p { margin: 8px 0; }
+a { color: var(--accent); }
+figure { margin: 16px 0 24px; background: var(--surface); border: 1px solid var(--line); border-radius: 10px; padding: 10px; }
+figure img { display: block; max-width: 100%; height: auto; margin: 0 auto; border-radius: 4px; cursor: zoom-in; }
+figure.narrow img { max-width: min(460px, 100%); width: auto; }
+figure.mid img { max-width: min(720px, 100%); width: auto; }
+figcaption { color: var(--muted); font-size: 13px; text-align: center; margin-top: 8px; }
+.grid2 { display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 16px; align-items: start; }
+.grid3 { display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 12px; align-items: start; }
+.grid2 figure, .grid3 figure { margin: 0; }
+.side { display: grid; grid-template-columns: minmax(240px, 380px) minmax(0, 1fr); gap: 20px; align-items: start; }
+.side > figure { margin: 0; }
+table { border-collapse: collapse; width: 100%; margin: 12px 0 20px; background: var(--surface); font-size: 14px; }
+th, td { border: 1px solid var(--line); padding: 6px 10px; text-align: left; vertical-align: top; }
+th { background: var(--accent-soft); white-space: nowrap; }
+td:first-child:not([colspan]) { white-space: nowrap; }
+.table-wrap { overflow-x: auto; }
+kbd { font-family: Consolas, monospace; font-size: 13px; background: var(--code); border: 1px solid var(--line); border-bottom-width: 2px; border-radius: 4px; padding: 0 5px; white-space: nowrap; }
+code { font-family: Consolas, monospace; background: var(--code); padding: 1px 5px; border-radius: 4px; font-size: 14px; }
+.note { background: var(--note); border-left: 4px solid var(--note-line); padding: 10px 14px; border-radius: 6px; margin: 14px 0; font-size: 15px; }
+.tag { display: inline-block; font-size: 12px; padding: 0 8px; border-radius: 10px; background: var(--accent-soft); color: var(--accent); margin-left: 6px; vertical-align: middle; }
+ol.steps { padding-left: 22px; }
+ol.steps li { margin: 6px 0; }
+ul.plain { padding-left: 20px; }
+.num { display: inline-block; min-width: 1.45em; height: 1.45em; line-height: 1.45em; border-radius: 50%; background: #eb283c; color: #fff; font-size: 12px; font-weight: 700; text-align: center; margin-right: 4px; vertical-align: 1px; }
+.legend { display: block; margin-top: 4px; }
+table.params td:nth-child(3), table.params td:nth-child(4) { font-size: 13px; }
+table.params td:nth-child(2) { white-space: normal; min-width: 8em; }
+.lightbox { position: fixed; inset: 0; background: rgba(0,0,0,.85); display: none; align-items: center; justify-content: center; z-index: 10; cursor: zoom-out; padding: 16px; }
+.lightbox.open { display: flex; }
+.lightbox img { max-width: 100%; max-height: 100%; }
+.theme-toggle { margin-top: 20px; font-size: 12px; background: none; border: 1px solid var(--line); color: var(--muted); border-radius: 6px; padding: 4px 8px; cursor: pointer; }
+.menu-toggle { display: none; }
+@media (max-width: 900px) {
+  .layout { grid-template-columns: 1fr; }
+  nav.toc { position: static; height: auto; border-right: none; border-bottom: 1px solid var(--line); padding: 16px; }
+  nav.toc .toc-body { display: none; }
+  nav.toc.open .toc-body { display: block; }
+  .menu-toggle { display: inline-block; margin-top: 8px; background: var(--accent-soft); color: var(--accent); border: none; border-radius: 6px; padding: 6px 12px; font-size: 14px; }
+  main { padding: 20px 16px 60px; }
+  header.hero h1 { font-size: 26px; }
+  .side { grid-template-columns: 1fr; }
+  td:first-child { white-space: normal; }
+}
+pre { background: var(--code); border: 1px solid var(--line); border-radius: 8px; padding: 10px 14px; overflow-x: auto; font-size: 13px; line-height: 1.6; }
+pre code { background: none; padding: 0; }
+</style>
+</head>
+<body>
+<div class="layout">
+<nav class="toc" id="toc">
+  <!-- manual-languages:start -->
+  <div class="manual-languages" dir="ltr"><a href="sam31.html" lang="ja">日本語</a> · <a href="sam31_en.html" lang="en">English</a> · <a href="sam31_zh_CN.html" lang="zh-CN">简体中文</a> · <a href="sam31_zh_Hant.html" lang="zh-Hant">繁體中文</a> · <a href="sam31_zh_TW.html" lang="zh-TW">台灣華語</a> · <a href="sam31_ko.html" lang="ko">한국어</a> · <a href="sam31_es.html" lang="es" aria-current="page">Español</a> · <a href="sam31_ar.html" lang="ar">العربية</a> · <a href="sam31_hi.html" lang="hi">हिन्दी</a> · <a href="sam31_pt_BR.html" lang="pt-BR">Português (Brasil)</a> · <a href="sam31_bn.html" lang="bn">বাংলা</a> · <a href="sam31_ru.html" lang="ru">Русский</a></div>
+  <!-- manual-languages:end -->
+
+  <div class="brand">Guía de instalación de SAM 3.1</div>
+  <div class="sub">Guía adicional de LoomStroke</div>
+  <button class="menu-toggle" type="button" onclick="document.getElementById('toc').classList.toggle('open')">Abrir índice</button>
+  <div class="toc-body">
+  <ol>
+    <li><a href="#about">1. ¿Qué es SAM 3.1?</a></li>
+    <li><a href="#require">2. Lo necesario</a></li>
+    <li><a href="#steps">3. Procedimiento de instalación</a>
+      <ol><li><a href="#step1">Instalar Python</a></li><li><a href="#step2"> Crear carpeta</a></li><li><a href="#step3"> Obtener modelo</a></li><li><a href="#step4"> Permitir la red</a></li><li><a href="#step5"> Ejecutar configuración</a></li><li><a href="#step6"> Verificar el funcionamiento</a></li></ol></li>
+    <li><a href="#screen">4. Pantalla de configuración de SAM 3.1</a></li>
+    <li><a href="#layout">5. Contenido del directorio</a></li>
+    <li><a href="#memory">6. Manejo de memoria de GPU</a></li>
+    <li><a href="#trouble">7. Cuando no funcione correctamente</a></li>
+    <li><a href="#offline">8. Instalación y eliminación offline</a></li>
+  </ol>
+  <p style="margin-top:16px"><a href="index_es.html">← Volver al manual</a></p>
+  <button class="theme-toggle" type="button" id="themeBtn">Modo claro/oscuro</button>
+  </div>
+</nav>
+
+<main>
+<p class="translation-notice"><a href="sam31.html" hreflang="ja">Traducción automática. Original en japonés</a></p>
+<header class="hero">
+  <h1>Guía de instalación de SAM 3.1</h1>
+  <p>de LoomStroke <b>AI Select</b> Se explica aquí cómo preparar SAM 3.1 para usar la selección automática por inteligencia artificial. El proceso dura entre 30 minutos y 1 hora (puede tardar más según la velocidad de conexión).</p>
+</header>
+
+<section id="about">
+<h2>1. ¿Qué es SAM 3.1?</h2>
+<p>SAM 3.1 es una inteligencia artificial de segmentación de imágenes publicada por Meta. En LoomStroke se utiliza para las siguientes funciones.</p>
+<ul class="plain">
+  <li><a href="index_es.html#tool-ai">Herramienta de Selección de IA</a>: Crea candidatos de selección a partir de palabras como 'cabello' o 'personaje' o mediante clics.</li>
+  <li><a href="index_es.html#p-aicand">Panel AI Select Candidates</a>：Combinar y crear capas de los candidatos encontrados.</li>
+  <li><a href="index_es.html#p-mangamask">Panel Manga Mask Assistant</a>: Crea un máscara que combine páginas de manga, cuadros, notas y personajes.</li>
+</ul>
+<p>SAM 3.1 es un modelo distinto al propio LoomStroke<b> Entorno de ejecución especial</b> Funciona como un pequeño servidor que se ejecuta en tu propia computadora. El botón 'Configuración' de LoomStroke crea automáticamente este entorno, pero<b> El modelo principal (punto de control) debe descargarse y almacenarse por usted mismo</b> es necesario. LoomStroke no descarga automáticamente el modelo.</p>
+<div class="note">SAM 3.1 no envía imágenes al exterior y procesa todo en su propio ordenador. El uso de internet solo ocurre durante la descarga de componentes (como PyTorch) al instalarlo y al obtener el modelo.</div>
+</section>
+
+<section id="require">
+<h2>2. Lo necesario</h2>
+<div class="table-wrap"><table>
+<tr><th>elemento</th><th> contenido</th></tr>
+<tr><td>OS</td><td> Windows 10 / 11（64 bit）</td></tr>
+<tr><td>GPU</td><td><b> Se recomienda fuertemente usar GPUs fabricadas por NVIDIA (compatibles con CUDA)</b>Durante las pruebas de desarrollo (RTX 4090), se usó hasta aproximadamente 4,6 GB de memoria GPU por imagen. Se recomienda tener al menos 8 GB de memoria GPU para sentirse seguro.<br>Aunque no tenga GPU, la instalación puede continuar, pero en la prueba final se mostrará 'no se puede usar CUDA' y se detendrá (la velocidad con CPU no sería práctica).</td></tr>
+<tr><td>Controlador NVIDIA</td><td> Nuevo controlador. La instalación requiere PyTorch versión 13.0 con CUDA, por lo que en la consola de comandos debe <code>nvidia-smi</code> ejecutar para que la versión de CUDA en la esquina superior derecha sea <b>13.0 o superior</b> Asegúrese de que sea así. Si no lo es, actualice el controlador desde el sitio web oficial de NVIDIA.</td></tr>
+<tr><td>Python</td><td><b> Python 3.12 o superior</b>（Recomendado para 3.13). Es necesario tener instalado LoomStroke separadamente en el PC (<a href="#step1">Paso 1</a>）。</td></tr>
+<tr><td>Espacio libre en disco</td><td> Referencia <b>más de 15 GB</b>（Modelo aproximadamente 3.5 GB + PyTorch y otros varios GB + espacio de trabajo）.</td></tr>
+<tr><td>Internet</td><td> Sólo requerido durante la instalación (PyTorch tiene descargas de varios GB).</td></tr>
+<tr><td>Cuenta de Hugging Face</td><td> Requerido para obtener el modelo (gratuito).</td></tr>
+</table></div>
+</section>
+
+<section id="steps">
+<h2>3. Procedimiento de instalación</h2>
+
+<h3 id="step1">Paso 1: Instalar Python 3.12 o superior</h3>
+<ol class="steps">
+  <li><a href="https://www.python.org/downloads/windows/" target="_blank" rel="noopener">python.org</a> Descargue el instalador para Windows de Python 3.13 (o 3.12).</li>
+  <li>Iniciar instalador y<b>「py launcher」</b>Instale manteniendo la configuración en la que se encuentra el lanzador de Python.</li>
+  <li>Ejecuta en el prompt de comandos lo siguiente y <code>Python 3.13.x</code> se mostrará como indicado. Esto indica que está completo.
+<pre><code>py -3.13 --version</code></pre></li>
+</ol>
+<p>La instalación <code>py -3.13</code> → <code>py -3.12</code> → <code>py -3</code> → <code>python</code> Busca Python en orden, y utiliza el primero encontrado que sea de versión 3.12 o superior.</p>
+
+<h3 id="step2">Paso 2: Crear un directorio para SAM 3.1</h3>
+<p>Colocar modelo y entorno de ejecución<b> Carpeta raíz</b> se creará. Colóquelo en un disco con mucha capacidad libre,<b>Ruta con solo caracteres alfanuméricos en inglés</b> se recomienda crearlo con.</p>
+<pre><code>例：D:\SAM31</code></pre>
+<p>En este directorio, coloca el modelo en el paso 3 y ejecuta el entorno de configuración en el paso 5 (<code>runtime</code> el (carpeta) se crea automáticamente.</p>
+
+<h3 id="step3">Paso 3: Obtener el modelo (checkpoint)</h3>
+<p>El modelo de SAM 3.1 está disponible en Hugging Face <a href="https://huggingface.co/facebook/sam3.1" target="_blank" rel="noopener">facebook/sam3.1</a> está publicado. Esta página es<b> Se requiere consentimiento de acceso (con puerta de acceso)</b>.</p>
+<ol class="steps">
+  <li><a href="https://huggingface.co/" target="_blank" rel="noopener">Hugging Face</a> crear una cuenta y iniciar sesión.</li>
+  <li><a href="https://huggingface.co/facebook/sam3.1" target="_blank" rel="noopener">facebook/sam3.1</a> para leer los términos de uso, aceptar el compartir de contacto y solicitar acceso. Puede tardar un momento hasta que se apruebe.</li>
+  <li>Después de la aprobación, desde la pestaña 'Archivos y versiones' <b>Todos los archivos del repositorio</b>（<code>sam3.1_multiplex.pt</code>(aproximadamente 3.5 GB) y <code>config.json</code> archivo de configuración) y únelo en el carpeta del paso 2.</li>
+</ol>
+<p>Si estás familiarizado con los comandos, puedes obtenerlos de forma conjunta mediante las herramientas oficiales de Hugging Face (ejecútalo después de obtener permiso en el navegador).</p>
+<pre><code>py -3.13 -m pip install -U huggingface_hub
+hf auth login
+hf download facebook/sam3.1 --local-dir D:\SAM31</code></pre>
+<p><code>hf auth login</code> Ahora, pegue el token de lectura creado en la pantalla de configuración de Hugging Face (Access Tokens).<code>hf</code> Si el comando no se encuentra, asegúrese de haber activado «Añadir python.exe a PATH» durante la instalación de Python y vuelva a instalarlo, o descárguelo directamente desde el navegador.</p>
+<p class="note">El modelo se encuentra en la carpeta raíz o en <code>checkpoints</code>·<code>model</code> puede colocarse en un subcarpeta. El nombre de archivo será <code>sam3.1_multiplex.pt</code> si es así, úsalo; en caso contrario, <code>.pt</code> Se usa únicamente cuando solo haya un archivo (si hay varios, no se puede identificar y se tratará como 'no encontrado'). LoomStroke no copia ni mueve modelos.</p>
+
+<h3 id="step4">Paso 4: Permita la conexión a servicios externos en LoomStroke</h3>
+<p>Permite descargar herramientas como PyTorch durante la configuración, permitiendo la conexión a internet.</p>
+<figure><img src="img/sam_pref_ui.png" alt="Permitir servicios de inteligencia artificial externos" loading="lazy"><figcaption><span class="num">1</span> Interfaz　<span class="num">2</span> Permitir servicios de inteligencia artificial externos　<span class="num">3</span> Aplicable</figcaption></figure>
+<ol class="steps">
+  <li><b>editar › configuración del entorno</b>（<kbd>Ctrl</kbd>+<kbd>,</kbd>abrir)<span class="num">1</span> Selecciona «Interfaz».</li>
+  <li><span class="num">2</span> Active la opción 'Permitir servicios de inteligencia artificial externos (ComfyUI, LLM Gateway, NanoBanana)'.</li>
+  <li><span class="num">3</span><b> Pulse 'Aplicar' para guardar.</b>La instalación muestra los ajustes guardados, por lo que si se activa sin aplicar, se detendrá con el mensaje 'Se requiere permiso de red'.</li>
+</ol>
+
+<h3 id="step5">Paso 5: Ejecuta la configuración</h3>
+<figure><img src="img/sam_pref_sam.png" alt="Configuración de SAM 3.1" loading="lazy"><figcaption>Configuración del entorno › SAM 3.1 (sin configuración)</figcaption></figure>
+<ol class="steps">
+  <li>Lista de la izquierda de la configuración del entorno <b>SAM 3.1</b> seleccionarlo.</li>
+  <li><span class="num">1</span> Selecciona el directorio 'SAM 3.1 Root Folder' en 'Referencia...', y elige el directorio del paso 2.<span class="num">3</span> Si el nombre del archivo aparece en el estado 'Punto de control', el modelo se ha encontrado.</li>
+  <li><span class="num">4</span><b>«Configuración»</b>pulse este botón.<span class="num">7</span> se mostrará en la sección de registro y avanzarán secuencialmente los siguientes 10 niveles.</li>
+</ol>
+<div class="table-wrap"><table>
+<tr><th>Etapa</th><th> contenido</th><th> Estimación de tiempo</th></tr>
+<tr><td>1. Ver el directorio</td><td> Verifica que exista un directorio raíz y que puedas escribir en él,<code>runtime</code>·<code>logs</code>·<code>state</code> Crear carpeta.</td><td>Inmediato</td></tr>
+<tr><td>2. Verificación de Python</td><td> Busca Python 3.12 o superior.</td><td>Inmediato</td></tr>
+<tr><td>3. Creación del entorno</td><td> entorno virtual exclusivo para SAM 3.1 (<code>runtime\venv</code> Se crea este elemento. No modifica el entorno principal de LoomStroke.</td><td>aproximadamente 1 minuto</td></tr>
+<tr><td>4. Preparación de pip</td><td> Prepara la herramienta (pip) para insertar componentes.</td><td>Inmediato</td></tr>
+<tr><td>5. Instalación de PyTorch</td><td> Si se detecta una GPU de NVIDIA, se descargará y se instalará la versión CUDA de PyTorch; en caso contrario, se instalará la versión para CPU.</td><td><b>entre unos minutos y varios minutos</b>（algunos GB）</td></tr>
+<tr><td>6. Instalación de SAM 3.1</td><td> Incluya los componentes necesarios y el programa SAM 3 (repositorio GitHub de facebookresearch/sam3).</td><td>En unos minutos</td></tr>
+<tr><td>7. Verificación del modelo</td><td> Verifica si hay un modelo en el directorio raíz (no se realizará descarga).</td><td>Inmediato</td></tr>
+<tr><td>8. Prueba de funcionamiento</td><td> Carga el modelo y verifica que sea un modelo para SAM 3.1 y que el GPU (CUDA) esté disponible.</td><td>En unos minutos</td></tr>
+<tr><td>9. Inicio del trabajador</td><td> inicia el procesador (worker) de SAM 3.1.</td><td>Decenas de segundos</td></tr>
+<tr><td>10. Verificación de respuesta</td><td> verifique si el trabajador responde correctamente.</td><td>Inmediato</td></tr>
+</table></div>
+<p>al final del registro <b>「SAM 3.1 Ready」</b>se mostrará entonces que está completado.<span class="num">3</span> La sección de estado mostrará algo como «Tiempo de ejecución: Listo», «Punto de control: sam3.1_multiplex.pt» y «Trabajador: en ejecución», además de mostrar el nombre de la GPU (CUDA).<b>OK</b> cierra la configuración del entorno.</p>
+<div class="note">si falla durante el proceso<span class="num"> 4</span> Aunque se detenga con 'Cancelar', al presionar nuevamente 'Configuración' se puede<b> Saltar las etapas ya finalizadas y continuar desde allí</b> Volver a intentarlo. No se reiniciará desde el principio.</div>
+
+<h3 id="step6">Paso 6: Verificar el funcionamiento</h3>
+<ol class="steps">
+  <li>Abra una imagen en el lienzo y, desde la barra de herramientas, <a href="index_es.html#tool-ai">AI Select</a> Elige (manteniendo pulsado el botón de grupo seleccionado).</li>
+  <li>En la barra de propiedades, en 'Prompt', escriba lo que desea buscar (por ejemplo:<code>hair</code>、<code>person</code>、<code>flower</code>)</li>
+  <li>Si los candidatos se muestran con color, se ha completado correctamente. Al hacer clic en 'Aplicar', se seleccionará el área correspondiente.</li>
+</ol>
+<p>La primera ejecución carga el modelo (aproximadamente 3.5 GB) en la GPU, por lo que puede tardar un poco. Si el trabajador se detiene, se iniciará automáticamente durante la ejecución.</p>
+</section>
+
+<section id="screen">
+<h2>4. Pantalla de configuración de SAM 3.1</h2>
+<p>configuración del entorno › cada opción de SAM 3.1 (los números son<a href="#step5"> Paso 5</a> para imágenes de este tipo).</p>
+<div class="table-wrap"><table class="params">
+<tr><th>elemento</th><th> contenido</th></tr>
+<tr><td><span class="num">1</span> Carpeta raíz de SAM 3.1</td><td> El directorio donde se almacenan el modelo y el entorno de ejecución (selecciona mediante 'Referencia...').</td></tr>
+<tr><td><span class="num">2</span> Iniciar automáticamente el servidor SAM 3.1</td><td> Al activarlo, se inicia también el worker al arrancar LoomStroke (la carga del modelo no se realiza hasta que se use realmente). El valor predeterminado es desactivado. Aunque esté desactivado, se inicia automáticamente al ejecutar AI Select.</td></tr>
+<tr><td><span class="num">3</span> Estado</td><td>
+<b>Tiempo de ejecución</b>: Listo si todo está preparado. Si faltan elementos, se mostrará un código explicativo (<a href="#trouble">Lista</a>）。<br>
+<b>Punto de control</b>: nombre del archivo del modelo encontrado (si no se encuentra, 'no detectado').<br>
+<b>worker</b>: running (en ejecución) / stopped (detenido).<br>
+<b>model</b>: cargado (ya cargado en GPU) / no cargado (no cargado)<br>
+<b>CUDA</b>: Muestra el nombre de la GPU que estás utilizando durante el arranque del trabajador.</td></tr>
+<tr><td><span class="num">4</span> Configurar / Cancelar</td><td> Preparar el entorno de ejecución / Detener la preparación en cualquier momento.</td></tr>
+<tr><td><span class="num">5</span> Iniciar / Detener / Reiniciar</td><td> Manipule manualmente al trabajador.</td></tr>
+<tr><td><span class="num">6</span> Cargar modelo / Desactivar modelo</td><td> Cargar el modelo en la memoria de GPU / Descargar el modelo de la memoria de GPU (el trabajador permanece activo).</td></tr>
+<tr><td><span class="num">7</span> Panel de registro</td><td> Muestra el proceso de configuración y arranque, así como el contenido y métodos de solución de errores.</td></tr>
+<tr><td><span class="num">8</span> Límite de caché de activos</td><td> Límite de capacidad para guardar resultados de análisis (como máscaras). Entre 64 y 262144 MB, valor inicial 2048 MB.</td></tr>
+</table></div>
+</section>
+
+<section id="layout">
+<h2>5. Contenido del directorio</h2>
+<pre><code>D:\SAM31\                      ← ルートフォルダー（手順 2）
+├ sam3.1_multiplex.pt          ← モデル（手順 3 で自分で置く）
+├ config.json ほか              ← モデルの設定ファイル（同上）
+├ checkpoints\ / model\        ← （直下に置かない場合のモデルの置き場所）
+└ runtime\                     ← セットアップが自動で作成
+   ├ venv\                     ← SAM 3.1 専用の Python 環境
+   ├ sam3-src\                 ← （任意）オフライン導入用の SAM 3 ソース
+   ├ logs\setup.log            ← セットアップのログ
+   ├ logs\worker.log           ← ワーカーのログ
+   └ state\</code></pre>
+</section>
+
+<section id="memory">
+<h2>6. Manejo de memoria de GPU</h2>
+<p>SAM 3.1 carga el modelo en la memoria de la GPU. Si se ejecutan simultáneamente tareas que usan otra GPU (como ComfyUI), es recomendable liberar la memoria una vez terminadas para garantizar estabilidad.</p>
+<table>
+<tr><td>Libera la memoria de SAM en el panel AI Select Candidates</td><td> Descarga el modelo de la memoria de GPU. Se cargará automáticamente al usarlo de nuevo.</td></tr>
+<tr><td>Configuración del entorno › SAM 3.1 › 'Desactivar modelo'</td><td>Igual que arriba.</td></tr>
+<tr><td>Configuración del entorno › 'Detener' en SAM 3.1</td><td> detiene el worker (se reiniciará automáticamente en la siguiente ejecución).</td></tr>
+</table>
+</section>
+
+<section id="trouble">
+<h2>7. Cuando no funcione correctamente</h2>
+<p>Si falla, se mostrará en la sección de registros <code>[コード] 内容</code> y los métodos de solución se mostrarán. Los registros detallados se <code>ルートフォルダー\runtime\logs\setup.log</code>（Configuración）y <code>worker.log</code> está disponible en tiempo de ejecución.</p>
+<div class="table-wrap"><table>
+<tr><th>Código</th><th> significado</th><th> Copia</th></tr>
+<tr><td>ROOT_NOT_CONFIGURED</td><td> El directorio raíz no está configurado</td><td> Configuración del entorno › Elige la carpeta raíz en SAM 3.1</td></tr>
+<tr><td>ROOT_INVALID</td><td> el directorio no existe o no se puede escribir</td><td> Elige un directorio existente y escribible.</td></tr>
+<tr><td>SETUP_REQUIRED</td><td> el entorno de ejecución aún no está disponible</td><td> ejecutará la configuración.</td></tr>
+<tr><td>CHECKPOINT_MISSING</td><td> Modelo no encontrado / modelo no compatible con SAM 3.1</td><td><a href="#step3"> Paso 3</a> según <code>sam3.1_multiplex.pt</code> y coloca el archivo de configuración en la carpeta raíz.<code>.pt</code> Si hay varios, mueve los innecesarios.</td></tr>
+<tr><td>PYTHON_UNSUPPORTED</td><td> No se encuentra Python 3.12 o superior</td><td><a href="#step1"> Paso 1</a> Instala Python aquí (debe ser detectable desde el lanzador de Python).</td></tr>
+<tr><td>NETWORK_CONSENT_REQUIRED</td><td> No se permite la descarga</td><td><a href="#step4"> Paso 4</a> Habilita 'Permitir servicios de inteligencia artificial externos' en<b> Aplicable</b> Haga lo anterior y configure nuevamente (en el mensaje aparece 'Privacy', pero las configuraciones se encuentran en la página de interfaz).</td></tr>
+<tr><td>VENV_CREATE_FAILED</td><td> no se puede crear un entorno especializado</td><td> Verifica la capacidad libre en disco y los permisos de la carpeta, luego vuelve a ejecutar.</td></tr>
+<tr><td>PIP_FAILED</td><td> no se puede preparar pip</td><td> Realice nuevamente la configuración.</td></tr>
+<tr><td>TORCH_INSTALL_FAILED</td><td> Error al instalar PyTorch</td><td> Verifica la red y el archivo setup.log, luego vuelve a ejecutar.</td></tr>
+<tr><td>SAM31_INSTALL_FAILED</td><td> Instalación o prueba de funcionamiento de SAM fallida</td><td> revisa setup.log. La instalación offline es<a href="#offline"> Capítulo 8</a>。</td></tr>
+<tr><td>CUDA_UNAVAILABLE</td><td> No se puede utilizar GPU (CUDA)</td><td>Verifique la GPU NVIDIA y sus controladores. No será posible alcanzar una velocidad útil únicamente con la CPU.</td></tr>
+<tr><td>CUDA_MISMATCH</td><td> PyTorch no es compatible con el driver CUDA</td><td> Actualice el controlador NVIDIA y vuelva a configurar el sistema.</td></tr>
+<tr><td>WORKER_START_FAILED</td><td> El trabajador no se inicia</td><td> Verificar worker.log.</td></tr>
+<tr><td>HEALTH_FAILED</td><td> Se inicia pero no responde</td><td> Pruebe reiniciar, si no funciona, revise el archivo worker.log.</td></tr>
+<tr><td>MODEL_LOAD_FAILED</td><td> falla al cargar el modelo</td><td> Revisa worker.log. Si el archivo del modelo está dañado, reemplázalo.</td></tr>
+<tr><td>OOM</td><td> insuficiencia de memoria GPU</td><td> Cierre aplicaciones que utilicen otra GPU como ComfyUI o libere la memoria de esa GPU antes de reiniciarla.</td></tr>
+<tr><td>COMPATIBILITY_UNSUPPORTED</td><td> la versión de SAM 3 instalada no es compatible</td><td> Espere la actualización de LoomStroke o comuníquese con el desarrollador.</td></tr>
+<tr><td>CANCELLED</td><td> se canceló la instalación</td><td> Al presionar nuevamente 'Configuración', se reiniciará desde donde se interrumpió.</td></tr>
+</table></div>
+<p>En caso de que aparezca un mensaje como 'SAM 3.1 no está configurado' al usar una herramienta en AI Select, también está relacionado con la tabla anterior. Por favor, verifique el estado de SAM 3.1 en la configuración del entorno.</p>
+</section>
+
+<section id="offline">
+<h2>8. Instalación y eliminación offline</h2>
+<h3>Instalar SAM 3 en modo offline</h3>
+<p>de GitHub <a href="https://github.com/facebookresearch/sam3" target="_blank" rel="noopener">facebookresearch/sam3</a> de la serie (<code>pyproject.toml</code> en el directorio (que incluye) <code>ルートフォルダー\runtime\sam3-src</code> Al colocarlo aquí, SAM 3 se instalará desde ese punto. Sin embargo, componentes como PyTorch deben descargarse desde la red.</p>
+<h3>Eliminar</h3>
+<ol class="steps">
+  <li>Configuración del entorno › En SAM 3.1, pulse 'Detener' para detener el trabajador.</li>
+  <li>Elimina completamente el directorio raíz (el entorno especial y los modelos también se encuentran aquí, y no afectan al propio LoomStroke ni a otros entornos de Python).</li>
+  <li>Configuración del entorno › vacía el campo de la carpeta raíz de SAM 3.1 y haz clic en Aceptar.</li>
+</ol>
+<p class="note">Las condiciones de uso del modelo de SAM 3.1 se pueden verificar en la página de Hugging Face de facebook/sam3.1.</p>
+</section>
+
+<p style="color:var(--muted);font-size:13px;margin-top:48px;">Se basa en la versión de desarrollo de LoomStroke en el punto de tiempo de 2026-10-16.<a href="index_es.html">volver a la guía</a></p>
+</main>
+</div>
+
+<div class="lightbox" id="lightbox" role="dialog" aria-label="ampliar"><img alt=""></div>
+<script>
+(function () {
+  var lb = document.getElementById('lightbox'), lbImg = lb.querySelector('img');
+  document.querySelectorAll('figure img').forEach(function (img) {
+    img.addEventListener('click', function () { lbImg.src = img.src; lbImg.alt = img.alt; lb.classList.add('open'); });
+  });
+  lb.addEventListener('click', function () { lb.classList.remove('open'); });
+  document.addEventListener('keydown', function (e) { if (e.key === 'Escape') lb.classList.remove('open'); });
+  var root = document.documentElement, btn = document.getElementById('themeBtn');
+  try { var saved = localStorage.getItem('ls-manual-theme'); if (saved) root.setAttribute('data-theme', saved); } catch (e) {}
+  btn.addEventListener('click', function () {
+    var dark = root.getAttribute('data-theme') ? root.getAttribute('data-theme') === 'dark'
+      : window.matchMedia('(prefers-color-scheme: dark)').matches;
+    var next = dark ? 'light' : 'dark';
+    root.setAttribute('data-theme', next);
+    try { localStorage.setItem('ls-manual-theme', next); } catch (e) {}
+  });
+})();
+</script>
+</body>
+</html>

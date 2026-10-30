@@ -6,7 +6,9 @@ Per Master.md specifications, provides settings UI for pen tool.
 from __future__ import annotations
 
 from PySide6.QtCore import Qt, Signal
-from PySide6.QtWidgets import QFormLayout, QSlider, QWidget
+from PySide6.QtWidgets import QFormLayout, QLabel, QSlider, QWidget
+
+from loomstroke.ui.widget_translations import bind_widget_text
 
 __all__ = ["PenOptionsPanel", "create_pen_panel"]
 
@@ -34,9 +36,9 @@ class PenOptionsPanel(QWidget):
         self.opacity.setValue(int(settings.get("pen/opacity", 100)))
         self.hardness.setValue(int(settings.get("pen/hardness", 80)))
 
-        lay.addRow("Size", self.size)
-        lay.addRow("Opacity", self.opacity)
-        lay.addRow("Hardness", self.hardness)
+        lay.addRow(bind_widget_text(QLabel(), "Size", domain="PenOptionsPanel"), self.size)
+        lay.addRow(bind_widget_text(QLabel(), "Opacity", domain="PenOptionsPanel"), self.opacity)
+        lay.addRow(bind_widget_text(QLabel(), "Hardness", domain="PenOptionsPanel"), self.hardness)
 
         for w in (self.size, self.opacity, self.hardness):
             w.valueChanged.connect(self._emit_changed)

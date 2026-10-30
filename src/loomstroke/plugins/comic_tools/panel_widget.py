@@ -33,6 +33,8 @@ from PySide6.QtWidgets import (
     QWidget,
 )
 
+from loomstroke.ui.widget_translations import bind_widget_text
+
 from . import layout_tree as lt
 from .dialogue import build_dialogue_rows
 from .dialogue_batch_actions import edit_selected_dialogues
@@ -45,6 +47,7 @@ from .frame_panel_labels import panel_button, panel_label, retranslate_panel
 from .model import BALLOON_KINDS, is_raster_rig
 from .panel_fidelity import FidelityControl, handles_label, refresh_contour_controls
 from .panel_formatting import ComicFormattingWidget
+from .panel_localization import refresh_balloon_labels
 from .panel_order_refresh import PanelOrderRefresh
 from .panel_speaker_styles import SpeakerStylesWidget, speaker_styles_title
 from .panel_workflow import (
@@ -61,9 +64,9 @@ from .speaker_delegate import SpeakerDelegate
 #: compositing modes of the raster rig: (stable value, display text)
 RIG_MODES = (
     ("contour_rebuild", "Continuous contour (standard)"),
-    ("open_ink_fill", "付け根を開いて塗る (標準)"),
-    ("open_forced", "付け根を開く (透明)"),
-    ("registration_default", "登録時の設定のまま"),
+    ("open_ink_fill", "Open and fill base (standard)"),
+    ("open_forced", "Open base (transparent)"),
+    ("registration_default", "Use registration settings"),
 )
 
 
@@ -85,10 +88,10 @@ if TYPE_CHECKING:
     from .tool import ComicToolsPlugin
 
 _KIND_LABELS = {
-    "speech_round": "楕円",
-    "speech_rect": "角丸矩形",
-    "speech_cloud": "雲形 (思考)",
-    "spiky_balloon": "ギザギザ (叫び)",
+    "speech_round": "Ellipse",
+    "speech_rect": "Rounded Rectangle",
+    "speech_cloud": "Cloud (Thought)",
+    "spiky_balloon": "Spiky (Shout)",
 }
 
 _TEMPLATE_LABELS = {
@@ -115,9 +118,9 @@ class ComicToolsPanelWidget(QWidget):
         panels_scroll = QScrollArea()
         panels_scroll.setWidgetResizable(True)
         panels_scroll.setWidget(self._build_panels_tab())
-        self.tabs.addTab(panels_scroll, "コマ割り")
-        self.tabs.addTab(self._build_balloon_tab(), "フキダシ")
-        self.tabs.addTab(self._build_dialogue_tab(), "セリフ一覧")
+        self.tabs.addTab(panels_scroll, panel_ts("Panels"))
+        self.tabs.addTab(self._build_balloon_tab(), panel_ts("Balloons"))
+        self.tabs.addTab(self._build_dialogue_tab(), panel_ts("Dialogue"))
         self.speaker_styles = SpeakerStylesWidget(tool, self)
         speaker_scroll = QScrollArea()
         speaker_scroll.setWidgetResizable(True)
@@ -134,6 +137,7 @@ class ComicToolsPanelWidget(QWidget):
         self._order_refresh = PanelOrderRefresh(self)
         self.refresh_from_tool()
         retranslate_panel(self, _TEMPLATE_LABELS)
+        refresh_balloon_labels(self, _KIND_LABELS, RIG_MODES)
 
     # ── Panels tab ─────────────────────────────────────────────────────
 
@@ -270,7 +274,9 @@ class ComicToolsPanelWidget(QWidget):
         self.kind_combo = QComboBox()
         for kind in BALLOON_KINDS:
             self.kind_combo.addItem(_KIND_LABELS[kind], kind)
-        create_btn = QPushButton("フキダシ作成")
+        create_btn = bind_widget_text(
+            QPushButton(), "Create Balloon", domain="ComicToolsPanelWidget"
+        )
         create_btn.clicked.connect(self._create_balloon)
         create_wrap = QWidget()
         create_row.addWidget(self.kind_combo, 1)
@@ -278,37 +284,58 @@ class ComicToolsPanelWidget(QWidget):
         create_wrap.setLayout(create_row)
         form.addRow(create_wrap)
 
-        self.vertical_check = QCheckBox("縦書き")
+        self.vertical_check = bind_widget_text(
+            QCheckBox(), "Vertical writing", domain="ComicToolsPanelWidget"
+        )
         self.vertical_check.setChecked(True)
         form.addRow("", self.vertical_check)
 
-        self.auto_size_check = QCheckBox("テキストに合わせて自動サイズ調整")
+        self.auto_size_check = bind_widget_text(
+            QCheckBox(), "Auto-size to fit text", domain="ComicToolsPanelWidget"
+        )
         self.auto_size_check.setChecked(True)
         self.auto_size_check.toggled.connect(self._on_auto_size_toggled)
         form.addRow("", self.auto_size_check)
 
-        self.body_open_check = QCheckBox("しっぽの付け根でバルーンを開く")
-        self.body_open_check.setToolTip(
-            "ON: 輪郭をしっぽの付け根で切り欠き、しっぽを動かすと開口部も追従します。"
-            " OFF: 輪郭は常に閉じます (開いて描いた場合は隙間を線で埋めます)。"
+        self.body_open_check = bind_widget_text(
+            QCheckBox(), "Open the balloon at the tail base", domain="ComicToolsPanelWidget"
+        )
+        bind_widget_text(
+            self.body_open_check,
+            "On: open the contour at the tail base and follow tail movement. "
+            "Off: keep the contour closed, filling any drawn gap.",
+            domain="ComicToolsPanelWidget",
+            attribute="toolTip",
         )
         self.body_open_check.setChecked(False)
         self.body_open_check.toggled.connect(self._on_body_open_toggled)
         form.addRow("", self.body_open_check)
 
-        self.tail_follow_check = QCheckBox("付け根を先端に追従させる")
-        self.tail_follow_check.setToolTip(
-            "ON: 先端を動かすと付け根 (と開口) がバルーンの外周に沿って追従します。"
-            " OFF: 付け根は今の位置に固定され、先端だけが動きます。"
+        self.tail_follow_check = bind_widget_text(
+            QCheckBox(), "Make the base follow the tip", domain="ComicToolsPanelWidget"
+        )
+        bind_widget_text(
+            self.tail_follow_check,
+            "On: moving the tip moves the base and opening along the balloon contour. "
+            "Off: keep the base fixed and move only the tip.",
+            domain="ComicToolsPanelWidget",
+            attribute="toolTip",
         )
         self.tail_follow_check.setChecked(True)
         self.tail_follow_check.toggled.connect(self._on_tail_follow_toggled)
         form.addRow("", self.tail_follow_check)
 
-        self.tail_join_check = QCheckBox("しっぽとバルーンの線を自動でつなぐ")
-        self.tail_join_check.setToolTip(
-            "しっぽの線の端とバルーンの輪郭を、ピクセルから推定した接線・太さ・色で"
-            " 滑らかにつなぎます (離れすぎている場合はつなぎません)。"
+        self.tail_join_check = bind_widget_text(
+            QCheckBox(),
+            "Automatically join tail and balloon outlines",
+            domain="ComicToolsPanelWidget",
+        )
+        bind_widget_text(
+            self.tail_join_check,
+            "Smoothly join the tail and balloon outlines using tangents, widths and colors "
+            "estimated from pixels. Distant outlines are not joined.",
+            domain="ComicToolsPanelWidget",
+            attribute="toolTip",
         )
         self.tail_join_check.setChecked(True)
         self.tail_join_check.toggled.connect(self._on_tail_join_toggled)
@@ -319,37 +346,74 @@ class ComicToolsPanelWidget(QWidget):
         self.tail_gap_spin.setDecimals(1)
         self.tail_gap_spin.setSingleStep(1.0)
         self.tail_gap_spin.setSuffix(" px")
-        self.tail_gap_spin.setToolTip(
-            "しっぽの付け根とバルーン外周の距離。変換時は描いたままの距離になります。"
-            " 0 で密着、負の値で食い込み。"
+        bind_widget_text(
+            self.tail_gap_spin,
+            "Distance between the tail base and balloon contour. Conversion preserves the drawn "
+            "distance. Zero touches the contour; negative values overlap it.",
+            domain="ComicToolsPanelWidget",
+            attribute="toolTip",
         )
         self.tail_gap_spin.valueChanged.connect(self._on_tail_gap_changed)
-        form.addRow("しっぽの距離", self.tail_gap_spin)
+        form.addRow(
+            bind_widget_text(QLabel(), "Tail distance", domain="ComicToolsPanelWidget"),
+            self.tail_gap_spin,
+        )
 
         self.text_edit = QPlainTextEdit()
-        self.text_edit.setPlaceholderText("セリフを入力...")
+        bind_widget_text(
+            self.text_edit,
+            "Enter dialogue...",
+            domain="ComicToolsPanelWidget",
+            attribute="placeholderText",
+        )
         self.text_edit.setMaximumHeight(120)
-        form.addRow("セリフ", self.text_edit)
-        apply_text_btn = QPushButton("セリフを反映")
+        form.addRow(
+            bind_widget_text(QLabel(), "Dialogue", domain="ComicToolsPanelWidget"), self.text_edit
+        )
+        apply_text_btn = bind_widget_text(
+            QPushButton(), "Apply Dialogue", domain="ComicToolsPanelWidget"
+        )
         apply_text_btn.clicked.connect(self._apply_text)
         form.addRow("", apply_text_btn)
 
         self.speaker_id_edit = QLineEdit()
-        self.speaker_id_edit.setPlaceholderText("speaker_id (例: char_a)")
+        bind_widget_text(
+            self.speaker_id_edit,
+            "Speaker ID (e.g. char_a)",
+            domain="ComicToolsPanelWidget",
+            attribute="placeholderText",
+        )
         self.speaker_name_edit = QLineEdit()
-        self.speaker_name_edit.setPlaceholderText("表示名 (例: 主人公)")
-        form.addRow("話者ID", self.speaker_id_edit)
-        form.addRow("話者名", self.speaker_name_edit)
-        speaker_btn = QPushButton("話者を設定")
+        bind_widget_text(
+            self.speaker_name_edit,
+            "Display name (e.g. Protagonist)",
+            domain="ComicToolsPanelWidget",
+            attribute="placeholderText",
+        )
+        form.addRow(
+            bind_widget_text(QLabel(), "Speaker ID", domain="ComicToolsPanelWidget"),
+            self.speaker_id_edit,
+        )
+        form.addRow(
+            bind_widget_text(QLabel(), "Speaker name", domain="ComicToolsPanelWidget"),
+            self.speaker_name_edit,
+        )
+        speaker_btn = bind_widget_text(QPushButton(), "Set Speaker", domain="ComicToolsPanelWidget")
         speaker_btn.clicked.connect(self._apply_speaker)
         form.addRow("", speaker_btn)
 
-        delete_btn = QPushButton("フキダシ削除")
+        delete_btn = bind_widget_text(
+            QPushButton(), "Delete Balloon", domain="ComicToolsPanelWidget"
+        )
         delete_btn.clicked.connect(self._delete_balloon)
         form.addRow("", delete_btn)
 
         # ── 吹き出し化 (半自動変換、確認ステップ付き) ──
-        balloonize_btn = QPushButton("手描きフキダシを変換 (選択範囲/レイヤー)")
+        balloonize_btn = bind_widget_text(
+            QPushButton(),
+            "Convert Hand-drawn Balloon (Selection/Layer)",
+            domain="ComicToolsPanelWidget",
+        )
         balloonize_btn.clicked.connect(self._start_balloonize)
         form.addRow(balloonize_btn)
 
@@ -358,12 +422,19 @@ class ComicToolsPanelWidget(QWidget):
         bz_form.setContentsMargins(8, 0, 0, 0)
         self.bz_status_label = QLabel("-")
         self.bz_status_label.setWordWrap(True)
-        bz_form.addRow("候補", self.bz_status_label)
+        bz_form.addRow(
+            bind_widget_text(QLabel(), "Candidate", domain="ComicToolsPanelWidget"),
+            self.bz_status_label,
+        )
         self.bz_kind_combo = QComboBox()
         for kind in BALLOON_KINDS:
             self.bz_kind_combo.addItem(_KIND_LABELS[kind], kind)
-        bz_form.addRow("種類", self.bz_kind_combo)
-        self.bz_tail_check = QCheckBox("tail を付ける")
+        bz_form.addRow(
+            bind_widget_text(QLabel(), "Kind", domain="ComicToolsPanelWidget"), self.bz_kind_combo
+        )
+        self.bz_tail_check = bind_widget_text(
+            QCheckBox(), "Add tail", domain="ComicToolsPanelWidget"
+        )
         bz_form.addRow("", self.bz_tail_check)
         tip_row = QHBoxLayout()
         self.bz_tip_x = QDoubleSpinBox()
@@ -373,7 +444,9 @@ class ComicToolsPanelWidget(QWidget):
             tip_row.addWidget(spin)
         tip_wrap = QWidget()
         tip_wrap.setLayout(tip_row)
-        bz_form.addRow("tail 先端", tip_wrap)
+        bz_form.addRow(
+            bind_widget_text(QLabel(), "Tail tip", domain="ComicToolsPanelWidget"), tip_wrap
+        )
         size_row = QHBoxLayout()
         self.bz_body_w = QDoubleSpinBox()
         self.bz_body_h = QDoubleSpinBox()
@@ -382,14 +455,20 @@ class ComicToolsPanelWidget(QWidget):
             size_row.addWidget(spin)
         size_wrap = QWidget()
         size_wrap.setLayout(size_row)
-        bz_form.addRow("body サイズ", size_wrap)
-        self.bz_hide_source_check = QCheckBox("元レイヤーを非表示にする (削除はしない)")
+        bz_form.addRow(
+            bind_widget_text(QLabel(), "Body size", domain="ComicToolsPanelWidget"), size_wrap
+        )
+        self.bz_hide_source_check = bind_widget_text(
+            QCheckBox(), "Hide source layer (keep it)", domain="ComicToolsPanelWidget"
+        )
         self.bz_hide_source_check.setChecked(True)
         bz_form.addRow("", self.bz_hide_source_check)
         confirm_row = QHBoxLayout()
-        bz_confirm_btn = QPushButton("確定して変換")
+        bz_confirm_btn = bind_widget_text(
+            QPushButton(), "Confirm and Convert", domain="ComicToolsPanelWidget"
+        )
         bz_confirm_btn.clicked.connect(self._confirm_balloonize)
-        bz_cancel_btn = QPushButton("キャンセル")
+        bz_cancel_btn = bind_widget_text(QPushButton(), "Cancel", domain="ComicToolsPanelWidget")
         bz_cancel_btn.clicked.connect(self._cancel_balloonize)
         confirm_row.addWidget(bz_confirm_btn)
         confirm_row.addWidget(bz_cancel_btn)
@@ -400,16 +479,28 @@ class ComicToolsPanelWidget(QWidget):
         form.addRow(self.balloonize_group)
 
         # -- Body/Tail レイヤーからフキダシ化 (raster rig) --
-        rig_btn = QPushButton("Body/Tail レイヤーからフキダシ化")
+        rig_btn = bind_widget_text(
+            QPushButton(), "Create Balloon from Body/Tail Layers", domain="ComicToolsPanelWidget"
+        )
         rig_btn.clicked.connect(self._start_rig)
         form.addRow(rig_btn)
         self._build_rig_group(form)
 
         self.balloon_info_label = QLabel("-")
         self.balloon_info_label.setWordWrap(True)
-        form.addRow("選択中", self.balloon_info_label)
-        asset_btn = QPushButton("選択中のフキダシを素材パネルに登録")
-        asset_btn.setToolTip("Comic Assets パネルの「フキダシ」タブに素材として保存します")
+        form.addRow(
+            bind_widget_text(QLabel(), "Selected", domain="ComicToolsPanelWidget"),
+            self.balloon_info_label,
+        )
+        asset_btn = bind_widget_text(
+            QPushButton(), "Register Selected Balloon as Asset", domain="ComicToolsPanelWidget"
+        )
+        bind_widget_text(
+            asset_btn,
+            "Save as an asset in the Balloons tab of the Comic Assets panel.",
+            domain="ComicToolsPanelWidget",
+            attribute="toolTip",
+        )
         asset_btn.clicked.connect(self._register_asset)
         form.addRow(asset_btn)
         self._balloon_selection_actions = (apply_text_btn, speaker_btn, delete_btn, asset_btn)
@@ -519,19 +610,27 @@ class ComicToolsPanelWidget(QWidget):
     def _start_balloonize(self) -> None:
         context = self._tool.propose_balloonize()
         if context is None:
-            self.bz_status_label.setText(
-                "フキダシを認識できませんでした (選択範囲かレイヤーを確認)"
+            bind_widget_text(
+                self.bz_status_label,
+                "Could not recognize a balloon (check the selection or layer).",
+                domain="ComicToolsPanelWidget",
+                attribute="text",
             )
             self.balloonize_group.setVisible(False)
             return
         proposal = context.proposal
-        notes = {
-            "tail_not_detected": "tail 未検出 (手動で付けられます)",
-            "tail_ambiguous": "tail 候補が曖昧です (要確認)",
-        }
-        joined = " / ".join(notes[n] for n in proposal.notes if n in notes)
-        note_text = joined or "候補を確認してください"
-        self.bz_status_label.setText(note_text)
+        notes = [n for n in proposal.notes if n in {"tail_not_detected", "tail_ambiguous"}]
+        source = "Review the candidate."
+        if "tail_not_detected" in notes and "tail_ambiguous" in notes:
+            source = (
+                "Tail not detected (you can add one manually) / "
+                "Tail candidate is ambiguous (review required)"
+            )
+        elif "tail_not_detected" in notes:
+            source = "Tail not detected (you can add one manually)"
+        elif "tail_ambiguous" in notes:
+            source = "Tail candidate is ambiguous (review required)"
+        bind_widget_text(self.bz_status_label, source, domain="ComicToolsPanelWidget")
         index = self.bz_kind_combo.findData(proposal.kind)
         if index >= 0:
             self.bz_kind_combo.setCurrentIndex(index)
@@ -572,8 +671,11 @@ class ComicToolsPanelWidget(QWidget):
 
     def _register_asset(self) -> None:
         asset = self._tool.register_selected_balloon_as_asset()
-        self.balloon_info_label.setText(
-            f"素材に登録しました: {asset.name}" if asset else "素材登録: フキダシを選択してください"
+        bind_widget_text(
+            self.balloon_info_label,
+            "Registered as an asset: {name}" if asset else "Asset registration: select a balloon.",
+            domain="ComicToolsPanelWidget",
+            name=asset.name if asset else "",
         )
 
     # ── raster rig (Body/Tail レイヤーからフキダシ化) ──────────────────
@@ -589,16 +691,31 @@ class ComicToolsPanelWidget(QWidget):
         pick_form.setContentsMargins(0, 0, 0, 0)
         self.rig_body_combo = _LayerCombo(self._populate_rig_layer_combos)
         self.rig_tail_combo = _LayerCombo(self._populate_rig_layer_combos)
-        pick_form.addRow("Body レイヤー", self.rig_body_combo)
-        pick_form.addRow("Tail レイヤー", self.rig_tail_combo)
+        pick_form.addRow(
+            bind_widget_text(QLabel(), "Body layer", domain="ComicToolsPanelWidget"),
+            self.rig_body_combo,
+        )
+        pick_form.addRow(
+            bind_widget_text(QLabel(), "Tail layer", domain="ComicToolsPanelWidget"),
+            self.rig_tail_combo,
+        )
         register_row = QHBoxLayout()
-        rig_register_btn = QPushButton("登録してプレビュー")
+        rig_register_btn = bind_widget_text(
+            QPushButton(), "Register and Preview", domain="ComicToolsPanelWidget"
+        )
         rig_register_btn.clicked.connect(self._register_rig)
         register_row.addWidget(rig_register_btn)
         # The legacy clean converter is still internal; frame availability
         # does not expose this separate experimental conversion mode.
-        clean_btn = QPushButton("クリーン変換 (開発)")
-        clean_btn.setToolTip("マスクを結合して整形ベクターに変換する旧モード (開発用)")
+        clean_btn = bind_widget_text(
+            QPushButton(), "Clean Conversion (Development)", domain="ComicToolsPanelWidget"
+        )
+        bind_widget_text(
+            clean_btn,
+            "Legacy mode that combines masks and converts them to shaped vectors (development).",
+            domain="ComicToolsPanelWidget",
+            attribute="toolTip",
+        )
         clean_btn.clicked.connect(self._start_clean_dev)
         register_row.addWidget(clean_btn)
         clean_btn.hide()
@@ -607,7 +724,10 @@ class ComicToolsPanelWidget(QWidget):
         pick_form.addRow(register_wrap)
         self.rig_status_label = QLabel("-")
         self.rig_status_label.setWordWrap(True)
-        pick_form.addRow("状態", self.rig_status_label)
+        pick_form.addRow(
+            bind_widget_text(QLabel(), "Status", domain="ComicToolsPanelWidget"),
+            self.rig_status_label,
+        )
         rig_form.addRow(self.rig_pick_widget)
 
         # 2) compositing parameters (live session or selected rig balloon)
@@ -626,7 +746,9 @@ class ComicToolsPanelWidget(QWidget):
         scale_row.addWidget(self.rig_scale_slider, 1)
         scale_wrap = QWidget()
         scale_wrap.setLayout(scale_row)
-        param_form.addRow("しっぽの大きさ", scale_wrap)
+        param_form.addRow(
+            bind_widget_text(QLabel(), "Tail size", domain="ComicToolsPanelWidget"), scale_wrap
+        )
         self.rig_fidelity_control = FidelityControl()
         param_form.addRow(self.rig_fidelity_control)
         self.rig_fidelity_control.valueChanged.connect(lambda _value: self._rig_param_changed())
@@ -638,23 +760,44 @@ class ComicToolsPanelWidget(QWidget):
             self.rig_mode_combo.addItem(
                 contour_mode_label() if value == "contour_rebuild" else label, value
             )
-        param_form.addRow("接続モード", self.rig_mode_combo)
+        param_form.addRow(
+            bind_widget_text(QLabel(), "Connection mode", domain="ComicToolsPanelWidget"),
+            self.rig_mode_combo,
+        )
         self.rig_inset_spin = QDoubleSpinBox()
         self.rig_inset_spin.setRange(0.0, 48.0)
         self.rig_inset_spin.setSingleStep(0.5)
         self.rig_inset_spin.setSuffix(" px")
-        self.rig_inset_spin.setToolTip("接続部で本体側へ塗り込む幅")
-        param_form.addRow("塗り込み", self.rig_inset_spin)
+        bind_widget_text(
+            self.rig_inset_spin,
+            "Width of fill into the body at the connection",
+            domain="ComicToolsPanelWidget",
+            attribute="toolTip",
+        )
+        param_form.addRow(
+            bind_widget_text(QLabel(), "Fill inset", domain="ComicToolsPanelWidget"),
+            self.rig_inset_spin,
+        )
         self.rig_overlap_spin = QDoubleSpinBox()
         self.rig_overlap_spin.setRange(-24.0, 48.0)
         self.rig_overlap_spin.setSingleStep(0.5)
         self.rig_overlap_spin.setSuffix(" px")
-        self.rig_overlap_spin.setToolTip("しっぽの付け根を本体側へ押し込む量 (負 = 輪郭の外)")
-        param_form.addRow("付け根の深さ", self.rig_overlap_spin)
+        bind_widget_text(
+            self.rig_overlap_spin,
+            "Depth of the tail base inside the body (negative = outside the contour)",
+            domain="ComicToolsPanelWidget",
+            attribute="toolTip",
+        )
+        param_form.addRow(
+            bind_widget_text(QLabel(), "Base depth", domain="ComicToolsPanelWidget"),
+            self.rig_overlap_spin,
+        )
         self.rig_handles_check = QCheckBox(handles_label(True))
         self.rig_handles_check.setChecked(True)
         param_form.addRow("", self.rig_handles_check)
-        self.rig_diag_check = QCheckBox("診断を表示 (開発)")
+        self.rig_diag_check = bind_widget_text(
+            QCheckBox(), "Show Diagnostics (Development)", domain="ComicToolsPanelWidget"
+        )
         self.rig_diag_label = QLabel("")
         self.rig_diag_label.setWordWrap(True)
         self.rig_diag_label.setVisible(False)
@@ -677,13 +820,17 @@ class ComicToolsPanelWidget(QWidget):
         self.rig_confirm_widget = QWidget()
         confirm_form = QFormLayout(self.rig_confirm_widget)
         confirm_form.setContentsMargins(0, 0, 0, 0)
-        self.rig_hide_source_check = QCheckBox("元レイヤーを非表示にする (削除はしない)")
+        self.rig_hide_source_check = bind_widget_text(
+            QCheckBox(), "Hide source layer (keep it)", domain="ComicToolsPanelWidget"
+        )
         self.rig_hide_source_check.setChecked(True)
         confirm_form.addRow("", self.rig_hide_source_check)
         confirm_row = QHBoxLayout()
-        rig_confirm_btn = QPushButton("確定して変換")
+        rig_confirm_btn = bind_widget_text(
+            QPushButton(), "Confirm and Convert", domain="ComicToolsPanelWidget"
+        )
         rig_confirm_btn.clicked.connect(self._confirm_rig)
-        rig_cancel_btn = QPushButton("キャンセル")
+        rig_cancel_btn = bind_widget_text(QPushButton(), "Cancel", domain="ComicToolsPanelWidget")
         rig_cancel_btn.clicked.connect(self._cancel_rig)
         confirm_row.addWidget(rig_confirm_btn)
         confirm_row.addWidget(rig_cancel_btn)
@@ -719,36 +866,65 @@ class ComicToolsPanelWidget(QWidget):
     def _start_rig(self) -> None:
         self._populate_rig_layer_combos()
         self._rig_pick_requested = True
-        self.rig_status_label.setText("Body / Tail レイヤーを選んで「登録してプレビュー」")
+        bind_widget_text(
+            self.rig_status_label,
+            "Select Body/Tail layers, then click Register and Preview.",
+            domain="ComicToolsPanelWidget",
+            attribute="text",
+        )
         self._refresh_rig_controls()
 
     def _register_rig(self) -> None:
         body_layer_id = str(self.rig_body_combo.currentData() or "")
         tail_layer_id = str(self.rig_tail_combo.currentData() or "")
         if not body_layer_id or not tail_layer_id:
-            self.rig_status_label.setText("Body と Tail のレイヤーを両方選択してください")
+            bind_widget_text(
+                self.rig_status_label,
+                "Select both Body and Tail layers.",
+                domain="ComicToolsPanelWidget",
+                attribute="text",
+            )
             return
         if body_layer_id == tail_layer_id:
-            self.rig_status_label.setText("Body と Tail は別のレイヤーを選んでください")
+            bind_widget_text(
+                self.rig_status_label,
+                "Select different layers for Body and Tail.",
+                domain="ComicToolsPanelWidget",
+                attribute="text",
+            )
             return
         session = self._tool.start_rig_registration(body_layer_id, tail_layer_id)
         if session is None:
             reasons = "; ".join(
                 contour_reason(r) for r in (getattr(self._tool, "last_rig_reasons", []) or [])
             )
-            self.rig_status_label.setText(f"登録できませんでした: {reasons or '不明'}")
+            bind_widget_text(
+                self.rig_status_label,
+                "Could not register: {reasons}",
+                domain="ComicToolsPanelWidget",
+                reasons=reasons or contour_reason("unknown"),
+            )
             self._refresh_rig_controls()
             return
         info = session.proposal_summary()
         warnings = info.get("warnings") or []
-        note = f" / 注意: {'; '.join(str(w) for w in warnings)}" if warnings else ""
+        note = (
+            panel_ts(" / Warnings: {warnings}").format(warnings="; ".join(str(w) for w in warnings))
+            if warnings
+            else ""
+        )
         self._rig_preview_note = note
         self.rig_status_label.setText(contour_preview_hint(note))
         self._refresh_rig_controls()
 
     def _confirm_rig(self) -> None:
         if not self._tool.rig_registration_pending:
-            self.rig_status_label.setText("先に「登録してプレビュー」を実行してください")
+            bind_widget_text(
+                self.rig_status_label,
+                "Click Register and Preview first.",
+                domain="ComicToolsPanelWidget",
+                attribute="text",
+            )
             return
         balloon_id = self._tool.confirm_rig(
             text=self.text_edit.toPlainText(),
@@ -771,13 +947,23 @@ class ComicToolsPanelWidget(QWidget):
         body_layer_id = str(self.rig_body_combo.currentData() or "")
         tail_layer_id = str(self.rig_tail_combo.currentData() or "") or None
         if not body_layer_id:
-            self.rig_status_label.setText("Body レイヤーを選択してください")
+            bind_widget_text(
+                self.rig_status_label,
+                "Select a Body layer.",
+                domain="ComicToolsPanelWidget",
+                attribute="text",
+            )
             return
         context = self._tool.propose_balloonize_clean_from_layers(
             body_layer_id=body_layer_id, tail_layer_id=tail_layer_id
         )
         if context is None:
-            self.rig_status_label.setText("認識できませんでした")
+            bind_widget_text(
+                self.rig_status_label,
+                "Could not recognize the balloon.",
+                domain="ComicToolsPanelWidget",
+                attribute="text",
+            )
             return
         # Clean reuses the existing Phase BZ confirmation surface
         self._rig_pick_requested = False
@@ -958,7 +1144,12 @@ class ComicToolsPanelWidget(QWidget):
         self.bz_tip_y.setValue(proposal.tail.tip[1])
         self.bz_body_w.setValue(proposal.body_rect[2])
         self.bz_body_h.setValue(proposal.body_rect[3])
-        self.bz_status_label.setText("Clean 変換候補を確認してください")
+        bind_widget_text(
+            self.bz_status_label,
+            "Review the clean conversion candidate.",
+            domain="ComicToolsPanelWidget",
+            attribute="text",
+        )
         self.balloonize_group.setVisible(True)
 
     # ── Dialogue tab ───────────────────────────────────────────────────
@@ -966,7 +1157,9 @@ class ComicToolsPanelWidget(QWidget):
     def _build_dialogue_tab(self) -> QWidget:
         page = QWidget()
         column = QVBoxLayout(page)
-        refresh_btn = QPushButton("一覧を更新")
+        refresh_btn = bind_widget_text(
+            QPushButton(), "Refresh List", domain="ComicToolsPanelWidget"
+        )
         refresh_btn.clicked.connect(self.refresh_dialogue)
         column.addWidget(refresh_btn)
         from .panel_formatting import _ts  # noqa: PLC0415
@@ -975,7 +1168,9 @@ class ComicToolsPanelWidget(QWidget):
         self.dialogue_batch_button.clicked.connect(lambda: edit_selected_dialogues(self))
         column.addWidget(self.dialogue_batch_button)
         self.dialogue_table = QTableWidget(0, 5)
-        self.dialogue_table.setHorizontalHeaderLabels(["ページ", "コマ", "話者", "セリフ", "状態"])
+        self.dialogue_table.setHorizontalHeaderLabels(
+            ["Page", "Panel", "Speaker", "Dialogue", "Status"]
+        )
         self.dialogue_table.setEditTriggers(
             QTableWidget.EditTrigger.DoubleClicked | QTableWidget.EditTrigger.EditKeyPressed
         )
@@ -1050,6 +1245,7 @@ class ComicToolsPanelWidget(QWidget):
         super().changeEvent(event)
         if event.type() == QEvent.Type.LanguageChange and hasattr(self, "speaker_styles"):
             retranslate_panel(self, _TEMPLATE_LABELS)
+            refresh_balloon_labels(self, _KIND_LABELS, RIG_MODES)
             self.tabs.setTabText(3, speaker_styles_title())
             from .panel_formatting import _ts  # noqa: PLC0415
 
@@ -1107,9 +1303,13 @@ class ComicToolsPanelWidget(QWidget):
                     from .service import text_props_from_object  # noqa: PLC0415
 
                     props = text_props_from_object(text_obj) if text_obj is not None else None
-                    self.balloon_info_label.setText(
-                        f"{record.balloon_id} / コマ: {record.panel_id or '-'} / "
-                        f"話者: {record.speaker_name or record.speaker_id or '-'}"
+                    bind_widget_text(
+                        self.balloon_info_label,
+                        "{balloon} / Panel: {panel} / Speaker: {speaker}",
+                        domain="ComicToolsPanelWidget",
+                        balloon=record.balloon_id,
+                        panel=record.panel_id or "-",
+                        speaker=record.speaker_name or record.speaker_id or "-",
                     )
                     self.auto_size_check.setChecked(record.auto_size)
                     rig = is_raster_rig(record)

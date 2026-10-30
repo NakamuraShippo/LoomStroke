@@ -10,6 +10,8 @@ from typing import Any, cast
 from PySide6.QtCore import Qt, QTimer
 from PySide6.QtWidgets import QLabel, QStackedWidget
 
+from loomstroke.ui.widget_translations import bind_widget_text
+
 from ..core.book_spread_layout import BookLayout
 from ..core.brush_size_key_stepper import ACCELERATION_SETTING_KEY
 from ..core.tool_manager import ToolManager
@@ -380,7 +382,14 @@ class MainWindowCanvasBootstrapCoordinator:
         window = self._window
         # Fallback to placeholder
         logger.warning(f"CanvasWidget import failed: {error}")
-        window.canvas = cast(Any, QLabel("Canvas Placeholder\n(CanvasWidget not found)"))
+        window.canvas = cast(
+            Any,
+            bind_widget_text(
+                QLabel(),
+                "Canvas Placeholder\n(CanvasWidget not found)",
+                domain="MainWindowCanvasBootstrapCoordinator",
+            ),
+        )
         window.canvas.setAlignment(Qt.AlignmentFlag.AlignCenter)
         window.canvas.setStyleSheet("background-color: #2b2b2b; color: #888; font-size: 14px;")
         logger.warning("Using placeholder for canvas")

@@ -276,7 +276,9 @@ class ConnectionBar(QWidget):
             for server in registry.list_all():
                 self.server_combo.addItem(f"{server.name} — {server.url}", server.id)
             if self.server_combo.count() == 0:
-                self.server_combo.addItem(f"Local — {DEFAULT_LOCAL_COMFYUI_URL}", "local")
+                self.server_combo.addItem(
+                    self._ts("Local — {url}").format(url=DEFAULT_LOCAL_COMFYUI_URL), "local"
+                )
             index = self.server_combo.findData(current_id)
             if index < 0:
                 index = self.server_combo.findData(registry.default_server_id or "local")

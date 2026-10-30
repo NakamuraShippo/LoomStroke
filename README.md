@@ -73,7 +73,7 @@ Windows 64-bitでは、Python未導入のまま `install.bat` をダブルクリ
 インストール完了後は `update.bat` をダブルクリックし、最新版への更新が完了してから
 `boot_LoomStroke.bat` で起動します。
 
-`install.bat --nanobanana` でNanoBananaの追加依存を有効にできます。
+`install.bat` はNanoBanana用の追加依存（`google-genai`）も標準でインストールします。従来の `--nanobanana` オプションも使用できます。
 自動実行時は `--no-pause`、新しい仮想環境の作成に使うPythonを指定する場合は
 `--python "C:\path\python.exe"` を追加してください。
 `--no-python-download` でPythonの自動取得を止められます。
@@ -109,6 +109,8 @@ AI SelectionのSAM3.1実行環境やモデル重みは同梱せず、対応機�
 ## 説明書
 
 - [利用者向けガイドの入口](docs/user/index.html)
+- [画像付き説明書（12言語）](docs/user/manual/index.html)
+- [SAM 3.1導入ガイド（12言語）](docs/user/manual/sam31.html)
 - [日本語マニュアル](docs/user/index_ja.html)
 - [インストールと起動](docs/user/INSTALL_AND_RUN.md)
 - [起動方法・トラブルシューティング](docs/user/RUN_INSTRUCTIONS.md)

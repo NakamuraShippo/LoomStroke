@@ -9,6 +9,7 @@ from PySide6.QtWidgets import QMainWindow, QMessageBox, QWidget
 
 from .credential_migration_notice import install_credential_migration_notice
 from .main_window_tool_plugin_bootstrap import MainWindowToolPluginBootstrapCoordinator
+from .translations import translate_with_fallback
 
 logger = logging.getLogger(__name__)
 
@@ -78,6 +79,8 @@ class MainWindowAppIntegrationCoordinator:
             logger.error("Async initialization failed: %s", exc)
             QMessageBox.critical(
                 window,
-                "Initialization Error",
-                f"Failed to initialize: {exc}",
+                translate_with_fallback("MainWindow", "Initialization Error"),
+                translate_with_fallback("MainWindow", "Failed to initialize: {error}").format(
+                    error=exc
+                ),
             )

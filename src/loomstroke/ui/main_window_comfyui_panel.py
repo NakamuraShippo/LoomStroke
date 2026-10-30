@@ -10,6 +10,8 @@ from typing import Any
 from PySide6.QtCore import Qt
 from PySide6.QtWidgets import QDockWidget, QLabel
 
+from loomstroke.ui.widget_translations import bind_widget_text
+
 logger = logging.getLogger(__name__)
 
 
@@ -116,7 +118,11 @@ class MainWindowComfyUIPanelCoordinator:
         try:
             comfyui_dock = QDockWidget("ComfyUI", window)
             window._comfyui_dock = comfyui_dock
-            placeholder = QLabel("ComfyUI Panel\n(Not Available)")
+            placeholder = bind_widget_text(
+                QLabel(),
+                "ComfyUI Panel\n(Not Available)",
+                domain="MainWindowComfyUIPanelCoordinator",
+            )
             placeholder.setAlignment(Qt.AlignmentFlag.AlignCenter)
             placeholder.setStyleSheet("color: #666; padding: 20px;")
 

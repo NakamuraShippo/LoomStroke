@@ -23,6 +23,7 @@ from PySide6.QtWidgets import (
 )
 
 from loomstroke.ui.panels.base_panel import BasePanel
+from loomstroke.ui.widget_translations import bind_combo_texts
 
 logger = logging.getLogger(__name__)
 
@@ -114,7 +115,9 @@ class PromptPanel(BasePanel):
         header_layout.addWidget(selector_label)
 
         self.template_combo = QComboBox()
-        self.template_combo.currentTextChanged.connect(self._on_template_selected)
+        self.template_combo.currentIndexChanged.connect(
+            lambda _index: self._on_template_selected(self.template_combo.currentData())
+        )
         header_layout.addWidget(self.template_combo)
 
         layout.addLayout(header_layout)
@@ -336,8 +339,12 @@ class PromptPanel(BasePanel):
         # Update combo box
         if self.template_combo is None:
             return
-        self.template_combo.addItem("None")
-        self.template_combo.addItems([t.name for t in defaults])
+        self.template_combo.addItem("None", "None")
+        for template in defaults:
+            self.template_combo.addItem(template.name, template.name)
+        bind_combo_texts(
+            self.template_combo, ["None", *[t.name for t in defaults]], domain="PromptPanel"
+        )
 
     # Event Handlers
 
@@ -441,7 +448,7 @@ class PromptPanel(BasePanel):
         self.templates[name] = template
         if self.template_combo is None:
             return
-        self.template_combo.addItem(name)
+        self.template_combo.addItem(name, name)
 
         logger.info(f"Saved template: {name}")
 

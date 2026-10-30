@@ -1343,7 +1343,7 @@ class PresetManagerWindow(QWidget):
         self._content_title = QLabel(_tr("All Presets"), header)
         self._content_title.setObjectName("PresetManagerContentTitle")
         hlayout.addWidget(self._content_title)
-        self._content_count = QLabel("0 items", header)
+        self._content_count = QLabel(_tr("%d items") % 0, header)
         self._content_count.setObjectName("PresetManagerContentCount")
         hlayout.addWidget(self._content_count)
         hlayout.addStretch(1)

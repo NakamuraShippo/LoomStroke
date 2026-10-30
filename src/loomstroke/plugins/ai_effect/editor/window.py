@@ -1456,7 +1456,9 @@ class EffectEditorWindow(QWidget):
             for server in servers:
                 self._server_combo.addItem(f"{server.name} — {server.url}", server.id)
             if self._server_combo.count() == 0:
-                self._server_combo.addItem("Local — http://127.0.0.1:8188", "local")
+                self._server_combo.addItem(
+                    _tr("Local — {url}").format(url="http://127.0.0.1:8188"), "local"
+                )
             index = self._server_combo.findData(current_id)
             if index < 0:
                 index = self._server_combo.findData(default_id)

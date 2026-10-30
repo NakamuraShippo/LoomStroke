@@ -6,7 +6,7 @@ import json
 import logging
 import uuid
 
-from PySide6.QtCore import Qt
+from PySide6.QtCore import QEvent, Qt
 from PySide6.QtGui import QColor
 from PySide6.QtWidgets import (
     QDialog,
@@ -24,6 +24,7 @@ from loomstroke.plugins.color_manager.color_models import (
     PaletteSwatch,
 )
 from loomstroke.plugins.color_manager.widgets.panel import ColorPanel
+from loomstroke.ui.translations import TranslationBinder, translate_with_fallback
 
 logger = logging.getLogger(__name__)
 
@@ -44,7 +45,10 @@ class ColorPickerPopup(QDialog):
         parent: QWidget | None = None,
     ) -> None:
         super().__init__(parent)
-        self.setWindowTitle("Color Picker")
+        self._translations = TranslationBinder(
+            lambda source: translate_with_fallback("ColorPickerPopup", source)
+        )
+        self._translations.register(self.setWindowTitle, "Color Picker")
         self.setWindowFlags(self.windowFlags() | Qt.WindowType.WindowCloseButtonHint)
 
         self._result_color: QColor | None = None
@@ -73,10 +77,12 @@ class ColorPickerPopup(QDialog):
         # --- OK / Cancel buttons ---
         btn_layout = QHBoxLayout()
         btn_layout.addStretch(1)
-        ok_btn = QPushButton("OK")
+        ok_btn = QPushButton()
+        self._translations.register(ok_btn.setText, "OK")
         ok_btn.setDefault(True)
         ok_btn.clicked.connect(self.accept)
-        cancel_btn = QPushButton("Cancel")
+        cancel_btn = QPushButton()
+        self._translations.register(cancel_btn.setText, "Cancel")
         cancel_btn.clicked.connect(self.reject)
         btn_layout.addWidget(ok_btn)
         btn_layout.addWidget(cancel_btn)
@@ -87,6 +93,11 @@ class ColorPickerPopup(QDialog):
         layout.addLayout(btn_layout)
         self.adjustSize()
         self.setFixedSize(self.sizeHint())
+
+    def changeEvent(self, event: QEvent) -> None:
+        super().changeEvent(event)
+        if event.type() == QEvent.Type.LanguageChange and hasattr(self, "_translations"):
+            self._translations.retranslate()
 
     @staticmethod
     def _load_palettes() -> list[ColorPalette]:

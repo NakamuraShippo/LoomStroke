@@ -29,6 +29,7 @@ from PySide6.QtWidgets import (
 )
 
 from loomstroke.ui.translations import translate_with_fallback
+from loomstroke.ui.widget_translations import bind_widget_text
 
 logger = logging.getLogger(__name__)
 
@@ -413,7 +414,7 @@ class ParameterEditor(QWidget):
         optional = input_schema.get("optional", {})
         if optional:
             # Add separator
-            sep = QLabel("Optional Parameters")
+            sep = bind_widget_text(QLabel(), "Optional Parameters", domain="ParameterEditor")
             sep.setStyleSheet("color: gray; font-weight: bold; padding-top: 10px;")
             self.content_layout.addWidget(sep)
 

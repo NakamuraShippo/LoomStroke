@@ -9,6 +9,8 @@ from pathlib import Path
 
 from PySide6.QtCore import QCoreApplication, QLocale, Qt, QTranslator
 
+from .shared_catalog_translator import SharedCatalogTranslator
+
 TRANSLATION_PREFIX = "loomstroke_"
 TRANSLATION_SUFFIX = ".qm"
 DEFAULT_LANGUAGE = "en"
@@ -228,7 +230,7 @@ def build_translator(code: str) -> QTranslator | None:
     if path is None:
         logger.info("No translation file found for language: %s", code)
         return None
-    translator = QTranslator()
+    translator = SharedCatalogTranslator()
     if translator.load(str(path)):
         logger.info("Loaded translator: %s", path)
         return translator

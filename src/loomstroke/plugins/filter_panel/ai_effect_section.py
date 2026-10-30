@@ -1454,7 +1454,7 @@ class AIEffectPanelSection(QWidget, AsyncTaskOwner):
         for server in servers:
             combo.addItem(f"{server.name} — {server.url}", server.id)
         if combo.count() == 0:
-            combo.addItem("Local — http://127.0.0.1:8188", "local")
+            combo.addItem(_ts("Local — {url}").format(url="http://127.0.0.1:8188"), "local")
 
     def _build_ai_output_to_self_section(self, parent_layout: QVBoxLayout) -> None:
         """Place the "Output to this layer" toggle right under the
