@@ -73,7 +73,7 @@ Windows 64-bitでは、Python未導入のまま `install.bat` をダブルクリ
 インストール完了後は `update.bat` をダブルクリックし、最新版への更新が完了してから
 `boot_LoomStroke.bat` で起動します。
 
-`install.bat` はNanoBanana用の追加依存（`google-genai`）も標準でインストールします。従来の `--nanobanana` オプションも使用できます。
+`install.bat` はNanoBanana用の追加依存（`google-genai`）も標準でインストールし、既存環境では3系の最新版へ更新します。従来の `--nanobanana` オプションも使用できます。
 自動実行時は `--no-pause`、新しい仮想環境の作成に使うPythonを指定する場合は
 `--python "C:\path\python.exe"` を追加してください。
 `--no-python-download` でPythonの自動取得を止められます。

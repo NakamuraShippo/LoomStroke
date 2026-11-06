@@ -160,11 +160,16 @@ class OpenAIImageTransport(IGPTImage2Transport):
         if not image_bytes:
             raise ValueError("No image data to apply")
         image_array = await bridge.decode_async(image_bytes)
+        if target_layer_id is None:
+            await bridge.apply_new_image_async(
+                image_array,
+                name="GPT Image 2 Output",
+                metadata={"source": "GPT Image 2", **(metadata or {})},
+            )
+            return
         layer_ref = self._resolve_layer(target_layer_id)
-        if target_layer_id and layer_ref is None:
-            from loomstroke.host_api import LayerRef  # noqa: PLC0415
-
-            layer_ref = LayerRef(id=target_layer_id, name=None)
+        if layer_ref is None:
+            raise ValueError(f"Output layer is no longer available: {target_layer_id}")
         layer = bridge.ensure_layer(layer_ref, create_if_missing=True, name="GPT Image 2 Output")
         result = await bridge.apply_async(
             image_array,

@@ -3,6 +3,10 @@
 <TS version="2.1" language="ru">
     <context>
         <name>MainWindow</name>
+    <message>
+        <source>Perspective Ruler...</source>
+        <translation>Линейка перспективы...</translation>
+    </message>
         <message>
             <source>PSD export cannot preserve this filter layer. Export a flattened image instead.</source>
             <translation>Экспорт в PSD не может сохранить этот слой фильтра. Вместо этого экспортируйте сведённое изображение.</translation>
@@ -2641,6 +2645,14 @@ After refreshing the token, any agents registered to this LoomStroke MCP server 
 </context>
     <context>
         <name>InterfacePage</name>
+    <message>
+        <source>LivePrompt default separator</source>
+        <translation>Разделитель LivePrompt по умолчанию</translation>
+    </message>
+    <message>
+        <source>Use \n for a new line or \t for a tab. Empty uses a new line. Applies to new LivePrompts; saved separators take precedence.</source>
+        <translation>Используйте \n для новой строки или \t для табуляции. Пустое поле означает новую строку. Применяется к новым LivePrompt; сохранённые разделители имеют приоритет.</translation>
+    </message>
         <message>
             <source>Dark</source>
             <translation>Тёмная</translation>
@@ -4964,6 +4976,14 @@ After refreshing the token, any agents registered to this LoomStroke MCP server 
     <message>
         <source>Failed to import image as new layer</source>
         <translation>Не удалось импортировать изображение как новый слой</translation>
+    </message>
+    <message>
+        <source>Layer: {name}</source>
+        <translation>Слой: {name}</translation>
+    </message>
+    <message>
+        <source>Clear the layer filter</source>
+        <translation>Сбросить фильтр слоя</translation>
     </message>
 </context>
 <context>
@@ -7639,6 +7659,18 @@ Select a file to recover.</source>
     <message>
         <source>Wait until generation is ready.</source>
         <translation>Ожидайте, пока генерация будет готова.</translation>
+    </message>
+    <message>
+        <source>Plan: {count} generations</source>
+        <translation>План: генераций — {count}</translation>
+    </message>
+    <message>
+        <source>Plan: until stopped</source>
+        <translation>План: до остановки</translation>
+    </message>
+    <message>
+        <source>Plan: one cycle of {count}</source>
+        <translation>План: один цикл — {count}</translation>
     </message>
 </context>
 <context>
@@ -11307,6 +11339,42 @@ Please check that all image paths in your workflow are valid.
 <context>
     <name>DrawingAssistPanel</name>
     <message>
+        <source>Perspective ruler</source>
+        <translation>Линейка перспективы</translation>
+    </message>
+    <message>
+        <source>1-point perspective</source>
+        <translation>Одноточечная перспектива</translation>
+    </message>
+    <message>
+        <source>2-point perspective</source>
+        <translation>Двухточечная перспектива</translation>
+    </message>
+    <message>
+        <source>3-point perspective</source>
+        <translation>Трёхточечная перспектива</translation>
+    </message>
+    <message>
+        <source>Drawing direction</source>
+        <translation>Направление рисования</translation>
+    </message>
+    <message>
+        <source>Automatic</source>
+        <translation>Автоматически</translation>
+    </message>
+    <message>
+        <source>Vertical</source>
+        <translation>Вертикально</translation>
+    </message>
+    <message>
+        <source>Edit vanishing points</source>
+        <translation>Редактировать точки схода</translation>
+    </message>
+    <message>
+        <source>Drag VP handles on the canvas. Esc cancels the drag.</source>
+        <translation>Перетаскивайте маркеры VP на холсте. Esc отменяет перетаскивание.</translation>
+    </message>
+    <message>
         <source>Add</source>
         <translation>Добавить</translation>
     </message>
@@ -13383,6 +13451,10 @@ Please check that all image paths in your workflow are valid.
 <context>
     <name>GPTImage2PanelPlugin</name>
     <message>
+        <source>GPT Image</source>
+        <translation>GPT Image</translation>
+    </message>
+    <message>
         <source>Configure GPT Image 2 jobs</source>
         <translation>Настройка заданий GPT Image 2</translation>
     </message>
@@ -13892,6 +13964,22 @@ Please check that all image paths in your workflow are valid.
 </context>
 <context>
     <name>LLMPaneController</name>
+    <message>
+        <source>Copy</source>
+        <translation>Копировать</translation>
+    </message>
+    <message>
+        <source>Model ID</source>
+        <translation>ID модели</translation>
+    </message>
+    <message>
+        <source>Server URL</source>
+        <translation>URL сервера</translation>
+    </message>
+    <message>
+        <source>Enter a model ID:</source>
+        <translation>Введите ID модели:</translation>
+    </message>
     <message>
         <source>Add Library</source>
         <translation>Добавить библиотеку</translation>
@@ -15707,6 +15795,14 @@ Operation: {operation}
     <message>
         <source>Workflow transferred. Select parameters and outputs in the Editor tab, then register.</source>
         <translation>Работа перенесена. Выберите параметры и выходные данные в вкладке Редактор, затем зарегистрируйтесь.</translation>
+    </message>
+    <message>
+        <source>Live prompt</source>
+        <translation>Динамическая подсказка</translation>
+    </message>
+    <message>
+        <source>Text (node)</source>
+        <translation>Текст (узел)</translation>
     </message>
 </context>
 <context>
@@ -18319,6 +18415,122 @@ Type: {type}</source>
     <message>
         <source>User prompt is empty.</source>
         <translation>Запрос пользователя пуст.</translation>
+    </message>
+    <message>
+        <source>Unsaved changes</source>
+        <translation>Не сохранено</translation>
+    </message>
+    <message>
+        <source>More actions</source>
+        <translation>Другие действия</translation>
+    </message>
+    <message>
+        <source>New line</source>
+        <translation>Новая строка</translation>
+    </message>
+    <message>
+        <source>Comma</source>
+        <translation>Запятая</translation>
+    </message>
+    <message>
+        <source>Comma and space</source>
+        <translation>Запятая и пробел</translation>
+    </message>
+    <message>
+        <source>Custom</source>
+        <translation>Свой</translation>
+    </message>
+    <message>
+        <source>{count} characters</source>
+        <translation>Символов: {count}</translation>
+    </message>
+    <message>
+        <source>Tidy with LLM</source>
+        <translation>Привести в порядок с LLM</translation>
+    </message>
+    <message>
+        <source>This model does not use temperature.</source>
+        <translation>Эта модель не использует температуру.</translation>
+    </message>
+    <message>
+        <source>Output copied to clipboard.</source>
+        <translation>Вывод скопирован в буфер обмена.</translation>
+    </message>
+    <message>
+        <source>All types</source>
+        <translation>Все типы</translation>
+    </message>
+    <message>
+        <source>Body</source>
+        <translation>Текст</translation>
+    </message>
+    <message>
+        <source>Import</source>
+        <translation>Импорт</translation>
+    </message>
+    <message>
+        <source>Import prompt</source>
+        <translation>Импорт промпта</translation>
+    </message>
+    <message>
+        <source>Imported '{title}'.</source>
+        <translation>Импортировано: '{title}'.</translation>
+    </message>
+    <message>
+        <source>Import failed: {error}</source>
+        <translation>Ошибка импорта: {error}</translation>
+    </message>
+    <message>
+        <source>The file is empty.</source>
+        <translation>Файл пуст.</translation>
+    </message>
+    <message>
+        <source>Other model…</source>
+        <translation>Другая модель…</translation>
+    </message>
+    <message>
+        <source>Model ID</source>
+        <translation>ID модели</translation>
+    </message>
+    <message>
+        <source>Enter a model ID:</source>
+        <translation>Введите ID модели:</translation>
+    </message>
+    <message>
+        <source>Refresh the model list</source>
+        <translation>Обновить список моделей</translation>
+    </message>
+    <message>
+        <source>Loaded {count} models.</source>
+        <translation>Загружено моделей: {count}.</translation>
+    </message>
+    <message>
+        <source>Couldn't update the model list: {error}</source>
+        <translation>Не удалось обновить список моделей: {error}</translation>
+    </message>
+    <message>
+        <source>Local (OpenAI compatible)</source>
+        <translation>Локальный (совместимый с OpenAI)</translation>
+    </message>
+    <message>
+        <source>Server URL</source>
+        <translation>URL сервера</translation>
+    </message>
+    <message>
+        <source>(No models yet)</source>
+        <translation>(Пока нет моделей)</translation>
+    </message>
+    <message>
+        <source>Select a model first.</source>
+        <translation>Сначала выберите модель.</translation>
+    </message>
+    <message>
+        <source>Enter the URL of a server on this PC, such as http://localhost:11434/v1.</source>
+        <translation>Введите URL сервера на этом ПК, например http://localhost:11434/v1.</translation>
+    </message>
+    <message>
+        <source>Ollama's default context is short and silently cuts the start of long prompts; raise it with OLLAMA_CONTEXT_LENGTH or the model's num_ctx.</source>
+        <translation>Контекст Ollama по умолчанию короткий и молча обрезает начало длинных промптов; увеличьте его через OLLAMA_CONTEXT_LENGTH или num_ctx модели.</translation>
     </message>
 </context>
 <context>
@@ -21015,6 +21227,410 @@ Do you want to save them?</source>
 </context>
 <context>
     <name>__shared__</name>
+    <message>
+        <source>Choose a different name for this model.</source>
+        <translation>Выберите другое имя для этой модели.</translation>
+    </message>
+    <message>
+        <source>Enter a name between 1 and 80 characters.</source>
+        <translation>Введите имя длиной от 1 до 80 символов.</translation>
+    </message>
+    <message>
+        <source>Saved poses</source>
+        <translation>Сохранённые позы</translation>
+    </message>
+    <message>
+        <source>Select saved pose</source>
+        <translation>Выбрать сохранённую позу</translation>
+    </message>
+    <message>
+        <source>Save current pose</source>
+        <translation>Сохранить текущую позу</translation>
+    </message>
+    <message>
+        <source>Apply saved pose</source>
+        <translation>Применить сохранённую позу</translation>
+    </message>
+    <message>
+        <source>Delete saved pose</source>
+        <translation>Удалить сохранённую позу</translation>
+    </message>
+    <message>
+        <source>Could not load pose presets</source>
+        <translation>Не удалось загрузить сохранённые позы</translation>
+    </message>
+    <message>
+        <source>Pose presets</source>
+        <translation>Пресеты поз</translation>
+    </message>
+    <message>
+        <source>Save pose preset</source>
+        <translation>Сохранить пресет позы</translation>
+    </message>
+    <message>
+        <source>Pose preset name</source>
+        <translation>Название пресета позы</translation>
+    </message>
+    <message>
+        <source>Could not save pose preset</source>
+        <translation>Не удалось сохранить пресет позы</translation>
+    </message>
+    <message>
+        <source>Could not apply pose preset</source>
+        <translation>Не удалось применить пресет позы</translation>
+    </message>
+    <message>
+        <source>Could not delete pose preset</source>
+        <translation>Не удалось удалить пресет позы</translation>
+    </message>
+    <message>
+        <source>Delete selected pose preset?</source>
+        <translation>Удалить выбранный пресет позы?</translation>
+    </message>
+    <message>
+      <source>Fingers together</source>
+      <translation>Пальцы вместе</translation>
+    </message>
+    <message>
+      <source>Fingers spread</source>
+      <translation>Пальцы врозь</translation>
+    </message>
+    <message>
+      <source>Flat hand</source>
+      <translation>Плоская ладонь</translation>
+    </message>
+    <message>
+      <source>Soft fist</source>
+      <translation>Мягкий кулак</translation>
+    </message>
+    <message>
+      <source>Tight fist</source>
+      <translation>Сжатый кулак</translation>
+    </message>
+    <message>
+      <source>Half-closed hand</source>
+      <translation>Полусжатая кисть</translation>
+    </message>
+    <message>
+      <source>Cupped hand</source>
+      <translation>Ладонь лодочкой</translation>
+    </message>
+    <message>
+      <source>Deeply cupped hand</source>
+      <translation>Глубокая лодочка</translation>
+    </message>
+    <message>
+      <source>Thumbs up</source>
+      <translation>Большой палец вверх</translation>
+    </message>
+    <message>
+      <source>OK sign</source>
+      <translation>Жест OK</translation>
+    </message>
+    <message>
+      <source>Horns sign</source>
+      <translation>Жест рогов</translation>
+    </message>
+    <message>
+      <source>Shaka sign</source>
+      <translation>Жест шака</translation>
+    </message>
+    <message>
+      <source>Three extended fingers</source>
+      <translation>Три вытянутых пальца</translation>
+    </message>
+    <message>
+      <source>Four extended fingers</source>
+      <translation>Четыре вытянутых пальца</translation>
+    </message>
+    <message>
+      <source>Thumb and index</source>
+      <translation>Большой и указательный</translation>
+    </message>
+    <message>
+      <source>Thumb, index and middle</source>
+      <translation>Большой, указательный и средний</translation>
+    </message>
+    <message>
+      <source>Crossed fingers</source>
+      <translation>Скрещённые пальцы</translation>
+    </message>
+    <message>
+      <source>Finger heart</source>
+      <translation>Сердце пальцами</translation>
+    </message>
+    <message>
+      <source>Beckoning finger</source>
+      <translation>Подзывающий палец</translation>
+    </message>
+    <message>
+      <source>Stop gesture</source>
+      <translation>Жест остановки</translation>
+    </message>
+    <message>
+      <source>Count one</source>
+      <translation>Счёт один</translation>
+    </message>
+    <message>
+      <source>Count two</source>
+      <translation>Счёт два</translation>
+    </message>
+    <message>
+      <source>Count three</source>
+      <translation>Счёт три</translation>
+    </message>
+    <message>
+      <source>Count four</source>
+      <translation>Счёт четыре</translation>
+    </message>
+    <message>
+      <source>Count five</source>
+      <translation>Счёт пять</translation>
+    </message>
+    <message>
+      <source>Small pinch</source>
+      <translation>Малый щипок</translation>
+    </message>
+    <message>
+      <source>Wide pinch</source>
+      <translation>Широкий щипок</translation>
+    </message>
+    <message>
+      <source>Tripod pinch</source>
+      <translation>Трёхпальцевый щипок</translation>
+    </message>
+    <message>
+      <source>Precision grip</source>
+      <translation>Точный захват</translation>
+    </message>
+    <message>
+      <source>Pen grip</source>
+      <translation>Захват ручки</translation>
+    </message>
+    <message>
+      <source>Brush grip</source>
+      <translation>Захват кисти</translation>
+    </message>
+    <message>
+      <source>Cylinder grip</source>
+      <translation>Цилиндрический захват</translation>
+    </message>
+    <message>
+      <source>Thin handle grip</source>
+      <translation>Захват тонкой рукоятки</translation>
+    </message>
+    <message>
+      <source>Ball grip</source>
+      <translation>Захват мяча</translation>
+    </message>
+    <message>
+      <source>Large ball grip</source>
+      <translation>Захват большого мяча</translation>
+    </message>
+    <message>
+      <source>Hook grip</source>
+      <translation>Крюковой захват</translation>
+    </message>
+    <message>
+      <source>Key pinch</source>
+      <translation>Захват ключа</translation>
+    </message>
+    <message>
+      <source>Claw hand</source>
+      <translation>Кисть когтем</translation>
+    </message>
+    <message>
+      <source>Gentle touch</source>
+      <translation>Лёгкое касание</translation>
+    </message>
+    <message>
+      <source>Fingertip touch</source>
+      <translation>Касание кончиками пальцев</translation>
+    </message>
+    <message>
+      <source>Fabric pinch</source>
+      <translation>Щипок ткани</translation>
+    </message>
+    <message>
+      <source>Delicate hand</source>
+      <translation>Изящная кисть</translation>
+    </message>
+    <message>
+      <source>Tense hand</source>
+      <translation>Напряжённая кисть</translation>
+    </message>
+    <message>
+      <source>Basic hand poses</source>
+      <translation>Основные позы кисти</translation>
+    </message>
+    <message>
+      <source>Hand gestures</source>
+      <translation>Жесты кисти</translation>
+    </message>
+    <message>
+      <source>Finger counting</source>
+      <translation>Счёт на пальцах</translation>
+    </message>
+    <message>
+      <source>Grasping poses</source>
+      <translation>Позы захвата</translation>
+    </message>
+    <message>
+      <source>Expressive hands</source>
+      <translation>Выразительные кисти</translation>
+    </message>
+    <message>
+      <source>All hand poses</source>
+      <translation>Все позы кисти</translation>
+    </message>
+    <message>
+        <source>Edit selected hand</source>
+        <translation>Редактировать выбранную кисть</translation>
+    </message>
+    <message>
+        <source>Hand pose</source>
+        <translation>Поза кисти</translation>
+    </message>
+    <message>
+        <source>Finger</source>
+        <translation>Палец</translation>
+    </message>
+    <message>
+        <source>Finger curl</source>
+        <translation>Сгибание</translation>
+    </message>
+    <message>
+        <source>Finger spread</source>
+        <translation>Разведение</translation>
+    </message>
+    <message>
+        <source>Cup palm</source>
+        <translation>Согнуть ладонь</translation>
+    </message>
+    <message>
+        <source>Joint</source>
+        <translation>Сустав</translation>
+    </message>
+    <message>
+        <source>Reset hand</source>
+        <translation>Сбросить позу кисти</translation>
+    </message>
+    <message>
+        <source>Thumb</source>
+        <translation>Большой палец</translation>
+    </message>
+    <message>
+        <source>Index finger</source>
+        <translation>Указательный палец</translation>
+    </message>
+    <message>
+        <source>Middle finger</source>
+        <translation>Средний палец</translation>
+    </message>
+    <message>
+        <source>Ring finger</source>
+        <translation>Безымянный палец</translation>
+    </message>
+    <message>
+        <source>Little finger</source>
+        <translation>Мизинец</translation>
+    </message>
+    <message>
+        <source>Palm</source>
+        <translation>Ладонь</translation>
+    </message>
+    <message>
+        <source>Wrist</source>
+        <translation>Запястье</translation>
+    </message>
+    <message>
+        <source>Open hand</source>
+        <translation>Открытая кисть</translation>
+    </message>
+    <message>
+        <source>Relaxed hand</source>
+        <translation>Расслабленная кисть</translation>
+    </message>
+    <message>
+        <source>Fist</source>
+        <translation>Кулак</translation>
+    </message>
+    <message>
+        <source>Pointing hand</source>
+        <translation>Указующий жест</translation>
+    </message>
+    <message>
+        <source>Peace sign</source>
+        <translation>Жест мира</translation>
+    </message>
+    <message>
+        <source>Reset selected part</source>
+        <translation>Сбросить выбранную часть</translation>
+    </message>
+    <message>
+        <source>GPT Image</source>
+        <translation>GPT Image</translation>
+    </message>
+    <message>
+        <source>Perspective ruler</source>
+        <translation>Линейка перспективы</translation>
+    </message>
+    <message>
+        <source>1-point perspective</source>
+        <translation>Одноточечная перспектива</translation>
+    </message>
+    <message>
+        <source>2-point perspective</source>
+        <translation>Двухточечная перспектива</translation>
+    </message>
+    <message>
+        <source>3-point perspective</source>
+        <translation>Трёхточечная перспектива</translation>
+    </message>
+    <message>
+        <source>Drawing direction</source>
+        <translation>Направление рисования</translation>
+    </message>
+    <message>
+        <source>Edit vanishing points</source>
+        <translation>Редактировать точки схода</translation>
+    </message>
+    <message>
+        <source>Drag VP handles on the canvas. Esc cancels the drag.</source>
+        <translation>Перетаскивайте маркеры VP на холсте. Esc отменяет перетаскивание.</translation>
+    </message>
+    <message>
+        <source>Perspective Ruler...</source>
+        <translation>Линейка перспективы...</translation>
+    </message>
+    <message>
+        <source>LivePrompt default separator</source>
+        <translation>Разделитель LivePrompt по умолчанию</translation>
+    </message>
+    <message>
+        <source>Use \n for a new line or \t for a tab. Empty uses a new line. Applies to new LivePrompts; saved separators take precedence.</source>
+        <translation>Используйте \n для новой строки или \t для табуляции. Пустое поле означает новую строку. Применяется к новым LivePrompt; сохранённые разделители имеют приоритет.</translation>
+    </message>
+    <message>
+        <source>Register in AI Effect Manager</source>
+        <translation>Добавить в AI Effect Manager</translation>
+    </message>
+    <message>
+        <source>Save the current prompt and options as a preset. Choose input layers again when applying the preset.</source>
+        <translation>Сохранить текущий запрос и параметры как пресет. При применении пресета выберите входные слои заново.</translation>
+    </message>
+    <message>
+        <source>Preset name is required</source>
+        <translation>Введите название пресета</translation>
+    </message>
+    <message>
+        <source>Registered preset: {name}</source>
+        <translation>Пресет добавлен: {name}</translation>
+    </message>
+    <message>
+        <source>Could not register preset. AI Effect Manager may be unavailable or saving failed.</source>
+        <translation>Не удалось добавить пресет. Возможно, AI Effect Manager недоступен или произошла ошибка сохранения.</translation>
+    </message>
     <message>
         <source> %</source>
         <translation> %</translation>
@@ -35621,6 +36237,326 @@ Click to show as panel</source>
 
 Нажмите, чтобы отобразить как панель</translation>
     </message>
+    <message>
+        <source>Emphasis</source>
+        <translation>Акцент</translation>
+    </message>
+    <message>
+        <source>Weaken emphasis</source>
+        <translation>Ослабить акцент</translation>
+    </message>
+    <message>
+        <source>Strengthen emphasis</source>
+        <translation>Усилить акцент</translation>
+    </message>
+    <message>
+        <source>Remove from LivePrompt</source>
+        <translation>Убрать из LivePrompt</translation>
+    </message>
+    <message>
+        <source>Unsaved changes</source>
+        <translation>Не сохранено</translation>
+    </message>
+    <message>
+        <source>More actions</source>
+        <translation>Другие действия</translation>
+    </message>
+    <message>
+        <source>New line</source>
+        <translation>Новая строка</translation>
+    </message>
+    <message>
+        <source>Comma</source>
+        <translation>Запятая</translation>
+    </message>
+    <message>
+        <source>Comma and space</source>
+        <translation>Запятая и пробел</translation>
+    </message>
+    <message>
+        <source>{count} characters</source>
+        <translation>Символов: {count}</translation>
+    </message>
+    <message>
+        <source>Tidy with LLM</source>
+        <translation>Привести в порядок с LLM</translation>
+    </message>
+    <message>
+        <source>Text (node)</source>
+        <translation>Текст (узел)</translation>
+    </message>
+    <message>
+        <source>Plan: {count} generations</source>
+        <translation>План: генераций — {count}</translation>
+    </message>
+    <message>
+        <source>Plan: until stopped</source>
+        <translation>План: до остановки</translation>
+    </message>
+    <message>
+        <source>Plan: one cycle of {count}</source>
+        <translation>План: один цикл — {count}</translation>
+    </message>
+    <message>
+        <source>Generated on this layer ({count})</source>
+        <translation>Создано на этом слое ({count})</translation>
+    </message>
+    <message>
+        <source>Show in Gallery</source>
+        <translation>Показать в галерее</translation>
+    </message>
+    <message>
+        <source>Open in Gallery (this layer only)</source>
+        <translation>Открыть в галерее (только этот слой)</translation>
+    </message>
+    <message>
+        <source>No generations yet.</source>
+        <translation>Пока ничего не создано.</translation>
+    </message>
+    <message>
+        <source>Layer: {name}</source>
+        <translation>Слой: {name}</translation>
+    </message>
+    <message>
+        <source>Clear the layer filter</source>
+        <translation>Сбросить фильтр слоя</translation>
+    </message>
+    <message>
+        <source>This model does not use temperature.</source>
+        <translation>Эта модель не использует температуру.</translation>
+    </message>
+    <message>
+        <source>Output copied to clipboard.</source>
+        <translation>Вывод скопирован в буфер обмена.</translation>
+    </message>
+    <message>
+        <source>All types</source>
+        <translation>Все типы</translation>
+    </message>
+    <message>
+        <source>Import prompt</source>
+        <translation>Импорт промпта</translation>
+    </message>
+    <message>
+        <source>Imported '{title}'.</source>
+        <translation>Импортировано: '{title}'.</translation>
+    </message>
+    <message>
+        <source>Import failed: {error}</source>
+        <translation>Ошибка импорта: {error}</translation>
+    </message>
+    <message>
+        <source>The file is empty.</source>
+        <translation>Файл пуст.</translation>
+    </message>
+    <message>
+        <source>Other model…</source>
+        <translation>Другая модель…</translation>
+    </message>
+    <message>
+        <source>Model ID</source>
+        <translation>ID модели</translation>
+    </message>
+    <message>
+        <source>Enter a model ID:</source>
+        <translation>Введите ID модели:</translation>
+    </message>
+    <message>
+        <source>Refresh the model list</source>
+        <translation>Обновить список моделей</translation>
+    </message>
+    <message>
+        <source>Loaded {count} models.</source>
+        <translation>Загружено моделей: {count}.</translation>
+    </message>
+    <message>
+        <source>Couldn't update the model list: {error}</source>
+        <translation>Не удалось обновить список моделей: {error}</translation>
+    </message>
+    <message>
+        <source>Local (OpenAI compatible)</source>
+        <translation>Локальный (совместимый с OpenAI)</translation>
+    </message>
+    <message>
+        <source>Server URL</source>
+        <translation>URL сервера</translation>
+    </message>
+    <message>
+        <source>(No models yet)</source>
+        <translation>(Пока нет моделей)</translation>
+    </message>
+    <message>
+        <source>Select a model first.</source>
+        <translation>Сначала выберите модель.</translation>
+    </message>
+    <message>
+        <source>Enter the URL of a server on this PC, such as http://localhost:11434/v1.</source>
+        <translation>Введите URL сервера на этом ПК, например http://localhost:11434/v1.</translation>
+    </message>
+    <message>
+        <source>Ollama's default context is short and silently cuts the start of long prompts; raise it with OLLAMA_CONTEXT_LENGTH or the model's num_ctx.</source>
+        <translation>Контекст Ollama по умолчанию короткий и молча обрезает начало длинных промптов; увеличьте его через OLLAMA_CONTEXT_LENGTH или num_ctx модели.</translation>
+    </message>
+    <message>
+        <source>Fill input transparency</source>
+        <translation>Залить прозрачные области входных изображений</translation>
+    </message>
+    <message>
+        <source>Fill transparent areas of input images with this color before sending. Source layers are unchanged.</source>
+        <translation>Перед отправкой залить прозрачные области входных изображений этим цветом. Исходные слои не изменяются.</translation>
+    </message>
+    <message>
+        <source>Input fill color</source>
+        <translation>Цвет заливки входных изображений</translation>
+    </message>
+    <message>
+        <source>Add drawing figure</source>
+        <translation>Добавить манекен для рисования</translation>
+    </message>
+    <message>
+        <source>Apply pose</source>
+        <translation>Применить позу</translation>
+    </message>
+    <message>
+        <source>Arms out</source>
+        <translation>Руки в стороны</translation>
+    </message>
+    <message>
+        <source>Chest</source>
+        <translation>Грудь</translation>
+    </message>
+    <message>
+        <source>Could not add drawing figure</source>
+        <translation>Не удалось добавить манекен</translation>
+    </message>
+    <message>
+        <source>Could not export OpenPose</source>
+        <translation>Не удалось экспортировать OpenPose</translation>
+    </message>
+    <message>
+        <source>Crouching</source>
+        <translation>На корточках</translation>
+    </message>
+    <message>
+        <source>Drag joints; Alt-drag changes depth. Pink joints are pinned.</source>
+        <translation>Перетаскивайте суставы; Alt с перетаскиванием меняет глубину. Розовые суставы закреплены.</translation>
+    </message>
+    <message>
+        <source>Drag joints to move; drag XYZ rings to rotate. Alt-drag changes depth. Pink joints are pinned.</source>
+        <translation>Перетаскивайте суставы для перемещения, а кольца XYZ — для вращения. Alt с перетаскиванием меняет глубину. Розовые суставы закреплены.</translation>
+    </message>
+    <message>
+        <source>Drawing figure</source>
+        <translation>Манекен для рисования</translation>
+    </message>
+    <message>
+        <source>Edit pose</source>
+        <translation>Изменить позу</translation>
+    </message>
+    <message>
+        <source>Export OpenPose</source>
+        <translation>Экспорт OpenPose</translation>
+    </message>
+    <message>
+        <source>Head</source>
+        <translation>Голова</translation>
+    </message>
+    <message>
+        <source>Left Ankle</source>
+        <translation>Слева: Лодыжка</translation>
+    </message>
+    <message>
+        <source>Left Collar</source>
+        <translation>Слева: Ключица</translation>
+    </message>
+    <message>
+        <source>Left Elbow</source>
+        <translation>Слева: Локоть</translation>
+    </message>
+    <message>
+        <source>Left Hip</source>
+        <translation>Слева: Бедро</translation>
+    </message>
+    <message>
+        <source>Left Knee</source>
+        <translation>Слева: Колено</translation>
+    </message>
+    <message>
+        <source>Left Shoulder</source>
+        <translation>Слева: Плечо</translation>
+    </message>
+    <message>
+        <source>Left Wrist</source>
+        <translation>Слева: Запястье</translation>
+    </message>
+    <message>
+        <source>Neck</source>
+        <translation>Шея</translation>
+    </message>
+    <message>
+        <source>OpenPose layer</source>
+        <translation>Слой OpenPose</translation>
+    </message>
+    <message>
+        <source>Pelvis</source>
+        <translation>Таз</translation>
+    </message>
+    <message>
+        <source>Pin / unpin joint</source>
+        <translation>Закрепить / освободить сустав</translation>
+    </message>
+    <message>
+        <source>Pose assistance</source>
+        <translation>Помощь при позировании</translation>
+    </message>
+    <message>
+        <source>Reaching</source>
+        <translation>Вытянутая рука</translation>
+    </message>
+    <message>
+        <source>Right Ankle</source>
+        <translation>Справа: Лодыжка</translation>
+    </message>
+    <message>
+        <source>Right Collar</source>
+        <translation>Справа: Ключица</translation>
+    </message>
+    <message>
+        <source>Right Elbow</source>
+        <translation>Справа: Локоть</translation>
+    </message>
+    <message>
+        <source>Right Hip</source>
+        <translation>Справа: Бедро</translation>
+    </message>
+    <message>
+        <source>Right Knee</source>
+        <translation>Справа: Колено</translation>
+    </message>
+    <message>
+        <source>Right Shoulder</source>
+        <translation>Справа: Плечо</translation>
+    </message>
+    <message>
+        <source>Right Wrist</source>
+        <translation>Справа: Запястье</translation>
+    </message>
+    <message>
+        <source>Sitting</source>
+        <translation>Сидя</translation>
+    </message>
+    <message>
+        <source>Standing</source>
+        <translation>Стоя</translation>
+    </message>
+    <message>
+        <source>Waist</source>
+        <translation>Талия</translation>
+    </message>
+    <message>
+        <source>Walking</source>
+        <translation>Ходьба</translation>
+    </message>
 </context>
 <context>
     <name>app_ai_effect_generation_commit</name>
@@ -36266,6 +37202,670 @@ Click to show as panel</source>
     <message>
         <source>Use as Inpaint Mask</source>
         <translation>Использовать как маску для восстановления</translation>
+    </message>
+</context>
+<context>
+    <name>AIEffectRegisterButton</name>
+    <message>
+        <source>Register in AI Effect Manager</source>
+        <translation>Добавить в AI Effect Manager</translation>
+    </message>
+    <message>
+        <source>Save the current prompt and options as a preset. Choose input layers again when applying the preset.</source>
+        <translation>Сохранить текущий запрос и параметры как пресет. При применении пресета выберите входные слои заново.</translation>
+    </message>
+    <message>
+        <source>Preset name:</source>
+        <translation>Название пресета:</translation>
+    </message>
+    <message>
+        <source>Preset name is required</source>
+        <translation>Введите название пресета</translation>
+    </message>
+    <message>
+        <source>Registered preset: {name}</source>
+        <translation>Пресет добавлен: {name}</translation>
+    </message>
+    <message>
+        <source>Could not register preset. AI Effect Manager may be unavailable or saving failed.</source>
+        <translation>Не удалось добавить пресет. Возможно, AI Effect Manager недоступен или произошла ошибка сохранения.</translation>
+    </message>
+</context>
+<context>
+    <name>PromptChipWidget</name>
+    <message>
+        <source>Emphasis</source>
+        <translation>Акцент</translation>
+    </message>
+    <message>
+        <source>Weaken emphasis</source>
+        <translation>Ослабить акцент</translation>
+    </message>
+    <message>
+        <source>Strengthen emphasis</source>
+        <translation>Усилить акцент</translation>
+    </message>
+    <message>
+        <source>Clear</source>
+        <translation>Снять</translation>
+    </message>
+    <message>
+        <source>Remove from LivePrompt</source>
+        <translation>Убрать из LivePrompt</translation>
+    </message>
+</context>
+<context>
+    <name>LayerGenerationHistory</name>
+    <message>
+        <source>Generated on this layer ({count})</source>
+        <translation>Создано на этом слое ({count})</translation>
+    </message>
+    <message>
+        <source>Show in Gallery</source>
+        <translation>Показать в галерее</translation>
+    </message>
+    <message>
+        <source>Open in Gallery (this layer only)</source>
+        <translation>Открыть в галерее (только этот слой)</translation>
+    </message>
+    <message>
+        <source>No generations yet.</source>
+        <translation>Пока ничего не создано.</translation>
+    </message>
+</context>
+<context>
+    <name>InputAlphaControls</name>
+    <message>
+        <source>Fill input transparency</source>
+        <translation>Залить прозрачные области входных изображений</translation>
+    </message>
+    <message>
+        <source>Fill transparent areas of input images with this color before sending. Source layers are unchanged.</source>
+        <translation>Перед отправкой залить прозрачные области входных изображений этим цветом. Исходные слои не изменяются.</translation>
+    </message>
+    <message>
+        <source>Input fill color</source>
+        <translation>Цвет заливки входных изображений</translation>
+    </message>
+</context>
+<context>
+    <name>DrawingFigure</name>
+    <message>
+        <source>Choose a different name for this model.</source>
+        <translation>Выберите другое имя для этой модели.</translation>
+    </message>
+    <message>
+        <source>Enter a name between 1 and 80 characters.</source>
+        <translation>Введите имя длиной от 1 до 80 символов.</translation>
+    </message>
+    <message>
+        <source>Saved poses</source>
+        <translation>Сохранённые позы</translation>
+    </message>
+    <message>
+        <source>Select saved pose</source>
+        <translation>Выбрать сохранённую позу</translation>
+    </message>
+    <message>
+        <source>Save current pose</source>
+        <translation>Сохранить текущую позу</translation>
+    </message>
+    <message>
+        <source>Apply saved pose</source>
+        <translation>Применить сохранённую позу</translation>
+    </message>
+    <message>
+        <source>Delete saved pose</source>
+        <translation>Удалить сохранённую позу</translation>
+    </message>
+    <message>
+        <source>Could not load pose presets</source>
+        <translation>Не удалось загрузить сохранённые позы</translation>
+    </message>
+    <message>
+        <source>Pose presets</source>
+        <translation>Пресеты поз</translation>
+    </message>
+    <message>
+        <source>Save pose preset</source>
+        <translation>Сохранить пресет позы</translation>
+    </message>
+    <message>
+        <source>Pose preset name</source>
+        <translation>Название пресета позы</translation>
+    </message>
+    <message>
+        <source>Could not save pose preset</source>
+        <translation>Не удалось сохранить пресет позы</translation>
+    </message>
+    <message>
+        <source>Could not apply pose preset</source>
+        <translation>Не удалось применить пресет позы</translation>
+    </message>
+    <message>
+        <source>Could not delete pose preset</source>
+        <translation>Не удалось удалить пресет позы</translation>
+    </message>
+    <message>
+        <source>Delete selected pose preset?</source>
+        <translation>Удалить выбранный пресет позы?</translation>
+    </message>
+    <message>
+      <source>Fingers together</source>
+      <translation>Пальцы вместе</translation>
+    </message>
+    <message>
+      <source>Fingers spread</source>
+      <translation>Пальцы врозь</translation>
+    </message>
+    <message>
+      <source>Flat hand</source>
+      <translation>Плоская ладонь</translation>
+    </message>
+    <message>
+      <source>Soft fist</source>
+      <translation>Мягкий кулак</translation>
+    </message>
+    <message>
+      <source>Tight fist</source>
+      <translation>Сжатый кулак</translation>
+    </message>
+    <message>
+      <source>Half-closed hand</source>
+      <translation>Полусжатая кисть</translation>
+    </message>
+    <message>
+      <source>Cupped hand</source>
+      <translation>Ладонь лодочкой</translation>
+    </message>
+    <message>
+      <source>Deeply cupped hand</source>
+      <translation>Глубокая лодочка</translation>
+    </message>
+    <message>
+      <source>Thumbs up</source>
+      <translation>Большой палец вверх</translation>
+    </message>
+    <message>
+      <source>OK sign</source>
+      <translation>Жест OK</translation>
+    </message>
+    <message>
+      <source>Horns sign</source>
+      <translation>Жест рогов</translation>
+    </message>
+    <message>
+      <source>Shaka sign</source>
+      <translation>Жест шака</translation>
+    </message>
+    <message>
+      <source>Three extended fingers</source>
+      <translation>Три вытянутых пальца</translation>
+    </message>
+    <message>
+      <source>Four extended fingers</source>
+      <translation>Четыре вытянутых пальца</translation>
+    </message>
+    <message>
+      <source>Thumb and index</source>
+      <translation>Большой и указательный</translation>
+    </message>
+    <message>
+      <source>Thumb, index and middle</source>
+      <translation>Большой, указательный и средний</translation>
+    </message>
+    <message>
+      <source>Crossed fingers</source>
+      <translation>Скрещённые пальцы</translation>
+    </message>
+    <message>
+      <source>Finger heart</source>
+      <translation>Сердце пальцами</translation>
+    </message>
+    <message>
+      <source>Beckoning finger</source>
+      <translation>Подзывающий палец</translation>
+    </message>
+    <message>
+      <source>Stop gesture</source>
+      <translation>Жест остановки</translation>
+    </message>
+    <message>
+      <source>Count one</source>
+      <translation>Счёт один</translation>
+    </message>
+    <message>
+      <source>Count two</source>
+      <translation>Счёт два</translation>
+    </message>
+    <message>
+      <source>Count three</source>
+      <translation>Счёт три</translation>
+    </message>
+    <message>
+      <source>Count four</source>
+      <translation>Счёт четыре</translation>
+    </message>
+    <message>
+      <source>Count five</source>
+      <translation>Счёт пять</translation>
+    </message>
+    <message>
+      <source>Small pinch</source>
+      <translation>Малый щипок</translation>
+    </message>
+    <message>
+      <source>Wide pinch</source>
+      <translation>Широкий щипок</translation>
+    </message>
+    <message>
+      <source>Tripod pinch</source>
+      <translation>Трёхпальцевый щипок</translation>
+    </message>
+    <message>
+      <source>Precision grip</source>
+      <translation>Точный захват</translation>
+    </message>
+    <message>
+      <source>Pen grip</source>
+      <translation>Захват ручки</translation>
+    </message>
+    <message>
+      <source>Brush grip</source>
+      <translation>Захват кисти</translation>
+    </message>
+    <message>
+      <source>Cylinder grip</source>
+      <translation>Цилиндрический захват</translation>
+    </message>
+    <message>
+      <source>Thin handle grip</source>
+      <translation>Захват тонкой рукоятки</translation>
+    </message>
+    <message>
+      <source>Ball grip</source>
+      <translation>Захват мяча</translation>
+    </message>
+    <message>
+      <source>Large ball grip</source>
+      <translation>Захват большого мяча</translation>
+    </message>
+    <message>
+      <source>Hook grip</source>
+      <translation>Крюковой захват</translation>
+    </message>
+    <message>
+      <source>Key pinch</source>
+      <translation>Захват ключа</translation>
+    </message>
+    <message>
+      <source>Claw hand</source>
+      <translation>Кисть когтем</translation>
+    </message>
+    <message>
+      <source>Gentle touch</source>
+      <translation>Лёгкое касание</translation>
+    </message>
+    <message>
+      <source>Fingertip touch</source>
+      <translation>Касание кончиками пальцев</translation>
+    </message>
+    <message>
+      <source>Fabric pinch</source>
+      <translation>Щипок ткани</translation>
+    </message>
+    <message>
+      <source>Delicate hand</source>
+      <translation>Изящная кисть</translation>
+    </message>
+    <message>
+      <source>Tense hand</source>
+      <translation>Напряжённая кисть</translation>
+    </message>
+    <message>
+      <source>Basic hand poses</source>
+      <translation>Основные позы кисти</translation>
+    </message>
+    <message>
+      <source>Hand gestures</source>
+      <translation>Жесты кисти</translation>
+    </message>
+    <message>
+      <source>Finger counting</source>
+      <translation>Счёт на пальцах</translation>
+    </message>
+    <message>
+      <source>Grasping poses</source>
+      <translation>Позы захвата</translation>
+    </message>
+    <message>
+      <source>Expressive hands</source>
+      <translation>Выразительные кисти</translation>
+    </message>
+    <message>
+      <source>All hand poses</source>
+      <translation>Все позы кисти</translation>
+    </message>
+    <message>
+        <source>Edit selected hand</source>
+        <translation>Редактировать выбранную кисть</translation>
+    </message>
+    <message>
+        <source>Hand pose</source>
+        <translation>Поза кисти</translation>
+    </message>
+    <message>
+        <source>Finger</source>
+        <translation>Палец</translation>
+    </message>
+    <message>
+        <source>Finger curl</source>
+        <translation>Сгибание</translation>
+    </message>
+    <message>
+        <source>Finger spread</source>
+        <translation>Разведение</translation>
+    </message>
+    <message>
+        <source>Cup palm</source>
+        <translation>Согнуть ладонь</translation>
+    </message>
+    <message>
+        <source>Joint</source>
+        <translation>Сустав</translation>
+    </message>
+    <message>
+        <source>Reset hand</source>
+        <translation>Сбросить позу кисти</translation>
+    </message>
+    <message>
+        <source>Thumb</source>
+        <translation>Большой палец</translation>
+    </message>
+    <message>
+        <source>Index finger</source>
+        <translation>Указательный палец</translation>
+    </message>
+    <message>
+        <source>Middle finger</source>
+        <translation>Средний палец</translation>
+    </message>
+    <message>
+        <source>Ring finger</source>
+        <translation>Безымянный палец</translation>
+    </message>
+    <message>
+        <source>Little finger</source>
+        <translation>Мизинец</translation>
+    </message>
+    <message>
+        <source>Palm</source>
+        <translation>Ладонь</translation>
+    </message>
+    <message>
+        <source>Wrist</source>
+        <translation>Запястье</translation>
+    </message>
+    <message>
+        <source>Open hand</source>
+        <translation>Открытая кисть</translation>
+    </message>
+    <message>
+        <source>Relaxed hand</source>
+        <translation>Расслабленная кисть</translation>
+    </message>
+    <message>
+        <source>Fist</source>
+        <translation>Кулак</translation>
+    </message>
+    <message>
+        <source>Pointing hand</source>
+        <translation>Указующий жест</translation>
+    </message>
+    <message>
+        <source>Peace sign</source>
+        <translation>Жест мира</translation>
+    </message>
+    <message>
+        <source>Reset selected part</source>
+        <translation>Сбросить выбранную часть</translation>
+    </message>
+    <message>
+        <source>Add drawing figure</source>
+        <translation>Добавить манекен для рисования</translation>
+    </message>
+    <message>
+        <source>Drawing figure</source>
+        <translation>Манекен для рисования</translation>
+    </message>
+    <message>
+        <source>Could not add drawing figure</source>
+        <translation>Не удалось добавить манекен</translation>
+    </message>
+    <message>
+        <source>Edit pose</source>
+        <translation>Изменить позу</translation>
+    </message>
+    <message>
+        <source>Apply pose</source>
+        <translation>Применить позу</translation>
+    </message>
+    <message>
+        <source>Pose assistance</source>
+        <translation>Помощь при позировании</translation>
+    </message>
+    <message>
+        <source>Pin / unpin joint</source>
+        <translation>Закрепить / освободить сустав</translation>
+    </message>
+    <message>
+        <source>OpenPose layer</source>
+        <translation>Слой OpenPose</translation>
+    </message>
+    <message>
+        <source>Drag joints; Alt-drag changes depth. Pink joints are pinned.</source>
+        <translation>Перетаскивайте суставы; Alt с перетаскиванием меняет глубину. Розовые суставы закреплены.</translation>
+    </message>
+    <message>
+        <source>Drag joints to move; drag XYZ rings to rotate. Alt-drag changes depth. Pink joints are pinned.</source>
+        <translation>Перетаскивайте суставы для перемещения, а кольца XYZ — для вращения. Alt с перетаскиванием меняет глубину. Розовые суставы закреплены.</translation>
+    </message>
+    <message>
+        <source>Export OpenPose</source>
+        <translation>Экспорт OpenPose</translation>
+    </message>
+    <message>
+        <source>Could not export OpenPose</source>
+        <translation>Не удалось экспортировать OpenPose</translation>
+    </message>
+    <message>
+        <source>Standing</source>
+        <translation>Стоя</translation>
+    </message>
+    <message>
+        <source>Arms out</source>
+        <translation>Руки в стороны</translation>
+    </message>
+    <message>
+        <source>Sitting</source>
+        <translation>Сидя</translation>
+    </message>
+    <message>
+        <source>Walking</source>
+        <translation>Ходьба</translation>
+    </message>
+    <message>
+        <source>Crouching</source>
+        <translation>На корточках</translation>
+    </message>
+    <message>
+        <source>Reaching</source>
+        <translation>Вытянутая рука</translation>
+    </message>
+    <message>
+        <source>Pelvis</source>
+        <translation>Таз</translation>
+    </message>
+    <message>
+        <source>Waist</source>
+        <translation>Талия</translation>
+    </message>
+    <message>
+        <source>Chest</source>
+        <translation>Грудь</translation>
+    </message>
+    <message>
+        <source>Neck</source>
+        <translation>Шея</translation>
+    </message>
+    <message>
+        <source>Head</source>
+        <translation>Голова</translation>
+    </message>
+    <message>
+        <source>Left Collar</source>
+        <translation>Слева: Ключица</translation>
+    </message>
+    <message>
+        <source>Left Shoulder</source>
+        <translation>Слева: Плечо</translation>
+    </message>
+    <message>
+        <source>Left Elbow</source>
+        <translation>Слева: Локоть</translation>
+    </message>
+    <message>
+        <source>Left Wrist</source>
+        <translation>Слева: Запястье</translation>
+    </message>
+    <message>
+        <source>Left Hip</source>
+        <translation>Слева: Бедро</translation>
+    </message>
+    <message>
+        <source>Left Knee</source>
+        <translation>Слева: Колено</translation>
+    </message>
+    <message>
+        <source>Left Ankle</source>
+        <translation>Слева: Лодыжка</translation>
+    </message>
+    <message>
+        <source>Right Collar</source>
+        <translation>Справа: Ключица</translation>
+    </message>
+    <message>
+        <source>Right Shoulder</source>
+        <translation>Справа: Плечо</translation>
+    </message>
+    <message>
+        <source>Right Elbow</source>
+        <translation>Справа: Локоть</translation>
+    </message>
+    <message>
+        <source>Right Wrist</source>
+        <translation>Справа: Запястье</translation>
+    </message>
+    <message>
+        <source>Right Hip</source>
+        <translation>Справа: Бедро</translation>
+    </message>
+    <message>
+        <source>Right Knee</source>
+        <translation>Справа: Колено</translation>
+    </message>
+    <message>
+        <source>Right Ankle</source>
+        <translation>Справа: Лодыжка</translation>
+    </message>
+</context>
+<context>
+    <name>DrawingFigureToolbarWidget</name>
+    <message>
+        <source>Could not export OpenPose</source>
+        <translation>Не удалось экспортировать OpenPose</translation>
+    </message>
+    <message>
+        <source>Export OpenPose</source>
+        <translation>Экспорт OpenPose</translation>
+    </message>
+</context>
+<context>
+    <name>DrawingFigureHandEditor</name>
+    <message>
+        <source>Hand pose</source>
+        <translation>Поза кисти</translation>
+    </message>
+    <message>
+        <source>Cup palm</source>
+        <translation>Согнуть ладонь</translation>
+    </message>
+    <message>
+        <source>Joint</source>
+        <translation>Сустав</translation>
+    </message>
+</context>
+<context>
+    <name>DrawingFigurePosePresetControls</name>
+    <message>
+        <source>Choose a different name for this model.</source>
+        <translation>Выберите другое имя для этой модели.</translation>
+    </message>
+    <message>
+        <source>Enter a name between 1 and 80 characters.</source>
+        <translation>Введите имя длиной от 1 до 80 символов.</translation>
+    </message>
+    <message>
+        <source>Saved poses</source>
+        <translation>Сохранённые позы</translation>
+    </message>
+    <message>
+        <source>Select saved pose</source>
+        <translation>Выбрать сохранённую позу</translation>
+    </message>
+    <message>
+        <source>Save current pose</source>
+        <translation>Сохранить текущую позу</translation>
+    </message>
+    <message>
+        <source>Apply saved pose</source>
+        <translation>Применить сохранённую позу</translation>
+    </message>
+    <message>
+        <source>Delete saved pose</source>
+        <translation>Удалить сохранённую позу</translation>
+    </message>
+    <message>
+        <source>Could not load pose presets</source>
+        <translation>Не удалось загрузить сохранённые позы</translation>
+    </message>
+    <message>
+        <source>Pose presets</source>
+        <translation>Пресеты поз</translation>
+    </message>
+    <message>
+        <source>Save pose preset</source>
+        <translation>Сохранить пресет позы</translation>
+    </message>
+    <message>
+        <source>Pose preset name</source>
+        <translation>Название пресета позы</translation>
+    </message>
+    <message>
+        <source>Could not save pose preset</source>
+        <translation>Не удалось сохранить пресет позы</translation>
+    </message>
+    <message>
+        <source>Could not apply pose preset</source>
+        <translation>Не удалось применить пресет позы</translation>
+    </message>
+    <message>
+        <source>Could not delete pose preset</source>
+        <translation>Не удалось удалить пресет позы</translation>
+    </message>
+    <message>
+        <source>Delete selected pose preset?</source>
+        <translation>Удалить выбранный пресет позы?</translation>
     </message>
 </context>
 </TS>

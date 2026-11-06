@@ -11,6 +11,7 @@ from .channels_translations import CHANNELS_JA
 from .comic_assets_feedback_strings import COMIC_ASSETS_FEEDBACK_JA
 from .comic_frame_translations import FRAME_JA
 from .credential_migration_translations import CREDENTIAL_MIGRATION_JA
+from .drawing_figure_translations import CATALOGS as DRAWING_FIGURE_CATALOGS
 from .filter_pen_translations import FILTER_PEN_JA
 from .filter_translations import (
     DIRECT_FILTER_JA,
@@ -43,6 +44,13 @@ _JA_FALLBACK_TRANSLATIONS: dict[str, dict[str, str]] = {
         "Sequential": "順次選択",
         "Combinatorial": "組み合わせ列挙",
         "All unchecked: fixed. List: items; String/Prompt: snippets matching the tag; Text: {a|b|c}. One choice per generation; combinations advance rightmost first.": "すべてオフで固定。Listは項目、String/Promptはタグに合うスニペット、Textは {a|b|c} から選択します。生成ごとに1件選択し、組み合わせは右側から進みます。",
+    },
+    "PromptChipWidget": {
+        "Emphasis": "強調",
+        "Weaken emphasis": "強調を弱める",
+        "Strengthen emphasis": "強調を強める",
+        "Clear": "外す",
+        "Remove from LivePrompt": "ライブプロンプトから外す",
     },
     "GuidePlacement": {
         "Rotation": "回転",
@@ -393,6 +401,7 @@ _JA_FALLBACK_TRANSLATIONS: dict[str, dict[str, str]] = {
         "話者欄で話者書式を変更、ページ・フキダシ欄で該当箇所へ移動します。",
     },
     "MainWindow": {
+        "Perspective Ruler...": "パース定規...",
         "Cover Template...": "表紙テンプレート...",
         "Pattern Along Path": "パスに沿って模様を配置",
         "Preview Trimmed Page": "仕上がり表示",
@@ -2019,7 +2028,16 @@ _JA_FALLBACK_TRANSLATIONS["DrawingAssistPanel"] = {
     "parallel": "平行定規",
     "radial": "放射定規",
     "concentric": "同心円定規",
-    "perspective": "透視定規",
+    "perspective": "パース定規",
+    "Perspective ruler": "パース定規",
+    "1-point perspective": "1点透視",
+    "2-point perspective": "2点透視",
+    "3-point perspective": "3点透視",
+    "Drawing direction": "描画方向",
+    "Automatic": "自動",
+    "Vertical": "垂直",
+    "Edit vanishing points": "消失点を編集",
+    "Drag VP handles on the canvas. Esc cancels the drag.": "キャンバスのVPハンドルをドラッグして移動。Escで取り消します。",
     "Add": "追加",
     "Remove": "削除",
     "Set Active": "アクティブにする",
@@ -2766,6 +2784,10 @@ _JA_FALLBACK_TRANSLATIONS["PromptEditorPanel"] = {
     "Clear components": "コンポーネントをクリア",
     "Live prompt": "ライブプロンプト",
     "Separator": "区切り",
+    "New line": "改行",
+    "Comma": "カンマ",
+    "Comma and space": "カンマと空白",
+    "Custom": "カスタム",
     "Copy": "コピー",
     "Save": "保存",
     "Save As": "名前を付けて保存",
@@ -2774,9 +2796,20 @@ _JA_FALLBACK_TRANSLATIONS["PromptEditorPanel"] = {
     "Tags": "タグ",
     "Tags (comma separated)": "タグ (カンマ区切り)",
     "New": "新規",
+    "Unsaved changes": "未保存",
+    "More actions": "その他の操作",
+    "{count} characters": "{count} 文字",
+    "Tidy with LLM": "LLMで整える",
     "Search prompts...": "プロンプトを検索...",
     "Details": "詳細",
     "Component type": "コンポーネント種別",
+    "All types": "すべての種別",
+    "Body": "本文",
+    "Import": "取り込み",
+    "Import prompt": "プロンプトを取り込む",
+    "Imported '{title}'.": "'{title}' を取り込みました。",
+    "Import failed: {error}": "取り込みに失敗しました: {error}",
+    "The file is empty.": "ファイルが空です。",
     "Preview": "プレビュー",
     "Duplicate": "複製",
     "Delete": "削除",
@@ -2813,6 +2846,20 @@ _JA_FALLBACK_TRANSLATIONS["PromptEditorPanel"] = {
     "LLM gateway unavailable.": "LLM ゲートウェイを利用できません。",
     "Failed to load providers: {error}": "プロバイダーの読み込みに失敗しました: {error}",
     "Failed to load models: {error}": "モデルの読み込みに失敗しました: {error}",
+    "This model does not use temperature.": "このモデルは温度を使いません。",
+    "Other model…": "その他のモデル…",
+    "Model ID": "モデル ID",
+    "Enter a model ID:": "モデル ID を入力:",
+    "Refresh the model list": "モデル一覧を更新",
+    "Loaded {count} models.": "{count} 件のモデルを読み込みました。",
+    "Couldn't update the model list: {error}": "モデル一覧を更新できませんでした: {error}",
+    "Local (OpenAI compatible)": "ローカル (OpenAI 互換)",
+    "Server URL": "サーバー URL",
+    "(No models yet)": "(モデルがまだありません)",
+    "Select a model first.": "先にモデルを選んでください。",
+    "Enter the URL of a server on this PC, such as http://localhost:11434/v1.": "この PC 上のサーバーの URL を入力してください。例: http://localhost:11434/v1",
+    "Ollama's default context is short and silently cuts the start of long prompts; raise it with OLLAMA_CONTEXT_LENGTH or the model's num_ctx.": "Ollama は既定で扱える長さが短く、長いプロンプトは先頭が黙って切り捨てられます。OLLAMA_CONTEXT_LENGTH やモデルの num_ctx で広げてください。",
+    "Output copied to clipboard.": "出力をコピーしました。",
     "User prompt is empty.": "ユーザープロンプトが空です。",
     "Submission failed: {error}": "送信に失敗しました: {error}",
     "Submitted job {job_id}: {prompt}": "ジョブ {job_id} を送信しました: {prompt}",
@@ -2900,6 +2947,14 @@ _JA_FALLBACK_TRANSLATIONS["GPTImage2PanelPlugin"] = {
     "Job completed": "ジョブが完了しました",
     "Job failed": "ジョブが失敗しました",
     "Error: {error}": "エラー: {error}",
+}
+_JA_FALLBACK_TRANSLATIONS["InputAlphaControls"] = {
+    "Fill input transparency": "入力画像の透明部分を塗りつぶす",
+    "Input fill color": "入力画像の塗りつぶし色",
+    (
+        "Fill transparent areas of input images with this color before sending. "
+        "Source layers are unchanged."
+    ): "送信前に入力画像の透明部分をこの色で塗りつぶします。元のレイヤーは変更しません。",
 }
 _JA_FALLBACK_TRANSLATIONS["GPTImage2Panel"] = {
     "<New Layer>": "<新規レイヤー>",
@@ -3129,6 +3184,15 @@ _JA_FALLBACK_TRANSLATIONS["BatchGenerationControls"] = {
     "External services are disabled.": "外部サービスの利用が無効です。",
     "Wait until generation is ready.": "生成の準備が完了するまでお待ちください。",
     "A cycle requires Sequential or Combinatorial LivePrompt choices.": "一巡にはライブプロンプトの順次選択または組み合わせ列挙を設定してください。",
+    "Plan: {count} generations": "予定: {count}件",
+    "Plan: until stopped": "予定: 止めるまで",
+    "Plan: one cycle of {count}": "予定: 一巡 {count}件",
+}
+_JA_FALLBACK_TRANSLATIONS["LayerGenerationHistory"] = {
+    "Generated on this layer ({count})": "このレイヤーで生成したもの ({count})",
+    "Show in Gallery": "ギャラリーで表示",
+    "Open in Gallery (this layer only)": "ギャラリーで開く (このレイヤーで絞り込み)",
+    "No generations yet.": "まだ生成していません。",
 }
 _JA_FALLBACK_TRANSLATIONS["_DetailWidget"] = {
     "Copy full prompt": "プロンプト全文をコピー",
@@ -3156,6 +3220,8 @@ _JA_FALLBACK_TRANSLATIONS["GalleryPanel"] = {
     "Failed": "失敗",
     "Cancelled": "キャンセル済み",
     "All Services": "すべてのサービス",
+    "Layer: {name}": "レイヤー: {name}",
+    "Clear the layer filter": "レイヤーの絞り込みを解除",
     "Delete Record": "レコードを削除",
     "Delete this generation record?": "この生成レコードを削除しますか?",
     "Warning": "警告",
@@ -3796,6 +3862,11 @@ for _language, _messages in NON_JA_SHARED_FALLBACK_TRANSLATIONS.items():
 
 _JA_FALLBACK_TRANSLATIONS.setdefault("__shared__", {}).update(UI_GAP_JA)
 
+for _figure_locale, _figure_messages in DRAWING_FIGURE_CATALOGS.items():
+    _RUNTIME_FALLBACK_TRANSLATIONS.setdefault(_figure_locale, {}).setdefault(
+        "DrawingFigure", {}
+    ).update(_figure_messages)
+
 for _domain, _messages in PAINTING_TOOL_JA.items():
     _JA_FALLBACK_TRANSLATIONS.setdefault(_domain, {}).update(_messages)
 
@@ -3934,7 +4005,10 @@ def _current_language_setting() -> str:
 
 def _current_language_candidates() -> tuple[str, ...]:
     try:
-        from loomstroke.ui.i18n import _canonical_language_code, resolve_language  # noqa: PLC0415
+        from loomstroke.ui.i18n import (  # noqa: PLC0415
+            _canonical_language_code,
+            resolve_language,
+        )
     except Exception:
 
         def _canonical_language_code(code: str) -> str:

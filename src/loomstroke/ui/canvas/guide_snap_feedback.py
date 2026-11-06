@@ -46,6 +46,10 @@ class GuideSnapFeedback:
         update_guide_overlay(self.widget)
 
     def clear(self, *, repaint: bool = True) -> None:
+        assist = getattr(self.widget, "_drawing_assist_controller", None)
+        clear_position = getattr(assist, "clear_position_feedback", None)
+        if callable(clear_position):
+            clear_position()
         changed = bool(self.guides or self.composition is not None)
         self.guides, self.composition, self.context = (), None, None
         self.composition_geometry = ()

@@ -1163,6 +1163,14 @@ Please check that all image paths in your workflow are valid.
 <context>
     <name>InterfacePage</name>
     <message>
+        <source>LivePrompt default separator</source>
+        <translation>LivePrompt default separator</translation>
+    </message>
+    <message>
+        <source>Use \n for a new line or \t for a tab. Empty uses a new line. Applies to new LivePrompts; saved separators take precedence.</source>
+        <translation>Use \n for a new line or \t for a tab. Empty uses a new line. Applies to new LivePrompts; saved separators take precedence.</translation>
+    </message>
+    <message>
         <source>System Default</source>
         <translation>System Default</translation>
     </message>
@@ -1531,6 +1539,10 @@ Please check that all image paths in your workflow are valid.
 </context>
 <context>
     <name>MainWindow</name>
+    <message>
+        <source>Perspective Ruler...</source>
+        <translation>Perspective Ruler...</translation>
+    </message>
     <message>
         <source>PSD export cannot preserve this filter layer. Export a flattened image instead.</source>
         <translation>PSD export cannot preserve this filter layer. Export a flattened image instead.</translation>
@@ -3566,6 +3578,122 @@ Type: {type}</translation>
     <message>
         <source>User prompt is empty.</source>
         <translation>User prompt is empty.</translation>
+    </message>
+    <message>
+        <source>Unsaved changes</source>
+        <translation>Unsaved changes</translation>
+    </message>
+    <message>
+        <source>More actions</source>
+        <translation>More actions</translation>
+    </message>
+    <message>
+        <source>New line</source>
+        <translation>New line</translation>
+    </message>
+    <message>
+        <source>Comma</source>
+        <translation>Comma</translation>
+    </message>
+    <message>
+        <source>Comma and space</source>
+        <translation>Comma and space</translation>
+    </message>
+    <message>
+        <source>Custom</source>
+        <translation>Custom</translation>
+    </message>
+    <message>
+        <source>{count} characters</source>
+        <translation>{count} characters</translation>
+    </message>
+    <message>
+        <source>Tidy with LLM</source>
+        <translation>Tidy with LLM</translation>
+    </message>
+    <message>
+        <source>This model does not use temperature.</source>
+        <translation>This model does not use temperature.</translation>
+    </message>
+    <message>
+        <source>Output copied to clipboard.</source>
+        <translation>Output copied to clipboard.</translation>
+    </message>
+    <message>
+        <source>All types</source>
+        <translation>All types</translation>
+    </message>
+    <message>
+        <source>Body</source>
+        <translation>Body</translation>
+    </message>
+    <message>
+        <source>Import</source>
+        <translation>Import</translation>
+    </message>
+    <message>
+        <source>Import prompt</source>
+        <translation>Import prompt</translation>
+    </message>
+    <message>
+        <source>Imported '{title}'.</source>
+        <translation>Imported '{title}'.</translation>
+    </message>
+    <message>
+        <source>Import failed: {error}</source>
+        <translation>Import failed: {error}</translation>
+    </message>
+    <message>
+        <source>The file is empty.</source>
+        <translation>The file is empty.</translation>
+    </message>
+    <message>
+        <source>Other model…</source>
+        <translation>Other model…</translation>
+    </message>
+    <message>
+        <source>Model ID</source>
+        <translation>Model ID</translation>
+    </message>
+    <message>
+        <source>Enter a model ID:</source>
+        <translation>Enter a model ID:</translation>
+    </message>
+    <message>
+        <source>Refresh the model list</source>
+        <translation>Refresh the model list</translation>
+    </message>
+    <message>
+        <source>Loaded {count} models.</source>
+        <translation>Loaded {count} models.</translation>
+    </message>
+    <message>
+        <source>Couldn't update the model list: {error}</source>
+        <translation>Couldn't update the model list: {error}</translation>
+    </message>
+    <message>
+        <source>Local (OpenAI compatible)</source>
+        <translation>Local (OpenAI compatible)</translation>
+    </message>
+    <message>
+        <source>Server URL</source>
+        <translation>Server URL</translation>
+    </message>
+    <message>
+        <source>(No models yet)</source>
+        <translation>(No models yet)</translation>
+    </message>
+    <message>
+        <source>Select a model first.</source>
+        <translation>Select a model first.</translation>
+    </message>
+    <message>
+        <source>Enter the URL of a server on this PC, such as http://localhost:11434/v1.</source>
+        <translation>Enter the URL of a server on this PC, such as http://localhost:11434/v1.</translation>
+    </message>
+    <message>
+        <source>Ollama's default context is short and silently cuts the start of long prompts; raise it with OLLAMA_CONTEXT_LENGTH or the model's num_ctx.</source>
+        <translation>Ollama's default context is short and silently cuts the start of long prompts; raise it with OLLAMA_CONTEXT_LENGTH or the model's num_ctx.</translation>
     </message>
 </context>
 <context>
@@ -9364,6 +9492,18 @@ Select a file to recover.</translation>
         <source>Wait until generation is ready.</source>
         <translation>Wait until generation is ready.</translation>
     </message>
+    <message>
+        <source>Plan: {count} generations</source>
+        <translation>Plan: {count} generations</translation>
+    </message>
+    <message>
+        <source>Plan: until stopped</source>
+        <translation>Plan: until stopped</translation>
+    </message>
+    <message>
+        <source>Plan: one cycle of {count}</source>
+        <translation>Plan: one cycle of {count}</translation>
+    </message>
 </context>
 <context>
     <name>BindingMarginDialog</name>
@@ -12396,6 +12536,42 @@ Failed to initialise the GPU compositor. Please update your graphics driver and 
 <context>
     <name>DrawingAssistPanel</name>
     <message>
+        <source>Perspective ruler</source>
+        <translation>Perspective ruler</translation>
+    </message>
+    <message>
+        <source>1-point perspective</source>
+        <translation>1-point perspective</translation>
+    </message>
+    <message>
+        <source>2-point perspective</source>
+        <translation>2-point perspective</translation>
+    </message>
+    <message>
+        <source>3-point perspective</source>
+        <translation>3-point perspective</translation>
+    </message>
+    <message>
+        <source>Drawing direction</source>
+        <translation>Drawing direction</translation>
+    </message>
+    <message>
+        <source>Automatic</source>
+        <translation>Automatic</translation>
+    </message>
+    <message>
+        <source>Vertical</source>
+        <translation>Vertical</translation>
+    </message>
+    <message>
+        <source>Edit vanishing points</source>
+        <translation>Edit vanishing points</translation>
+    </message>
+    <message>
+        <source>Drag VP handles on the canvas. Esc cancels the drag.</source>
+        <translation>Drag VP handles on the canvas. Esc cancels the drag.</translation>
+    </message>
+    <message>
         <source>Add</source>
         <translation>Add</translation>
     </message>
@@ -14429,6 +14605,10 @@ Failed to initialise the GPU compositor. Please update your graphics driver and 
 <context>
     <name>GPTImage2PanelPlugin</name>
     <message>
+        <source>GPT Image</source>
+        <translation>GPT Image</translation>
+    </message>
+    <message>
         <source>Configure GPT Image 2 jobs</source>
         <translation>Configure GPT Image 2 jobs</translation>
     </message>
@@ -14530,6 +14710,14 @@ Failed to initialise the GPU compositor. Please update your graphics driver and 
     <message>
         <source>Warning</source>
         <translation>Warning</translation>
+    </message>
+    <message>
+        <source>Layer: {name}</source>
+        <translation>Layer: {name}</translation>
+    </message>
+    <message>
+        <source>Clear the layer filter</source>
+        <translation>Clear the layer filter</translation>
     </message>
 </context>
 <context>
@@ -14942,6 +15130,22 @@ Failed to initialise the GPU compositor. Please update your graphics driver and 
 </context>
 <context>
     <name>LLMPaneController</name>
+    <message>
+        <source>Copy</source>
+        <translation>Copy</translation>
+    </message>
+    <message>
+        <source>Model ID</source>
+        <translation>Model ID</translation>
+    </message>
+    <message>
+        <source>Server URL</source>
+        <translation>Server URL</translation>
+    </message>
+    <message>
+        <source>Enter a model ID:</source>
+        <translation>Enter a model ID:</translation>
+    </message>
     <message>
         <source>Add Library</source>
         <translation>Add Library</translation>
@@ -16839,6 +17043,14 @@ Operation: {operation}
     <message>
         <source>Workflow transferred. Select parameters and outputs in the Editor tab, then register.</source>
         <translation>Workflow transferred. Select parameters and outputs in the Editor tab, then register.</translation>
+    </message>
+    <message>
+        <source>Live prompt</source>
+        <translation>Live prompt</translation>
+    </message>
+    <message>
+        <source>Text (node)</source>
+        <translation>Text (node)</translation>
     </message>
 </context>
 <context>
@@ -21009,6 +21221,410 @@ You will need to enter it again before generating.</translation>
 </context>
 <context>
     <name>__shared__</name>
+    <message>
+        <source>Choose a different name for this model.</source>
+        <translation>Choose a different name for this model.</translation>
+    </message>
+    <message>
+        <source>Enter a name between 1 and 80 characters.</source>
+        <translation>Enter a name between 1 and 80 characters.</translation>
+    </message>
+    <message>
+        <source>Saved poses</source>
+        <translation>Saved poses</translation>
+    </message>
+    <message>
+        <source>Select saved pose</source>
+        <translation>Select saved pose</translation>
+    </message>
+    <message>
+        <source>Save current pose</source>
+        <translation>Save current pose</translation>
+    </message>
+    <message>
+        <source>Apply saved pose</source>
+        <translation>Apply saved pose</translation>
+    </message>
+    <message>
+        <source>Delete saved pose</source>
+        <translation>Delete saved pose</translation>
+    </message>
+    <message>
+        <source>Could not load pose presets</source>
+        <translation>Could not load pose presets</translation>
+    </message>
+    <message>
+        <source>Pose presets</source>
+        <translation>Pose presets</translation>
+    </message>
+    <message>
+        <source>Save pose preset</source>
+        <translation>Save pose preset</translation>
+    </message>
+    <message>
+        <source>Pose preset name</source>
+        <translation>Pose preset name</translation>
+    </message>
+    <message>
+        <source>Could not save pose preset</source>
+        <translation>Could not save pose preset</translation>
+    </message>
+    <message>
+        <source>Could not apply pose preset</source>
+        <translation>Could not apply pose preset</translation>
+    </message>
+    <message>
+        <source>Could not delete pose preset</source>
+        <translation>Could not delete pose preset</translation>
+    </message>
+    <message>
+        <source>Delete selected pose preset?</source>
+        <translation>Delete selected pose preset?</translation>
+    </message>
+    <message>
+      <source>Fingers together</source>
+      <translation>Fingers together</translation>
+    </message>
+    <message>
+      <source>Fingers spread</source>
+      <translation>Fingers spread</translation>
+    </message>
+    <message>
+      <source>Flat hand</source>
+      <translation>Flat hand</translation>
+    </message>
+    <message>
+      <source>Soft fist</source>
+      <translation>Soft fist</translation>
+    </message>
+    <message>
+      <source>Tight fist</source>
+      <translation>Tight fist</translation>
+    </message>
+    <message>
+      <source>Half-closed hand</source>
+      <translation>Half-closed hand</translation>
+    </message>
+    <message>
+      <source>Cupped hand</source>
+      <translation>Cupped hand</translation>
+    </message>
+    <message>
+      <source>Deeply cupped hand</source>
+      <translation>Deeply cupped hand</translation>
+    </message>
+    <message>
+      <source>Thumbs up</source>
+      <translation>Thumbs up</translation>
+    </message>
+    <message>
+      <source>OK sign</source>
+      <translation>OK sign</translation>
+    </message>
+    <message>
+      <source>Horns sign</source>
+      <translation>Horns sign</translation>
+    </message>
+    <message>
+      <source>Shaka sign</source>
+      <translation>Shaka sign</translation>
+    </message>
+    <message>
+      <source>Three extended fingers</source>
+      <translation>Three extended fingers</translation>
+    </message>
+    <message>
+      <source>Four extended fingers</source>
+      <translation>Four extended fingers</translation>
+    </message>
+    <message>
+      <source>Thumb and index</source>
+      <translation>Thumb and index</translation>
+    </message>
+    <message>
+      <source>Thumb, index and middle</source>
+      <translation>Thumb, index and middle</translation>
+    </message>
+    <message>
+      <source>Crossed fingers</source>
+      <translation>Crossed fingers</translation>
+    </message>
+    <message>
+      <source>Finger heart</source>
+      <translation>Finger heart</translation>
+    </message>
+    <message>
+      <source>Beckoning finger</source>
+      <translation>Beckoning finger</translation>
+    </message>
+    <message>
+      <source>Stop gesture</source>
+      <translation>Stop gesture</translation>
+    </message>
+    <message>
+      <source>Count one</source>
+      <translation>Count one</translation>
+    </message>
+    <message>
+      <source>Count two</source>
+      <translation>Count two</translation>
+    </message>
+    <message>
+      <source>Count three</source>
+      <translation>Count three</translation>
+    </message>
+    <message>
+      <source>Count four</source>
+      <translation>Count four</translation>
+    </message>
+    <message>
+      <source>Count five</source>
+      <translation>Count five</translation>
+    </message>
+    <message>
+      <source>Small pinch</source>
+      <translation>Small pinch</translation>
+    </message>
+    <message>
+      <source>Wide pinch</source>
+      <translation>Wide pinch</translation>
+    </message>
+    <message>
+      <source>Tripod pinch</source>
+      <translation>Tripod pinch</translation>
+    </message>
+    <message>
+      <source>Precision grip</source>
+      <translation>Precision grip</translation>
+    </message>
+    <message>
+      <source>Pen grip</source>
+      <translation>Pen grip</translation>
+    </message>
+    <message>
+      <source>Brush grip</source>
+      <translation>Brush grip</translation>
+    </message>
+    <message>
+      <source>Cylinder grip</source>
+      <translation>Cylinder grip</translation>
+    </message>
+    <message>
+      <source>Thin handle grip</source>
+      <translation>Thin handle grip</translation>
+    </message>
+    <message>
+      <source>Ball grip</source>
+      <translation>Ball grip</translation>
+    </message>
+    <message>
+      <source>Large ball grip</source>
+      <translation>Large ball grip</translation>
+    </message>
+    <message>
+      <source>Hook grip</source>
+      <translation>Hook grip</translation>
+    </message>
+    <message>
+      <source>Key pinch</source>
+      <translation>Key pinch</translation>
+    </message>
+    <message>
+      <source>Claw hand</source>
+      <translation>Claw hand</translation>
+    </message>
+    <message>
+      <source>Gentle touch</source>
+      <translation>Gentle touch</translation>
+    </message>
+    <message>
+      <source>Fingertip touch</source>
+      <translation>Fingertip touch</translation>
+    </message>
+    <message>
+      <source>Fabric pinch</source>
+      <translation>Fabric pinch</translation>
+    </message>
+    <message>
+      <source>Delicate hand</source>
+      <translation>Delicate hand</translation>
+    </message>
+    <message>
+      <source>Tense hand</source>
+      <translation>Tense hand</translation>
+    </message>
+    <message>
+      <source>Basic hand poses</source>
+      <translation>Basic hand poses</translation>
+    </message>
+    <message>
+      <source>Hand gestures</source>
+      <translation>Hand gestures</translation>
+    </message>
+    <message>
+      <source>Finger counting</source>
+      <translation>Finger counting</translation>
+    </message>
+    <message>
+      <source>Grasping poses</source>
+      <translation>Grasping poses</translation>
+    </message>
+    <message>
+      <source>Expressive hands</source>
+      <translation>Expressive hands</translation>
+    </message>
+    <message>
+      <source>All hand poses</source>
+      <translation>All hand poses</translation>
+    </message>
+    <message>
+        <source>Edit selected hand</source>
+        <translation>Edit selected hand</translation>
+    </message>
+    <message>
+        <source>Hand pose</source>
+        <translation>Hand pose</translation>
+    </message>
+    <message>
+        <source>Finger</source>
+        <translation>Finger</translation>
+    </message>
+    <message>
+        <source>Finger curl</source>
+        <translation>Finger curl</translation>
+    </message>
+    <message>
+        <source>Finger spread</source>
+        <translation>Finger spread</translation>
+    </message>
+    <message>
+        <source>Cup palm</source>
+        <translation>Cup palm</translation>
+    </message>
+    <message>
+        <source>Joint</source>
+        <translation>Joint</translation>
+    </message>
+    <message>
+        <source>Reset hand</source>
+        <translation>Reset hand</translation>
+    </message>
+    <message>
+        <source>Thumb</source>
+        <translation>Thumb</translation>
+    </message>
+    <message>
+        <source>Index finger</source>
+        <translation>Index finger</translation>
+    </message>
+    <message>
+        <source>Middle finger</source>
+        <translation>Middle finger</translation>
+    </message>
+    <message>
+        <source>Ring finger</source>
+        <translation>Ring finger</translation>
+    </message>
+    <message>
+        <source>Little finger</source>
+        <translation>Little finger</translation>
+    </message>
+    <message>
+        <source>Palm</source>
+        <translation>Palm</translation>
+    </message>
+    <message>
+        <source>Wrist</source>
+        <translation>Wrist</translation>
+    </message>
+    <message>
+        <source>Open hand</source>
+        <translation>Open hand</translation>
+    </message>
+    <message>
+        <source>Relaxed hand</source>
+        <translation>Relaxed hand</translation>
+    </message>
+    <message>
+        <source>Fist</source>
+        <translation>Fist</translation>
+    </message>
+    <message>
+        <source>Pointing hand</source>
+        <translation>Pointing hand</translation>
+    </message>
+    <message>
+        <source>Peace sign</source>
+        <translation>Peace sign</translation>
+    </message>
+    <message>
+        <source>Reset selected part</source>
+        <translation>Reset selected part</translation>
+    </message>
+    <message>
+        <source>GPT Image</source>
+        <translation>GPT Image</translation>
+    </message>
+    <message>
+        <source>Perspective ruler</source>
+        <translation>Perspective ruler</translation>
+    </message>
+    <message>
+        <source>1-point perspective</source>
+        <translation>1-point perspective</translation>
+    </message>
+    <message>
+        <source>2-point perspective</source>
+        <translation>2-point perspective</translation>
+    </message>
+    <message>
+        <source>3-point perspective</source>
+        <translation>3-point perspective</translation>
+    </message>
+    <message>
+        <source>Drawing direction</source>
+        <translation>Drawing direction</translation>
+    </message>
+    <message>
+        <source>Edit vanishing points</source>
+        <translation>Edit vanishing points</translation>
+    </message>
+    <message>
+        <source>Drag VP handles on the canvas. Esc cancels the drag.</source>
+        <translation>Drag VP handles on the canvas. Esc cancels the drag.</translation>
+    </message>
+    <message>
+        <source>Perspective Ruler...</source>
+        <translation>Perspective Ruler...</translation>
+    </message>
+    <message>
+        <source>LivePrompt default separator</source>
+        <translation>LivePrompt default separator</translation>
+    </message>
+    <message>
+        <source>Use \n for a new line or \t for a tab. Empty uses a new line. Applies to new LivePrompts; saved separators take precedence.</source>
+        <translation>Use \n for a new line or \t for a tab. Empty uses a new line. Applies to new LivePrompts; saved separators take precedence.</translation>
+    </message>
+    <message>
+        <source>Register in AI Effect Manager</source>
+        <translation>Register in AI Effect Manager</translation>
+    </message>
+    <message>
+        <source>Save the current prompt and options as a preset. Choose input layers again when applying the preset.</source>
+        <translation>Save the current prompt and options as a preset. Choose input layers again when applying the preset.</translation>
+    </message>
+    <message>
+        <source>Preset name is required</source>
+        <translation>Preset name is required</translation>
+    </message>
+    <message>
+        <source>Registered preset: {name}</source>
+        <translation>Registered preset: {name}</translation>
+    </message>
+    <message>
+        <source>Could not register preset. AI Effect Manager may be unavailable or saving failed.</source>
+        <translation>Could not register preset. AI Effect Manager may be unavailable or saving failed.</translation>
+    </message>
     <message>
         <source> %</source>
         <translation> %</translation>
@@ -35615,6 +36231,326 @@ Click to show as panel</source>
 
 Click to show as panel</translation>
     </message>
+    <message>
+        <source>Emphasis</source>
+        <translation>Emphasis</translation>
+    </message>
+    <message>
+        <source>Weaken emphasis</source>
+        <translation>Weaken emphasis</translation>
+    </message>
+    <message>
+        <source>Strengthen emphasis</source>
+        <translation>Strengthen emphasis</translation>
+    </message>
+    <message>
+        <source>Remove from LivePrompt</source>
+        <translation>Remove from LivePrompt</translation>
+    </message>
+    <message>
+        <source>Unsaved changes</source>
+        <translation>Unsaved changes</translation>
+    </message>
+    <message>
+        <source>More actions</source>
+        <translation>More actions</translation>
+    </message>
+    <message>
+        <source>New line</source>
+        <translation>New line</translation>
+    </message>
+    <message>
+        <source>Comma</source>
+        <translation>Comma</translation>
+    </message>
+    <message>
+        <source>Comma and space</source>
+        <translation>Comma and space</translation>
+    </message>
+    <message>
+        <source>{count} characters</source>
+        <translation>{count} characters</translation>
+    </message>
+    <message>
+        <source>Tidy with LLM</source>
+        <translation>Tidy with LLM</translation>
+    </message>
+    <message>
+        <source>Text (node)</source>
+        <translation>Text (node)</translation>
+    </message>
+    <message>
+        <source>Plan: {count} generations</source>
+        <translation>Plan: {count} generations</translation>
+    </message>
+    <message>
+        <source>Plan: until stopped</source>
+        <translation>Plan: until stopped</translation>
+    </message>
+    <message>
+        <source>Plan: one cycle of {count}</source>
+        <translation>Plan: one cycle of {count}</translation>
+    </message>
+    <message>
+        <source>Generated on this layer ({count})</source>
+        <translation>Generated on this layer ({count})</translation>
+    </message>
+    <message>
+        <source>Show in Gallery</source>
+        <translation>Show in Gallery</translation>
+    </message>
+    <message>
+        <source>Open in Gallery (this layer only)</source>
+        <translation>Open in Gallery (this layer only)</translation>
+    </message>
+    <message>
+        <source>No generations yet.</source>
+        <translation>No generations yet.</translation>
+    </message>
+    <message>
+        <source>Layer: {name}</source>
+        <translation>Layer: {name}</translation>
+    </message>
+    <message>
+        <source>Clear the layer filter</source>
+        <translation>Clear the layer filter</translation>
+    </message>
+    <message>
+        <source>This model does not use temperature.</source>
+        <translation>This model does not use temperature.</translation>
+    </message>
+    <message>
+        <source>Output copied to clipboard.</source>
+        <translation>Output copied to clipboard.</translation>
+    </message>
+    <message>
+        <source>All types</source>
+        <translation>All types</translation>
+    </message>
+    <message>
+        <source>Import prompt</source>
+        <translation>Import prompt</translation>
+    </message>
+    <message>
+        <source>Imported '{title}'.</source>
+        <translation>Imported '{title}'.</translation>
+    </message>
+    <message>
+        <source>Import failed: {error}</source>
+        <translation>Import failed: {error}</translation>
+    </message>
+    <message>
+        <source>The file is empty.</source>
+        <translation>The file is empty.</translation>
+    </message>
+    <message>
+        <source>Other model…</source>
+        <translation>Other model…</translation>
+    </message>
+    <message>
+        <source>Model ID</source>
+        <translation>Model ID</translation>
+    </message>
+    <message>
+        <source>Enter a model ID:</source>
+        <translation>Enter a model ID:</translation>
+    </message>
+    <message>
+        <source>Refresh the model list</source>
+        <translation>Refresh the model list</translation>
+    </message>
+    <message>
+        <source>Loaded {count} models.</source>
+        <translation>Loaded {count} models.</translation>
+    </message>
+    <message>
+        <source>Couldn't update the model list: {error}</source>
+        <translation>Couldn't update the model list: {error}</translation>
+    </message>
+    <message>
+        <source>Local (OpenAI compatible)</source>
+        <translation>Local (OpenAI compatible)</translation>
+    </message>
+    <message>
+        <source>Server URL</source>
+        <translation>Server URL</translation>
+    </message>
+    <message>
+        <source>(No models yet)</source>
+        <translation>(No models yet)</translation>
+    </message>
+    <message>
+        <source>Select a model first.</source>
+        <translation>Select a model first.</translation>
+    </message>
+    <message>
+        <source>Enter the URL of a server on this PC, such as http://localhost:11434/v1.</source>
+        <translation>Enter the URL of a server on this PC, such as http://localhost:11434/v1.</translation>
+    </message>
+    <message>
+        <source>Ollama's default context is short and silently cuts the start of long prompts; raise it with OLLAMA_CONTEXT_LENGTH or the model's num_ctx.</source>
+        <translation>Ollama's default context is short and silently cuts the start of long prompts; raise it with OLLAMA_CONTEXT_LENGTH or the model's num_ctx.</translation>
+    </message>
+    <message>
+        <source>Fill input transparency</source>
+        <translation>Fill input transparency</translation>
+    </message>
+    <message>
+        <source>Fill transparent areas of input images with this color before sending. Source layers are unchanged.</source>
+        <translation>Fill transparent areas of input images with this color before sending. Source layers are unchanged.</translation>
+    </message>
+    <message>
+        <source>Input fill color</source>
+        <translation>Input fill color</translation>
+    </message>
+    <message>
+        <source>Add drawing figure</source>
+        <translation>Add drawing figure</translation>
+    </message>
+    <message>
+        <source>Apply pose</source>
+        <translation>Apply pose</translation>
+    </message>
+    <message>
+        <source>Arms out</source>
+        <translation>Arms out</translation>
+    </message>
+    <message>
+        <source>Chest</source>
+        <translation>Chest</translation>
+    </message>
+    <message>
+        <source>Could not add drawing figure</source>
+        <translation>Could not add drawing figure</translation>
+    </message>
+    <message>
+        <source>Could not export OpenPose</source>
+        <translation>Could not export OpenPose</translation>
+    </message>
+    <message>
+        <source>Crouching</source>
+        <translation>Crouching</translation>
+    </message>
+    <message>
+        <source>Drag joints; Alt-drag changes depth. Pink joints are pinned.</source>
+        <translation>Drag joints; Alt-drag changes depth. Pink joints are pinned.</translation>
+    </message>
+    <message>
+        <source>Drag joints to move; drag XYZ rings to rotate. Alt-drag changes depth. Pink joints are pinned.</source>
+        <translation>Drag joints to move; drag XYZ rings to rotate. Alt-drag changes depth. Pink joints are pinned.</translation>
+    </message>
+    <message>
+        <source>Drawing figure</source>
+        <translation>Drawing figure</translation>
+    </message>
+    <message>
+        <source>Edit pose</source>
+        <translation>Edit pose</translation>
+    </message>
+    <message>
+        <source>Export OpenPose</source>
+        <translation>Export OpenPose</translation>
+    </message>
+    <message>
+        <source>Head</source>
+        <translation>Head</translation>
+    </message>
+    <message>
+        <source>Left Ankle</source>
+        <translation>Left Ankle</translation>
+    </message>
+    <message>
+        <source>Left Collar</source>
+        <translation>Left Collar</translation>
+    </message>
+    <message>
+        <source>Left Elbow</source>
+        <translation>Left Elbow</translation>
+    </message>
+    <message>
+        <source>Left Hip</source>
+        <translation>Left Hip</translation>
+    </message>
+    <message>
+        <source>Left Knee</source>
+        <translation>Left Knee</translation>
+    </message>
+    <message>
+        <source>Left Shoulder</source>
+        <translation>Left Shoulder</translation>
+    </message>
+    <message>
+        <source>Left Wrist</source>
+        <translation>Left Wrist</translation>
+    </message>
+    <message>
+        <source>Neck</source>
+        <translation>Neck</translation>
+    </message>
+    <message>
+        <source>OpenPose layer</source>
+        <translation>OpenPose layer</translation>
+    </message>
+    <message>
+        <source>Pelvis</source>
+        <translation>Pelvis</translation>
+    </message>
+    <message>
+        <source>Pin / unpin joint</source>
+        <translation>Pin / unpin joint</translation>
+    </message>
+    <message>
+        <source>Pose assistance</source>
+        <translation>Pose assistance</translation>
+    </message>
+    <message>
+        <source>Reaching</source>
+        <translation>Reaching</translation>
+    </message>
+    <message>
+        <source>Right Ankle</source>
+        <translation>Right Ankle</translation>
+    </message>
+    <message>
+        <source>Right Collar</source>
+        <translation>Right Collar</translation>
+    </message>
+    <message>
+        <source>Right Elbow</source>
+        <translation>Right Elbow</translation>
+    </message>
+    <message>
+        <source>Right Hip</source>
+        <translation>Right Hip</translation>
+    </message>
+    <message>
+        <source>Right Knee</source>
+        <translation>Right Knee</translation>
+    </message>
+    <message>
+        <source>Right Shoulder</source>
+        <translation>Right Shoulder</translation>
+    </message>
+    <message>
+        <source>Right Wrist</source>
+        <translation>Right Wrist</translation>
+    </message>
+    <message>
+        <source>Sitting</source>
+        <translation>Sitting</translation>
+    </message>
+    <message>
+        <source>Standing</source>
+        <translation>Standing</translation>
+    </message>
+    <message>
+        <source>Waist</source>
+        <translation>Waist</translation>
+    </message>
+    <message>
+        <source>Walking</source>
+        <translation>Walking</translation>
+    </message>
 </context>
 <context>
     <name>app_ai_effect_generation_commit</name>
@@ -36260,6 +37196,670 @@ Click to show as panel</translation>
     <message>
         <source>Use as Inpaint Mask</source>
         <translation>Use as Inpaint Mask</translation>
+    </message>
+</context>
+<context>
+    <name>AIEffectRegisterButton</name>
+    <message>
+        <source>Register in AI Effect Manager</source>
+        <translation>Register in AI Effect Manager</translation>
+    </message>
+    <message>
+        <source>Save the current prompt and options as a preset. Choose input layers again when applying the preset.</source>
+        <translation>Save the current prompt and options as a preset. Choose input layers again when applying the preset.</translation>
+    </message>
+    <message>
+        <source>Preset name:</source>
+        <translation>Preset name:</translation>
+    </message>
+    <message>
+        <source>Preset name is required</source>
+        <translation>Preset name is required</translation>
+    </message>
+    <message>
+        <source>Registered preset: {name}</source>
+        <translation>Registered preset: {name}</translation>
+    </message>
+    <message>
+        <source>Could not register preset. AI Effect Manager may be unavailable or saving failed.</source>
+        <translation>Could not register preset. AI Effect Manager may be unavailable or saving failed.</translation>
+    </message>
+</context>
+<context>
+    <name>PromptChipWidget</name>
+    <message>
+        <source>Emphasis</source>
+        <translation>Emphasis</translation>
+    </message>
+    <message>
+        <source>Weaken emphasis</source>
+        <translation>Weaken emphasis</translation>
+    </message>
+    <message>
+        <source>Strengthen emphasis</source>
+        <translation>Strengthen emphasis</translation>
+    </message>
+    <message>
+        <source>Clear</source>
+        <translation>Clear</translation>
+    </message>
+    <message>
+        <source>Remove from LivePrompt</source>
+        <translation>Remove from LivePrompt</translation>
+    </message>
+</context>
+<context>
+    <name>LayerGenerationHistory</name>
+    <message>
+        <source>Generated on this layer ({count})</source>
+        <translation>Generated on this layer ({count})</translation>
+    </message>
+    <message>
+        <source>Show in Gallery</source>
+        <translation>Show in Gallery</translation>
+    </message>
+    <message>
+        <source>Open in Gallery (this layer only)</source>
+        <translation>Open in Gallery (this layer only)</translation>
+    </message>
+    <message>
+        <source>No generations yet.</source>
+        <translation>No generations yet.</translation>
+    </message>
+</context>
+<context>
+    <name>InputAlphaControls</name>
+    <message>
+        <source>Fill input transparency</source>
+        <translation>Fill input transparency</translation>
+    </message>
+    <message>
+        <source>Fill transparent areas of input images with this color before sending. Source layers are unchanged.</source>
+        <translation>Fill transparent areas of input images with this color before sending. Source layers are unchanged.</translation>
+    </message>
+    <message>
+        <source>Input fill color</source>
+        <translation>Input fill color</translation>
+    </message>
+</context>
+<context>
+    <name>DrawingFigure</name>
+    <message>
+        <source>Choose a different name for this model.</source>
+        <translation>Choose a different name for this model.</translation>
+    </message>
+    <message>
+        <source>Enter a name between 1 and 80 characters.</source>
+        <translation>Enter a name between 1 and 80 characters.</translation>
+    </message>
+    <message>
+        <source>Saved poses</source>
+        <translation>Saved poses</translation>
+    </message>
+    <message>
+        <source>Select saved pose</source>
+        <translation>Select saved pose</translation>
+    </message>
+    <message>
+        <source>Save current pose</source>
+        <translation>Save current pose</translation>
+    </message>
+    <message>
+        <source>Apply saved pose</source>
+        <translation>Apply saved pose</translation>
+    </message>
+    <message>
+        <source>Delete saved pose</source>
+        <translation>Delete saved pose</translation>
+    </message>
+    <message>
+        <source>Could not load pose presets</source>
+        <translation>Could not load pose presets</translation>
+    </message>
+    <message>
+        <source>Pose presets</source>
+        <translation>Pose presets</translation>
+    </message>
+    <message>
+        <source>Save pose preset</source>
+        <translation>Save pose preset</translation>
+    </message>
+    <message>
+        <source>Pose preset name</source>
+        <translation>Pose preset name</translation>
+    </message>
+    <message>
+        <source>Could not save pose preset</source>
+        <translation>Could not save pose preset</translation>
+    </message>
+    <message>
+        <source>Could not apply pose preset</source>
+        <translation>Could not apply pose preset</translation>
+    </message>
+    <message>
+        <source>Could not delete pose preset</source>
+        <translation>Could not delete pose preset</translation>
+    </message>
+    <message>
+        <source>Delete selected pose preset?</source>
+        <translation>Delete selected pose preset?</translation>
+    </message>
+    <message>
+      <source>Fingers together</source>
+      <translation>Fingers together</translation>
+    </message>
+    <message>
+      <source>Fingers spread</source>
+      <translation>Fingers spread</translation>
+    </message>
+    <message>
+      <source>Flat hand</source>
+      <translation>Flat hand</translation>
+    </message>
+    <message>
+      <source>Soft fist</source>
+      <translation>Soft fist</translation>
+    </message>
+    <message>
+      <source>Tight fist</source>
+      <translation>Tight fist</translation>
+    </message>
+    <message>
+      <source>Half-closed hand</source>
+      <translation>Half-closed hand</translation>
+    </message>
+    <message>
+      <source>Cupped hand</source>
+      <translation>Cupped hand</translation>
+    </message>
+    <message>
+      <source>Deeply cupped hand</source>
+      <translation>Deeply cupped hand</translation>
+    </message>
+    <message>
+      <source>Thumbs up</source>
+      <translation>Thumbs up</translation>
+    </message>
+    <message>
+      <source>OK sign</source>
+      <translation>OK sign</translation>
+    </message>
+    <message>
+      <source>Horns sign</source>
+      <translation>Horns sign</translation>
+    </message>
+    <message>
+      <source>Shaka sign</source>
+      <translation>Shaka sign</translation>
+    </message>
+    <message>
+      <source>Three extended fingers</source>
+      <translation>Three extended fingers</translation>
+    </message>
+    <message>
+      <source>Four extended fingers</source>
+      <translation>Four extended fingers</translation>
+    </message>
+    <message>
+      <source>Thumb and index</source>
+      <translation>Thumb and index</translation>
+    </message>
+    <message>
+      <source>Thumb, index and middle</source>
+      <translation>Thumb, index and middle</translation>
+    </message>
+    <message>
+      <source>Crossed fingers</source>
+      <translation>Crossed fingers</translation>
+    </message>
+    <message>
+      <source>Finger heart</source>
+      <translation>Finger heart</translation>
+    </message>
+    <message>
+      <source>Beckoning finger</source>
+      <translation>Beckoning finger</translation>
+    </message>
+    <message>
+      <source>Stop gesture</source>
+      <translation>Stop gesture</translation>
+    </message>
+    <message>
+      <source>Count one</source>
+      <translation>Count one</translation>
+    </message>
+    <message>
+      <source>Count two</source>
+      <translation>Count two</translation>
+    </message>
+    <message>
+      <source>Count three</source>
+      <translation>Count three</translation>
+    </message>
+    <message>
+      <source>Count four</source>
+      <translation>Count four</translation>
+    </message>
+    <message>
+      <source>Count five</source>
+      <translation>Count five</translation>
+    </message>
+    <message>
+      <source>Small pinch</source>
+      <translation>Small pinch</translation>
+    </message>
+    <message>
+      <source>Wide pinch</source>
+      <translation>Wide pinch</translation>
+    </message>
+    <message>
+      <source>Tripod pinch</source>
+      <translation>Tripod pinch</translation>
+    </message>
+    <message>
+      <source>Precision grip</source>
+      <translation>Precision grip</translation>
+    </message>
+    <message>
+      <source>Pen grip</source>
+      <translation>Pen grip</translation>
+    </message>
+    <message>
+      <source>Brush grip</source>
+      <translation>Brush grip</translation>
+    </message>
+    <message>
+      <source>Cylinder grip</source>
+      <translation>Cylinder grip</translation>
+    </message>
+    <message>
+      <source>Thin handle grip</source>
+      <translation>Thin handle grip</translation>
+    </message>
+    <message>
+      <source>Ball grip</source>
+      <translation>Ball grip</translation>
+    </message>
+    <message>
+      <source>Large ball grip</source>
+      <translation>Large ball grip</translation>
+    </message>
+    <message>
+      <source>Hook grip</source>
+      <translation>Hook grip</translation>
+    </message>
+    <message>
+      <source>Key pinch</source>
+      <translation>Key pinch</translation>
+    </message>
+    <message>
+      <source>Claw hand</source>
+      <translation>Claw hand</translation>
+    </message>
+    <message>
+      <source>Gentle touch</source>
+      <translation>Gentle touch</translation>
+    </message>
+    <message>
+      <source>Fingertip touch</source>
+      <translation>Fingertip touch</translation>
+    </message>
+    <message>
+      <source>Fabric pinch</source>
+      <translation>Fabric pinch</translation>
+    </message>
+    <message>
+      <source>Delicate hand</source>
+      <translation>Delicate hand</translation>
+    </message>
+    <message>
+      <source>Tense hand</source>
+      <translation>Tense hand</translation>
+    </message>
+    <message>
+      <source>Basic hand poses</source>
+      <translation>Basic hand poses</translation>
+    </message>
+    <message>
+      <source>Hand gestures</source>
+      <translation>Hand gestures</translation>
+    </message>
+    <message>
+      <source>Finger counting</source>
+      <translation>Finger counting</translation>
+    </message>
+    <message>
+      <source>Grasping poses</source>
+      <translation>Grasping poses</translation>
+    </message>
+    <message>
+      <source>Expressive hands</source>
+      <translation>Expressive hands</translation>
+    </message>
+    <message>
+      <source>All hand poses</source>
+      <translation>All hand poses</translation>
+    </message>
+    <message>
+        <source>Edit selected hand</source>
+        <translation>Edit selected hand</translation>
+    </message>
+    <message>
+        <source>Hand pose</source>
+        <translation>Hand pose</translation>
+    </message>
+    <message>
+        <source>Finger</source>
+        <translation>Finger</translation>
+    </message>
+    <message>
+        <source>Finger curl</source>
+        <translation>Finger curl</translation>
+    </message>
+    <message>
+        <source>Finger spread</source>
+        <translation>Finger spread</translation>
+    </message>
+    <message>
+        <source>Cup palm</source>
+        <translation>Cup palm</translation>
+    </message>
+    <message>
+        <source>Joint</source>
+        <translation>Joint</translation>
+    </message>
+    <message>
+        <source>Reset hand</source>
+        <translation>Reset hand</translation>
+    </message>
+    <message>
+        <source>Thumb</source>
+        <translation>Thumb</translation>
+    </message>
+    <message>
+        <source>Index finger</source>
+        <translation>Index finger</translation>
+    </message>
+    <message>
+        <source>Middle finger</source>
+        <translation>Middle finger</translation>
+    </message>
+    <message>
+        <source>Ring finger</source>
+        <translation>Ring finger</translation>
+    </message>
+    <message>
+        <source>Little finger</source>
+        <translation>Little finger</translation>
+    </message>
+    <message>
+        <source>Palm</source>
+        <translation>Palm</translation>
+    </message>
+    <message>
+        <source>Wrist</source>
+        <translation>Wrist</translation>
+    </message>
+    <message>
+        <source>Open hand</source>
+        <translation>Open hand</translation>
+    </message>
+    <message>
+        <source>Relaxed hand</source>
+        <translation>Relaxed hand</translation>
+    </message>
+    <message>
+        <source>Fist</source>
+        <translation>Fist</translation>
+    </message>
+    <message>
+        <source>Pointing hand</source>
+        <translation>Pointing hand</translation>
+    </message>
+    <message>
+        <source>Peace sign</source>
+        <translation>Peace sign</translation>
+    </message>
+    <message>
+        <source>Reset selected part</source>
+        <translation>Reset selected part</translation>
+    </message>
+    <message>
+        <source>Add drawing figure</source>
+        <translation>Add drawing figure</translation>
+    </message>
+    <message>
+        <source>Drawing figure</source>
+        <translation>Drawing figure</translation>
+    </message>
+    <message>
+        <source>Could not add drawing figure</source>
+        <translation>Could not add drawing figure</translation>
+    </message>
+    <message>
+        <source>Edit pose</source>
+        <translation>Edit pose</translation>
+    </message>
+    <message>
+        <source>Apply pose</source>
+        <translation>Apply pose</translation>
+    </message>
+    <message>
+        <source>Pose assistance</source>
+        <translation>Pose assistance</translation>
+    </message>
+    <message>
+        <source>Pin / unpin joint</source>
+        <translation>Pin / unpin joint</translation>
+    </message>
+    <message>
+        <source>OpenPose layer</source>
+        <translation>OpenPose layer</translation>
+    </message>
+    <message>
+        <source>Drag joints; Alt-drag changes depth. Pink joints are pinned.</source>
+        <translation>Drag joints; Alt-drag changes depth. Pink joints are pinned.</translation>
+    </message>
+    <message>
+        <source>Drag joints to move; drag XYZ rings to rotate. Alt-drag changes depth. Pink joints are pinned.</source>
+        <translation>Drag joints to move; drag XYZ rings to rotate. Alt-drag changes depth. Pink joints are pinned.</translation>
+    </message>
+    <message>
+        <source>Export OpenPose</source>
+        <translation>Export OpenPose</translation>
+    </message>
+    <message>
+        <source>Could not export OpenPose</source>
+        <translation>Could not export OpenPose</translation>
+    </message>
+    <message>
+        <source>Standing</source>
+        <translation>Standing</translation>
+    </message>
+    <message>
+        <source>Arms out</source>
+        <translation>Arms out</translation>
+    </message>
+    <message>
+        <source>Sitting</source>
+        <translation>Sitting</translation>
+    </message>
+    <message>
+        <source>Walking</source>
+        <translation>Walking</translation>
+    </message>
+    <message>
+        <source>Crouching</source>
+        <translation>Crouching</translation>
+    </message>
+    <message>
+        <source>Reaching</source>
+        <translation>Reaching</translation>
+    </message>
+    <message>
+        <source>Pelvis</source>
+        <translation>Pelvis</translation>
+    </message>
+    <message>
+        <source>Waist</source>
+        <translation>Waist</translation>
+    </message>
+    <message>
+        <source>Chest</source>
+        <translation>Chest</translation>
+    </message>
+    <message>
+        <source>Neck</source>
+        <translation>Neck</translation>
+    </message>
+    <message>
+        <source>Head</source>
+        <translation>Head</translation>
+    </message>
+    <message>
+        <source>Left Collar</source>
+        <translation>Left Collar</translation>
+    </message>
+    <message>
+        <source>Left Shoulder</source>
+        <translation>Left Shoulder</translation>
+    </message>
+    <message>
+        <source>Left Elbow</source>
+        <translation>Left Elbow</translation>
+    </message>
+    <message>
+        <source>Left Wrist</source>
+        <translation>Left Wrist</translation>
+    </message>
+    <message>
+        <source>Left Hip</source>
+        <translation>Left Hip</translation>
+    </message>
+    <message>
+        <source>Left Knee</source>
+        <translation>Left Knee</translation>
+    </message>
+    <message>
+        <source>Left Ankle</source>
+        <translation>Left Ankle</translation>
+    </message>
+    <message>
+        <source>Right Collar</source>
+        <translation>Right Collar</translation>
+    </message>
+    <message>
+        <source>Right Shoulder</source>
+        <translation>Right Shoulder</translation>
+    </message>
+    <message>
+        <source>Right Elbow</source>
+        <translation>Right Elbow</translation>
+    </message>
+    <message>
+        <source>Right Wrist</source>
+        <translation>Right Wrist</translation>
+    </message>
+    <message>
+        <source>Right Hip</source>
+        <translation>Right Hip</translation>
+    </message>
+    <message>
+        <source>Right Knee</source>
+        <translation>Right Knee</translation>
+    </message>
+    <message>
+        <source>Right Ankle</source>
+        <translation>Right Ankle</translation>
+    </message>
+</context>
+<context>
+    <name>DrawingFigureToolbarWidget</name>
+    <message>
+        <source>Could not export OpenPose</source>
+        <translation>Could not export OpenPose</translation>
+    </message>
+    <message>
+        <source>Export OpenPose</source>
+        <translation>Export OpenPose</translation>
+    </message>
+</context>
+<context>
+    <name>DrawingFigureHandEditor</name>
+    <message>
+        <source>Hand pose</source>
+        <translation>Hand pose</translation>
+    </message>
+    <message>
+        <source>Cup palm</source>
+        <translation>Cup palm</translation>
+    </message>
+    <message>
+        <source>Joint</source>
+        <translation>Joint</translation>
+    </message>
+</context>
+<context>
+    <name>DrawingFigurePosePresetControls</name>
+    <message>
+        <source>Choose a different name for this model.</source>
+        <translation>Choose a different name for this model.</translation>
+    </message>
+    <message>
+        <source>Enter a name between 1 and 80 characters.</source>
+        <translation>Enter a name between 1 and 80 characters.</translation>
+    </message>
+    <message>
+        <source>Saved poses</source>
+        <translation>Saved poses</translation>
+    </message>
+    <message>
+        <source>Select saved pose</source>
+        <translation>Select saved pose</translation>
+    </message>
+    <message>
+        <source>Save current pose</source>
+        <translation>Save current pose</translation>
+    </message>
+    <message>
+        <source>Apply saved pose</source>
+        <translation>Apply saved pose</translation>
+    </message>
+    <message>
+        <source>Delete saved pose</source>
+        <translation>Delete saved pose</translation>
+    </message>
+    <message>
+        <source>Could not load pose presets</source>
+        <translation>Could not load pose presets</translation>
+    </message>
+    <message>
+        <source>Pose presets</source>
+        <translation>Pose presets</translation>
+    </message>
+    <message>
+        <source>Save pose preset</source>
+        <translation>Save pose preset</translation>
+    </message>
+    <message>
+        <source>Pose preset name</source>
+        <translation>Pose preset name</translation>
+    </message>
+    <message>
+        <source>Could not save pose preset</source>
+        <translation>Could not save pose preset</translation>
+    </message>
+    <message>
+        <source>Could not apply pose preset</source>
+        <translation>Could not apply pose preset</translation>
+    </message>
+    <message>
+        <source>Could not delete pose preset</source>
+        <translation>Could not delete pose preset</translation>
+    </message>
+    <message>
+        <source>Delete selected pose preset?</source>
+        <translation>Delete selected pose preset?</translation>
     </message>
 </context>
 </TS>

@@ -5,6 +5,7 @@ from __future__ import annotations
 import numpy as np
 
 from .fill_region_request import FillRegionRequest
+from .fill_seed_union import calculate_seed_union
 from .flood_fill import _apply_gap_close, _bounds_from_spans, flood_fill_spans
 
 
@@ -13,6 +14,8 @@ class FillRegionCalculator:
     def calculate(
         cls, request: FillRegionRequest
     ) -> tuple[list[tuple[int, int, int]], tuple[int, int, int, int] | None]:
+        if request.seeds:
+            return calculate_seed_union(request, cls.calculate, cls.spans)
         reference = request.reference
         height, width = reference.shape[:2]
         x, y = request.seed

@@ -14,6 +14,7 @@ from typing import Any
 
 from ...core.layout_grid_settings import read_layout_grid
 from ...core.layout_grid_snap import nearest_grid_point
+from .drawing_assist import get_drawing_assist_controller
 
 
 def _canvas_widget(host_api: Any) -> Any:
@@ -37,8 +38,13 @@ def is_snap_enabled(
     host_api: Any,
     *,
     grid_snap: bool | None = None,
+    assist_snap: bool = False,
 ) -> bool:
     """Return ``True`` when grid snap or guide snap is active."""
+    assist = get_drawing_assist_controller(host_api) if assist_snap else None
+    active = getattr(assist, "active_assist", lambda: None)()
+    if active is not None and getattr(assist, "overlay_visible", False):
+        return True
     settings = getattr(host_api, "settings", None) if host_api else None
     grid_snap_enabled = bool(settings.get("view/grid_snap", False)) if settings else False
     if grid_snap is not None:
@@ -109,6 +115,7 @@ def snap_position(
     *,
     grid_snap: bool | None = None,
     grid_size: int | None = None,
+    assist_snap: bool = False,
 ) -> tuple[float, float]:
     """Snap *(x, y)* using grid and/or guide snap.
 
@@ -172,6 +179,19 @@ def snap_position(
             targets.clear()
             composition_target = getattr(composition, "last_snap_target", None)
 
+    assist = get_drawing_assist_controller(host_api) if assist_snap else None
+    snap = getattr(assist, "snap_position", None)
+    if callable(snap):
+        ax, ay, geometry = snap(x, y, w, h)
+        if not geometry.is_empty and (
+            (sx, sy) == (x, y) or (ax - x) ** 2 + (ay - y) ** 2 < (sx - x) ** 2 + (sy - y) ** 2
+        ):
+            sx, sy = ax, ay
+            targets.clear()
+            composition_target = None
+        else:
+            geometry = type(geometry)()
+        assist.set_position_feedback(geometry)
     feedback = getattr(_canvas_widget(host_api), "_guide_snap_feedback", None)
     if feedback is not None:
         feedback.set_targets(tuple(targets), composition_target)

@@ -9,6 +9,7 @@ from collections.abc import Iterator, Mapping
 from contextlib import contextmanager
 from dataclasses import dataclass
 from typing import Any
+from urllib.parse import urlsplit
 
 from loomstroke.config.secret_provider import SecretNotConfigured, SecretProvider
 
@@ -17,6 +18,9 @@ from loomstroke.config.secret_provider import SecretNotConfigured, SecretProvide
 # missing-key state into provider-specific errors without importing
 # from the SDK secret-provider module directly.
 __all__ = [
+    "DEFAULT_LOCAL_BASE_URL",
+    "LOCAL_BASE_URL_KEY",
+    "LOCAL_PROVIDER",
     "LLMConfig",
     "SecretNotConfigured",
     "available_api_key_providers",
@@ -25,17 +29,23 @@ __all__ = [
     "resolve_model",
     "update",
     "use_api_key",
+    "validate_local_base_url",
 ]
 
 _NAMESPACE = "llm"
+# OpenAI-compatible server on this machine (Ollama, LM Studio, llama.cpp, vLLM).
+LOCAL_PROVIDER = "local"
+LOCAL_BASE_URL_KEY = f"{_NAMESPACE}/local/base_url"
+DEFAULT_LOCAL_BASE_URL = "http://localhost:11434/v1"
+_LOCAL_HOSTS = frozenset({"localhost", "127.0.0.1", "::1"})
 # Default model per provider. Pinned to currently-served IDs as of
-# 2026-04 — older Claude 3.x ``-latest`` aliases now return 404 from
+# 2026-11 — older Claude 3.x ``-latest`` aliases now return 404 from
 # the Messages API, so a stale default would break Anthropic out of
 # the box. Users override these via the LLM panel / settings.
 _DEFAULT_MODELS = {
-    "openai": "gpt-4.1-mini",
-    "anthropic": "claude-sonnet-4-6",
-    "gemini": "gemini-2.5-flash",
+    "openai": "gpt-6.1-terra",
+    "anthropic": "claude-opus-5-5",
+    "gemini": "gemini-3.8-flash",
 }
 # Selectable model list per provider, surfaced in the LLM panel's
 # Model dropdown. The user-configured model (``cfg.models[provider]``)
@@ -47,29 +57,27 @@ _DEFAULT_MODELS = {
 # Ordered roughly best/most-recent first so the natural top pick is
 # also the recommended default. Maintenance: bump these when vendors
 # retire models or ship new ones — stale entries cause user-visible
-# 404s (see Claude 3.x ``-latest`` retirement, 2026-04).
+# 404s (see Claude 3.x ``-latest`` retirement, 2026-04). Newer models
+# also reject older request parameters; ``model_params`` adapts those.
 _KNOWN_MODELS: dict[str, list[str]] = {
     "openai": [
-        "gpt-4.1",
-        "gpt-4.1-mini",
-        "gpt-4.1-nano",
-        "gpt-4o",
-        "gpt-4o-mini",
-        "o4-mini",
-        "o3-mini",
+        "gpt-6-astra",
+        "gpt-6.1-sol",
+        "gpt-6.1-terra",
+        "gpt-6-luna",
     ],
     "anthropic": [
-        "claude-opus-4-7",
-        "claude-sonnet-4-6",
-        "claude-haiku-4-5",
+        "claude-opus-5-5",
+        "claude-sonnet-5-5",
+        "claude-haiku-5-5",
+        "claude-fable-5-1",
     ],
     "gemini": [
-        "gemini-2.5-pro",
-        "gemini-2.5-flash",
-        "gemini-2.5-flash-lite",
-        "gemini-2.0-flash",
-        "gemini-1.5-pro",
-        "gemini-1.5-flash",
+        "gemini-4-argon",
+        "gemini-3.8-flash",
+        "gemini-3.6-flash",
+        "gemini-3.5-flash-lite",
+        "gemini-3.1-flash-lite",
     ],
 }
 _PROVIDER_SAFE_RE = re.compile(r"[^a-z0-9._-]+")
@@ -164,6 +172,18 @@ class LLMConfig:
     layer_snapshot_fmt: str
     layer_queue_size: int
     system_prompts: dict[str, str]
+    local_base_url: str = DEFAULT_LOCAL_BASE_URL
+
+
+def validate_local_base_url(url: str) -> str:
+    """Return *url* without a trailing slash; raise ValueError unless it targets this PC."""
+    text = str(url or "").strip().rstrip("/")
+    parsed = urlsplit(text)
+    if parsed.scheme not in {"http", "https"} or not parsed.hostname:
+        raise ValueError("enter an http:// or https:// URL")
+    if parsed.hostname.lower() not in _LOCAL_HOSTS:
+        raise ValueError("only servers on this PC (localhost) are allowed")
+    return text
 
 
 def _read(settings: Any, key: str, default: Any) -> Any:
@@ -226,6 +246,8 @@ def load(settings: Any) -> LLMConfig:
         layer_snapshot_fmt=layer_snapshot_fmt,
         layer_queue_size=layer_queue_size,
         system_prompts=system_prompts,
+        local_base_url=str(_read(settings, LOCAL_BASE_URL_KEY, "") or "").strip()
+        or DEFAULT_LOCAL_BASE_URL,
     )
 
 

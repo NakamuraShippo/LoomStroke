@@ -6,7 +6,7 @@ returned tuples) and used unchanged for preview and commit (CT-14 §performance)
 
 from __future__ import annotations
 
-from dataclasses import dataclass, field
+from dataclasses import dataclass, field, replace
 from typing import Any
 
 from .concentric_constraint import ConcentricConstraint
@@ -32,6 +32,7 @@ class StrokeConstraintSession:
     rotational: RotationalGeometry | None = None
     include_original: bool = True
     anchor: Point | None = field(default=None)
+    _perspective_locked: PerspectiveConstraint | None = field(default=None)
 
     @classmethod
     def compile(cls, assist: DrawingAssist | None) -> StrokeConstraintSession | None:
@@ -49,6 +50,15 @@ class StrokeConstraintSession:
             return (x, y)
         if self.constraint is None:
             return (x, y)
+        if isinstance(self.constraint, PerspectiveConstraint) and self.constraint.axis == "auto":
+            if self._perspective_locked is None and (
+                abs(x - self.anchor[0]) + abs(y - self.anchor[1]) > 1e-9
+            ):
+                self._perspective_locked = replace(
+                    self.constraint, axis=self.constraint.axis_for_motion(self.anchor, x, y)
+                )
+            constraint = self._perspective_locked or self.constraint
+            return constraint.project(self.anchor, x, y)
         return self.constraint.project(self.anchor, x, y)
 
     def copies(self, x: float, y: float) -> tuple[Point, ...]:
@@ -72,6 +82,7 @@ class StrokeConstraintSession:
 
     def reset(self) -> None:
         self.anchor = None
+        self._perspective_locked = None
 
     # -- compile per type --------------------------------------------------------------
 

@@ -3,6 +3,13 @@
 # ruff: noqa: E501, RUF001 - translation dictionary and intentional Japanese punctuation
 
 UI_GAP_JA: dict[str, str] = {
+    "LivePrompt default separator": "LivePromptの既定の区切り文字",
+    "Use \\n for a new line or \\t for a tab. Empty uses a new line. Applies to new LivePrompts; saved separators take precedence.": "改行は\\n、タブは\\tで指定します。空欄は改行になります。新しいLivePromptに適用され、保存済みの区切り文字が優先されます。",
+    "Register in AI Effect Manager": "AI Effect Managerに登録",
+    "Save the current prompt and options as a preset. Choose input layers again when applying the preset.": "現在のプロンプトと設定をプリセットとして保存します。適用時に入力レイヤーを再指定してください。",
+    "Preset name is required": "プリセット名を入力してください",
+    "Registered preset: {name}": "プリセットを登録しました: {name}",
+    "Could not register preset. AI Effect Manager may be unavailable or saving failed.": "プリセットを登録できませんでした。AI Effect Managerが利用できないか、保存に失敗しました。",
     "Allow this MCP operation?\n\nOperation: {operation}\n\n{details}": "このMCP操作を許可しますか？\n\n操作: {operation}\n\n{details}",
     "Startup Error": "起動エラー",
     "Fatal Error": "致命的なエラー",

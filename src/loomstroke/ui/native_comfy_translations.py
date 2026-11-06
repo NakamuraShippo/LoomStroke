@@ -54,6 +54,8 @@ NATIVE_COMFY_JA = {
     "Apply changes to Editor": "変更をEditorに反映",
     "Prompt input…": "プロンプト入力…",
     "Apply to node": "ノードに適用",
+    "Live prompt": "ライブプロンプト",
+    "Text (node)": "テキスト (ノード)",
     "Cancel": "キャンセル",
     "This node has no published text parameters.": "このノードには公開されたテキスト項目がありません。",
     "Reload nodes": "ノードを再読み込み",

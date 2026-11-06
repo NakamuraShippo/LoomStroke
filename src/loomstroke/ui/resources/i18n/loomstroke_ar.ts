@@ -3,6 +3,10 @@
 <TS version="2.1" language="ar">
     <context>
         <name>MainWindow</name>
+    <message>
+        <source>Perspective Ruler...</source>
+        <translation>مسطرة المنظور...</translation>
+    </message>
         <message>
             <source>PSD export cannot preserve this filter layer. Export a flattened image instead.</source>
             <translation>لا يمكن لتصدير PSD الاحتفاظ بطبقة المرشح هذه. صدّر صورة مدمجة الطبقات بدلًا منها.</translation>
@@ -2640,6 +2644,14 @@ After refreshing the token, any agents registered to this LoomStroke MCP server 
 </context>
     <context>
         <name>InterfacePage</name>
+    <message>
+        <source>LivePrompt default separator</source>
+        <translation>الفاصل الافتراضي لـ LivePrompt</translation>
+    </message>
+    <message>
+        <source>Use \n for a new line or \t for a tab. Empty uses a new line. Applies to new LivePrompts; saved separators take precedence.</source>
+        <translation>استخدم \n لسطر جديد أو \t لعلامة تبويب. يستخدم الحقل الفارغ سطرًا جديدًا. ينطبق على LivePrompt الجديدة؛ وللفواصل المحفوظة الأولوية.</translation>
+    </message>
         <message>
             <source>Dark</source>
             <translation>داكن</translation>
@@ -4962,6 +4974,14 @@ After refreshing the token, any agents registered to this LoomStroke MCP server 
     <message>
         <source>Failed to import image as new layer</source>
         <translation>فشل في استيراد الصورة كطبقة جديدة</translation>
+    </message>
+    <message>
+        <source>Layer: {name}</source>
+        <translation>الطبقة: {name}</translation>
+    </message>
+    <message>
+        <source>Clear the layer filter</source>
+        <translation>إلغاء تصفية الطبقة</translation>
     </message>
 </context>
 <context>
@@ -7563,6 +7583,18 @@ Select a file to recover.</source>
     <message>
         <source>Wait until generation is ready.</source>
         <translation>انتظر حتى يصبح التوليد جاهزًا.</translation>
+    </message>
+    <message>
+        <source>Plan: {count} generations</source>
+        <translation>المخطط: {count} عمليات توليد</translation>
+    </message>
+    <message>
+        <source>Plan: until stopped</source>
+        <translation>المخطط: حتى الإيقاف</translation>
+    </message>
+    <message>
+        <source>Plan: one cycle of {count}</source>
+        <translation>المخطط: دورة واحدة من {count}</translation>
     </message>
 </context>
 <context>
@@ -11230,6 +11262,42 @@ Please check that all image paths in your workflow are valid.
 <context>
     <name>DrawingAssistPanel</name>
     <message>
+        <source>Perspective ruler</source>
+        <translation>مسطرة المنظور</translation>
+    </message>
+    <message>
+        <source>1-point perspective</source>
+        <translation>منظور بنقطة واحدة</translation>
+    </message>
+    <message>
+        <source>2-point perspective</source>
+        <translation>منظور بنقطتين</translation>
+    </message>
+    <message>
+        <source>3-point perspective</source>
+        <translation>منظور بثلاث نقاط</translation>
+    </message>
+    <message>
+        <source>Drawing direction</source>
+        <translation>اتجاه الرسم</translation>
+    </message>
+    <message>
+        <source>Automatic</source>
+        <translation>تلقائي</translation>
+    </message>
+    <message>
+        <source>Vertical</source>
+        <translation>عمودي</translation>
+    </message>
+    <message>
+        <source>Edit vanishing points</source>
+        <translation>تحرير نقاط التلاشي</translation>
+    </message>
+    <message>
+        <source>Drag VP handles on the canvas. Esc cancels the drag.</source>
+        <translation>اسحب مقابض VP على اللوحة. اضغط Esc لإلغاء السحب.</translation>
+    </message>
+    <message>
         <source>Add</source>
         <translation>إضافة</translation>
     </message>
@@ -13306,6 +13374,10 @@ Please check that all image paths in your workflow are valid.
 <context>
     <name>GPTImage2PanelPlugin</name>
     <message>
+        <source>GPT Image</source>
+        <translation>GPT Image</translation>
+    </message>
+    <message>
         <source>Configure GPT Image 2 jobs</source>
         <translation>تكوين مهام GPT Image 2</translation>
     </message>
@@ -13815,6 +13887,22 @@ Please check that all image paths in your workflow are valid.
 </context>
 <context>
     <name>LLMPaneController</name>
+    <message>
+        <source>Copy</source>
+        <translation>نسخ</translation>
+    </message>
+    <message>
+        <source>Model ID</source>
+        <translation>معرّف النموذج</translation>
+    </message>
+    <message>
+        <source>Server URL</source>
+        <translation>عنوان URL للخادم</translation>
+    </message>
+    <message>
+        <source>Enter a model ID:</source>
+        <translation>أدخل معرّف النموذج:</translation>
+    </message>
     <message>
         <source>Add Library</source>
         <translation>إضافة مكتبة</translation>
@@ -15673,6 +15761,14 @@ Operation: {operation}
     <message>
         <source>Workflow transferred. Select parameters and outputs in the Editor tab, then register.</source>
         <translation>تم نقل التدفق. اختر المعلمات والنتائج في علامة التحرير، ثم أعد التسجيل.</translation>
+    </message>
+    <message>
+        <source>Live prompt</source>
+        <translation>مُدخل تفاعلي</translation>
+    </message>
+    <message>
+        <source>Text (node)</source>
+        <translation>النص (العقدة)</translation>
     </message>
 </context>
 <context>
@@ -18285,6 +18381,122 @@ Type: {type}</source>
     <message>
         <source>User prompt is empty.</source>
         <translation>مدخل المستخدم فارغ.</translation>
+    </message>
+    <message>
+        <source>Unsaved changes</source>
+        <translation>تغييرات غير محفوظة</translation>
+    </message>
+    <message>
+        <source>More actions</source>
+        <translation>مزيد من الإجراءات</translation>
+    </message>
+    <message>
+        <source>New line</source>
+        <translation>سطر جديد</translation>
+    </message>
+    <message>
+        <source>Comma</source>
+        <translation>فاصلة</translation>
+    </message>
+    <message>
+        <source>Comma and space</source>
+        <translation>فاصلة ومسافة</translation>
+    </message>
+    <message>
+        <source>Custom</source>
+        <translation>مخصص</translation>
+    </message>
+    <message>
+        <source>{count} characters</source>
+        <translation>{count} حرفًا</translation>
+    </message>
+    <message>
+        <source>Tidy with LLM</source>
+        <translation>التنسيق باستخدام LLM</translation>
+    </message>
+    <message>
+        <source>This model does not use temperature.</source>
+        <translation>هذا النموذج لا يستخدم درجة الحرارة.</translation>
+    </message>
+    <message>
+        <source>Output copied to clipboard.</source>
+        <translation>تم نسخ المخرجات إلى الحافظة.</translation>
+    </message>
+    <message>
+        <source>All types</source>
+        <translation>كل الأنواع</translation>
+    </message>
+    <message>
+        <source>Body</source>
+        <translation>النص</translation>
+    </message>
+    <message>
+        <source>Import</source>
+        <translation>استيراد</translation>
+    </message>
+    <message>
+        <source>Import prompt</source>
+        <translation>استيراد موجّه</translation>
+    </message>
+    <message>
+        <source>Imported '{title}'.</source>
+        <translation>تم استيراد '{title}'.</translation>
+    </message>
+    <message>
+        <source>Import failed: {error}</source>
+        <translation>فشل الاستيراد: {error}</translation>
+    </message>
+    <message>
+        <source>The file is empty.</source>
+        <translation>الملف فارغ.</translation>
+    </message>
+    <message>
+        <source>Other model…</source>
+        <translation>نموذج آخر…</translation>
+    </message>
+    <message>
+        <source>Model ID</source>
+        <translation>معرّف النموذج</translation>
+    </message>
+    <message>
+        <source>Enter a model ID:</source>
+        <translation>أدخل معرّف النموذج:</translation>
+    </message>
+    <message>
+        <source>Refresh the model list</source>
+        <translation>تحديث قائمة النماذج</translation>
+    </message>
+    <message>
+        <source>Loaded {count} models.</source>
+        <translation>تم تحميل {count} نموذجًا.</translation>
+    </message>
+    <message>
+        <source>Couldn't update the model list: {error}</source>
+        <translation>تعذّر تحديث قائمة النماذج: {error}</translation>
+    </message>
+    <message>
+        <source>Local (OpenAI compatible)</source>
+        <translation>محلي (متوافق مع OpenAI)</translation>
+    </message>
+    <message>
+        <source>Server URL</source>
+        <translation>عنوان URL للخادم</translation>
+    </message>
+    <message>
+        <source>(No models yet)</source>
+        <translation>(لا توجد نماذج بعد)</translation>
+    </message>
+    <message>
+        <source>Select a model first.</source>
+        <translation>اختر نموذجًا أولًا.</translation>
+    </message>
+    <message>
+        <source>Enter the URL of a server on this PC, such as http://localhost:11434/v1.</source>
+        <translation>أدخل عنوان URL لخادم على هذا الكمبيوتر، مثل http://localhost:11434/v1.</translation>
+    </message>
+    <message>
+        <source>Ollama's default context is short and silently cuts the start of long prompts; raise it with OLLAMA_CONTEXT_LENGTH or the model's num_ctx.</source>
+        <translation>سياق Ollama الافتراضي قصير ويقطع بداية الموجّهات الطويلة دون تنبيه؛ زِده عبر OLLAMA_CONTEXT_LENGTH أو num_ctx للنموذج.</translation>
     </message>
 </context>
 <context>
@@ -21012,6 +21224,410 @@ Do you want to save them?</source>
 </context>
 <context>
     <name>__shared__</name>
+    <message>
+        <source>Choose a different name for this model.</source>
+        <translation>اختر اسما آخر لهذا النموذج.</translation>
+    </message>
+    <message>
+        <source>Enter a name between 1 and 80 characters.</source>
+        <translation>أدخل اسما يتراوح طوله بين 1 و80 حرفا.</translation>
+    </message>
+    <message>
+        <source>Saved poses</source>
+        <translation>وضعيات محفوظة</translation>
+    </message>
+    <message>
+        <source>Select saved pose</source>
+        <translation>اختيار وضعية محفوظة</translation>
+    </message>
+    <message>
+        <source>Save current pose</source>
+        <translation>حفظ الوضعية الحالية</translation>
+    </message>
+    <message>
+        <source>Apply saved pose</source>
+        <translation>تطبيق الوضعية المحفوظة</translation>
+    </message>
+    <message>
+        <source>Delete saved pose</source>
+        <translation>حذف الوضعية المحفوظة</translation>
+    </message>
+    <message>
+        <source>Could not load pose presets</source>
+        <translation>تعذر تحميل الوضعيات المحفوظة</translation>
+    </message>
+    <message>
+        <source>Pose presets</source>
+        <translation>إعدادات الوضعيات</translation>
+    </message>
+    <message>
+        <source>Save pose preset</source>
+        <translation>حفظ إعداد وضعية</translation>
+    </message>
+    <message>
+        <source>Pose preset name</source>
+        <translation>اسم إعداد الوضعية</translation>
+    </message>
+    <message>
+        <source>Could not save pose preset</source>
+        <translation>تعذر حفظ إعداد الوضعية</translation>
+    </message>
+    <message>
+        <source>Could not apply pose preset</source>
+        <translation>تعذر تطبيق إعداد الوضعية</translation>
+    </message>
+    <message>
+        <source>Could not delete pose preset</source>
+        <translation>تعذر حذف إعداد الوضعية</translation>
+    </message>
+    <message>
+        <source>Delete selected pose preset?</source>
+        <translation>هل تريد حذف إعداد الوضعية المحدد؟</translation>
+    </message>
+    <message>
+      <source>Fingers together</source>
+      <translation>أصابع مضمومة</translation>
+    </message>
+    <message>
+      <source>Fingers spread</source>
+      <translation>أصابع مفرودة</translation>
+    </message>
+    <message>
+      <source>Flat hand</source>
+      <translation>يد مسطحة</translation>
+    </message>
+    <message>
+      <source>Soft fist</source>
+      <translation>قبضة خفيفة</translation>
+    </message>
+    <message>
+      <source>Tight fist</source>
+      <translation>قبضة محكمة</translation>
+    </message>
+    <message>
+      <source>Half-closed hand</source>
+      <translation>يد نصف مغلقة</translation>
+    </message>
+    <message>
+      <source>Cupped hand</source>
+      <translation>يد مقعرة</translation>
+    </message>
+    <message>
+      <source>Deeply cupped hand</source>
+      <translation>يد مقعرة بعمق</translation>
+    </message>
+    <message>
+      <source>Thumbs up</source>
+      <translation>إبهام مرفوع</translation>
+    </message>
+    <message>
+      <source>OK sign</source>
+      <translation>إشارة OK</translation>
+    </message>
+    <message>
+      <source>Horns sign</source>
+      <translation>إشارة القرون</translation>
+    </message>
+    <message>
+      <source>Shaka sign</source>
+      <translation>إشارة شاكا</translation>
+    </message>
+    <message>
+      <source>Three extended fingers</source>
+      <translation>ثلاثة أصابع ممدودة</translation>
+    </message>
+    <message>
+      <source>Four extended fingers</source>
+      <translation>أربعة أصابع ممدودة</translation>
+    </message>
+    <message>
+      <source>Thumb and index</source>
+      <translation>الإبهام والسبابة</translation>
+    </message>
+    <message>
+      <source>Thumb, index and middle</source>
+      <translation>الإبهام والسبابة والوسطى</translation>
+    </message>
+    <message>
+      <source>Crossed fingers</source>
+      <translation>أصابع متقاطعة</translation>
+    </message>
+    <message>
+      <source>Finger heart</source>
+      <translation>قلب بالأصابع</translation>
+    </message>
+    <message>
+      <source>Beckoning finger</source>
+      <translation>إصبع يستدعي</translation>
+    </message>
+    <message>
+      <source>Stop gesture</source>
+      <translation>إشارة توقف</translation>
+    </message>
+    <message>
+      <source>Count one</source>
+      <translation>عد واحد</translation>
+    </message>
+    <message>
+      <source>Count two</source>
+      <translation>عد اثنين</translation>
+    </message>
+    <message>
+      <source>Count three</source>
+      <translation>عد ثلاثة</translation>
+    </message>
+    <message>
+      <source>Count four</source>
+      <translation>عد أربعة</translation>
+    </message>
+    <message>
+      <source>Count five</source>
+      <translation>عد خمسة</translation>
+    </message>
+    <message>
+      <source>Small pinch</source>
+      <translation>قرصة صغيرة</translation>
+    </message>
+    <message>
+      <source>Wide pinch</source>
+      <translation>قرصة واسعة</translation>
+    </message>
+    <message>
+      <source>Tripod pinch</source>
+      <translation>قرصة بثلاثة أصابع</translation>
+    </message>
+    <message>
+      <source>Precision grip</source>
+      <translation>قبضة دقيقة</translation>
+    </message>
+    <message>
+      <source>Pen grip</source>
+      <translation>إمساك قلم</translation>
+    </message>
+    <message>
+      <source>Brush grip</source>
+      <translation>إمساك فرشاة</translation>
+    </message>
+    <message>
+      <source>Cylinder grip</source>
+      <translation>قبضة أسطوانية</translation>
+    </message>
+    <message>
+      <source>Thin handle grip</source>
+      <translation>إمساك مقبض رفيع</translation>
+    </message>
+    <message>
+      <source>Ball grip</source>
+      <translation>إمساك كرة</translation>
+    </message>
+    <message>
+      <source>Large ball grip</source>
+      <translation>إمساك كرة كبيرة</translation>
+    </message>
+    <message>
+      <source>Hook grip</source>
+      <translation>قبضة خطافية</translation>
+    </message>
+    <message>
+      <source>Key pinch</source>
+      <translation>قرصة مفتاح</translation>
+    </message>
+    <message>
+      <source>Claw hand</source>
+      <translation>يد كالمخلب</translation>
+    </message>
+    <message>
+      <source>Gentle touch</source>
+      <translation>لمسة لطيفة</translation>
+    </message>
+    <message>
+      <source>Fingertip touch</source>
+      <translation>لمس بأطراف الأصابع</translation>
+    </message>
+    <message>
+      <source>Fabric pinch</source>
+      <translation>قرص القماش</translation>
+    </message>
+    <message>
+      <source>Delicate hand</source>
+      <translation>يد رقيقة</translation>
+    </message>
+    <message>
+      <source>Tense hand</source>
+      <translation>يد متوترة</translation>
+    </message>
+    <message>
+      <source>Basic hand poses</source>
+      <translation>وضعيات يد أساسية</translation>
+    </message>
+    <message>
+      <source>Hand gestures</source>
+      <translation>إيماءات اليد</translation>
+    </message>
+    <message>
+      <source>Finger counting</source>
+      <translation>العد بالأصابع</translation>
+    </message>
+    <message>
+      <source>Grasping poses</source>
+      <translation>وضعيات الإمساك</translation>
+    </message>
+    <message>
+      <source>Expressive hands</source>
+      <translation>أيد تعبيرية</translation>
+    </message>
+    <message>
+      <source>All hand poses</source>
+      <translation>كل وضعيات اليد</translation>
+    </message>
+    <message>
+        <source>Edit selected hand</source>
+        <translation>تحرير اليد المحددة</translation>
+    </message>
+    <message>
+        <source>Hand pose</source>
+        <translation>وضعية اليد</translation>
+    </message>
+    <message>
+        <source>Finger</source>
+        <translation>الإصبع</translation>
+    </message>
+    <message>
+        <source>Finger curl</source>
+        <translation>الثني</translation>
+    </message>
+    <message>
+        <source>Finger spread</source>
+        <translation>التباعد</translation>
+    </message>
+    <message>
+        <source>Cup palm</source>
+        <translation>تقويس راحة اليد</translation>
+    </message>
+    <message>
+        <source>Joint</source>
+        <translation>المفصل</translation>
+    </message>
+    <message>
+        <source>Reset hand</source>
+        <translation>إعادة ضبط اليد</translation>
+    </message>
+    <message>
+        <source>Thumb</source>
+        <translation>الإبهام</translation>
+    </message>
+    <message>
+        <source>Index finger</source>
+        <translation>السبابة</translation>
+    </message>
+    <message>
+        <source>Middle finger</source>
+        <translation>الوسطى</translation>
+    </message>
+    <message>
+        <source>Ring finger</source>
+        <translation>البنصر</translation>
+    </message>
+    <message>
+        <source>Little finger</source>
+        <translation>الخنصر</translation>
+    </message>
+    <message>
+        <source>Palm</source>
+        <translation>راحة اليد</translation>
+    </message>
+    <message>
+        <source>Wrist</source>
+        <translation>المعصم</translation>
+    </message>
+    <message>
+        <source>Open hand</source>
+        <translation>يد مفتوحة</translation>
+    </message>
+    <message>
+        <source>Relaxed hand</source>
+        <translation>يد مسترخية</translation>
+    </message>
+    <message>
+        <source>Fist</source>
+        <translation>قبضة</translation>
+    </message>
+    <message>
+        <source>Pointing hand</source>
+        <translation>يد تشير</translation>
+    </message>
+    <message>
+        <source>Peace sign</source>
+        <translation>إشارة السلام</translation>
+    </message>
+    <message>
+        <source>Reset selected part</source>
+        <translation>إعادة ضبط الجزء المحدد</translation>
+    </message>
+    <message>
+        <source>GPT Image</source>
+        <translation>GPT Image</translation>
+    </message>
+    <message>
+        <source>Perspective ruler</source>
+        <translation>مسطرة المنظور</translation>
+    </message>
+    <message>
+        <source>1-point perspective</source>
+        <translation>منظور بنقطة واحدة</translation>
+    </message>
+    <message>
+        <source>2-point perspective</source>
+        <translation>منظور بنقطتين</translation>
+    </message>
+    <message>
+        <source>3-point perspective</source>
+        <translation>منظور بثلاث نقاط</translation>
+    </message>
+    <message>
+        <source>Drawing direction</source>
+        <translation>اتجاه الرسم</translation>
+    </message>
+    <message>
+        <source>Edit vanishing points</source>
+        <translation>تحرير نقاط التلاشي</translation>
+    </message>
+    <message>
+        <source>Drag VP handles on the canvas. Esc cancels the drag.</source>
+        <translation>اسحب مقابض VP على اللوحة. اضغط Esc لإلغاء السحب.</translation>
+    </message>
+    <message>
+        <source>Perspective Ruler...</source>
+        <translation>مسطرة المنظور...</translation>
+    </message>
+    <message>
+        <source>LivePrompt default separator</source>
+        <translation>الفاصل الافتراضي لـ LivePrompt</translation>
+    </message>
+    <message>
+        <source>Use \n for a new line or \t for a tab. Empty uses a new line. Applies to new LivePrompts; saved separators take precedence.</source>
+        <translation>استخدم \n لسطر جديد أو \t لعلامة تبويب. يستخدم الحقل الفارغ سطرًا جديدًا. ينطبق على LivePrompt الجديدة؛ وللفواصل المحفوظة الأولوية.</translation>
+    </message>
+    <message>
+        <source>Register in AI Effect Manager</source>
+        <translation>تسجيل في AI Effect Manager</translation>
+    </message>
+    <message>
+        <source>Save the current prompt and options as a preset. Choose input layers again when applying the preset.</source>
+        <translation>احفظ النص والخيارات الحالية كإعداد مسبق. اختر طبقات الإدخال مجددًا عند تطبيقه.</translation>
+    </message>
+    <message>
+        <source>Preset name is required</source>
+        <translation>أدخل اسم الإعداد المسبق</translation>
+    </message>
+    <message>
+        <source>Registered preset: {name}</source>
+        <translation>تم تسجيل الإعداد المسبق: {name}</translation>
+    </message>
+    <message>
+        <source>Could not register preset. AI Effect Manager may be unavailable or saving failed.</source>
+        <translation>تعذّر تسجيل الإعداد المسبق. قد يكون AI Effect Manager غير متاح أو فشل الحفظ.</translation>
+    </message>
     <message>
         <source> %</source>
         <translation> %</translation>
@@ -35617,6 +36233,326 @@ Click to show as panel</source>
 
 انقر لعرضها كورقة</translation>
     </message>
+    <message>
+        <source>Emphasis</source>
+        <translation>التوكيد</translation>
+    </message>
+    <message>
+        <source>Weaken emphasis</source>
+        <translation>إضعاف التوكيد</translation>
+    </message>
+    <message>
+        <source>Strengthen emphasis</source>
+        <translation>تقوية التوكيد</translation>
+    </message>
+    <message>
+        <source>Remove from LivePrompt</source>
+        <translation>إزالة من LivePrompt</translation>
+    </message>
+    <message>
+        <source>Unsaved changes</source>
+        <translation>تغييرات غير محفوظة</translation>
+    </message>
+    <message>
+        <source>More actions</source>
+        <translation>مزيد من الإجراءات</translation>
+    </message>
+    <message>
+        <source>New line</source>
+        <translation>سطر جديد</translation>
+    </message>
+    <message>
+        <source>Comma</source>
+        <translation>فاصلة</translation>
+    </message>
+    <message>
+        <source>Comma and space</source>
+        <translation>فاصلة ومسافة</translation>
+    </message>
+    <message>
+        <source>{count} characters</source>
+        <translation>{count} حرفًا</translation>
+    </message>
+    <message>
+        <source>Tidy with LLM</source>
+        <translation>التنسيق باستخدام LLM</translation>
+    </message>
+    <message>
+        <source>Text (node)</source>
+        <translation>النص (العقدة)</translation>
+    </message>
+    <message>
+        <source>Plan: {count} generations</source>
+        <translation>المخطط: {count} عمليات توليد</translation>
+    </message>
+    <message>
+        <source>Plan: until stopped</source>
+        <translation>المخطط: حتى الإيقاف</translation>
+    </message>
+    <message>
+        <source>Plan: one cycle of {count}</source>
+        <translation>المخطط: دورة واحدة من {count}</translation>
+    </message>
+    <message>
+        <source>Generated on this layer ({count})</source>
+        <translation>ما تم توليده في هذه الطبقة ({count})</translation>
+    </message>
+    <message>
+        <source>Show in Gallery</source>
+        <translation>عرض في المعرض</translation>
+    </message>
+    <message>
+        <source>Open in Gallery (this layer only)</source>
+        <translation>فتح في المعرض (هذه الطبقة فقط)</translation>
+    </message>
+    <message>
+        <source>No generations yet.</source>
+        <translation>لا توجد عمليات توليد بعد.</translation>
+    </message>
+    <message>
+        <source>Layer: {name}</source>
+        <translation>الطبقة: {name}</translation>
+    </message>
+    <message>
+        <source>Clear the layer filter</source>
+        <translation>إلغاء تصفية الطبقة</translation>
+    </message>
+    <message>
+        <source>This model does not use temperature.</source>
+        <translation>هذا النموذج لا يستخدم درجة الحرارة.</translation>
+    </message>
+    <message>
+        <source>Output copied to clipboard.</source>
+        <translation>تم نسخ المخرجات إلى الحافظة.</translation>
+    </message>
+    <message>
+        <source>All types</source>
+        <translation>كل الأنواع</translation>
+    </message>
+    <message>
+        <source>Import prompt</source>
+        <translation>استيراد موجّه</translation>
+    </message>
+    <message>
+        <source>Imported '{title}'.</source>
+        <translation>تم استيراد '{title}'.</translation>
+    </message>
+    <message>
+        <source>Import failed: {error}</source>
+        <translation>فشل الاستيراد: {error}</translation>
+    </message>
+    <message>
+        <source>The file is empty.</source>
+        <translation>الملف فارغ.</translation>
+    </message>
+    <message>
+        <source>Other model…</source>
+        <translation>نموذج آخر…</translation>
+    </message>
+    <message>
+        <source>Model ID</source>
+        <translation>معرّف النموذج</translation>
+    </message>
+    <message>
+        <source>Enter a model ID:</source>
+        <translation>أدخل معرّف النموذج:</translation>
+    </message>
+    <message>
+        <source>Refresh the model list</source>
+        <translation>تحديث قائمة النماذج</translation>
+    </message>
+    <message>
+        <source>Loaded {count} models.</source>
+        <translation>تم تحميل {count} نموذجًا.</translation>
+    </message>
+    <message>
+        <source>Couldn't update the model list: {error}</source>
+        <translation>تعذّر تحديث قائمة النماذج: {error}</translation>
+    </message>
+    <message>
+        <source>Local (OpenAI compatible)</source>
+        <translation>محلي (متوافق مع OpenAI)</translation>
+    </message>
+    <message>
+        <source>Server URL</source>
+        <translation>عنوان URL للخادم</translation>
+    </message>
+    <message>
+        <source>(No models yet)</source>
+        <translation>(لا توجد نماذج بعد)</translation>
+    </message>
+    <message>
+        <source>Select a model first.</source>
+        <translation>اختر نموذجًا أولًا.</translation>
+    </message>
+    <message>
+        <source>Enter the URL of a server on this PC, such as http://localhost:11434/v1.</source>
+        <translation>أدخل عنوان URL لخادم على هذا الكمبيوتر، مثل http://localhost:11434/v1.</translation>
+    </message>
+    <message>
+        <source>Ollama's default context is short and silently cuts the start of long prompts; raise it with OLLAMA_CONTEXT_LENGTH or the model's num_ctx.</source>
+        <translation>سياق Ollama الافتراضي قصير ويقطع بداية الموجّهات الطويلة دون تنبيه؛ زِده عبر OLLAMA_CONTEXT_LENGTH أو num_ctx للنموذج.</translation>
+    </message>
+    <message>
+        <source>Fill input transparency</source>
+        <translation>ملء المناطق الشفافة في الصور المدخلة</translation>
+    </message>
+    <message>
+        <source>Fill transparent areas of input images with this color before sending. Source layers are unchanged.</source>
+        <translation>املأ المناطق الشفافة في الصور المدخلة بهذا اللون قبل الإرسال. تبقى الطبقات الأصلية دون تغيير.</translation>
+    </message>
+    <message>
+        <source>Input fill color</source>
+        <translation>لون تعبئة الصور المدخلة</translation>
+    </message>
+    <message>
+        <source>Add drawing figure</source>
+        <translation>إضافة مجسم للرسم</translation>
+    </message>
+    <message>
+        <source>Apply pose</source>
+        <translation>تطبيق الوضعية</translation>
+    </message>
+    <message>
+        <source>Arms out</source>
+        <translation>ذراعان ممدودتان</translation>
+    </message>
+    <message>
+        <source>Chest</source>
+        <translation>الصدر</translation>
+    </message>
+    <message>
+        <source>Could not add drawing figure</source>
+        <translation>تعذرت إضافة مجسم الرسم</translation>
+    </message>
+    <message>
+        <source>Could not export OpenPose</source>
+        <translation>تعذر تصدير OpenPose</translation>
+    </message>
+    <message>
+        <source>Crouching</source>
+        <translation>قرفصاء</translation>
+    </message>
+    <message>
+        <source>Drag joints; Alt-drag changes depth. Pink joints are pinned.</source>
+        <translation>اسحب المفاصل؛ السحب مع Alt يغيّر العمق. المفاصل الوردية مثبتة.</translation>
+    </message>
+    <message>
+        <source>Drag joints to move; drag XYZ rings to rotate. Alt-drag changes depth. Pink joints are pinned.</source>
+        <translation>اسحب المفاصل لتحريكها وحلقات XYZ لتدويرها. السحب مع Alt يغير العمق. المفاصل الوردية مثبتة.</translation>
+    </message>
+    <message>
+        <source>Drawing figure</source>
+        <translation>مجسم الرسم</translation>
+    </message>
+    <message>
+        <source>Edit pose</source>
+        <translation>تحرير الوضعية</translation>
+    </message>
+    <message>
+        <source>Export OpenPose</source>
+        <translation>تصدير OpenPose</translation>
+    </message>
+    <message>
+        <source>Head</source>
+        <translation>الرأس</translation>
+    </message>
+    <message>
+        <source>Left Ankle</source>
+        <translation>يسار: الكاحل</translation>
+    </message>
+    <message>
+        <source>Left Collar</source>
+        <translation>يسار: الترقوة</translation>
+    </message>
+    <message>
+        <source>Left Elbow</source>
+        <translation>يسار: المرفق</translation>
+    </message>
+    <message>
+        <source>Left Hip</source>
+        <translation>يسار: الورك</translation>
+    </message>
+    <message>
+        <source>Left Knee</source>
+        <translation>يسار: الركبة</translation>
+    </message>
+    <message>
+        <source>Left Shoulder</source>
+        <translation>يسار: الكتف</translation>
+    </message>
+    <message>
+        <source>Left Wrist</source>
+        <translation>يسار: المعصم</translation>
+    </message>
+    <message>
+        <source>Neck</source>
+        <translation>الرقبة</translation>
+    </message>
+    <message>
+        <source>OpenPose layer</source>
+        <translation>طبقة OpenPose</translation>
+    </message>
+    <message>
+        <source>Pelvis</source>
+        <translation>الحوض</translation>
+    </message>
+    <message>
+        <source>Pin / unpin joint</source>
+        <translation>تثبيت المفصل / تحريره</translation>
+    </message>
+    <message>
+        <source>Pose assistance</source>
+        <translation>مساعدة الوضعية</translation>
+    </message>
+    <message>
+        <source>Reaching</source>
+        <translation>مد الذراع</translation>
+    </message>
+    <message>
+        <source>Right Ankle</source>
+        <translation>يمين: الكاحل</translation>
+    </message>
+    <message>
+        <source>Right Collar</source>
+        <translation>يمين: الترقوة</translation>
+    </message>
+    <message>
+        <source>Right Elbow</source>
+        <translation>يمين: المرفق</translation>
+    </message>
+    <message>
+        <source>Right Hip</source>
+        <translation>يمين: الورك</translation>
+    </message>
+    <message>
+        <source>Right Knee</source>
+        <translation>يمين: الركبة</translation>
+    </message>
+    <message>
+        <source>Right Shoulder</source>
+        <translation>يمين: الكتف</translation>
+    </message>
+    <message>
+        <source>Right Wrist</source>
+        <translation>يمين: المعصم</translation>
+    </message>
+    <message>
+        <source>Sitting</source>
+        <translation>جلوس</translation>
+    </message>
+    <message>
+        <source>Standing</source>
+        <translation>وقوف</translation>
+    </message>
+    <message>
+        <source>Waist</source>
+        <translation>الخصر</translation>
+    </message>
+    <message>
+        <source>Walking</source>
+        <translation>مشي</translation>
+    </message>
 </context>
 <context>
     <name>app_ai_effect_generation_commit</name>
@@ -36262,6 +37198,670 @@ Click to show as panel</source>
     <message>
         <source>Use as Inpaint Mask</source>
         <translation>استخدام كقناع للملء التوليدي</translation>
+    </message>
+</context>
+<context>
+    <name>AIEffectRegisterButton</name>
+    <message>
+        <source>Register in AI Effect Manager</source>
+        <translation>تسجيل في AI Effect Manager</translation>
+    </message>
+    <message>
+        <source>Save the current prompt and options as a preset. Choose input layers again when applying the preset.</source>
+        <translation>احفظ النص والخيارات الحالية كإعداد مسبق. اختر طبقات الإدخال مجددًا عند تطبيقه.</translation>
+    </message>
+    <message>
+        <source>Preset name:</source>
+        <translation>اسم الإعداد المسبق:</translation>
+    </message>
+    <message>
+        <source>Preset name is required</source>
+        <translation>أدخل اسم الإعداد المسبق</translation>
+    </message>
+    <message>
+        <source>Registered preset: {name}</source>
+        <translation>تم تسجيل الإعداد المسبق: {name}</translation>
+    </message>
+    <message>
+        <source>Could not register preset. AI Effect Manager may be unavailable or saving failed.</source>
+        <translation>تعذّر تسجيل الإعداد المسبق. قد يكون AI Effect Manager غير متاح أو فشل الحفظ.</translation>
+    </message>
+</context>
+<context>
+    <name>PromptChipWidget</name>
+    <message>
+        <source>Emphasis</source>
+        <translation>التوكيد</translation>
+    </message>
+    <message>
+        <source>Weaken emphasis</source>
+        <translation>إضعاف التوكيد</translation>
+    </message>
+    <message>
+        <source>Strengthen emphasis</source>
+        <translation>تقوية التوكيد</translation>
+    </message>
+    <message>
+        <source>Clear</source>
+        <translation>إزالة</translation>
+    </message>
+    <message>
+        <source>Remove from LivePrompt</source>
+        <translation>إزالة من LivePrompt</translation>
+    </message>
+</context>
+<context>
+    <name>LayerGenerationHistory</name>
+    <message>
+        <source>Generated on this layer ({count})</source>
+        <translation>ما تم توليده في هذه الطبقة ({count})</translation>
+    </message>
+    <message>
+        <source>Show in Gallery</source>
+        <translation>عرض في المعرض</translation>
+    </message>
+    <message>
+        <source>Open in Gallery (this layer only)</source>
+        <translation>فتح في المعرض (هذه الطبقة فقط)</translation>
+    </message>
+    <message>
+        <source>No generations yet.</source>
+        <translation>لا توجد عمليات توليد بعد.</translation>
+    </message>
+</context>
+<context>
+    <name>InputAlphaControls</name>
+    <message>
+        <source>Fill input transparency</source>
+        <translation>ملء المناطق الشفافة في الصور المدخلة</translation>
+    </message>
+    <message>
+        <source>Fill transparent areas of input images with this color before sending. Source layers are unchanged.</source>
+        <translation>املأ المناطق الشفافة في الصور المدخلة بهذا اللون قبل الإرسال. تبقى الطبقات الأصلية دون تغيير.</translation>
+    </message>
+    <message>
+        <source>Input fill color</source>
+        <translation>لون تعبئة الصور المدخلة</translation>
+    </message>
+</context>
+<context>
+    <name>DrawingFigure</name>
+    <message>
+        <source>Choose a different name for this model.</source>
+        <translation>اختر اسما آخر لهذا النموذج.</translation>
+    </message>
+    <message>
+        <source>Enter a name between 1 and 80 characters.</source>
+        <translation>أدخل اسما يتراوح طوله بين 1 و80 حرفا.</translation>
+    </message>
+    <message>
+        <source>Saved poses</source>
+        <translation>وضعيات محفوظة</translation>
+    </message>
+    <message>
+        <source>Select saved pose</source>
+        <translation>اختيار وضعية محفوظة</translation>
+    </message>
+    <message>
+        <source>Save current pose</source>
+        <translation>حفظ الوضعية الحالية</translation>
+    </message>
+    <message>
+        <source>Apply saved pose</source>
+        <translation>تطبيق الوضعية المحفوظة</translation>
+    </message>
+    <message>
+        <source>Delete saved pose</source>
+        <translation>حذف الوضعية المحفوظة</translation>
+    </message>
+    <message>
+        <source>Could not load pose presets</source>
+        <translation>تعذر تحميل الوضعيات المحفوظة</translation>
+    </message>
+    <message>
+        <source>Pose presets</source>
+        <translation>إعدادات الوضعيات</translation>
+    </message>
+    <message>
+        <source>Save pose preset</source>
+        <translation>حفظ إعداد وضعية</translation>
+    </message>
+    <message>
+        <source>Pose preset name</source>
+        <translation>اسم إعداد الوضعية</translation>
+    </message>
+    <message>
+        <source>Could not save pose preset</source>
+        <translation>تعذر حفظ إعداد الوضعية</translation>
+    </message>
+    <message>
+        <source>Could not apply pose preset</source>
+        <translation>تعذر تطبيق إعداد الوضعية</translation>
+    </message>
+    <message>
+        <source>Could not delete pose preset</source>
+        <translation>تعذر حذف إعداد الوضعية</translation>
+    </message>
+    <message>
+        <source>Delete selected pose preset?</source>
+        <translation>هل تريد حذف إعداد الوضعية المحدد؟</translation>
+    </message>
+    <message>
+      <source>Fingers together</source>
+      <translation>أصابع مضمومة</translation>
+    </message>
+    <message>
+      <source>Fingers spread</source>
+      <translation>أصابع مفرودة</translation>
+    </message>
+    <message>
+      <source>Flat hand</source>
+      <translation>يد مسطحة</translation>
+    </message>
+    <message>
+      <source>Soft fist</source>
+      <translation>قبضة خفيفة</translation>
+    </message>
+    <message>
+      <source>Tight fist</source>
+      <translation>قبضة محكمة</translation>
+    </message>
+    <message>
+      <source>Half-closed hand</source>
+      <translation>يد نصف مغلقة</translation>
+    </message>
+    <message>
+      <source>Cupped hand</source>
+      <translation>يد مقعرة</translation>
+    </message>
+    <message>
+      <source>Deeply cupped hand</source>
+      <translation>يد مقعرة بعمق</translation>
+    </message>
+    <message>
+      <source>Thumbs up</source>
+      <translation>إبهام مرفوع</translation>
+    </message>
+    <message>
+      <source>OK sign</source>
+      <translation>إشارة OK</translation>
+    </message>
+    <message>
+      <source>Horns sign</source>
+      <translation>إشارة القرون</translation>
+    </message>
+    <message>
+      <source>Shaka sign</source>
+      <translation>إشارة شاكا</translation>
+    </message>
+    <message>
+      <source>Three extended fingers</source>
+      <translation>ثلاثة أصابع ممدودة</translation>
+    </message>
+    <message>
+      <source>Four extended fingers</source>
+      <translation>أربعة أصابع ممدودة</translation>
+    </message>
+    <message>
+      <source>Thumb and index</source>
+      <translation>الإبهام والسبابة</translation>
+    </message>
+    <message>
+      <source>Thumb, index and middle</source>
+      <translation>الإبهام والسبابة والوسطى</translation>
+    </message>
+    <message>
+      <source>Crossed fingers</source>
+      <translation>أصابع متقاطعة</translation>
+    </message>
+    <message>
+      <source>Finger heart</source>
+      <translation>قلب بالأصابع</translation>
+    </message>
+    <message>
+      <source>Beckoning finger</source>
+      <translation>إصبع يستدعي</translation>
+    </message>
+    <message>
+      <source>Stop gesture</source>
+      <translation>إشارة توقف</translation>
+    </message>
+    <message>
+      <source>Count one</source>
+      <translation>عد واحد</translation>
+    </message>
+    <message>
+      <source>Count two</source>
+      <translation>عد اثنين</translation>
+    </message>
+    <message>
+      <source>Count three</source>
+      <translation>عد ثلاثة</translation>
+    </message>
+    <message>
+      <source>Count four</source>
+      <translation>عد أربعة</translation>
+    </message>
+    <message>
+      <source>Count five</source>
+      <translation>عد خمسة</translation>
+    </message>
+    <message>
+      <source>Small pinch</source>
+      <translation>قرصة صغيرة</translation>
+    </message>
+    <message>
+      <source>Wide pinch</source>
+      <translation>قرصة واسعة</translation>
+    </message>
+    <message>
+      <source>Tripod pinch</source>
+      <translation>قرصة بثلاثة أصابع</translation>
+    </message>
+    <message>
+      <source>Precision grip</source>
+      <translation>قبضة دقيقة</translation>
+    </message>
+    <message>
+      <source>Pen grip</source>
+      <translation>إمساك قلم</translation>
+    </message>
+    <message>
+      <source>Brush grip</source>
+      <translation>إمساك فرشاة</translation>
+    </message>
+    <message>
+      <source>Cylinder grip</source>
+      <translation>قبضة أسطوانية</translation>
+    </message>
+    <message>
+      <source>Thin handle grip</source>
+      <translation>إمساك مقبض رفيع</translation>
+    </message>
+    <message>
+      <source>Ball grip</source>
+      <translation>إمساك كرة</translation>
+    </message>
+    <message>
+      <source>Large ball grip</source>
+      <translation>إمساك كرة كبيرة</translation>
+    </message>
+    <message>
+      <source>Hook grip</source>
+      <translation>قبضة خطافية</translation>
+    </message>
+    <message>
+      <source>Key pinch</source>
+      <translation>قرصة مفتاح</translation>
+    </message>
+    <message>
+      <source>Claw hand</source>
+      <translation>يد كالمخلب</translation>
+    </message>
+    <message>
+      <source>Gentle touch</source>
+      <translation>لمسة لطيفة</translation>
+    </message>
+    <message>
+      <source>Fingertip touch</source>
+      <translation>لمس بأطراف الأصابع</translation>
+    </message>
+    <message>
+      <source>Fabric pinch</source>
+      <translation>قرص القماش</translation>
+    </message>
+    <message>
+      <source>Delicate hand</source>
+      <translation>يد رقيقة</translation>
+    </message>
+    <message>
+      <source>Tense hand</source>
+      <translation>يد متوترة</translation>
+    </message>
+    <message>
+      <source>Basic hand poses</source>
+      <translation>وضعيات يد أساسية</translation>
+    </message>
+    <message>
+      <source>Hand gestures</source>
+      <translation>إيماءات اليد</translation>
+    </message>
+    <message>
+      <source>Finger counting</source>
+      <translation>العد بالأصابع</translation>
+    </message>
+    <message>
+      <source>Grasping poses</source>
+      <translation>وضعيات الإمساك</translation>
+    </message>
+    <message>
+      <source>Expressive hands</source>
+      <translation>أيد تعبيرية</translation>
+    </message>
+    <message>
+      <source>All hand poses</source>
+      <translation>كل وضعيات اليد</translation>
+    </message>
+    <message>
+        <source>Edit selected hand</source>
+        <translation>تحرير اليد المحددة</translation>
+    </message>
+    <message>
+        <source>Hand pose</source>
+        <translation>وضعية اليد</translation>
+    </message>
+    <message>
+        <source>Finger</source>
+        <translation>الإصبع</translation>
+    </message>
+    <message>
+        <source>Finger curl</source>
+        <translation>الثني</translation>
+    </message>
+    <message>
+        <source>Finger spread</source>
+        <translation>التباعد</translation>
+    </message>
+    <message>
+        <source>Cup palm</source>
+        <translation>تقويس راحة اليد</translation>
+    </message>
+    <message>
+        <source>Joint</source>
+        <translation>المفصل</translation>
+    </message>
+    <message>
+        <source>Reset hand</source>
+        <translation>إعادة ضبط اليد</translation>
+    </message>
+    <message>
+        <source>Thumb</source>
+        <translation>الإبهام</translation>
+    </message>
+    <message>
+        <source>Index finger</source>
+        <translation>السبابة</translation>
+    </message>
+    <message>
+        <source>Middle finger</source>
+        <translation>الوسطى</translation>
+    </message>
+    <message>
+        <source>Ring finger</source>
+        <translation>البنصر</translation>
+    </message>
+    <message>
+        <source>Little finger</source>
+        <translation>الخنصر</translation>
+    </message>
+    <message>
+        <source>Palm</source>
+        <translation>راحة اليد</translation>
+    </message>
+    <message>
+        <source>Wrist</source>
+        <translation>المعصم</translation>
+    </message>
+    <message>
+        <source>Open hand</source>
+        <translation>يد مفتوحة</translation>
+    </message>
+    <message>
+        <source>Relaxed hand</source>
+        <translation>يد مسترخية</translation>
+    </message>
+    <message>
+        <source>Fist</source>
+        <translation>قبضة</translation>
+    </message>
+    <message>
+        <source>Pointing hand</source>
+        <translation>يد تشير</translation>
+    </message>
+    <message>
+        <source>Peace sign</source>
+        <translation>إشارة السلام</translation>
+    </message>
+    <message>
+        <source>Reset selected part</source>
+        <translation>إعادة ضبط الجزء المحدد</translation>
+    </message>
+    <message>
+        <source>Add drawing figure</source>
+        <translation>إضافة مجسم للرسم</translation>
+    </message>
+    <message>
+        <source>Drawing figure</source>
+        <translation>مجسم الرسم</translation>
+    </message>
+    <message>
+        <source>Could not add drawing figure</source>
+        <translation>تعذرت إضافة مجسم الرسم</translation>
+    </message>
+    <message>
+        <source>Edit pose</source>
+        <translation>تحرير الوضعية</translation>
+    </message>
+    <message>
+        <source>Apply pose</source>
+        <translation>تطبيق الوضعية</translation>
+    </message>
+    <message>
+        <source>Pose assistance</source>
+        <translation>مساعدة الوضعية</translation>
+    </message>
+    <message>
+        <source>Pin / unpin joint</source>
+        <translation>تثبيت المفصل / تحريره</translation>
+    </message>
+    <message>
+        <source>OpenPose layer</source>
+        <translation>طبقة OpenPose</translation>
+    </message>
+    <message>
+        <source>Drag joints; Alt-drag changes depth. Pink joints are pinned.</source>
+        <translation>اسحب المفاصل؛ السحب مع Alt يغيّر العمق. المفاصل الوردية مثبتة.</translation>
+    </message>
+    <message>
+        <source>Drag joints to move; drag XYZ rings to rotate. Alt-drag changes depth. Pink joints are pinned.</source>
+        <translation>اسحب المفاصل لتحريكها وحلقات XYZ لتدويرها. السحب مع Alt يغير العمق. المفاصل الوردية مثبتة.</translation>
+    </message>
+    <message>
+        <source>Export OpenPose</source>
+        <translation>تصدير OpenPose</translation>
+    </message>
+    <message>
+        <source>Could not export OpenPose</source>
+        <translation>تعذر تصدير OpenPose</translation>
+    </message>
+    <message>
+        <source>Standing</source>
+        <translation>وقوف</translation>
+    </message>
+    <message>
+        <source>Arms out</source>
+        <translation>ذراعان ممدودتان</translation>
+    </message>
+    <message>
+        <source>Sitting</source>
+        <translation>جلوس</translation>
+    </message>
+    <message>
+        <source>Walking</source>
+        <translation>مشي</translation>
+    </message>
+    <message>
+        <source>Crouching</source>
+        <translation>قرفصاء</translation>
+    </message>
+    <message>
+        <source>Reaching</source>
+        <translation>مد الذراع</translation>
+    </message>
+    <message>
+        <source>Pelvis</source>
+        <translation>الحوض</translation>
+    </message>
+    <message>
+        <source>Waist</source>
+        <translation>الخصر</translation>
+    </message>
+    <message>
+        <source>Chest</source>
+        <translation>الصدر</translation>
+    </message>
+    <message>
+        <source>Neck</source>
+        <translation>الرقبة</translation>
+    </message>
+    <message>
+        <source>Head</source>
+        <translation>الرأس</translation>
+    </message>
+    <message>
+        <source>Left Collar</source>
+        <translation>يسار: الترقوة</translation>
+    </message>
+    <message>
+        <source>Left Shoulder</source>
+        <translation>يسار: الكتف</translation>
+    </message>
+    <message>
+        <source>Left Elbow</source>
+        <translation>يسار: المرفق</translation>
+    </message>
+    <message>
+        <source>Left Wrist</source>
+        <translation>يسار: المعصم</translation>
+    </message>
+    <message>
+        <source>Left Hip</source>
+        <translation>يسار: الورك</translation>
+    </message>
+    <message>
+        <source>Left Knee</source>
+        <translation>يسار: الركبة</translation>
+    </message>
+    <message>
+        <source>Left Ankle</source>
+        <translation>يسار: الكاحل</translation>
+    </message>
+    <message>
+        <source>Right Collar</source>
+        <translation>يمين: الترقوة</translation>
+    </message>
+    <message>
+        <source>Right Shoulder</source>
+        <translation>يمين: الكتف</translation>
+    </message>
+    <message>
+        <source>Right Elbow</source>
+        <translation>يمين: المرفق</translation>
+    </message>
+    <message>
+        <source>Right Wrist</source>
+        <translation>يمين: المعصم</translation>
+    </message>
+    <message>
+        <source>Right Hip</source>
+        <translation>يمين: الورك</translation>
+    </message>
+    <message>
+        <source>Right Knee</source>
+        <translation>يمين: الركبة</translation>
+    </message>
+    <message>
+        <source>Right Ankle</source>
+        <translation>يمين: الكاحل</translation>
+    </message>
+</context>
+<context>
+    <name>DrawingFigureToolbarWidget</name>
+    <message>
+        <source>Could not export OpenPose</source>
+        <translation>تعذر تصدير OpenPose</translation>
+    </message>
+    <message>
+        <source>Export OpenPose</source>
+        <translation>تصدير OpenPose</translation>
+    </message>
+</context>
+<context>
+    <name>DrawingFigureHandEditor</name>
+    <message>
+        <source>Hand pose</source>
+        <translation>وضعية اليد</translation>
+    </message>
+    <message>
+        <source>Cup palm</source>
+        <translation>تقويس راحة اليد</translation>
+    </message>
+    <message>
+        <source>Joint</source>
+        <translation>المفصل</translation>
+    </message>
+</context>
+<context>
+    <name>DrawingFigurePosePresetControls</name>
+    <message>
+        <source>Choose a different name for this model.</source>
+        <translation>اختر اسما آخر لهذا النموذج.</translation>
+    </message>
+    <message>
+        <source>Enter a name between 1 and 80 characters.</source>
+        <translation>أدخل اسما يتراوح طوله بين 1 و80 حرفا.</translation>
+    </message>
+    <message>
+        <source>Saved poses</source>
+        <translation>وضعيات محفوظة</translation>
+    </message>
+    <message>
+        <source>Select saved pose</source>
+        <translation>اختيار وضعية محفوظة</translation>
+    </message>
+    <message>
+        <source>Save current pose</source>
+        <translation>حفظ الوضعية الحالية</translation>
+    </message>
+    <message>
+        <source>Apply saved pose</source>
+        <translation>تطبيق الوضعية المحفوظة</translation>
+    </message>
+    <message>
+        <source>Delete saved pose</source>
+        <translation>حذف الوضعية المحفوظة</translation>
+    </message>
+    <message>
+        <source>Could not load pose presets</source>
+        <translation>تعذر تحميل الوضعيات المحفوظة</translation>
+    </message>
+    <message>
+        <source>Pose presets</source>
+        <translation>إعدادات الوضعيات</translation>
+    </message>
+    <message>
+        <source>Save pose preset</source>
+        <translation>حفظ إعداد وضعية</translation>
+    </message>
+    <message>
+        <source>Pose preset name</source>
+        <translation>اسم إعداد الوضعية</translation>
+    </message>
+    <message>
+        <source>Could not save pose preset</source>
+        <translation>تعذر حفظ إعداد الوضعية</translation>
+    </message>
+    <message>
+        <source>Could not apply pose preset</source>
+        <translation>تعذر تطبيق إعداد الوضعية</translation>
+    </message>
+    <message>
+        <source>Could not delete pose preset</source>
+        <translation>تعذر حذف إعداد الوضعية</translation>
+    </message>
+    <message>
+        <source>Delete selected pose preset?</source>
+        <translation>هل تريد حذف إعداد الوضعية المحدد؟</translation>
     </message>
 </context>
 </TS>

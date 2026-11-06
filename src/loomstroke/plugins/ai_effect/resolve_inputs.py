@@ -9,22 +9,26 @@ Implements the ``ResolveInputs`` callable that ``PanelGenerationBinder``
 - Collect per-layer ``texture_version`` numbers the controller uses in
   ``compute_param_hash`` so identical inputs hit the Gallery cache.
 
-Scope MVP:
-- Raster layers only. Vector / group / mask sources are skipped with
-  a warning — the author needs to rasterize (or Phase 6-d'-3 will
-  teach this module to rasterize on demand).
+Supported inputs include raster results and on-demand vector/group/mask
+snapshots. 3D layers use the canvas's renderer-neutral snapshot port; failure
+must propagate rather than silently submit a missing reference image.
+
+Scope:
 - ``source_page_id`` is always ``None``; multi-page document routing
   lands in a later phase.
 """
 
 from __future__ import annotations
 
+import hashlib
 import logging
 from typing import Any
 
 from PySide6.QtCore import QBuffer, QByteArray, QIODevice, Qt
 from PySide6.QtGui import QColor, QImage, QPainter
 
+from loomstroke.core.appearance.input_styles import render_input_styles
+from loomstroke.core.appearance.live_styles import style_signature
 from loomstroke.core.comic_panels.ai_image_context import panel_input_image, panel_input_version
 from loomstroke.plugins.ai_effect.errors import AIError, AIGatewayError, ErrorClass
 from loomstroke.plugins.ai_effect.gateway_protocol import AIGateway, SlotImage
@@ -131,8 +135,27 @@ class HostResolveInputs:
                 continue
             ver = getattr(layer, "texture_version", None)
             if isinstance(ver, int):
-                versions[lid] = panel_input_version(
+                version = panel_input_version(
                     self._canvas_service, layer, ver, (encoded_inputs or {}).get(lid)
+                )
+                if str(getattr(layer, "layer_type", "")) == "3d":
+                    # The old unsupported path could cache a generation with
+                    # no 3D image. Include the rendered pixels to invalidate it
+                    # and observe camera/lighting edits without a version bump.
+                    content = hashlib.sha256((encoded_inputs or {}).get(lid, b"")).digest()
+                    version = int.from_bytes(
+                        hashlib.sha256(
+                            repr((version, "wgpu-3d-input-v1", content)).encode()
+                        ).digest()[:8],
+                        "big",
+                    )
+                styles = style_signature(layer)
+                versions[lid] = (
+                    int.from_bytes(
+                        hashlib.sha256(repr((version, styles)).encode()).digest()[:8], "big"
+                    )
+                    if styles
+                    else version
                 )
         return versions
 
@@ -168,7 +191,7 @@ def _encode_layer_as_slot_image(
       path, so the slot binding works without forcing the user to
       manually rasterize the layer first.
 
-    Returns ``None`` for layer types still unsupported (group, mask)
+    Returns ``None`` for layer types still unsupported
     and for any layer that has no encodable image yet — callers log
     the miss so the author knows to generate the upstream effect or
     rasterize / flatten a group source first.
@@ -191,15 +214,20 @@ def _encode_layer_as_slot_image(
     image = _resolve_layer_image(layer, canvas_service)
     if image is None:
         return None
+    image = render_input_styles(image, layer)
 
     if canvas_service is not None:
         image = panel_input_image(canvas_service, layer, image)
         if image is None:
+            if str(getattr(layer, "layer_type", "")) == "3d":
+                raise ValueError("3D input image could not be placed in the panel")
             return None
 
     flattened = _flatten_against_white(image)
     png_bytes = _qimage_to_png(flattened)
     if png_bytes is None:
+        if str(getattr(layer, "layer_type", "")) == "3d":
+            raise ValueError("3D input image could not be encoded")
         return None
     # Diagnostic: surface rough pixel stats so a "content not reaching
     # ComfyUI" complaint can be triaged without reaching for a
@@ -240,6 +268,8 @@ def _resolve_layer_image(  # noqa: PLR0911, PLR0912 - layer-type guard chain
     - ``mask`` (Phase 6-d'-4): convert the layer's alpha channel to
       a grayscale RGB image so ComfyUI ControlNet preprocessors
       (LineArt / Canny / depth) treat it as a guide.
+    - ``3d``: use the shared canvas renderer for the current pose/camera.
+      This image is in canvas coordinates; rendering failures propagate.
     - Anything else (unknown): return ``None`` so the caller logs
       "not encodable" and the user knows to flatten manually.
 
@@ -252,6 +282,14 @@ def _resolve_layer_image(  # noqa: PLR0911, PLR0912 - layer-type guard chain
         if isinstance(image, QImage) and not image.isNull():
             return image
         return None
+    if layer_type == "3d":
+        renderer = getattr(canvas_service, "_rasterize_3d_layer", None)
+        if not callable(renderer):
+            raise ValueError("3D input snapshot renderer is unavailable")
+        image = renderer(layer)
+        if not isinstance(image, QImage) or image.isNull():
+            raise ValueError("3D input snapshot renderer returned an invalid image")
+        return image
     if layer_type == "vector":
         return _auto_rasterize_via_canvas(
             layer,

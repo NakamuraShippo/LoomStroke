@@ -4,7 +4,7 @@ from __future__ import annotations
 
 import contextlib
 import logging
-from dataclasses import dataclass, field
+from dataclasses import asdict, dataclass, field
 from functools import partial
 from typing import Any
 
@@ -25,6 +25,7 @@ from PySide6.QtWidgets import (
 from loomstroke.core.event_bus_extensions import get_extended_event_bus
 from loomstroke.core.events import DocumentChangeEvent, Events
 from loomstroke.plugins.comfyui.ui.prompt_composer import PromptComposerWidget
+from loomstroke.plugins.common.ai_effect_register_button import AIEffectRegisterButton
 from loomstroke.plugins.common.outbound_policy import is_external_services_allowed
 from loomstroke.plugins.sdk.base import JobSpec
 from loomstroke.ui._dock_safe import is_valid
@@ -136,7 +137,10 @@ class NanoBananaPanel(QWidget):
         self._translation_binder.register(prompt_label.setText, prompt_label_text)
         layout.addWidget(prompt_label)
 
-        self._prompt_composer = PromptComposerWidget(host_api=self._host, parent=self)
+        # This gateway has no weight syntax, so LivePrompt emphasis stays out.
+        self._prompt_composer = PromptComposerWidget(
+            host_api=self._host, parent=self, emphasis_output=False
+        )
         self._prompt_composer.composedTextChanged.connect(self._on_composed_prompt_changed)
         self._prompt_composer.modeChanged.connect(self._on_prompt_mode_changed)
         self._prompt_composer.setSizePolicy(
@@ -283,6 +287,11 @@ class NanoBananaPanel(QWidget):
         self._generate_button.setFixedHeight(28)
         self._generate_button.setSizePolicy(QSizePolicy.Policy.Fixed, QSizePolicy.Policy.Fixed)
         layout.addWidget(self._generate_button, alignment=Qt.AlignRight)
+
+        self._register_effect_button = AIEffectRegisterButton(
+            self, "nanobanana", self._preset_settings
+        )
+        layout.addWidget(self._register_effect_button)
 
         # Status log
         self._status = QTextEdit(self)
@@ -596,6 +605,17 @@ class NanoBananaPanel(QWidget):
         if len(layer_ids) > MAX_INPUT_LAYERS:
             layer_ids = layer_ids[:MAX_INPUT_LAYERS]
 
+        options = self._collect_options()
+        params = {
+            "prompt": prompt,
+            "input_layer_ids": layer_ids,
+            "options": asdict(options),
+        }
+        spec = JobSpec(op="generate", params=params)
+        self.submitRequested.emit(spec)
+        self.append_status_translated("Submitted job to queue")
+
+    def _collect_options(self) -> NanoBananaOptions:
         model = self._model_combo.currentData() or DEFAULT_MODEL
         modality = self._modality_combo.currentData()
         if not isinstance(modality, str):
@@ -607,7 +627,7 @@ class NanoBananaPanel(QWidget):
         google_search = self._google_search_check.isChecked()
         target_layer_id = self._target_combo.currentData()
 
-        options = NanoBananaOptions(
+        return NanoBananaOptions(
             modality=modality if modality in ("Image", "Text+Image") else "Text+Image",
             aspect_ratio=aspect,
             target_layer_id=target_layer_id,
@@ -617,23 +637,15 @@ class NanoBananaPanel(QWidget):
             include_thoughts=include_thoughts,
             google_search=google_search,
         )
-        params = {
-            "prompt": prompt,
-            "input_layer_ids": layer_ids,
-            "options": {
-                "modality": options.modality,
-                "aspect_ratio": options.aspect_ratio,
-                "target_layer_id": options.target_layer_id,
-                "model": options.model,
-                "image_size": options.image_size,
-                "thinking_level": options.thinking_level,
-                "include_thoughts": options.include_thoughts,
-                "google_search": options.google_search,
-            },
+
+    def _preset_settings(self) -> dict[str, Any]:
+        options = self._collect_options()
+        return {
+            "prompt": self._prompt_text.toPlainText().strip(),
+            "options": asdict(options),
+            "input_count": len(self._gather_layer_selection()),
+            "replace_target": options.target_layer_id is not None,
         }
-        spec = JobSpec(op="generate", params=params)
-        self.submitRequested.emit(spec)
-        self.append_status_translated("Submitted job to queue")
 
     @staticmethod
     def _configure_compact_combo(combo: QComboBox, *, min_chars: int) -> None:

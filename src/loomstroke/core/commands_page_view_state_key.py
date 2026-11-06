@@ -34,20 +34,25 @@ class SetPageViewStateKeyCommand(Command):
         self._previous: Any = _MISSING
 
     def apply(self, canvas: Any) -> bool:
+        list_pages = getattr(self._pages, "list_pages", None)
+        if callable(list_pages) and not any(page.id == self.page_id for page in list_pages()):
+            return False
         current = self._current()
         if current is None and not callable(getattr(self._pages, "set_page_view_state", None)):
             return False
         self._previous = (
             copy.deepcopy(current[self.key]) if current and self.key in current else _MISSING
         )
-        self._write(self.value)
+        if not self._write(self.value):
+            return False
         self._executed = True
         return True
 
     def revert(self, canvas: Any) -> bool:
         if not self._executed:
             return False
-        self._write(None if self._previous is _MISSING else self._previous)
+        if not self._write(None if self._previous is _MISSING else self._previous):
+            return False
         self._executed = False
         return True
 
@@ -60,20 +65,23 @@ class SetPageViewStateKeyCommand(Command):
         state = getter(self.page_id)
         return dict(state) if isinstance(state, dict) else {}
 
-    def _write(self, value: Any) -> None:
+    def _write(self, value: Any) -> bool:
         if value is None:
             merged = self._current() or {}
             merged.pop(self.key, None)
             setter = getattr(self._pages, "set_page_view_state", None)
             if callable(setter):
                 setter(self.page_id, merged)
-            return
+                return True
+            return False
         updater = getattr(self._pages, "update_page_view_state", None)
         if callable(updater):
             updater(self.page_id, {self.key: copy.deepcopy(value)}, mark_dirty=True)
-            return
+            return True
         merged = self._current() or {}
         merged[self.key] = copy.deepcopy(value)
         setter = getattr(self._pages, "set_page_view_state", None)
         if callable(setter):
             setter(self.page_id, merged)
+            return True
+        return False

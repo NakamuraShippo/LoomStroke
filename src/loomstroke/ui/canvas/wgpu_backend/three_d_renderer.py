@@ -623,7 +623,10 @@ class Wgpu3DLayerRenderer:
             radius = 1.0
         scale = min(width, height) * 0.42 * camera.zoom / radius
         mode = self._mode_id(preview_display_mode(getattr(layer, "display_mode_3d", "solid")))
-        light = self._light_direction()
+        lighting = getattr(layer, "lighting_3d", None)
+        light = self._light_direction(
+            lighting.get("direction") if isinstance(lighting, dict) else None
+        )
         return np.asarray(
             [
                 float(width),
@@ -864,8 +867,19 @@ class Wgpu3DLayerRenderer:
         }[mode]
 
     @staticmethod
-    def _light_direction() -> np.ndarray:
+    def _light_direction(direction: Any = None) -> np.ndarray:
         light = np.asarray((-0.4, -0.7, -1.0), dtype=np.float32)
+        if direction is not None:
+            try:
+                candidate = np.asarray(direction, dtype=np.float32)
+            except (TypeError, ValueError):
+                candidate = np.empty(0)
+            if (
+                candidate.shape == (3,)
+                and np.isfinite(candidate).all()
+                and np.linalg.norm(candidate) > 1e-6
+            ):
+                light = candidate
         length = float(np.linalg.norm(light))
         if length <= 1e-6:
             return np.asarray((0.0, 0.0, -1.0), dtype=np.float32)

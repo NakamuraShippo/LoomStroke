@@ -21,6 +21,7 @@ def editing_services(window: Any) -> dict[str, Any]:
     reference = plugin("loomstroke.reference_viewer")
     pen = plugin("basic_pen")
     shape = plugin("loomstroke.shape_manager")
+    prompt_editor = plugin("prompt_editor_panel")
     document_getter = getattr(window, "_get_document_service", None)
     document = getattr(host, "document", None)
     get_service = getattr(host, "get_service", None)
@@ -61,6 +62,9 @@ def editing_services(window: Any) -> dict[str, Any]:
         "comfyui_native_author": getattr(manager, "_comfy_author", None),
         "generation_history": get_service("generation_history") if callable(get_service) else None,
         "llm_gateway": plugin("llm_gateway_service"),
+        "prompt_editor_library_changed": getattr(
+            getattr(prompt_editor, "_widget", None), "refresh_data", None
+        ),
     }
     if document is not None or callable(document_getter):
         from loomstroke.core.document_service import SaveOptions  # noqa: PLC0415

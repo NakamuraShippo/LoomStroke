@@ -128,6 +128,24 @@ def _param_catalogue() -> list[ParamCandidate]:
             suggested_choices=list(ALL_MODERATION),
             gateway_ref={"param": "moderation"},
         ),
+        ParamCandidate(
+            source_hint="gptimage2.input_alpha_fill",
+            suggested_display_name="Fill input transparency",
+            suggested_type="bool",
+            suggested_default=False,
+            suggested_range=None,
+            suggested_choices=None,
+            gateway_ref={"param": "input_alpha_fill"},
+        ),
+        ParamCandidate(
+            source_hint="gptimage2.input_alpha_color",
+            suggested_display_name="Input fill color",
+            suggested_type="string",
+            suggested_default="#ffffff",
+            suggested_range=None,
+            suggested_choices=None,
+            gateway_ref={"param": "input_alpha_color"},
+        ),
     ]
 
 
@@ -493,6 +511,8 @@ class GPTImage2Gateway(AIGateway):
             "output_compression",
             "background",
             "moderation",
+            "input_alpha_fill",
+            "input_alpha_color",
         ):
             if key in canonical and canonical[key] not in (None, ""):
                 options[key] = canonical[key]

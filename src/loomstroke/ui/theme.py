@@ -245,6 +245,10 @@ def _build_palette(colors: _ThemeColors) -> QPalette:
 
     with suppress(AttributeError):
         palette.setColor(QPalette.ColorRole.PlaceholderText, QColor(colors.dim))
+    with suppress(AttributeError):
+        # Qt 6.6+: the windows11 style fills checkboxes etc. with Accent, which
+        # otherwise follows the OS accent color instead of the theme.
+        palette.setColor(QPalette.ColorRole.Accent, QColor(colors.accent_deep))
 
     for role in (
         QPalette.ColorRole.WindowText,

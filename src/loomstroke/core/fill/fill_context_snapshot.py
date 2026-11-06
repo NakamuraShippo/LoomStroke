@@ -23,18 +23,34 @@ class FillContextSnapshot:
     selection: np.ndarray | None
     canvas_identity: int
     allowed: np.ndarray | None = None
+    require_editable: bool = True
 
     @classmethod
-    def capture(cls, canvas: Any, reference_mode: str) -> FillContextSnapshot:
+    def capture(
+        cls, canvas: Any, reference_mode: str, *, respect_selection=True, require_editable=True
+    ) -> FillContextSnapshot:
         query = LayerTreeQueryService(canvas)
         target = query.get_active_layer()
-        if target is None or not _layer_allows_edit(target) or target.layer_type != "raster":
+        if (
+            target is None
+            or (require_editable and not _layer_allows_edit(target))
+            or target.layer_type != "raster"
+        ):
             raise ValueError("Fill requires an unlocked raster layer.")
         width, height = canvas.get_canvas_size()
         projected = None
-        if uses_placed_pixels(canvas, target):
+        native = getattr(target, "native_cmyk", None)
+        if native is not None or uses_placed_pixels(canvas, target):
             projected = raster_selection_reference(
-                canvas, target, image_rgba_copy(target.image), width, height
+                canvas,
+                target,
+                (
+                    native.snapshot().preview()
+                    if native is not None
+                    else image_rgba_copy(target.image)
+                ),
+                width,
+                height,
             )
             if projected is None:
                 raise ValueError("The fill placement could not be read.")
@@ -65,12 +81,19 @@ class FillContextSnapshot:
         reference.setflags(write=False)
         if selection is not None:
             selection.setflags(write=False)
-            if allowed is not None:
+            if allowed is not None and respect_selection:
                 allowed = np.where(selection > 0, allowed, np.uint8(0))
         if allowed is not None:
             allowed.setflags(write=False)
         return cls(
-            target.id, (width, height), cls.state(canvas), reference, selection, id(canvas), allowed
+            target.id,
+            (width, height),
+            cls.state(canvas),
+            reference,
+            selection,
+            id(canvas),
+            allowed,
+            require_editable=require_editable,
         )
 
     def matches(self, canvas: Any) -> bool:
@@ -80,7 +103,11 @@ class FillContextSnapshot:
             return False
         query = LayerTreeQueryService(canvas)
         target = query.get_active_layer()
-        if target is None or target.id != self.target_id or not _layer_allows_edit(target):
+        if (
+            target is None
+            or target.id != self.target_id
+            or (self.require_editable and not _layer_allows_edit(target))
+        ):
             return False
         mask, _ = UpdateSelectionMaskCommand._read_selection(canvas)
         if mask is None:

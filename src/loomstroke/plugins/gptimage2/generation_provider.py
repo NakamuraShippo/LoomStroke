@@ -77,6 +77,8 @@ class GPTImage2GenerationProvider:
             "output_compression": submission_context.get("output_compression"),
             "background": submission_context.get("background"),
             "moderation": submission_context.get("moderation"),
+            "input_alpha_fill": submission_context.get("input_alpha_fill", False),
+            "input_alpha_color": submission_context.get("input_alpha_color", "#ffffff"),
         }
 
         return GenerationRecord(
@@ -120,6 +122,18 @@ class GPTImage2GenerationProvider:
             self._restore_combo("_format_combo", snapshot.get("output_format"))
             self._restore_combo("_background_combo", snapshot.get("background"))
             self._restore_combo("_moderation_combo", snapshot.get("moderation"))
+            if hasattr(self._panel, "_input_alpha"):
+                from .types import GPTImage2Options  # noqa: PLC0415
+
+                options = GPTImage2Options.from_mapping(
+                    {
+                        "input_alpha_fill": snapshot.get("input_alpha_fill", False),
+                        "input_alpha_color": snapshot.get("input_alpha_color", "#ffffff"),
+                    }
+                )
+                self._panel._input_alpha.restore(
+                    options.input_alpha_fill, options.input_alpha_color
+                )
             compression = snapshot.get("output_compression")
             if compression is not None and hasattr(self._panel, "_compression_spin"):
                 self._panel._compression_spin.setValue(int(compression))

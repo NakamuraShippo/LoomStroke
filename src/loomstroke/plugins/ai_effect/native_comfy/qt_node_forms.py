@@ -123,6 +123,9 @@ class QtNodeForms(QStackedWidget):
         self.setVisible(page is not None)
         if self.panel.view is not None:
             self.panel.view.setVisible(page is None)
+        prompt_area = getattr(self.panel, "prompt_area", None)
+        if prompt_area is not None:
+            prompt_area.apply_visibility()
         return page is not None
 
     def retranslate(self) -> None:

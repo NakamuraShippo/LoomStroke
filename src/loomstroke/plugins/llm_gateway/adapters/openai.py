@@ -11,6 +11,7 @@ from typing import Any
 from aiohttp import ClientResponseError
 
 from ..errors import AuthenticationError, LLMError
+from ..model_params import is_chat_model, tune_body
 from ..types import ImageAttachment, ProviderPayload
 from .base import (
     CancelContext,
@@ -83,6 +84,7 @@ class OpenAIAdapter:
         headers["Authorization"] = f"Bearer {ctx.config.api_key}"
         body = dict(ctx.payload.body)
         body["model"] = ctx.config.model
+        body = tune_body("openai", ctx.config.model, body)
         try:
             async with ctx.session.post(_ENDPOINT, json=body, headers=headers) as resp:
                 resp.raise_for_status()
@@ -127,6 +129,14 @@ class OpenAIAdapter:
         except Exception:
             _logger.debug("OpenAI health check failed", exc_info=True)
             return False
+
+    async def list_models(self, ctx: HealthContext) -> list[str]:
+        headers = {"Authorization": f"Bearer {ctx.config.api_key}"}
+        async with ctx.session.get(_MODELS_ENDPOINT, headers=headers) as resp:
+            resp.raise_for_status()
+            data = await resp.json()
+        models = [str(entry["id"]) for entry in data.get("data", []) if entry.get("id")]
+        return [model for model in models if is_chat_model("openai", model)]
 
     @staticmethod
     def _now() -> float:

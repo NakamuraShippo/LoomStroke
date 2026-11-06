@@ -23,7 +23,7 @@ from loomstroke.plugins.sdk.base import (
     ServiceDescriptor,
 )
 
-from .input_images import MAX_INPUT_LAYERS, normalize_input_pngs
+from .input_images import MAX_INPUT_LAYERS, fill_input_alpha, normalize_input_pngs
 from .key_settings import (
     GPTIMAGE2_API_KEY_SERVICE,
     GPTIMAGE2_API_KEY_USERNAME,
@@ -242,6 +242,16 @@ class GPTImage2Service:
             if state.cancel_event.is_set():
                 raise asyncio.CancelledError()
             input_pngs.append(await self._transport.export_layer_png(layer_id))
+        if state.cancel_event.is_set():
+            raise asyncio.CancelledError()
+        input_pngs = normalize_input_pngs(input_pngs)
+        if state.params.options.input_alpha_fill:
+            for index, image in enumerate(input_pngs):
+                if state.cancel_event.is_set():
+                    raise asyncio.CancelledError()
+                input_pngs[index] = await asyncio.to_thread(
+                    fill_input_alpha, image, state.params.options.input_alpha_color
+                )
         if state.cancel_event.is_set():
             raise asyncio.CancelledError()
         return normalize_input_pngs(input_pngs)

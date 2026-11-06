@@ -10,12 +10,14 @@ from loomstroke.core.commands_layer_metadata_key import SetLayerMetadataKeyComma
 from loomstroke.core.commands_layer_opacity import SetLayerOpacityCommand
 from loomstroke.core.commands_layer_rename import RenameLayerCommand
 from loomstroke.core.commands_layer_transform import TransformLayerCommand
+from loomstroke.core.commands_page_view_state_key import SetPageViewStateKeyCommand
 from loomstroke.core.fill.commands_fill import (
     FloodFillCommand,
     FloodFillToNewLayerCommand,
     PatternFillCommand,
 )
 from loomstroke.core.fill.prepared_fill_command import PreparedFillCommand
+from loomstroke.core.fill.prepared_pattern_command import PreparedPatternFillCommand
 from loomstroke.core.filter_pen.command import FilterPenStrokeCommand
 from loomstroke.core.pen_taper_command import PenTaperCommand
 from loomstroke.core.recontour.commands import RecontourCommand
@@ -76,7 +78,9 @@ class NativeCmykCommandDispatcher:
             return service.paint(command, erase=True)
         if type(command) in (FloodFillCommand, PatternFillCommand):
             return service.fill(command)
-        if isinstance(command, (PreparedFillCommand, FloodFillToNewLayerCommand)):
+        if isinstance(
+            command, (PreparedFillCommand, PreparedPatternFillCommand, FloodFillToNewLayerCommand)
+        ):
             return bool(canvas._simple_layer_command_submit().submit(command, "CMYK Fill"))
         if isinstance(command, GradientCommand):
             return service.gradient(command)
@@ -127,6 +131,7 @@ class NativeCmykCommandDispatcher:
             commands.SetActiveColorCommand,
             commands.ToggleClippingCommand,
             SetLayerMetadataKeyCommand,
+            SetPageViewStateKeyCommand,
             RenameLayerCommand,
             FilterPenStrokeCommand,
         )

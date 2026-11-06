@@ -1,26 +1,31 @@
 # LoomStroke User Guide — Full Translation Package
 
-## Illustrated manual
+## Screenshot manual (current)
 
-Open the [illustrated manual](manual/index.html) or the
-[SAM 3.1 installation guide](manual/sam31.html). Both have links to all 12
-application language choices and work offline with shared screenshots.
-For example, the English pages are [the manual](manual/index_en.html) and
-[the SAM 3.1 guide](manual/sam31_en.html).
+Open [`manual/index.html`](manual/index.html) for the current screenshot manual,
+or [`manual/sam31.html`](manual/sam31.html) for the SAM 3.1 setup guide. Both offer
+the application's 12 language choices. Translated pages use `_<locale>.html`
+suffixes and share the Japanese screenshots. All pages work offline.
 
-The Japanese pages are the sources. The other pages are machine translations;
+The Japanese pages are the sources. The other languages are machine translations;
 their notice links back to the original. Screenshots retain Japanese UI labels.
-Traditional Chinese and Taiwan Mandarin currently share the same draft.
-Native-speaker review of all translated prose is still pending.
+Traditional Chinese and Taiwan Mandarin currently share the same Traditional
+Chinese draft. Native-speaker review is still required before publication.
 
-## Earlier guide and setup
+To update translations, use `tools/build_manual_translations.py --translate` from
+the repository root with the project venv. This explicitly sends Japanese prose
+to Google's public translation endpoint and caches each text by SHA-256 in
+`user_data/cache/manual_translations_20261030/`. Service availability and request
+limits may prevent completion; incomplete translations are not emitted. An
+existing complete cache can be rebuilt offline by omitting `--translate`.
+Task-local offline Qwen drafts can also populate the same cache; see the
+[development record](../dev/manual_localization_20261030.md) for provenance.
+Review translated prose after updates and run
+`./venv/Scripts/python.exe -m pytest tests/unit/test_manual_translations.py -q`.
 
-This package contains static HTML pages for all 12 language choices. Open
-[index.html](index.html) to choose a language, or [index_ja.html](index_ja.html)
-for the Japanese guide. The detailed illustrated manual is in `manual/`.
+## Earlier guide
 
-For setup, see [INSTALL_AND_RUN.md](INSTALL_AND_RUN.md). For launch commands
-and troubleshooting, see [RUN_INSTRUCTIONS.md](RUN_INSTRUCTIONS.md).
+This package contains static HTML pages for all 12 language choices from the uploaded guide. `index.html` is a language landing page.
 
 Files:
 - `index_ja.html`
@@ -37,5 +42,4 @@ Files:
 - `index_ru.html`
 - `ROADMAP.md` — Japanese user-facing development roadmap
 
-Translation audit reports and the original reference copy are maintained in the
-development repository and are not part of this distribution.
+`index_dynamic_original.html` preserves the original uploaded dynamic page for reference. See `TRANSLATION_QA.md` for the residual-check report.

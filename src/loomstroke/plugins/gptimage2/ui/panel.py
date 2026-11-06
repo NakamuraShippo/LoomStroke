@@ -23,6 +23,7 @@ from PySide6.QtWidgets import (
 from loomstroke.core.event_bus_extensions import get_extended_event_bus
 from loomstroke.core.events import DocumentChangeEvent, Events
 from loomstroke.plugins.comfyui.ui.prompt_composer import PromptComposerWidget
+from loomstroke.plugins.common.ai_effect_register_button import AIEffectRegisterButton
 from loomstroke.plugins.common.input_layer_selector import InputLayerSelector
 from loomstroke.plugins.common.outbound_policy import is_external_services_allowed
 from loomstroke.plugins.sdk.base import JobSpec
@@ -41,6 +42,7 @@ from ..types import (
     MODEL_DISPLAY_NAMES,
     GPTImage2Options,
 )
+from .input_alpha_controls import InputAlphaControls
 
 logger = logging.getLogger(__name__)
 
@@ -128,7 +130,10 @@ class GPTImage2Panel(QWidget):
         self._translation_binder.register(prompt_label.setText, prompt_label_text)
         layout.addWidget(prompt_label)
 
-        self._prompt_composer = PromptComposerWidget(host_api=self._host, parent=self)
+        # This gateway has no weight syntax, so LivePrompt emphasis stays out.
+        self._prompt_composer = PromptComposerWidget(
+            host_api=self._host, parent=self, emphasis_output=False
+        )
         self._prompt_composer.composedTextChanged.connect(self._on_composed_prompt_changed)
         self._prompt_composer.modeChanged.connect(self._on_prompt_mode_changed)
         self._prompt_composer.setSizePolicy(
@@ -147,6 +152,8 @@ class GPTImage2Panel(QWidget):
 
         self._input_layers = InputLayerSelector(MAX_INPUT_LAYERS, self)
         layout.addWidget(self._input_layers)
+        self._input_alpha = InputAlphaControls(self)
+        layout.addWidget(self._input_alpha)
 
         opts = QGridLayout()
         opts.setContentsMargins(0, 0, 0, 0)
@@ -244,6 +251,11 @@ class GPTImage2Panel(QWidget):
         self._generate_button.setFixedHeight(28)
         self._generate_button.setSizePolicy(QSizePolicy.Policy.Fixed, QSizePolicy.Policy.Fixed)
         layout.addWidget(self._generate_button, alignment=Qt.AlignRight)
+
+        self._register_effect_button = AIEffectRegisterButton(
+            self, "gptimage2", self._preset_settings
+        )
+        layout.addWidget(self._register_effect_button)
 
         self._status = QTextEdit(self)
         self._status.setReadOnly(True)
@@ -493,18 +505,7 @@ class GPTImage2Panel(QWidget):
             self.append_status_translated("Prompt is required")
             return
 
-        output_format = self._format_combo.currentData() or "png"
-        compression = self._compression_spin.value() if output_format in {"jpeg", "webp"} else None
-        options = GPTImage2Options(
-            target_layer_id=self._target_combo.currentData(),
-            model=self._model_combo.currentData() or DEFAULT_MODEL,
-            size=self._size_combo.currentData() or "1024x1024",
-            quality=self._quality_combo.currentData() or "auto",
-            output_format=output_format,
-            output_compression=compression,
-            background=self._background_combo.currentData() or "auto",
-            moderation=self._moderation_combo.currentData() or "auto",
-        )
+        options = self._collect_options()
         spec = JobSpec(
             op="generate",
             params={
@@ -515,6 +516,31 @@ class GPTImage2Panel(QWidget):
         )
         self.submitRequested.emit(spec)
         self.append_status_translated("Submitted job to queue")
+
+    def _collect_options(self) -> GPTImage2Options:
+        output_format = self._format_combo.currentData() or "png"
+        compression = self._compression_spin.value() if output_format in {"jpeg", "webp"} else None
+        return GPTImage2Options(
+            target_layer_id=self._target_combo.currentData(),
+            model=self._model_combo.currentData() or DEFAULT_MODEL,
+            size=self._size_combo.currentData() or "1024x1024",
+            quality=self._quality_combo.currentData() or "auto",
+            output_format=output_format,
+            output_compression=compression,
+            background=self._background_combo.currentData() or "auto",
+            moderation=self._moderation_combo.currentData() or "auto",
+            input_alpha_fill=self._input_alpha.checkbox.isChecked(),
+            input_alpha_color=self._input_alpha.color_name(),
+        )
+
+    def _preset_settings(self) -> dict[str, Any]:
+        options = self._collect_options()
+        return {
+            "prompt": self._prompt_text.toPlainText().strip(),
+            "options": options.as_mapping(),
+            "input_count": len(self._input_layers.selected()),
+            "replace_target": options.target_layer_id is not None,
+        }
 
     @staticmethod
     def _configure_compact_combo(combo: QComboBox, *, min_chars: int) -> None:
@@ -667,6 +693,7 @@ class GPTImage2Panel(QWidget):
         self._translation_binder.set_translator(self.tr)
         self._translation_binder.retranslate()
         self._input_layers.refresh_translations()
+        self._input_alpha.refresh_translations()
         self._populate_model_combo()
         self._populate_quality_combo()
         self._populate_size_combo()

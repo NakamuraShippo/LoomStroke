@@ -13,6 +13,7 @@ from typing import Any
 
 from loomstroke.host_api import HostAPI, SettingsService
 from loomstroke.plugins.llm_gateway.config import (
+    LOCAL_PROVIDER,
     LLMConfig,
     available_api_key_providers,
 )
@@ -130,6 +131,9 @@ class LLMGatewayClient:
 
         providers.update(available_api_key_providers())
 
+        # A local server needs no key, so it is always offered.
+        providers.add(LOCAL_PROVIDER)
+
         return sorted(provider for provider in providers if provider)
 
     def default_model(self, provider: str) -> str:
@@ -153,6 +157,11 @@ class LLMGatewayClient:
 
         cfg = self.config()
         provider_key = provider.lower()
+        if provider_key == LOCAL_PROVIDER:
+            # No curated models: the server's own list fills the dropdown,
+            # and the provider name is never a usable model ID.
+            configured = cfg.models.get(provider_key, "")
+            return [configured] if configured else []
         catalogue = known_models(provider_key)
         configured = cfg.models.get(provider_key) or resolve_model(cfg, provider_key, None)
         ordered: list[str] = []
@@ -162,6 +171,17 @@ class LLMGatewayClient:
             if model and model not in ordered:
                 ordered.append(model)
         return ordered or [provider_key]
+
+    async def fetch_models(self, provider: str) -> list[str] | None:
+        """Ask *provider* which chat models the stored key can use.
+
+        None means the request was skipped (no consent or no key); request
+        failures raise.
+        """
+        lister = getattr(self.service(), "list_models", None)
+        if not callable(lister):
+            return None
+        return await lister(provider)
 
     # ---- submission -------------------------------------------------------
 

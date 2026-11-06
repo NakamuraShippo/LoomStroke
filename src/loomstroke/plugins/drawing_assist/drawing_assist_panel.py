@@ -5,6 +5,7 @@ from __future__ import annotations
 from collections.abc import Callable
 from typing import Any
 
+from PySide6.QtCore import QEvent
 from PySide6.QtWidgets import (
     QCheckBox,
     QComboBox,
@@ -22,6 +23,8 @@ from PySide6.QtWidgets import (
 from loomstroke.core.drawing_assist import KNOWN_ASSIST_TYPES, DrawingAssist
 from loomstroke.ui.canvas.drawing_assist_controller import DrawingAssistController
 from loomstroke.ui.translations import translated_literal_domain
+
+from .perspective_controls import PerspectiveControls
 
 __all__ = ["DrawingAssistPanel"]
 
@@ -82,26 +85,52 @@ class DrawingAssistPanel(QWidget):
 
     def _button(self, row: QHBoxLayout, text: str, slot: Callable[[], Any]) -> QPushButton:
         button = QPushButton(_ts(text))
+        button.setProperty("translationSource", text)
         button.clicked.connect(slot)
         row.addWidget(button)
         return button
 
     # -- data --------------------------------------------------------------------------
 
+    def changeEvent(self, event: QEvent) -> None:
+        if event.type() == QEvent.LanguageChange:
+            for index in range(self.type_combo.count()):
+                self.type_combo.setItemText(index, _ts(self.type_combo.itemData(index)))
+            state = self._controller.state()
+            for index in range(self.list.count()):
+                item = self.list.item(index)
+                assist = state.get(item.data(_ROLE))
+                if assist is not None:
+                    item.setText(self._item_title(assist, state.active_id))
+            for button in self.findChildren(QPushButton):
+                source = button.property("translationSource")
+                if source:
+                    button.setText(_ts(source))
+            self.enable_box.setText(_ts("Enabled"))
+            self.overlay_box.setText(_ts("Show overlay"))
+        super().changeEvent(event)
+
+    @staticmethod
+    def _item_title(assist: DrawingAssist, active_id: str | None) -> str:
+        flags = []
+        if assist.id == active_id:
+            flags.append(_ts("active"))
+        if not assist.enabled:
+            flags.append(_ts("disabled"))
+        if not assist.is_known:
+            flags.append(_ts("unknown type"))
+        suffix = f"  [{', '.join(flags)}]" if flags else ""
+        return f"{_ts(assist.type)}{suffix}"
+
     def refresh(self) -> None:
         selected = self.selected_id()
         state = self._controller.state()
+        self._displayed_state = (self._controller.page_id(), state)
+        if state.get(selected) is None:
+            selected = state.active_id
         self.list.clear()
         for assist in state.items:
-            flags = []
-            if assist.id == state.active_id:
-                flags.append(_ts("active"))
-            if not assist.enabled:
-                flags.append(_ts("disabled"))
-            if not assist.is_known:
-                flags.append(_ts("unknown type"))
-            suffix = f"  [{', '.join(flags)}]" if flags else ""
-            item = QListWidgetItem(f"{_ts(assist.type)}{suffix}")
+            item = QListWidgetItem(self._item_title(assist, state.active_id))
             item.setData(_ROLE, assist.id)
             self.list.addItem(item)
         for row in range(self.list.count()):
@@ -131,6 +160,8 @@ class DrawingAssistPanel(QWidget):
         self.refresh()
         if assist is not None:
             self.select(assist.id)
+        else:
+            self._show_submit_error()
         return assist
 
     def remove_selected(self) -> None:
@@ -146,9 +177,13 @@ class DrawingAssistPanel(QWidget):
             self.refresh()
 
     def apply_fields(self) -> bool:
+        updated = self.edited_assist()
+        return self.submit_assist(updated) if updated is not None else False
+
+    def edited_assist(self) -> DrawingAssist | None:
         assist = self._editing
         if assist is None:
-            return False
+            return None
         geometry: dict[str, Any] = dict(assist.geometry)
         options: dict[str, Any] = dict(assist.options)
         for (source, key, index), spin in self._fields.items():
@@ -165,9 +200,11 @@ class DrawingAssistPanel(QWidget):
             else:
                 current[index] = value
             store[key] = current
-        updated = DrawingAssist(
+        return DrawingAssist(
             assist.id, assist.type, assist.enabled, assist.locked, geometry, options
         )
+
+    def submit_assist(self, updated: DrawingAssist) -> bool:
         issues = self._controller.issues(updated)
         if issues:
             self.status_label.setText(
@@ -176,7 +213,12 @@ class DrawingAssistPanel(QWidget):
             return False
         ok = self._controller.update(updated)
         self.refresh()
+        if not ok:
+            self._show_submit_error()
         return ok
+
+    def _show_submit_error(self) -> None:
+        self.status_label.setText(_ts("Not applied: {codes}").format(codes="assist_submit_failed"))
 
     # -- internals ---------------------------------------------------------------------
 
@@ -204,11 +246,20 @@ class DrawingAssistPanel(QWidget):
         self._controller._repaint()  # noqa: SLF001 - same component
 
     def _rebuild_form(self, assist: DrawingAssist | None) -> None:
+        # A selector may rebuild this form from its own Qt signal handler.
+        # Defer destruction until that signal has returned to Qt.
+        for control in self.form_host.findChildren(PerspectiveControls):
+            self.form.removeWidget(control)
+            control.hide()
+            control.setParent(None)
+            control.deleteLater()
         while self.form.rowCount():
             self.form.removeRow(0)
         self._fields.clear()
         if assist is None or not assist.is_known:
             return
+        if assist.type == "perspective":
+            self.form.addRow(PerspectiveControls(self, assist))
         for source, mapping in (("geometry", assist.geometry), ("options", assist.options)):
             for key, value in mapping.items():
                 if isinstance(value, bool):

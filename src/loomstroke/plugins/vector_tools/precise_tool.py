@@ -14,8 +14,11 @@ from ...core.native_cmyk.vector_paints import capture_paint, capture_vector_pain
 from ...host_api import StrokePoint as HostStrokePoint
 from ..common.vector_hit_test_geometry import VectorHitTestGeometry
 from ..sdk import PropertySpec, PropertyType, ToolDescriptor, ToolMetadata
+from ..sdk.assist_vector_objects import preview_object
+from ..sdk.assisted_vector_command import assisted_vector_command
 from ..sdk.base import PluginMetadata, PluginType
 from ..sdk.cursors import apply_hover_cursor
+from ..sdk.drawing_assist import ToolAssistBridge
 from ..sdk.tool import ContextToolbarSpec
 from .common import (
     VECTOR_IDS_META_KEY,
@@ -92,6 +95,7 @@ class VectorPreciseTool(CurveFitting):
         self._target_layer_id: str | None = None
         self._created_layer_id: str | None = None
         self._straight_segment_modifier = False
+        self._assist = ToolAssistBridge("vector_pen_precise")
 
     def descriptor(self) -> ToolDescriptor:
         return ToolDescriptor(
@@ -160,13 +164,14 @@ class VectorPreciseTool(CurveFitting):
         self._straight_segment_modifier = bool(shift)
 
         # Start new stroke
+        pt = self._assist.begin(self.host_api, pt)
         self._apply_active_color()
         self._points = [pt]
         self._is_drawing = True
 
     def on_pointer_move(self, pts: Iterable[HostStrokePoint]) -> None:
         if self._is_drawing:
-            new_pts = list(pts)
+            new_pts = self._assist.points(pts)
             if not new_pts:
                 return
             self._points.extend(new_pts)
@@ -188,7 +193,7 @@ class VectorPreciseTool(CurveFitting):
                 self._move_selected_anchor(pt, preview_only=False)
                 self._commit_editing_object()
             return
-        self._points.append(pt)
+        self._points.append(self._assist.point(pt))
         obj = self._build_object()
         if obj:
             self._pending_objects.append(obj)
@@ -229,11 +234,14 @@ class VectorPreciseTool(CurveFitting):
         commands: list[VectorCreateCommand] = []
         if self._pending_objects:
             commands.extend(
-                VectorCreateCommand(
-                    obj,
-                    layer_id=target_layer_id,
-                    merge_key="vector_precise",
-                    created_layer_id=created_layer_id,
+                assisted_vector_command(
+                    VectorCreateCommand(
+                        obj,
+                        layer_id=target_layer_id,
+                        merge_key="vector_precise",
+                        created_layer_id=created_layer_id,
+                    ),
+                    self._assist.session,
                 )
                 for obj in self._pending_objects
             )
@@ -254,6 +262,7 @@ class VectorPreciseTool(CurveFitting):
         obj = self._build_object(preview=True)
         if not obj:
             return
+        obj = preview_object(obj, self._assist.session)
         layer_hint = self._target_layer_id or self._resolve_existing_vector_layer_id()
         if layer_hint is None:
             layer_hint = self._create_vector_layer_id()
@@ -330,6 +339,7 @@ class VectorPreciseTool(CurveFitting):
         return None
 
     def _reset(self) -> None:
+        self._assist.end()
         self._points.clear()
         self._is_drawing = False
         self._pending_commands.clear()
@@ -794,7 +804,8 @@ class VectorPreciseTool(CurveFitting):
         self._created_layer_id = None
         if not commands:
             return
-        for cmd in commands:
+        for source_command in commands:
+            cmd = assisted_vector_command(source_command, self._assist.session)
             if isinstance(cmd, VectorCreateCommand) and cmd.layer_id is None:
                 cmd.layer_id = target_layer_id
             try:

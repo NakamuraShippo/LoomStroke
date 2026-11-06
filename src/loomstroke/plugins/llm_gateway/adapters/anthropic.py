@@ -11,6 +11,7 @@ from typing import Any
 from aiohttp import ClientResponseError
 
 from ..errors import AuthenticationError, LLMError
+from ..model_params import is_chat_model, tune_body
 from ..types import ImageAttachment, ProviderPayload
 from .base import (
     CancelContext,
@@ -25,6 +26,7 @@ _logger = logging.getLogger(__name__)
 _ENDPOINT = "https://api.anthropic.com/v1/messages"
 _MODELS_ENDPOINT = "https://api.anthropic.com/v1/models"
 _ANTHROPIC_VERSION = "2023-06-01"
+_MAX_MODEL_PAGES = 20
 
 
 class ClaudeAdapter:
@@ -93,6 +95,7 @@ class ClaudeAdapter:
         headers["x-api-key"] = ctx.config.api_key
         body = dict(ctx.payload.body)
         body["model"] = ctx.config.model
+        body = tune_body("anthropic", ctx.config.model, body)
         try:
             async with ctx.session.post(_ENDPOINT, json=body, headers=headers) as resp:
                 resp.raise_for_status()
@@ -138,6 +141,23 @@ class ClaudeAdapter:
         except Exception:
             _logger.debug("Anthropic health check failed", exc_info=True)
             return False
+
+    async def list_models(self, ctx: HealthContext) -> list[str]:
+        headers = {
+            "x-api-key": ctx.config.api_key,
+            "anthropic-version": _ANTHROPIC_VERSION,
+        }
+        models: list[str] = []
+        params: dict[str, str] = {"limit": "1000"}
+        for _page in range(_MAX_MODEL_PAGES):
+            async with ctx.session.get(_MODELS_ENDPOINT, headers=headers, params=params) as resp:
+                resp.raise_for_status()
+                data = await resp.json()
+            models.extend(str(entry["id"]) for entry in data.get("data", []) if entry.get("id"))
+            if not data.get("has_more") or not data.get("last_id"):
+                break
+            params = {"limit": "1000", "after_id": str(data["last_id"])}
+        return [model for model in models if is_chat_model("anthropic", model)]
 
     @staticmethod
     def _now() -> float:

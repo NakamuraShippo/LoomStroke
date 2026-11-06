@@ -1,7 +1,7 @@
 """Plain chip text with matching wrap-aware paint and layout measurements."""
 
-from PySide6.QtCore import QRect, QSize, Qt
-from PySide6.QtGui import QPainter
+from PySide6.QtCore import QPoint, QPointF, QRect, QSize, Qt
+from PySide6.QtGui import QPainter, QTextLayout, QTextLine, QTextOption
 from PySide6.QtWidgets import QLabel, QSizePolicy
 
 
@@ -38,6 +38,42 @@ class WrappedChipLabel(QLabel):
             (self.fontMetrics().horizontalAdvance(s) for s in self.text().splitlines()), default=1
         )
         return QSize(max(1, width), self.heightForWidth(max(1, width)))
+
+    def char_index_at(self, pos: QPoint) -> int:
+        """Index of the character painted at ``pos``, or -1 outside the text."""
+        text = self.text()
+        rect = self.contentsRect()
+        if not text or rect.width() <= 0:
+            return -1
+        # drawText breaks lines at "\n"; QTextLayout needs a line separator.
+        layout = QTextLayout(text.replace("\n", "\u2028"), self.font())
+        option = QTextOption()
+        option.setWrapMode(QTextOption.WrapMode.WrapAnywhere)
+        layout.setTextOption(option)
+        layout.beginLayout()
+        height = 0.0
+        while True:
+            line = layout.createLine()
+            if not line.isValid():
+                break
+            line.setLineWidth(rect.width())
+            line.setPosition(QPointF(0, height))
+            height += line.height()
+        layout.endLayout()
+        top = float(rect.top())
+        if self.alignment() & Qt.AlignmentFlag.AlignVCenter:
+            top += (rect.height() - height) / 2
+        elif self.alignment() & Qt.AlignmentFlag.AlignBottom:
+            top += rect.height() - height
+        x = pos.x() - rect.left()
+        for index in range(layout.lineCount()):
+            line = layout.lineAt(index)
+            y = top + line.y()
+            if y <= pos.y() < y + line.height():
+                if not 0 <= x < line.naturalTextWidth():
+                    return -1
+                return line.xToCursor(x, QTextLine.CursorPosition.CursorOnCharacter)
+        return -1
 
     def paintEvent(self, event) -> None:  # noqa: N802
         painter = QPainter(self)

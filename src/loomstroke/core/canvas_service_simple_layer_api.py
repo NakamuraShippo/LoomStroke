@@ -298,6 +298,9 @@ class CanvasServiceLayerApiMixin(_CanvasServiceLayerApiBase):
     def _snapshot_image_for_layer(self, target_layer: _Layer) -> QImage:
         return self._layer_snapshot()._snapshot_image_for_layer(target_layer)
 
+    def _rasterize_3d_layer(self, layer: _Layer) -> QImage:
+        return self._layer_snapshot().rasterize_3d_layer(layer)
+
     @staticmethod
     def _snapshot_format(fmt: str) -> str:
         return CanvasLayerSnapshotService._snapshot_format(fmt)

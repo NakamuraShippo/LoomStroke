@@ -21,6 +21,7 @@ from ...plugins.sdk.tool import (
     ToolSettings,
 )
 from ..common.tool_icons import resolve_tool_icon_path
+from ..sdk.drawing_assist import ToolAssistBridge
 from .fill_gesture_controller import FillGestureController
 from .fill_preparation_controller import FillPreparationController
 from .settings import (
@@ -56,6 +57,7 @@ class BasicFillBucketPlugin:
         self._pending_commands: list[Command] = []
         self._preparation = FillPreparationController(self)
         self._gesture = FillGestureController(self)
+        self._assist = ToolAssistBridge("basic_fill_bucket")
 
         self.metadata = PluginMetadata(
             id="loomstroke.basic_fill_bucket",
@@ -167,11 +169,13 @@ class BasicFillBucketPlugin:
             self.host_api.events.emit("tool.changed", {"tool": "basic_fill_bucket"})
 
     def disable(self) -> None:
+        self._assist.end()
         self._preparation.cancel()
         self._gesture.cancel()
         self._pending_commands.clear()
 
     def deactivate(self) -> None:
+        self._assist.end()
         self._preparation.cancel()
         self._gesture.cancel()
         if self.host_api:
@@ -194,10 +198,15 @@ class BasicFillBucketPlugin:
         del alt, shift, ctrl, meta
         if not self.host_api:
             return
+        self._assist.capture(self.host_api)
         if self.settings.fill_mode != "Bucket":
             self._gesture.down(pt)
             return
-        if self.settings.reference_mode != "Active Layer" or self.settings.area_expansion:
+        if (
+            self.settings.reference_mode != "Active Layer"
+            or self.settings.area_expansion
+            or (self._assist.session is not None and self._assist.session.has_copies)
+        ):
             self._preparation.prepare(pt)
             return
         seed_x = round(pt.pos[0])
@@ -234,12 +243,14 @@ class BasicFillBucketPlugin:
 
     def on_pointer_up(self, pt: StrokePoint) -> None:
         self._gesture.up(pt)
+        self._assist.end()
 
     def on_pointer_hover(self, pt: StrokePoint) -> None:
         del pt
 
     def on_key(self, key: str, pressed: bool) -> bool:
         if pressed and key.lower() in {"escape", "esc"}:
+            self._assist.end()
             self._gesture.cancel()
             self._preparation.cancel()
             return True

@@ -309,8 +309,14 @@ class ContextToolbarManager(QObject):
         if not has_content:
             return
 
-        # If already showing the same provider, just update position
+        # Reuse the provider's controls, restoring native close/hide as needed.
         if self._toolbar_visible and self._active_provider_id == provider_id:
+            toolbar_ref = getattr(self, "_toolbar_widget", None)
+            if toolbar_ref is not None:
+                toolbar = toolbar_ref.widget
+                if not toolbar.isVisible():
+                    toolbar.setVisible(True)
+                    toolbar.raise_()
             self._active_spec = spec
             self._apply_context_action_states(provider_id)
             self.update_position()

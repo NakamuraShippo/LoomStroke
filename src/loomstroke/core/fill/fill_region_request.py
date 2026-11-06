@@ -17,3 +17,4 @@ class FillRegionRequest:
     mode: str = "Bucket"
     enclosure: np.ndarray | None = None
     allowed: np.ndarray | None = None
+    seeds: tuple[tuple[int, int], ...] = ()

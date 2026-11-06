@@ -213,6 +213,12 @@ class AIEffectCoordinator:
         )
         self._ai_effect_gen_controller = gen_controller
 
+        from .app_ai_effect_panel_registration import (  # noqa: PLC0415
+            PanelPresetRegistrationBinding,
+        )
+
+        self._panel_preset_registration = PanelPresetRegistrationBinding(self)
+
         # Phase 8d: panel-side surfaces (auto-connect failure, etc.)
         # do not have direct access to ``self.main_window``; they emit
         # a toast request on the bus and we route it through the same

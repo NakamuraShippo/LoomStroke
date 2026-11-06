@@ -12,7 +12,7 @@ try:  # pragma: no cover - fallback for type checkers
 except ImportError:  # pragma: no cover
     from typing import Literal  # type: ignore
 
-from .input_images import normalize_layer_ids
+from .input_images import normalize_input_alpha_color, normalize_layer_ids
 
 Model = Literal[
     "gpt-image-2",
@@ -127,6 +127,8 @@ class GPTImage2Options:
     output_compression: int | None = None
     background: Background = cast(Background, "auto")  # noqa: RUF009
     moderation: Moderation = cast(Moderation, "auto")  # noqa: RUF009
+    input_alpha_fill: bool = False
+    input_alpha_color: str = "#ffffff"
 
     @classmethod
     def from_mapping(cls, payload: Mapping[str, Any] | GPTImage2Options | None) -> GPTImage2Options:
@@ -134,6 +136,9 @@ class GPTImage2Options:
             return cls()
         if isinstance(payload, cls):
             return payload
+        input_alpha_fill = payload.get("input_alpha_fill", False)
+        if not isinstance(input_alpha_fill, bool):
+            raise ValueError("input_alpha_fill must be a boolean")
         output_format = cast(
             OutputFormat,
             _coerce_choice(
@@ -147,6 +152,10 @@ class GPTImage2Options:
         if output_format == "png":
             compression = None
         return cls(
+            input_alpha_fill=input_alpha_fill,
+            input_alpha_color=normalize_input_alpha_color(
+                payload.get("input_alpha_color", "#ffffff")
+            ),
             target_layer_id=_coerce_target(payload.get("target_layer_id")),
             model=cast(
                 Model,
@@ -194,6 +203,8 @@ class GPTImage2Options:
             "output_compression": self.output_compression,
             "background": self.background,
             "moderation": self.moderation,
+            "input_alpha_fill": self.input_alpha_fill,
+            "input_alpha_color": self.input_alpha_color,
         }
 
 

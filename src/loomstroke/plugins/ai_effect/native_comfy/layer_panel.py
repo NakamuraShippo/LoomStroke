@@ -16,6 +16,7 @@ from loomstroke.plugins.comfyui.session_target import active_url
 from .layer_cache import identity, take, target_url
 from .live_prompt_choices import NativeLivePromptChoices
 from .panel import NativePanel, tr
+from .prompt_area import PromptArea
 from .qt_node_forms import QtNodeForms
 from .seed_control import advance_controls
 from .values import layer_document, parameter_bindings, prompt_ui_state, snapshot_values
@@ -45,9 +46,6 @@ class ComfyLayerPanel(NativePanel):
         self.save_button.clicked.connect(lambda: self.run(self.commit()))
         bar.addWidget(self.open_button)
         bar.addWidget(self.save_button)
-        self.prompt_button = self.button("Prompt input…")
-        self.prompt_button.clicked.connect(self.open_prompt)
-        bar.addWidget(self.prompt_button)
         self.body.insertLayout(0, bar)
         self.body.insertWidget(1, self.nodes)
         self.classification_label = QLabel(self)
@@ -55,6 +53,8 @@ class ComfyLayerPanel(NativePanel):
         self.qt_forms = QtNodeForms(self)
         self.live_prompt_choices = NativeLivePromptChoices(self)
         self.body.insertWidget(3, self.qt_forms)
+        self.prompt_area = PromptArea(self)
+        self.body.insertWidget(4, self.prompt_area)
         self.status.setText(
             tr(
                 "Apply values before generating or changing layers. "
@@ -112,6 +112,7 @@ class ComfyLayerPanel(NativePanel):
         self._nodes_loaded = False
         self._focus_path = None
         self.qt_forms.clear()
+        self.prompt_area.clear()
         self.live_prompt_choices.clear()
         self.classification_label.clear()
         self.save_button.setEnabled(False)
@@ -120,6 +121,16 @@ class ComfyLayerPanel(NativePanel):
         self.nodes.blockSignals(False)
 
     async def open_nodes(self) -> None:
+        try:
+            await self._open_nodes()
+        except TimeoutError as exc:
+            self.clear_nodes()
+            self.dispose_view()
+            raise ValueError(
+                tr("ComfyUI did not finish loading. Check the server connection and reload nodes.")
+            ) from exc
+
+    async def _open_nodes(self) -> None:
         self.clear_nodes()
         state = self.current_state()
         gateway = state.preset_snapshot.get("gateway_file", {})
@@ -150,6 +161,7 @@ class ComfyLayerPanel(NativePanel):
         info = await view.call("describe", True)
         self.current_state()
         self.qt_forms.rebuild(info, state)
+        self.prompt_area.rebuild(state, skip=self.qt_forms.widgets)
         ids = {str(ref["node_id"]) for ref in parameter_bindings(state).values()}
         self.nodes.blockSignals(True)
         self.nodes.clear()
@@ -194,6 +206,7 @@ class ComfyLayerPanel(NativePanel):
         ):
             return
         self.qt_forms.sync(state)
+        self.prompt_area.sync(state)
         if self.view is not None and not self._busy and state.param_values != self._synced:
             self.run(self.push_values(copy.deepcopy(state), previous_values=self._synced))
 
@@ -221,11 +234,6 @@ class ComfyLayerPanel(NativePanel):
             if task is not None:
                 await task
 
-    def open_prompt(self) -> None:
-        from .prompt_dialog import edit_prompt  # noqa: PLC0415
-
-        self.run(edit_prompt(self))
-
     async def commit(
         self, *, generate: bool = False, ui_updates: dict | None = None, dispatch: bool = True
     ) -> None:
@@ -243,6 +251,9 @@ class ComfyLayerPanel(NativePanel):
             self.qt_forms.advance_seeds()
         before = copy.deepcopy(self.current_state().param_values)
         await self.qt_forms.apply_values(self.current_state(), exclude=ui_updates or ())
+        inline = self.prompt_area.node_updates(self.current_state())
+        if inline:
+            await self.view.evaluate("window.loomstrokeApplyValues(" + json.dumps(inline) + ")")
         if generate:
             await advance_controls(self.view, self.current_state())
         snapshot = await self.view.call("snapshot")
@@ -252,6 +263,7 @@ class ComfyLayerPanel(NativePanel):
                 tr("Layer values changed while reading nodes. Reopen the node editor.")
             )
         values = snapshot_values(state, snapshot["output"])
+        ui_updates = dict(self.prompt_area.ui_updates(state.param_ui_state), **(ui_updates or {}))
         ui = prompt_ui_state(state.param_ui_state, values, ui_updates)
         if generate:
             snapshot = await self.live_prompt_choices.apply(state, values, ui, before) or snapshot
@@ -262,6 +274,7 @@ class ComfyLayerPanel(NativePanel):
         ):
             raise ValueError(tr("Could not update the AI Effect layer."))
         self.qt_forms.sync(self.current_state())
+        self.prompt_area.committed(values, ui)
         if hasattr(self, "_cache_identity"):
             self._cache_identity = copy.deepcopy(
                 (state.preset_snapshot, ui.get("comfyui_native"), state.target_server_id)

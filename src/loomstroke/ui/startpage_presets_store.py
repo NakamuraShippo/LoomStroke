@@ -9,6 +9,7 @@ from pathlib import Path
 from uuid import uuid4
 
 from ..platform.user_dirs import default_user_root
+from .startpage_ai_image_presets import ai_image_presets
 from .startpage_models import CanvasPreset, PresetCategory
 
 logger = logging.getLogger(__name__)
@@ -63,6 +64,7 @@ def default_categories() -> list[PresetCategory]:
             _preset("[SDXL/etc] 9:16 768 x 1344", 768, 1344),
             _preset("[SDXL/etc] 21:9 1536 x 640", 1536, 640),
             _preset("[SDXL/etc] 9:21 640 x 1536", 640, 1536),
+            *ai_image_presets(),
         ),
     )
 
@@ -151,17 +153,30 @@ def _normalize_categories(categories: Iterable[PresetCategory]) -> list[PresetCa
     normalized: list[PresetCategory] = []
     for category_id, category_label in _REQUIRED_CATEGORIES:
         category = by_id.get(category_id)
-        if category is None:
-            normalized.append(PresetCategory(id=category_id, label=category_label, presets=()))
-        else:
-            normalized.append(
-                PresetCategory(
-                    id=category_id,
-                    label=category_label,
-                    presets=tuple(category.presets),
-                )
+        presets = tuple(category.presets) if category is not None else ()
+        if category_id == "ai":
+            presets = _with_ai_image_presets(presets)
+        normalized.append(
+            PresetCategory(
+                id=category_id,
+                label=category_label,
+                presets=presets,
             )
+        )
     return normalized
+
+
+def _with_ai_image_presets(presets: tuple[CanvasPreset, ...]) -> tuple[CanvasPreset, ...]:
+    """Backfill only missing additions; preserve saved entries, order, and edits."""
+    ids = {preset.id for preset in presets}
+    signatures = {(preset.label, preset.width_px, preset.height_px) for preset in presets}
+    additions = tuple(
+        preset
+        for preset in ai_image_presets()
+        if preset.id not in ids
+        and (preset.label, preset.width_px, preset.height_px) not in signatures
+    )
+    return (*presets, *additions)
 
 
 def load_presets() -> list[PresetCategory]:

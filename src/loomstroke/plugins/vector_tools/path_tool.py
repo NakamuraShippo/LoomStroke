@@ -15,8 +15,12 @@ from ...core.native_cmyk.vector_paints import capture_paint, capture_vector_pain
 from ...host_api import StrokePoint as HostStrokePoint
 from ..common.vector_hit_test_geometry import VectorHitTestGeometry
 from ..sdk import PropertySpec, PropertyType, ToolDescriptor, ToolMetadata
+from ..sdk.assist_geometry import snap_assist_point
+from ..sdk.assist_vector_objects import preview_object
+from ..sdk.assisted_vector_command import assisted_vector_command
 from ..sdk.base import PluginMetadata, PluginType
 from ..sdk.cursors import apply_hover_cursor
+from ..sdk.drawing_assist import ToolAssistBridge
 from ..sdk.tool import ContextToolbarSpec
 from .common import (
     Anchor,
@@ -87,6 +91,7 @@ class VectorPathTool:
         self._preview_layer_id: str | None = None
         self._target_layer_id: str | None = None
         self._created_layer_id: str | None = None
+        self._assist = ToolAssistBridge("vector_path_tool")
 
     def descriptor(self) -> ToolDescriptor:
         return ToolDescriptor(
@@ -199,6 +204,11 @@ class VectorPathTool:
             self._anchors.clear()
             self.state = "creating_path"
             self._target_layer_id = None
+            self._assist.begin(self.host_api, pt)
+            if self._assist.session is None or self._assist.session.constraint is None:
+                pt = snap_assist_point(self.host_api, pt)
+
+        pt = self._assist.point(pt)
 
         # Clicking near the first anchor closes immediately
         if len(self._anchors) >= 3 and self._is_near_start(pt.pos):
@@ -218,6 +228,7 @@ class VectorPathTool:
             last = _last
         if last is None:
             return
+        last = self._assist.point(last)
         self._current_drag_vec = (
             float(last.pos[0] - self._pointer_down.pos[0]),
             float(last.pos[1] - self._pointer_down.pos[1]),
@@ -234,6 +245,7 @@ class VectorPathTool:
         if self.state != "creating_path" or self._pointer_down is None:
             return
 
+        pt = self._assist.point(pt)
         drag_vec = (
             float(pt.pos[0] - self._pointer_down.pos[0]),
             float(pt.pos[1] - self._pointer_down.pos[1]),
@@ -394,7 +406,11 @@ class VectorPathTool:
         if len(self._anchors) >= 3 and self.config.snap_anchors and self._is_near_start(pos):
             start = self._anchors[0].pos
             return (float(start[0]), float(start[1]))
-        return (float(pos[0]), float(pos[1]))
+        point = HostStrokePoint(pos=pos)
+        session = self._assist.session
+        if session is not None and session.constraint is not None:
+            return self._assist.point(point).pos
+        return snap_assist_point(self.host_api, point).pos
 
     def _apply_constraint(self, handle_vec: tuple[float, float]) -> tuple[float, float]:
         angle = math.atan2(handle_vec[1], handle_vec[0])
@@ -447,6 +463,7 @@ class VectorPathTool:
         self._reset(keep_pending=True)
 
     def _queue_command(self, cmd: VectorCreateCommand) -> None:
+        cmd = assisted_vector_command(cmd, self._assist.session)
         if self.host_api and getattr(self.host_api, "canvas", None):
             try:
                 success = self.host_api.canvas.submit(cmd, merge_key="vector_path_tool")
@@ -506,6 +523,7 @@ class VectorPathTool:
             self._reset()
 
     def _reset(self, *, keep_pending: bool = False) -> None:
+        self._assist.end()
         self._anchors.clear()
         if not keep_pending:
             self._pending_commands.clear()
@@ -611,6 +629,7 @@ class VectorPathTool:
         )
         meta = capture_vector_paints({"preview": True}, getattr(self, "_paint_color", None), style)
         obj = make_vector_object([path], style, meta)
+        obj = preview_object(obj, self._assist.session)
         try:
             canvas = self.host_api.canvas
             if self._target_layer_id is None:

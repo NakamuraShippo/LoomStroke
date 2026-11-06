@@ -34,6 +34,10 @@ def park(section: Any, panel: Any) -> None:
     if not isinstance(section, QWidget):
         panel.dispose()
         return
+    if panel._auto_open_attempted and not panel._busy and not panel._nodes_loaded:
+        panel.dispose()
+        panel.deleteLater()
+        return
     cache = getattr(section, "_comfy_layer_cache", None)
     if cache is None:
         cache = section._comfy_layer_cache = {}

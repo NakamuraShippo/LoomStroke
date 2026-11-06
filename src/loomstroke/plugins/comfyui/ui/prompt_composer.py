@@ -30,7 +30,9 @@ from loomstroke.plugins.common.constants import (
     CK_TEXT,
     SK_PROMPT,
 )
+from loomstroke.plugins.common.liveprompt_defaults import default_separator
 from loomstroke.plugins.common.snippet_repository import SnippetRepository
+from loomstroke.plugins.prompt_editor import emphasis as _emphasis
 from loomstroke.plugins.prompt_editor.compose_widgets import (
     PromptChipFlowWidget,
     PromptChipWidget,
@@ -87,9 +89,14 @@ class PromptComposerWidget(QWidget):
         self,
         host_api: Any | None = None,
         parent: QWidget | None = None,
+        *,
+        emphasis_output: bool = True,
     ) -> None:
         super().__init__(parent)
         self._host_api = host_api
+        # False for gateways without weight syntax: chips keep their ComfyUI
+        # emphasis, but the composed and generated text leave it out.
+        self._emphasis_output = emphasis_output
 
         # Data
         self._components: list[PromptComponent] = []
@@ -153,6 +160,9 @@ class PromptComposerWidget(QWidget):
         # --- Chip flow ---
         self._chip_flow = PromptChipFlowWidget()
         self._chip_flow.chipInserted.connect(self._on_chip_inserted)
+        self._chip_flow.snippetInserted.connect(
+            lambda kind, snippet_id, row: self._on_chip_inserted(kind, row, snippet_id)
+        )
         self._chip_flow.chipMoved.connect(self._on_chip_moved)
         self._flow_area = ResizablePromptArea(
             self._chip_flow, getattr(self._host_api, "settings", None)
@@ -168,7 +178,9 @@ class PromptComposerWidget(QWidget):
         sep_label.setSizePolicy(QSizePolicy.Policy.Fixed, QSizePolicy.Policy.Fixed)
         sep_row.addWidget(sep_label)
 
-        self._separator_edit = QLineEdit(r"\n")
+        self._separator_edit = QLineEdit(
+            default_separator(getattr(self._host_api, "settings", None))
+        )
         self._separator_edit.setMaximumWidth(120)
         self._separator_edit.textChanged.connect(self._on_separator_changed)
         sep_row.addWidget(self._separator_edit)
@@ -255,10 +267,12 @@ class PromptComposerWidget(QWidget):
         # Restore separator
         separator_token = metadata.get("separator")
         block = self._separator_edit.blockSignals(True)
-        if isinstance(separator_token, str) and separator_token:
+        if isinstance(separator_token, str):
             self._separator_edit.setText(separator_token)
         else:
-            self._separator_edit.setText(r"\n")
+            self._separator_edit.setText(
+                default_separator(getattr(self._host_api, "settings", None))
+            )
         self._separator_edit.blockSignals(block)
 
         self._rebuild_chips()
@@ -299,14 +313,18 @@ class PromptComposerWidget(QWidget):
                 if isinstance(entry, Mapping):
                     components.append(PromptComponent.from_metadata(dict(entry)))
         separator = state.get("separator")
-        separator = separator if isinstance(separator, str) else r"\n"
+        separator = (
+            separator
+            if isinstance(separator, str)
+            else default_separator(getattr(self._host_api, "settings", None))
+        )
         components_changed = components != self._components
         if components_changed or separator != self._separator_edit.text():
             self._dynamic_sequence.reset()
         self._components = components if components_changed else self._components
         previous_sep_block = self._separator_edit.blockSignals(True)
         try:
-            self._separator_edit.setText(separator if isinstance(separator, str) else r"\n")
+            self._separator_edit.setText(separator)
         finally:
             self._separator_edit.blockSignals(previous_sep_block)
 
@@ -363,14 +381,16 @@ class PromptComposerWidget(QWidget):
         for chip in chips:
             chip.removed.connect(self._on_chip_removed)
             chip.changed.connect(self._on_chip_changed)
+            chip.emphasis_changed.connect(lambda _component: self._recompose())
             chip.expand_requested.connect(self._on_chip_expand)
         self._update_separator_display()
 
-    def _on_chip_inserted(self, kind: str, row: int) -> None:
+    def _on_chip_inserted(self, kind: str, row: int, snippet_id: str | None = None) -> None:
         if self._catalog is None:
             return
         component = PromptComponent(kind=kind)
-        default = self._catalog.default_snippet(kind)
+        chosen = self._catalog.get(snippet_id) if snippet_id else None
+        default = chosen or self._catalog.default_snippet(kind)
         if default:
             component.snippet_id = default.id
             if kind == CK_LIST and default.list_items:
@@ -466,7 +486,7 @@ class PromptComposerWidget(QWidget):
 
     def _compose_text(self) -> str:
         separator = self._current_separator()
-        parts = [self._render_component(c) for c in self._components]
+        parts = [self._decorate(c, self._render_component(c)) for c in self._components]
         return separator.join(part for part in parts if part)
 
     def resolve_for_generation(self) -> str:
@@ -477,7 +497,13 @@ class PromptComposerWidget(QWidget):
             self._render_component,
             _resolve_list_items,
             self._current_separator(),
+            decorate=self._decorate,
         )
+
+    def _decorate(self, component: PromptComponent, text: str) -> str:
+        if not self._emphasis_output:
+            return text
+        return _emphasis.decorate(text, component)
 
     def _recompose(self) -> None:
         self.composedTextChanged.emit(self._compose_text())

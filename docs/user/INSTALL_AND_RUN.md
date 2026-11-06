@@ -1,77 +1,55 @@
-> **最終照合: 2026-10-30**
+> **最終照合: 2026-11-06**
 
 # LoomStroke インストールと起動ガイド
 
-この文書は配布用ソースのセットアップ手順です。詳細な起動パターンは
-[RUN_INSTRUCTIONS.md](RUN_INSTRUCTIONS.md)、操作説明は
-[日本語ガイド](index_ja.html)を参照してください。
+この文書は現行コードに合わせたセットアップ手順です。詳細な起動パターンは
+`docs/user/RUN_INSTRUCTIONS.md`、プラグイン開発は `docs/dev/SDK_GUIDE.md` を参照してください。
 
 ## 推奨セットアップ
 
-### Windows: ZIPを展開してインストール
-
-Pythonの事前インストールとGitは不要です。Windows 64-bitでインターネットに接続してください。
-
-1. [最新版の配布ZIP](https://github.com/NakamuraShippo/LoomStroke/archive/refs/heads/main.zip)をダウンロードします。
-2. ZIPを右クリックして「すべて展開」し、展開した `LoomStroke-main` フォルダを開きます。
-3. `install.bat` をダブルクリックします。初回は依存ライブラリの取得に時間がかかります。
-4. 「Installation completed successfully.」が表示されたら、`boot_LoomStroke.bat` をダブルクリックします。
-
-以後の起動は `boot_LoomStroke.bat` だけで行えます。ZIP内から直接実行しないでください。
-セットアップ後も同じ展開先を使います。設定や保存した作業用データは、展開先の `user_data/` に作られます。
-ZIPにPython本体やモデル重みは含まれません。
-Pythonがない場合は `install.bat` が自動取得します。モデルの準備は対応機能の利用時に行います。
-`install.bat` はNanoBanana用SDK（`google-genai`）も標準で導入します。従来の `--nanobanana` オプションも使用できます。
-
-### 導入の確認範囲（2026-10-20）
-
-Python未導入のWindows Sandbox（Windows 11 Enterprise 64-bit、ネット接続・vGPUあり）で、
-配布ZIPを展開し、追加オプションなしの `install.bat` → `boot_LoomStroke.bat` を実行しました。
-専用Python 3.13.16・venv・必須依存の自動導入と `pip check`、実画面での新規文書・ペン描画・
-Undo/Redo・保存・通常終了を確認しています。通常利用にWindows Sandboxは不要です。
-
-保存文書は別の新規Sandboxの製品読み込み処理でも正常に読めました。
-後半にSandboxの接続エラーが発生したため、GUI操作による再読込は未確認です。
-他のWindows版・ARM64、実ペンタブ、長時間利用、実AIバックエンドとの組合せは今回の検証に含めていません。
-
-### インストーラーの動作とオプション
-
-Windowsでは `install.bat` をダブルクリックすると、既存環境を調べ、利用可能なPythonがなければ
-公式のCPython 3.13.16（64-bit）を `.runtime/` に自動取得します。
-固定SHA-256で検証し、venv/ensurepipを含むPythonが実行できてから依存インストールへ進みます。
-管理者権限、システムへのPython登録、永続的なPATH変更は不要です。
+Windows 64-bitではPythonの事前インストールは不要です。インターネットに接続し、
+リポジトリ直下の `install.bat` をダブルクリックしてください。
+利用可能なPythonがない場合、Python公式のNuGet版3.13.16を `.runtime/` に取得し、
+固定したSHA-256を検証してから仮想環境の作成と依存インストールを実行します。
+管理者権限、システムPythonの追加・更新、永続的なPATH変更は必要ありません。
 既存の `.venv` / `venv` があれば再利用し、なければ `.venv` を作ります。
 完了後は `boot_LoomStroke.bat` で起動してください。失敗時はエラーを画面に残し、
-既存環境を削除・置換せず終了します。`--nanobanana` で追加依存、`--no-pause` で待機なし、
+既存環境を削除・置換せず終了します。`google-genai` を含むNanoBananaの依存も標準で入ります。
+従来の `--nanobanana` も引き続き使えます。`--no-pause` で待機なし、
 `--python "C:\path\python.exe"` で新規環境の作成に使うPythonを指定できます。
-`--no-python-download` でPythonの自動取得を止められます。取得や検証に失敗すると処理は停止します。
-`.runtime/` は `.venv` の基盤なので、セットアップ後も削除・移動せず、同じ場所に残してください。
+`--no-python-download` でPythonの自動取得を止められます。
+`.runtime/` は `.venv` の基盤なので、セットアップ後も同じフォルダに残してください。
+取得や検証に失敗した場合は処理を止め、既存環境を削除・置換しません。
 
 ### ZIP版のアップデート（Windows）
 
 1. 原稿を保存してLoomStrokeを終了します。
-2. 本体フォルダの `update.bat` をダブルクリックします。
-3. `Update completed successfully` と表示されたら、`boot_LoomStroke.bat` で起動します。
+2. インターネットに接続し、`boot_LoomStroke.bat` と同じ場所の `update.bat` をダブルクリックします。
+3. `Update completed successfully` と表示されたら画面を閉じ、`boot_LoomStroke.bat` で起動します。
 
-公開mainの最新版を取得し、本体・同梱素材・説明書を置き換え、既存インストーラーで依存を更新します。
-`user_data/`、`.venv` / `venv`、`.runtime/`、本体フォルダ外の原稿やルートの個人ファイルは更新対象外です。
+公開リポジトリの `main` の最新版を取得し、本体・同梱素材・説明書を置き換えてから、
+既存のインストーラーで必要なPythonパッケージとNanoBananaの`google-genai`を更新します。Gitのインストールは不要です。
+`user_data/`（設定・追加プラグイン等）、`.venv` / `venv`、`.runtime/`、本体フォルダ外の原稿や
+ルートに置いた `.lstroke`・画像には上書きしません。独自のプラグインは `user_data/plugins/` に置いてください。
+
 旧本体は `.update-backups/日時-ID/` に残します。本体管理下の `src/loomstroke/`、`img/`、
-`docs/user/`、`LICENSES/` に直接追加した独自ファイルもバックアップ側へ移るため、
-個人の原稿や素材はこれらのフォルダに置かないでください。
+`docs/user/`、`LICENSES/` に直接追加・編集したファイルもバックアップ側へ移るため、
+個人の原稿・素材はこれらのフォルダに保存しないでください。バックアップは正常動作の確認後に削除できます。
+ダウンロード・ZIP検査の失敗時は本体を変更しません。置き換え・依存更新が失敗した場合は旧本体を戻します。
+依存パッケージ自体は巻き戻せないため、依存更新の途中で失敗した場合は `install.bat` を再実行してください。
+強制終了・停電等で中断した場合は、画面に表示されたバックアップ先の `RECOVERY.txt` と `changes.json` を確認してください。
 
-取得・ZIP検査の失敗では本体を変更せず、通常の適用失敗では旧本体を戻します。
-依存パッケージは巻き戻せないため、依存更新で失敗した場合は `install.bat` を再実行してください。
-停電・強制終了で中断した場合は、表示されたバックアップ先の `RECOVERY.txt` と `changes.json` を確認します。
-
-初回は最新版ZIPから `update.bat` / `update.ps1` の両方を現在の本体フォルダへコピーしてください。
-以降は `update.bat` で更新できます。公開Git版の更新は下記の手順に対応しています。
-`update.bat --no-pause` は終了時のキー入力を省略します。
+初めてこの更新機能を導入するときは、最新版ZIPの `update.bat` と `update.ps1` を両方、
+現在利用している本体フォルダへコピーしてください。以降は `update.bat` だけで更新できます。
+公開Git版の更新は下記の手順に対応しています。開発用フォルダは自動更新の対象外です。
+コマンドからの `update.bat --no-pause` は結果表示後のキー入力を省略します。
+旧EXE配布用 `update_LoomStroke.bat` とは別の、ソースZIP版用の手順です。
 
 ### Git版のアップデート（Windows）
 
 公開リポジトリ `NakamuraShippo/LoomStroke` をGitで導入した場合も、アプリを終了して
 `update.bat` をダブルクリックすると更新できます。Git for Windowsが利用でき、`main`ブランチであることが必要です。
-更新後は既存のインストーラーでPythonパッケージも更新します。
+更新後は既存のインストーラーでPythonパッケージとNanoBananaの`google-genai`も更新します。
 
 ローカル変更・未追跡ファイル・独自コミット・進行中のGit操作がある場合は、自動で破棄せず停止します。
 Git管理外の設定・原稿・実行環境を引き継ぎ、更新ファイルと衝突する場合も上書きしません。
@@ -104,6 +82,12 @@ source .venv/bin/activate
 python -m pip install -e .
 ```
 
+開発用ツール込み:
+
+```powershell
+python -m pip install -e .[dev]
+```
+
 NanoBanana の依存関係も使う場合:
 
 ```powershell
@@ -111,9 +95,7 @@ python -m pip install -e .[nanobanana]
 ```
 
 `wgpu==0.31.0` は必須依存に登録されており、`rendercanvas` とともに自動で入ります。
-`requirements.txt` にも両パッケージが含まれます。これは実行用依存の固定一覧で、
-NanoBananaの追加SDKも含みます。通常は上記の `pip install -e .` だけで十分です。
-開発用の `requirements.lock` やテスト用ツールは配布対象に含めません。
+`requirements.txt` / `requirements.lock` にも両パッケージが含まれます。
 
 `qasync` は通常の依存関係に含まれているため、現行構成では追加で個別
 インストールする必要はありません。
@@ -134,18 +116,20 @@ loomstroke
 python -m loomstroke
 ```
 
-AI機能を使わない場合は `boot_LoomStroke_noAI.bat` をダブルクリックするか、
-`loomstroke --no-ai` / `python -m loomstroke --no-ai` で起動します。
-設定やプリセットは保持され、通常のバッチでは通常モードに戻ります。
+### ComfyUIを自動起動するときのウィンドウ表示（Windows）
 
-### ComfyUI自動起動時のコンソール表示（Windows）
+Preferences → AI Effect → ComfyUI Foldersの
+「ComfyUIのコンソールウィンドウを表示」で切り替えられます。
+ONにすると次回の自動起動から別のコンソールにComfyUIの出力を表示し、
+OFFでは従来どおりバックグラウンドで起動します。既定はOFFです。
+フォルダの指定、「LoomStroke起動時にComfyUIを自動起動」、外部サービスの許可も必要です。
 
-Preferences → AI Effect → ComfyUI Foldersの「ComfyUIのコンソールウィンドウを表示」で切り替えます。
-ONでは次回の自動起動から別コンソールに出力し、OFF（既定）ではバックグラウンドで起動します。
-フォルダ指定・自動起動設定・外部サービス許可も必要です。既に起動済みのプロセスには反映しません。
-バックグラウンドで自動起動した所有ComfyUIはLoomStroke終了時に停止します。
-別コンソール起動は「LoomStroke終了時にComfyUIも終了する」に従います。
-既存/遠隔サーバーは停止しません。ブラウザーを自動表示する設定ではありません。
+起動済みのComfyUIには切り替えが反映されないため、次回の起動時に確認してください。
+バックグラウンドで自動起動したComfyUIは、生成中でもLoomStroke終了時に自動で終了します。
+別コンソールで起動した場合、LoomStroke終了時にも止めるかどうかは
+隣の「LoomStroke終了時にComfyUIも終了する」で設定します。コンソールを閉じてもComfyUIは終了します。
+既に起動していたComfyUIと遠隔サーバーは終了対象に含めません。
+この設定はコンソール表示を切り替えるもので、ブラウザーの自動表示は行いません。
 
 ## ソースチェックアウトから直接起動したい場合
 

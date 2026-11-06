@@ -17,6 +17,8 @@ class ProviderConfig:
     model: str
     timeout: float
     verify_ssl: bool
+    # Only the local (OpenAI-compatible) provider reads this; others use fixed endpoints.
+    base_url: str = ""
 
 
 @dataclass(slots=True)
@@ -74,6 +76,10 @@ class ProviderAdapter(Protocol):
     async def cancel(self, ctx: CancelContext) -> None: ...
 
     async def health(self, ctx: HealthContext) -> bool: ...
+
+    async def list_models(self, ctx: HealthContext) -> list[str]:
+        """Text-generation model IDs the key can use; raises on request failure."""
+        ...
 
     def build_payload(
         self,

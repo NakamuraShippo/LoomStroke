@@ -88,7 +88,7 @@ echo Using "%VENV_PYTHON%"
 echo Installing LoomStroke and its dependencies, including wgpu and google-genai...
 set "PACKAGE=."
 if "%WITH_NANOBANANA%"=="1" set "PACKAGE=.[nanobanana]"
-"%VENV_PYTHON%" -m pip install -e "%PACKAGE%"
+"%VENV_PYTHON%" -m pip install --upgrade -e "%PACKAGE%" google-genai
 if errorlevel 1 goto :command_error
 "%VENV_PYTHON%" -m pip check
 if errorlevel 1 goto :command_error

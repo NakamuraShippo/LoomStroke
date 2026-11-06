@@ -2742,7 +2742,9 @@ class VectorPathEditTool:
         by = bbox[1] if bbox else 0.0
         bw = (bbox[2] - bbox[0]) if bbox else 0.0
         bh = (bbox[3] - bbox[1]) if bbox else 0.0
-        sx, sy = snap_position(self.host_api, bx + delta[0], by + delta[1], bw, bh)
+        sx, sy = snap_position(
+            self.host_api, bx + delta[0], by + delta[1], bw, bh, assist_snap=True
+        )
         return (sx - bx, sy - by)
 
     def _current_selection_object(self):  # noqa: PLR0911

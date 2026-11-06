@@ -1166,6 +1166,14 @@ Please check that all image paths in your workflow are valid.
 <context>
     <name>InterfacePage</name>
     <message>
+        <source>LivePrompt default separator</source>
+        <translation>LivePromptの既定の区切り文字</translation>
+    </message>
+    <message>
+        <source>Use \n for a new line or \t for a tab. Empty uses a new line. Applies to new LivePrompts; saved separators take precedence.</source>
+        <translation>改行は\n、タブは\tで指定します。空欄は改行になります。新しいLivePromptに適用され、保存済みの区切り文字が優先されます。</translation>
+    </message>
+    <message>
         <source>System Default</source>
         <translation>システム既定</translation>
     </message>
@@ -1536,6 +1544,10 @@ Please check that all image paths in your workflow are valid.
 </context>
 <context>
     <name>MainWindow</name>
+    <message>
+        <source>Perspective Ruler...</source>
+        <translation>パース定規...</translation>
+    </message>
     <message><source>Cover Template...</source><translation>表紙テンプレート...</translation></message>
     <message><source>Pattern Along Path</source><translation>パスに沿って模様を配置</translation></message>
     <message>
@@ -3528,6 +3540,122 @@ Type: {type}</source>
     <message>
         <source>Delete '{title}'?</source>
         <translation>'{title}' を削除しますか?</translation>
+    </message>
+    <message>
+        <source>Unsaved changes</source>
+        <translation>未保存</translation>
+    </message>
+    <message>
+        <source>More actions</source>
+        <translation>その他の操作</translation>
+    </message>
+    <message>
+        <source>New line</source>
+        <translation>改行</translation>
+    </message>
+    <message>
+        <source>Comma</source>
+        <translation>カンマ</translation>
+    </message>
+    <message>
+        <source>Comma and space</source>
+        <translation>カンマと空白</translation>
+    </message>
+    <message>
+        <source>Custom</source>
+        <translation>カスタム</translation>
+    </message>
+    <message>
+        <source>{count} characters</source>
+        <translation>{count} 文字</translation>
+    </message>
+    <message>
+        <source>Tidy with LLM</source>
+        <translation>LLMで整える</translation>
+    </message>
+    <message>
+        <source>This model does not use temperature.</source>
+        <translation>このモデルは温度を使いません。</translation>
+    </message>
+    <message>
+        <source>Output copied to clipboard.</source>
+        <translation>出力をコピーしました。</translation>
+    </message>
+    <message>
+        <source>All types</source>
+        <translation>すべての種別</translation>
+    </message>
+    <message>
+        <source>Body</source>
+        <translation>本文</translation>
+    </message>
+    <message>
+        <source>Import</source>
+        <translation>取り込み</translation>
+    </message>
+    <message>
+        <source>Import prompt</source>
+        <translation>プロンプトを取り込む</translation>
+    </message>
+    <message>
+        <source>Imported '{title}'.</source>
+        <translation>'{title}' を取り込みました。</translation>
+    </message>
+    <message>
+        <source>Import failed: {error}</source>
+        <translation>取り込みに失敗しました: {error}</translation>
+    </message>
+    <message>
+        <source>The file is empty.</source>
+        <translation>ファイルが空です。</translation>
+    </message>
+    <message>
+        <source>Other model…</source>
+        <translation>その他のモデル…</translation>
+    </message>
+    <message>
+        <source>Model ID</source>
+        <translation>モデル ID</translation>
+    </message>
+    <message>
+        <source>Enter a model ID:</source>
+        <translation>モデル ID を入力:</translation>
+    </message>
+    <message>
+        <source>Refresh the model list</source>
+        <translation>モデル一覧を更新</translation>
+    </message>
+    <message>
+        <source>Loaded {count} models.</source>
+        <translation>{count} 件のモデルを読み込みました。</translation>
+    </message>
+    <message>
+        <source>Couldn't update the model list: {error}</source>
+        <translation>モデル一覧を更新できませんでした: {error}</translation>
+    </message>
+    <message>
+        <source>Local (OpenAI compatible)</source>
+        <translation>ローカル (OpenAI 互換)</translation>
+    </message>
+    <message>
+        <source>Server URL</source>
+        <translation>サーバー URL</translation>
+    </message>
+    <message>
+        <source>(No models yet)</source>
+        <translation>(モデルがまだありません)</translation>
+    </message>
+    <message>
+        <source>Select a model first.</source>
+        <translation>先にモデルを選んでください。</translation>
+    </message>
+    <message>
+        <source>Enter the URL of a server on this PC, such as http://localhost:11434/v1.</source>
+        <translation>この PC 上のサーバーの URL を入力してください。例: http://localhost:11434/v1</translation>
+    </message>
+    <message>
+        <source>Ollama's default context is short and silently cuts the start of long prompts; raise it with OLLAMA_CONTEXT_LENGTH or the model's num_ctx.</source>
+        <translation>Ollama は既定で扱える長さが短く、長いプロンプトは先頭が黙って切り捨てられます。OLLAMA_CONTEXT_LENGTH やモデルの num_ctx で広げてください。</translation>
     </message>
 </context>
 <context>
@@ -8928,6 +9056,14 @@ Use "Edit Filters" to add.</source>
         <source>Failed to import image as new layer</source>
         <translation>画像を新規レイヤーとして読み込めませんでした</translation>
     </message>
+    <message>
+        <source>Layer: {name}</source>
+        <translation>レイヤー: {name}</translation>
+    </message>
+    <message>
+        <source>Clear the layer filter</source>
+        <translation>レイヤーの絞り込みを解除</translation>
+    </message>
 </context>
 <context>
     <name>PluginManagerDialog</name>
@@ -11250,6 +11386,18 @@ Drag onto the canvas to place</source>
     <message><source>External services are disabled.</source><translation>外部サービスの利用が無効です。</translation></message>
     <message><source>Wait until generation is ready.</source><translation>生成の準備が完了するまでお待ちください。</translation></message>
     <message><source>A cycle requires Sequential or Combinatorial LivePrompt choices.</source><translation>一巡にはライブプロンプトの順次選択または組み合わせ列挙を設定してください。</translation></message>
+    <message>
+        <source>Plan: {count} generations</source>
+        <translation>予定: {count}件</translation>
+    </message>
+    <message>
+        <source>Plan: until stopped</source>
+        <translation>予定: 止めるまで</translation>
+    </message>
+    <message>
+        <source>Plan: one cycle of {count}</source>
+        <translation>予定: 一巡 {count}件</translation>
+    </message>
 </context>
 <context>
     <name>PromptComposer</name>
@@ -13988,6 +14136,22 @@ GPU合成処理を初期化できませんでした。グラフィックスド�
 <context>
     <name>LLMPaneController</name>
     <message>
+        <source>Copy</source>
+        <translation>コピー</translation>
+    </message>
+    <message>
+        <source>Model ID</source>
+        <translation>モデル ID</translation>
+    </message>
+    <message>
+        <source>Server URL</source>
+        <translation>サーバー URL</translation>
+    </message>
+    <message>
+        <source>Enter a model ID:</source>
+        <translation>モデル ID を入力:</translation>
+    </message>
+    <message>
         <source>Cancel</source>
         <translation>キャンセル</translation>
     </message>
@@ -15670,6 +15834,410 @@ Select a file to recover.</source>
 </context>
 <context>
     <name>__shared__</name>
+    <message>
+        <source>Choose a different name for this model.</source>
+        <translation>このモデルでは別の名前を指定してください。</translation>
+    </message>
+    <message>
+        <source>Enter a name between 1 and 80 characters.</source>
+        <translation>名前は1文字以上80文字以内で入力してください。</translation>
+    </message>
+    <message>
+        <source>Saved poses</source>
+        <translation>保存したポーズ</translation>
+    </message>
+    <message>
+        <source>Select saved pose</source>
+        <translation>保存したポーズを選択</translation>
+    </message>
+    <message>
+        <source>Save current pose</source>
+        <translation>現在のポーズを保存</translation>
+    </message>
+    <message>
+        <source>Apply saved pose</source>
+        <translation>保存したポーズを適用</translation>
+    </message>
+    <message>
+        <source>Delete saved pose</source>
+        <translation>保存したポーズを削除</translation>
+    </message>
+    <message>
+        <source>Could not load pose presets</source>
+        <translation>ポーズプリセットを読み込めませんでした</translation>
+    </message>
+    <message>
+        <source>Pose presets</source>
+        <translation>ポーズプリセット</translation>
+    </message>
+    <message>
+        <source>Save pose preset</source>
+        <translation>ポーズプリセットを保存</translation>
+    </message>
+    <message>
+        <source>Pose preset name</source>
+        <translation>ポーズプリセット名</translation>
+    </message>
+    <message>
+        <source>Could not save pose preset</source>
+        <translation>ポーズプリセットを保存できませんでした</translation>
+    </message>
+    <message>
+        <source>Could not apply pose preset</source>
+        <translation>ポーズプリセットを適用できませんでした</translation>
+    </message>
+    <message>
+        <source>Could not delete pose preset</source>
+        <translation>ポーズプリセットを削除できませんでした</translation>
+    </message>
+    <message>
+        <source>Delete selected pose preset?</source>
+        <translation>選択したポーズプリセットを削除しますか？</translation>
+    </message>
+    <message>
+      <source>Fingers together</source>
+      <translation>指をそろえる</translation>
+    </message>
+    <message>
+      <source>Fingers spread</source>
+      <translation>指を広げる</translation>
+    </message>
+    <message>
+      <source>Flat hand</source>
+      <translation>平らな手</translation>
+    </message>
+    <message>
+      <source>Soft fist</source>
+      <translation>軽く握る</translation>
+    </message>
+    <message>
+      <source>Tight fist</source>
+      <translation>強く握る</translation>
+    </message>
+    <message>
+      <source>Half-closed hand</source>
+      <translation>半開きの手</translation>
+    </message>
+    <message>
+      <source>Cupped hand</source>
+      <translation>すくう手</translation>
+    </message>
+    <message>
+      <source>Deeply cupped hand</source>
+      <translation>深くすくう手</translation>
+    </message>
+    <message>
+      <source>Thumbs up</source>
+      <translation>サムズアップ</translation>
+    </message>
+    <message>
+      <source>OK sign</source>
+      <translation>OKサイン</translation>
+    </message>
+    <message>
+      <source>Horns sign</source>
+      <translation>角のサイン</translation>
+    </message>
+    <message>
+      <source>Shaka sign</source>
+      <translation>シャカサイン</translation>
+    </message>
+    <message>
+      <source>Three extended fingers</source>
+      <translation>三本の指を伸ばす</translation>
+    </message>
+    <message>
+      <source>Four extended fingers</source>
+      <translation>四本の指を伸ばす</translation>
+    </message>
+    <message>
+      <source>Thumb and index</source>
+      <translation>親指と人差し指</translation>
+    </message>
+    <message>
+      <source>Thumb, index and middle</source>
+      <translation>親指・人差し指・中指</translation>
+    </message>
+    <message>
+      <source>Crossed fingers</source>
+      <translation>指を交差</translation>
+    </message>
+    <message>
+      <source>Finger heart</source>
+      <translation>指ハート</translation>
+    </message>
+    <message>
+      <source>Beckoning finger</source>
+      <translation>指で手招き</translation>
+    </message>
+    <message>
+      <source>Stop gesture</source>
+      <translation>制止の手</translation>
+    </message>
+    <message>
+      <source>Count one</source>
+      <translation>数える・一</translation>
+    </message>
+    <message>
+      <source>Count two</source>
+      <translation>数える・二</translation>
+    </message>
+    <message>
+      <source>Count three</source>
+      <translation>数える・三</translation>
+    </message>
+    <message>
+      <source>Count four</source>
+      <translation>数える・四</translation>
+    </message>
+    <message>
+      <source>Count five</source>
+      <translation>数える・五</translation>
+    </message>
+    <message>
+      <source>Small pinch</source>
+      <translation>小さくつまむ</translation>
+    </message>
+    <message>
+      <source>Wide pinch</source>
+      <translation>大きくつまむ</translation>
+    </message>
+    <message>
+      <source>Tripod pinch</source>
+      <translation>三点つまみ</translation>
+    </message>
+    <message>
+      <source>Precision grip</source>
+      <translation>細かい物をつまむ</translation>
+    </message>
+    <message>
+      <source>Pen grip</source>
+      <translation>ペンを持つ</translation>
+    </message>
+    <message>
+      <source>Brush grip</source>
+      <translation>筆を持つ</translation>
+    </message>
+    <message>
+      <source>Cylinder grip</source>
+      <translation>筒を握る</translation>
+    </message>
+    <message>
+      <source>Thin handle grip</source>
+      <translation>細い柄を握る</translation>
+    </message>
+    <message>
+      <source>Ball grip</source>
+      <translation>ボールを持つ</translation>
+    </message>
+    <message>
+      <source>Large ball grip</source>
+      <translation>大きなボールを持つ</translation>
+    </message>
+    <message>
+      <source>Hook grip</source>
+      <translation>ひっかけて持つ</translation>
+    </message>
+    <message>
+      <source>Key pinch</source>
+      <translation>鍵をつまむ</translation>
+    </message>
+    <message>
+      <source>Claw hand</source>
+      <translation>かぎ爪の手</translation>
+    </message>
+    <message>
+      <source>Gentle touch</source>
+      <translation>そっと触れる</translation>
+    </message>
+    <message>
+      <source>Fingertip touch</source>
+      <translation>指先で触れる</translation>
+    </message>
+    <message>
+      <source>Fabric pinch</source>
+      <translation>布をつまむ</translation>
+    </message>
+    <message>
+      <source>Delicate hand</source>
+      <translation>しなやかな手</translation>
+    </message>
+    <message>
+      <source>Tense hand</source>
+      <translation>力を入れた手</translation>
+    </message>
+    <message>
+      <source>Basic hand poses</source>
+      <translation>基本の手</translation>
+    </message>
+    <message>
+      <source>Hand gestures</source>
+      <translation>ジェスチャー</translation>
+    </message>
+    <message>
+      <source>Finger counting</source>
+      <translation>指で数える</translation>
+    </message>
+    <message>
+      <source>Grasping poses</source>
+      <translation>握る・持つ</translation>
+    </message>
+    <message>
+      <source>Expressive hands</source>
+      <translation>表現の手</translation>
+    </message>
+    <message>
+      <source>All hand poses</source>
+      <translation>すべての手のポーズ</translation>
+    </message>
+    <message>
+        <source>Edit selected hand</source>
+        <translation>選択中の手を編集</translation>
+    </message>
+    <message>
+        <source>Hand pose</source>
+        <translation>手のポーズ</translation>
+    </message>
+    <message>
+        <source>Finger</source>
+        <translation>指</translation>
+    </message>
+    <message>
+        <source>Finger curl</source>
+        <translation>曲げ</translation>
+    </message>
+    <message>
+        <source>Finger spread</source>
+        <translation>開き</translation>
+    </message>
+    <message>
+        <source>Cup palm</source>
+        <translation>手のひらを丸める</translation>
+    </message>
+    <message>
+        <source>Joint</source>
+        <translation>関節</translation>
+    </message>
+    <message>
+        <source>Reset hand</source>
+        <translation>手を初期姿勢に戻す</translation>
+    </message>
+    <message>
+        <source>Thumb</source>
+        <translation>親指</translation>
+    </message>
+    <message>
+        <source>Index finger</source>
+        <translation>人差し指</translation>
+    </message>
+    <message>
+        <source>Middle finger</source>
+        <translation>中指</translation>
+    </message>
+    <message>
+        <source>Ring finger</source>
+        <translation>薬指</translation>
+    </message>
+    <message>
+        <source>Little finger</source>
+        <translation>小指</translation>
+    </message>
+    <message>
+        <source>Palm</source>
+        <translation>手のひら</translation>
+    </message>
+    <message>
+        <source>Wrist</source>
+        <translation>手首</translation>
+    </message>
+    <message>
+        <source>Open hand</source>
+        <translation>開いた手</translation>
+    </message>
+    <message>
+        <source>Relaxed hand</source>
+        <translation>力を抜いた手</translation>
+    </message>
+    <message>
+        <source>Fist</source>
+        <translation>握りこぶし</translation>
+    </message>
+    <message>
+        <source>Pointing hand</source>
+        <translation>指差し</translation>
+    </message>
+    <message>
+        <source>Peace sign</source>
+        <translation>ピース</translation>
+    </message>
+    <message>
+        <source>Reset selected part</source>
+        <translation>選択部位を初期姿勢に戻す</translation>
+    </message>
+    <message>
+        <source>GPT Image</source>
+        <translation>GPT Image</translation>
+    </message>
+    <message>
+        <source>Perspective ruler</source>
+        <translation>パース定規</translation>
+    </message>
+    <message>
+        <source>1-point perspective</source>
+        <translation>1点透視</translation>
+    </message>
+    <message>
+        <source>2-point perspective</source>
+        <translation>2点透視</translation>
+    </message>
+    <message>
+        <source>3-point perspective</source>
+        <translation>3点透視</translation>
+    </message>
+    <message>
+        <source>Drawing direction</source>
+        <translation>描画方向</translation>
+    </message>
+    <message>
+        <source>Edit vanishing points</source>
+        <translation>消失点を編集</translation>
+    </message>
+    <message>
+        <source>Drag VP handles on the canvas. Esc cancels the drag.</source>
+        <translation>キャンバスのVPハンドルをドラッグして移動。Escで取り消します。</translation>
+    </message>
+    <message>
+        <source>Perspective Ruler...</source>
+        <translation>パース定規...</translation>
+    </message>
+    <message>
+        <source>LivePrompt default separator</source>
+        <translation>LivePromptの既定の区切り文字</translation>
+    </message>
+    <message>
+        <source>Use \n for a new line or \t for a tab. Empty uses a new line. Applies to new LivePrompts; saved separators take precedence.</source>
+        <translation>改行は\n、タブは\tで指定します。空欄は改行になります。新しいLivePromptに適用され、保存済みの区切り文字が優先されます。</translation>
+    </message>
+    <message>
+        <source>Register in AI Effect Manager</source>
+        <translation>AI Effect Managerに登録</translation>
+    </message>
+    <message>
+        <source>Save the current prompt and options as a preset. Choose input layers again when applying the preset.</source>
+        <translation>現在のプロンプトと設定をプリセットとして保存します。適用時に入力レイヤーを再指定してください。</translation>
+    </message>
+    <message>
+        <source>Preset name is required</source>
+        <translation>プリセット名を入力してください</translation>
+    </message>
+    <message>
+        <source>Registered preset: {name}</source>
+        <translation>プリセットを登録しました: {name}</translation>
+    </message>
+    <message>
+        <source>Could not register preset. AI Effect Manager may be unavailable or saving failed.</source>
+        <translation>プリセットを登録できませんでした。AI Effect Managerが利用できないか、保存に失敗しました。</translation>
+    </message>
     <message>
         <source>Allow this MCP operation?
 
@@ -29906,7 +30474,7 @@ After refreshing the token, any agents registered to this LoomStroke MCP server 
     </message>
     <message>
         <source>perspective</source>
-        <translation>透視定規</translation>
+        <translation>パース定規</translation>
     </message>
     <message>
         <source>pillow</source>
@@ -30275,6 +30843,326 @@ After refreshing the token, any agents registered to this LoomStroke MCP server 
     <message>
         <source>ガイド表示/非表示</source>
         <translation>ガイド表示/非表示</translation>
+    </message>
+    <message>
+        <source>Emphasis</source>
+        <translation>強調</translation>
+    </message>
+    <message>
+        <source>Weaken emphasis</source>
+        <translation>強調を弱める</translation>
+    </message>
+    <message>
+        <source>Strengthen emphasis</source>
+        <translation>強調を強める</translation>
+    </message>
+    <message>
+        <source>Remove from LivePrompt</source>
+        <translation>ライブプロンプトから外す</translation>
+    </message>
+    <message>
+        <source>Unsaved changes</source>
+        <translation>未保存</translation>
+    </message>
+    <message>
+        <source>More actions</source>
+        <translation>その他の操作</translation>
+    </message>
+    <message>
+        <source>New line</source>
+        <translation>改行</translation>
+    </message>
+    <message>
+        <source>Comma</source>
+        <translation>カンマ</translation>
+    </message>
+    <message>
+        <source>Comma and space</source>
+        <translation>カンマと空白</translation>
+    </message>
+    <message>
+        <source>{count} characters</source>
+        <translation>{count} 文字</translation>
+    </message>
+    <message>
+        <source>Tidy with LLM</source>
+        <translation>LLMで整える</translation>
+    </message>
+    <message>
+        <source>Text (node)</source>
+        <translation>テキスト (ノード)</translation>
+    </message>
+    <message>
+        <source>Plan: {count} generations</source>
+        <translation>予定: {count}件</translation>
+    </message>
+    <message>
+        <source>Plan: until stopped</source>
+        <translation>予定: 止めるまで</translation>
+    </message>
+    <message>
+        <source>Plan: one cycle of {count}</source>
+        <translation>予定: 一巡 {count}件</translation>
+    </message>
+    <message>
+        <source>Generated on this layer ({count})</source>
+        <translation>このレイヤーで生成したもの ({count})</translation>
+    </message>
+    <message>
+        <source>Show in Gallery</source>
+        <translation>ギャラリーで表示</translation>
+    </message>
+    <message>
+        <source>Open in Gallery (this layer only)</source>
+        <translation>ギャラリーで開く (このレイヤーで絞り込み)</translation>
+    </message>
+    <message>
+        <source>No generations yet.</source>
+        <translation>まだ生成していません。</translation>
+    </message>
+    <message>
+        <source>Layer: {name}</source>
+        <translation>レイヤー: {name}</translation>
+    </message>
+    <message>
+        <source>Clear the layer filter</source>
+        <translation>レイヤーの絞り込みを解除</translation>
+    </message>
+    <message>
+        <source>This model does not use temperature.</source>
+        <translation>このモデルは温度を使いません。</translation>
+    </message>
+    <message>
+        <source>Output copied to clipboard.</source>
+        <translation>出力をコピーしました。</translation>
+    </message>
+    <message>
+        <source>All types</source>
+        <translation>すべての種別</translation>
+    </message>
+    <message>
+        <source>Import prompt</source>
+        <translation>プロンプトを取り込む</translation>
+    </message>
+    <message>
+        <source>Imported '{title}'.</source>
+        <translation>'{title}' を取り込みました。</translation>
+    </message>
+    <message>
+        <source>Import failed: {error}</source>
+        <translation>取り込みに失敗しました: {error}</translation>
+    </message>
+    <message>
+        <source>The file is empty.</source>
+        <translation>ファイルが空です。</translation>
+    </message>
+    <message>
+        <source>Other model…</source>
+        <translation>その他のモデル…</translation>
+    </message>
+    <message>
+        <source>Model ID</source>
+        <translation>モデル ID</translation>
+    </message>
+    <message>
+        <source>Enter a model ID:</source>
+        <translation>モデル ID を入力:</translation>
+    </message>
+    <message>
+        <source>Refresh the model list</source>
+        <translation>モデル一覧を更新</translation>
+    </message>
+    <message>
+        <source>Loaded {count} models.</source>
+        <translation>{count} 件のモデルを読み込みました。</translation>
+    </message>
+    <message>
+        <source>Couldn't update the model list: {error}</source>
+        <translation>モデル一覧を更新できませんでした: {error}</translation>
+    </message>
+    <message>
+        <source>Local (OpenAI compatible)</source>
+        <translation>ローカル (OpenAI 互換)</translation>
+    </message>
+    <message>
+        <source>Server URL</source>
+        <translation>サーバー URL</translation>
+    </message>
+    <message>
+        <source>(No models yet)</source>
+        <translation>(モデルがまだありません)</translation>
+    </message>
+    <message>
+        <source>Select a model first.</source>
+        <translation>先にモデルを選んでください。</translation>
+    </message>
+    <message>
+        <source>Enter the URL of a server on this PC, such as http://localhost:11434/v1.</source>
+        <translation>この PC 上のサーバーの URL を入力してください。例: http://localhost:11434/v1</translation>
+    </message>
+    <message>
+        <source>Ollama's default context is short and silently cuts the start of long prompts; raise it with OLLAMA_CONTEXT_LENGTH or the model's num_ctx.</source>
+        <translation>Ollama は既定で扱える長さが短く、長いプロンプトは先頭が黙って切り捨てられます。OLLAMA_CONTEXT_LENGTH やモデルの num_ctx で広げてください。</translation>
+    </message>
+    <message>
+        <source>Fill input transparency</source>
+        <translation>入力画像の透明部分を塗りつぶす</translation>
+    </message>
+    <message>
+        <source>Fill transparent areas of input images with this color before sending. Source layers are unchanged.</source>
+        <translation>送信前に入力画像の透明部分をこの色で塗りつぶします。元のレイヤーは変更しません。</translation>
+    </message>
+    <message>
+        <source>Input fill color</source>
+        <translation>入力画像の塗りつぶし色</translation>
+    </message>
+    <message>
+        <source>Add drawing figure</source>
+        <translation>デッサン人形を追加</translation>
+    </message>
+    <message>
+        <source>Apply pose</source>
+        <translation>ポーズを適用</translation>
+    </message>
+    <message>
+        <source>Arms out</source>
+        <translation>腕を広げる</translation>
+    </message>
+    <message>
+        <source>Chest</source>
+        <translation>胸</translation>
+    </message>
+    <message>
+        <source>Could not add drawing figure</source>
+        <translation>デッサン人形を追加できませんでした</translation>
+    </message>
+    <message>
+        <source>Could not export OpenPose</source>
+        <translation>OpenPoseを書き出せませんでした</translation>
+    </message>
+    <message>
+        <source>Crouching</source>
+        <translation>しゃがみ姿</translation>
+    </message>
+    <message>
+        <source>Drag joints; Alt-drag changes depth. Pink joints are pinned.</source>
+        <translation>関節をドラッグして操作、Alt＋ドラッグで奥行きを変更。ピンクは固定した関節です。</translation>
+    </message>
+    <message>
+        <source>Drag joints to move; drag XYZ rings to rotate. Alt-drag changes depth. Pink joints are pinned.</source>
+        <translation>関節をドラッグして移動、XYZリングをドラッグして回転。Alt＋ドラッグで奥行きを変更。ピンクは固定した関節です。</translation>
+    </message>
+    <message>
+        <source>Drawing figure</source>
+        <translation>デッサン人形</translation>
+    </message>
+    <message>
+        <source>Edit pose</source>
+        <translation>ポーズ編集</translation>
+    </message>
+    <message>
+        <source>Export OpenPose</source>
+        <translation>OpenPoseを書き出す</translation>
+    </message>
+    <message>
+        <source>Head</source>
+        <translation>頭</translation>
+    </message>
+    <message>
+        <source>Left Ankle</source>
+        <translation>左足首</translation>
+    </message>
+    <message>
+        <source>Left Collar</source>
+        <translation>左鎖骨</translation>
+    </message>
+    <message>
+        <source>Left Elbow</source>
+        <translation>左肘</translation>
+    </message>
+    <message>
+        <source>Left Hip</source>
+        <translation>左股関節</translation>
+    </message>
+    <message>
+        <source>Left Knee</source>
+        <translation>左膝</translation>
+    </message>
+    <message>
+        <source>Left Shoulder</source>
+        <translation>左肩</translation>
+    </message>
+    <message>
+        <source>Left Wrist</source>
+        <translation>左手首</translation>
+    </message>
+    <message>
+        <source>Neck</source>
+        <translation>首</translation>
+    </message>
+    <message>
+        <source>OpenPose layer</source>
+        <translation>OpenPoseレイヤー</translation>
+    </message>
+    <message>
+        <source>Pelvis</source>
+        <translation>骨盤</translation>
+    </message>
+    <message>
+        <source>Pin / unpin joint</source>
+        <translation>関節を固定・解除</translation>
+    </message>
+    <message>
+        <source>Pose assistance</source>
+        <translation>ポーズ補正</translation>
+    </message>
+    <message>
+        <source>Reaching</source>
+        <translation>手を伸ばす</translation>
+    </message>
+    <message>
+        <source>Right Ankle</source>
+        <translation>右足首</translation>
+    </message>
+    <message>
+        <source>Right Collar</source>
+        <translation>右鎖骨</translation>
+    </message>
+    <message>
+        <source>Right Elbow</source>
+        <translation>右肘</translation>
+    </message>
+    <message>
+        <source>Right Hip</source>
+        <translation>右股関節</translation>
+    </message>
+    <message>
+        <source>Right Knee</source>
+        <translation>右膝</translation>
+    </message>
+    <message>
+        <source>Right Shoulder</source>
+        <translation>右肩</translation>
+    </message>
+    <message>
+        <source>Right Wrist</source>
+        <translation>右手首</translation>
+    </message>
+    <message>
+        <source>Sitting</source>
+        <translation>座り姿</translation>
+    </message>
+    <message>
+        <source>Standing</source>
+        <translation>立ち姿</translation>
+    </message>
+    <message>
+        <source>Waist</source>
+        <translation>腰</translation>
+    </message>
+    <message>
+        <source>Walking</source>
+        <translation>歩き姿</translation>
     </message>
 </context>
 <context>
@@ -32506,6 +33394,42 @@ After refreshing the token, any agents registered to this LoomStroke MCP server 
 <context>
     <name>DrawingAssistPanel</name>
     <message>
+        <source>Perspective ruler</source>
+        <translation>パース定規</translation>
+    </message>
+    <message>
+        <source>1-point perspective</source>
+        <translation>1点透視</translation>
+    </message>
+    <message>
+        <source>2-point perspective</source>
+        <translation>2点透視</translation>
+    </message>
+    <message>
+        <source>3-point perspective</source>
+        <translation>3点透視</translation>
+    </message>
+    <message>
+        <source>Drawing direction</source>
+        <translation>描画方向</translation>
+    </message>
+    <message>
+        <source>Automatic</source>
+        <translation>自動</translation>
+    </message>
+    <message>
+        <source>Vertical</source>
+        <translation>垂直</translation>
+    </message>
+    <message>
+        <source>Edit vanishing points</source>
+        <translation>消失点を編集</translation>
+    </message>
+    <message>
+        <source>Drag VP handles on the canvas. Esc cancels the drag.</source>
+        <translation>キャンバスのVPハンドルをドラッグして移動。Escで取り消します。</translation>
+    </message>
+    <message>
         <source>Add</source>
         <translation>追加</translation>
     </message>
@@ -32571,7 +33495,7 @@ After refreshing the token, any agents registered to this LoomStroke MCP server 
     </message>
     <message>
         <source>perspective</source>
-        <translation>透視定規</translation>
+        <translation>パース定規</translation>
     </message>
     <message>
         <source>radial</source>
@@ -33130,6 +34054,10 @@ After refreshing the token, any agents registered to this LoomStroke MCP server 
 </context>
 <context>
     <name>GPTImage2PanelPlugin</name>
+    <message>
+        <source>GPT Image</source>
+        <translation>GPT Image</translation>
+    </message>
     <message>
         <source>Configure GPT Image 2 jobs</source>
         <translation>GPT Image 2 ジョブを設定します</translation>
@@ -34031,6 +34959,14 @@ After refreshing the token, any agents registered to this LoomStroke MCP server 
     <message>
         <source>Workflow transferred. Select parameters and outputs in the Editor tab, then register.</source>
         <translation>ワークフローを転送しました。Editorタブで公開パラメーターと出力を選び、登録してください。</translation>
+    </message>
+    <message>
+        <source>Live prompt</source>
+        <translation>ライブプロンプト</translation>
+    </message>
+    <message>
+        <source>Text (node)</source>
+        <translation>テキスト (ノード)</translation>
     </message>
 </context>
 <context>
@@ -35616,6 +36552,670 @@ After refreshing the token, any agents registered to this LoomStroke MCP server 
     <message>
         <source>This node has no published text parameters.</source>
         <translation>このノードには公開されたテキスト項目がありません。</translation>
+    </message>
+</context>
+<context>
+    <name>AIEffectRegisterButton</name>
+    <message>
+        <source>Register in AI Effect Manager</source>
+        <translation>AI Effect Managerに登録</translation>
+    </message>
+    <message>
+        <source>Save the current prompt and options as a preset. Choose input layers again when applying the preset.</source>
+        <translation>現在のプロンプトと設定をプリセットとして保存します。適用時に入力レイヤーを再指定してください。</translation>
+    </message>
+    <message>
+        <source>Preset name:</source>
+        <translation>プリセット名:</translation>
+    </message>
+    <message>
+        <source>Preset name is required</source>
+        <translation>プリセット名を入力してください</translation>
+    </message>
+    <message>
+        <source>Registered preset: {name}</source>
+        <translation>プリセットを登録しました: {name}</translation>
+    </message>
+    <message>
+        <source>Could not register preset. AI Effect Manager may be unavailable or saving failed.</source>
+        <translation>プリセットを登録できませんでした。AI Effect Managerが利用できないか、保存に失敗しました。</translation>
+    </message>
+</context>
+<context>
+    <name>PromptChipWidget</name>
+    <message>
+        <source>Emphasis</source>
+        <translation>強調</translation>
+    </message>
+    <message>
+        <source>Weaken emphasis</source>
+        <translation>強調を弱める</translation>
+    </message>
+    <message>
+        <source>Strengthen emphasis</source>
+        <translation>強調を強める</translation>
+    </message>
+    <message>
+        <source>Clear</source>
+        <translation>外す</translation>
+    </message>
+    <message>
+        <source>Remove from LivePrompt</source>
+        <translation>ライブプロンプトから外す</translation>
+    </message>
+</context>
+<context>
+    <name>LayerGenerationHistory</name>
+    <message>
+        <source>Generated on this layer ({count})</source>
+        <translation>このレイヤーで生成したもの ({count})</translation>
+    </message>
+    <message>
+        <source>Show in Gallery</source>
+        <translation>ギャラリーで表示</translation>
+    </message>
+    <message>
+        <source>Open in Gallery (this layer only)</source>
+        <translation>ギャラリーで開く (このレイヤーで絞り込み)</translation>
+    </message>
+    <message>
+        <source>No generations yet.</source>
+        <translation>まだ生成していません。</translation>
+    </message>
+</context>
+<context>
+    <name>InputAlphaControls</name>
+    <message>
+        <source>Fill input transparency</source>
+        <translation>入力画像の透明部分を塗りつぶす</translation>
+    </message>
+    <message>
+        <source>Fill transparent areas of input images with this color before sending. Source layers are unchanged.</source>
+        <translation>送信前に入力画像の透明部分をこの色で塗りつぶします。元のレイヤーは変更しません。</translation>
+    </message>
+    <message>
+        <source>Input fill color</source>
+        <translation>入力画像の塗りつぶし色</translation>
+    </message>
+</context>
+<context>
+    <name>DrawingFigure</name>
+    <message>
+        <source>Choose a different name for this model.</source>
+        <translation>このモデルでは別の名前を指定してください。</translation>
+    </message>
+    <message>
+        <source>Enter a name between 1 and 80 characters.</source>
+        <translation>名前は1文字以上80文字以内で入力してください。</translation>
+    </message>
+    <message>
+        <source>Saved poses</source>
+        <translation>保存したポーズ</translation>
+    </message>
+    <message>
+        <source>Select saved pose</source>
+        <translation>保存したポーズを選択</translation>
+    </message>
+    <message>
+        <source>Save current pose</source>
+        <translation>現在のポーズを保存</translation>
+    </message>
+    <message>
+        <source>Apply saved pose</source>
+        <translation>保存したポーズを適用</translation>
+    </message>
+    <message>
+        <source>Delete saved pose</source>
+        <translation>保存したポーズを削除</translation>
+    </message>
+    <message>
+        <source>Could not load pose presets</source>
+        <translation>ポーズプリセットを読み込めませんでした</translation>
+    </message>
+    <message>
+        <source>Pose presets</source>
+        <translation>ポーズプリセット</translation>
+    </message>
+    <message>
+        <source>Save pose preset</source>
+        <translation>ポーズプリセットを保存</translation>
+    </message>
+    <message>
+        <source>Pose preset name</source>
+        <translation>ポーズプリセット名</translation>
+    </message>
+    <message>
+        <source>Could not save pose preset</source>
+        <translation>ポーズプリセットを保存できませんでした</translation>
+    </message>
+    <message>
+        <source>Could not apply pose preset</source>
+        <translation>ポーズプリセットを適用できませんでした</translation>
+    </message>
+    <message>
+        <source>Could not delete pose preset</source>
+        <translation>ポーズプリセットを削除できませんでした</translation>
+    </message>
+    <message>
+        <source>Delete selected pose preset?</source>
+        <translation>選択したポーズプリセットを削除しますか？</translation>
+    </message>
+    <message>
+      <source>Fingers together</source>
+      <translation>指をそろえる</translation>
+    </message>
+    <message>
+      <source>Fingers spread</source>
+      <translation>指を広げる</translation>
+    </message>
+    <message>
+      <source>Flat hand</source>
+      <translation>平らな手</translation>
+    </message>
+    <message>
+      <source>Soft fist</source>
+      <translation>軽く握る</translation>
+    </message>
+    <message>
+      <source>Tight fist</source>
+      <translation>強く握る</translation>
+    </message>
+    <message>
+      <source>Half-closed hand</source>
+      <translation>半開きの手</translation>
+    </message>
+    <message>
+      <source>Cupped hand</source>
+      <translation>すくう手</translation>
+    </message>
+    <message>
+      <source>Deeply cupped hand</source>
+      <translation>深くすくう手</translation>
+    </message>
+    <message>
+      <source>Thumbs up</source>
+      <translation>サムズアップ</translation>
+    </message>
+    <message>
+      <source>OK sign</source>
+      <translation>OKサイン</translation>
+    </message>
+    <message>
+      <source>Horns sign</source>
+      <translation>角のサイン</translation>
+    </message>
+    <message>
+      <source>Shaka sign</source>
+      <translation>シャカサイン</translation>
+    </message>
+    <message>
+      <source>Three extended fingers</source>
+      <translation>三本の指を伸ばす</translation>
+    </message>
+    <message>
+      <source>Four extended fingers</source>
+      <translation>四本の指を伸ばす</translation>
+    </message>
+    <message>
+      <source>Thumb and index</source>
+      <translation>親指と人差し指</translation>
+    </message>
+    <message>
+      <source>Thumb, index and middle</source>
+      <translation>親指・人差し指・中指</translation>
+    </message>
+    <message>
+      <source>Crossed fingers</source>
+      <translation>指を交差</translation>
+    </message>
+    <message>
+      <source>Finger heart</source>
+      <translation>指ハート</translation>
+    </message>
+    <message>
+      <source>Beckoning finger</source>
+      <translation>指で手招き</translation>
+    </message>
+    <message>
+      <source>Stop gesture</source>
+      <translation>制止の手</translation>
+    </message>
+    <message>
+      <source>Count one</source>
+      <translation>数える・一</translation>
+    </message>
+    <message>
+      <source>Count two</source>
+      <translation>数える・二</translation>
+    </message>
+    <message>
+      <source>Count three</source>
+      <translation>数える・三</translation>
+    </message>
+    <message>
+      <source>Count four</source>
+      <translation>数える・四</translation>
+    </message>
+    <message>
+      <source>Count five</source>
+      <translation>数える・五</translation>
+    </message>
+    <message>
+      <source>Small pinch</source>
+      <translation>小さくつまむ</translation>
+    </message>
+    <message>
+      <source>Wide pinch</source>
+      <translation>大きくつまむ</translation>
+    </message>
+    <message>
+      <source>Tripod pinch</source>
+      <translation>三点つまみ</translation>
+    </message>
+    <message>
+      <source>Precision grip</source>
+      <translation>細かい物をつまむ</translation>
+    </message>
+    <message>
+      <source>Pen grip</source>
+      <translation>ペンを持つ</translation>
+    </message>
+    <message>
+      <source>Brush grip</source>
+      <translation>筆を持つ</translation>
+    </message>
+    <message>
+      <source>Cylinder grip</source>
+      <translation>筒を握る</translation>
+    </message>
+    <message>
+      <source>Thin handle grip</source>
+      <translation>細い柄を握る</translation>
+    </message>
+    <message>
+      <source>Ball grip</source>
+      <translation>ボールを持つ</translation>
+    </message>
+    <message>
+      <source>Large ball grip</source>
+      <translation>大きなボールを持つ</translation>
+    </message>
+    <message>
+      <source>Hook grip</source>
+      <translation>ひっかけて持つ</translation>
+    </message>
+    <message>
+      <source>Key pinch</source>
+      <translation>鍵をつまむ</translation>
+    </message>
+    <message>
+      <source>Claw hand</source>
+      <translation>かぎ爪の手</translation>
+    </message>
+    <message>
+      <source>Gentle touch</source>
+      <translation>そっと触れる</translation>
+    </message>
+    <message>
+      <source>Fingertip touch</source>
+      <translation>指先で触れる</translation>
+    </message>
+    <message>
+      <source>Fabric pinch</source>
+      <translation>布をつまむ</translation>
+    </message>
+    <message>
+      <source>Delicate hand</source>
+      <translation>しなやかな手</translation>
+    </message>
+    <message>
+      <source>Tense hand</source>
+      <translation>力を入れた手</translation>
+    </message>
+    <message>
+      <source>Basic hand poses</source>
+      <translation>基本の手</translation>
+    </message>
+    <message>
+      <source>Hand gestures</source>
+      <translation>ジェスチャー</translation>
+    </message>
+    <message>
+      <source>Finger counting</source>
+      <translation>指で数える</translation>
+    </message>
+    <message>
+      <source>Grasping poses</source>
+      <translation>握る・持つ</translation>
+    </message>
+    <message>
+      <source>Expressive hands</source>
+      <translation>表現の手</translation>
+    </message>
+    <message>
+      <source>All hand poses</source>
+      <translation>すべての手のポーズ</translation>
+    </message>
+    <message>
+        <source>Edit selected hand</source>
+        <translation>選択中の手を編集</translation>
+    </message>
+    <message>
+        <source>Hand pose</source>
+        <translation>手のポーズ</translation>
+    </message>
+    <message>
+        <source>Finger</source>
+        <translation>指</translation>
+    </message>
+    <message>
+        <source>Finger curl</source>
+        <translation>曲げ</translation>
+    </message>
+    <message>
+        <source>Finger spread</source>
+        <translation>開き</translation>
+    </message>
+    <message>
+        <source>Cup palm</source>
+        <translation>手のひらを丸める</translation>
+    </message>
+    <message>
+        <source>Joint</source>
+        <translation>関節</translation>
+    </message>
+    <message>
+        <source>Reset hand</source>
+        <translation>手を初期姿勢に戻す</translation>
+    </message>
+    <message>
+        <source>Thumb</source>
+        <translation>親指</translation>
+    </message>
+    <message>
+        <source>Index finger</source>
+        <translation>人差し指</translation>
+    </message>
+    <message>
+        <source>Middle finger</source>
+        <translation>中指</translation>
+    </message>
+    <message>
+        <source>Ring finger</source>
+        <translation>薬指</translation>
+    </message>
+    <message>
+        <source>Little finger</source>
+        <translation>小指</translation>
+    </message>
+    <message>
+        <source>Palm</source>
+        <translation>手のひら</translation>
+    </message>
+    <message>
+        <source>Wrist</source>
+        <translation>手首</translation>
+    </message>
+    <message>
+        <source>Open hand</source>
+        <translation>開いた手</translation>
+    </message>
+    <message>
+        <source>Relaxed hand</source>
+        <translation>力を抜いた手</translation>
+    </message>
+    <message>
+        <source>Fist</source>
+        <translation>握りこぶし</translation>
+    </message>
+    <message>
+        <source>Pointing hand</source>
+        <translation>指差し</translation>
+    </message>
+    <message>
+        <source>Peace sign</source>
+        <translation>ピース</translation>
+    </message>
+    <message>
+        <source>Reset selected part</source>
+        <translation>選択部位を初期姿勢に戻す</translation>
+    </message>
+    <message>
+        <source>Add drawing figure</source>
+        <translation>デッサン人形を追加</translation>
+    </message>
+    <message>
+        <source>Drawing figure</source>
+        <translation>デッサン人形</translation>
+    </message>
+    <message>
+        <source>Could not add drawing figure</source>
+        <translation>デッサン人形を追加できませんでした</translation>
+    </message>
+    <message>
+        <source>Edit pose</source>
+        <translation>ポーズ編集</translation>
+    </message>
+    <message>
+        <source>Apply pose</source>
+        <translation>ポーズを適用</translation>
+    </message>
+    <message>
+        <source>Pose assistance</source>
+        <translation>ポーズ補正</translation>
+    </message>
+    <message>
+        <source>Pin / unpin joint</source>
+        <translation>関節を固定・解除</translation>
+    </message>
+    <message>
+        <source>OpenPose layer</source>
+        <translation>OpenPoseレイヤー</translation>
+    </message>
+    <message>
+        <source>Drag joints; Alt-drag changes depth. Pink joints are pinned.</source>
+        <translation>関節をドラッグして操作、Alt＋ドラッグで奥行きを変更。ピンクは固定した関節です。</translation>
+    </message>
+    <message>
+        <source>Drag joints to move; drag XYZ rings to rotate. Alt-drag changes depth. Pink joints are pinned.</source>
+        <translation>関節をドラッグして移動、XYZリングをドラッグして回転。Alt＋ドラッグで奥行きを変更。ピンクは固定した関節です。</translation>
+    </message>
+    <message>
+        <source>Export OpenPose</source>
+        <translation>OpenPoseを書き出す</translation>
+    </message>
+    <message>
+        <source>Could not export OpenPose</source>
+        <translation>OpenPoseを書き出せませんでした</translation>
+    </message>
+    <message>
+        <source>Standing</source>
+        <translation>立ち姿</translation>
+    </message>
+    <message>
+        <source>Arms out</source>
+        <translation>腕を広げる</translation>
+    </message>
+    <message>
+        <source>Sitting</source>
+        <translation>座り姿</translation>
+    </message>
+    <message>
+        <source>Walking</source>
+        <translation>歩き姿</translation>
+    </message>
+    <message>
+        <source>Crouching</source>
+        <translation>しゃがみ姿</translation>
+    </message>
+    <message>
+        <source>Reaching</source>
+        <translation>手を伸ばす</translation>
+    </message>
+    <message>
+        <source>Pelvis</source>
+        <translation>骨盤</translation>
+    </message>
+    <message>
+        <source>Waist</source>
+        <translation>腰</translation>
+    </message>
+    <message>
+        <source>Chest</source>
+        <translation>胸</translation>
+    </message>
+    <message>
+        <source>Neck</source>
+        <translation>首</translation>
+    </message>
+    <message>
+        <source>Head</source>
+        <translation>頭</translation>
+    </message>
+    <message>
+        <source>Left Collar</source>
+        <translation>左鎖骨</translation>
+    </message>
+    <message>
+        <source>Left Shoulder</source>
+        <translation>左肩</translation>
+    </message>
+    <message>
+        <source>Left Elbow</source>
+        <translation>左肘</translation>
+    </message>
+    <message>
+        <source>Left Wrist</source>
+        <translation>左手首</translation>
+    </message>
+    <message>
+        <source>Left Hip</source>
+        <translation>左股関節</translation>
+    </message>
+    <message>
+        <source>Left Knee</source>
+        <translation>左膝</translation>
+    </message>
+    <message>
+        <source>Left Ankle</source>
+        <translation>左足首</translation>
+    </message>
+    <message>
+        <source>Right Collar</source>
+        <translation>右鎖骨</translation>
+    </message>
+    <message>
+        <source>Right Shoulder</source>
+        <translation>右肩</translation>
+    </message>
+    <message>
+        <source>Right Elbow</source>
+        <translation>右肘</translation>
+    </message>
+    <message>
+        <source>Right Wrist</source>
+        <translation>右手首</translation>
+    </message>
+    <message>
+        <source>Right Hip</source>
+        <translation>右股関節</translation>
+    </message>
+    <message>
+        <source>Right Knee</source>
+        <translation>右膝</translation>
+    </message>
+    <message>
+        <source>Right Ankle</source>
+        <translation>右足首</translation>
+    </message>
+</context>
+<context>
+    <name>DrawingFigureToolbarWidget</name>
+    <message>
+        <source>Could not export OpenPose</source>
+        <translation>OpenPoseを書き出せませんでした</translation>
+    </message>
+    <message>
+        <source>Export OpenPose</source>
+        <translation>OpenPoseを書き出す</translation>
+    </message>
+</context>
+<context>
+    <name>DrawingFigureHandEditor</name>
+    <message>
+        <source>Hand pose</source>
+        <translation>手のポーズ</translation>
+    </message>
+    <message>
+        <source>Cup palm</source>
+        <translation>手のひらを丸める</translation>
+    </message>
+    <message>
+        <source>Joint</source>
+        <translation>関節</translation>
+    </message>
+</context>
+<context>
+    <name>DrawingFigurePosePresetControls</name>
+    <message>
+        <source>Choose a different name for this model.</source>
+        <translation>このモデルでは別の名前を指定してください。</translation>
+    </message>
+    <message>
+        <source>Enter a name between 1 and 80 characters.</source>
+        <translation>名前は1文字以上80文字以内で入力してください。</translation>
+    </message>
+    <message>
+        <source>Saved poses</source>
+        <translation>保存したポーズ</translation>
+    </message>
+    <message>
+        <source>Select saved pose</source>
+        <translation>保存したポーズを選択</translation>
+    </message>
+    <message>
+        <source>Save current pose</source>
+        <translation>現在のポーズを保存</translation>
+    </message>
+    <message>
+        <source>Apply saved pose</source>
+        <translation>保存したポーズを適用</translation>
+    </message>
+    <message>
+        <source>Delete saved pose</source>
+        <translation>保存したポーズを削除</translation>
+    </message>
+    <message>
+        <source>Could not load pose presets</source>
+        <translation>ポーズプリセットを読み込めませんでした</translation>
+    </message>
+    <message>
+        <source>Pose presets</source>
+        <translation>ポーズプリセット</translation>
+    </message>
+    <message>
+        <source>Save pose preset</source>
+        <translation>ポーズプリセットを保存</translation>
+    </message>
+    <message>
+        <source>Pose preset name</source>
+        <translation>ポーズプリセット名</translation>
+    </message>
+    <message>
+        <source>Could not save pose preset</source>
+        <translation>ポーズプリセットを保存できませんでした</translation>
+    </message>
+    <message>
+        <source>Could not apply pose preset</source>
+        <translation>ポーズプリセットを適用できませんでした</translation>
+    </message>
+    <message>
+        <source>Could not delete pose preset</source>
+        <translation>ポーズプリセットを削除できませんでした</translation>
+    </message>
+    <message>
+        <source>Delete selected pose preset?</source>
+        <translation>選択したポーズプリセットを削除しますか？</translation>
     </message>
 </context>
 </TS>

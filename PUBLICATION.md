@@ -1,4 +1,4 @@
-> **最終照合: 2026-10-30**
+> **最終照合: 2026-11-06**
 
 # 公開用ソースの対象範囲
 
@@ -9,6 +9,20 @@
 LoomStroke本体の `LICENSE` と `LICENSE_JA` は開発側から内容を変更せず収録しています。
 
 ## 現行の配布スナップショット
+
+### 2026-11-06 v0.3.0.8 Google Gen AI SDK 3系対応
+
+開発側のv0.3.0.8までの本体・実行資源・利用者文書を収録し、v0.3.0.7.23〜52の更新項目を
+`CHANGELOG.md`へ追加します。NanoBananaはGoogle Gen AI SDK 3.0.0へ対応し、
+従来の画像生成APIバージョンと接続失敗時の再試行を維持します。
+Windowsの`install.bat`は既存環境でも`google-genai`を3系制約内の最新版へ更新し、
+ZIP版・Git版の`update.bat`は更新後のインストーラーを実行します。
+内部資料、テスト、ユーザーデータ、開発用ロックファイルは収録しません。
+公開対象の本体・実行資源・利用者文書2,513ファイルは開発側とSHA-256が一致し、
+配布専用のISC告知を保持しています。開発側のinstaller/updater/版番号関連65件が成功しました。
+配布側の既存`.venv`では`install.bat --no-pause`により`google-genai`を1.73.1から3.0.0へ更新し、
+`google-auth` 2.62.1、アプリ版0.3.0.8、`pip check`成功を確認しました。
+全テスト、実API画像生成、通常GUI操作、新規Windows環境での導入は今回未実施です。
 
 ### 2026-10-30 画像付き説明書の12言語対応
 
@@ -23,7 +37,7 @@ LoomStroke本体の `LICENSE` と `LICENSE_JA` は開発側から内容を変更
 各言語のREADMEから説明書・SAM導入ガイドへ案内します。
 翻訳生成ツール、内部検証記録、モデル、キャッシュ、テストは配布物へ含めません。
 
-現在の配布版は`0.3.0.7.22`です。公開mainのソースZIPで配布し、タグ・Releaseは作成しません。
+この時点の配布版は`0.3.0.7.22`です。公開mainのソースZIPを用い、タグ・Releaseは作成していません。
 
 本体・実行資源とインストーラーの56ファイルも開発側のコミット済み内容へ同期し、
 説明書と本体の版を揃えました。全12言語のカタログ補完、入力値を保つ実行時言語切替、
@@ -200,7 +214,7 @@ build backendが生成したパッケージMETADATAのVersionも`0.3.0.3`で一�
 - ロゴ `img/`、第三者告知 `LICENSES/`、`THIRD_PARTY_LICENSES`
 - 利用者向け文書 `docs/user/`
 - `pyproject.toml`、`requirements.txt`
-- 更新履歴 `CHANGELOG.md`（2026-10-21のv0.3から開始、現在v0.3.0.7.22）
+- 更新履歴 `CHANGELOG.md`（2026-10-21のv0.3から開始、現在v0.3.0.8）
 - `main.py`、`install.bat`、`install_python.ps1`、`boot_LoomStroke.bat`、`run.sh`
 - AI無し専用入口 `boot_LoomStroke_noAI.bat`、ZIP更新用 `update.bat` / `update.ps1`
 
@@ -212,7 +226,7 @@ build backendが生成したパッケージMETADATAのVersionも`0.3.0.3`で一�
 実GPU device作成を確認済みです。検証で生成した `.venv` はGit管理対象外です。
 
 `requirements.txt` は開発環境の固定バージョンから、必須実行依存とNanoBanana用追加SDKの
-依存先だけを選んだ59パッケージの一覧です。テスト・整形・型検査・ビルド用ツールは除外しています。
+依存先だけを選んだ62パッケージの一覧です。テスト・整形・型検査・ビルド用ツールは除外しています。
 通常の `install.bat` は本体の必須依存とNanoBanana用追加SDKを標準でインストールします。従来の `--nanobanana` も受け付けます。
 
 ## 収録しないもの

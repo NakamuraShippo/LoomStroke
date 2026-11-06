@@ -4,8 +4,9 @@ from __future__ import annotations
 
 import asyncio
 import base64
+import contextlib
 import logging
-from collections.abc import AsyncIterator, Iterable, Mapping
+from collections.abc import AsyncIterator, Iterable, Iterator, Mapping
 from dataclasses import dataclass, field
 from typing import Any
 from uuid import uuid4
@@ -33,12 +34,16 @@ from .adapters.base import (
     SubmitContext,
 )
 from .adapters.gemini import GeminiAdapter
+from .adapters.local import LocalAdapter
 from .adapters.openai import OpenAIAdapter
 from .config import (
+    LOCAL_PROVIDER,
     LLMConfig,
     SecretNotConfigured,
+    available_api_key_providers,
     load,
     use_api_key,
+    validate_local_base_url,
 )
 from .errors import InvalidRequestError
 from .layer_tasks import LayerTaskQueue
@@ -52,7 +57,18 @@ _SUPPORTED_PROVIDERS = {
     "openai": OpenAIAdapter,
     "anthropic": ClaudeAdapter,
     "gemini": GeminiAdapter,
+    LOCAL_PROVIDER: LocalAdapter,
 }
+
+
+@contextlib.contextmanager
+def _provider_api_key(provider: str) -> Iterator[str]:
+    """The stored key; a local server may run without one, so it gets ''."""
+    if provider == LOCAL_PROVIDER and provider not in available_api_key_providers():
+        yield ""
+        return
+    with use_api_key(provider) as api_key:
+        yield api_key
 
 
 @dataclass
@@ -117,7 +133,7 @@ class LLMGatewayPlugin(AIServicePlugin):
             timeout=config.timeout, verify_ssl=config.verify_ssl
         )
         try:
-            with use_api_key(provider_key) as api_key:
+            with _provider_api_key(provider_key) as api_key:
                 provider_config = self._build_provider_config(config, provider_key, None, api_key)
                 ctx = HealthContext(session=session, config=provider_config)
                 return await adapter.health(ctx)
@@ -125,6 +141,28 @@ class LLMGatewayPlugin(AIServicePlugin):
             # Health check is informational — report unhealthy rather
             # than raising so the UI just shows a "configure key" hint.
             return False
+
+    async def list_models(self, provider: str) -> list[str] | None:
+        """Chat models *provider* offers this key; None when consent or a key is missing.
+
+        Request failures raise so the caller can say why the list did not update.
+        """
+        if not ensure_network_services_consent(self._host, service_name="LLM Gateway"):
+            return None
+        config = self._ensure_config()
+        provider_key = provider.strip().lower()
+        adapter = self._require_adapter(provider_key)
+        session = await self._session_mgr.ensure(
+            timeout=config.timeout, verify_ssl=config.verify_ssl
+        )
+        try:
+            with _provider_api_key(provider_key) as api_key:
+                provider_config = self._build_provider_config(config, provider_key, None, api_key)
+                return await adapter.list_models(
+                    HealthContext(session=session, config=provider_config)
+                )
+        except SecretNotConfigured:
+            return None
 
     async def submit(self, spec: JobSpec) -> str:
         if not ensure_network_services_consent(self._host, service_name="LLM Gateway"):
@@ -139,7 +177,7 @@ class LLMGatewayPlugin(AIServicePlugin):
         adapter = self._require_adapter(provider_key)
         model_override = spec.params.get("model")
         try:
-            with use_api_key(provider_key) as api_key:
+            with _provider_api_key(provider_key) as api_key:
                 provider_config = self._build_provider_config(
                     config, provider_key, model_override, api_key
                 )
@@ -200,7 +238,7 @@ class LLMGatewayPlugin(AIServicePlugin):
             timeout=config.timeout, verify_ssl=config.verify_ssl
         )
         try:
-            with use_api_key(pending.provider) as api_key:
+            with _provider_api_key(pending.provider) as api_key:
                 provider_config = self._build_provider_config(
                     config,
                     pending.provider,
@@ -236,7 +274,7 @@ class LLMGatewayPlugin(AIServicePlugin):
             timeout=config.timeout, verify_ssl=config.verify_ssl
         )
         try:
-            with use_api_key(pending.provider) as api_key:
+            with _provider_api_key(pending.provider) as api_key:
                 provider_config = self._build_provider_config(
                     config,
                     pending.provider,
@@ -356,11 +394,19 @@ class LLMGatewayPlugin(AIServicePlugin):
         # same with-block — once it exits, the SecretProvider has
         # released its reference and the value is treated as expired.
         model = override or config.models.get(provider) or provider
+        base_url = ""
+        if provider == LOCAL_PROVIDER:
+            # Re-checked on every use: a stored URL may predate the localhost rule.
+            try:
+                base_url = validate_local_base_url(config.local_base_url)
+            except ValueError as exc:
+                raise InvalidRequestError(f"local LLM server URL: {exc}") from exc
         return ProviderConfig(
             api_key=api_key,
             model=model,
             timeout=config.timeout,
             verify_ssl=config.verify_ssl,
+            base_url=base_url,
         )
 
     def _normalize_attachments(self, raw: Iterable[Any]) -> list[ImageAttachment]:

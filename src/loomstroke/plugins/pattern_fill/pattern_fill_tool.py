@@ -24,6 +24,7 @@ from ...plugins.sdk.tool import (
     ToolSettings,
 )
 from ..common.tool_icons import resolve_tool_icon_path
+from .drawing_assist_controller import PatternDrawingAssist
 
 if TYPE_CHECKING:
     from ...core.commands import Command
@@ -133,6 +134,7 @@ class PatternFillPlugin:
         self._pattern_index: int = 0
         self._pattern_scale: float = 1.0
         self._pending_commands: list[Command] = []
+        self._assist = PatternDrawingAssist(self)
         self._patterns: dict[str, np.ndarray] = {}
         self._pattern_names: list[str] = []
         self._load_patterns()
@@ -243,9 +245,11 @@ class PatternFillPlugin:
             self.host_api.events.emit("tool.changed", {"tool": "pattern_fill"})
 
     def disable(self) -> None:
+        self._assist.cancel()
         self._pending_commands.clear()
 
     def deactivate(self) -> None:
+        self._assist.cancel()
         if self.host_api:
             unregister = getattr(self.host_api, "unregister_tool", None)
             if callable(unregister):
@@ -266,6 +270,8 @@ class PatternFillPlugin:
         if not self.host_api:
             return
 
+        if self._assist.down(pt):
+            return
         seed_x = round(pt.pos[0])
         seed_y = round(pt.pos[1])
         layer_id = self._active_layer_id()
@@ -291,6 +297,9 @@ class PatternFillPlugin:
         del pt
 
     def on_key(self, key: str, pressed: bool) -> bool:
+        if pressed and key.lower() in {"escape", "esc"}:
+            self._assist.cancel()
+            return True
         del key, pressed
         return False
 
@@ -318,6 +327,7 @@ class PatternFillPlugin:
             self._apply_setting_dict(settings)
 
     def set_setting(self, key: str, value: Any) -> None:
+        self._assist.cancel()
         if key == "color_tolerance":
             self._tolerance = _clamp_int(value, 0, 255)
         elif key == "gap_close_px":

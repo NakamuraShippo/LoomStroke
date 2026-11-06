@@ -23,6 +23,11 @@ from loomstroke.core.drawing_assist import (
     OverlayGeometryBuilder,
     StrokeConstraintSession,
 )
+from loomstroke.core.drawing_assist.assist_overlay_geometry import AssistOverlayGeometry
+from loomstroke.core.drawing_assist.position_snap import snap_to_geometry
+from loomstroke.core.drawing_assist.stroke_feedback import stroke_feedback
+
+from .perspective_handle_interaction import PerspectiveHandleInteraction
 
 __all__ = ["DrawingAssistController"]
 
@@ -37,6 +42,12 @@ class DrawingAssistController:
         self.overlay_visible = True
         self.overlay_color = QColor(0, 150, 255)
         self.overlay_opacity = 0.6
+        self.handles = PerspectiveHandleInteraction(self)
+        self._stroke_session: StrokeConstraintSession | None = None
+        self._stroke_page = ""
+        self._stroke_feedback = AssistOverlayGeometry()
+        self._feedback_is_position = False
+        self._snap_cache = None
 
     # -- state -------------------------------------------------------------------------
 
@@ -97,8 +108,8 @@ class DrawingAssistController:
         assist = self.default_assist(assist_type)
         if assist is None:
             return None
-        self.set_state(self.state().with_item(assist, activate=activate), label="Add Assist")
-        return assist
+        ok = self.set_state(self.state().with_item(assist, activate=activate), label="Add Assist")
+        return assist if ok else None
 
     def update(self, assist: DrawingAssist) -> bool:
         return self.set_state(self.state().with_item(assist), label="Edit Assist")
@@ -129,10 +140,67 @@ class DrawingAssistController:
     # -- strokes -----------------------------------------------------------------------
 
     def begin_session(self, tool_id: str) -> StrokeConstraintSession | None:
+        self.clear_stroke_feedback()
         assist = self.active_assist()
         if assist is None or self.issues(assist):
             return None
-        return StrokeConstraintSession.compile(assist)
+        self._stroke_session = StrokeConstraintSession.compile(assist)
+        self._stroke_page = self.page_id()
+        return self._stroke_session
+
+    def set_stroke_feedback(self, session: StrokeConstraintSession, point: Any) -> None:
+        if session is not self._stroke_session:
+            return
+        if point is None or self.page_id() != self._stroke_page:
+            self.clear_stroke_feedback()
+            return
+        geometry = stroke_feedback(session, point, self.canvas_size())
+        self._feedback_is_position = False
+        if geometry != self._stroke_feedback:
+            self._stroke_feedback = geometry
+            self._repaint()
+
+    def clear_stroke_feedback(self) -> None:
+        changed = not self._stroke_feedback.is_empty
+        self._stroke_session = None
+        self._stroke_feedback = AssistOverlayGeometry()
+        self._feedback_is_position = False
+        if changed:
+            self._repaint()
+
+    def snap_position(self, x, y, w=0.0, h=0.0):
+        assist = self.active_assist() if self.overlay_visible else None
+        if assist is None or self.issues(assist):
+            return x, y, AssistOverlayGeometry()
+        size = self.canvas_size()
+        key = (assist, size)
+        if self._snap_cache is None or self._snap_cache[0] != key:
+            self._snap_cache = (key, self._overlay.build(assist, size))
+        ui = getattr(self._host, "ui", None)
+        window = getattr(ui, "get_main_window", lambda: None)()
+        viewport = getattr(getattr(window, "canvas", None), "viewport", None)
+        radius = getattr(viewport, "screen_to_canvas_distance", lambda value: value)(8)
+        best = None
+        for px, py in dict.fromkeys(((x, y), (x + w, y), (x, y + h), (x + w, y + h))):
+            point, geometry = snap_to_geometry(self._snap_cache[1], (px, py), radius)
+            if not geometry.is_empty:
+                distance = (point[0] - px) ** 2 + (point[1] - py) ** 2
+                if best is None or distance < best[0]:
+                    best = (distance, x + point[0] - px, y + point[1] - py, geometry)
+        return (x, y, AssistOverlayGeometry()) if best is None else best[1:]
+
+    def set_position_feedback(self, geometry):
+        if geometry.is_empty and not self._feedback_is_position:
+            return
+        if geometry != self._stroke_feedback:
+            self._stroke_feedback = geometry
+            self._stroke_page = self.page_id()
+            self._feedback_is_position = True
+            self._repaint()
+
+    def clear_position_feedback(self):
+        if self._feedback_is_position:
+            self.clear_stroke_feedback()
 
     # -- overlay -----------------------------------------------------------------------
 
@@ -145,7 +213,9 @@ class DrawingAssistController:
         size = self.canvas_size()
         painter.save()
         try:
-            for assist in state.items:
+            for stored in state.items:
+                preview = self.handles.preview
+                assist = preview if preview is not None and stored.id == preview.id else stored
                 if not assist.enabled or not assist.is_known:
                     continue
                 geometry = self._overlay.build(assist, size)
@@ -158,8 +228,26 @@ class DrawingAssistController:
                 for x, y, label in geometry.markers:
                     painter.drawEllipse(QPointF(x, y), 3.0, 3.0)
                     painter.drawText(QPointF(x + 4.0, y - 4.0), label)
+            if self._stroke_page == self.page_id():
+                self._draw_stroke_feedback(painter)
         finally:
             painter.restore()
+
+    def _draw_stroke_feedback(self, painter: QPainter) -> None:
+        geometry = self._stroke_feedback
+        painter.setOpacity(1)
+        scale = max(1e-6, abs(painter.transform().m11()), abs(painter.transform().m12()))
+        for color, width in ((QColor(25, 15, 35, 230), 5), (QColor(255, 190, 40), 2.5)):
+            pen = QPen(color, width)
+            pen.setCosmetic(True)
+            painter.setPen(pen)
+            for start, end in geometry.lines:
+                painter.drawLine(QPointF(*start), QPointF(*end))
+            for cx, cy, rx, ry in geometry.ellipses:
+                painter.drawEllipse(QRectF(cx - rx, cy - ry, rx * 2, ry * 2))
+            for x, y, label in geometry.markers:
+                painter.drawEllipse(QPointF(x, y), 6 / scale, 6 / scale)
+                painter.drawText(QPointF(x + 8 / scale, y - 8 / scale), label)
 
     def _pen(self, *, active: bool) -> QPen:
         color = QColor(self.overlay_color)

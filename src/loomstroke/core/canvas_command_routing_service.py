@@ -47,6 +47,7 @@ from loomstroke.core.commands_layer_image_replace import ReplaceLayerImageComman
 from loomstroke.core.commands_layer_metadata_key import SetLayerMetadataKeyCommand
 from loomstroke.core.commands_layer_opacity import SetLayerOpacityCommand
 from loomstroke.core.commands_layer_rename import RenameLayerCommand
+from loomstroke.core.commands_page_view_state_key import SetPageViewStateKeyCommand
 from loomstroke.core.fill.commands_fill import (
     FloodFillCommand,
     FloodFillToNewLayerCommand,
@@ -165,6 +166,7 @@ class CanvasCommandRoutingService:
             SetLayer3DSceneCommand,
             ReplaceLayerImageCommand,
             SetLayerMetadataKeyCommand,
+            SetPageViewStateKeyCommand,
         )
         tree_or_sam3_submitted = _submit_tree_or_sam3_command(owner, cmd, tree_types)
         if tree_or_sam3_submitted is not None:

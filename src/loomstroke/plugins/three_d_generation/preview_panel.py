@@ -34,10 +34,13 @@ from loomstroke.rendering_3d import (
     ProjectionImportService,
     SoftwarePreviewRenderer,
 )
+from loomstroke.rendering_3d.preview_renderer import PreviewRenderResult
 from loomstroke.rendering_3d.projection import (
     _PROJECTION_FACE_LIMIT_MESSAGE,
     _ProjectionFaceLimitExceeded,
 )
+from loomstroke.ui.drawing_figure_add import DrawingFigureAddWidget
+from loomstroke.ui.three_d_preview_renderer import ThreeDPreviewFrame, ThreeDPreviewRenderer
 
 logger = logging.getLogger(__name__)
 
@@ -58,6 +61,7 @@ class Generated3DPreviewWidget(QWidget):
         self._camera = OrbitCameraState.fit_to_scene(self._scene)
         self._renderer = SoftwarePreviewRenderer()
         self._projection = ProjectionImportService(self._renderer)
+        self._initialize_display_renderer()
         self._display_mode = PreviewDisplayMode.TEXTURED
         self._layer_id: str | None = None
         self._event_tokens: list[tuple[str, Any]] = []
@@ -97,15 +101,16 @@ class Generated3DPreviewWidget(QWidget):
         row.addWidget(fit)
         row.addWidget(zoom_out)
         row.addWidget(zoom_in)
-        row.addWidget(rotate)
-        row.addWidget(turn)
-        row.addWidget(add_3d_button)
-        row.addWidget(import_button)
+        actions = QHBoxLayout()
+        for button in (rotate, turn, add_3d_button, import_button):
+            actions.addWidget(button)
 
         layout = QVBoxLayout(self)
         layout.setContentsMargins(8, 8, 8, 8)
         layout.addWidget(self._preview, 1)
         layout.addLayout(row)
+        layout.addLayout(actions)
+        layout.addWidget(DrawingFigureAddWidget(lambda: self._host, self))
         self.refresh()
 
     def set_host(self, host: HostAPI) -> None:
@@ -123,6 +128,7 @@ class Generated3DPreviewWidget(QWidget):
     def set_scene(self, scene: Scene3DDocument) -> None:
         self._layer_id = None
         self._scene = scene
+        self._lighting = None
         self.fit_to_view()
 
     def rotate(self, yaw_delta: float, pitch_delta: float) -> None:
@@ -210,14 +216,48 @@ class Generated3DPreviewWidget(QWidget):
             logger.warning("3D layer import failed", exc_info=True)
             return False
 
+    def _initialize_display_renderer(self) -> None:
+        self._display_renderer = ThreeDPreviewRenderer()
+        self.destroyed.connect(self._display_renderer.release)
+        self._lighting: Any = None
+        self._refresh_timer = QTimer(self)
+        self._refresh_timer.setSingleShot(True)
+        self._refresh_timer.timeout.connect(self._render_preview)
+
     def refresh(self) -> None:
-        result = self._renderer.render(
-            self._scene,
-            width=max(1, self._preview.width()),
-            height=max(1, self._preview.height()),
-            camera=self._camera,
-            display_mode=self._display_mode,
-        )
+        # Layer add/select/change and resize can arrive in the same event-loop
+        # turn. Hidden docks still receive them, but need no image until shown.
+        if self.isVisible():
+            self._refresh_timer.start(0)
+
+    def showEvent(self, event) -> None:  # noqa: N802, ANN001
+        super().showEvent(event)
+        self.refresh()
+
+    def _render_preview(self) -> None:
+        if not self.isVisible():
+            return
+        options: dict[str, Any] = {
+            "width": max(1, self._preview.width()),
+            "height": max(1, self._preview.height()),
+            "camera": self._camera,
+            "display_mode": self._display_mode,
+        }
+        # Preserve the existing line preview; the canvas's wgpu 3D pass does
+        # not implement wireframe yet. Projection maps keep their own renderer.
+        result: PreviewRenderResult | ThreeDPreviewFrame
+        try:
+            if self._display_mode is PreviewDisplayMode.WIREFRAME:
+                result = self._renderer.render(self._scene, **options)
+            else:
+                result = self._display_renderer.render(
+                    self._scene, lighting=self._lighting, **options
+                )
+        except Exception as exc:
+            logger.exception("3D dock preview rendering failed")
+            self._preview.clear()
+            self._preview.setToolTip(str(exc))
+            return
         self._preview.setPixmap(QPixmap.fromImage(result.image))
         self._preview.setToolTip(", ".join(result.fallbacks))
 
@@ -294,6 +334,7 @@ class Generated3DPreviewWidget(QWidget):
             return False
         self._layer_id = str(getattr(layer, "id", "") or "")
         self._scene = scene
+        self._lighting = getattr(layer, "lighting_3d", None)
         self._camera = orbit_camera_state(getattr(layer, "camera_3d", None), scene)
         self._display_mode = preview_display_mode(getattr(layer, "display_mode_3d", "solid"))
         self._sync_mode_combo()

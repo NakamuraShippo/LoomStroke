@@ -7,7 +7,15 @@ from contextlib import suppress
 from typing import Any
 
 from PySide6.QtCore import QRect
-from PySide6.QtWidgets import QButtonGroup, QComboBox, QHBoxLayout, QLabel, QPushButton, QWidget
+from PySide6.QtWidgets import (
+    QButtonGroup,
+    QComboBox,
+    QHBoxLayout,
+    QLabel,
+    QPushButton,
+    QVBoxLayout,
+    QWidget,
+)
 
 from loomstroke.core.assets_3d.scene import Scene3DDocument
 from loomstroke.core.commands import SetLayer3DCameraCommand, SetLayer3DDisplayModeCommand
@@ -57,6 +65,12 @@ class ThreeDLayerContextToolbarController:
         self.refresh()
 
     def refresh(self) -> bool:
+        editor = getattr(self, "_figure_hand_editor", None)
+        if editor is not None:
+            editor.sync()
+        figure = getattr(self._interaction_controller(), "figure", None)
+        if figure is not None:
+            figure.cancel_if_invalid()
         layer = self._active_3d_layer()
         if layer is None:
             self._hide()
@@ -126,13 +140,13 @@ class ThreeDLayerContextToolbarController:
         getter = getattr(controller, "drag_mode", None)
         if callable(getter):
             mode = str(getter())
-            if mode in {"orbit", "move"}:
+            if mode in {"orbit", "move", "pose"}:
                 self._interaction_mode = mode
         return self._interaction_mode
 
     def set_interaction_mode(self, mode: str) -> bool:
         token = str(mode or "").strip().lower()
-        if token not in {"orbit", "move"}:
+        if token not in {"orbit", "move", "pose"}:
             return False
         self._interaction_mode = token
         controller = self._interaction_controller()
@@ -147,10 +161,17 @@ class ThreeDLayerContextToolbarController:
     def _build_widget(self, parent: QWidget, _on_changed: Any) -> QWidget:
         widget = ThreeDLayerToolbarWidget(self, parent=parent)
         self._widget = widget
+        widget.destroyed.connect(lambda: self._forget_widget(widget))
         layer = self._active_3d_layer()
         if layer is not None:
             widget.sync_from_layer(layer)
         return widget
+
+    def _forget_widget(self, widget: ThreeDLayerToolbarWidget) -> None:
+        # Another provider rebuilds the shared toolbar with deleteLater().
+        # An older pending deletion must not clear its newer replacement.
+        if self._widget is widget:
+            self._widget = None
 
     def _subscribe(self) -> None:
         subscribe = getattr(self._event_bus, "on", None) or getattr(
@@ -262,7 +283,10 @@ class ThreeDLayerToolbarWidget(QWidget):
         self._controller = controller
         self._syncing = False
 
-        layout = QHBoxLayout(self)
+        outer = QVBoxLayout(self)
+        outer.setContentsMargins(0, 0, 0, 0)
+        layout = QHBoxLayout()
+        outer.addLayout(layout)
         layout.setContentsMargins(0, 0, 0, 0)
         layout.setSpacing(6)
 
@@ -314,8 +338,14 @@ class ThreeDLayerToolbarWidget(QWidget):
         )
         self._add_button(layout, "-", _ts("Zoom out"), lambda: controller.zoom(1.0 / 1.2))
         self._add_button(layout, "+", _ts("Zoom in"), lambda: controller.zoom(1.2))
+        from loomstroke.ui.drawing_figure_toolbar import DrawingFigureToolbarWidget  # noqa: PLC0415
+
+        self._figure_controls = DrawingFigureToolbarWidget(controller, self)
+        self._figure_controls.hide()
+        outer.addWidget(self._figure_controls)
 
     def sync_from_layer(self, layer: Any) -> None:
+        self._figure_controls.sync_from_layer(layer)
         mode = preview_display_mode(getattr(layer, "display_mode_3d", "solid"))
         self._syncing = True
         try:
@@ -333,6 +363,8 @@ class ThreeDLayerToolbarWidget(QWidget):
             self._sync_interaction_mode_unchecked(mode)
         finally:
             self._syncing = False
+        if hasattr(self, "_figure_controls"):
+            self._figure_controls.sync_from_layer(self._controller._active_3d_layer())
 
     def set_value(self, key: str, value: Any) -> None:
         if key == "display_mode":
@@ -358,10 +390,11 @@ class ThreeDLayerToolbarWidget(QWidget):
         self._controller.set_interaction_mode("move" if button_id == 1 else "orbit")
 
     def _sync_interaction_mode_unchecked(self, mode: str) -> None:
-        if str(mode).strip().lower() == "move":
-            self._move_button.setChecked(True)
-        else:
-            self._orbit_button.setChecked(True)
+        token = str(mode).strip().lower()
+        self._interaction_group.setExclusive(False)
+        self._move_button.setChecked(token == "move")
+        self._orbit_button.setChecked(token not in {"move", "pose"})
+        self._interaction_group.setExclusive(True)
 
     def _add_mode_button(
         self,

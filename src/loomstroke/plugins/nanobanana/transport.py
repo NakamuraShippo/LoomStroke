@@ -17,12 +17,14 @@ try:  # Pillow is optional runtime dependency
 except ImportError:  # pragma: no cover - handled in health()
     Image = None  # type: ignore
 
-try:  # httpx is a transitive dependency via google-genai; if absent the
-    # google import itself fails earlier and we never reach this branch.
-    # Cached as a module reference so the retry loop can ``isinstance``
-    # against ``httpx.TransportError`` without re-importing on every attempt.
+try:  # google-genai 3 uses httpx2 by default.
+    import httpx2 as _httpx2  # type: ignore[import-untyped]
+except ImportError:  # pragma: no cover - google-genai is optional
+    _httpx2 = None  # type: ignore
+
+try:  # Keep retries when GOOGLE_GENAI_HTTP_CLIENT=httpx selects the legacy backend.
     import httpx as _httpx  # type: ignore[import-untyped]
-except ImportError:  # pragma: no cover - google-genai pulls httpx in
+except ImportError:  # pragma: no cover - httpx is not installed by google-genai 3
     _httpx = None  # type: ignore
 
 from .model_config import image_config_kwargs, supports_google_search, thinking_config_kwargs
@@ -242,13 +244,16 @@ class GoogleGenAITransport(INanoBananaTransport):
         if not png:
             raise ValueError("No image data to apply")
         image_array = await bridge.decode_async(png)
+        if target_layer_id is None:
+            await bridge.apply_new_image_async(
+                image_array,
+                name="NanoBanana Output",
+                metadata={"source": "NanoBanana", **(metadata or {})},
+            )
+            return
         layer_ref = self._resolve_layer(target_layer_id)
-        if target_layer_id and layer_ref is None:
-            # Build lightweight placeholder for ensure_layer.
-            # Local import to avoid cycles.
-            from loomstroke.host_api import LayerRef  # noqa: PLC0415
-
-            layer_ref = LayerRef(id=target_layer_id, name=None)
+        if layer_ref is None:
+            raise ValueError(f"Output layer is no longer available: {target_layer_id}")
         layer = bridge.ensure_layer(layer_ref, create_if_missing=True, name="NanoBanana Output")
         result = await bridge.apply_async(
             image_array,
@@ -361,7 +366,12 @@ class GoogleGenAITransport(INanoBananaTransport):
         )
 
         def _invoke(model: str) -> bytes:  # noqa: PLR0912, PLR0915 - linear response-walking
-            client = genai.Client(api_key=api_key)
+            # SDK 3 defaults to v1; retain the v1beta endpoint used by
+            # the existing preview image models and request options.
+            client = genai.Client(
+                api_key=api_key,
+                http_options=types.HttpOptions(api_version="v1beta"),
+            )
 
             cfg_kwargs: dict[str, object] = {
                 "response_modalities": (
@@ -496,14 +506,16 @@ class GoogleGenAITransport(INanoBananaTransport):
                         attempt_model,
                     )
                     await asyncio.sleep(retry_delay_s * (attempt + 1))
-                except Exception as exc:  # noqa: BLE001 - filtered to httpx.TransportError below
-                    # Only retry httpx-level transport failures (connection
-                    # drop / timeout / protocol error). Everything else
+                except Exception as exc:  # noqa: BLE001 - filtered to SDK transport errors below
+                    # Only retry SDK transport failures (connection drop /
+                    # timeout / protocol error). Everything else
                     # (assertion errors, programmer bugs, SDK bugs) re-raises
-                    # so the caller sees the real cause. ``_httpx`` may be
-                    # None on a stripped install; the ``isinstance`` short
-                    # circuits cleanly in that case.
-                    if _httpx is None or not isinstance(exc, _httpx.TransportError):
+                    # so the caller sees the real cause. SDK 3 defaults to
+                    # httpx2; an explicit environment override may use httpx.
+                    transport_errors = tuple(
+                        module.TransportError for module in (_httpx2, _httpx) if module is not None
+                    )
+                    if not isinstance(exc, transport_errors):
                         raise
                     last_error = exc
                     if attempt == attempts_for_model - 1:

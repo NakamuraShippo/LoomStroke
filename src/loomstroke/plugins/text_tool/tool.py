@@ -64,6 +64,7 @@ from .common import (  # noqa: E402
     save_text_tool_setting,
     vector_bbox_from_paths,
 )
+from .drawing_assist_controller import TextDrawingAssist
 from .edit_lifecycle import TextEditLifecycle
 from .editing_history import TextEditMetadataHistory
 from .editing_metadata import clone_text_for_edit, replace_edited_text
@@ -190,6 +191,7 @@ class TextTool:
         self._edit_lifecycle = TextEditLifecycle(self)
         self._annotations = TextAnnotationsController(self)
         self._path_text = PathTextController(self)
+        self._drawing_assist = TextDrawingAssist(self)
 
     @property
     def _inline_editor(self) -> _InlineTextEditor | None:
@@ -367,6 +369,7 @@ class TextTool:
         self._flush_prop_transaction()
         self._cancel_transform()
         self._finish_inline_edit(commit=True)
+        self._drawing_assist.cancel()
         self._clear_inline_selection_if_owned()
         self._clear_auto_return_context(strip_canvas=False)
         self._reset_state()
@@ -481,6 +484,9 @@ class TextTool:
                 if self.host_api:
                     self.host_api.input.pointer_capture(self.descriptor().id)
                 return
+        if press_hit is None:
+            pt = self._drawing_assist.begin(pt)
+            x, y = pt.pos
         self._press_pos = (x, y)
         self._last_pos = (x, y)
         self._press_hit = press_hit
@@ -500,6 +506,7 @@ class TextTool:
             return
         if hasattr(self, "_link_picker") and self._link_picker.pointer(last):
             return
+        last = self._drawing_assist.snap(last)
         current = (float(last.pos[0]), float(last.pos[1]))
         if send_selection_pointer(self, "move", current):
             return
@@ -540,6 +547,7 @@ class TextTool:
         if self._press_pos is None:
             return
 
+        pt = self._drawing_assist.release(pt)
         self._last_pos = (float(pt.pos[0]), float(pt.pos[1]))
         moved = self._drag_distance(self._press_pos, self._last_pos)
 
@@ -863,6 +871,8 @@ class TextTool:
         return None
 
     def _reset_state(self) -> None:
+        if self._inline_state is None:
+            self._drawing_assist.cancel()
         self._press_pos = None
         self._last_pos = None
         self._press_hit = None
@@ -1926,7 +1936,9 @@ class TextTool:
                 else new_ink_text_object(self, initial_text, rect, word_wrap)
             ),
             rotation_deg=(
-                self._payload_rotation(target_hit.payload) if target_hit is not None else 0.0
+                self._payload_rotation(target_hit.payload)
+                if target_hit is not None
+                else self._drawing_assist.rotation()
             ),
             is_new=(target_hit is None),
             canvas_widget=canvas_widget,
@@ -2152,16 +2164,12 @@ class TextTool:
                 merge_key="text_tool.create",
                 created_layer_id=created_layer_id,
             )
+            cmd = self._drawing_assist.command(cmd)
             self._submit_command(cmd)
-            sync_text_layer_name(self, target_layer_id, new_obj.id, content)
-            self._set_inline_selection_for_object(
-                str(getattr(new_obj, "id", "")),
-                target_layer_id,
-                rect,
-                rotation_deg=state.rotation_deg,
-                preview=False,
-            )
+            sync_text_layer_name(self, target_layer_id, cmd.vector_object.id, content)
+            self._drawing_assist.select_created(cmd, target_layer_id)
         finally:
+            self._drawing_assist.cancel()
             canvas = getattr(self.host_api, "canvas", None) if self.host_api else None
             if same_page:
                 self._inline_controller.discard_empty_created_layer(canvas, state.created_layer_id)
@@ -2937,6 +2945,7 @@ class TextTool:
             )
         try:
             canvas._vector_preview = preview_obj  # type: ignore[attr-defined]  # duck-typed canvas attr
+            self._drawing_assist.preview(preview_obj)
             canvas._vector_preview_layer_id = self._path_text.preview_layer_id(state)
             # Set flag directly and sync geometry without triggering
             # _update_inline_selection_overlay (which calls _recompose).
@@ -2955,6 +2964,7 @@ class TextTool:
             logger.debug("TextTool inline shape preview failed", exc_info=True)
 
     def _clear_inline_text_preview(self) -> None:
+        self._drawing_assist.overlay.clear()
         self._set_inline_shape_preview_active(False)
         if not self.host_api:
             return
@@ -3451,12 +3461,12 @@ class TextTool:
     ) -> tuple[float, float]:
         from ..sdk.snap import snap_position  # noqa: PLC0415
 
-        return snap_position(self.host_api, x, y, w, h)
+        return snap_position(self.host_api, x, y, w, h, assist_snap=True)
 
     def _is_snap_enabled(self) -> bool:
         from ..sdk.snap import is_snap_enabled  # noqa: PLC0415
 
-        return is_snap_enabled(self.host_api)
+        return is_snap_enabled(self.host_api, assist_snap=True)
 
     def _show_context_menu(self, payload: dict[str, Any] | None = None) -> None:
         """Show a context menu for the selected text object (non-inline state)."""

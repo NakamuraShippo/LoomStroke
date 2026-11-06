@@ -12,6 +12,7 @@ from loomstroke.plugins.comfyui.ui.prompt_composer import PromptComposerWidget
 from loomstroke.plugins.common.outbound_policy import is_external_services_allowed
 
 from .panel import tr
+from .prompt_area import TEXT_MODE
 from .values import parameter_bindings, snapshot_values
 
 
@@ -55,6 +56,8 @@ class NativeLivePromptChoices:
                 continue  # Qt forms already advanced this parameter once.
             saved = ui.get(key, {})
             live = saved.get("live_prompt") if isinstance(saved, Mapping) else None
+            if isinstance(saved, Mapping) and saved.get(TEXT_MODE):
+                continue  # The user chose the node text in the panel.
             if not self._eligible(live, values.get(key)):
                 continue
             composer = self.composers.get(key)

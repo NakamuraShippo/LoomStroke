@@ -150,6 +150,9 @@ class AIEffectPanelSection(QWidget, AsyncTaskOwner):
             ParamWidget,
             create_param_widget,
         )
+        from loomstroke.plugins.prompt_editor.emphasis import (  # noqa: PLC0415
+            WEIGHTLESS_GATEWAYS,
+        )
 
         self._clear_ai_effect_ui()
 
@@ -259,6 +262,7 @@ class AIEffectPanelSection(QWidget, AsyncTaskOwner):
                         effective_entry,
                         self._ai_effect_group,
                         host_api=self._host,
+                        emphasis_output=gateway_id_str not in WEIGHTLESS_GATEWAYS,
                     )
                 except Exception:
                     # Malformed manifest entry — log + skip rather than
@@ -287,6 +291,10 @@ class AIEffectPanelSection(QWidget, AsyncTaskOwner):
 
         # ---- Action bar (Trigger + Generate) ----
         self._build_ai_action_bar(group_layout)
+
+        from loomstroke.plugins.ai_effect.ui import layer_history  # noqa: PLC0415
+
+        layer_history.mount(self, group_layout, self._current_ai_effect_id)
 
         # Insert above stretch spacer so the group sits at the top.
         self._root_layout.insertWidget(0, self._ai_effect_group)
@@ -329,6 +337,8 @@ class AIEffectPanelSection(QWidget, AsyncTaskOwner):
             self._select_output_to_self(override == "self")
         finally:
             self._updating = False
+        if getattr(self, "_batch_controls", None) is not None:
+            self._batch_controls.refresh_plan()
 
     def _sync_ai_effect_param_ui_state(self, state: Any) -> None:
         """Restore optional LoomStroke-only UI state into AI param widgets."""

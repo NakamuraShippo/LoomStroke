@@ -147,6 +147,7 @@ DEFAULT_SETTINGS: dict[str, SettingsValue] = {
     # UI settings (per PR-D spec)
     "ui/theme": "dark",
     "ui/language": "system",
+    "ui/liveprompt/default_separator": r"\n",
     "ui/show_toolbar": True,
     "ui/show_statusbar": True,
     "ui/dock_positions": {},

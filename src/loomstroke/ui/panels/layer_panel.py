@@ -1192,6 +1192,7 @@ class LayerPanel(QWidget):
         self._placeholder_seq = 0
         self._active_layer_id: str | None = None
         self._selected_layer_id: str | None = None
+        self._pending_selection_layer_id: str | None = None
         self._suppress_reorder_signal = False
         self._suppress_opacity_signal = False
         self._suppress_blend_signal = False
@@ -1665,7 +1666,10 @@ class LayerPanel(QWidget):
         layer_id = logical_layer_id(getattr(self, "_layer_lookup", {}), layer_id)
         item = self._item_map.get(layer_id)
         if item is None:
+            # Layer selection can arrive before the coalesced layer-add rebuild.
+            self._pending_selection_layer_id = layer_id
             return False
+        self._pending_selection_layer_id = None
         self._list.blockSignals(True)
         self._list.setCurrentItem(item)
         self._list.blockSignals(False)
@@ -2101,6 +2105,10 @@ class LayerPanel(QWidget):
         restore_frame_expansion(self, expanded_frames)
 
         # Restore selection
+        pending_id = getattr(self, "_pending_selection_layer_id", None)
+        if pending_id in self._item_map:
+            selected_id = pending_id
+        self._pending_selection_layer_id = None
         target_item = self._item_map.get(selected_id) if selected_id else None
         if target_item is None and entries:
             target_item = self._list.topLevelItem(0)

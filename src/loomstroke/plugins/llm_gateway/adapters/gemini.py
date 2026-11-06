@@ -11,6 +11,7 @@ from typing import Any
 from aiohttp import ClientResponseError
 
 from ..errors import AuthenticationError, LLMError
+from ..model_params import is_chat_model, tune_body
 from ..types import ImageAttachment, ProviderPayload
 from .base import (
     CancelContext,
@@ -24,6 +25,7 @@ from .base import (
 _logger = logging.getLogger(__name__)
 _ENDPOINT_PREFIX = "https://generativelanguage.googleapis.com/v1beta/models"
 _MODELS_ENDPOINT = f"{_ENDPOINT_PREFIX}"
+_MAX_MODEL_PAGES = 20
 
 
 class GeminiAdapter:
@@ -94,7 +96,7 @@ class GeminiAdapter:
     async def submit(self, ctx: SubmitContext) -> ProviderJob:
         headers = dict(ctx.payload.headers)
         headers["x-goog-api-key"] = ctx.config.api_key
-        body = dict(ctx.payload.body)
+        body = tune_body("gemini", ctx.config.model, dict(ctx.payload.body))
         endpoint = f"{_ENDPOINT_PREFIX}/{ctx.config.model}:generateContent"
         try:
             async with ctx.session.post(endpoint, json=body, headers=headers) as resp:
@@ -140,6 +142,26 @@ class GeminiAdapter:
         except Exception:
             _logger.debug("Gemini health check failed", exc_info=True)
             return False
+
+    async def list_models(self, ctx: HealthContext) -> list[str]:
+        headers = {"x-goog-api-key": ctx.config.api_key}
+        models: list[str] = []
+        params: dict[str, str] = {"pageSize": "1000"}
+        for _page in range(_MAX_MODEL_PAGES):
+            async with ctx.session.get(_MODELS_ENDPOINT, headers=headers, params=params) as resp:
+                resp.raise_for_status()
+                data = await resp.json()
+            for entry in data.get("models", []):
+                if "generateContent" not in entry.get("supportedGenerationMethods", []):
+                    continue
+                name = str(entry.get("name", "")).removeprefix("models/")
+                if is_chat_model("gemini", name):
+                    models.append(name)
+            token = data.get("nextPageToken")
+            if not token:
+                break
+            params = {"pageSize": "1000", "pageToken": str(token)}
+        return models
 
     @staticmethod
     def _now() -> float:

@@ -63,7 +63,7 @@ class GPTImage2PanelPlugin(UIPanelPlugin):
     def descriptor(self) -> PanelDescriptor:
         return PanelDescriptor(
             id="gptimage2_panel",
-            display_name=_ts("GPT Image 2"),
+            display_name=_ts("GPT Image"),
             category="ai_tools",
             default_position="right",
             default_size=(360, 460),
@@ -133,8 +133,16 @@ class GPTImage2PanelPlugin(UIPanelPlugin):
             "output_compression": (
                 options.get("output_compression") if isinstance(options, dict) else None
             ),
-            "background": options.get("background", "auto") if isinstance(options, dict) else "",
-            "moderation": options.get("moderation", "auto") if isinstance(options, dict) else "",
+            "background": (options.get("background", "auto") if isinstance(options, dict) else ""),
+            "moderation": (options.get("moderation", "auto") if isinstance(options, dict) else ""),
+            "input_alpha_fill": (
+                options.get("input_alpha_fill", False) if isinstance(options, dict) else False
+            ),
+            "input_alpha_color": (
+                options.get("input_alpha_color", "#ffffff")
+                if isinstance(options, dict)
+                else "#ffffff"
+            ),
             "created_at": datetime.now(tz=UTC).isoformat(),
         }
 

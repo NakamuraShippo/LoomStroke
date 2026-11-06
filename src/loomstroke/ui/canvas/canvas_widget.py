@@ -33,6 +33,10 @@ from PySide6.QtWidgets import QApplication, QMessageBox, QWidget
 
 from loomstroke.core.canvas_invalidation import RenderInvalidation
 from loomstroke.host_api import HostAPI, StrokePoint
+from loomstroke.ui.layer_snapshot_renderer import (
+    bind_layer_snapshot_renderer,
+    release_layer_snapshot_renderer,
+)
 
 from .canvas_diagnostics import build_canvas_widget_render_diagnostics
 from .canvas_presenter import CanvasPresenterDiagnostics
@@ -45,6 +49,7 @@ from .guide_preview_interaction import route_guide_preview
 from .guide_snap_feedback import GuideSnapFeedback
 from .input_handler import InputHandler
 from .layout_grid_overlay import draw_layout_grid
+from .perspective_handle_interaction import route_assist_handles
 from .projection_state import ProjectionStateTracker
 from .render_scene import (
     RenderSceneSnapshot,
@@ -383,6 +388,7 @@ class CanvasWidget(_CanvasWidgetBase):
     def async_cleanup(self) -> None:
         """Async cleanup."""
         logger.info("Canvas widget cleanup")
+        release_layer_snapshot_renderer(self)
         self._update_timer.stop()
         self._release_wgpu_bitmap_presenter()
         self._gl_context_manager.cleanup_for_shutdown()
@@ -992,6 +998,7 @@ class CanvasWidget(_CanvasWidgetBase):
         self._guide_snap_feedback.draw(painter)
         self._draw_marching_ants(painter)
         self._draw_vector_selection_overlay(painter)
+        self._three_d_interaction.draw_overlay(painter)
         if self._canvas_agent_overlay_fn is not None:
             self._canvas_agent_overlay_fn(painter)
         # Tool UI overlay (e.g. gradient line/pins) drawn last = topmost
@@ -1312,6 +1319,7 @@ class CanvasWidget(_CanvasWidgetBase):
 
     def hideEvent(self, event: Any) -> None:
         """Handle hide/minimize resource release for optional presenters."""
+        self._three_d_interaction.figure.cancel()
         self._invalidate_wgpu_bitmap_resources("widget hidden")
         super().hideEvent(event)
 
@@ -1328,6 +1336,9 @@ class CanvasWidget(_CanvasWidgetBase):
 
     def mousePressEvent(self, event: QMouseEvent) -> None:
         """Handle mouse press."""
+        if route_assist_handles(self, event, "press"):
+            event.accept()
+            return
         self._guide_snap_feedback.clear()
         if event.button() == Qt.LeftButton and not self._input_handler_intercepts(event):
             pos = event.position()
@@ -1369,6 +1380,9 @@ class CanvasWidget(_CanvasWidgetBase):
 
     def mouseMoveEvent(self, event: QMouseEvent) -> None:
         """Handle mouse move."""
+        if route_assist_handles(self, event, "move"):
+            event.accept()
+            return
         if not self._input_handler_intercepts(event):
             pos = event.position()
             if route_guide_preview(
@@ -1406,6 +1420,9 @@ class CanvasWidget(_CanvasWidgetBase):
 
     def mouseReleaseEvent(self, event: QMouseEvent) -> None:
         """Handle mouse release."""
+        if route_assist_handles(self, event, "release"):
+            event.accept()
+            return
         if event.button() == Qt.LeftButton and not self._input_handler_intercepts(event):
             pos = event.position()
             if route_guide_preview(
@@ -1536,6 +1553,17 @@ class CanvasWidget(_CanvasWidgetBase):
             QEvent.TabletMove: "move",
             QEvent.TabletRelease: "release",
         }.get(getattr(event, "type", lambda: None)())
+        if phase is not None and route_assist_handles(self, event, phase):
+            event.accept()
+            return
+        if phase is not None and self._three_d_interaction.drag_mode() == "pose":
+            handler = {
+                "press": self._three_d_interaction.handle_mouse_press,
+                "move": self._three_d_interaction.handle_mouse_move,
+                "release": self._three_d_interaction.handle_mouse_release,
+            }[phase]
+            if handler(event):
+                return
         if phase is not None:
             pos = event.position()
             if route_guide_preview(
@@ -1548,10 +1576,17 @@ class CanvasWidget(_CanvasWidgetBase):
                 return
         self.input_handler.handle_tablet_event(event)
 
-    def keyPressEvent(self, event: QKeyEvent) -> None:
+    def keyPressEvent(self, event: QKeyEvent) -> None:  # noqa: PLR0911 - delegated input gates
         """Handle key press."""
         if event.key() == Qt.Key.Key_Escape:
+            if self._three_d_interaction.is_active():
+                self._three_d_interaction.cancel()
+                event.accept()
+                return
             self._guide_snap_feedback.clear()
+            if route_assist_handles(self, event, "cancel"):
+                event.accept()
+                return
         # Pass to input handler first for modifier tracking
         self.input_handler.handle_key_press(event)
         editor = getattr(self, "_guide_editor", None)
@@ -1673,6 +1708,7 @@ class CanvasWidget(_CanvasWidgetBase):
         super().leaveEvent(event)
 
     def focusOutEvent(self, event: Any) -> None:
+        self._three_d_interaction.figure.cancel()
         self._guide_snap_feedback.clear()
         super().focusOutEvent(event)
 
@@ -1841,6 +1877,7 @@ class CanvasWidget(_CanvasWidgetBase):
             host_api: HostAPI instance
         """
         self._host_api = host_api
+        bind_layer_snapshot_renderer(self, host_api)
 
         # Connect to canvas service signals if available
         if host_api and hasattr(host_api.canvas, "composited_changed"):

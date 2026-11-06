@@ -1,8 +1,8 @@
 THIRD-PARTY SOFTWARE LICENSES
 ==============================
 
-LoomStroke uses the following third-party libraries.
-Each library retains its own copyright and license terms as listed below.
+LoomStroke uses the following third-party libraries and assets.
+Each component retains its own copyright and license terms as listed below.
 
 wgpu-py 0.31.0 (required GPU runtime)
    Copyright (c) 2019-2023, Almar Klein, Korijn van Golen.
@@ -117,13 +117,11 @@ rendercanvas 2.6.3 (dependency of wgpu-py)
     These third-party resources retain their own terms; the LoomStroke
     proprietary license does not replace or restrict the above grants.
 
-16. Mapbox earcut (Python port included in LoomStroke)
-    Copyright (c) 2016, Mapbox.
-    License: ISC
-    Upstream version: v2.2.4
-    Source: https://github.com/mapbox/earcut/tree/v2.2.4
-    Original license: https://github.com/mapbox/earcut/blob/v2.2.4/LICENSE
-    Full license text: LICENSES/ISC-earcut.txt
-    Applies to: src/loomstroke/ui/canvas/wgpu_backend/vector/earcut.py
-    The Python port retains the upstream algorithm structure and is
-    governed by ISC, rather than the LoomStroke proprietary restrictions.
+16. BodyChan / BodyKun drawing figure models
+    Author: vinchau
+    Original title: BodyChan - BodyKun | Posable Drawing Figures
+    License: CC0 (Creative Commons CC0 1.0 Universal)
+    Source: https://blendswap.com/blend/23521
+    License URL: https://creativecommons.org/publicdomain/zero/1.0/
+    Bundled assets are converted numeric mesh, skeleton, and skin weight data.
+    Coordinates and weights were adapted for LoomStroke.

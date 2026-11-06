@@ -18,6 +18,7 @@ from ..common.document_capture_guard import (
     begin_document_capture_edit,
     release_document_capture_edit,
 )
+from .rect_assist_controller import RectSelectionAssist
 
 if TYPE_CHECKING:
     from .rect_tool import BasicSelectionRectTool
@@ -76,8 +77,10 @@ class RasterSelectionController:
         self._tool = tool
         self.state = RasterSelectionState()
         self.transform = RasterTransformSession()
+        self.assist = RectSelectionAssist(tool)
 
     def reset_pointer_state(self) -> None:
+        self.assist.reset()
         self.state.base_mask = None
         self.state.base_bounds = None
         self.state.base_full_bounds = None
@@ -104,6 +107,9 @@ class RasterSelectionController:
         ctrl: bool = False,
         meta: bool = False,
     ) -> None:
+        if self.assist.preparation.busy:
+            self.assist.reset()
+            return
         del meta
         tool = self._tool
         if not tool.host_api:
@@ -163,6 +169,7 @@ class RasterSelectionController:
                 tool._drag_offset = (pt.pos[0] - bx, pt.pos[1] - by)
         else:
             tool._drag_mode = "create"
+            self.assist.begin(pt)
 
     def on_pointer_move(self, points: list[StrokePoint]) -> None:
         tool = self._tool
@@ -193,6 +200,10 @@ class RasterSelectionController:
             return
         full_bounds = full_rect if operation == SelectionOp.REPLACE else None
 
+        if self.assist.active:
+            self.assist.preview(full_rect or rect)
+            return
+
         tool._pending_commands.append(
             UpdateSelectionMaskCommand(
                 rect,
@@ -214,6 +225,15 @@ class RasterSelectionController:
 
         if tool._drag_mode == "move_selection":
             self._queue_move_commit(pt)
+        elif self.assist.active and tool._movement_exceeded_threshold(pt):
+            rect, full_rect = tool._compute_rect_geometry_with_full(
+                tool._start,
+                tool._current,
+                square=tool._current_modifiers["shift"],
+                center=tool._current_modifiers["alt"],
+            )
+            self.assist.commit(full_rect or rect, tool._op_from_modifiers(tool._initial_modifiers))
+            return
         else:
             self._queue_create_commit(pt)
 

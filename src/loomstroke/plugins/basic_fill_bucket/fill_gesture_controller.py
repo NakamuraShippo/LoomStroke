@@ -8,6 +8,7 @@ from typing import Any
 from loomstroke.core.fill.fill_gesture_mask import FillGestureMask
 
 from ..basic_selection.free_selection_overlay import FreeSelectionOverlay
+from ..sdk.assist_geometry import mapped_paths, path_copies, snap_assist_point
 
 
 class FillGestureController:
@@ -20,6 +21,7 @@ class FillGestureController:
 
     def down(self, point: Any) -> None:
         self.cancel()
+        point = snap_assist_point(self._tool.host_api, point)
         position = tuple(map(float, point.pos))
         if not all(math.isfinite(value) for value in position):
             return
@@ -32,7 +34,8 @@ class FillGestureController:
     def move(self, points: list[Any]) -> None:
         if not self._points:
             return
-        for point in points:
+        for source_point in points:
+            point = snap_assist_point(self._tool.host_api, source_point)
             position = tuple(map(float, point.pos))
             if (
                 all(math.isfinite(v) for v in position)
@@ -48,7 +51,12 @@ class FillGestureController:
             return
         self.move([point])
         size = self._tool.host_api.canvas.get_canvas_size()
-        enclosure = FillGestureMask.render(self._mode, self._points, self._size, size)
+        session = self._tool._assist.session
+        enclosure = (
+            mapped_paths(self._path(copies=False), session)
+            if session is not None and session.has_copies
+            else FillGestureMask.render_path(self._path(), size)
+        )
         self.cancel()
         if enclosure is not None:
             self._tool._preparation.prepare(point, enclosure)
@@ -60,6 +68,9 @@ class FillGestureController:
         self._overlay.clear()
 
     def _preview(self) -> None:
-        self._overlay.show(
-            self._tool.host_api, FillGestureMask.path(self._mode, self._points, self._size)
-        )
+        self._overlay.show(self._tool.host_api, self._path(preview=True))
+
+    def _path(self, *, preview=False, copies=True):
+        path = FillGestureMask.path(self._mode, self._points, self._size)
+        session = getattr(getattr(self._tool, "_assist", None), "session", None)
+        return path_copies(path, session, union=not preview) if copies else path

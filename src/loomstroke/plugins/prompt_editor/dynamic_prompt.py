@@ -59,6 +59,7 @@ class DynamicPromptSequence:
         render: Callable[[Any], str],
         resolve_items: Callable[[Any], list[str]],
         separator: str,
+        decorate: Callable[[Any, str], str] | None = None,
     ) -> str:
         parts = [self._slots(c, catalog, render, resolve_items) for c in components]
         signature = (separator, tuple(tuple(part) for part in parts))
@@ -75,7 +76,7 @@ class DynamicPromptSequence:
                     remainder //= len(slot.values)
 
         rendered = []
-        for part in parts:
+        for component, part in zip(components, parts, strict=True):
             text = ""
             for slot in part:
                 if slot.mode == "random":
@@ -86,7 +87,8 @@ class DynamicPromptSequence:
                     value = slot.values[indices.get(id(slot), 0)]
                 text += value
             if text.strip():
-                rendered.append(text.strip())
+                text = text.strip()
+                rendered.append(decorate(component, text) if decorate is not None else text)
         result = separator.join(rendered)
         # Even an empty alternative consumes this attempt, so a rejected empty
         # prompt cannot trap sequential/combinatorial selection at that entry.

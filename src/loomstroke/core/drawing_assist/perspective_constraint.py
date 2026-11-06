@@ -18,6 +18,10 @@ class PerspectiveConstraint:
     vanishing_points: tuple[tuple[float, float], ...]
     axis: str = "auto"
 
+    def axis_for_motion(self, anchor: tuple[float, float], x: float, y: float) -> str:
+        target = self._vanishing_point_for(anchor, x, y)
+        return f"vp{self.vanishing_points.index(target) + 1}"
+
     def project(self, anchor: tuple[float, float], x: float, y: float) -> tuple[float, float]:
         if self.axis == "vertical" or not self.vanishing_points:
             return (anchor[0], y)

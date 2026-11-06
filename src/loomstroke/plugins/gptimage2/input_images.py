@@ -2,11 +2,35 @@
 
 from __future__ import annotations
 
+import re
 from collections.abc import Sequence
+from io import BytesIO
 from typing import Any
 
 MAX_INPUT_LAYERS = 16
 MAX_INPUT_IMAGE_BYTES = 50 * 1024 * 1024
+
+
+def normalize_input_alpha_color(value: Any) -> str:
+    if not isinstance(value, str) or re.fullmatch(r"#[0-9a-fA-F]{6}", value) is None:
+        raise ValueError("Input alpha fill color must be #RRGGBB")
+    return value.lower()
+
+
+def fill_input_alpha(image_bytes: bytes, color: str) -> bytes:
+    """Composite an upload copy over an opaque color, preserving opaque inputs."""
+    from PIL import Image  # noqa: PLC0415
+
+    color = normalize_input_alpha_color(color)
+    with Image.open(BytesIO(image_bytes)) as image:
+        rgba = image.convert("RGBA")
+        if rgba.getchannel("A").getextrema() == (255, 255):
+            return image_bytes
+        background = Image.new("RGBA", rgba.size, color)
+        background.alpha_composite(rgba)
+        output = BytesIO()
+        background.convert("RGB").save(output, format="PNG")
+        return output.getvalue()
 
 
 def normalize_layer_ids(value: Any) -> list[str]:

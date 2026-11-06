@@ -448,8 +448,10 @@ class StringParamWidget(ParamWidget):
         parent: QWidget | None = None,
         *,
         host_api: Any | None = None,
+        emphasis_output: bool = True,
     ) -> None:
         super().__init__(entry, parent)
+        self._emphasis_output = emphasis_output
         # Fill the form column so a long single-line entry's right
         # edge isn't clipped on a narrow dock.
         self.setSizePolicy(QSizePolicy.Policy.Expanding, QSizePolicy.Policy.Fixed)
@@ -513,7 +515,9 @@ class StringParamWidget(ParamWidget):
                 "PromptComposerWidget unavailable; multiline string falls back to QTextEdit"
             )
             return None
-        composer = PromptComposerWidget(host_api=host_api, parent=self)
+        composer = PromptComposerWidget(
+            host_api=host_api, parent=self, emphasis_output=self._emphasis_output
+        )
         composer.composedTextChanged.connect(self._on_composed_text_changed)
         composer.modeChanged.connect(self._on_prompt_mode_changed)
         return composer
@@ -961,6 +965,7 @@ def create_param_widget(
     parent: QWidget | None = None,
     *,
     host_api: Any | None = None,
+    emphasis_output: bool = True,
 ) -> ParamWidget:
     """Factory that returns the ``ParamWidget`` subclass for a manifest entry.
 
@@ -968,7 +973,8 @@ def create_param_widget(
     services (currently only :class:`StringParamWidget`'s LivePrompt
     composer for snippet repository lookups). Other widgets ignore it,
     so the parameter is keyword-only to keep historical positional
-    call sites working.
+    call sites working. ``emphasis_output`` likewise only reaches the
+    LivePrompt composer; pass False for gateways without weight syntax.
 
     Raises
     ------
@@ -994,7 +1000,7 @@ def create_param_widget(
             f"unsupported param type {ptype!r} (expected one of {sorted(_WIDGET_BY_TYPE)})"
         )
     if cls is StringParamWidget:
-        return StringParamWidget(entry, parent, host_api=host_api)
+        return StringParamWidget(entry, parent, host_api=host_api, emphasis_output=emphasis_output)
     return cls(entry, parent)
 
 

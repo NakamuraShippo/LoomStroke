@@ -3030,12 +3030,12 @@ class BasicSelectionRectTool:
     ) -> tuple[float, float]:
         from ...plugins.sdk.snap import snap_position  # noqa: PLC0415
 
-        return snap_position(self.host_api, x, y, w, h)
+        return snap_position(self.host_api, x, y, w, h, assist_snap=True)
 
     def _is_snap_enabled(self) -> bool:
         from ...plugins.sdk.snap import is_snap_enabled  # noqa: PLC0415
 
-        return is_snap_enabled(self.host_api)
+        return is_snap_enabled(self.host_api, assist_snap=True)
 
 
 PLUGIN_METADATA = PluginMetadata(

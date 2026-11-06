@@ -37,9 +37,11 @@ class FillGestureMask:
         size: float,
         canvas_size: tuple[int, int],
     ) -> np.ndarray | None:
-        rendered = SelectionShapeMask.render(
-            cls.path(mode, points, size), canvas_size, pixel_perfect=True
-        )
+        return cls.render_path(cls.path(mode, points, size), canvas_size)
+
+    @staticmethod
+    def render_path(path: QPainterPath, canvas_size: tuple[int, int]) -> np.ndarray | None:
+        rendered = SelectionShapeMask.render(path, canvas_size, pixel_perfect=True)
         if rendered is None:
             return None
         mask, (x, y, width, height) = rendered

@@ -13,6 +13,9 @@ from loomstroke.core.commands import SetLayer3DCameraCommand, SetLayer3DOffsetCo
 from loomstroke.core.layer_3d_rendering import orbit_camera_state
 from loomstroke.rendering_3d import OrbitCameraState
 
+from .drawing_figure_interaction import DrawingFigureInteraction
+from .guide_canvas_bridge import update_guide_overlay
+
 logger = logging.getLogger(__name__)
 
 _ROTATE_DEGREES_PER_PIXEL = 0.35
@@ -38,11 +41,13 @@ class Canvas3DLayerInteractionController:
         self._widget = canvas_widget
         self._state: _InteractionState | None = None
         self._drag_mode = "orbit"
+        self.figure = DrawingFigureInteraction(self)
 
     def handle_mouse_press(self, event: Any) -> bool:
-        if self._state is not None:
+        if self.is_active():
             event.accept()
             return True
+        self.figure.hover.clear()
         layer = self._active_3d_layer()
         if layer is None:
             return False
@@ -58,19 +63,20 @@ class Canvas3DLayerInteractionController:
                 if _has_modifier(modifiers, Qt.KeyboardModifier.ShiftModifier)
                 else self._drag_mode
             )
+            if mode == "pose" or (mode == "orbit" and self.figure.hand_editor_active):
+                if self.figure.press(event):
+                    return True
+                mode = "orbit"
         elif button == Qt.MouseButton.MiddleButton:
             mode = "move"
         else:
-            return False
-        scene = getattr(layer, "scene_3d", None)
-        if not isinstance(scene, Scene3DDocument):
             return False
         self._state = _InteractionState(
             layer=layer,
             mode=mode,
             start_widget=widget_pos,
             start_canvas=(float(canvas_pos[0]), float(canvas_pos[1])),
-            start_camera=orbit_camera_state(getattr(layer, "camera_3d", None), scene),
+            start_camera=orbit_camera_state(getattr(layer, "camera_3d", None), layer.scene_3d),
             start_offset=(
                 int(getattr(layer, "offset_x", 0)),
                 int(getattr(layer, "offset_y", 0)),
@@ -80,9 +86,11 @@ class Canvas3DLayerInteractionController:
         return True
 
     def handle_mouse_move(self, event: Any) -> bool:
+        if self.figure.state is not None:
+            return self.figure.move(event)
         state = self._state
         if state is None:
-            return False
+            return self.figure.hover.move(event)
         widget_pos = _event_widget_pos(event)
         if state.mode == "orbit":
             dx = widget_pos[0] - state.start_widget[0]
@@ -108,6 +116,10 @@ class Canvas3DLayerInteractionController:
         return True
 
     def handle_mouse_release(self, event: Any) -> bool:
+        if self.figure.state is not None:
+            handled = self.figure.release(event)
+            self.figure.hover.move(event)
+            return handled
         state = self._state
         if state is None:
             return False
@@ -118,9 +130,12 @@ class Canvas3DLayerInteractionController:
             else:
                 self._commit_offset(state)
         event.accept()
+        if self._drag_mode == "pose":
+            self.figure.hover.move(event)
         return True
 
     def handle_wheel(self, event: Any) -> bool:
+        self.figure.cancel()
         layer = self._active_3d_layer()
         if layer is None:
             return False
@@ -150,19 +165,25 @@ class Canvas3DLayerInteractionController:
         return True
 
     def is_active(self) -> bool:
-        return self._state is not None
+        return self._state is not None or self.figure.state is not None
+
+    def draw_overlay(self, painter: Any) -> None:
+        self.figure.draw(painter)
 
     def drag_mode(self) -> str:
         return self._drag_mode
 
     def set_drag_mode(self, mode: str) -> bool:
         token = str(mode or "").strip().lower()
-        if token not in {"orbit", "move"}:
+        if token not in {"orbit", "move", "pose"}:
             return False
+        self.cancel()
         self._drag_mode = token
+        update_guide_overlay(self._widget)
         return True
 
     def cancel(self) -> None:
+        self.figure.cancel()
         state = self._state
         self._state = None
         if state is None:
@@ -222,6 +243,8 @@ class Canvas3DLayerInteractionController:
         if callable(recompose):
             recompose()
         self._widget.update()
+        if self._drag_mode == "pose":
+            update_guide_overlay(self._widget)
 
     def _submit(self, command: Any) -> bool:
         canvas = self._canvas_service()

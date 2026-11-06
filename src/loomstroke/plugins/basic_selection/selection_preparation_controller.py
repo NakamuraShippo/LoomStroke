@@ -7,6 +7,7 @@ from PySide6.QtCore import QObject, Qt, QThreadPool, Slot
 
 from loomstroke.core.selection_shapes.shape_selection_mask_command import ShapeSelectionMaskCommand
 
+from ..common.page_context import page_context
 from .selection_mask_worker import SelectionMaskWorker
 
 logger = logging.getLogger(__name__)
@@ -20,6 +21,7 @@ class SelectionPreparationController(QObject):
         self._cancelled = False
         self._context = None
         self._operation = None
+        self._page_context = None
 
     @property
     def busy(self):
@@ -44,6 +46,7 @@ class SelectionPreparationController(QObject):
 
     def prepare(self, path, size, radius, pixel_perfect, operation):
         self._context = self.context(self._tool.host_api.canvas)
+        self._page_context = page_context(self._tool.host_api)
         self._operation, self._cancelled = operation, False
         worker = SelectionMaskWorker(path, size, radius, pixel_perfect)
         worker.signals.finished.connect(self._finished, Qt.ConnectionType.QueuedConnection)
@@ -54,7 +57,12 @@ class SelectionPreparationController(QObject):
     def _finished(self, result, error):
         self._worker = None
         host = self._tool.host_api
-        if self._cancelled or host is None or self.context(host.canvas) != self._context:
+        if (
+            self._cancelled
+            or host is None
+            or page_context(host) != self._page_context
+            or self.context(host.canvas) != self._context
+        ):
             return
         if error is not None:
             logger.error("Selection preparation failed: %s", error)

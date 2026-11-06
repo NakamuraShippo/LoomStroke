@@ -21,6 +21,7 @@ from ...plugins.sdk.tool import (
     ToolSettings,
 )
 from ..common.tool_icons import resolve_tool_icon_path
+from .drawing_assist_controller import MagicWandDrawingAssist
 from .magic_wand_command import MagicWandCommand
 
 if TYPE_CHECKING:
@@ -49,6 +50,7 @@ class MagicWandPlugin:
     """Magic wand selection tool that generates selection mask commands."""
 
     def __init__(self) -> None:
+        self._assist = MagicWandDrawingAssist(self)
         self.host_api: HostAPI | None = None
         self._tolerance: int = 32
         self._contiguous: bool = True
@@ -138,11 +140,13 @@ class MagicWandPlugin:
             self.host_api.events.emit("tool.changed", {"tool": "magic_wand"})
 
     def disable(self) -> None:
+        self._assist.cancel()
         self._pending_commands.clear()
         self._last_seed = None
         self._last_layer_id = None
 
     def deactivate(self) -> None:
+        self._assist.cancel()
         if self.host_api:
             unregister = getattr(self.host_api, "unregister_tool", None)
             if callable(unregister):
@@ -180,6 +184,8 @@ class MagicWandPlugin:
         elif ctrl:
             op = SelectionOp.SUBTRACT
 
+        if self._assist.prepare(pt, op):
+            return
         command = MagicWandCommand(
             layer_id=layer_id,
             seed_x=seed_x,
@@ -200,6 +206,9 @@ class MagicWandPlugin:
         del pt
 
     def on_key(self, key: str, pressed: bool) -> bool:
+        if pressed and key.lower() in {"escape", "esc"}:
+            self._assist.cancel()
+            return True
         del key, pressed
         return False
 
@@ -248,6 +257,8 @@ class MagicWandPlugin:
         if canvas is None:
             return
         seed_x, seed_y = self._last_seed
+        if self._assist.prepare(StrokePoint((seed_x, seed_y)), SelectionOp.REPLACE):
+            return
         cmd = MagicWandCommand(
             layer_id=self._last_layer_id,
             seed_x=seed_x,

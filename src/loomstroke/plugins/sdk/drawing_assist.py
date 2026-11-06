@@ -27,7 +27,21 @@ from loomstroke.core.drawing_assist import StrokeConstraintSession
 
 __all__ = ["SUPPORTED_TOOL_IDS", "ToolAssistBridge", "get_drawing_assist_controller"]
 
-SUPPORTED_TOOL_IDS: frozenset[str] = frozenset({"basic_pen", "basic_eraser", "effect_pen"})
+SUPPORTED_TOOL_IDS: frozenset[str] = frozenset(
+    {
+        "basic_pen",
+        "basic_eraser",
+        "effect_pen",
+        "loomstroke.basic.selection.rect",
+        "basic_fill_bucket",
+        "pattern_fill",
+        "magic_wand",
+        "vector_pen_precise",
+        "vector_path_tool",
+        "text_tool",
+        "text_tool_vertical",
+    }
+)
 
 
 def get_drawing_assist_controller(host_api: Any) -> Any:
@@ -48,6 +62,7 @@ class ToolAssistBridge:
     def __init__(self, tool_id: str) -> None:
         self._tool_id = tool_id
         self._session: StrokeConstraintSession | None = None
+        self._controller: Any = None
 
     @property
     def session(self) -> StrokeConstraintSession | None:
@@ -59,16 +74,28 @@ class ToolAssistBridge:
 
     def begin(self, host_api: Any, point: Any) -> Any:
         """Start a stroke: compile the active assist (if any) and constrain the first point."""
-        self._session = None
+        self.capture(host_api)
+        return self.point(point)
+
+    def capture(self, host_api: Any) -> None:
+        """Capture symmetry for an area/object gesture without constraining its bounds."""
+        self.end()
         if self._tool_id in SUPPORTED_TOOL_IDS:
             controller = get_drawing_assist_controller(host_api)
+            self._controller = controller
             begin_session = getattr(controller, "begin_session", None)
             if callable(begin_session):
                 self._session = begin_session(self._tool_id)
-        return self.point(point)
 
     def end(self) -> None:
+        self._feedback(None)
         self._session = None
+        self._controller = None
+
+    def _feedback(self, point: Any) -> None:
+        notify = getattr(self._controller, "set_stroke_feedback", None)
+        if self._session is not None and callable(notify):
+            notify(self._session, None if point is None else self._pos(point))
 
     def point(self, point: Any) -> Any:
         if self._session is None or (
@@ -78,7 +105,9 @@ class ToolAssistBridge:
                 self._session.constrain(*self._pos(point))
             return point
         x, y = self._session.constrain(*self._pos(point))
-        return self._with_pos(point, (x, y))
+        result = self._with_pos(point, (x, y))
+        self._feedback(result)
+        return result
 
     def points(self, points: Iterable[Any]) -> list[Any]:
         return [self.point(point) for point in points]

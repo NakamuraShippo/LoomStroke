@@ -19,7 +19,12 @@ def panel_input_image(canvas: Any, layer: Any, image: QImage) -> QImage | None:
         return image
     width, height = canvas.get_canvas_size()
     projected = placed_source_image(
-        canvas, layer, image, width, height, already_placed=layer.layer_type in {"group", "vector"}
+        canvas,
+        layer,
+        image,
+        width,
+        height,
+        already_placed=layer.layer_type in {"group", "vector", "3d"},
     )
     if projected is None:
         return None

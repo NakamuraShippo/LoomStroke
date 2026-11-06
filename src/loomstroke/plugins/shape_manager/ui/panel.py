@@ -1329,6 +1329,9 @@ class ShapeManagerPanel(QWidget):
         vector_kind: str,
         select_inserted: bool,
     ) -> bool:
+        from loomstroke.plugins.sdk.assist_geometry import snap_assist_coordinates  # noqa: PLC0415
+
+        pos = snap_assist_coordinates(self._host, pos)
         shape_id = str(payload.get("shape_id", ""))
         record = self._index.get(shape_id)
         if record is None:
@@ -1375,19 +1378,27 @@ class ShapeManagerPanel(QWidget):
             created_layer_id=created_layer_id,
         )
         try:
-            success = canvas.submit(cmd, merge_key=None)
+            from loomstroke.plugins.sdk.assisted_vector_command import (  # noqa: PLC0415
+                assisted_create_for_host,
+            )
+
+            assisted = assisted_create_for_host(cmd, self._host)
+            success = canvas.submit(assisted, merge_key=None)
         except Exception:
             success = False
         if not success:
             self._notify(self._ts("Canvas insert failed."))
             return False
         if select_inserted:
-            self._select_inserted_vector(canvas, vector_obj, created_layer_id)
+            self._select_inserted_vector(canvas, assisted.vector_object, created_layer_id)
         return True
 
     def _insert_basic_shape_from_payload(self, payload: dict, pos: tuple[float, float]) -> bool:
         if not self._host:
             return False
+        from loomstroke.plugins.sdk.assist_geometry import snap_assist_coordinates  # noqa: PLC0415
+
+        pos = snap_assist_coordinates(self._host, pos)
         basic_shape_id = str(payload.get("basic_shape_id", ""))
         definition = get_basic_shape_definition(basic_shape_id)
         if definition is None:
@@ -1424,7 +1435,11 @@ class ShapeManagerPanel(QWidget):
             created_layer_id=created_layer_id,
         )
         try:
-            success = canvas.submit(cmd, merge_key=None)
+            from loomstroke.plugins.sdk.assisted_vector_command import (  # noqa: PLC0415
+                assisted_create_for_host,
+            )
+
+            success = canvas.submit(assisted_create_for_host(cmd, self._host), merge_key=None)
         except Exception:
             success = False
         if not success:

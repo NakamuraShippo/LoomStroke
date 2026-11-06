@@ -3,6 +3,10 @@
 <TS version="2.1" language="es">
     <context>
         <name>MainWindow</name>
+    <message>
+        <source>Perspective Ruler...</source>
+        <translation>Regla de perspectiva...</translation>
+    </message>
         <message>
             <source>PSD export cannot preserve this filter layer. Export a flattened image instead.</source>
             <translation>La exportación a PSD no puede conservar esta capa de filtro. Exporta una imagen acoplada en su lugar.</translation>
@@ -2641,6 +2645,14 @@ Después de refrescar el token, cualquier agente registrado en este servidor de 
 </context>
     <context>
         <name>InterfacePage</name>
+    <message>
+        <source>LivePrompt default separator</source>
+        <translation>Separador predeterminado de LivePrompt</translation>
+    </message>
+    <message>
+        <source>Use \n for a new line or \t for a tab. Empty uses a new line. Applies to new LivePrompts; saved separators take precedence.</source>
+        <translation>Usa \n para un salto de línea o \t para una tabulación. Si está vacío, se usa un salto de línea. Se aplica a nuevos LivePrompts; los separadores guardados tienen prioridad.</translation>
+    </message>
         <message>
             <source>Dark</source>
             <translation>Oscuro</translation>
@@ -4964,6 +4976,14 @@ Después de refrescar el token, cualquier agente registrado en este servidor de 
     <message>
         <source>Failed to import image as new layer</source>
         <translation>Fallo al importar imagen como nueva capa</translation>
+    </message>
+    <message>
+        <source>Layer: {name}</source>
+        <translation>Capa: {name}</translation>
+    </message>
+    <message>
+        <source>Clear the layer filter</source>
+        <translation>Quitar el filtro de capa</translation>
     </message>
 </context>
 <context>
@@ -7639,6 +7659,18 @@ Selecciona un archivo para recuperar.</translation>
     <message>
         <source>Wait until generation is ready.</source>
         <translation>Espera hasta que la generación esté lista.</translation>
+    </message>
+    <message>
+        <source>Plan: {count} generations</source>
+        <translation>Previsto: {count} generaciones</translation>
+    </message>
+    <message>
+        <source>Plan: until stopped</source>
+        <translation>Previsto: hasta detener</translation>
+    </message>
+    <message>
+        <source>Plan: one cycle of {count}</source>
+        <translation>Previsto: un ciclo de {count}</translation>
     </message>
 </context>
 <context>
@@ -11307,6 +11339,42 @@ Por favor, verifique que todas las rutas de imagen en su flujo sean válidas.
 <context>
     <name>DrawingAssistPanel</name>
     <message>
+        <source>Perspective ruler</source>
+        <translation>Regla de perspectiva</translation>
+    </message>
+    <message>
+        <source>1-point perspective</source>
+        <translation>Perspectiva de un punto</translation>
+    </message>
+    <message>
+        <source>2-point perspective</source>
+        <translation>Perspectiva de dos puntos</translation>
+    </message>
+    <message>
+        <source>3-point perspective</source>
+        <translation>Perspectiva de tres puntos</translation>
+    </message>
+    <message>
+        <source>Drawing direction</source>
+        <translation>Dirección de dibujo</translation>
+    </message>
+    <message>
+        <source>Automatic</source>
+        <translation>Automática</translation>
+    </message>
+    <message>
+        <source>Vertical</source>
+        <translation>Vertical</translation>
+    </message>
+    <message>
+        <source>Edit vanishing points</source>
+        <translation>Editar puntos de fuga</translation>
+    </message>
+    <message>
+        <source>Drag VP handles on the canvas. Esc cancels the drag.</source>
+        <translation>Arrastra los controles VP en el lienzo. Esc cancela el arrastre.</translation>
+    </message>
+    <message>
         <source>Add</source>
         <translation>Añadir</translation>
     </message>
@@ -13383,6 +13451,10 @@ Por favor, verifique que todas las rutas de imagen en su flujo sean válidas.
 <context>
     <name>GPTImage2PanelPlugin</name>
     <message>
+        <source>GPT Image</source>
+        <translation>GPT Image</translation>
+    </message>
+    <message>
         <source>Configure GPT Image 2 jobs</source>
         <translation>Configurar tareas GPT Image 2</translation>
     </message>
@@ -13892,6 +13964,22 @@ Por favor, verifique que todas las rutas de imagen en su flujo sean válidas.
 </context>
 <context>
     <name>LLMPaneController</name>
+    <message>
+        <source>Copy</source>
+        <translation>Copiar</translation>
+    </message>
+    <message>
+        <source>Model ID</source>
+        <translation>ID del modelo</translation>
+    </message>
+    <message>
+        <source>Server URL</source>
+        <translation>URL del servidor</translation>
+    </message>
+    <message>
+        <source>Enter a model ID:</source>
+        <translation>Introduce el ID del modelo:</translation>
+    </message>
     <message>
         <source>Add Library</source>
         <translation>Agregar a la biblioteca</translation>
@@ -15707,6 +15795,14 @@ Operación: {operation}
     <message>
         <source>Workflow transferred. Select parameters and outputs in the Editor tab, then register.</source>
         <translation>Flujo de trabajo transferido. Seleccione los parámetros y salidas en la pestaña Editor, luego registre.</translation>
+    </message>
+    <message>
+        <source>Live prompt</source>
+        <translation>Prompt en tiempo real</translation>
+    </message>
+    <message>
+        <source>Text (node)</source>
+        <translation>Texto (nodo)</translation>
     </message>
 </context>
 <context>
@@ -18319,6 +18415,122 @@ Tipo: {type}</translation>
     <message>
         <source>User prompt is empty.</source>
         <translation>El prompt del usuario está vacío.</translation>
+    </message>
+    <message>
+        <source>Unsaved changes</source>
+        <translation>Cambios sin guardar</translation>
+    </message>
+    <message>
+        <source>More actions</source>
+        <translation>Más acciones</translation>
+    </message>
+    <message>
+        <source>New line</source>
+        <translation>Salto de línea</translation>
+    </message>
+    <message>
+        <source>Comma</source>
+        <translation>Coma</translation>
+    </message>
+    <message>
+        <source>Comma and space</source>
+        <translation>Coma y espacio</translation>
+    </message>
+    <message>
+        <source>Custom</source>
+        <translation>Personalizado</translation>
+    </message>
+    <message>
+        <source>{count} characters</source>
+        <translation>{count} caracteres</translation>
+    </message>
+    <message>
+        <source>Tidy with LLM</source>
+        <translation>Ordenar con LLM</translation>
+    </message>
+    <message>
+        <source>This model does not use temperature.</source>
+        <translation>Este modelo no usa la temperatura.</translation>
+    </message>
+    <message>
+        <source>Output copied to clipboard.</source>
+        <translation>Salida copiada al portapapeles.</translation>
+    </message>
+    <message>
+        <source>All types</source>
+        <translation>Todos los tipos</translation>
+    </message>
+    <message>
+        <source>Body</source>
+        <translation>Cuerpo</translation>
+    </message>
+    <message>
+        <source>Import</source>
+        <translation>Importar</translation>
+    </message>
+    <message>
+        <source>Import prompt</source>
+        <translation>Importar prompt</translation>
+    </message>
+    <message>
+        <source>Imported '{title}'.</source>
+        <translation>Se importó '{title}'.</translation>
+    </message>
+    <message>
+        <source>Import failed: {error}</source>
+        <translation>Error al importar: {error}</translation>
+    </message>
+    <message>
+        <source>The file is empty.</source>
+        <translation>El archivo está vacío.</translation>
+    </message>
+    <message>
+        <source>Other model…</source>
+        <translation>Otro modelo…</translation>
+    </message>
+    <message>
+        <source>Model ID</source>
+        <translation>ID del modelo</translation>
+    </message>
+    <message>
+        <source>Enter a model ID:</source>
+        <translation>Introduce el ID del modelo:</translation>
+    </message>
+    <message>
+        <source>Refresh the model list</source>
+        <translation>Actualizar la lista de modelos</translation>
+    </message>
+    <message>
+        <source>Loaded {count} models.</source>
+        <translation>Se cargaron {count} modelos.</translation>
+    </message>
+    <message>
+        <source>Couldn't update the model list: {error}</source>
+        <translation>No se pudo actualizar la lista de modelos: {error}</translation>
+    </message>
+    <message>
+        <source>Local (OpenAI compatible)</source>
+        <translation>Local (compatible con OpenAI)</translation>
+    </message>
+    <message>
+        <source>Server URL</source>
+        <translation>URL del servidor</translation>
+    </message>
+    <message>
+        <source>(No models yet)</source>
+        <translation>(Aún no hay modelos)</translation>
+    </message>
+    <message>
+        <source>Select a model first.</source>
+        <translation>Primero selecciona un modelo.</translation>
+    </message>
+    <message>
+        <source>Enter the URL of a server on this PC, such as http://localhost:11434/v1.</source>
+        <translation>Introduce la URL de un servidor en este PC, como http://localhost:11434/v1.</translation>
+    </message>
+    <message>
+        <source>Ollama's default context is short and silently cuts the start of long prompts; raise it with OLLAMA_CONTEXT_LENGTH or the model's num_ctx.</source>
+        <translation>El contexto predeterminado de Ollama es corto y recorta sin aviso el inicio de los prompts largos; auméntalo con OLLAMA_CONTEXT_LENGTH o el num_ctx del modelo.</translation>
     </message>
 </context>
 <context>
@@ -21015,6 +21227,410 @@ Do you want to save them?</source>
 </context>
 <context>
     <name>__shared__</name>
+    <message>
+        <source>Choose a different name for this model.</source>
+        <translation>Elige otro nombre para este modelo.</translation>
+    </message>
+    <message>
+        <source>Enter a name between 1 and 80 characters.</source>
+        <translation>Escribe un nombre de entre 1 y 80 caracteres.</translation>
+    </message>
+    <message>
+        <source>Saved poses</source>
+        <translation>Poses guardadas</translation>
+    </message>
+    <message>
+        <source>Select saved pose</source>
+        <translation>Elegir pose guardada</translation>
+    </message>
+    <message>
+        <source>Save current pose</source>
+        <translation>Guardar pose actual</translation>
+    </message>
+    <message>
+        <source>Apply saved pose</source>
+        <translation>Aplicar pose guardada</translation>
+    </message>
+    <message>
+        <source>Delete saved pose</source>
+        <translation>Eliminar pose guardada</translation>
+    </message>
+    <message>
+        <source>Could not load pose presets</source>
+        <translation>No se pudieron cargar las poses guardadas</translation>
+    </message>
+    <message>
+        <source>Pose presets</source>
+        <translation>Poses guardadas</translation>
+    </message>
+    <message>
+        <source>Save pose preset</source>
+        <translation>Guardar pose</translation>
+    </message>
+    <message>
+        <source>Pose preset name</source>
+        <translation>Nombre de la pose</translation>
+    </message>
+    <message>
+        <source>Could not save pose preset</source>
+        <translation>No se pudo guardar la pose</translation>
+    </message>
+    <message>
+        <source>Could not apply pose preset</source>
+        <translation>No se pudo aplicar la pose</translation>
+    </message>
+    <message>
+        <source>Could not delete pose preset</source>
+        <translation>No se pudo eliminar la pose</translation>
+    </message>
+    <message>
+        <source>Delete selected pose preset?</source>
+        <translation>¿Eliminar la pose seleccionada?</translation>
+    </message>
+    <message>
+      <source>Fingers together</source>
+      <translation>Dedos juntos</translation>
+    </message>
+    <message>
+      <source>Fingers spread</source>
+      <translation>Dedos separados</translation>
+    </message>
+    <message>
+      <source>Flat hand</source>
+      <translation>Mano plana</translation>
+    </message>
+    <message>
+      <source>Soft fist</source>
+      <translation>Puño suave</translation>
+    </message>
+    <message>
+      <source>Tight fist</source>
+      <translation>Puño apretado</translation>
+    </message>
+    <message>
+      <source>Half-closed hand</source>
+      <translation>Mano semicerrada</translation>
+    </message>
+    <message>
+      <source>Cupped hand</source>
+      <translation>Mano ahuecada</translation>
+    </message>
+    <message>
+      <source>Deeply cupped hand</source>
+      <translation>Mano muy ahuecada</translation>
+    </message>
+    <message>
+      <source>Thumbs up</source>
+      <translation>Pulgar arriba</translation>
+    </message>
+    <message>
+      <source>OK sign</source>
+      <translation>Signo de OK</translation>
+    </message>
+    <message>
+      <source>Horns sign</source>
+      <translation>Signo de cuernos</translation>
+    </message>
+    <message>
+      <source>Shaka sign</source>
+      <translation>Signo shaka</translation>
+    </message>
+    <message>
+      <source>Three extended fingers</source>
+      <translation>Tres dedos extendidos</translation>
+    </message>
+    <message>
+      <source>Four extended fingers</source>
+      <translation>Cuatro dedos extendidos</translation>
+    </message>
+    <message>
+      <source>Thumb and index</source>
+      <translation>Pulgar e índice</translation>
+    </message>
+    <message>
+      <source>Thumb, index and middle</source>
+      <translation>Pulgar, índice y medio</translation>
+    </message>
+    <message>
+      <source>Crossed fingers</source>
+      <translation>Dedos cruzados</translation>
+    </message>
+    <message>
+      <source>Finger heart</source>
+      <translation>Corazón con los dedos</translation>
+    </message>
+    <message>
+      <source>Beckoning finger</source>
+      <translation>Dedo llamando</translation>
+    </message>
+    <message>
+      <source>Stop gesture</source>
+      <translation>Gesto de alto</translation>
+    </message>
+    <message>
+      <source>Count one</source>
+      <translation>Contar uno</translation>
+    </message>
+    <message>
+      <source>Count two</source>
+      <translation>Contar dos</translation>
+    </message>
+    <message>
+      <source>Count three</source>
+      <translation>Contar tres</translation>
+    </message>
+    <message>
+      <source>Count four</source>
+      <translation>Contar cuatro</translation>
+    </message>
+    <message>
+      <source>Count five</source>
+      <translation>Contar cinco</translation>
+    </message>
+    <message>
+      <source>Small pinch</source>
+      <translation>Pinza pequeña</translation>
+    </message>
+    <message>
+      <source>Wide pinch</source>
+      <translation>Pinza amplia</translation>
+    </message>
+    <message>
+      <source>Tripod pinch</source>
+      <translation>Pinza de tres dedos</translation>
+    </message>
+    <message>
+      <source>Precision grip</source>
+      <translation>Agarre de precisión</translation>
+    </message>
+    <message>
+      <source>Pen grip</source>
+      <translation>Agarrar un bolígrafo</translation>
+    </message>
+    <message>
+      <source>Brush grip</source>
+      <translation>Agarrar un pincel</translation>
+    </message>
+    <message>
+      <source>Cylinder grip</source>
+      <translation>Agarre cilíndrico</translation>
+    </message>
+    <message>
+      <source>Thin handle grip</source>
+      <translation>Agarrar un mango fino</translation>
+    </message>
+    <message>
+      <source>Ball grip</source>
+      <translation>Agarrar una pelota</translation>
+    </message>
+    <message>
+      <source>Large ball grip</source>
+      <translation>Agarrar una pelota grande</translation>
+    </message>
+    <message>
+      <source>Hook grip</source>
+      <translation>Agarre de gancho</translation>
+    </message>
+    <message>
+      <source>Key pinch</source>
+      <translation>Pinza de llave</translation>
+    </message>
+    <message>
+      <source>Claw hand</source>
+      <translation>Mano en garra</translation>
+    </message>
+    <message>
+      <source>Gentle touch</source>
+      <translation>Toque suave</translation>
+    </message>
+    <message>
+      <source>Fingertip touch</source>
+      <translation>Toque con la punta</translation>
+    </message>
+    <message>
+      <source>Fabric pinch</source>
+      <translation>Pinzar tela</translation>
+    </message>
+    <message>
+      <source>Delicate hand</source>
+      <translation>Mano delicada</translation>
+    </message>
+    <message>
+      <source>Tense hand</source>
+      <translation>Mano tensa</translation>
+    </message>
+    <message>
+      <source>Basic hand poses</source>
+      <translation>Poses básicas de mano</translation>
+    </message>
+    <message>
+      <source>Hand gestures</source>
+      <translation>Gestos de mano</translation>
+    </message>
+    <message>
+      <source>Finger counting</source>
+      <translation>Contar con los dedos</translation>
+    </message>
+    <message>
+      <source>Grasping poses</source>
+      <translation>Poses de agarre</translation>
+    </message>
+    <message>
+      <source>Expressive hands</source>
+      <translation>Manos expresivas</translation>
+    </message>
+    <message>
+      <source>All hand poses</source>
+      <translation>Todas las poses de mano</translation>
+    </message>
+    <message>
+        <source>Edit selected hand</source>
+        <translation>Editar mano seleccionada</translation>
+    </message>
+    <message>
+        <source>Hand pose</source>
+        <translation>Pose de la mano</translation>
+    </message>
+    <message>
+        <source>Finger</source>
+        <translation>Dedo</translation>
+    </message>
+    <message>
+        <source>Finger curl</source>
+        <translation>Flexión</translation>
+    </message>
+    <message>
+        <source>Finger spread</source>
+        <translation>Separación</translation>
+    </message>
+    <message>
+        <source>Cup palm</source>
+        <translation>Ahuecar la palma</translation>
+    </message>
+    <message>
+        <source>Joint</source>
+        <translation>Articulación</translation>
+    </message>
+    <message>
+        <source>Reset hand</source>
+        <translation>Restablecer mano</translation>
+    </message>
+    <message>
+        <source>Thumb</source>
+        <translation>Pulgar</translation>
+    </message>
+    <message>
+        <source>Index finger</source>
+        <translation>Índice</translation>
+    </message>
+    <message>
+        <source>Middle finger</source>
+        <translation>Dedo medio</translation>
+    </message>
+    <message>
+        <source>Ring finger</source>
+        <translation>Anular</translation>
+    </message>
+    <message>
+        <source>Little finger</source>
+        <translation>Meñique</translation>
+    </message>
+    <message>
+        <source>Palm</source>
+        <translation>Palma</translation>
+    </message>
+    <message>
+        <source>Wrist</source>
+        <translation>Muñeca</translation>
+    </message>
+    <message>
+        <source>Open hand</source>
+        <translation>Mano abierta</translation>
+    </message>
+    <message>
+        <source>Relaxed hand</source>
+        <translation>Mano relajada</translation>
+    </message>
+    <message>
+        <source>Fist</source>
+        <translation>Puño</translation>
+    </message>
+    <message>
+        <source>Pointing hand</source>
+        <translation>Mano señalando</translation>
+    </message>
+    <message>
+        <source>Peace sign</source>
+        <translation>Señal de paz</translation>
+    </message>
+    <message>
+        <source>Reset selected part</source>
+        <translation>Restablecer parte seleccionada</translation>
+    </message>
+    <message>
+        <source>GPT Image</source>
+        <translation>GPT Image</translation>
+    </message>
+    <message>
+        <source>Perspective ruler</source>
+        <translation>Regla de perspectiva</translation>
+    </message>
+    <message>
+        <source>1-point perspective</source>
+        <translation>Perspectiva de un punto</translation>
+    </message>
+    <message>
+        <source>2-point perspective</source>
+        <translation>Perspectiva de dos puntos</translation>
+    </message>
+    <message>
+        <source>3-point perspective</source>
+        <translation>Perspectiva de tres puntos</translation>
+    </message>
+    <message>
+        <source>Drawing direction</source>
+        <translation>Dirección de dibujo</translation>
+    </message>
+    <message>
+        <source>Edit vanishing points</source>
+        <translation>Editar puntos de fuga</translation>
+    </message>
+    <message>
+        <source>Drag VP handles on the canvas. Esc cancels the drag.</source>
+        <translation>Arrastra los controles VP en el lienzo. Esc cancela el arrastre.</translation>
+    </message>
+    <message>
+        <source>Perspective Ruler...</source>
+        <translation>Regla de perspectiva...</translation>
+    </message>
+    <message>
+        <source>LivePrompt default separator</source>
+        <translation>Separador predeterminado de LivePrompt</translation>
+    </message>
+    <message>
+        <source>Use \n for a new line or \t for a tab. Empty uses a new line. Applies to new LivePrompts; saved separators take precedence.</source>
+        <translation>Usa \n para un salto de línea o \t para una tabulación. Si está vacío, se usa un salto de línea. Se aplica a nuevos LivePrompts; los separadores guardados tienen prioridad.</translation>
+    </message>
+    <message>
+        <source>Register in AI Effect Manager</source>
+        <translation>Registrar en AI Effect Manager</translation>
+    </message>
+    <message>
+        <source>Save the current prompt and options as a preset. Choose input layers again when applying the preset.</source>
+        <translation>Guarda el prompt y las opciones actuales como un ajuste preestablecido. Vuelve a elegir las capas de entrada al aplicarlo.</translation>
+    </message>
+    <message>
+        <source>Preset name is required</source>
+        <translation>Introduce un nombre para el ajuste</translation>
+    </message>
+    <message>
+        <source>Registered preset: {name}</source>
+        <translation>Ajuste registrado: {name}</translation>
+    </message>
+    <message>
+        <source>Could not register preset. AI Effect Manager may be unavailable or saving failed.</source>
+        <translation>No se pudo registrar el ajuste. AI Effect Manager puede no estar disponible o el guardado ha fallado.</translation>
+    </message>
     <message>
         <source> %</source>
         <translation> %</translation>
@@ -35621,6 +36237,326 @@ Click to show as panel</source>
 
 Haga clic para mostrar como panel</translation>
     </message>
+    <message>
+        <source>Emphasis</source>
+        <translation>Énfasis</translation>
+    </message>
+    <message>
+        <source>Weaken emphasis</source>
+        <translation>Reducir énfasis</translation>
+    </message>
+    <message>
+        <source>Strengthen emphasis</source>
+        <translation>Aumentar énfasis</translation>
+    </message>
+    <message>
+        <source>Remove from LivePrompt</source>
+        <translation>Quitar de LivePrompt</translation>
+    </message>
+    <message>
+        <source>Unsaved changes</source>
+        <translation>Cambios sin guardar</translation>
+    </message>
+    <message>
+        <source>More actions</source>
+        <translation>Más acciones</translation>
+    </message>
+    <message>
+        <source>New line</source>
+        <translation>Salto de línea</translation>
+    </message>
+    <message>
+        <source>Comma</source>
+        <translation>Coma</translation>
+    </message>
+    <message>
+        <source>Comma and space</source>
+        <translation>Coma y espacio</translation>
+    </message>
+    <message>
+        <source>{count} characters</source>
+        <translation>{count} caracteres</translation>
+    </message>
+    <message>
+        <source>Tidy with LLM</source>
+        <translation>Ordenar con LLM</translation>
+    </message>
+    <message>
+        <source>Text (node)</source>
+        <translation>Texto (nodo)</translation>
+    </message>
+    <message>
+        <source>Plan: {count} generations</source>
+        <translation>Previsto: {count} generaciones</translation>
+    </message>
+    <message>
+        <source>Plan: until stopped</source>
+        <translation>Previsto: hasta detener</translation>
+    </message>
+    <message>
+        <source>Plan: one cycle of {count}</source>
+        <translation>Previsto: un ciclo de {count}</translation>
+    </message>
+    <message>
+        <source>Generated on this layer ({count})</source>
+        <translation>Generado en esta capa ({count})</translation>
+    </message>
+    <message>
+        <source>Show in Gallery</source>
+        <translation>Mostrar en la galería</translation>
+    </message>
+    <message>
+        <source>Open in Gallery (this layer only)</source>
+        <translation>Abrir en la galería (solo esta capa)</translation>
+    </message>
+    <message>
+        <source>No generations yet.</source>
+        <translation>Todavía no hay generaciones.</translation>
+    </message>
+    <message>
+        <source>Layer: {name}</source>
+        <translation>Capa: {name}</translation>
+    </message>
+    <message>
+        <source>Clear the layer filter</source>
+        <translation>Quitar el filtro de capa</translation>
+    </message>
+    <message>
+        <source>This model does not use temperature.</source>
+        <translation>Este modelo no usa la temperatura.</translation>
+    </message>
+    <message>
+        <source>Output copied to clipboard.</source>
+        <translation>Salida copiada al portapapeles.</translation>
+    </message>
+    <message>
+        <source>All types</source>
+        <translation>Todos los tipos</translation>
+    </message>
+    <message>
+        <source>Import prompt</source>
+        <translation>Importar prompt</translation>
+    </message>
+    <message>
+        <source>Imported '{title}'.</source>
+        <translation>Se importó '{title}'.</translation>
+    </message>
+    <message>
+        <source>Import failed: {error}</source>
+        <translation>Error al importar: {error}</translation>
+    </message>
+    <message>
+        <source>The file is empty.</source>
+        <translation>El archivo está vacío.</translation>
+    </message>
+    <message>
+        <source>Other model…</source>
+        <translation>Otro modelo…</translation>
+    </message>
+    <message>
+        <source>Model ID</source>
+        <translation>ID del modelo</translation>
+    </message>
+    <message>
+        <source>Enter a model ID:</source>
+        <translation>Introduce el ID del modelo:</translation>
+    </message>
+    <message>
+        <source>Refresh the model list</source>
+        <translation>Actualizar la lista de modelos</translation>
+    </message>
+    <message>
+        <source>Loaded {count} models.</source>
+        <translation>Se cargaron {count} modelos.</translation>
+    </message>
+    <message>
+        <source>Couldn't update the model list: {error}</source>
+        <translation>No se pudo actualizar la lista de modelos: {error}</translation>
+    </message>
+    <message>
+        <source>Local (OpenAI compatible)</source>
+        <translation>Local (compatible con OpenAI)</translation>
+    </message>
+    <message>
+        <source>Server URL</source>
+        <translation>URL del servidor</translation>
+    </message>
+    <message>
+        <source>(No models yet)</source>
+        <translation>(Aún no hay modelos)</translation>
+    </message>
+    <message>
+        <source>Select a model first.</source>
+        <translation>Primero selecciona un modelo.</translation>
+    </message>
+    <message>
+        <source>Enter the URL of a server on this PC, such as http://localhost:11434/v1.</source>
+        <translation>Introduce la URL de un servidor en este PC, como http://localhost:11434/v1.</translation>
+    </message>
+    <message>
+        <source>Ollama's default context is short and silently cuts the start of long prompts; raise it with OLLAMA_CONTEXT_LENGTH or the model's num_ctx.</source>
+        <translation>El contexto predeterminado de Ollama es corto y recorta sin aviso el inicio de los prompts largos; auméntalo con OLLAMA_CONTEXT_LENGTH o el num_ctx del modelo.</translation>
+    </message>
+    <message>
+        <source>Fill input transparency</source>
+        <translation>Rellenar la transparencia de entrada</translation>
+    </message>
+    <message>
+        <source>Fill transparent areas of input images with this color before sending. Source layers are unchanged.</source>
+        <translation>Rellena las áreas transparentes de las imágenes de entrada con este color antes de enviarlas. Las capas originales no se modifican.</translation>
+    </message>
+    <message>
+        <source>Input fill color</source>
+        <translation>Color de relleno de entrada</translation>
+    </message>
+    <message>
+        <source>Add drawing figure</source>
+        <translation>Añadir figura de dibujo</translation>
+    </message>
+    <message>
+        <source>Apply pose</source>
+        <translation>Aplicar pose</translation>
+    </message>
+    <message>
+        <source>Arms out</source>
+        <translation>Brazos abiertos</translation>
+    </message>
+    <message>
+        <source>Chest</source>
+        <translation>Pecho</translation>
+    </message>
+    <message>
+        <source>Could not add drawing figure</source>
+        <translation>No se pudo añadir la figura de dibujo</translation>
+    </message>
+    <message>
+        <source>Could not export OpenPose</source>
+        <translation>No se pudo exportar OpenPose</translation>
+    </message>
+    <message>
+        <source>Crouching</source>
+        <translation>En cuclillas</translation>
+    </message>
+    <message>
+        <source>Drag joints; Alt-drag changes depth. Pink joints are pinned.</source>
+        <translation>Arrastra las articulaciones; Alt y arrastrar cambia la profundidad. Las articulaciones rosas están fijadas.</translation>
+    </message>
+    <message>
+        <source>Drag joints to move; drag XYZ rings to rotate. Alt-drag changes depth. Pink joints are pinned.</source>
+        <translation>Arrastra las articulaciones para moverlas y los anillos XYZ para girarlas. Alt al arrastrar cambia la profundidad. Las articulaciones rosas están fijadas.</translation>
+    </message>
+    <message>
+        <source>Drawing figure</source>
+        <translation>Figura de dibujo</translation>
+    </message>
+    <message>
+        <source>Edit pose</source>
+        <translation>Editar pose</translation>
+    </message>
+    <message>
+        <source>Export OpenPose</source>
+        <translation>Exportar OpenPose</translation>
+    </message>
+    <message>
+        <source>Head</source>
+        <translation>Cabeza</translation>
+    </message>
+    <message>
+        <source>Left Ankle</source>
+        <translation>Izquierda: Tobillo</translation>
+    </message>
+    <message>
+        <source>Left Collar</source>
+        <translation>Izquierda: Clavícula</translation>
+    </message>
+    <message>
+        <source>Left Elbow</source>
+        <translation>Izquierda: Codo</translation>
+    </message>
+    <message>
+        <source>Left Hip</source>
+        <translation>Izquierda: Cadera</translation>
+    </message>
+    <message>
+        <source>Left Knee</source>
+        <translation>Izquierda: Rodilla</translation>
+    </message>
+    <message>
+        <source>Left Shoulder</source>
+        <translation>Izquierda: Hombro</translation>
+    </message>
+    <message>
+        <source>Left Wrist</source>
+        <translation>Izquierda: Muñeca</translation>
+    </message>
+    <message>
+        <source>Neck</source>
+        <translation>Cuello</translation>
+    </message>
+    <message>
+        <source>OpenPose layer</source>
+        <translation>Capa OpenPose</translation>
+    </message>
+    <message>
+        <source>Pelvis</source>
+        <translation>Pelvis</translation>
+    </message>
+    <message>
+        <source>Pin / unpin joint</source>
+        <translation>Fijar / liberar articulación</translation>
+    </message>
+    <message>
+        <source>Pose assistance</source>
+        <translation>Asistencia de pose</translation>
+    </message>
+    <message>
+        <source>Reaching</source>
+        <translation>Extendiendo el brazo</translation>
+    </message>
+    <message>
+        <source>Right Ankle</source>
+        <translation>Derecha: Tobillo</translation>
+    </message>
+    <message>
+        <source>Right Collar</source>
+        <translation>Derecha: Clavícula</translation>
+    </message>
+    <message>
+        <source>Right Elbow</source>
+        <translation>Derecha: Codo</translation>
+    </message>
+    <message>
+        <source>Right Hip</source>
+        <translation>Derecha: Cadera</translation>
+    </message>
+    <message>
+        <source>Right Knee</source>
+        <translation>Derecha: Rodilla</translation>
+    </message>
+    <message>
+        <source>Right Shoulder</source>
+        <translation>Derecha: Hombro</translation>
+    </message>
+    <message>
+        <source>Right Wrist</source>
+        <translation>Derecha: Muñeca</translation>
+    </message>
+    <message>
+        <source>Sitting</source>
+        <translation>Sentado</translation>
+    </message>
+    <message>
+        <source>Standing</source>
+        <translation>De pie</translation>
+    </message>
+    <message>
+        <source>Waist</source>
+        <translation>Cintura</translation>
+    </message>
+    <message>
+        <source>Walking</source>
+        <translation>Caminando</translation>
+    </message>
 </context>
 <context>
     <name>app_ai_effect_generation_commit</name>
@@ -36266,6 +37202,670 @@ Haga clic para mostrar como panel</translation>
     <message>
         <source>Use as Inpaint Mask</source>
         <translation>Usar como máscara de restauración</translation>
+    </message>
+</context>
+<context>
+    <name>AIEffectRegisterButton</name>
+    <message>
+        <source>Register in AI Effect Manager</source>
+        <translation>Registrar en AI Effect Manager</translation>
+    </message>
+    <message>
+        <source>Save the current prompt and options as a preset. Choose input layers again when applying the preset.</source>
+        <translation>Guarda el prompt y las opciones actuales como un ajuste preestablecido. Vuelve a elegir las capas de entrada al aplicarlo.</translation>
+    </message>
+    <message>
+        <source>Preset name:</source>
+        <translation>Nombre del ajuste:</translation>
+    </message>
+    <message>
+        <source>Preset name is required</source>
+        <translation>Introduce un nombre para el ajuste</translation>
+    </message>
+    <message>
+        <source>Registered preset: {name}</source>
+        <translation>Ajuste registrado: {name}</translation>
+    </message>
+    <message>
+        <source>Could not register preset. AI Effect Manager may be unavailable or saving failed.</source>
+        <translation>No se pudo registrar el ajuste. AI Effect Manager puede no estar disponible o el guardado ha fallado.</translation>
+    </message>
+</context>
+<context>
+    <name>PromptChipWidget</name>
+    <message>
+        <source>Emphasis</source>
+        <translation>Énfasis</translation>
+    </message>
+    <message>
+        <source>Weaken emphasis</source>
+        <translation>Reducir énfasis</translation>
+    </message>
+    <message>
+        <source>Strengthen emphasis</source>
+        <translation>Aumentar énfasis</translation>
+    </message>
+    <message>
+        <source>Clear</source>
+        <translation>Quitar</translation>
+    </message>
+    <message>
+        <source>Remove from LivePrompt</source>
+        <translation>Quitar de LivePrompt</translation>
+    </message>
+</context>
+<context>
+    <name>LayerGenerationHistory</name>
+    <message>
+        <source>Generated on this layer ({count})</source>
+        <translation>Generado en esta capa ({count})</translation>
+    </message>
+    <message>
+        <source>Show in Gallery</source>
+        <translation>Mostrar en la galería</translation>
+    </message>
+    <message>
+        <source>Open in Gallery (this layer only)</source>
+        <translation>Abrir en la galería (solo esta capa)</translation>
+    </message>
+    <message>
+        <source>No generations yet.</source>
+        <translation>Todavía no hay generaciones.</translation>
+    </message>
+</context>
+<context>
+    <name>InputAlphaControls</name>
+    <message>
+        <source>Fill input transparency</source>
+        <translation>Rellenar la transparencia de entrada</translation>
+    </message>
+    <message>
+        <source>Fill transparent areas of input images with this color before sending. Source layers are unchanged.</source>
+        <translation>Rellena las áreas transparentes de las imágenes de entrada con este color antes de enviarlas. Las capas originales no se modifican.</translation>
+    </message>
+    <message>
+        <source>Input fill color</source>
+        <translation>Color de relleno de entrada</translation>
+    </message>
+</context>
+<context>
+    <name>DrawingFigure</name>
+    <message>
+        <source>Choose a different name for this model.</source>
+        <translation>Elige otro nombre para este modelo.</translation>
+    </message>
+    <message>
+        <source>Enter a name between 1 and 80 characters.</source>
+        <translation>Escribe un nombre de entre 1 y 80 caracteres.</translation>
+    </message>
+    <message>
+        <source>Saved poses</source>
+        <translation>Poses guardadas</translation>
+    </message>
+    <message>
+        <source>Select saved pose</source>
+        <translation>Elegir pose guardada</translation>
+    </message>
+    <message>
+        <source>Save current pose</source>
+        <translation>Guardar pose actual</translation>
+    </message>
+    <message>
+        <source>Apply saved pose</source>
+        <translation>Aplicar pose guardada</translation>
+    </message>
+    <message>
+        <source>Delete saved pose</source>
+        <translation>Eliminar pose guardada</translation>
+    </message>
+    <message>
+        <source>Could not load pose presets</source>
+        <translation>No se pudieron cargar las poses guardadas</translation>
+    </message>
+    <message>
+        <source>Pose presets</source>
+        <translation>Poses guardadas</translation>
+    </message>
+    <message>
+        <source>Save pose preset</source>
+        <translation>Guardar pose</translation>
+    </message>
+    <message>
+        <source>Pose preset name</source>
+        <translation>Nombre de la pose</translation>
+    </message>
+    <message>
+        <source>Could not save pose preset</source>
+        <translation>No se pudo guardar la pose</translation>
+    </message>
+    <message>
+        <source>Could not apply pose preset</source>
+        <translation>No se pudo aplicar la pose</translation>
+    </message>
+    <message>
+        <source>Could not delete pose preset</source>
+        <translation>No se pudo eliminar la pose</translation>
+    </message>
+    <message>
+        <source>Delete selected pose preset?</source>
+        <translation>¿Eliminar la pose seleccionada?</translation>
+    </message>
+    <message>
+      <source>Fingers together</source>
+      <translation>Dedos juntos</translation>
+    </message>
+    <message>
+      <source>Fingers spread</source>
+      <translation>Dedos separados</translation>
+    </message>
+    <message>
+      <source>Flat hand</source>
+      <translation>Mano plana</translation>
+    </message>
+    <message>
+      <source>Soft fist</source>
+      <translation>Puño suave</translation>
+    </message>
+    <message>
+      <source>Tight fist</source>
+      <translation>Puño apretado</translation>
+    </message>
+    <message>
+      <source>Half-closed hand</source>
+      <translation>Mano semicerrada</translation>
+    </message>
+    <message>
+      <source>Cupped hand</source>
+      <translation>Mano ahuecada</translation>
+    </message>
+    <message>
+      <source>Deeply cupped hand</source>
+      <translation>Mano muy ahuecada</translation>
+    </message>
+    <message>
+      <source>Thumbs up</source>
+      <translation>Pulgar arriba</translation>
+    </message>
+    <message>
+      <source>OK sign</source>
+      <translation>Signo de OK</translation>
+    </message>
+    <message>
+      <source>Horns sign</source>
+      <translation>Signo de cuernos</translation>
+    </message>
+    <message>
+      <source>Shaka sign</source>
+      <translation>Signo shaka</translation>
+    </message>
+    <message>
+      <source>Three extended fingers</source>
+      <translation>Tres dedos extendidos</translation>
+    </message>
+    <message>
+      <source>Four extended fingers</source>
+      <translation>Cuatro dedos extendidos</translation>
+    </message>
+    <message>
+      <source>Thumb and index</source>
+      <translation>Pulgar e índice</translation>
+    </message>
+    <message>
+      <source>Thumb, index and middle</source>
+      <translation>Pulgar, índice y medio</translation>
+    </message>
+    <message>
+      <source>Crossed fingers</source>
+      <translation>Dedos cruzados</translation>
+    </message>
+    <message>
+      <source>Finger heart</source>
+      <translation>Corazón con los dedos</translation>
+    </message>
+    <message>
+      <source>Beckoning finger</source>
+      <translation>Dedo llamando</translation>
+    </message>
+    <message>
+      <source>Stop gesture</source>
+      <translation>Gesto de alto</translation>
+    </message>
+    <message>
+      <source>Count one</source>
+      <translation>Contar uno</translation>
+    </message>
+    <message>
+      <source>Count two</source>
+      <translation>Contar dos</translation>
+    </message>
+    <message>
+      <source>Count three</source>
+      <translation>Contar tres</translation>
+    </message>
+    <message>
+      <source>Count four</source>
+      <translation>Contar cuatro</translation>
+    </message>
+    <message>
+      <source>Count five</source>
+      <translation>Contar cinco</translation>
+    </message>
+    <message>
+      <source>Small pinch</source>
+      <translation>Pinza pequeña</translation>
+    </message>
+    <message>
+      <source>Wide pinch</source>
+      <translation>Pinza amplia</translation>
+    </message>
+    <message>
+      <source>Tripod pinch</source>
+      <translation>Pinza de tres dedos</translation>
+    </message>
+    <message>
+      <source>Precision grip</source>
+      <translation>Agarre de precisión</translation>
+    </message>
+    <message>
+      <source>Pen grip</source>
+      <translation>Agarrar un bolígrafo</translation>
+    </message>
+    <message>
+      <source>Brush grip</source>
+      <translation>Agarrar un pincel</translation>
+    </message>
+    <message>
+      <source>Cylinder grip</source>
+      <translation>Agarre cilíndrico</translation>
+    </message>
+    <message>
+      <source>Thin handle grip</source>
+      <translation>Agarrar un mango fino</translation>
+    </message>
+    <message>
+      <source>Ball grip</source>
+      <translation>Agarrar una pelota</translation>
+    </message>
+    <message>
+      <source>Large ball grip</source>
+      <translation>Agarrar una pelota grande</translation>
+    </message>
+    <message>
+      <source>Hook grip</source>
+      <translation>Agarre de gancho</translation>
+    </message>
+    <message>
+      <source>Key pinch</source>
+      <translation>Pinza de llave</translation>
+    </message>
+    <message>
+      <source>Claw hand</source>
+      <translation>Mano en garra</translation>
+    </message>
+    <message>
+      <source>Gentle touch</source>
+      <translation>Toque suave</translation>
+    </message>
+    <message>
+      <source>Fingertip touch</source>
+      <translation>Toque con la punta</translation>
+    </message>
+    <message>
+      <source>Fabric pinch</source>
+      <translation>Pinzar tela</translation>
+    </message>
+    <message>
+      <source>Delicate hand</source>
+      <translation>Mano delicada</translation>
+    </message>
+    <message>
+      <source>Tense hand</source>
+      <translation>Mano tensa</translation>
+    </message>
+    <message>
+      <source>Basic hand poses</source>
+      <translation>Poses básicas de mano</translation>
+    </message>
+    <message>
+      <source>Hand gestures</source>
+      <translation>Gestos de mano</translation>
+    </message>
+    <message>
+      <source>Finger counting</source>
+      <translation>Contar con los dedos</translation>
+    </message>
+    <message>
+      <source>Grasping poses</source>
+      <translation>Poses de agarre</translation>
+    </message>
+    <message>
+      <source>Expressive hands</source>
+      <translation>Manos expresivas</translation>
+    </message>
+    <message>
+      <source>All hand poses</source>
+      <translation>Todas las poses de mano</translation>
+    </message>
+    <message>
+        <source>Edit selected hand</source>
+        <translation>Editar mano seleccionada</translation>
+    </message>
+    <message>
+        <source>Hand pose</source>
+        <translation>Pose de la mano</translation>
+    </message>
+    <message>
+        <source>Finger</source>
+        <translation>Dedo</translation>
+    </message>
+    <message>
+        <source>Finger curl</source>
+        <translation>Flexión</translation>
+    </message>
+    <message>
+        <source>Finger spread</source>
+        <translation>Separación</translation>
+    </message>
+    <message>
+        <source>Cup palm</source>
+        <translation>Ahuecar la palma</translation>
+    </message>
+    <message>
+        <source>Joint</source>
+        <translation>Articulación</translation>
+    </message>
+    <message>
+        <source>Reset hand</source>
+        <translation>Restablecer mano</translation>
+    </message>
+    <message>
+        <source>Thumb</source>
+        <translation>Pulgar</translation>
+    </message>
+    <message>
+        <source>Index finger</source>
+        <translation>Índice</translation>
+    </message>
+    <message>
+        <source>Middle finger</source>
+        <translation>Dedo medio</translation>
+    </message>
+    <message>
+        <source>Ring finger</source>
+        <translation>Anular</translation>
+    </message>
+    <message>
+        <source>Little finger</source>
+        <translation>Meñique</translation>
+    </message>
+    <message>
+        <source>Palm</source>
+        <translation>Palma</translation>
+    </message>
+    <message>
+        <source>Wrist</source>
+        <translation>Muñeca</translation>
+    </message>
+    <message>
+        <source>Open hand</source>
+        <translation>Mano abierta</translation>
+    </message>
+    <message>
+        <source>Relaxed hand</source>
+        <translation>Mano relajada</translation>
+    </message>
+    <message>
+        <source>Fist</source>
+        <translation>Puño</translation>
+    </message>
+    <message>
+        <source>Pointing hand</source>
+        <translation>Mano señalando</translation>
+    </message>
+    <message>
+        <source>Peace sign</source>
+        <translation>Señal de paz</translation>
+    </message>
+    <message>
+        <source>Reset selected part</source>
+        <translation>Restablecer parte seleccionada</translation>
+    </message>
+    <message>
+        <source>Add drawing figure</source>
+        <translation>Añadir figura de dibujo</translation>
+    </message>
+    <message>
+        <source>Drawing figure</source>
+        <translation>Figura de dibujo</translation>
+    </message>
+    <message>
+        <source>Could not add drawing figure</source>
+        <translation>No se pudo añadir la figura de dibujo</translation>
+    </message>
+    <message>
+        <source>Edit pose</source>
+        <translation>Editar pose</translation>
+    </message>
+    <message>
+        <source>Apply pose</source>
+        <translation>Aplicar pose</translation>
+    </message>
+    <message>
+        <source>Pose assistance</source>
+        <translation>Asistencia de pose</translation>
+    </message>
+    <message>
+        <source>Pin / unpin joint</source>
+        <translation>Fijar / liberar articulación</translation>
+    </message>
+    <message>
+        <source>OpenPose layer</source>
+        <translation>Capa OpenPose</translation>
+    </message>
+    <message>
+        <source>Drag joints; Alt-drag changes depth. Pink joints are pinned.</source>
+        <translation>Arrastra las articulaciones; Alt y arrastrar cambia la profundidad. Las articulaciones rosas están fijadas.</translation>
+    </message>
+    <message>
+        <source>Drag joints to move; drag XYZ rings to rotate. Alt-drag changes depth. Pink joints are pinned.</source>
+        <translation>Arrastra las articulaciones para moverlas y los anillos XYZ para girarlas. Alt al arrastrar cambia la profundidad. Las articulaciones rosas están fijadas.</translation>
+    </message>
+    <message>
+        <source>Export OpenPose</source>
+        <translation>Exportar OpenPose</translation>
+    </message>
+    <message>
+        <source>Could not export OpenPose</source>
+        <translation>No se pudo exportar OpenPose</translation>
+    </message>
+    <message>
+        <source>Standing</source>
+        <translation>De pie</translation>
+    </message>
+    <message>
+        <source>Arms out</source>
+        <translation>Brazos abiertos</translation>
+    </message>
+    <message>
+        <source>Sitting</source>
+        <translation>Sentado</translation>
+    </message>
+    <message>
+        <source>Walking</source>
+        <translation>Caminando</translation>
+    </message>
+    <message>
+        <source>Crouching</source>
+        <translation>En cuclillas</translation>
+    </message>
+    <message>
+        <source>Reaching</source>
+        <translation>Extendiendo el brazo</translation>
+    </message>
+    <message>
+        <source>Pelvis</source>
+        <translation>Pelvis</translation>
+    </message>
+    <message>
+        <source>Waist</source>
+        <translation>Cintura</translation>
+    </message>
+    <message>
+        <source>Chest</source>
+        <translation>Pecho</translation>
+    </message>
+    <message>
+        <source>Neck</source>
+        <translation>Cuello</translation>
+    </message>
+    <message>
+        <source>Head</source>
+        <translation>Cabeza</translation>
+    </message>
+    <message>
+        <source>Left Collar</source>
+        <translation>Izquierda: Clavícula</translation>
+    </message>
+    <message>
+        <source>Left Shoulder</source>
+        <translation>Izquierda: Hombro</translation>
+    </message>
+    <message>
+        <source>Left Elbow</source>
+        <translation>Izquierda: Codo</translation>
+    </message>
+    <message>
+        <source>Left Wrist</source>
+        <translation>Izquierda: Muñeca</translation>
+    </message>
+    <message>
+        <source>Left Hip</source>
+        <translation>Izquierda: Cadera</translation>
+    </message>
+    <message>
+        <source>Left Knee</source>
+        <translation>Izquierda: Rodilla</translation>
+    </message>
+    <message>
+        <source>Left Ankle</source>
+        <translation>Izquierda: Tobillo</translation>
+    </message>
+    <message>
+        <source>Right Collar</source>
+        <translation>Derecha: Clavícula</translation>
+    </message>
+    <message>
+        <source>Right Shoulder</source>
+        <translation>Derecha: Hombro</translation>
+    </message>
+    <message>
+        <source>Right Elbow</source>
+        <translation>Derecha: Codo</translation>
+    </message>
+    <message>
+        <source>Right Wrist</source>
+        <translation>Derecha: Muñeca</translation>
+    </message>
+    <message>
+        <source>Right Hip</source>
+        <translation>Derecha: Cadera</translation>
+    </message>
+    <message>
+        <source>Right Knee</source>
+        <translation>Derecha: Rodilla</translation>
+    </message>
+    <message>
+        <source>Right Ankle</source>
+        <translation>Derecha: Tobillo</translation>
+    </message>
+</context>
+<context>
+    <name>DrawingFigureToolbarWidget</name>
+    <message>
+        <source>Could not export OpenPose</source>
+        <translation>No se pudo exportar OpenPose</translation>
+    </message>
+    <message>
+        <source>Export OpenPose</source>
+        <translation>Exportar OpenPose</translation>
+    </message>
+</context>
+<context>
+    <name>DrawingFigureHandEditor</name>
+    <message>
+        <source>Hand pose</source>
+        <translation>Pose de la mano</translation>
+    </message>
+    <message>
+        <source>Cup palm</source>
+        <translation>Ahuecar la palma</translation>
+    </message>
+    <message>
+        <source>Joint</source>
+        <translation>Articulación</translation>
+    </message>
+</context>
+<context>
+    <name>DrawingFigurePosePresetControls</name>
+    <message>
+        <source>Choose a different name for this model.</source>
+        <translation>Elige otro nombre para este modelo.</translation>
+    </message>
+    <message>
+        <source>Enter a name between 1 and 80 characters.</source>
+        <translation>Escribe un nombre de entre 1 y 80 caracteres.</translation>
+    </message>
+    <message>
+        <source>Saved poses</source>
+        <translation>Poses guardadas</translation>
+    </message>
+    <message>
+        <source>Select saved pose</source>
+        <translation>Elegir pose guardada</translation>
+    </message>
+    <message>
+        <source>Save current pose</source>
+        <translation>Guardar pose actual</translation>
+    </message>
+    <message>
+        <source>Apply saved pose</source>
+        <translation>Aplicar pose guardada</translation>
+    </message>
+    <message>
+        <source>Delete saved pose</source>
+        <translation>Eliminar pose guardada</translation>
+    </message>
+    <message>
+        <source>Could not load pose presets</source>
+        <translation>No se pudieron cargar las poses guardadas</translation>
+    </message>
+    <message>
+        <source>Pose presets</source>
+        <translation>Poses guardadas</translation>
+    </message>
+    <message>
+        <source>Save pose preset</source>
+        <translation>Guardar pose</translation>
+    </message>
+    <message>
+        <source>Pose preset name</source>
+        <translation>Nombre de la pose</translation>
+    </message>
+    <message>
+        <source>Could not save pose preset</source>
+        <translation>No se pudo guardar la pose</translation>
+    </message>
+    <message>
+        <source>Could not apply pose preset</source>
+        <translation>No se pudo aplicar la pose</translation>
+    </message>
+    <message>
+        <source>Could not delete pose preset</source>
+        <translation>No se pudo eliminar la pose</translation>
+    </message>
+    <message>
+        <source>Delete selected pose preset?</source>
+        <translation>¿Eliminar la pose seleccionada?</translation>
     </message>
 </context>
 </TS>

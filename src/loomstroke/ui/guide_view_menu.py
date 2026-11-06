@@ -13,7 +13,14 @@ from .dialogs.guide_templates_dialog import open_guide_templates
 
 
 def populate_guide_view_menu(window: Any, menu: Any) -> None:
+    from loomstroke.plugins.drawing_assist.perspective_controls import (  # noqa: PLC0415
+        open_perspective_ruler,
+    )
+
     submenu = window._submenu(menu, "Guides")
+    submenu.addAction(
+        window._mk_action("Perspective Ruler...", lambda: open_perspective_ruler(window))
+    )
     for source, key, default in (
         ("Show Guides", "view/guides_visible", True),
         ("Lock Guides", "view/guides_locked", False),

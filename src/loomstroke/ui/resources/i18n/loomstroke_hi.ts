@@ -3,6 +3,10 @@
 <TS version="2.1" language="hi">
     <context>
         <name>MainWindow</name>
+    <message>
+        <source>Perspective Ruler...</source>
+        <translation>परिप्रेक्ष्य रूलर...</translation>
+    </message>
         <message>
             <source>PSD export cannot preserve this filter layer. Export a flattened image instead.</source>
             <translation>PSD निर्यात इस फ़िल्टर लेयर को सुरक्षित नहीं रख सकता। इसके बजाय सभी लेयर मिलाकर बनाई गई छवि निर्यात करें।</translation>
@@ -2640,6 +2644,14 @@ After refreshing the token, any agents registered to this LoomStroke MCP server 
 </context>
     <context>
         <name>InterfacePage</name>
+    <message>
+        <source>LivePrompt default separator</source>
+        <translation>LivePrompt का डिफ़ॉल्ट विभाजक</translation>
+    </message>
+    <message>
+        <source>Use \n for a new line or \t for a tab. Empty uses a new line. Applies to new LivePrompts; saved separators take precedence.</source>
+        <translation>नई पंक्ति के लिए \n और टैब के लिए \t का उपयोग करें। खाली होने पर नई पंक्ति का उपयोग होता है। यह नए LivePrompt पर लागू होता है; सहेजे गए विभाजकों को प्राथमिकता मिलती है।</translation>
+    </message>
         <message>
             <source>Dark</source>
             <translation>गहरा</translation>
@@ -4962,6 +4974,14 @@ After refreshing the token, any agents registered to this LoomStroke MCP server 
     <message>
         <source>Failed to import image as new layer</source>
         <translation>चित्र को नई लेयर के रूप में आयात नहीं किया जा सका</translation>
+    </message>
+    <message>
+        <source>Layer: {name}</source>
+        <translation>लेयर: {name}</translation>
+    </message>
+    <message>
+        <source>Clear the layer filter</source>
+        <translation>लेयर फ़िल्टर हटाएं</translation>
     </message>
 </context>
 <context>
@@ -7563,6 +7583,18 @@ Select a file to recover.</source>
     <message>
         <source>Wait until generation is ready.</source>
         <translation>जनरेशन तैयार होने तक इंतजार करें।</translation>
+    </message>
+    <message>
+        <source>Plan: {count} generations</source>
+        <translation>योजना: {count} जनरेशन</translation>
+    </message>
+    <message>
+        <source>Plan: until stopped</source>
+        <translation>योजना: रोकने तक</translation>
+    </message>
+    <message>
+        <source>Plan: one cycle of {count}</source>
+        <translation>योजना: एक चक्र में {count}</translation>
     </message>
 </context>
 <context>
@@ -11231,6 +11263,42 @@ Please check that all image paths in your workflow are valid.
 <context>
     <name>DrawingAssistPanel</name>
     <message>
+        <source>Perspective ruler</source>
+        <translation>परिप्रेक्ष्य रूलर</translation>
+    </message>
+    <message>
+        <source>1-point perspective</source>
+        <translation>एक-बिंदु परिप्रेक्ष्य</translation>
+    </message>
+    <message>
+        <source>2-point perspective</source>
+        <translation>दो-बिंदु परिप्रेक्ष्य</translation>
+    </message>
+    <message>
+        <source>3-point perspective</source>
+        <translation>तीन-बिंदु परिप्रेक्ष्य</translation>
+    </message>
+    <message>
+        <source>Drawing direction</source>
+        <translation>ड्राइंग की दिशा</translation>
+    </message>
+    <message>
+        <source>Automatic</source>
+        <translation>स्वचालित</translation>
+    </message>
+    <message>
+        <source>Vertical</source>
+        <translation>ऊर्ध्वाधर</translation>
+    </message>
+    <message>
+        <source>Edit vanishing points</source>
+        <translation>लुप्त बिंदु संपादित करें</translation>
+    </message>
+    <message>
+        <source>Drag VP handles on the canvas. Esc cancels the drag.</source>
+        <translation>कैनवास पर VP हैंडल खींचें। Esc से खींचना रद्द करें।</translation>
+    </message>
+    <message>
         <source>Add</source>
         <translation>जोड़ें</translation>
     </message>
@@ -13307,6 +13375,10 @@ Please check that all image paths in your workflow are valid.
 <context>
     <name>GPTImage2PanelPlugin</name>
     <message>
+        <source>GPT Image</source>
+        <translation>GPT Image</translation>
+    </message>
+    <message>
         <source>Configure GPT Image 2 jobs</source>
         <translation>GPT इमेज 2 जॉब्स कॉन्फ़िगर करें</translation>
     </message>
@@ -13816,6 +13888,22 @@ Please check that all image paths in your workflow are valid.
 </context>
 <context>
     <name>LLMPaneController</name>
+    <message>
+        <source>Copy</source>
+        <translation>कॉपी</translation>
+    </message>
+    <message>
+        <source>Model ID</source>
+        <translation>मॉडल ID</translation>
+    </message>
+    <message>
+        <source>Server URL</source>
+        <translation>सर्वर URL</translation>
+    </message>
+    <message>
+        <source>Enter a model ID:</source>
+        <translation>मॉडल ID दर्ज करें:</translation>
+    </message>
     <message>
         <source>Add Library</source>
         <translation>लाइब्रेरी जोड़ें</translation>
@@ -15674,6 +15762,14 @@ Operation: {operation}
     <message>
         <source>Workflow transferred. Select parameters and outputs in the Editor tab, then register.</source>
         <translation>वर्कफ्लो ट्रांसफर हो गया है। एडिटर टैब में पैरामीटर्स और आउटपुट चुनें, फिर रजिस्टर करें</translation>
+    </message>
+    <message>
+        <source>Live prompt</source>
+        <translation>रियल टिप्पणी</translation>
+    </message>
+    <message>
+        <source>Text (node)</source>
+        <translation>टेक्स्ट (नोड)</translation>
     </message>
 </context>
 <context>
@@ -18286,6 +18382,122 @@ Type: {type}</source>
     <message>
         <source>User prompt is empty.</source>
         <translation>उपयोगकर्ता प्रमोट खाली है।</translation>
+    </message>
+    <message>
+        <source>Unsaved changes</source>
+        <translation>असहेजे बदलाव</translation>
+    </message>
+    <message>
+        <source>More actions</source>
+        <translation>और कार्रवाइयाँ</translation>
+    </message>
+    <message>
+        <source>New line</source>
+        <translation>नई पंक्ति</translation>
+    </message>
+    <message>
+        <source>Comma</source>
+        <translation>अल्पविराम</translation>
+    </message>
+    <message>
+        <source>Comma and space</source>
+        <translation>अल्पविराम और स्पेस</translation>
+    </message>
+    <message>
+        <source>Custom</source>
+        <translation>कस्टम</translation>
+    </message>
+    <message>
+        <source>{count} characters</source>
+        <translation>{count} अक्षर</translation>
+    </message>
+    <message>
+        <source>Tidy with LLM</source>
+        <translation>LLM से व्यवस्थित करें</translation>
+    </message>
+    <message>
+        <source>This model does not use temperature.</source>
+        <translation>यह मॉडल तापमान का उपयोग नहीं करता।</translation>
+    </message>
+    <message>
+        <source>Output copied to clipboard.</source>
+        <translation>आउटपुट क्लिपबोर्ड पर कॉपी किया गया।</translation>
+    </message>
+    <message>
+        <source>All types</source>
+        <translation>सभी प्रकार</translation>
+    </message>
+    <message>
+        <source>Body</source>
+        <translation>मुख्य पाठ</translation>
+    </message>
+    <message>
+        <source>Import</source>
+        <translation>इम्पोर्ट</translation>
+    </message>
+    <message>
+        <source>Import prompt</source>
+        <translation>प्रॉम्प्ट इम्पोर्ट करें</translation>
+    </message>
+    <message>
+        <source>Imported '{title}'.</source>
+        <translation>'{title}' इम्पोर्ट किया गया।</translation>
+    </message>
+    <message>
+        <source>Import failed: {error}</source>
+        <translation>इम्पोर्ट विफल: {error}</translation>
+    </message>
+    <message>
+        <source>The file is empty.</source>
+        <translation>फ़ाइल खाली है।</translation>
+    </message>
+    <message>
+        <source>Other model…</source>
+        <translation>अन्य मॉडल…</translation>
+    </message>
+    <message>
+        <source>Model ID</source>
+        <translation>मॉडल ID</translation>
+    </message>
+    <message>
+        <source>Enter a model ID:</source>
+        <translation>मॉडल ID दर्ज करें:</translation>
+    </message>
+    <message>
+        <source>Refresh the model list</source>
+        <translation>मॉडल सूची रीफ़्रेश करें</translation>
+    </message>
+    <message>
+        <source>Loaded {count} models.</source>
+        <translation>{count} मॉडल लोड हुए।</translation>
+    </message>
+    <message>
+        <source>Couldn't update the model list: {error}</source>
+        <translation>मॉडल सूची अपडेट नहीं हो सकी: {error}</translation>
+    </message>
+    <message>
+        <source>Local (OpenAI compatible)</source>
+        <translation>लोकल (OpenAI-संगत)</translation>
+    </message>
+    <message>
+        <source>Server URL</source>
+        <translation>सर्वर URL</translation>
+    </message>
+    <message>
+        <source>(No models yet)</source>
+        <translation>(अभी कोई मॉडल नहीं)</translation>
+    </message>
+    <message>
+        <source>Select a model first.</source>
+        <translation>पहले एक मॉडल चुनें।</translation>
+    </message>
+    <message>
+        <source>Enter the URL of a server on this PC, such as http://localhost:11434/v1.</source>
+        <translation>इस PC पर किसी सर्वर का URL दर्ज करें, जैसे http://localhost:11434/v1।</translation>
+    </message>
+    <message>
+        <source>Ollama's default context is short and silently cuts the start of long prompts; raise it with OLLAMA_CONTEXT_LENGTH or the model's num_ctx.</source>
+        <translation>Ollama का डिफ़ॉल्ट कॉन्टेक्स्ट छोटा है और लंबे प्रॉम्प्ट की शुरुआत चुपचाप काट देता है; OLLAMA_CONTEXT_LENGTH या मॉडल के num_ctx से बढ़ाएँ।</translation>
     </message>
 </context>
 <context>
@@ -21013,6 +21225,410 @@ Do you want to save them?</source>
 </context>
 <context>
     <name>__shared__</name>
+    <message>
+        <source>Choose a different name for this model.</source>
+        <translation>इस मॉडल के लिए कोई दूसरा नाम चुनें।</translation>
+    </message>
+    <message>
+        <source>Enter a name between 1 and 80 characters.</source>
+        <translation>1 से 80 अक्षरों का नाम दर्ज करें।</translation>
+    </message>
+    <message>
+        <source>Saved poses</source>
+        <translation>सहेजी गई मुद्राएँ</translation>
+    </message>
+    <message>
+        <source>Select saved pose</source>
+        <translation>सहेजी मुद्रा चुनें</translation>
+    </message>
+    <message>
+        <source>Save current pose</source>
+        <translation>वर्तमान मुद्रा सहेजें</translation>
+    </message>
+    <message>
+        <source>Apply saved pose</source>
+        <translation>सहेजी मुद्रा लागू करें</translation>
+    </message>
+    <message>
+        <source>Delete saved pose</source>
+        <translation>सहेजी मुद्रा हटाएँ</translation>
+    </message>
+    <message>
+        <source>Could not load pose presets</source>
+        <translation>मुद्रा प्रीसेट लोड नहीं हो सके</translation>
+    </message>
+    <message>
+        <source>Pose presets</source>
+        <translation>मुद्रा प्रीसेट</translation>
+    </message>
+    <message>
+        <source>Save pose preset</source>
+        <translation>मुद्रा प्रीसेट सहेजें</translation>
+    </message>
+    <message>
+        <source>Pose preset name</source>
+        <translation>मुद्रा प्रीसेट का नाम</translation>
+    </message>
+    <message>
+        <source>Could not save pose preset</source>
+        <translation>मुद्रा प्रीसेट सहेजा नहीं जा सका</translation>
+    </message>
+    <message>
+        <source>Could not apply pose preset</source>
+        <translation>मुद्रा प्रीसेट लागू नहीं किया जा सका</translation>
+    </message>
+    <message>
+        <source>Could not delete pose preset</source>
+        <translation>मुद्रा प्रीसेट हटाया नहीं जा सका</translation>
+    </message>
+    <message>
+        <source>Delete selected pose preset?</source>
+        <translation>चयनित मुद्रा प्रीसेट हटाएँ?</translation>
+    </message>
+    <message>
+      <source>Fingers together</source>
+      <translation>उंगलियाँ साथ</translation>
+    </message>
+    <message>
+      <source>Fingers spread</source>
+      <translation>उंगलियाँ फैली हुई</translation>
+    </message>
+    <message>
+      <source>Flat hand</source>
+      <translation>सपाट हाथ</translation>
+    </message>
+    <message>
+      <source>Soft fist</source>
+      <translation>हल्की मुट्ठी</translation>
+    </message>
+    <message>
+      <source>Tight fist</source>
+      <translation>कसी हुई मुट्ठी</translation>
+    </message>
+    <message>
+      <source>Half-closed hand</source>
+      <translation>आधा बंद हाथ</translation>
+    </message>
+    <message>
+      <source>Cupped hand</source>
+      <translation>कटोरी जैसा हाथ</translation>
+    </message>
+    <message>
+      <source>Deeply cupped hand</source>
+      <translation>गहरा कटोरी जैसा हाथ</translation>
+    </message>
+    <message>
+      <source>Thumbs up</source>
+      <translation>अंगूठा ऊपर</translation>
+    </message>
+    <message>
+      <source>OK sign</source>
+      <translation>OK संकेत</translation>
+    </message>
+    <message>
+      <source>Horns sign</source>
+      <translation>सींग का संकेत</translation>
+    </message>
+    <message>
+      <source>Shaka sign</source>
+      <translation>शाका संकेत</translation>
+    </message>
+    <message>
+      <source>Three extended fingers</source>
+      <translation>तीन उंगलियाँ सीधी</translation>
+    </message>
+    <message>
+      <source>Four extended fingers</source>
+      <translation>चार उंगलियाँ सीधी</translation>
+    </message>
+    <message>
+      <source>Thumb and index</source>
+      <translation>अंगूठा और तर्जनी</translation>
+    </message>
+    <message>
+      <source>Thumb, index and middle</source>
+      <translation>अंगूठा, तर्जनी और मध्यमा</translation>
+    </message>
+    <message>
+      <source>Crossed fingers</source>
+      <translation>उंगलियाँ क्रॉस</translation>
+    </message>
+    <message>
+      <source>Finger heart</source>
+      <translation>उंगलियों का दिल</translation>
+    </message>
+    <message>
+      <source>Beckoning finger</source>
+      <translation>उंगली से बुलाना</translation>
+    </message>
+    <message>
+      <source>Stop gesture</source>
+      <translation>रुकने का संकेत</translation>
+    </message>
+    <message>
+      <source>Count one</source>
+      <translation>एक गिनें</translation>
+    </message>
+    <message>
+      <source>Count two</source>
+      <translation>दो गिनें</translation>
+    </message>
+    <message>
+      <source>Count three</source>
+      <translation>तीन गिनें</translation>
+    </message>
+    <message>
+      <source>Count four</source>
+      <translation>चार गिनें</translation>
+    </message>
+    <message>
+      <source>Count five</source>
+      <translation>पाँच गिनें</translation>
+    </message>
+    <message>
+      <source>Small pinch</source>
+      <translation>छोटी चुटकी</translation>
+    </message>
+    <message>
+      <source>Wide pinch</source>
+      <translation>चौड़ी चुटकी</translation>
+    </message>
+    <message>
+      <source>Tripod pinch</source>
+      <translation>तीन उंगलियों की चुटकी</translation>
+    </message>
+    <message>
+      <source>Precision grip</source>
+      <translation>बारीक पकड़</translation>
+    </message>
+    <message>
+      <source>Pen grip</source>
+      <translation>कलम पकड़ना</translation>
+    </message>
+    <message>
+      <source>Brush grip</source>
+      <translation>कूची पकड़ना</translation>
+    </message>
+    <message>
+      <source>Cylinder grip</source>
+      <translation>बेलनाकार पकड़</translation>
+    </message>
+    <message>
+      <source>Thin handle grip</source>
+      <translation>पतला हत्था पकड़ना</translation>
+    </message>
+    <message>
+      <source>Ball grip</source>
+      <translation>गेंद पकड़ना</translation>
+    </message>
+    <message>
+      <source>Large ball grip</source>
+      <translation>बड़ी गेंद पकड़ना</translation>
+    </message>
+    <message>
+      <source>Hook grip</source>
+      <translation>हुक जैसी पकड़</translation>
+    </message>
+    <message>
+      <source>Key pinch</source>
+      <translation>चाबी की पकड़</translation>
+    </message>
+    <message>
+      <source>Claw hand</source>
+      <translation>पंजे जैसा हाथ</translation>
+    </message>
+    <message>
+      <source>Gentle touch</source>
+      <translation>हल्का स्पर्श</translation>
+    </message>
+    <message>
+      <source>Fingertip touch</source>
+      <translation>उंगलियों के सिरों से स्पर्श</translation>
+    </message>
+    <message>
+      <source>Fabric pinch</source>
+      <translation>कपड़ा चुटकी में पकड़ना</translation>
+    </message>
+    <message>
+      <source>Delicate hand</source>
+      <translation>कोमल हाथ</translation>
+    </message>
+    <message>
+      <source>Tense hand</source>
+      <translation>तनाव वाला हाथ</translation>
+    </message>
+    <message>
+      <source>Basic hand poses</source>
+      <translation>हाथ की मूल मुद्राएँ</translation>
+    </message>
+    <message>
+      <source>Hand gestures</source>
+      <translation>हाथ के संकेत</translation>
+    </message>
+    <message>
+      <source>Finger counting</source>
+      <translation>उंगलियों से गिनना</translation>
+    </message>
+    <message>
+      <source>Grasping poses</source>
+      <translation>पकड़ने की मुद्राएँ</translation>
+    </message>
+    <message>
+      <source>Expressive hands</source>
+      <translation>अभिव्यक्तिपूर्ण हाथ</translation>
+    </message>
+    <message>
+      <source>All hand poses</source>
+      <translation>हाथ की सभी मुद्राएँ</translation>
+    </message>
+    <message>
+        <source>Edit selected hand</source>
+        <translation>चयनित हाथ संपादित करें</translation>
+    </message>
+    <message>
+        <source>Hand pose</source>
+        <translation>हाथ की मुद्रा</translation>
+    </message>
+    <message>
+        <source>Finger</source>
+        <translation>उंगली</translation>
+    </message>
+    <message>
+        <source>Finger curl</source>
+        <translation>मोड़</translation>
+    </message>
+    <message>
+        <source>Finger spread</source>
+        <translation>फैलाव</translation>
+    </message>
+    <message>
+        <source>Cup palm</source>
+        <translation>हथेली मोड़ें</translation>
+    </message>
+    <message>
+        <source>Joint</source>
+        <translation>जोड़</translation>
+    </message>
+    <message>
+        <source>Reset hand</source>
+        <translation>हाथ रीसेट करें</translation>
+    </message>
+    <message>
+        <source>Thumb</source>
+        <translation>अंगूठा</translation>
+    </message>
+    <message>
+        <source>Index finger</source>
+        <translation>तर्जनी</translation>
+    </message>
+    <message>
+        <source>Middle finger</source>
+        <translation>मध्यमा</translation>
+    </message>
+    <message>
+        <source>Ring finger</source>
+        <translation>अनामिका</translation>
+    </message>
+    <message>
+        <source>Little finger</source>
+        <translation>कनिष्ठा</translation>
+    </message>
+    <message>
+        <source>Palm</source>
+        <translation>हथेली</translation>
+    </message>
+    <message>
+        <source>Wrist</source>
+        <translation>कलाई</translation>
+    </message>
+    <message>
+        <source>Open hand</source>
+        <translation>खुला हाथ</translation>
+    </message>
+    <message>
+        <source>Relaxed hand</source>
+        <translation>ढीला हाथ</translation>
+    </message>
+    <message>
+        <source>Fist</source>
+        <translation>मुट्ठी</translation>
+    </message>
+    <message>
+        <source>Pointing hand</source>
+        <translation>इशारा करता हाथ</translation>
+    </message>
+    <message>
+        <source>Peace sign</source>
+        <translation>शांति चिह्न</translation>
+    </message>
+    <message>
+        <source>Reset selected part</source>
+        <translation>चयनित अंग रीसेट करें</translation>
+    </message>
+    <message>
+        <source>GPT Image</source>
+        <translation>GPT Image</translation>
+    </message>
+    <message>
+        <source>Perspective ruler</source>
+        <translation>परिप्रेक्ष्य रूलर</translation>
+    </message>
+    <message>
+        <source>1-point perspective</source>
+        <translation>एक-बिंदु परिप्रेक्ष्य</translation>
+    </message>
+    <message>
+        <source>2-point perspective</source>
+        <translation>दो-बिंदु परिप्रेक्ष्य</translation>
+    </message>
+    <message>
+        <source>3-point perspective</source>
+        <translation>तीन-बिंदु परिप्रेक्ष्य</translation>
+    </message>
+    <message>
+        <source>Drawing direction</source>
+        <translation>ड्राइंग की दिशा</translation>
+    </message>
+    <message>
+        <source>Edit vanishing points</source>
+        <translation>लुप्त बिंदु संपादित करें</translation>
+    </message>
+    <message>
+        <source>Drag VP handles on the canvas. Esc cancels the drag.</source>
+        <translation>कैनवास पर VP हैंडल खींचें। Esc से खींचना रद्द करें।</translation>
+    </message>
+    <message>
+        <source>Perspective Ruler...</source>
+        <translation>परिप्रेक्ष्य रूलर...</translation>
+    </message>
+    <message>
+        <source>LivePrompt default separator</source>
+        <translation>LivePrompt का डिफ़ॉल्ट विभाजक</translation>
+    </message>
+    <message>
+        <source>Use \n for a new line or \t for a tab. Empty uses a new line. Applies to new LivePrompts; saved separators take precedence.</source>
+        <translation>नई पंक्ति के लिए \n और टैब के लिए \t का उपयोग करें। खाली होने पर नई पंक्ति का उपयोग होता है। यह नए LivePrompt पर लागू होता है; सहेजे गए विभाजकों को प्राथमिकता मिलती है।</translation>
+    </message>
+    <message>
+        <source>Register in AI Effect Manager</source>
+        <translation>AI Effect Manager में पंजीकृत करें</translation>
+    </message>
+    <message>
+        <source>Save the current prompt and options as a preset. Choose input layers again when applying the preset.</source>
+        <translation>वर्तमान प्रॉम्प्ट और विकल्पों को प्रीसेट के रूप में सहेजें। प्रीसेट लागू करते समय इनपुट परतें फिर से चुनें।</translation>
+    </message>
+    <message>
+        <source>Preset name is required</source>
+        <translation>प्रीसेट का नाम दर्ज करें</translation>
+    </message>
+    <message>
+        <source>Registered preset: {name}</source>
+        <translation>प्रीसेट पंजीकृत: {name}</translation>
+    </message>
+    <message>
+        <source>Could not register preset. AI Effect Manager may be unavailable or saving failed.</source>
+        <translation>प्रीसेट पंजीकृत नहीं हो सका। AI Effect Manager उपलब्ध नहीं है या सहेजना विफल हुआ।</translation>
+    </message>
     <message>
         <source> %</source>
         <translation> %</translation>
@@ -35619,6 +36235,326 @@ Click to show as panel</source>
 
 पैनल के रूप में दिखाएं</translation>
     </message>
+    <message>
+        <source>Emphasis</source>
+        <translation>ज़ोर</translation>
+    </message>
+    <message>
+        <source>Weaken emphasis</source>
+        <translation>ज़ोर कम करें</translation>
+    </message>
+    <message>
+        <source>Strengthen emphasis</source>
+        <translation>ज़ोर बढ़ाएँ</translation>
+    </message>
+    <message>
+        <source>Remove from LivePrompt</source>
+        <translation>LivePrompt से हटाएँ</translation>
+    </message>
+    <message>
+        <source>Unsaved changes</source>
+        <translation>असहेजे बदलाव</translation>
+    </message>
+    <message>
+        <source>More actions</source>
+        <translation>और कार्रवाइयाँ</translation>
+    </message>
+    <message>
+        <source>New line</source>
+        <translation>नई पंक्ति</translation>
+    </message>
+    <message>
+        <source>Comma</source>
+        <translation>अल्पविराम</translation>
+    </message>
+    <message>
+        <source>Comma and space</source>
+        <translation>अल्पविराम और स्पेस</translation>
+    </message>
+    <message>
+        <source>{count} characters</source>
+        <translation>{count} अक्षर</translation>
+    </message>
+    <message>
+        <source>Tidy with LLM</source>
+        <translation>LLM से व्यवस्थित करें</translation>
+    </message>
+    <message>
+        <source>Text (node)</source>
+        <translation>टेक्स्ट (नोड)</translation>
+    </message>
+    <message>
+        <source>Plan: {count} generations</source>
+        <translation>योजना: {count} जनरेशन</translation>
+    </message>
+    <message>
+        <source>Plan: until stopped</source>
+        <translation>योजना: रोकने तक</translation>
+    </message>
+    <message>
+        <source>Plan: one cycle of {count}</source>
+        <translation>योजना: एक चक्र में {count}</translation>
+    </message>
+    <message>
+        <source>Generated on this layer ({count})</source>
+        <translation>इस लेयर में जनरेट किए गए ({count})</translation>
+    </message>
+    <message>
+        <source>Show in Gallery</source>
+        <translation>गैलरी में दिखाएं</translation>
+    </message>
+    <message>
+        <source>Open in Gallery (this layer only)</source>
+        <translation>गैलरी में खोलें (केवल यह लेयर)</translation>
+    </message>
+    <message>
+        <source>No generations yet.</source>
+        <translation>अभी तक कोई जनरेशन नहीं।</translation>
+    </message>
+    <message>
+        <source>Layer: {name}</source>
+        <translation>लेयर: {name}</translation>
+    </message>
+    <message>
+        <source>Clear the layer filter</source>
+        <translation>लेयर फ़िल्टर हटाएं</translation>
+    </message>
+    <message>
+        <source>This model does not use temperature.</source>
+        <translation>यह मॉडल तापमान का उपयोग नहीं करता।</translation>
+    </message>
+    <message>
+        <source>Output copied to clipboard.</source>
+        <translation>आउटपुट क्लिपबोर्ड पर कॉपी किया गया।</translation>
+    </message>
+    <message>
+        <source>All types</source>
+        <translation>सभी प्रकार</translation>
+    </message>
+    <message>
+        <source>Import prompt</source>
+        <translation>प्रॉम्प्ट इम्पोर्ट करें</translation>
+    </message>
+    <message>
+        <source>Imported '{title}'.</source>
+        <translation>'{title}' इम्पोर्ट किया गया।</translation>
+    </message>
+    <message>
+        <source>Import failed: {error}</source>
+        <translation>इम्पोर्ट विफल: {error}</translation>
+    </message>
+    <message>
+        <source>The file is empty.</source>
+        <translation>फ़ाइल खाली है।</translation>
+    </message>
+    <message>
+        <source>Other model…</source>
+        <translation>अन्य मॉडल…</translation>
+    </message>
+    <message>
+        <source>Model ID</source>
+        <translation>मॉडल ID</translation>
+    </message>
+    <message>
+        <source>Enter a model ID:</source>
+        <translation>मॉडल ID दर्ज करें:</translation>
+    </message>
+    <message>
+        <source>Refresh the model list</source>
+        <translation>मॉडल सूची रीफ़्रेश करें</translation>
+    </message>
+    <message>
+        <source>Loaded {count} models.</source>
+        <translation>{count} मॉडल लोड हुए।</translation>
+    </message>
+    <message>
+        <source>Couldn't update the model list: {error}</source>
+        <translation>मॉडल सूची अपडेट नहीं हो सकी: {error}</translation>
+    </message>
+    <message>
+        <source>Local (OpenAI compatible)</source>
+        <translation>लोकल (OpenAI-संगत)</translation>
+    </message>
+    <message>
+        <source>Server URL</source>
+        <translation>सर्वर URL</translation>
+    </message>
+    <message>
+        <source>(No models yet)</source>
+        <translation>(अभी कोई मॉडल नहीं)</translation>
+    </message>
+    <message>
+        <source>Select a model first.</source>
+        <translation>पहले एक मॉडल चुनें।</translation>
+    </message>
+    <message>
+        <source>Enter the URL of a server on this PC, such as http://localhost:11434/v1.</source>
+        <translation>इस PC पर किसी सर्वर का URL दर्ज करें, जैसे http://localhost:11434/v1।</translation>
+    </message>
+    <message>
+        <source>Ollama's default context is short and silently cuts the start of long prompts; raise it with OLLAMA_CONTEXT_LENGTH or the model's num_ctx.</source>
+        <translation>Ollama का डिफ़ॉल्ट कॉन्टेक्स्ट छोटा है और लंबे प्रॉम्प्ट की शुरुआत चुपचाप काट देता है; OLLAMA_CONTEXT_LENGTH या मॉडल के num_ctx से बढ़ाएँ।</translation>
+    </message>
+    <message>
+        <source>Fill input transparency</source>
+        <translation>इनपुट की पारदर्शिता भरें</translation>
+    </message>
+    <message>
+        <source>Fill transparent areas of input images with this color before sending. Source layers are unchanged.</source>
+        <translation>भेजने से पहले इनपुट चित्रों के पारदर्शी भागों को इस रंग से भरें। मूल परतें अपरिवर्तित रहती हैं।</translation>
+    </message>
+    <message>
+        <source>Input fill color</source>
+        <translation>इनपुट भरने का रंग</translation>
+    </message>
+    <message>
+        <source>Add drawing figure</source>
+        <translation>ड्रॉइंग पुतला जोड़ें</translation>
+    </message>
+    <message>
+        <source>Apply pose</source>
+        <translation>मुद्रा लागू करें</translation>
+    </message>
+    <message>
+        <source>Arms out</source>
+        <translation>बाहें फैलाना</translation>
+    </message>
+    <message>
+        <source>Chest</source>
+        <translation>छाती</translation>
+    </message>
+    <message>
+        <source>Could not add drawing figure</source>
+        <translation>ड्रॉइंग पुतला नहीं जोड़ा जा सका</translation>
+    </message>
+    <message>
+        <source>Could not export OpenPose</source>
+        <translation>OpenPose निर्यात नहीं हो सका</translation>
+    </message>
+    <message>
+        <source>Crouching</source>
+        <translation>उकड़ूँ बैठना</translation>
+    </message>
+    <message>
+        <source>Drag joints; Alt-drag changes depth. Pink joints are pinned.</source>
+        <translation>जोड़ों को खींचें; Alt के साथ खींचने से गहराई बदलती है। गुलाबी जोड़ स्थिर हैं।</translation>
+    </message>
+    <message>
+        <source>Drag joints to move; drag XYZ rings to rotate. Alt-drag changes depth. Pink joints are pinned.</source>
+        <translation>जोड़ों को खींचकर हिलाएँ और XYZ रिंग खींचकर घुमाएँ। Alt के साथ खींचने से गहराई बदलती है। गुलाबी जोड़ स्थिर हैं।</translation>
+    </message>
+    <message>
+        <source>Drawing figure</source>
+        <translation>ड्रॉइंग पुतला</translation>
+    </message>
+    <message>
+        <source>Edit pose</source>
+        <translation>मुद्रा संपादित करें</translation>
+    </message>
+    <message>
+        <source>Export OpenPose</source>
+        <translation>OpenPose निर्यात करें</translation>
+    </message>
+    <message>
+        <source>Head</source>
+        <translation>सिर</translation>
+    </message>
+    <message>
+        <source>Left Ankle</source>
+        <translation>बायाँ: टखना</translation>
+    </message>
+    <message>
+        <source>Left Collar</source>
+        <translation>बायाँ: हंसली</translation>
+    </message>
+    <message>
+        <source>Left Elbow</source>
+        <translation>बायाँ: कोहनी</translation>
+    </message>
+    <message>
+        <source>Left Hip</source>
+        <translation>बायाँ: कूल्हा</translation>
+    </message>
+    <message>
+        <source>Left Knee</source>
+        <translation>बायाँ: घुटना</translation>
+    </message>
+    <message>
+        <source>Left Shoulder</source>
+        <translation>बायाँ: कंधा</translation>
+    </message>
+    <message>
+        <source>Left Wrist</source>
+        <translation>बायाँ: कलाई</translation>
+    </message>
+    <message>
+        <source>Neck</source>
+        <translation>गर्दन</translation>
+    </message>
+    <message>
+        <source>OpenPose layer</source>
+        <translation>OpenPose परत</translation>
+    </message>
+    <message>
+        <source>Pelvis</source>
+        <translation>श्रोणि</translation>
+    </message>
+    <message>
+        <source>Pin / unpin joint</source>
+        <translation>जोड़ स्थिर करें / छोड़ें</translation>
+    </message>
+    <message>
+        <source>Pose assistance</source>
+        <translation>मुद्रा सहायता</translation>
+    </message>
+    <message>
+        <source>Reaching</source>
+        <translation>हाथ बढ़ाना</translation>
+    </message>
+    <message>
+        <source>Right Ankle</source>
+        <translation>दायाँ: टखना</translation>
+    </message>
+    <message>
+        <source>Right Collar</source>
+        <translation>दायाँ: हंसली</translation>
+    </message>
+    <message>
+        <source>Right Elbow</source>
+        <translation>दायाँ: कोहनी</translation>
+    </message>
+    <message>
+        <source>Right Hip</source>
+        <translation>दायाँ: कूल्हा</translation>
+    </message>
+    <message>
+        <source>Right Knee</source>
+        <translation>दायाँ: घुटना</translation>
+    </message>
+    <message>
+        <source>Right Shoulder</source>
+        <translation>दायाँ: कंधा</translation>
+    </message>
+    <message>
+        <source>Right Wrist</source>
+        <translation>दायाँ: कलाई</translation>
+    </message>
+    <message>
+        <source>Sitting</source>
+        <translation>बैठना</translation>
+    </message>
+    <message>
+        <source>Standing</source>
+        <translation>खड़े होना</translation>
+    </message>
+    <message>
+        <source>Waist</source>
+        <translation>कमर</translation>
+    </message>
+    <message>
+        <source>Walking</source>
+        <translation>चलना</translation>
+    </message>
 </context>
 <context>
     <name>app_ai_effect_generation_commit</name>
@@ -36264,6 +37200,670 @@ Click to show as panel</source>
     <message>
         <source>Use as Inpaint Mask</source>
         <translation>इनपेंट मास्क के रूप में उपयोग करें</translation>
+    </message>
+</context>
+<context>
+    <name>AIEffectRegisterButton</name>
+    <message>
+        <source>Register in AI Effect Manager</source>
+        <translation>AI Effect Manager में पंजीकृत करें</translation>
+    </message>
+    <message>
+        <source>Save the current prompt and options as a preset. Choose input layers again when applying the preset.</source>
+        <translation>वर्तमान प्रॉम्प्ट और विकल्पों को प्रीसेट के रूप में सहेजें। प्रीसेट लागू करते समय इनपुट परतें फिर से चुनें।</translation>
+    </message>
+    <message>
+        <source>Preset name:</source>
+        <translation>प्रीसेट का नाम:</translation>
+    </message>
+    <message>
+        <source>Preset name is required</source>
+        <translation>प्रीसेट का नाम दर्ज करें</translation>
+    </message>
+    <message>
+        <source>Registered preset: {name}</source>
+        <translation>प्रीसेट पंजीकृत: {name}</translation>
+    </message>
+    <message>
+        <source>Could not register preset. AI Effect Manager may be unavailable or saving failed.</source>
+        <translation>प्रीसेट पंजीकृत नहीं हो सका। AI Effect Manager उपलब्ध नहीं है या सहेजना विफल हुआ।</translation>
+    </message>
+</context>
+<context>
+    <name>PromptChipWidget</name>
+    <message>
+        <source>Emphasis</source>
+        <translation>ज़ोर</translation>
+    </message>
+    <message>
+        <source>Weaken emphasis</source>
+        <translation>ज़ोर कम करें</translation>
+    </message>
+    <message>
+        <source>Strengthen emphasis</source>
+        <translation>ज़ोर बढ़ाएँ</translation>
+    </message>
+    <message>
+        <source>Clear</source>
+        <translation>हटाएँ</translation>
+    </message>
+    <message>
+        <source>Remove from LivePrompt</source>
+        <translation>LivePrompt से हटाएँ</translation>
+    </message>
+</context>
+<context>
+    <name>LayerGenerationHistory</name>
+    <message>
+        <source>Generated on this layer ({count})</source>
+        <translation>इस लेयर में जनरेट किए गए ({count})</translation>
+    </message>
+    <message>
+        <source>Show in Gallery</source>
+        <translation>गैलरी में दिखाएं</translation>
+    </message>
+    <message>
+        <source>Open in Gallery (this layer only)</source>
+        <translation>गैलरी में खोलें (केवल यह लेयर)</translation>
+    </message>
+    <message>
+        <source>No generations yet.</source>
+        <translation>अभी तक कोई जनरेशन नहीं।</translation>
+    </message>
+</context>
+<context>
+    <name>InputAlphaControls</name>
+    <message>
+        <source>Fill input transparency</source>
+        <translation>इनपुट की पारदर्शिता भरें</translation>
+    </message>
+    <message>
+        <source>Fill transparent areas of input images with this color before sending. Source layers are unchanged.</source>
+        <translation>भेजने से पहले इनपुट चित्रों के पारदर्शी भागों को इस रंग से भरें। मूल परतें अपरिवर्तित रहती हैं।</translation>
+    </message>
+    <message>
+        <source>Input fill color</source>
+        <translation>इनपुट भरने का रंग</translation>
+    </message>
+</context>
+<context>
+    <name>DrawingFigure</name>
+    <message>
+        <source>Choose a different name for this model.</source>
+        <translation>इस मॉडल के लिए कोई दूसरा नाम चुनें।</translation>
+    </message>
+    <message>
+        <source>Enter a name between 1 and 80 characters.</source>
+        <translation>1 से 80 अक्षरों का नाम दर्ज करें।</translation>
+    </message>
+    <message>
+        <source>Saved poses</source>
+        <translation>सहेजी गई मुद्राएँ</translation>
+    </message>
+    <message>
+        <source>Select saved pose</source>
+        <translation>सहेजी मुद्रा चुनें</translation>
+    </message>
+    <message>
+        <source>Save current pose</source>
+        <translation>वर्तमान मुद्रा सहेजें</translation>
+    </message>
+    <message>
+        <source>Apply saved pose</source>
+        <translation>सहेजी मुद्रा लागू करें</translation>
+    </message>
+    <message>
+        <source>Delete saved pose</source>
+        <translation>सहेजी मुद्रा हटाएँ</translation>
+    </message>
+    <message>
+        <source>Could not load pose presets</source>
+        <translation>मुद्रा प्रीसेट लोड नहीं हो सके</translation>
+    </message>
+    <message>
+        <source>Pose presets</source>
+        <translation>मुद्रा प्रीसेट</translation>
+    </message>
+    <message>
+        <source>Save pose preset</source>
+        <translation>मुद्रा प्रीसेट सहेजें</translation>
+    </message>
+    <message>
+        <source>Pose preset name</source>
+        <translation>मुद्रा प्रीसेट का नाम</translation>
+    </message>
+    <message>
+        <source>Could not save pose preset</source>
+        <translation>मुद्रा प्रीसेट सहेजा नहीं जा सका</translation>
+    </message>
+    <message>
+        <source>Could not apply pose preset</source>
+        <translation>मुद्रा प्रीसेट लागू नहीं किया जा सका</translation>
+    </message>
+    <message>
+        <source>Could not delete pose preset</source>
+        <translation>मुद्रा प्रीसेट हटाया नहीं जा सका</translation>
+    </message>
+    <message>
+        <source>Delete selected pose preset?</source>
+        <translation>चयनित मुद्रा प्रीसेट हटाएँ?</translation>
+    </message>
+    <message>
+      <source>Fingers together</source>
+      <translation>उंगलियाँ साथ</translation>
+    </message>
+    <message>
+      <source>Fingers spread</source>
+      <translation>उंगलियाँ फैली हुई</translation>
+    </message>
+    <message>
+      <source>Flat hand</source>
+      <translation>सपाट हाथ</translation>
+    </message>
+    <message>
+      <source>Soft fist</source>
+      <translation>हल्की मुट्ठी</translation>
+    </message>
+    <message>
+      <source>Tight fist</source>
+      <translation>कसी हुई मुट्ठी</translation>
+    </message>
+    <message>
+      <source>Half-closed hand</source>
+      <translation>आधा बंद हाथ</translation>
+    </message>
+    <message>
+      <source>Cupped hand</source>
+      <translation>कटोरी जैसा हाथ</translation>
+    </message>
+    <message>
+      <source>Deeply cupped hand</source>
+      <translation>गहरा कटोरी जैसा हाथ</translation>
+    </message>
+    <message>
+      <source>Thumbs up</source>
+      <translation>अंगूठा ऊपर</translation>
+    </message>
+    <message>
+      <source>OK sign</source>
+      <translation>OK संकेत</translation>
+    </message>
+    <message>
+      <source>Horns sign</source>
+      <translation>सींग का संकेत</translation>
+    </message>
+    <message>
+      <source>Shaka sign</source>
+      <translation>शाका संकेत</translation>
+    </message>
+    <message>
+      <source>Three extended fingers</source>
+      <translation>तीन उंगलियाँ सीधी</translation>
+    </message>
+    <message>
+      <source>Four extended fingers</source>
+      <translation>चार उंगलियाँ सीधी</translation>
+    </message>
+    <message>
+      <source>Thumb and index</source>
+      <translation>अंगूठा और तर्जनी</translation>
+    </message>
+    <message>
+      <source>Thumb, index and middle</source>
+      <translation>अंगूठा, तर्जनी और मध्यमा</translation>
+    </message>
+    <message>
+      <source>Crossed fingers</source>
+      <translation>उंगलियाँ क्रॉस</translation>
+    </message>
+    <message>
+      <source>Finger heart</source>
+      <translation>उंगलियों का दिल</translation>
+    </message>
+    <message>
+      <source>Beckoning finger</source>
+      <translation>उंगली से बुलाना</translation>
+    </message>
+    <message>
+      <source>Stop gesture</source>
+      <translation>रुकने का संकेत</translation>
+    </message>
+    <message>
+      <source>Count one</source>
+      <translation>एक गिनें</translation>
+    </message>
+    <message>
+      <source>Count two</source>
+      <translation>दो गिनें</translation>
+    </message>
+    <message>
+      <source>Count three</source>
+      <translation>तीन गिनें</translation>
+    </message>
+    <message>
+      <source>Count four</source>
+      <translation>चार गिनें</translation>
+    </message>
+    <message>
+      <source>Count five</source>
+      <translation>पाँच गिनें</translation>
+    </message>
+    <message>
+      <source>Small pinch</source>
+      <translation>छोटी चुटकी</translation>
+    </message>
+    <message>
+      <source>Wide pinch</source>
+      <translation>चौड़ी चुटकी</translation>
+    </message>
+    <message>
+      <source>Tripod pinch</source>
+      <translation>तीन उंगलियों की चुटकी</translation>
+    </message>
+    <message>
+      <source>Precision grip</source>
+      <translation>बारीक पकड़</translation>
+    </message>
+    <message>
+      <source>Pen grip</source>
+      <translation>कलम पकड़ना</translation>
+    </message>
+    <message>
+      <source>Brush grip</source>
+      <translation>कूची पकड़ना</translation>
+    </message>
+    <message>
+      <source>Cylinder grip</source>
+      <translation>बेलनाकार पकड़</translation>
+    </message>
+    <message>
+      <source>Thin handle grip</source>
+      <translation>पतला हत्था पकड़ना</translation>
+    </message>
+    <message>
+      <source>Ball grip</source>
+      <translation>गेंद पकड़ना</translation>
+    </message>
+    <message>
+      <source>Large ball grip</source>
+      <translation>बड़ी गेंद पकड़ना</translation>
+    </message>
+    <message>
+      <source>Hook grip</source>
+      <translation>हुक जैसी पकड़</translation>
+    </message>
+    <message>
+      <source>Key pinch</source>
+      <translation>चाबी की पकड़</translation>
+    </message>
+    <message>
+      <source>Claw hand</source>
+      <translation>पंजे जैसा हाथ</translation>
+    </message>
+    <message>
+      <source>Gentle touch</source>
+      <translation>हल्का स्पर्श</translation>
+    </message>
+    <message>
+      <source>Fingertip touch</source>
+      <translation>उंगलियों के सिरों से स्पर्श</translation>
+    </message>
+    <message>
+      <source>Fabric pinch</source>
+      <translation>कपड़ा चुटकी में पकड़ना</translation>
+    </message>
+    <message>
+      <source>Delicate hand</source>
+      <translation>कोमल हाथ</translation>
+    </message>
+    <message>
+      <source>Tense hand</source>
+      <translation>तनाव वाला हाथ</translation>
+    </message>
+    <message>
+      <source>Basic hand poses</source>
+      <translation>हाथ की मूल मुद्राएँ</translation>
+    </message>
+    <message>
+      <source>Hand gestures</source>
+      <translation>हाथ के संकेत</translation>
+    </message>
+    <message>
+      <source>Finger counting</source>
+      <translation>उंगलियों से गिनना</translation>
+    </message>
+    <message>
+      <source>Grasping poses</source>
+      <translation>पकड़ने की मुद्राएँ</translation>
+    </message>
+    <message>
+      <source>Expressive hands</source>
+      <translation>अभिव्यक्तिपूर्ण हाथ</translation>
+    </message>
+    <message>
+      <source>All hand poses</source>
+      <translation>हाथ की सभी मुद्राएँ</translation>
+    </message>
+    <message>
+        <source>Edit selected hand</source>
+        <translation>चयनित हाथ संपादित करें</translation>
+    </message>
+    <message>
+        <source>Hand pose</source>
+        <translation>हाथ की मुद्रा</translation>
+    </message>
+    <message>
+        <source>Finger</source>
+        <translation>उंगली</translation>
+    </message>
+    <message>
+        <source>Finger curl</source>
+        <translation>मोड़</translation>
+    </message>
+    <message>
+        <source>Finger spread</source>
+        <translation>फैलाव</translation>
+    </message>
+    <message>
+        <source>Cup palm</source>
+        <translation>हथेली मोड़ें</translation>
+    </message>
+    <message>
+        <source>Joint</source>
+        <translation>जोड़</translation>
+    </message>
+    <message>
+        <source>Reset hand</source>
+        <translation>हाथ रीसेट करें</translation>
+    </message>
+    <message>
+        <source>Thumb</source>
+        <translation>अंगूठा</translation>
+    </message>
+    <message>
+        <source>Index finger</source>
+        <translation>तर्जनी</translation>
+    </message>
+    <message>
+        <source>Middle finger</source>
+        <translation>मध्यमा</translation>
+    </message>
+    <message>
+        <source>Ring finger</source>
+        <translation>अनामिका</translation>
+    </message>
+    <message>
+        <source>Little finger</source>
+        <translation>कनिष्ठा</translation>
+    </message>
+    <message>
+        <source>Palm</source>
+        <translation>हथेली</translation>
+    </message>
+    <message>
+        <source>Wrist</source>
+        <translation>कलाई</translation>
+    </message>
+    <message>
+        <source>Open hand</source>
+        <translation>खुला हाथ</translation>
+    </message>
+    <message>
+        <source>Relaxed hand</source>
+        <translation>ढीला हाथ</translation>
+    </message>
+    <message>
+        <source>Fist</source>
+        <translation>मुट्ठी</translation>
+    </message>
+    <message>
+        <source>Pointing hand</source>
+        <translation>इशारा करता हाथ</translation>
+    </message>
+    <message>
+        <source>Peace sign</source>
+        <translation>शांति चिह्न</translation>
+    </message>
+    <message>
+        <source>Reset selected part</source>
+        <translation>चयनित अंग रीसेट करें</translation>
+    </message>
+    <message>
+        <source>Add drawing figure</source>
+        <translation>ड्रॉइंग पुतला जोड़ें</translation>
+    </message>
+    <message>
+        <source>Drawing figure</source>
+        <translation>ड्रॉइंग पुतला</translation>
+    </message>
+    <message>
+        <source>Could not add drawing figure</source>
+        <translation>ड्रॉइंग पुतला नहीं जोड़ा जा सका</translation>
+    </message>
+    <message>
+        <source>Edit pose</source>
+        <translation>मुद्रा संपादित करें</translation>
+    </message>
+    <message>
+        <source>Apply pose</source>
+        <translation>मुद्रा लागू करें</translation>
+    </message>
+    <message>
+        <source>Pose assistance</source>
+        <translation>मुद्रा सहायता</translation>
+    </message>
+    <message>
+        <source>Pin / unpin joint</source>
+        <translation>जोड़ स्थिर करें / छोड़ें</translation>
+    </message>
+    <message>
+        <source>OpenPose layer</source>
+        <translation>OpenPose परत</translation>
+    </message>
+    <message>
+        <source>Drag joints; Alt-drag changes depth. Pink joints are pinned.</source>
+        <translation>जोड़ों को खींचें; Alt के साथ खींचने से गहराई बदलती है। गुलाबी जोड़ स्थिर हैं।</translation>
+    </message>
+    <message>
+        <source>Drag joints to move; drag XYZ rings to rotate. Alt-drag changes depth. Pink joints are pinned.</source>
+        <translation>जोड़ों को खींचकर हिलाएँ और XYZ रिंग खींचकर घुमाएँ। Alt के साथ खींचने से गहराई बदलती है। गुलाबी जोड़ स्थिर हैं।</translation>
+    </message>
+    <message>
+        <source>Export OpenPose</source>
+        <translation>OpenPose निर्यात करें</translation>
+    </message>
+    <message>
+        <source>Could not export OpenPose</source>
+        <translation>OpenPose निर्यात नहीं हो सका</translation>
+    </message>
+    <message>
+        <source>Standing</source>
+        <translation>खड़े होना</translation>
+    </message>
+    <message>
+        <source>Arms out</source>
+        <translation>बाहें फैलाना</translation>
+    </message>
+    <message>
+        <source>Sitting</source>
+        <translation>बैठना</translation>
+    </message>
+    <message>
+        <source>Walking</source>
+        <translation>चलना</translation>
+    </message>
+    <message>
+        <source>Crouching</source>
+        <translation>उकड़ूँ बैठना</translation>
+    </message>
+    <message>
+        <source>Reaching</source>
+        <translation>हाथ बढ़ाना</translation>
+    </message>
+    <message>
+        <source>Pelvis</source>
+        <translation>श्रोणि</translation>
+    </message>
+    <message>
+        <source>Waist</source>
+        <translation>कमर</translation>
+    </message>
+    <message>
+        <source>Chest</source>
+        <translation>छाती</translation>
+    </message>
+    <message>
+        <source>Neck</source>
+        <translation>गर्दन</translation>
+    </message>
+    <message>
+        <source>Head</source>
+        <translation>सिर</translation>
+    </message>
+    <message>
+        <source>Left Collar</source>
+        <translation>बायाँ: हंसली</translation>
+    </message>
+    <message>
+        <source>Left Shoulder</source>
+        <translation>बायाँ: कंधा</translation>
+    </message>
+    <message>
+        <source>Left Elbow</source>
+        <translation>बायाँ: कोहनी</translation>
+    </message>
+    <message>
+        <source>Left Wrist</source>
+        <translation>बायाँ: कलाई</translation>
+    </message>
+    <message>
+        <source>Left Hip</source>
+        <translation>बायाँ: कूल्हा</translation>
+    </message>
+    <message>
+        <source>Left Knee</source>
+        <translation>बायाँ: घुटना</translation>
+    </message>
+    <message>
+        <source>Left Ankle</source>
+        <translation>बायाँ: टखना</translation>
+    </message>
+    <message>
+        <source>Right Collar</source>
+        <translation>दायाँ: हंसली</translation>
+    </message>
+    <message>
+        <source>Right Shoulder</source>
+        <translation>दायाँ: कंधा</translation>
+    </message>
+    <message>
+        <source>Right Elbow</source>
+        <translation>दायाँ: कोहनी</translation>
+    </message>
+    <message>
+        <source>Right Wrist</source>
+        <translation>दायाँ: कलाई</translation>
+    </message>
+    <message>
+        <source>Right Hip</source>
+        <translation>दायाँ: कूल्हा</translation>
+    </message>
+    <message>
+        <source>Right Knee</source>
+        <translation>दायाँ: घुटना</translation>
+    </message>
+    <message>
+        <source>Right Ankle</source>
+        <translation>दायाँ: टखना</translation>
+    </message>
+</context>
+<context>
+    <name>DrawingFigureToolbarWidget</name>
+    <message>
+        <source>Could not export OpenPose</source>
+        <translation>OpenPose निर्यात नहीं हो सका</translation>
+    </message>
+    <message>
+        <source>Export OpenPose</source>
+        <translation>OpenPose निर्यात करें</translation>
+    </message>
+</context>
+<context>
+    <name>DrawingFigureHandEditor</name>
+    <message>
+        <source>Hand pose</source>
+        <translation>हाथ की मुद्रा</translation>
+    </message>
+    <message>
+        <source>Cup palm</source>
+        <translation>हथेली मोड़ें</translation>
+    </message>
+    <message>
+        <source>Joint</source>
+        <translation>जोड़</translation>
+    </message>
+</context>
+<context>
+    <name>DrawingFigurePosePresetControls</name>
+    <message>
+        <source>Choose a different name for this model.</source>
+        <translation>इस मॉडल के लिए कोई दूसरा नाम चुनें।</translation>
+    </message>
+    <message>
+        <source>Enter a name between 1 and 80 characters.</source>
+        <translation>1 से 80 अक्षरों का नाम दर्ज करें।</translation>
+    </message>
+    <message>
+        <source>Saved poses</source>
+        <translation>सहेजी गई मुद्राएँ</translation>
+    </message>
+    <message>
+        <source>Select saved pose</source>
+        <translation>सहेजी मुद्रा चुनें</translation>
+    </message>
+    <message>
+        <source>Save current pose</source>
+        <translation>वर्तमान मुद्रा सहेजें</translation>
+    </message>
+    <message>
+        <source>Apply saved pose</source>
+        <translation>सहेजी मुद्रा लागू करें</translation>
+    </message>
+    <message>
+        <source>Delete saved pose</source>
+        <translation>सहेजी मुद्रा हटाएँ</translation>
+    </message>
+    <message>
+        <source>Could not load pose presets</source>
+        <translation>मुद्रा प्रीसेट लोड नहीं हो सके</translation>
+    </message>
+    <message>
+        <source>Pose presets</source>
+        <translation>मुद्रा प्रीसेट</translation>
+    </message>
+    <message>
+        <source>Save pose preset</source>
+        <translation>मुद्रा प्रीसेट सहेजें</translation>
+    </message>
+    <message>
+        <source>Pose preset name</source>
+        <translation>मुद्रा प्रीसेट का नाम</translation>
+    </message>
+    <message>
+        <source>Could not save pose preset</source>
+        <translation>मुद्रा प्रीसेट सहेजा नहीं जा सका</translation>
+    </message>
+    <message>
+        <source>Could not apply pose preset</source>
+        <translation>मुद्रा प्रीसेट लागू नहीं किया जा सका</translation>
+    </message>
+    <message>
+        <source>Could not delete pose preset</source>
+        <translation>मुद्रा प्रीसेट हटाया नहीं जा सका</translation>
+    </message>
+    <message>
+        <source>Delete selected pose preset?</source>
+        <translation>चयनित मुद्रा प्रीसेट हटाएँ?</translation>
     </message>
 </context>
 </TS>

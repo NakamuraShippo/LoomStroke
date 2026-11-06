@@ -12,6 +12,8 @@ from loomstroke.core.selection_shapes.selection_shape_mask import SelectionShape
 from loomstroke.core.selection_shapes.selection_shape_path import SelectionShapePath
 from loomstroke.core.selection_shapes.shape_selection_mask_command import ShapeSelectionMaskCommand
 
+from ..sdk.assist_geometry import mapped_paths, path_copies, snap_assist_point
+from ..sdk.drawing_assist import ToolAssistBridge
 from .free_selection_overlay import FreeSelectionOverlay
 from .free_selection_session import FreeSelectionSession
 from .selection_preparation_controller import SelectionPreparationController
@@ -27,12 +29,14 @@ class FreeSelectionController:
         self._delegating = False
         self._overlay = FreeSelectionOverlay()
         self._preparation = SelectionPreparationController(tool)
+        self._assist = ToolAssistBridge("loomstroke.basic.selection.rect")
 
     @property
     def enabled(self) -> bool:
         return self._tool.settings.selection_mode in self.MODES
 
     def reset(self) -> None:
+        self._assist.end()
         self._preparation.cancel()
         if self._session is not None and self._tool.host_api is not None:
             self._tool.host_api.input.release_capture(self._tool.descriptor().id)
@@ -65,7 +69,10 @@ class FreeSelectionController:
                 tool._raster_controller.on_pointer_down(point, **modifiers)
                 return
             self._session = FreeSelectionSession(tool.settings.selection_mode, operation)
+            self._assist.capture(tool.host_api)
         session = self._session
+        point = snap_assist_point(tool.host_api, point)
+        position = self._position(point)
         if (
             session.mode == "Polygon"
             and len(session.points) >= 3
@@ -88,6 +95,7 @@ class FreeSelectionController:
         session = self._session
         if session is None or not points:
             return
+        points = [snap_assist_point(self._tool.host_api, point) for point in points]
         if session.mode == "Lasso":
             for point in points:
                 position = self._position(point)
@@ -153,7 +161,7 @@ class FreeSelectionController:
             return True
         return False
 
-    def _path(self, *, preview: bool = False) -> QPainterPath:
+    def _path(self, *, preview: bool = False, copies=True) -> QPainterPath:
         session = self._session
         if session is None:
             return QPainterPath()
@@ -173,7 +181,7 @@ class FreeSelectionController:
             path.moveTo(*points[0])
             for point in points[1:]:
                 path.lineTo(*point)
-        return path
+        return path_copies(path, self._assist.session, union=not preview) if copies else path
 
     def _preview(self) -> None:
         self._overlay.show(self._tool.host_api, self._path(preview=True))
@@ -183,10 +191,15 @@ class FreeSelectionController:
         if session is None:
             return
         settings = self._tool.settings
-        path, size = self._path(), self._tool._canvas_size()
+        path, size = self._path(copies=False), self._tool._canvas_size()
         radius = settings.feather_radius if settings.feather_enabled else 0
         bounds = path.boundingRect()
-        if radius and min(bounds.width(), size[0]) * min(bounds.height(), size[1]) > 512_000:
+        symmetric = self._assist.session is not None and self._assist.session.has_copies
+        if symmetric or (
+            radius and min(bounds.width(), size[0]) * min(bounds.height(), size[1]) > 512_000
+        ):
+            if symmetric:
+                path = mapped_paths(path, self._assist.session)
             self.reset()
             self._preparation.prepare(path, size, radius, settings.pixel_perfect, session.operation)
             return

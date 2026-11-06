@@ -9,6 +9,9 @@ from typing import Any
 
 from PySide6.QtGui import QImage
 
+from loomstroke.core.appearance.input_styles import render_input_styles
+from loomstroke.core.assets_3d.scene import Scene3DDocument
+from loomstroke.core.document_capture_guard import assert_document_capture_ready
 from loomstroke.platform.cache_paths import build_snapshot_path, normalize_image_format
 
 logger = logging.getLogger("loomstroke.core.canvas_service_simple")
@@ -52,13 +55,35 @@ class CanvasLayerSnapshotService:
         image_copy: QImage | None
         if target_layer.layer_type == "vector":
             image_copy = self._owner._rasterize_vector_layer(target_layer)
+        elif target_layer.layer_type == "3d":
+            image_copy = self.rasterize_3d_layer(target_layer)
         else:
             image_copy = target_layer.image.copy() if target_layer.image else None
         if image_copy is None or image_copy.isNull():
             raise ValueError(f"Layer has no image buffer: {target_layer.name}")
+        image_copy = render_input_styles(image_copy, target_layer)
         if image_copy.format() == QImage.Format.Format_ARGB32_Premultiplied:
             return image_copy.convertToFormat(QImage.Format.Format_ARGB32)
         return image_copy
+
+    def rasterize_3d_layer(self, layer: Any) -> QImage:
+        """Capture an isolated 3D view through a UI-owned rendering port."""
+        assert_document_capture_ready(self._owner)
+        if not isinstance(getattr(layer, "scene_3d", None), Scene3DDocument):
+            raise ValueError("3D input layer has no renderable scene")
+        renderer = getattr(self._owner, "_three_d_snapshot_renderer", None)
+        if not callable(renderer):
+            raise RuntimeError("3D input snapshot renderer is unavailable")
+        width, height = self._owner.get_canvas_size()
+        image = renderer(layer, width, height)
+        if (
+            not isinstance(image, QImage)
+            or image.isNull()
+            or image.width() != width
+            or image.height() != height
+        ):
+            raise ValueError("3D input snapshot renderer returned an invalid image")
+        return image
 
     @staticmethod
     def _snapshot_format(fmt: str) -> str:

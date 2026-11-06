@@ -11,8 +11,9 @@ import logging
 from pathlib import Path
 from typing import Any
 
-from PySide6.QtCore import QEvent
-from PySide6.QtWidgets import QTabWidget, QVBoxLayout, QWidget
+from PySide6.QtCore import QEvent, QObject, QTimer
+from PySide6.QtWidgets import QDockWidget, QTabWidget, QVBoxLayout, QWidget
+from shiboken6 import isValid
 
 from loomstroke.plugins.ai_effect.editor.import_preset import (
     ImportPresetError,
@@ -48,6 +49,8 @@ class AIEffectManagerPanel(QWidget):
         self._register_target_dir = register_target_dir
         self._preset_exported_handler = preset_exported_handler
         self._editor: Any | None = None
+        self._floating_dock: QDockWidget | None = None
+        self._floating_sync_pending = False
 
         self.setObjectName("AIEffectManagerPanel")
         layout = QVBoxLayout(self)
@@ -160,8 +163,49 @@ class AIEffectManagerPanel(QWidget):
         self._comfy_author.run(self._comfy_author.open_current())
 
     def showEvent(self, event: Any) -> None:  # noqa: N802 - Qt naming
+        self._track_floating_dock()
         self.refresh()
         super().showEvent(event)
+
+    def _track_floating_dock(self) -> None:
+        dock = self.parentWidget()
+        if not isinstance(dock, QDockWidget) or dock is self._floating_dock:
+            return
+        if self._floating_dock is not None and isValid(self._floating_dock):
+            self._floating_dock.removeEventFilter(self)
+            self._floating_dock.topLevelChanged.disconnect(self._on_dock_top_level_changed)
+        dock.installEventFilter(self)
+        dock.topLevelChanged.connect(self._on_dock_top_level_changed)
+        self._floating_dock = dock
+
+    def _on_dock_top_level_changed(self, floating: bool) -> None:
+        if not floating:
+            QTimer.singleShot(0, self._raise_redocked_panel)
+
+    def _raise_redocked_panel(self) -> None:
+        dock = self._floating_dock
+        if dock is not None and isValid(dock) and not dock.isFloating() and dock.widget() is self:
+            dock.raise_()
+
+    def eventFilter(self, watched: QObject, event: QEvent) -> bool:  # noqa: N802
+        if (
+            watched is self._floating_dock
+            and event.type() == QEvent.Type.Resize
+            and self._floating_dock.isFloating()
+            and not self._floating_sync_pending
+        ):
+            self._floating_sync_pending = True
+            QTimer.singleShot(0, self._sync_floating_geometry)
+        return super().eventFilter(watched, event)
+
+    def _sync_floating_geometry(self) -> None:
+        self._floating_sync_pending = False
+        dock = self._floating_dock
+        if dock is None or not isValid(dock) or not dock.isFloating() or dock.widget() is not self:
+            return
+        target = dock.contentsRect()
+        if self.geometry() != target:
+            self.setGeometry(target)
 
     def closeEvent(self, event: Any) -> None:  # noqa: N802
         self._comfy_author.dispose()

@@ -6,15 +6,18 @@ import logging
 import sqlite3  # noqa: F401 — used in except clauses
 import uuid
 from collections.abc import Callable, Iterable
-from dataclasses import dataclass
+from dataclasses import dataclass, field
 from pathlib import Path
 from typing import Any, ClassVar
 
 from PySide6.QtCore import QEvent, QMimeData, QModelIndex, QSize, Qt, QTimer, Signal
 from PySide6.QtGui import (  # noqa: F401
     QCloseEvent,
+    QColor,
     QIcon,
     QKeySequence,
+    QPainter,
+    QPixmap,
     QShortcut,
 )
 from PySide6.QtWidgets import (
@@ -37,6 +40,7 @@ from PySide6.QtWidgets import (
     QScrollArea,
     QSizePolicy,
     QSpinBox,
+    QSplitter,
     QStyle,
     QTabWidget,
     QToolButton,
@@ -63,6 +67,7 @@ from loomstroke.plugins.common.constants import (  # noqa: F401
     EventTypes,
 )
 from loomstroke.plugins.common.events import PluginEvent
+from loomstroke.plugins.common.liveprompt_defaults import default_separator
 from loomstroke.plugins.common.llm_gateway_client import LLMGatewayClient
 from loomstroke.plugins.common.snippet_models import (
     PromptPayload,
@@ -79,17 +84,30 @@ from loomstroke.ui.translations import (
     translated_literal_domain,
 )
 
+from . import emphasis as _emphasis
 from .comfyui_bridge import ComfyUIBridge
-from .compose_widgets import PromptChipFlowWidget, PromptChipWidget  # noqa: F401
+from .compose_header import ComposeHeader
+from .compose_output import OutputSection
+from .compose_separator import SeparatorSelector
+from .compose_widgets import _KIND_COLORS, PromptChipFlowWidget, PromptChipWidget  # noqa: F401
 from .composer import PromptComposer
 from .event_handlers import PromptEditorEventHandler, SnippetEventHandler
 from .llm_pane_controller import LLMPaneController
+from .resizable_prompt_area import ResizablePromptArea
 from .storage import PromptSnippetStore
 
 _LIBRARY_ACTION_ICON_SIZE = QSize(14, 14)
 _LIBRARY_ACTION_BUTTON_SIZE = QSize(22, 22)
 _PANEL_MINIMUM_SIZE_HINT = QSize(100, 50)
 _PROMPT_EDITOR_DEFAULT_SIZE = (360, 600)
+_LIBRARY_SPLITTER_KEY = "prompt_editor/library/splitter_sizes"
+# Same colors as the LivePrompt chips; the LLM-only kinds have no chip.
+_LIBRARY_KIND_COLORS = {
+    SK_PROMPT: _KIND_COLORS[CK_PROMPT],
+    SK_TEXT: _KIND_COLORS[CK_STRING],
+    SK_LIST: _KIND_COLORS[CK_LIST],
+}
+_LIBRARY_LLM_KIND_COLOR = "#9aa0a6"
 _LIBRARY_ACTION_SVG_ICONS: dict[str, str] = {
     "load": (
         "<svg viewBox='0 0 16 16' xmlns='http://www.w3.org/2000/svg'>"
@@ -99,12 +117,10 @@ _LIBRARY_ACTION_SVG_ICONS: dict[str, str] = {
         "<path d='M13 3v10' stroke='#94a3b8' stroke-width='1.3' stroke-linecap='round'/>"
         "</svg>"
     ),
+    # A bare plus: the old page outline read as a Save floppy at 14px.
     "new": (
         "<svg viewBox='0 0 16 16' xmlns='http://www.w3.org/2000/svg'>"
-        "<path d='M3.5 3.5h6l3 3v6h-9z' fill='none' stroke='#f8fafc' "
-        "stroke-width='1.3' stroke-linejoin='round'/>"
-        "<path d='M9.5 3.5v3h3' fill='none' stroke='#94a3b8' stroke-width='1.3'/>"
-        "<path d='M8 8v4M6 10h4' stroke='#a78bfa' stroke-width='1.5' "
+        "<path d='M8 3v10M3 8h10' stroke='#a78bfa' stroke-width='1.9' "
         "stroke-linecap='round'/>"
         "</svg>"
     ),
@@ -130,6 +146,13 @@ _LIBRARY_ACTION_SVG_ICONS: dict[str, str] = {
         "<svg viewBox='0 0 16 16' xmlns='http://www.w3.org/2000/svg'>"
         "<path d='M4 12.5h8' stroke='#94a3b8' stroke-width='1.3' stroke-linecap='round'/>"
         "<path d='M8 3.5v6M5.5 7.5L8 10l2.5-2.5' fill='none' stroke='#f8fafc' "
+        "stroke-width='1.5' stroke-linecap='round' stroke-linejoin='round'/>"
+        "</svg>"
+    ),
+    "import": (
+        "<svg viewBox='0 0 16 16' xmlns='http://www.w3.org/2000/svg'>"
+        "<path d='M4 12.5h8' stroke='#94a3b8' stroke-width='1.3' stroke-linecap='round'/>"
+        "<path d='M8 10V4M5.5 6L8 3.5 10.5 6' fill='none' stroke='#f8fafc' "
         "stroke-width='1.5' stroke-linecap='round' stroke-linejoin='round'/>"
         "</svg>"
     ),
@@ -182,6 +205,8 @@ class PromptComponent:
     text_value: str = ""
     tag_filter: str | None = None
     selection_mode: str = "fixed"
+    emphasis: dict[str, dict[str, Any]] = field(default_factory=dict)
+    chip_emphasis: dict[str, Any] = field(default_factory=dict)
 
     def to_metadata(self) -> dict[str, Any]:
         data: dict[str, Any] = {"kind": self.kind}
@@ -195,6 +220,10 @@ class PromptComponent:
             data["tag_filter"] = self.tag_filter
         if self.selection_mode in {"random", "sequential", "combinatorial"}:
             data["selection_mode"] = self.selection_mode
+        if self.emphasis:
+            data["emphasis"] = {token: dict(entry) for token, entry in self.emphasis.items()}
+        if self.chip_emphasis:
+            data["chip_emphasis"] = dict(self.chip_emphasis)
         return data
 
     @classmethod
@@ -216,6 +245,8 @@ class PromptComponent:
                 if payload.get("selection_mode") in ("random", "sequential", "combinatorial")
                 else "fixed"
             ),
+            emphasis=_emphasis.normalize(payload.get("emphasis")),
+            chip_emphasis=_emphasis.normalize_entry(payload.get("chip_emphasis")),
         )
 
 
@@ -433,7 +464,7 @@ class PromptEditorPanel(QWidget, AsyncTaskOwner):
             SK_USER_PROMPT: self._ts("User Prompt (LLM)"),
         }
         self._library_kind_order = list(ALL_SNIPPET_KINDS)
-        self._library_type_placeholder = self._ts("Component type")
+        self._library_type_placeholder = self._ts("All types")
         self._library_all_tags_source = self._ts("All tags")
         self._composer = composer
         self._comfyui = comfyui_bridge
@@ -466,7 +497,9 @@ class PromptEditorPanel(QWidget, AsyncTaskOwner):
         self._library_duplicate_button: QToolButton | None = None
         self._library_delete_button: QToolButton | None = None
         self._library_export_button: QToolButton | None = None
+        self._library_import_button: QToolButton | None = None
         self._library_refresh_button: QToolButton | None = None
+        self._library_splitter: QSplitter | None = None
         self._library_new_button: QToolButton | None = None
         self._library_load_button: QToolButton | None = None
         self._library_autosave: QTimer | None = None
@@ -518,6 +551,14 @@ class PromptEditorPanel(QWidget, AsyncTaskOwner):
         self._register_tab_title(self._compose_tab, compose_title)
         self._register_tab_title(self._library_tab, library_title)
         self._register_tab_title(self._llm_tab, llm_title)
+        # Model lists are fetched only once the user opens the LLM tab.
+        self._tabs.currentChanged.connect(
+            lambda _index: (
+                self._llm_pane.on_tab_shown()
+                if self._tabs is not None and self._tabs.currentWidget() is self._llm_tab
+                else None
+            )
+        )
 
         self._save_shortcut = QShortcut(QKeySequence("Ctrl+Shift+S"), self)
         self._save_shortcut.activated.connect(self._save_prompt)
@@ -627,102 +668,96 @@ class PromptEditorPanel(QWidget, AsyncTaskOwner):
         palette_box.setMinimumHeight(fixed_height)
         palette_box.setMaximumHeight(fixed_height + 0)
         layout.addWidget(palette_box)
+        # Components are added from the chip area's "+" menu (kind -> tag -> title).
+        palette_box.hide()
 
         live_prompt_text = self._ts("Live prompt")
         live_prompt_label = QLabel(live_prompt_text, tab)
         self._translation_binder.register(live_prompt_label.setText, live_prompt_text)
-        layout.addWidget(live_prompt_label)
-        self._chip_flow = PromptChipFlowWidget(tab)
-        self._chip_flow.chipInserted.connect(self._insert_component)
-        self._chip_flow.chipMoved.connect(self._on_chip_moved)
-        self._chip_flow.setSizePolicy(QSizePolicy.Policy.Expanding, QSizePolicy.Policy.Preferred)
-        layout.addWidget(self._chip_flow, 1)
-
-        action_row = QHBoxLayout()
-        action_row.setContentsMargins(0, 0, 0, 0)
-        separator_text = self._ts("Separator")
-        separator_label = QLabel(separator_text, tab)
-        self._translation_binder.register(separator_label.setText, separator_text)
+        live_prompt_row = QHBoxLayout()
+        live_prompt_row.setContentsMargins(0, 0, 0, 0)
+        live_prompt_row.addWidget(live_prompt_label)
+        live_prompt_row.addStretch(1)
         self._separator_edit = QLineEdit(tab)
         self._separator_edit.setPlaceholderText("\\n")
         self._separator_edit.setFixedWidth(64)
         self._separator_edit.textChanged.connect(self._on_separator_changed)
-        action_row.addWidget(separator_label)
-        action_row.addWidget(self._separator_edit)
-        copy_text = self._ts("Copy")
-        self._copy_button = self._create_compact_icon_button(
+        self._separator_selector = SeparatorSelector(
             tab,
-            tooltip=copy_text,
-            theme_icon="edit-copy",
-            fallback_icon=QStyle.SP_DialogOpenButton,
-            handler=self._handle_copy,
+            self._separator_edit,
+            texts={
+                "separator": self._ts("Separator"),
+                "newline": self._ts("New line"),
+                "comma": self._ts("Comma"),
+                "comma_space": self._ts("Comma and space"),
+                "custom": self._ts("Custom"),
+            },
+            register=self._translation_binder.register,
         )
-        action_row.addWidget(self._copy_button)
-        action_row.addStretch(1)
-        layout.addLayout(action_row)
+        live_prompt_row.addWidget(self._separator_selector)
+        layout.addLayout(live_prompt_row)
+        self._chip_flow = PromptChipFlowWidget(tab)
+        self._chip_flow.chipInserted.connect(self._insert_component)
+        self._chip_flow.snippetInserted.connect(
+            lambda kind, snippet_id, row: self._insert_component(kind, row, snippet_id)
+        )
+        self._chip_flow.chipMoved.connect(self._on_chip_moved)
+        self._chip_flow.setSizePolicy(QSizePolicy.Policy.Expanding, QSizePolicy.Policy.Preferred)
+        # Same remembered height (ui/liveprompt/flow_height) as the shared LivePrompt composer.
+        self._flow_area = ResizablePromptArea(self._chip_flow, self._host.settings)
+        layout.addWidget(self._flow_area)
 
-        save_title = self._ts("Save")
-        save_box = QGroupBox(save_title, tab)
-        self._translation_binder.register(save_box.setTitle, save_title)
-        save_layout = QVBoxLayout(save_box)
-        save_layout.setContentsMargins(8, 8, 8, 8)
-        save_layout.setSpacing(6)
-        form = QFormLayout()
-        form.setContentsMargins(0, 0, 0, 0)
-        form.setSpacing(6)
-        self._title_edit = QLineEdit(tab)
-        title_placeholder = self._ts("Prompt title")
-        self._translation_binder.register(self._title_edit.setPlaceholderText, title_placeholder)
+        self._output_section = OutputSection(
+            tab,
+            texts={
+                "output": self._ts("Output"),
+                "count": self._ts("{count} characters"),
+                "copy": self._ts("Copy"),
+                "tidy": self._ts("Tidy with LLM"),
+            },
+            register=self._translation_binder.register,
+            on_copy=self._handle_copy,
+            on_tidy=self._tidy_with_llm,
+        )
+        self._copy_button = self._output_section.copy_button
+        layout.addWidget(self._output_section)
+
+        # Title, unsaved mark and save actions sit above the live prompt.
+        self._compose_header = ComposeHeader(
+            tab,
+            texts={
+                "title": self._ts("Prompt title"),
+                "unsaved": self._ts("Unsaved changes"),
+                "save": self._ts("Save"),
+                "more": self._ts("More actions"),
+                "save_as": self._ts("Save As"),
+                "new": self._ts("New"),
+                "tags": self._ts("Tags (comma separated)"),
+            },
+            register=self._translation_binder.register,
+            on_save=self._save_prompt,
+            on_save_as=lambda: self._save_prompt(force_new=True),
+            on_new=self._new_prompt,
+        )
+        self._title_edit = self._compose_header.title_edit
         self._title_edit.textChanged.connect(self._on_title_changed)
-        self._add_form_row(form, self._ts("Title"), self._title_edit)
-        self._tags_edit = QLineEdit(tab)
-        tags_placeholder = self._ts("Tags (comma separated)")
-        self._translation_binder.register(self._tags_edit.setPlaceholderText, tags_placeholder)
+        self._tags_edit = self._compose_header.tags_edit
         self._tags_edit.textChanged.connect(self._on_tags_changed)
-        self._add_form_row(form, self._ts("Tags"), self._tags_edit)
-        save_layout.addLayout(form)
+        self._save_button = self._compose_header.save_button
+        self._save_as_button = self._compose_header.save_as_action
+        self._new_button = self._compose_header.new_action
+        layout.insertWidget(0, self._compose_header)
 
-        button_row = QHBoxLayout()
-        button_row.setContentsMargins(0, 0, 0, 0)
-        new_text = self._ts("New")
-        self._new_button = self._create_compact_icon_button(
-            tab,
-            tooltip=new_text,
-            theme_icon="document-new",
-            fallback_icon=QStyle.SP_FileDialogNewFolder,
-            handler=self._new_prompt,
-        )
-        button_row.addWidget(self._new_button)
-        save_text = self._ts("Save")
-        self._save_button = self._create_compact_icon_button(
-            tab,
-            tooltip=save_text,
-            theme_icon="document-save",
-            fallback_icon=QStyle.SP_DialogSaveButton,
-            handler=self._save_prompt,
-        )
-        button_row.addWidget(self._save_button)
-        save_as_text = self._ts("Save As")
-        self._save_as_button = self._create_compact_icon_button(
-            tab,
-            tooltip=save_as_text,
-            theme_icon="document-save-as",
-            fallback_icon=QStyle.SP_DialogSaveButton,
-            handler=lambda: self._save_prompt(force_new=True),
-        )
-        button_row.addWidget(self._save_as_button)
-        button_row.addStretch(1)
-        save_layout.addLayout(button_row)
-        layout.addWidget(save_box)
-
+        layout.addStretch(1)
         self._status = QLabel("", tab)
         self._status.setWordWrap(True)
         layout.addWidget(self._status)
 
         if self._separator_edit is not None:
             block = self._separator_edit.blockSignals(True)
-            self._separator_edit.setText("\\n")
+            self._separator_edit.setText(default_separator(self._host.settings))
             self._separator_edit.blockSignals(block)
+            self._separator_selector.refresh()
 
         return scroll
 
@@ -792,22 +827,30 @@ class PromptEditorPanel(QWidget, AsyncTaskOwner):
             self._library_search.setPlaceholderText, search_placeholder
         )
         filter_layout.addWidget(self._library_search)
+        # Tag and type side by side: two full-width rows cost list height.
+        filter_row = QHBoxLayout()
+        filter_row.setContentsMargins(0, 0, 0, 0)
+        filter_row.setSpacing(6)
         self._library_tag_filter = QComboBox(tab)
-        _configure_compact_combo(self._library_tag_filter, min_chars=8)
+        _configure_compact_combo(self._library_tag_filter, min_chars=4)
         self._library_tag_filter.addItem(self.tr(self._library_all_tags_source), None)
-        filter_layout.addWidget(self._library_tag_filter)
+        filter_row.addWidget(self._library_tag_filter, 1)
         self._library_type_filter = QComboBox(tab)
-        _configure_compact_combo(self._library_type_filter, min_chars=8)
+        _configure_compact_combo(self._library_type_filter, min_chars=4)
         self._populate_library_type_filter()
-        filter_layout.addWidget(self._library_type_filter)
+        filter_row.addWidget(self._library_type_filter, 1)
+        filter_layout.addLayout(filter_row)
         layout.addLayout(filter_layout)
 
-        self._library_list = QListWidget(tab)
+        # The list and the details share a splitter so the body editor gets room.
+        self._library_splitter = QSplitter(Qt.Orientation.Vertical, tab)
+        self._library_splitter.setChildrenCollapsible(False)
+        self._library_list = QListWidget(self._library_splitter)
         self._library_list.setSelectionMode(QAbstractItemView.SingleSelection)
-        layout.addWidget(self._library_list, 2)
+        self._library_splitter.addWidget(self._library_list)
 
         details_title = self._ts("Details")
-        details_box = QGroupBox(details_title, tab)
+        details_box = QGroupBox(details_title, self._library_splitter)
         self._translation_binder.register(details_box.setTitle, details_title)
         details_layout = QVBoxLayout(details_box)
         details_layout.setContentsMargins(8, 8, 8, 8)
@@ -824,14 +867,20 @@ class PromptEditorPanel(QWidget, AsyncTaskOwner):
         self._populate_library_kind_combo()
         self._add_form_row(form, self._ts("Component type"), self._library_kind_combo)
         details_layout.addLayout(form)
-        preview_text = self._ts("Preview")
+        # Edited in place and autosaved, so it is the body, not a preview.
+        preview_text = self._ts("Body")
         preview_label = QLabel(preview_text, tab)
         self._translation_binder.register(preview_label.setText, preview_text)
         details_layout.addWidget(preview_label)
         self._library_preview = QPlainTextEdit(tab)
         self._library_preview.setMinimumHeight(60)
-        details_layout.addWidget(self._library_preview)
-        layout.addWidget(details_box, 1)
+        details_layout.addWidget(self._library_preview, 1)
+        self._library_splitter.addWidget(details_box)
+        self._library_splitter.setStretchFactor(0, 1)
+        self._library_splitter.setStretchFactor(1, 2)
+        self._restore_library_splitter()
+        self._library_splitter.splitterMoved.connect(self._persist_library_splitter)
+        layout.addWidget(self._library_splitter, 1)
 
         action_row = QHBoxLayout()
         action_row.setContentsMargins(0, 0, 0, 0)
@@ -876,6 +925,14 @@ class PromptEditorPanel(QWidget, AsyncTaskOwner):
             handler=self._export_selected_prompt,
         )
         action_row.addWidget(self._library_export_button)
+        self._library_import_button = self._create_library_action_button(
+            tab,
+            tooltip=self._ts("Import"),
+            icon_key="import",
+            fallback_icon=QStyle.SP_DialogOpenButton,
+            handler=self._import_library_item,
+        )
+        action_row.addWidget(self._library_import_button)
         self._library_refresh_button = self._create_library_action_button(
             tab,
             tooltip=self._ts("Refresh"),
@@ -952,6 +1009,31 @@ class PromptEditorPanel(QWidget, AsyncTaskOwner):
                 self._library_kind_combo.setCurrentIndex(index)
         self._library_kind_combo.blockSignals(block)
 
+    @staticmethod
+    def _library_kind_icon(kind: str) -> QIcon:
+        pixmap = QPixmap(10, 10)
+        pixmap.fill(Qt.GlobalColor.transparent)
+        painter = QPainter(pixmap)
+        painter.setRenderHint(QPainter.RenderHint.Antialiasing)
+        painter.setPen(Qt.PenStyle.NoPen)
+        painter.setBrush(QColor(_LIBRARY_KIND_COLORS.get(kind, _LIBRARY_LLM_KIND_COLOR)))
+        painter.drawEllipse(1, 1, 8, 8)
+        painter.end()
+        return QIcon(pixmap)
+
+    def _apply_library_item(self, item: QListWidgetItem, snippet: Snippet) -> None:
+        """Kind as a chip-colored dot; kind, tags and body start in the tooltip."""
+        item.setText(snippet.title or snippet.id)
+        item.setIcon(self._library_kind_icon(snippet.kind))
+        details = [self._library_kind_label(snippet.kind)]
+        if snippet.tags:
+            details.append(", ".join(snippet.tags))
+        body = " ".join((snippet.body or "").split())
+        tooltip = " · ".join(details)
+        if body:
+            tooltip += "\n" + (body if len(body) <= 80 else body[:79] + "…")
+        item.setToolTip(tooltip)
+
     def _refresh_library_list_labels(self) -> None:
         if self._library_list is None:
             return
@@ -963,9 +1045,7 @@ class PromptEditorPanel(QWidget, AsyncTaskOwner):
             snippet = self._catalog.get(snippet_id) if snippet_id else None
             if snippet is None:
                 continue
-            kind_label = self._library_kind_label(snippet.kind)
-            title = snippet.title or snippet.id
-            item.setText(f"[{kind_label}] {title}")
+            self._apply_library_item(item, snippet)
 
     def _set_library_actions_enabled(self, enabled: bool) -> None:
         for button in (
@@ -1093,12 +1173,10 @@ class PromptEditorPanel(QWidget, AsyncTaskOwner):
     def _update_library_list_item(self, snippet: Snippet) -> None:
         if self._library_list is None:
             return
-        kind_label = self._library_kind_label(snippet.kind)
-        title = snippet.title or snippet.id
         for row in range(self._library_list.count()):
             item = self._library_list.item(row)
             if item.data(Qt.UserRole) == snippet.id:
-                item.setText(f"[{kind_label}] {title}")
+                self._apply_library_item(item, snippet)
                 break
 
     def _update_library_tag_filter(self) -> None:
@@ -1162,9 +1240,8 @@ class PromptEditorPanel(QWidget, AsyncTaskOwner):
         self._library_list.clear()
         selected_row = -1
         for idx, snippet in enumerate(snippets):
-            kind_label = self._library_kind_label(snippet.kind)
-            title = snippet.title or snippet.id
-            item = QListWidgetItem(f"[{kind_label}] {title}")
+            item = QListWidgetItem()
+            self._apply_library_item(item, snippet)
             item.setData(Qt.UserRole, snippet.id)
             self._library_list.addItem(item)
             if snippet.id == current_id:
@@ -1323,6 +1400,72 @@ class PromptEditorPanel(QWidget, AsyncTaskOwner):
         self._select_library_prompt(saved.id)
         self._refresh_llm_prompt_lists()
         self._set_library_status_translated("Created '{title}'.", title=saved.title)
+
+    def _import_library_item(self) -> None:
+        """Counterpart of Export: a .txt becomes a new item of the selected kind."""
+        path, _ = QFileDialog.getOpenFileName(
+            self,
+            self._ts("Import prompt"),
+            "",
+            self._ts("Text Files (*.txt);;All Files (*.*)"),
+        )
+        if not path:
+            return
+        try:
+            body = Path(path).read_text(encoding="utf-8").strip()
+        except (OSError, UnicodeDecodeError) as exc:
+            self._set_library_status_translated("Import failed: {error}", error=exc)
+            return
+        if not body:
+            self._set_library_status_translated(
+                "Import failed: {error}", error=self._ts("The file is empty.")
+            )
+            return
+        kind = SK_PROMPT
+        if self._library_kind_combo:
+            selection = self._library_kind_combo.currentData()
+            if selection:
+                kind = str(selection)
+        title = Path(path).stem or self._library_kind_label(kind)
+        snippet = Snippet(
+            id=f"{kind}-{uuid.uuid4().hex[:12]}",
+            title=title,
+            body=body,
+            tags=[],
+            category=kind,
+            favorite=False,
+            metadata={"title": title, "kind": kind},
+            kind=kind,
+            list_items=tuple(),
+        )
+        try:
+            saved = self._snippet_repo.save_snippet(snippet)
+        except (OSError, sqlite3.Error, ValueError) as exc:
+            self._set_library_status_translated("Save failed: {error}", error=exc)
+            return
+        self._prompt_snippets.append(saved)
+        self._catalog.refresh()
+        self._update_library_tag_filter()
+        self._refresh_library_list()
+        self._selected_prompt = saved
+        self._select_library_prompt(saved.id)
+        self._refresh_llm_prompt_lists()
+        self._set_library_status_translated("Imported '{title}'.", title=saved.title)
+
+    def _restore_library_splitter(self) -> None:
+        if self._library_splitter is None:
+            return
+        stored = self._settings_get(_LIBRARY_SPLITTER_KEY, [])
+        sizes: list[int] = []
+        if isinstance(stored, (list, tuple)) and len(stored) == 2:
+            with contextlib.suppress(TypeError, ValueError):
+                sizes = [max(1, int(value)) for value in stored]
+        # Without a stored split, give the details (body editor) two thirds.
+        self._library_splitter.setSizes(sizes or [100, 200])
+
+    def _persist_library_splitter(self, *_args: Any) -> None:
+        if self._library_splitter is not None:
+            self._settings_set(_LIBRARY_SPLITTER_KEY, list(self._library_splitter.sizes()))
 
     def _on_llm_output_context_menu(self, pos: Any) -> None:
         self._llm_pane.on_output_context_menu(pos)
@@ -1703,9 +1846,10 @@ class PromptEditorPanel(QWidget, AsyncTaskOwner):
             return
         self._insert_component(kind, len(self._components))
 
-    def _insert_component(self, kind: str, row: int) -> None:
+    def _insert_component(self, kind: str, row: int, snippet_id: str | None = None) -> None:
         component = PromptComponent(kind=kind)
-        default = self._catalog.default_snippet(kind)
+        chosen = self._catalog.get(snippet_id) if snippet_id else None
+        default = chosen or self._catalog.default_snippet(kind)
         if default:
             component.snippet_id = default.id
             if kind == CK_LIST and default.list_items:
@@ -1750,6 +1894,7 @@ class PromptEditorPanel(QWidget, AsyncTaskOwner):
         for chip in chips:
             chip.removed.connect(self._remove_component_widget)
             chip.changed.connect(self._on_component_changed)
+            chip.emphasis_changed.connect(self._on_component_changed)
             chip.expand_requested.connect(self._on_chip_expand)
         self._update_preview()
 
@@ -1803,11 +1948,12 @@ class PromptEditorPanel(QWidget, AsyncTaskOwner):
         if self._separator_edit:
             separator_token = metadata.get("separator")
             block = self._separator_edit.blockSignals(True)
-            if isinstance(separator_token, str) and separator_token:
+            if isinstance(separator_token, str):
                 self._separator_edit.setText(separator_token)
             else:
-                self._separator_edit.setText("\n")
+                self._separator_edit.setText(default_separator(self._host.settings))
             self._separator_edit.blockSignals(block)
+            self._separator_selector.refresh()
         self._components = components
         self._rebuild_component_widgets()
         self._mark_dirty(False)
@@ -1842,8 +1988,9 @@ class PromptEditorPanel(QWidget, AsyncTaskOwner):
         self._tags_edit.clear()
         if self._separator_edit:
             block_sep = self._separator_edit.blockSignals(True)
-            self._separator_edit.setText("\n")
+            self._separator_edit.setText(default_separator(self._host.settings))
             self._separator_edit.blockSignals(block_sep)
+            self._separator_selector.refresh()
         self._components = []
         self._rebuild_component_widgets()
         self._mark_dirty(False)
@@ -1862,6 +2009,8 @@ class PromptEditorPanel(QWidget, AsyncTaskOwner):
         prompt_text = self._compose_preview_text().strip()
         self._save_button.setEnabled(self._dirty and bool(prompt_text))
         self._save_as_button.setEnabled(bool(prompt_text))
+        self._compose_header.set_dirty(self._dirty)
+        self._output_section.set_text(self._compose_preview_text())
 
     def _save_prompt(self, *, force_new: bool = False) -> None:
         prompt_text = self._compose_preview_text().strip()
@@ -1950,7 +2099,10 @@ class PromptEditorPanel(QWidget, AsyncTaskOwner):
 
     def _compose_preview_text(self) -> str:
         separator = self._current_separator()
-        parts = [self._render_component(component) for component in self._components]
+        parts = [
+            _emphasis.decorate(self._render_component(component), component)
+            for component in self._components
+        ]
         return separator.join(part for part in parts if part)
 
     def _render_component(self, component: PromptComponent) -> str:
@@ -1988,6 +2140,20 @@ class PromptEditorPanel(QWidget, AsyncTaskOwner):
     def _handle_copy(self) -> None:
         QApplication.clipboard().setText(self._compose_preview_text())
         self.set_status_message_translated("Prompt copied to clipboard.")
+
+    def _tidy_with_llm(self) -> None:
+        """Append the composed prompt to the LLM tab's user prompt; the user sends it."""
+        text = self._compose_preview_text().strip()
+        if not text:
+            self.set_status_message_translated("Prompt is empty.")
+            return
+        user_prompt = self._llm_user_prompt
+        if user_prompt is None or self._tabs is None or self._llm_tab is None:
+            return
+        current = user_prompt.toPlainText()
+        joiner = "" if not current or current.endswith("\n") else "\n"
+        user_prompt.setPlainText(current + joiner + text)
+        self._tabs.setCurrentWidget(self._llm_tab)
 
 
 class PromptEditorPanelPlugin(UIPanelPlugin):

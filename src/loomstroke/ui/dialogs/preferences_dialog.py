@@ -65,6 +65,7 @@ from ...plugins.gptimage2.key_settings import (
 )
 from ..i18n import available_language_options
 from ..menu_catalog import MENU_DEFINITIONS
+from .liveprompt_preferences import LivePromptDefaultsControl
 
 if TYPE_CHECKING:
     from ..menu_catalog import MenuDefinition
@@ -584,6 +585,8 @@ class InterfacePage(PreferencesPage):
 
         self._add_labeled_row(form, self._ts("Language"), self.language_combo)
         self._add_labeled_row(form, self._ts("Color Theme"), self.theme_combo)
+        self.liveprompt_defaults = LivePromptDefaultsControl(self)
+        self.liveprompt_defaults.add_to(form)
         form.addRow(self.toolbar_check)
         form.addRow(self.statusbar_check)
         self._add_labeled_row(form, self._ts("Grid interval"), self.grid_size_spin)
@@ -698,6 +701,7 @@ class InterfacePage(PreferencesPage):
         return {
             "ui/language": language if isinstance(language, str) else "system",
             "ui/theme": theme_value if isinstance(theme_value, str) else "dark",
+            **self.liveprompt_defaults.collect_values(),
             "ui/show_toolbar": self.toolbar_check.isChecked(),
             "ui/show_statusbar": self.statusbar_check.isChecked(),
             "view/grid_size": self.grid_size_spin.value(),

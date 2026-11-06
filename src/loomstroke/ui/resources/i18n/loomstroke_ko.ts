@@ -3,6 +3,10 @@
 <TS version="2.1" language="ko">
     <context>
         <name>MainWindow</name>
+    <message>
+        <source>Perspective Ruler...</source>
+        <translation>원근자...</translation>
+    </message>
         <message>
             <source>PSD export cannot preserve this filter layer. Export a flattened image instead.</source>
             <translation>PSD 내보내기는 이 필터 레이어를 보존할 수 없습니다. 대신 레이어를 병합한 이미지로 내보내세요.</translation>
@@ -2641,6 +2645,14 @@ After refreshing the token, any agents registered to this LoomStroke MCP server 
 </context>
     <context>
         <name>InterfacePage</name>
+    <message>
+        <source>LivePrompt default separator</source>
+        <translation>LivePrompt 기본 구분자</translation>
+    </message>
+    <message>
+        <source>Use \n for a new line or \t for a tab. Empty uses a new line. Applies to new LivePrompts; saved separators take precedence.</source>
+        <translation>줄바꿈은 \n, 탭은 \t로 지정합니다. 비워 두면 줄바꿈을 사용합니다. 새 LivePrompt에 적용되며 저장된 구분자가 우선합니다.</translation>
+    </message>
         <message>
             <source>Dark</source>
             <translation>어둡게</translation>
@@ -4964,6 +4976,14 @@ After refreshing the token, any agents registered to this LoomStroke MCP server 
     <message>
         <source>Failed to import image as new layer</source>
         <translation>이미지를 새 레이어로 임포트할 수 없습니다</translation>
+    </message>
+    <message>
+        <source>Layer: {name}</source>
+        <translation>레이어: {name}</translation>
+    </message>
+    <message>
+        <source>Clear the layer filter</source>
+        <translation>레이어 필터 해제</translation>
     </message>
 </context>
 <context>
@@ -7639,6 +7659,18 @@ Select a file to recover.</source>
     <message>
         <source>Wait until generation is ready.</source>
         <translation>생성 작업이 완료될 때까지 기다려 주세요.</translation>
+    </message>
+    <message>
+        <source>Plan: {count} generations</source>
+        <translation>예정: {count}회</translation>
+    </message>
+    <message>
+        <source>Plan: until stopped</source>
+        <translation>예정: 중지할 때까지</translation>
+    </message>
+    <message>
+        <source>Plan: one cycle of {count}</source>
+        <translation>예정: 한 바퀴 {count}회</translation>
     </message>
 </context>
 <context>
@@ -11306,6 +11338,42 @@ Please check that all image paths in your workflow are valid.
 <context>
     <name>DrawingAssistPanel</name>
     <message>
+        <source>Perspective ruler</source>
+        <translation>원근자</translation>
+    </message>
+    <message>
+        <source>1-point perspective</source>
+        <translation>1점 투시</translation>
+    </message>
+    <message>
+        <source>2-point perspective</source>
+        <translation>2점 투시</translation>
+    </message>
+    <message>
+        <source>3-point perspective</source>
+        <translation>3점 투시</translation>
+    </message>
+    <message>
+        <source>Drawing direction</source>
+        <translation>그리기 방향</translation>
+    </message>
+    <message>
+        <source>Automatic</source>
+        <translation>자동</translation>
+    </message>
+    <message>
+        <source>Vertical</source>
+        <translation>수직</translation>
+    </message>
+    <message>
+        <source>Edit vanishing points</source>
+        <translation>소실점 편집</translation>
+    </message>
+    <message>
+        <source>Drag VP handles on the canvas. Esc cancels the drag.</source>
+        <translation>캔버스에서 VP 핸들을 드래그하세요. Esc로 취소합니다.</translation>
+    </message>
+    <message>
         <source>Add</source>
         <translation>추가</translation>
     </message>
@@ -13382,6 +13450,10 @@ Please check that all image paths in your workflow are valid.
 <context>
     <name>GPTImage2PanelPlugin</name>
     <message>
+        <source>GPT Image</source>
+        <translation>GPT Image</translation>
+    </message>
+    <message>
         <source>Configure GPT Image 2 jobs</source>
         <translation>GPT 이미지 2 작업 설정</translation>
     </message>
@@ -13891,6 +13963,22 @@ Please check that all image paths in your workflow are valid.
 </context>
 <context>
     <name>LLMPaneController</name>
+    <message>
+        <source>Copy</source>
+        <translation>복사</translation>
+    </message>
+    <message>
+        <source>Model ID</source>
+        <translation>모델 ID</translation>
+    </message>
+    <message>
+        <source>Server URL</source>
+        <translation>서버 URL</translation>
+    </message>
+    <message>
+        <source>Enter a model ID:</source>
+        <translation>모델 ID 입력:</translation>
+    </message>
     <message>
         <source>Add Library</source>
         <translation>라이브러리 추가</translation>
@@ -15706,6 +15794,14 @@ Operation: {operation}
     <message>
         <source>Workflow transferred. Select parameters and outputs in the Editor tab, then register.</source>
         <translation>워크플로우를 전송했습니다. 편집기 탭에서 매개변수와 출력을 선택한 후 등록하세요.</translation>
+    </message>
+    <message>
+        <source>Live prompt</source>
+        <translation>실시간 프롬프트</translation>
+    </message>
+    <message>
+        <source>Text (node)</source>
+        <translation>텍스트(노드)</translation>
     </message>
 </context>
 <context>
@@ -18318,6 +18414,122 @@ Type: {type}</source>
     <message>
         <source>User prompt is empty.</source>
         <translation>사용자 프롬프트가 비어 있습니다.</translation>
+    </message>
+    <message>
+        <source>Unsaved changes</source>
+        <translation>저장 안 됨</translation>
+    </message>
+    <message>
+        <source>More actions</source>
+        <translation>추가 작업</translation>
+    </message>
+    <message>
+        <source>New line</source>
+        <translation>줄바꿈</translation>
+    </message>
+    <message>
+        <source>Comma</source>
+        <translation>쉼표</translation>
+    </message>
+    <message>
+        <source>Comma and space</source>
+        <translation>쉼표와 공백</translation>
+    </message>
+    <message>
+        <source>Custom</source>
+        <translation>사용자 지정</translation>
+    </message>
+    <message>
+        <source>{count} characters</source>
+        <translation>{count}자</translation>
+    </message>
+    <message>
+        <source>Tidy with LLM</source>
+        <translation>LLM으로 다듬기</translation>
+    </message>
+    <message>
+        <source>This model does not use temperature.</source>
+        <translation>이 모델은 온도를 사용하지 않습니다.</translation>
+    </message>
+    <message>
+        <source>Output copied to clipboard.</source>
+        <translation>출력을 클립보드에 복사했습니다.</translation>
+    </message>
+    <message>
+        <source>All types</source>
+        <translation>모든 유형</translation>
+    </message>
+    <message>
+        <source>Body</source>
+        <translation>본문</translation>
+    </message>
+    <message>
+        <source>Import</source>
+        <translation>가져오기</translation>
+    </message>
+    <message>
+        <source>Import prompt</source>
+        <translation>프롬프트 가져오기</translation>
+    </message>
+    <message>
+        <source>Imported '{title}'.</source>
+        <translation>'{title}'을(를) 가져왔습니다.</translation>
+    </message>
+    <message>
+        <source>Import failed: {error}</source>
+        <translation>가져오기 실패: {error}</translation>
+    </message>
+    <message>
+        <source>The file is empty.</source>
+        <translation>파일이 비어 있습니다.</translation>
+    </message>
+    <message>
+        <source>Other model…</source>
+        <translation>다른 모델…</translation>
+    </message>
+    <message>
+        <source>Model ID</source>
+        <translation>모델 ID</translation>
+    </message>
+    <message>
+        <source>Enter a model ID:</source>
+        <translation>모델 ID 입력:</translation>
+    </message>
+    <message>
+        <source>Refresh the model list</source>
+        <translation>모델 목록 새로 고침</translation>
+    </message>
+    <message>
+        <source>Loaded {count} models.</source>
+        <translation>모델 {count}개를 불러왔습니다.</translation>
+    </message>
+    <message>
+        <source>Couldn't update the model list: {error}</source>
+        <translation>모델 목록을 업데이트하지 못했습니다: {error}</translation>
+    </message>
+    <message>
+        <source>Local (OpenAI compatible)</source>
+        <translation>로컬 (OpenAI 호환)</translation>
+    </message>
+    <message>
+        <source>Server URL</source>
+        <translation>서버 URL</translation>
+    </message>
+    <message>
+        <source>(No models yet)</source>
+        <translation>(아직 모델이 없습니다)</translation>
+    </message>
+    <message>
+        <source>Select a model first.</source>
+        <translation>먼저 모델을 선택하세요.</translation>
+    </message>
+    <message>
+        <source>Enter the URL of a server on this PC, such as http://localhost:11434/v1.</source>
+        <translation>이 PC의 서버 URL을 입력하세요(예: http://localhost:11434/v1).</translation>
+    </message>
+    <message>
+        <source>Ollama's default context is short and silently cuts the start of long prompts; raise it with OLLAMA_CONTEXT_LENGTH or the model's num_ctx.</source>
+        <translation>Ollama의 기본 컨텍스트는 짧아 긴 프롬프트의 앞부분이 알림 없이 잘립니다. OLLAMA_CONTEXT_LENGTH 또는 모델의 num_ctx로 늘리세요.</translation>
     </message>
 </context>
 <context>
@@ -21014,6 +21226,410 @@ Do you want to save them?</source>
 </context>
 <context>
     <name>__shared__</name>
+    <message>
+        <source>Choose a different name for this model.</source>
+        <translation>이 모델에 다른 이름을 사용하세요.</translation>
+    </message>
+    <message>
+        <source>Enter a name between 1 and 80 characters.</source>
+        <translation>이름은 1자에서 80자 사이로 입력하세요.</translation>
+    </message>
+    <message>
+        <source>Saved poses</source>
+        <translation>저장된 포즈</translation>
+    </message>
+    <message>
+        <source>Select saved pose</source>
+        <translation>저장된 포즈 선택</translation>
+    </message>
+    <message>
+        <source>Save current pose</source>
+        <translation>현재 포즈 저장</translation>
+    </message>
+    <message>
+        <source>Apply saved pose</source>
+        <translation>저장된 포즈 적용</translation>
+    </message>
+    <message>
+        <source>Delete saved pose</source>
+        <translation>저장된 포즈 삭제</translation>
+    </message>
+    <message>
+        <source>Could not load pose presets</source>
+        <translation>포즈 프리셋을 불러올 수 없습니다</translation>
+    </message>
+    <message>
+        <source>Pose presets</source>
+        <translation>포즈 프리셋</translation>
+    </message>
+    <message>
+        <source>Save pose preset</source>
+        <translation>포즈 프리셋 저장</translation>
+    </message>
+    <message>
+        <source>Pose preset name</source>
+        <translation>포즈 프리셋 이름</translation>
+    </message>
+    <message>
+        <source>Could not save pose preset</source>
+        <translation>포즈 프리셋을 저장할 수 없습니다</translation>
+    </message>
+    <message>
+        <source>Could not apply pose preset</source>
+        <translation>포즈 프리셋을 적용할 수 없습니다</translation>
+    </message>
+    <message>
+        <source>Could not delete pose preset</source>
+        <translation>포즈 프리셋을 삭제할 수 없습니다</translation>
+    </message>
+    <message>
+        <source>Delete selected pose preset?</source>
+        <translation>선택한 포즈 프리셋을 삭제할까요?</translation>
+    </message>
+    <message>
+      <source>Fingers together</source>
+      <translation>손가락 모으기</translation>
+    </message>
+    <message>
+      <source>Fingers spread</source>
+      <translation>손가락 펼치기</translation>
+    </message>
+    <message>
+      <source>Flat hand</source>
+      <translation>평평한 손</translation>
+    </message>
+    <message>
+      <source>Soft fist</source>
+      <translation>가볍게 쥔 주먹</translation>
+    </message>
+    <message>
+      <source>Tight fist</source>
+      <translation>꽉 쥔 주먹</translation>
+    </message>
+    <message>
+      <source>Half-closed hand</source>
+      <translation>반쯤 쥔 손</translation>
+    </message>
+    <message>
+      <source>Cupped hand</source>
+      <translation>오므린 손</translation>
+    </message>
+    <message>
+      <source>Deeply cupped hand</source>
+      <translation>깊게 오므린 손</translation>
+    </message>
+    <message>
+      <source>Thumbs up</source>
+      <translation>엄지 올리기</translation>
+    </message>
+    <message>
+      <source>OK sign</source>
+      <translation>OK 사인</translation>
+    </message>
+    <message>
+      <source>Horns sign</source>
+      <translation>뿔 모양 손</translation>
+    </message>
+    <message>
+      <source>Shaka sign</source>
+      <translation>샤카 사인</translation>
+    </message>
+    <message>
+      <source>Three extended fingers</source>
+      <translation>세 손가락 펴기</translation>
+    </message>
+    <message>
+      <source>Four extended fingers</source>
+      <translation>네 손가락 펴기</translation>
+    </message>
+    <message>
+      <source>Thumb and index</source>
+      <translation>엄지와 검지</translation>
+    </message>
+    <message>
+      <source>Thumb, index and middle</source>
+      <translation>엄지·검지·중지</translation>
+    </message>
+    <message>
+      <source>Crossed fingers</source>
+      <translation>손가락 교차</translation>
+    </message>
+    <message>
+      <source>Finger heart</source>
+      <translation>손가락 하트</translation>
+    </message>
+    <message>
+      <source>Beckoning finger</source>
+      <translation>손가락으로 부르기</translation>
+    </message>
+    <message>
+      <source>Stop gesture</source>
+      <translation>정지 손짓</translation>
+    </message>
+    <message>
+      <source>Count one</source>
+      <translation>하나 세기</translation>
+    </message>
+    <message>
+      <source>Count two</source>
+      <translation>둘 세기</translation>
+    </message>
+    <message>
+      <source>Count three</source>
+      <translation>셋 세기</translation>
+    </message>
+    <message>
+      <source>Count four</source>
+      <translation>넷 세기</translation>
+    </message>
+    <message>
+      <source>Count five</source>
+      <translation>다섯 세기</translation>
+    </message>
+    <message>
+      <source>Small pinch</source>
+      <translation>작게 집기</translation>
+    </message>
+    <message>
+      <source>Wide pinch</source>
+      <translation>넓게 집기</translation>
+    </message>
+    <message>
+      <source>Tripod pinch</source>
+      <translation>세 손가락 집기</translation>
+    </message>
+    <message>
+      <source>Precision grip</source>
+      <translation>정밀하게 잡기</translation>
+    </message>
+    <message>
+      <source>Pen grip</source>
+      <translation>펜 잡기</translation>
+    </message>
+    <message>
+      <source>Brush grip</source>
+      <translation>붓 잡기</translation>
+    </message>
+    <message>
+      <source>Cylinder grip</source>
+      <translation>원통 잡기</translation>
+    </message>
+    <message>
+      <source>Thin handle grip</source>
+      <translation>가는 손잡이 잡기</translation>
+    </message>
+    <message>
+      <source>Ball grip</source>
+      <translation>공 잡기</translation>
+    </message>
+    <message>
+      <source>Large ball grip</source>
+      <translation>큰 공 잡기</translation>
+    </message>
+    <message>
+      <source>Hook grip</source>
+      <translation>갈고리 모양 잡기</translation>
+    </message>
+    <message>
+      <source>Key pinch</source>
+      <translation>열쇠 집기</translation>
+    </message>
+    <message>
+      <source>Claw hand</source>
+      <translation>발톱 모양 손</translation>
+    </message>
+    <message>
+      <source>Gentle touch</source>
+      <translation>가볍게 닿기</translation>
+    </message>
+    <message>
+      <source>Fingertip touch</source>
+      <translation>손끝으로 닿기</translation>
+    </message>
+    <message>
+      <source>Fabric pinch</source>
+      <translation>천 집기</translation>
+    </message>
+    <message>
+      <source>Delicate hand</source>
+      <translation>섬세한 손</translation>
+    </message>
+    <message>
+      <source>Tense hand</source>
+      <translation>힘을 준 손</translation>
+    </message>
+    <message>
+      <source>Basic hand poses</source>
+      <translation>기본 손 포즈</translation>
+    </message>
+    <message>
+      <source>Hand gestures</source>
+      <translation>손짓</translation>
+    </message>
+    <message>
+      <source>Finger counting</source>
+      <translation>손가락으로 세기</translation>
+    </message>
+    <message>
+      <source>Grasping poses</source>
+      <translation>잡는 포즈</translation>
+    </message>
+    <message>
+      <source>Expressive hands</source>
+      <translation>표현적인 손</translation>
+    </message>
+    <message>
+      <source>All hand poses</source>
+      <translation>모든 손 포즈</translation>
+    </message>
+    <message>
+        <source>Edit selected hand</source>
+        <translation>선택한 손 편집</translation>
+    </message>
+    <message>
+        <source>Hand pose</source>
+        <translation>손 포즈</translation>
+    </message>
+    <message>
+        <source>Finger</source>
+        <translation>손가락</translation>
+    </message>
+    <message>
+        <source>Finger curl</source>
+        <translation>굽힘</translation>
+    </message>
+    <message>
+        <source>Finger spread</source>
+        <translation>벌림</translation>
+    </message>
+    <message>
+        <source>Cup palm</source>
+        <translation>손바닥 오므리기</translation>
+    </message>
+    <message>
+        <source>Joint</source>
+        <translation>관절</translation>
+    </message>
+    <message>
+        <source>Reset hand</source>
+        <translation>손 포즈 초기화</translation>
+    </message>
+    <message>
+        <source>Thumb</source>
+        <translation>엄지</translation>
+    </message>
+    <message>
+        <source>Index finger</source>
+        <translation>검지</translation>
+    </message>
+    <message>
+        <source>Middle finger</source>
+        <translation>중지</translation>
+    </message>
+    <message>
+        <source>Ring finger</source>
+        <translation>약지</translation>
+    </message>
+    <message>
+        <source>Little finger</source>
+        <translation>새끼손가락</translation>
+    </message>
+    <message>
+        <source>Palm</source>
+        <translation>손바닥</translation>
+    </message>
+    <message>
+        <source>Wrist</source>
+        <translation>손목</translation>
+    </message>
+    <message>
+        <source>Open hand</source>
+        <translation>편 손</translation>
+    </message>
+    <message>
+        <source>Relaxed hand</source>
+        <translation>힘을 뺀 손</translation>
+    </message>
+    <message>
+        <source>Fist</source>
+        <translation>주먹</translation>
+    </message>
+    <message>
+        <source>Pointing hand</source>
+        <translation>가리키는 손</translation>
+    </message>
+    <message>
+        <source>Peace sign</source>
+        <translation>브이 사인</translation>
+    </message>
+    <message>
+        <source>Reset selected part</source>
+        <translation>선택한 부위 초기화</translation>
+    </message>
+    <message>
+        <source>GPT Image</source>
+        <translation>GPT Image</translation>
+    </message>
+    <message>
+        <source>Perspective ruler</source>
+        <translation>원근자</translation>
+    </message>
+    <message>
+        <source>1-point perspective</source>
+        <translation>1점 투시</translation>
+    </message>
+    <message>
+        <source>2-point perspective</source>
+        <translation>2점 투시</translation>
+    </message>
+    <message>
+        <source>3-point perspective</source>
+        <translation>3점 투시</translation>
+    </message>
+    <message>
+        <source>Drawing direction</source>
+        <translation>그리기 방향</translation>
+    </message>
+    <message>
+        <source>Edit vanishing points</source>
+        <translation>소실점 편집</translation>
+    </message>
+    <message>
+        <source>Drag VP handles on the canvas. Esc cancels the drag.</source>
+        <translation>캔버스에서 VP 핸들을 드래그하세요. Esc로 취소합니다.</translation>
+    </message>
+    <message>
+        <source>Perspective Ruler...</source>
+        <translation>원근자...</translation>
+    </message>
+    <message>
+        <source>LivePrompt default separator</source>
+        <translation>LivePrompt 기본 구분자</translation>
+    </message>
+    <message>
+        <source>Use \n for a new line or \t for a tab. Empty uses a new line. Applies to new LivePrompts; saved separators take precedence.</source>
+        <translation>줄바꿈은 \n, 탭은 \t로 지정합니다. 비워 두면 줄바꿈을 사용합니다. 새 LivePrompt에 적용되며 저장된 구분자가 우선합니다.</translation>
+    </message>
+    <message>
+        <source>Register in AI Effect Manager</source>
+        <translation>AI Effect Manager에 등록</translation>
+    </message>
+    <message>
+        <source>Save the current prompt and options as a preset. Choose input layers again when applying the preset.</source>
+        <translation>현재 프롬프트와 옵션을 프리셋으로 저장합니다. 프리셋 적용 시 입력 레이어를 다시 선택하세요.</translation>
+    </message>
+    <message>
+        <source>Preset name is required</source>
+        <translation>프리셋 이름을 입력하세요</translation>
+    </message>
+    <message>
+        <source>Registered preset: {name}</source>
+        <translation>프리셋 등록 완료: {name}</translation>
+    </message>
+    <message>
+        <source>Could not register preset. AI Effect Manager may be unavailable or saving failed.</source>
+        <translation>프리셋을 등록할 수 없습니다. AI Effect Manager를 사용할 수 없거나 저장에 실패했습니다.</translation>
+    </message>
     <message>
         <source> %</source>
         <translation> %</translation>
@@ -35619,6 +36235,326 @@ Click to show as panel</source>
 
 클릭하여 패널로 표시</translation>
     </message>
+    <message>
+        <source>Emphasis</source>
+        <translation>강조</translation>
+    </message>
+    <message>
+        <source>Weaken emphasis</source>
+        <translation>강조 약하게</translation>
+    </message>
+    <message>
+        <source>Strengthen emphasis</source>
+        <translation>강조 강하게</translation>
+    </message>
+    <message>
+        <source>Remove from LivePrompt</source>
+        <translation>LivePrompt에서 제거</translation>
+    </message>
+    <message>
+        <source>Unsaved changes</source>
+        <translation>저장 안 됨</translation>
+    </message>
+    <message>
+        <source>More actions</source>
+        <translation>추가 작업</translation>
+    </message>
+    <message>
+        <source>New line</source>
+        <translation>줄바꿈</translation>
+    </message>
+    <message>
+        <source>Comma</source>
+        <translation>쉼표</translation>
+    </message>
+    <message>
+        <source>Comma and space</source>
+        <translation>쉼표와 공백</translation>
+    </message>
+    <message>
+        <source>{count} characters</source>
+        <translation>{count}자</translation>
+    </message>
+    <message>
+        <source>Tidy with LLM</source>
+        <translation>LLM으로 다듬기</translation>
+    </message>
+    <message>
+        <source>Text (node)</source>
+        <translation>텍스트(노드)</translation>
+    </message>
+    <message>
+        <source>Plan: {count} generations</source>
+        <translation>예정: {count}회</translation>
+    </message>
+    <message>
+        <source>Plan: until stopped</source>
+        <translation>예정: 중지할 때까지</translation>
+    </message>
+    <message>
+        <source>Plan: one cycle of {count}</source>
+        <translation>예정: 한 바퀴 {count}회</translation>
+    </message>
+    <message>
+        <source>Generated on this layer ({count})</source>
+        <translation>이 레이어에서 생성한 항목 ({count})</translation>
+    </message>
+    <message>
+        <source>Show in Gallery</source>
+        <translation>갤러리에서 보기</translation>
+    </message>
+    <message>
+        <source>Open in Gallery (this layer only)</source>
+        <translation>갤러리에서 열기 (이 레이어만)</translation>
+    </message>
+    <message>
+        <source>No generations yet.</source>
+        <translation>아직 생성한 항목이 없습니다.</translation>
+    </message>
+    <message>
+        <source>Layer: {name}</source>
+        <translation>레이어: {name}</translation>
+    </message>
+    <message>
+        <source>Clear the layer filter</source>
+        <translation>레이어 필터 해제</translation>
+    </message>
+    <message>
+        <source>This model does not use temperature.</source>
+        <translation>이 모델은 온도를 사용하지 않습니다.</translation>
+    </message>
+    <message>
+        <source>Output copied to clipboard.</source>
+        <translation>출력을 클립보드에 복사했습니다.</translation>
+    </message>
+    <message>
+        <source>All types</source>
+        <translation>모든 유형</translation>
+    </message>
+    <message>
+        <source>Import prompt</source>
+        <translation>프롬프트 가져오기</translation>
+    </message>
+    <message>
+        <source>Imported '{title}'.</source>
+        <translation>'{title}'을(를) 가져왔습니다.</translation>
+    </message>
+    <message>
+        <source>Import failed: {error}</source>
+        <translation>가져오기 실패: {error}</translation>
+    </message>
+    <message>
+        <source>The file is empty.</source>
+        <translation>파일이 비어 있습니다.</translation>
+    </message>
+    <message>
+        <source>Other model…</source>
+        <translation>다른 모델…</translation>
+    </message>
+    <message>
+        <source>Model ID</source>
+        <translation>모델 ID</translation>
+    </message>
+    <message>
+        <source>Enter a model ID:</source>
+        <translation>모델 ID 입력:</translation>
+    </message>
+    <message>
+        <source>Refresh the model list</source>
+        <translation>모델 목록 새로 고침</translation>
+    </message>
+    <message>
+        <source>Loaded {count} models.</source>
+        <translation>모델 {count}개를 불러왔습니다.</translation>
+    </message>
+    <message>
+        <source>Couldn't update the model list: {error}</source>
+        <translation>모델 목록을 업데이트하지 못했습니다: {error}</translation>
+    </message>
+    <message>
+        <source>Local (OpenAI compatible)</source>
+        <translation>로컬 (OpenAI 호환)</translation>
+    </message>
+    <message>
+        <source>Server URL</source>
+        <translation>서버 URL</translation>
+    </message>
+    <message>
+        <source>(No models yet)</source>
+        <translation>(아직 모델이 없습니다)</translation>
+    </message>
+    <message>
+        <source>Select a model first.</source>
+        <translation>먼저 모델을 선택하세요.</translation>
+    </message>
+    <message>
+        <source>Enter the URL of a server on this PC, such as http://localhost:11434/v1.</source>
+        <translation>이 PC의 서버 URL을 입력하세요(예: http://localhost:11434/v1).</translation>
+    </message>
+    <message>
+        <source>Ollama's default context is short and silently cuts the start of long prompts; raise it with OLLAMA_CONTEXT_LENGTH or the model's num_ctx.</source>
+        <translation>Ollama의 기본 컨텍스트는 짧아 긴 프롬프트의 앞부분이 알림 없이 잘립니다. OLLAMA_CONTEXT_LENGTH 또는 모델의 num_ctx로 늘리세요.</translation>
+    </message>
+    <message>
+        <source>Fill input transparency</source>
+        <translation>입력 이미지의 투명 영역 채우기</translation>
+    </message>
+    <message>
+        <source>Fill transparent areas of input images with this color before sending. Source layers are unchanged.</source>
+        <translation>전송 전에 입력 이미지의 투명 영역을 이 색상으로 채웁니다. 원본 레이어는 변경되지 않습니다.</translation>
+    </message>
+    <message>
+        <source>Input fill color</source>
+        <translation>입력 이미지 채우기 색상</translation>
+    </message>
+    <message>
+        <source>Add drawing figure</source>
+        <translation>데생 인형 추가</translation>
+    </message>
+    <message>
+        <source>Apply pose</source>
+        <translation>포즈 적용</translation>
+    </message>
+    <message>
+        <source>Arms out</source>
+        <translation>팔 벌리기</translation>
+    </message>
+    <message>
+        <source>Chest</source>
+        <translation>가슴</translation>
+    </message>
+    <message>
+        <source>Could not add drawing figure</source>
+        <translation>데생 인형을 추가하지 못했습니다</translation>
+    </message>
+    <message>
+        <source>Could not export OpenPose</source>
+        <translation>OpenPose를 내보내지 못했습니다</translation>
+    </message>
+    <message>
+        <source>Crouching</source>
+        <translation>쪼그려 앉기</translation>
+    </message>
+    <message>
+        <source>Drag joints; Alt-drag changes depth. Pink joints are pinned.</source>
+        <translation>관절을 드래그하세요. Alt를 누른 채 드래그하면 깊이가 변경됩니다. 분홍색 관절은 고정되어 있습니다.</translation>
+    </message>
+    <message>
+        <source>Drag joints to move; drag XYZ rings to rotate. Alt-drag changes depth. Pink joints are pinned.</source>
+        <translation>관절을 드래그하여 이동하고 XYZ 링을 드래그하여 회전합니다. Alt를 누른 채 드래그하면 깊이가 변경됩니다. 분홍색 관절은 고정되어 있습니다.</translation>
+    </message>
+    <message>
+        <source>Drawing figure</source>
+        <translation>데생 인형</translation>
+    </message>
+    <message>
+        <source>Edit pose</source>
+        <translation>포즈 편집</translation>
+    </message>
+    <message>
+        <source>Export OpenPose</source>
+        <translation>OpenPose 내보내기</translation>
+    </message>
+    <message>
+        <source>Head</source>
+        <translation>머리</translation>
+    </message>
+    <message>
+        <source>Left Ankle</source>
+        <translation>왼쪽 발목</translation>
+    </message>
+    <message>
+        <source>Left Collar</source>
+        <translation>왼쪽 쇄골</translation>
+    </message>
+    <message>
+        <source>Left Elbow</source>
+        <translation>왼쪽 팔꿈치</translation>
+    </message>
+    <message>
+        <source>Left Hip</source>
+        <translation>왼쪽 고관절</translation>
+    </message>
+    <message>
+        <source>Left Knee</source>
+        <translation>왼쪽 무릎</translation>
+    </message>
+    <message>
+        <source>Left Shoulder</source>
+        <translation>왼쪽 어깨</translation>
+    </message>
+    <message>
+        <source>Left Wrist</source>
+        <translation>왼쪽 손목</translation>
+    </message>
+    <message>
+        <source>Neck</source>
+        <translation>목</translation>
+    </message>
+    <message>
+        <source>OpenPose layer</source>
+        <translation>OpenPose 레이어</translation>
+    </message>
+    <message>
+        <source>Pelvis</source>
+        <translation>골반</translation>
+    </message>
+    <message>
+        <source>Pin / unpin joint</source>
+        <translation>관절 고정 / 해제</translation>
+    </message>
+    <message>
+        <source>Pose assistance</source>
+        <translation>포즈 보정</translation>
+    </message>
+    <message>
+        <source>Reaching</source>
+        <translation>손 뻗기</translation>
+    </message>
+    <message>
+        <source>Right Ankle</source>
+        <translation>오른쪽 발목</translation>
+    </message>
+    <message>
+        <source>Right Collar</source>
+        <translation>오른쪽 쇄골</translation>
+    </message>
+    <message>
+        <source>Right Elbow</source>
+        <translation>오른쪽 팔꿈치</translation>
+    </message>
+    <message>
+        <source>Right Hip</source>
+        <translation>오른쪽 고관절</translation>
+    </message>
+    <message>
+        <source>Right Knee</source>
+        <translation>오른쪽 무릎</translation>
+    </message>
+    <message>
+        <source>Right Shoulder</source>
+        <translation>오른쪽 어깨</translation>
+    </message>
+    <message>
+        <source>Right Wrist</source>
+        <translation>오른쪽 손목</translation>
+    </message>
+    <message>
+        <source>Sitting</source>
+        <translation>앉기</translation>
+    </message>
+    <message>
+        <source>Standing</source>
+        <translation>서기</translation>
+    </message>
+    <message>
+        <source>Waist</source>
+        <translation>허리</translation>
+    </message>
+    <message>
+        <source>Walking</source>
+        <translation>걷기</translation>
+    </message>
 </context>
 <context>
     <name>app_ai_effect_generation_commit</name>
@@ -36264,6 +37200,670 @@ Click to show as panel</source>
     <message>
         <source>Use as Inpaint Mask</source>
         <translation>인패인 마스크로 사용</translation>
+    </message>
+</context>
+<context>
+    <name>AIEffectRegisterButton</name>
+    <message>
+        <source>Register in AI Effect Manager</source>
+        <translation>AI Effect Manager에 등록</translation>
+    </message>
+    <message>
+        <source>Save the current prompt and options as a preset. Choose input layers again when applying the preset.</source>
+        <translation>현재 프롬프트와 옵션을 프리셋으로 저장합니다. 프리셋 적용 시 입력 레이어를 다시 선택하세요.</translation>
+    </message>
+    <message>
+        <source>Preset name:</source>
+        <translation>프리셋 이름:</translation>
+    </message>
+    <message>
+        <source>Preset name is required</source>
+        <translation>프리셋 이름을 입력하세요</translation>
+    </message>
+    <message>
+        <source>Registered preset: {name}</source>
+        <translation>프리셋 등록 완료: {name}</translation>
+    </message>
+    <message>
+        <source>Could not register preset. AI Effect Manager may be unavailable or saving failed.</source>
+        <translation>프리셋을 등록할 수 없습니다. AI Effect Manager를 사용할 수 없거나 저장에 실패했습니다.</translation>
+    </message>
+</context>
+<context>
+    <name>PromptChipWidget</name>
+    <message>
+        <source>Emphasis</source>
+        <translation>강조</translation>
+    </message>
+    <message>
+        <source>Weaken emphasis</source>
+        <translation>강조 약하게</translation>
+    </message>
+    <message>
+        <source>Strengthen emphasis</source>
+        <translation>강조 강하게</translation>
+    </message>
+    <message>
+        <source>Clear</source>
+        <translation>해제</translation>
+    </message>
+    <message>
+        <source>Remove from LivePrompt</source>
+        <translation>LivePrompt에서 제거</translation>
+    </message>
+</context>
+<context>
+    <name>LayerGenerationHistory</name>
+    <message>
+        <source>Generated on this layer ({count})</source>
+        <translation>이 레이어에서 생성한 항목 ({count})</translation>
+    </message>
+    <message>
+        <source>Show in Gallery</source>
+        <translation>갤러리에서 보기</translation>
+    </message>
+    <message>
+        <source>Open in Gallery (this layer only)</source>
+        <translation>갤러리에서 열기 (이 레이어만)</translation>
+    </message>
+    <message>
+        <source>No generations yet.</source>
+        <translation>아직 생성한 항목이 없습니다.</translation>
+    </message>
+</context>
+<context>
+    <name>InputAlphaControls</name>
+    <message>
+        <source>Fill input transparency</source>
+        <translation>입력 이미지의 투명 영역 채우기</translation>
+    </message>
+    <message>
+        <source>Fill transparent areas of input images with this color before sending. Source layers are unchanged.</source>
+        <translation>전송 전에 입력 이미지의 투명 영역을 이 색상으로 채웁니다. 원본 레이어는 변경되지 않습니다.</translation>
+    </message>
+    <message>
+        <source>Input fill color</source>
+        <translation>입력 이미지 채우기 색상</translation>
+    </message>
+</context>
+<context>
+    <name>DrawingFigure</name>
+    <message>
+        <source>Choose a different name for this model.</source>
+        <translation>이 모델에 다른 이름을 사용하세요.</translation>
+    </message>
+    <message>
+        <source>Enter a name between 1 and 80 characters.</source>
+        <translation>이름은 1자에서 80자 사이로 입력하세요.</translation>
+    </message>
+    <message>
+        <source>Saved poses</source>
+        <translation>저장된 포즈</translation>
+    </message>
+    <message>
+        <source>Select saved pose</source>
+        <translation>저장된 포즈 선택</translation>
+    </message>
+    <message>
+        <source>Save current pose</source>
+        <translation>현재 포즈 저장</translation>
+    </message>
+    <message>
+        <source>Apply saved pose</source>
+        <translation>저장된 포즈 적용</translation>
+    </message>
+    <message>
+        <source>Delete saved pose</source>
+        <translation>저장된 포즈 삭제</translation>
+    </message>
+    <message>
+        <source>Could not load pose presets</source>
+        <translation>포즈 프리셋을 불러올 수 없습니다</translation>
+    </message>
+    <message>
+        <source>Pose presets</source>
+        <translation>포즈 프리셋</translation>
+    </message>
+    <message>
+        <source>Save pose preset</source>
+        <translation>포즈 프리셋 저장</translation>
+    </message>
+    <message>
+        <source>Pose preset name</source>
+        <translation>포즈 프리셋 이름</translation>
+    </message>
+    <message>
+        <source>Could not save pose preset</source>
+        <translation>포즈 프리셋을 저장할 수 없습니다</translation>
+    </message>
+    <message>
+        <source>Could not apply pose preset</source>
+        <translation>포즈 프리셋을 적용할 수 없습니다</translation>
+    </message>
+    <message>
+        <source>Could not delete pose preset</source>
+        <translation>포즈 프리셋을 삭제할 수 없습니다</translation>
+    </message>
+    <message>
+        <source>Delete selected pose preset?</source>
+        <translation>선택한 포즈 프리셋을 삭제할까요?</translation>
+    </message>
+    <message>
+      <source>Fingers together</source>
+      <translation>손가락 모으기</translation>
+    </message>
+    <message>
+      <source>Fingers spread</source>
+      <translation>손가락 펼치기</translation>
+    </message>
+    <message>
+      <source>Flat hand</source>
+      <translation>평평한 손</translation>
+    </message>
+    <message>
+      <source>Soft fist</source>
+      <translation>가볍게 쥔 주먹</translation>
+    </message>
+    <message>
+      <source>Tight fist</source>
+      <translation>꽉 쥔 주먹</translation>
+    </message>
+    <message>
+      <source>Half-closed hand</source>
+      <translation>반쯤 쥔 손</translation>
+    </message>
+    <message>
+      <source>Cupped hand</source>
+      <translation>오므린 손</translation>
+    </message>
+    <message>
+      <source>Deeply cupped hand</source>
+      <translation>깊게 오므린 손</translation>
+    </message>
+    <message>
+      <source>Thumbs up</source>
+      <translation>엄지 올리기</translation>
+    </message>
+    <message>
+      <source>OK sign</source>
+      <translation>OK 사인</translation>
+    </message>
+    <message>
+      <source>Horns sign</source>
+      <translation>뿔 모양 손</translation>
+    </message>
+    <message>
+      <source>Shaka sign</source>
+      <translation>샤카 사인</translation>
+    </message>
+    <message>
+      <source>Three extended fingers</source>
+      <translation>세 손가락 펴기</translation>
+    </message>
+    <message>
+      <source>Four extended fingers</source>
+      <translation>네 손가락 펴기</translation>
+    </message>
+    <message>
+      <source>Thumb and index</source>
+      <translation>엄지와 검지</translation>
+    </message>
+    <message>
+      <source>Thumb, index and middle</source>
+      <translation>엄지·검지·중지</translation>
+    </message>
+    <message>
+      <source>Crossed fingers</source>
+      <translation>손가락 교차</translation>
+    </message>
+    <message>
+      <source>Finger heart</source>
+      <translation>손가락 하트</translation>
+    </message>
+    <message>
+      <source>Beckoning finger</source>
+      <translation>손가락으로 부르기</translation>
+    </message>
+    <message>
+      <source>Stop gesture</source>
+      <translation>정지 손짓</translation>
+    </message>
+    <message>
+      <source>Count one</source>
+      <translation>하나 세기</translation>
+    </message>
+    <message>
+      <source>Count two</source>
+      <translation>둘 세기</translation>
+    </message>
+    <message>
+      <source>Count three</source>
+      <translation>셋 세기</translation>
+    </message>
+    <message>
+      <source>Count four</source>
+      <translation>넷 세기</translation>
+    </message>
+    <message>
+      <source>Count five</source>
+      <translation>다섯 세기</translation>
+    </message>
+    <message>
+      <source>Small pinch</source>
+      <translation>작게 집기</translation>
+    </message>
+    <message>
+      <source>Wide pinch</source>
+      <translation>넓게 집기</translation>
+    </message>
+    <message>
+      <source>Tripod pinch</source>
+      <translation>세 손가락 집기</translation>
+    </message>
+    <message>
+      <source>Precision grip</source>
+      <translation>정밀하게 잡기</translation>
+    </message>
+    <message>
+      <source>Pen grip</source>
+      <translation>펜 잡기</translation>
+    </message>
+    <message>
+      <source>Brush grip</source>
+      <translation>붓 잡기</translation>
+    </message>
+    <message>
+      <source>Cylinder grip</source>
+      <translation>원통 잡기</translation>
+    </message>
+    <message>
+      <source>Thin handle grip</source>
+      <translation>가는 손잡이 잡기</translation>
+    </message>
+    <message>
+      <source>Ball grip</source>
+      <translation>공 잡기</translation>
+    </message>
+    <message>
+      <source>Large ball grip</source>
+      <translation>큰 공 잡기</translation>
+    </message>
+    <message>
+      <source>Hook grip</source>
+      <translation>갈고리 모양 잡기</translation>
+    </message>
+    <message>
+      <source>Key pinch</source>
+      <translation>열쇠 집기</translation>
+    </message>
+    <message>
+      <source>Claw hand</source>
+      <translation>발톱 모양 손</translation>
+    </message>
+    <message>
+      <source>Gentle touch</source>
+      <translation>가볍게 닿기</translation>
+    </message>
+    <message>
+      <source>Fingertip touch</source>
+      <translation>손끝으로 닿기</translation>
+    </message>
+    <message>
+      <source>Fabric pinch</source>
+      <translation>천 집기</translation>
+    </message>
+    <message>
+      <source>Delicate hand</source>
+      <translation>섬세한 손</translation>
+    </message>
+    <message>
+      <source>Tense hand</source>
+      <translation>힘을 준 손</translation>
+    </message>
+    <message>
+      <source>Basic hand poses</source>
+      <translation>기본 손 포즈</translation>
+    </message>
+    <message>
+      <source>Hand gestures</source>
+      <translation>손짓</translation>
+    </message>
+    <message>
+      <source>Finger counting</source>
+      <translation>손가락으로 세기</translation>
+    </message>
+    <message>
+      <source>Grasping poses</source>
+      <translation>잡는 포즈</translation>
+    </message>
+    <message>
+      <source>Expressive hands</source>
+      <translation>표현적인 손</translation>
+    </message>
+    <message>
+      <source>All hand poses</source>
+      <translation>모든 손 포즈</translation>
+    </message>
+    <message>
+        <source>Edit selected hand</source>
+        <translation>선택한 손 편집</translation>
+    </message>
+    <message>
+        <source>Hand pose</source>
+        <translation>손 포즈</translation>
+    </message>
+    <message>
+        <source>Finger</source>
+        <translation>손가락</translation>
+    </message>
+    <message>
+        <source>Finger curl</source>
+        <translation>굽힘</translation>
+    </message>
+    <message>
+        <source>Finger spread</source>
+        <translation>벌림</translation>
+    </message>
+    <message>
+        <source>Cup palm</source>
+        <translation>손바닥 오므리기</translation>
+    </message>
+    <message>
+        <source>Joint</source>
+        <translation>관절</translation>
+    </message>
+    <message>
+        <source>Reset hand</source>
+        <translation>손 포즈 초기화</translation>
+    </message>
+    <message>
+        <source>Thumb</source>
+        <translation>엄지</translation>
+    </message>
+    <message>
+        <source>Index finger</source>
+        <translation>검지</translation>
+    </message>
+    <message>
+        <source>Middle finger</source>
+        <translation>중지</translation>
+    </message>
+    <message>
+        <source>Ring finger</source>
+        <translation>약지</translation>
+    </message>
+    <message>
+        <source>Little finger</source>
+        <translation>새끼손가락</translation>
+    </message>
+    <message>
+        <source>Palm</source>
+        <translation>손바닥</translation>
+    </message>
+    <message>
+        <source>Wrist</source>
+        <translation>손목</translation>
+    </message>
+    <message>
+        <source>Open hand</source>
+        <translation>편 손</translation>
+    </message>
+    <message>
+        <source>Relaxed hand</source>
+        <translation>힘을 뺀 손</translation>
+    </message>
+    <message>
+        <source>Fist</source>
+        <translation>주먹</translation>
+    </message>
+    <message>
+        <source>Pointing hand</source>
+        <translation>가리키는 손</translation>
+    </message>
+    <message>
+        <source>Peace sign</source>
+        <translation>브이 사인</translation>
+    </message>
+    <message>
+        <source>Reset selected part</source>
+        <translation>선택한 부위 초기화</translation>
+    </message>
+    <message>
+        <source>Add drawing figure</source>
+        <translation>데생 인형 추가</translation>
+    </message>
+    <message>
+        <source>Drawing figure</source>
+        <translation>데생 인형</translation>
+    </message>
+    <message>
+        <source>Could not add drawing figure</source>
+        <translation>데생 인형을 추가하지 못했습니다</translation>
+    </message>
+    <message>
+        <source>Edit pose</source>
+        <translation>포즈 편집</translation>
+    </message>
+    <message>
+        <source>Apply pose</source>
+        <translation>포즈 적용</translation>
+    </message>
+    <message>
+        <source>Pose assistance</source>
+        <translation>포즈 보정</translation>
+    </message>
+    <message>
+        <source>Pin / unpin joint</source>
+        <translation>관절 고정 / 해제</translation>
+    </message>
+    <message>
+        <source>OpenPose layer</source>
+        <translation>OpenPose 레이어</translation>
+    </message>
+    <message>
+        <source>Drag joints; Alt-drag changes depth. Pink joints are pinned.</source>
+        <translation>관절을 드래그하세요. Alt를 누른 채 드래그하면 깊이가 변경됩니다. 분홍색 관절은 고정되어 있습니다.</translation>
+    </message>
+    <message>
+        <source>Drag joints to move; drag XYZ rings to rotate. Alt-drag changes depth. Pink joints are pinned.</source>
+        <translation>관절을 드래그하여 이동하고 XYZ 링을 드래그하여 회전합니다. Alt를 누른 채 드래그하면 깊이가 변경됩니다. 분홍색 관절은 고정되어 있습니다.</translation>
+    </message>
+    <message>
+        <source>Export OpenPose</source>
+        <translation>OpenPose 내보내기</translation>
+    </message>
+    <message>
+        <source>Could not export OpenPose</source>
+        <translation>OpenPose를 내보내지 못했습니다</translation>
+    </message>
+    <message>
+        <source>Standing</source>
+        <translation>서기</translation>
+    </message>
+    <message>
+        <source>Arms out</source>
+        <translation>팔 벌리기</translation>
+    </message>
+    <message>
+        <source>Sitting</source>
+        <translation>앉기</translation>
+    </message>
+    <message>
+        <source>Walking</source>
+        <translation>걷기</translation>
+    </message>
+    <message>
+        <source>Crouching</source>
+        <translation>쪼그려 앉기</translation>
+    </message>
+    <message>
+        <source>Reaching</source>
+        <translation>손 뻗기</translation>
+    </message>
+    <message>
+        <source>Pelvis</source>
+        <translation>골반</translation>
+    </message>
+    <message>
+        <source>Waist</source>
+        <translation>허리</translation>
+    </message>
+    <message>
+        <source>Chest</source>
+        <translation>가슴</translation>
+    </message>
+    <message>
+        <source>Neck</source>
+        <translation>목</translation>
+    </message>
+    <message>
+        <source>Head</source>
+        <translation>머리</translation>
+    </message>
+    <message>
+        <source>Left Collar</source>
+        <translation>왼쪽 쇄골</translation>
+    </message>
+    <message>
+        <source>Left Shoulder</source>
+        <translation>왼쪽 어깨</translation>
+    </message>
+    <message>
+        <source>Left Elbow</source>
+        <translation>왼쪽 팔꿈치</translation>
+    </message>
+    <message>
+        <source>Left Wrist</source>
+        <translation>왼쪽 손목</translation>
+    </message>
+    <message>
+        <source>Left Hip</source>
+        <translation>왼쪽 고관절</translation>
+    </message>
+    <message>
+        <source>Left Knee</source>
+        <translation>왼쪽 무릎</translation>
+    </message>
+    <message>
+        <source>Left Ankle</source>
+        <translation>왼쪽 발목</translation>
+    </message>
+    <message>
+        <source>Right Collar</source>
+        <translation>오른쪽 쇄골</translation>
+    </message>
+    <message>
+        <source>Right Shoulder</source>
+        <translation>오른쪽 어깨</translation>
+    </message>
+    <message>
+        <source>Right Elbow</source>
+        <translation>오른쪽 팔꿈치</translation>
+    </message>
+    <message>
+        <source>Right Wrist</source>
+        <translation>오른쪽 손목</translation>
+    </message>
+    <message>
+        <source>Right Hip</source>
+        <translation>오른쪽 고관절</translation>
+    </message>
+    <message>
+        <source>Right Knee</source>
+        <translation>오른쪽 무릎</translation>
+    </message>
+    <message>
+        <source>Right Ankle</source>
+        <translation>오른쪽 발목</translation>
+    </message>
+</context>
+<context>
+    <name>DrawingFigureToolbarWidget</name>
+    <message>
+        <source>Could not export OpenPose</source>
+        <translation>OpenPose를 내보내지 못했습니다</translation>
+    </message>
+    <message>
+        <source>Export OpenPose</source>
+        <translation>OpenPose 내보내기</translation>
+    </message>
+</context>
+<context>
+    <name>DrawingFigureHandEditor</name>
+    <message>
+        <source>Hand pose</source>
+        <translation>손 포즈</translation>
+    </message>
+    <message>
+        <source>Cup palm</source>
+        <translation>손바닥 오므리기</translation>
+    </message>
+    <message>
+        <source>Joint</source>
+        <translation>관절</translation>
+    </message>
+</context>
+<context>
+    <name>DrawingFigurePosePresetControls</name>
+    <message>
+        <source>Choose a different name for this model.</source>
+        <translation>이 모델에 다른 이름을 사용하세요.</translation>
+    </message>
+    <message>
+        <source>Enter a name between 1 and 80 characters.</source>
+        <translation>이름은 1자에서 80자 사이로 입력하세요.</translation>
+    </message>
+    <message>
+        <source>Saved poses</source>
+        <translation>저장된 포즈</translation>
+    </message>
+    <message>
+        <source>Select saved pose</source>
+        <translation>저장된 포즈 선택</translation>
+    </message>
+    <message>
+        <source>Save current pose</source>
+        <translation>현재 포즈 저장</translation>
+    </message>
+    <message>
+        <source>Apply saved pose</source>
+        <translation>저장된 포즈 적용</translation>
+    </message>
+    <message>
+        <source>Delete saved pose</source>
+        <translation>저장된 포즈 삭제</translation>
+    </message>
+    <message>
+        <source>Could not load pose presets</source>
+        <translation>포즈 프리셋을 불러올 수 없습니다</translation>
+    </message>
+    <message>
+        <source>Pose presets</source>
+        <translation>포즈 프리셋</translation>
+    </message>
+    <message>
+        <source>Save pose preset</source>
+        <translation>포즈 프리셋 저장</translation>
+    </message>
+    <message>
+        <source>Pose preset name</source>
+        <translation>포즈 프리셋 이름</translation>
+    </message>
+    <message>
+        <source>Could not save pose preset</source>
+        <translation>포즈 프리셋을 저장할 수 없습니다</translation>
+    </message>
+    <message>
+        <source>Could not apply pose preset</source>
+        <translation>포즈 프리셋을 적용할 수 없습니다</translation>
+    </message>
+    <message>
+        <source>Could not delete pose preset</source>
+        <translation>포즈 프리셋을 삭제할 수 없습니다</translation>
+    </message>
+    <message>
+        <source>Delete selected pose preset?</source>
+        <translation>선택한 포즈 프리셋을 삭제할까요?</translation>
     </message>
 </context>
 </TS>

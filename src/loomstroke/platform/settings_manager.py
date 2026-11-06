@@ -346,6 +346,10 @@ class SettingsManager(QObject):
         if raw is None:
             return default
 
+        # A separator is literal text; spaces and numeric-looking text matter.
+        if setting_path == "ui/liveprompt/default_separator" and isinstance(raw, str):
+            return raw
+
         if isinstance(default, bool):
             if isinstance(raw, str):
                 lowered = raw.lower()

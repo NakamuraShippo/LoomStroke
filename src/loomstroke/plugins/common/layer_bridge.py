@@ -18,6 +18,7 @@ from typing import TYPE_CHECKING, Any
 
 import numpy as np
 
+from loomstroke.core.add_generated_image_layer_command import AddGeneratedImageLayerCommand
 from loomstroke.core.commands import ApplyImageCommand, DirtyRegion
 from loomstroke.host_api import HostAPI, LayerRef
 from loomstroke.platform.cache_paths import get_layer_cache_dir
@@ -141,6 +142,21 @@ class LayerTransferBridge:
 
     # ------------------------------------------------------------------
     # Apply helpers
+    async def apply_new_image_async(
+        self,
+        image: NDArray[np.uint8],
+        *,
+        name: str,
+        metadata: dict[str, Any] | None = None,
+    ) -> None:
+        canvas = getattr(self._host, "canvas", None)
+        submit = getattr(canvas, "submit", None)
+        if not callable(submit):
+            raise RuntimeError("Canvas service unavailable")
+        command = AddGeneratedImageLayerCommand(image, name, metadata or {})
+        if not submit(command):
+            raise RuntimeError("Failed to apply generated image to a new layer")
+
     def apply(
         self,
         image: NDArray[np.uint8],

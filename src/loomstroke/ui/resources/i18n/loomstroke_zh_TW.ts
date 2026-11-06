@@ -3,6 +3,10 @@
 <TS version="2.1" language="zh_TW">
     <context>
         <name>MainWindow</name>
+    <message>
+        <source>Perspective Ruler...</source>
+        <translation>透視尺...</translation>
+    </message>
         <message>
             <source>PSD export cannot preserve this filter layer. Export a flattened image instead.</source>
             <translation>PSD 匯出無法保留此濾鏡圖層。請改為匯出拼合後的影象。</translation>
@@ -2641,6 +2645,14 @@ After refreshing the token, any agents registered to this LoomStroke MCP server 
 </context>
     <context>
         <name>InterfacePage</name>
+    <message>
+        <source>LivePrompt default separator</source>
+        <translation>LivePrompt 預設分隔字元</translation>
+    </message>
+    <message>
+        <source>Use \n for a new line or \t for a tab. Empty uses a new line. Applies to new LivePrompts; saved separators take precedence.</source>
+        <translation>使用 \n 表示換行，\t 表示定位字元。留空時使用換行。適用於新的 LivePrompt，已儲存的分隔字元優先。</translation>
+    </message>
         <message>
             <source>Dark</source>
             <translation>深色</translation>
@@ -4964,6 +4976,14 @@ After refreshing the token, any agents registered to this LoomStroke MCP server 
     <message>
         <source>Failed to import image as new layer</source>
         <translation>匯入影象作為新圖層失敗</translation>
+    </message>
+    <message>
+        <source>Layer: {name}</source>
+        <translation>圖層: {name}</translation>
+    </message>
+    <message>
+        <source>Clear the layer filter</source>
+        <translation>清除圖層篩選</translation>
     </message>
 </context>
 <context>
@@ -7639,6 +7659,18 @@ Select a file to recover.</source>
     <message>
         <source>Wait until generation is ready.</source>
         <translation>請等待生成完成。</translation>
+    </message>
+    <message>
+        <source>Plan: {count} generations</source>
+        <translation>預定: {count} 次</translation>
+    </message>
+    <message>
+        <source>Plan: until stopped</source>
+        <translation>預定: 直到停止</translation>
+    </message>
+    <message>
+        <source>Plan: one cycle of {count}</source>
+        <translation>預定: 一輪 {count} 次</translation>
     </message>
 </context>
 <context>
@@ -11307,6 +11339,42 @@ Please check that all image paths in your workflow are valid.
 <context>
     <name>DrawingAssistPanel</name>
     <message>
+        <source>Perspective ruler</source>
+        <translation>透視尺</translation>
+    </message>
+    <message>
+        <source>1-point perspective</source>
+        <translation>一點透視</translation>
+    </message>
+    <message>
+        <source>2-point perspective</source>
+        <translation>兩點透視</translation>
+    </message>
+    <message>
+        <source>3-point perspective</source>
+        <translation>三點透視</translation>
+    </message>
+    <message>
+        <source>Drawing direction</source>
+        <translation>繪製方向</translation>
+    </message>
+    <message>
+        <source>Automatic</source>
+        <translation>自動</translation>
+    </message>
+    <message>
+        <source>Vertical</source>
+        <translation>垂直</translation>
+    </message>
+    <message>
+        <source>Edit vanishing points</source>
+        <translation>編輯消失點</translation>
+    </message>
+    <message>
+        <source>Drag VP handles on the canvas. Esc cancels the drag.</source>
+        <translation>拖曳畫布上的 VP 控制柄。按 Esc 取消拖曳。</translation>
+    </message>
+    <message>
         <source>Add</source>
         <translation>新增</translation>
     </message>
@@ -13383,6 +13451,10 @@ Please check that all image paths in your workflow are valid.
 <context>
     <name>GPTImage2PanelPlugin</name>
     <message>
+        <source>GPT Image</source>
+        <translation>GPT Image</translation>
+    </message>
+    <message>
         <source>Configure GPT Image 2 jobs</source>
         <translation>配置 GPT Image 2 任務</translation>
     </message>
@@ -13892,6 +13964,22 @@ Please check that all image paths in your workflow are valid.
 </context>
 <context>
     <name>LLMPaneController</name>
+    <message>
+        <source>Copy</source>
+        <translation>複製</translation>
+    </message>
+    <message>
+        <source>Model ID</source>
+        <translation>模型 ID</translation>
+    </message>
+    <message>
+        <source>Server URL</source>
+        <translation>伺服器 URL</translation>
+    </message>
+    <message>
+        <source>Enter a model ID:</source>
+        <translation>輸入模型 ID：</translation>
+    </message>
     <message>
         <source>Add Library</source>
         <translation>新增庫</translation>
@@ -15707,6 +15795,14 @@ Operation: {operation}
     <message>
         <source>Workflow transferred. Select parameters and outputs in the Editor tab, then register.</source>
         <translation>工作流已轉移。請在編輯器選項卡中選擇引數和輸出，然後註冊。</translation>
+    </message>
+    <message>
+        <source>Live prompt</source>
+        <translation>實時提示</translation>
+    </message>
+    <message>
+        <source>Text (node)</source>
+        <translation>文字（節點）</translation>
     </message>
 </context>
 <context>
@@ -18319,6 +18415,122 @@ Type: {type}</source>
     <message>
         <source>User prompt is empty.</source>
         <translation>使用者提示為空。</translation>
+    </message>
+    <message>
+        <source>Unsaved changes</source>
+        <translation>未儲存</translation>
+    </message>
+    <message>
+        <source>More actions</source>
+        <translation>更多操作</translation>
+    </message>
+    <message>
+        <source>New line</source>
+        <translation>換行</translation>
+    </message>
+    <message>
+        <source>Comma</source>
+        <translation>逗號</translation>
+    </message>
+    <message>
+        <source>Comma and space</source>
+        <translation>逗號和空格</translation>
+    </message>
+    <message>
+        <source>Custom</source>
+        <translation>自訂</translation>
+    </message>
+    <message>
+        <source>{count} characters</source>
+        <translation>{count} 個字元</translation>
+    </message>
+    <message>
+        <source>Tidy with LLM</source>
+        <translation>用 LLM 整理</translation>
+    </message>
+    <message>
+        <source>This model does not use temperature.</source>
+        <translation>此模型不使用溫度。</translation>
+    </message>
+    <message>
+        <source>Output copied to clipboard.</source>
+        <translation>已將輸出複製到剪貼簿。</translation>
+    </message>
+    <message>
+        <source>All types</source>
+        <translation>所有類型</translation>
+    </message>
+    <message>
+        <source>Body</source>
+        <translation>內文</translation>
+    </message>
+    <message>
+        <source>Import</source>
+        <translation>匯入</translation>
+    </message>
+    <message>
+        <source>Import prompt</source>
+        <translation>匯入提示詞</translation>
+    </message>
+    <message>
+        <source>Imported '{title}'.</source>
+        <translation>已匯入「{title}」。</translation>
+    </message>
+    <message>
+        <source>Import failed: {error}</source>
+        <translation>匯入失敗：{error}</translation>
+    </message>
+    <message>
+        <source>The file is empty.</source>
+        <translation>檔案是空的。</translation>
+    </message>
+    <message>
+        <source>Other model…</source>
+        <translation>其他模型…</translation>
+    </message>
+    <message>
+        <source>Model ID</source>
+        <translation>模型 ID</translation>
+    </message>
+    <message>
+        <source>Enter a model ID:</source>
+        <translation>輸入模型 ID：</translation>
+    </message>
+    <message>
+        <source>Refresh the model list</source>
+        <translation>重新整理模型清單</translation>
+    </message>
+    <message>
+        <source>Loaded {count} models.</source>
+        <translation>已載入 {count} 個模型。</translation>
+    </message>
+    <message>
+        <source>Couldn't update the model list: {error}</source>
+        <translation>無法更新模型清單：{error}</translation>
+    </message>
+    <message>
+        <source>Local (OpenAI compatible)</source>
+        <translation>本機（相容 OpenAI）</translation>
+    </message>
+    <message>
+        <source>Server URL</source>
+        <translation>伺服器 URL</translation>
+    </message>
+    <message>
+        <source>(No models yet)</source>
+        <translation>（尚無模型）</translation>
+    </message>
+    <message>
+        <source>Select a model first.</source>
+        <translation>請先選擇模型。</translation>
+    </message>
+    <message>
+        <source>Enter the URL of a server on this PC, such as http://localhost:11434/v1.</source>
+        <translation>請輸入本機伺服器的 URL，例如 http://localhost:11434/v1。</translation>
+    </message>
+    <message>
+        <source>Ollama's default context is short and silently cuts the start of long prompts; raise it with OLLAMA_CONTEXT_LENGTH or the model's num_ctx.</source>
+        <translation>Ollama 預設上下文較短，會在不提示的情況下截斷長提示詞的開頭；請用 OLLAMA_CONTEXT_LENGTH 或模型的 num_ctx 調大。</translation>
     </message>
 </context>
 <context>
@@ -21015,6 +21227,410 @@ Do you want to save them?</source>
 </context>
 <context>
     <name>__shared__</name>
+    <message>
+        <source>Choose a different name for this model.</source>
+        <translation>請為此模型使用其他名稱。</translation>
+    </message>
+    <message>
+        <source>Enter a name between 1 and 80 characters.</source>
+        <translation>請輸入1到80個字元的名稱。</translation>
+    </message>
+    <message>
+        <source>Saved poses</source>
+        <translation>已儲存的姿勢</translation>
+    </message>
+    <message>
+        <source>Select saved pose</source>
+        <translation>選擇已儲存姿勢</translation>
+    </message>
+    <message>
+        <source>Save current pose</source>
+        <translation>儲存目前姿勢</translation>
+    </message>
+    <message>
+        <source>Apply saved pose</source>
+        <translation>套用已儲存姿勢</translation>
+    </message>
+    <message>
+        <source>Delete saved pose</source>
+        <translation>刪除已儲存姿勢</translation>
+    </message>
+    <message>
+        <source>Could not load pose presets</source>
+        <translation>無法載入姿勢預設</translation>
+    </message>
+    <message>
+        <source>Pose presets</source>
+        <translation>姿勢預設</translation>
+    </message>
+    <message>
+        <source>Save pose preset</source>
+        <translation>儲存姿勢預設</translation>
+    </message>
+    <message>
+        <source>Pose preset name</source>
+        <translation>姿勢預設名稱</translation>
+    </message>
+    <message>
+        <source>Could not save pose preset</source>
+        <translation>無法儲存姿勢預設</translation>
+    </message>
+    <message>
+        <source>Could not apply pose preset</source>
+        <translation>無法套用姿勢預設</translation>
+    </message>
+    <message>
+        <source>Could not delete pose preset</source>
+        <translation>無法刪除姿勢預設</translation>
+    </message>
+    <message>
+        <source>Delete selected pose preset?</source>
+        <translation>刪除所選姿勢預設？</translation>
+    </message>
+    <message>
+      <source>Fingers together</source>
+      <translation>併攏手指</translation>
+    </message>
+    <message>
+      <source>Fingers spread</source>
+      <translation>張開手指</translation>
+    </message>
+    <message>
+      <source>Flat hand</source>
+      <translation>平放的手</translation>
+    </message>
+    <message>
+      <source>Soft fist</source>
+      <translation>輕握拳</translation>
+    </message>
+    <message>
+      <source>Tight fist</source>
+      <translation>緊握拳</translation>
+    </message>
+    <message>
+      <source>Half-closed hand</source>
+      <translation>半閉合的手</translation>
+    </message>
+    <message>
+      <source>Cupped hand</source>
+      <translation>捧起的手</translation>
+    </message>
+    <message>
+      <source>Deeply cupped hand</source>
+      <translation>深攏的手</translation>
+    </message>
+    <message>
+      <source>Thumbs up</source>
+      <translation>豎起拇指</translation>
+    </message>
+    <message>
+      <source>OK sign</source>
+      <translation>OK手勢</translation>
+    </message>
+    <message>
+      <source>Horns sign</source>
+      <translation>犄角手勢</translation>
+    </message>
+    <message>
+      <source>Shaka sign</source>
+      <translation>沙卡手勢</translation>
+    </message>
+    <message>
+      <source>Three extended fingers</source>
+      <translation>伸出三指</translation>
+    </message>
+    <message>
+      <source>Four extended fingers</source>
+      <translation>伸出四指</translation>
+    </message>
+    <message>
+      <source>Thumb and index</source>
+      <translation>拇指和食指</translation>
+    </message>
+    <message>
+      <source>Thumb, index and middle</source>
+      <translation>拇指、食指和中指</translation>
+    </message>
+    <message>
+      <source>Crossed fingers</source>
+      <translation>交叉手指</translation>
+    </message>
+    <message>
+      <source>Finger heart</source>
+      <translation>手指愛心</translation>
+    </message>
+    <message>
+      <source>Beckoning finger</source>
+      <translation>勾指招手</translation>
+    </message>
+    <message>
+      <source>Stop gesture</source>
+      <translation>停止手勢</translation>
+    </message>
+    <message>
+      <source>Count one</source>
+      <translation>數一</translation>
+    </message>
+    <message>
+      <source>Count two</source>
+      <translation>數二</translation>
+    </message>
+    <message>
+      <source>Count three</source>
+      <translation>數三</translation>
+    </message>
+    <message>
+      <source>Count four</source>
+      <translation>數四</translation>
+    </message>
+    <message>
+      <source>Count five</source>
+      <translation>數五</translation>
+    </message>
+    <message>
+      <source>Small pinch</source>
+      <translation>小幅捏取</translation>
+    </message>
+    <message>
+      <source>Wide pinch</source>
+      <translation>大幅捏取</translation>
+    </message>
+    <message>
+      <source>Tripod pinch</source>
+      <translation>三指捏取</translation>
+    </message>
+    <message>
+      <source>Precision grip</source>
+      <translation>精細抓握</translation>
+    </message>
+    <message>
+      <source>Pen grip</source>
+      <translation>握筆</translation>
+    </message>
+    <message>
+      <source>Brush grip</source>
+      <translation>握畫筆</translation>
+    </message>
+    <message>
+      <source>Cylinder grip</source>
+      <translation>握圓柱</translation>
+    </message>
+    <message>
+      <source>Thin handle grip</source>
+      <translation>握細柄</translation>
+    </message>
+    <message>
+      <source>Ball grip</source>
+      <translation>握球</translation>
+    </message>
+    <message>
+      <source>Large ball grip</source>
+      <translation>握大球</translation>
+    </message>
+    <message>
+      <source>Hook grip</source>
+      <translation>鉤握</translation>
+    </message>
+    <message>
+      <source>Key pinch</source>
+      <translation>捏鑰匙</translation>
+    </message>
+    <message>
+      <source>Claw hand</source>
+      <translation>爪形手</translation>
+    </message>
+    <message>
+      <source>Gentle touch</source>
+      <translation>輕觸</translation>
+    </message>
+    <message>
+      <source>Fingertip touch</source>
+      <translation>指尖觸碰</translation>
+    </message>
+    <message>
+      <source>Fabric pinch</source>
+      <translation>捏布料</translation>
+    </message>
+    <message>
+      <source>Delicate hand</source>
+      <translation>柔美的手</translation>
+    </message>
+    <message>
+      <source>Tense hand</source>
+      <translation>緊張的手</translation>
+    </message>
+    <message>
+      <source>Basic hand poses</source>
+      <translation>基本手勢</translation>
+    </message>
+    <message>
+      <source>Hand gestures</source>
+      <translation>表達手勢</translation>
+    </message>
+    <message>
+      <source>Finger counting</source>
+      <translation>手指數數</translation>
+    </message>
+    <message>
+      <source>Grasping poses</source>
+      <translation>抓握姿勢</translation>
+    </message>
+    <message>
+      <source>Expressive hands</source>
+      <translation>表現性手勢</translation>
+    </message>
+    <message>
+      <source>All hand poses</source>
+      <translation>全部手部姿勢</translation>
+    </message>
+    <message>
+        <source>Edit selected hand</source>
+        <translation>編輯所選手部</translation>
+    </message>
+    <message>
+        <source>Hand pose</source>
+        <translation>手部姿勢</translation>
+    </message>
+    <message>
+        <source>Finger</source>
+        <translation>手指</translation>
+    </message>
+    <message>
+        <source>Finger curl</source>
+        <translation>彎曲</translation>
+    </message>
+    <message>
+        <source>Finger spread</source>
+        <translation>張開</translation>
+    </message>
+    <message>
+        <source>Cup palm</source>
+        <translation>彎曲手掌</translation>
+    </message>
+    <message>
+        <source>Joint</source>
+        <translation>關節</translation>
+    </message>
+    <message>
+        <source>Reset hand</source>
+        <translation>重設手部姿勢</translation>
+    </message>
+    <message>
+        <source>Thumb</source>
+        <translation>拇指</translation>
+    </message>
+    <message>
+        <source>Index finger</source>
+        <translation>食指</translation>
+    </message>
+    <message>
+        <source>Middle finger</source>
+        <translation>中指</translation>
+    </message>
+    <message>
+        <source>Ring finger</source>
+        <translation>無名指</translation>
+    </message>
+    <message>
+        <source>Little finger</source>
+        <translation>小指</translation>
+    </message>
+    <message>
+        <source>Palm</source>
+        <translation>手掌</translation>
+    </message>
+    <message>
+        <source>Wrist</source>
+        <translation>手腕</translation>
+    </message>
+    <message>
+        <source>Open hand</source>
+        <translation>張開的手</translation>
+    </message>
+    <message>
+        <source>Relaxed hand</source>
+        <translation>放鬆的手</translation>
+    </message>
+    <message>
+        <source>Fist</source>
+        <translation>握拳</translation>
+    </message>
+    <message>
+        <source>Pointing hand</source>
+        <translation>指向</translation>
+    </message>
+    <message>
+        <source>Peace sign</source>
+        <translation>勝利手勢</translation>
+    </message>
+    <message>
+        <source>Reset selected part</source>
+        <translation>重設所選部位</translation>
+    </message>
+    <message>
+        <source>GPT Image</source>
+        <translation>GPT Image</translation>
+    </message>
+    <message>
+        <source>Perspective ruler</source>
+        <translation>透視尺</translation>
+    </message>
+    <message>
+        <source>1-point perspective</source>
+        <translation>一點透視</translation>
+    </message>
+    <message>
+        <source>2-point perspective</source>
+        <translation>兩點透視</translation>
+    </message>
+    <message>
+        <source>3-point perspective</source>
+        <translation>三點透視</translation>
+    </message>
+    <message>
+        <source>Drawing direction</source>
+        <translation>繪製方向</translation>
+    </message>
+    <message>
+        <source>Edit vanishing points</source>
+        <translation>編輯消失點</translation>
+    </message>
+    <message>
+        <source>Drag VP handles on the canvas. Esc cancels the drag.</source>
+        <translation>拖曳畫布上的 VP 控制柄。按 Esc 取消拖曳。</translation>
+    </message>
+    <message>
+        <source>Perspective Ruler...</source>
+        <translation>透視尺...</translation>
+    </message>
+    <message>
+        <source>LivePrompt default separator</source>
+        <translation>LivePrompt 預設分隔字元</translation>
+    </message>
+    <message>
+        <source>Use \n for a new line or \t for a tab. Empty uses a new line. Applies to new LivePrompts; saved separators take precedence.</source>
+        <translation>使用 \n 表示換行，\t 表示定位字元。留空時使用換行。適用於新的 LivePrompt，已儲存的分隔字元優先。</translation>
+    </message>
+    <message>
+        <source>Register in AI Effect Manager</source>
+        <translation>登錄至 AI Effect Manager</translation>
+    </message>
+    <message>
+        <source>Save the current prompt and options as a preset. Choose input layers again when applying the preset.</source>
+        <translation>將目前的提示詞與選項儲存為預設。套用預設時請重新選擇輸入圖層。</translation>
+    </message>
+    <message>
+        <source>Preset name is required</source>
+        <translation>請輸入預設名稱</translation>
+    </message>
+    <message>
+        <source>Registered preset: {name}</source>
+        <translation>已登錄預設：{name}</translation>
+    </message>
+    <message>
+        <source>Could not register preset. AI Effect Manager may be unavailable or saving failed.</source>
+        <translation>無法登錄預設。AI Effect Manager 可能無法使用，或儲存失敗。</translation>
+    </message>
     <message>
         <source> %</source>
         <translation> %</translation>
@@ -35621,6 +36237,326 @@ Click to show as panel</source>
 
 點選以顯示為面板</translation>
     </message>
+    <message>
+        <source>Emphasis</source>
+        <translation>強調</translation>
+    </message>
+    <message>
+        <source>Weaken emphasis</source>
+        <translation>減弱強調</translation>
+    </message>
+    <message>
+        <source>Strengthen emphasis</source>
+        <translation>增強強調</translation>
+    </message>
+    <message>
+        <source>Remove from LivePrompt</source>
+        <translation>從 LivePrompt 中移除</translation>
+    </message>
+    <message>
+        <source>Unsaved changes</source>
+        <translation>未儲存</translation>
+    </message>
+    <message>
+        <source>More actions</source>
+        <translation>更多操作</translation>
+    </message>
+    <message>
+        <source>New line</source>
+        <translation>換行</translation>
+    </message>
+    <message>
+        <source>Comma</source>
+        <translation>逗號</translation>
+    </message>
+    <message>
+        <source>Comma and space</source>
+        <translation>逗號和空格</translation>
+    </message>
+    <message>
+        <source>{count} characters</source>
+        <translation>{count} 個字元</translation>
+    </message>
+    <message>
+        <source>Tidy with LLM</source>
+        <translation>用 LLM 整理</translation>
+    </message>
+    <message>
+        <source>Text (node)</source>
+        <translation>文字（節點）</translation>
+    </message>
+    <message>
+        <source>Plan: {count} generations</source>
+        <translation>預定: {count} 次</translation>
+    </message>
+    <message>
+        <source>Plan: until stopped</source>
+        <translation>預定: 直到停止</translation>
+    </message>
+    <message>
+        <source>Plan: one cycle of {count}</source>
+        <translation>預定: 一輪 {count} 次</translation>
+    </message>
+    <message>
+        <source>Generated on this layer ({count})</source>
+        <translation>此圖層生成的內容 ({count})</translation>
+    </message>
+    <message>
+        <source>Show in Gallery</source>
+        <translation>在圖庫中顯示</translation>
+    </message>
+    <message>
+        <source>Open in Gallery (this layer only)</source>
+        <translation>在圖庫中開啟 (僅此圖層)</translation>
+    </message>
+    <message>
+        <source>No generations yet.</source>
+        <translation>尚未生成任何內容。</translation>
+    </message>
+    <message>
+        <source>Layer: {name}</source>
+        <translation>圖層: {name}</translation>
+    </message>
+    <message>
+        <source>Clear the layer filter</source>
+        <translation>清除圖層篩選</translation>
+    </message>
+    <message>
+        <source>This model does not use temperature.</source>
+        <translation>此模型不使用溫度。</translation>
+    </message>
+    <message>
+        <source>Output copied to clipboard.</source>
+        <translation>已將輸出複製到剪貼簿。</translation>
+    </message>
+    <message>
+        <source>All types</source>
+        <translation>所有類型</translation>
+    </message>
+    <message>
+        <source>Import prompt</source>
+        <translation>匯入提示詞</translation>
+    </message>
+    <message>
+        <source>Imported '{title}'.</source>
+        <translation>已匯入「{title}」。</translation>
+    </message>
+    <message>
+        <source>Import failed: {error}</source>
+        <translation>匯入失敗：{error}</translation>
+    </message>
+    <message>
+        <source>The file is empty.</source>
+        <translation>檔案是空的。</translation>
+    </message>
+    <message>
+        <source>Other model…</source>
+        <translation>其他模型…</translation>
+    </message>
+    <message>
+        <source>Model ID</source>
+        <translation>模型 ID</translation>
+    </message>
+    <message>
+        <source>Enter a model ID:</source>
+        <translation>輸入模型 ID：</translation>
+    </message>
+    <message>
+        <source>Refresh the model list</source>
+        <translation>重新整理模型清單</translation>
+    </message>
+    <message>
+        <source>Loaded {count} models.</source>
+        <translation>已載入 {count} 個模型。</translation>
+    </message>
+    <message>
+        <source>Couldn't update the model list: {error}</source>
+        <translation>無法更新模型清單：{error}</translation>
+    </message>
+    <message>
+        <source>Local (OpenAI compatible)</source>
+        <translation>本機（相容 OpenAI）</translation>
+    </message>
+    <message>
+        <source>Server URL</source>
+        <translation>伺服器 URL</translation>
+    </message>
+    <message>
+        <source>(No models yet)</source>
+        <translation>（尚無模型）</translation>
+    </message>
+    <message>
+        <source>Select a model first.</source>
+        <translation>請先選擇模型。</translation>
+    </message>
+    <message>
+        <source>Enter the URL of a server on this PC, such as http://localhost:11434/v1.</source>
+        <translation>請輸入本機伺服器的 URL，例如 http://localhost:11434/v1。</translation>
+    </message>
+    <message>
+        <source>Ollama's default context is short and silently cuts the start of long prompts; raise it with OLLAMA_CONTEXT_LENGTH or the model's num_ctx.</source>
+        <translation>Ollama 預設上下文較短，會在不提示的情況下截斷長提示詞的開頭；請用 OLLAMA_CONTEXT_LENGTH 或模型的 num_ctx 調大。</translation>
+    </message>
+    <message>
+        <source>Fill input transparency</source>
+        <translation>填滿輸入影像的透明區域</translation>
+    </message>
+    <message>
+        <source>Fill transparent areas of input images with this color before sending. Source layers are unchanged.</source>
+        <translation>傳送前以此顏色填滿輸入影像的透明區域。原始圖層保持不變。</translation>
+    </message>
+    <message>
+        <source>Input fill color</source>
+        <translation>輸入影像填色</translation>
+    </message>
+    <message>
+        <source>Add drawing figure</source>
+        <translation>新增繪畫人偶</translation>
+    </message>
+    <message>
+        <source>Apply pose</source>
+        <translation>套用姿勢</translation>
+    </message>
+    <message>
+        <source>Arms out</source>
+        <translation>展開雙臂</translation>
+    </message>
+    <message>
+        <source>Chest</source>
+        <translation>胸部</translation>
+    </message>
+    <message>
+        <source>Could not add drawing figure</source>
+        <translation>無法新增繪畫人偶</translation>
+    </message>
+    <message>
+        <source>Could not export OpenPose</source>
+        <translation>無法匯出OpenPose</translation>
+    </message>
+    <message>
+        <source>Crouching</source>
+        <translation>蹲姿</translation>
+    </message>
+    <message>
+        <source>Drag joints; Alt-drag changes depth. Pink joints are pinned.</source>
+        <translation>拖曳關節；按住Alt拖曳可調整深度。粉紅色關節已固定。</translation>
+    </message>
+    <message>
+        <source>Drag joints to move; drag XYZ rings to rotate. Alt-drag changes depth. Pink joints are pinned.</source>
+        <translation>拖曳關節以移動，拖曳XYZ圓環以旋轉。按住Alt拖曳可調整深度。粉紅色關節已固定。</translation>
+    </message>
+    <message>
+        <source>Drawing figure</source>
+        <translation>繪畫人偶</translation>
+    </message>
+    <message>
+        <source>Edit pose</source>
+        <translation>編輯姿勢</translation>
+    </message>
+    <message>
+        <source>Export OpenPose</source>
+        <translation>匯出OpenPose</translation>
+    </message>
+    <message>
+        <source>Head</source>
+        <translation>頭部</translation>
+    </message>
+    <message>
+        <source>Left Ankle</source>
+        <translation>左腳踝</translation>
+    </message>
+    <message>
+        <source>Left Collar</source>
+        <translation>左鎖骨</translation>
+    </message>
+    <message>
+        <source>Left Elbow</source>
+        <translation>左肘部</translation>
+    </message>
+    <message>
+        <source>Left Hip</source>
+        <translation>左髖部</translation>
+    </message>
+    <message>
+        <source>Left Knee</source>
+        <translation>左膝蓋</translation>
+    </message>
+    <message>
+        <source>Left Shoulder</source>
+        <translation>左肩部</translation>
+    </message>
+    <message>
+        <source>Left Wrist</source>
+        <translation>左手腕</translation>
+    </message>
+    <message>
+        <source>Neck</source>
+        <translation>頸部</translation>
+    </message>
+    <message>
+        <source>OpenPose layer</source>
+        <translation>OpenPose圖層</translation>
+    </message>
+    <message>
+        <source>Pelvis</source>
+        <translation>骨盆</translation>
+    </message>
+    <message>
+        <source>Pin / unpin joint</source>
+        <translation>固定／解除固定關節</translation>
+    </message>
+    <message>
+        <source>Pose assistance</source>
+        <translation>姿勢輔助</translation>
+    </message>
+    <message>
+        <source>Reaching</source>
+        <translation>伸手</translation>
+    </message>
+    <message>
+        <source>Right Ankle</source>
+        <translation>右腳踝</translation>
+    </message>
+    <message>
+        <source>Right Collar</source>
+        <translation>右鎖骨</translation>
+    </message>
+    <message>
+        <source>Right Elbow</source>
+        <translation>右肘部</translation>
+    </message>
+    <message>
+        <source>Right Hip</source>
+        <translation>右髖部</translation>
+    </message>
+    <message>
+        <source>Right Knee</source>
+        <translation>右膝蓋</translation>
+    </message>
+    <message>
+        <source>Right Shoulder</source>
+        <translation>右肩部</translation>
+    </message>
+    <message>
+        <source>Right Wrist</source>
+        <translation>右手腕</translation>
+    </message>
+    <message>
+        <source>Sitting</source>
+        <translation>坐姿</translation>
+    </message>
+    <message>
+        <source>Standing</source>
+        <translation>站立</translation>
+    </message>
+    <message>
+        <source>Waist</source>
+        <translation>腰部</translation>
+    </message>
+    <message>
+        <source>Walking</source>
+        <translation>行走</translation>
+    </message>
 </context>
 <context>
     <name>app_ai_effect_generation_commit</name>
@@ -36266,6 +37202,670 @@ Click to show as panel</source>
     <message>
         <source>Use as Inpaint Mask</source>
         <translation>作為修復蒙版使用</translation>
+    </message>
+</context>
+<context>
+    <name>AIEffectRegisterButton</name>
+    <message>
+        <source>Register in AI Effect Manager</source>
+        <translation>登錄至 AI Effect Manager</translation>
+    </message>
+    <message>
+        <source>Save the current prompt and options as a preset. Choose input layers again when applying the preset.</source>
+        <translation>將目前的提示詞與選項儲存為預設。套用預設時請重新選擇輸入圖層。</translation>
+    </message>
+    <message>
+        <source>Preset name:</source>
+        <translation>預設名稱：</translation>
+    </message>
+    <message>
+        <source>Preset name is required</source>
+        <translation>請輸入預設名稱</translation>
+    </message>
+    <message>
+        <source>Registered preset: {name}</source>
+        <translation>已登錄預設：{name}</translation>
+    </message>
+    <message>
+        <source>Could not register preset. AI Effect Manager may be unavailable or saving failed.</source>
+        <translation>無法登錄預設。AI Effect Manager 可能無法使用，或儲存失敗。</translation>
+    </message>
+</context>
+<context>
+    <name>PromptChipWidget</name>
+    <message>
+        <source>Emphasis</source>
+        <translation>強調</translation>
+    </message>
+    <message>
+        <source>Weaken emphasis</source>
+        <translation>減弱強調</translation>
+    </message>
+    <message>
+        <source>Strengthen emphasis</source>
+        <translation>增強強調</translation>
+    </message>
+    <message>
+        <source>Clear</source>
+        <translation>清除</translation>
+    </message>
+    <message>
+        <source>Remove from LivePrompt</source>
+        <translation>從 LivePrompt 中移除</translation>
+    </message>
+</context>
+<context>
+    <name>LayerGenerationHistory</name>
+    <message>
+        <source>Generated on this layer ({count})</source>
+        <translation>此圖層生成的內容 ({count})</translation>
+    </message>
+    <message>
+        <source>Show in Gallery</source>
+        <translation>在圖庫中顯示</translation>
+    </message>
+    <message>
+        <source>Open in Gallery (this layer only)</source>
+        <translation>在圖庫中開啟 (僅此圖層)</translation>
+    </message>
+    <message>
+        <source>No generations yet.</source>
+        <translation>尚未生成任何內容。</translation>
+    </message>
+</context>
+<context>
+    <name>InputAlphaControls</name>
+    <message>
+        <source>Fill input transparency</source>
+        <translation>填滿輸入影像的透明區域</translation>
+    </message>
+    <message>
+        <source>Fill transparent areas of input images with this color before sending. Source layers are unchanged.</source>
+        <translation>傳送前以此顏色填滿輸入影像的透明區域。原始圖層保持不變。</translation>
+    </message>
+    <message>
+        <source>Input fill color</source>
+        <translation>輸入影像填色</translation>
+    </message>
+</context>
+<context>
+    <name>DrawingFigure</name>
+    <message>
+        <source>Choose a different name for this model.</source>
+        <translation>請為此模型使用其他名稱。</translation>
+    </message>
+    <message>
+        <source>Enter a name between 1 and 80 characters.</source>
+        <translation>請輸入1到80個字元的名稱。</translation>
+    </message>
+    <message>
+        <source>Saved poses</source>
+        <translation>已儲存的姿勢</translation>
+    </message>
+    <message>
+        <source>Select saved pose</source>
+        <translation>選擇已儲存姿勢</translation>
+    </message>
+    <message>
+        <source>Save current pose</source>
+        <translation>儲存目前姿勢</translation>
+    </message>
+    <message>
+        <source>Apply saved pose</source>
+        <translation>套用已儲存姿勢</translation>
+    </message>
+    <message>
+        <source>Delete saved pose</source>
+        <translation>刪除已儲存姿勢</translation>
+    </message>
+    <message>
+        <source>Could not load pose presets</source>
+        <translation>無法載入姿勢預設</translation>
+    </message>
+    <message>
+        <source>Pose presets</source>
+        <translation>姿勢預設</translation>
+    </message>
+    <message>
+        <source>Save pose preset</source>
+        <translation>儲存姿勢預設</translation>
+    </message>
+    <message>
+        <source>Pose preset name</source>
+        <translation>姿勢預設名稱</translation>
+    </message>
+    <message>
+        <source>Could not save pose preset</source>
+        <translation>無法儲存姿勢預設</translation>
+    </message>
+    <message>
+        <source>Could not apply pose preset</source>
+        <translation>無法套用姿勢預設</translation>
+    </message>
+    <message>
+        <source>Could not delete pose preset</source>
+        <translation>無法刪除姿勢預設</translation>
+    </message>
+    <message>
+        <source>Delete selected pose preset?</source>
+        <translation>刪除所選姿勢預設？</translation>
+    </message>
+    <message>
+      <source>Fingers together</source>
+      <translation>併攏手指</translation>
+    </message>
+    <message>
+      <source>Fingers spread</source>
+      <translation>張開手指</translation>
+    </message>
+    <message>
+      <source>Flat hand</source>
+      <translation>平放的手</translation>
+    </message>
+    <message>
+      <source>Soft fist</source>
+      <translation>輕握拳</translation>
+    </message>
+    <message>
+      <source>Tight fist</source>
+      <translation>緊握拳</translation>
+    </message>
+    <message>
+      <source>Half-closed hand</source>
+      <translation>半閉合的手</translation>
+    </message>
+    <message>
+      <source>Cupped hand</source>
+      <translation>捧起的手</translation>
+    </message>
+    <message>
+      <source>Deeply cupped hand</source>
+      <translation>深攏的手</translation>
+    </message>
+    <message>
+      <source>Thumbs up</source>
+      <translation>豎起拇指</translation>
+    </message>
+    <message>
+      <source>OK sign</source>
+      <translation>OK手勢</translation>
+    </message>
+    <message>
+      <source>Horns sign</source>
+      <translation>犄角手勢</translation>
+    </message>
+    <message>
+      <source>Shaka sign</source>
+      <translation>沙卡手勢</translation>
+    </message>
+    <message>
+      <source>Three extended fingers</source>
+      <translation>伸出三指</translation>
+    </message>
+    <message>
+      <source>Four extended fingers</source>
+      <translation>伸出四指</translation>
+    </message>
+    <message>
+      <source>Thumb and index</source>
+      <translation>拇指和食指</translation>
+    </message>
+    <message>
+      <source>Thumb, index and middle</source>
+      <translation>拇指、食指和中指</translation>
+    </message>
+    <message>
+      <source>Crossed fingers</source>
+      <translation>交叉手指</translation>
+    </message>
+    <message>
+      <source>Finger heart</source>
+      <translation>手指愛心</translation>
+    </message>
+    <message>
+      <source>Beckoning finger</source>
+      <translation>勾指招手</translation>
+    </message>
+    <message>
+      <source>Stop gesture</source>
+      <translation>停止手勢</translation>
+    </message>
+    <message>
+      <source>Count one</source>
+      <translation>數一</translation>
+    </message>
+    <message>
+      <source>Count two</source>
+      <translation>數二</translation>
+    </message>
+    <message>
+      <source>Count three</source>
+      <translation>數三</translation>
+    </message>
+    <message>
+      <source>Count four</source>
+      <translation>數四</translation>
+    </message>
+    <message>
+      <source>Count five</source>
+      <translation>數五</translation>
+    </message>
+    <message>
+      <source>Small pinch</source>
+      <translation>小幅捏取</translation>
+    </message>
+    <message>
+      <source>Wide pinch</source>
+      <translation>大幅捏取</translation>
+    </message>
+    <message>
+      <source>Tripod pinch</source>
+      <translation>三指捏取</translation>
+    </message>
+    <message>
+      <source>Precision grip</source>
+      <translation>精細抓握</translation>
+    </message>
+    <message>
+      <source>Pen grip</source>
+      <translation>握筆</translation>
+    </message>
+    <message>
+      <source>Brush grip</source>
+      <translation>握畫筆</translation>
+    </message>
+    <message>
+      <source>Cylinder grip</source>
+      <translation>握圓柱</translation>
+    </message>
+    <message>
+      <source>Thin handle grip</source>
+      <translation>握細柄</translation>
+    </message>
+    <message>
+      <source>Ball grip</source>
+      <translation>握球</translation>
+    </message>
+    <message>
+      <source>Large ball grip</source>
+      <translation>握大球</translation>
+    </message>
+    <message>
+      <source>Hook grip</source>
+      <translation>鉤握</translation>
+    </message>
+    <message>
+      <source>Key pinch</source>
+      <translation>捏鑰匙</translation>
+    </message>
+    <message>
+      <source>Claw hand</source>
+      <translation>爪形手</translation>
+    </message>
+    <message>
+      <source>Gentle touch</source>
+      <translation>輕觸</translation>
+    </message>
+    <message>
+      <source>Fingertip touch</source>
+      <translation>指尖觸碰</translation>
+    </message>
+    <message>
+      <source>Fabric pinch</source>
+      <translation>捏布料</translation>
+    </message>
+    <message>
+      <source>Delicate hand</source>
+      <translation>柔美的手</translation>
+    </message>
+    <message>
+      <source>Tense hand</source>
+      <translation>緊張的手</translation>
+    </message>
+    <message>
+      <source>Basic hand poses</source>
+      <translation>基本手勢</translation>
+    </message>
+    <message>
+      <source>Hand gestures</source>
+      <translation>表達手勢</translation>
+    </message>
+    <message>
+      <source>Finger counting</source>
+      <translation>手指數數</translation>
+    </message>
+    <message>
+      <source>Grasping poses</source>
+      <translation>抓握姿勢</translation>
+    </message>
+    <message>
+      <source>Expressive hands</source>
+      <translation>表現性手勢</translation>
+    </message>
+    <message>
+      <source>All hand poses</source>
+      <translation>全部手部姿勢</translation>
+    </message>
+    <message>
+        <source>Edit selected hand</source>
+        <translation>編輯所選手部</translation>
+    </message>
+    <message>
+        <source>Hand pose</source>
+        <translation>手部姿勢</translation>
+    </message>
+    <message>
+        <source>Finger</source>
+        <translation>手指</translation>
+    </message>
+    <message>
+        <source>Finger curl</source>
+        <translation>彎曲</translation>
+    </message>
+    <message>
+        <source>Finger spread</source>
+        <translation>張開</translation>
+    </message>
+    <message>
+        <source>Cup palm</source>
+        <translation>彎曲手掌</translation>
+    </message>
+    <message>
+        <source>Joint</source>
+        <translation>關節</translation>
+    </message>
+    <message>
+        <source>Reset hand</source>
+        <translation>重設手部姿勢</translation>
+    </message>
+    <message>
+        <source>Thumb</source>
+        <translation>拇指</translation>
+    </message>
+    <message>
+        <source>Index finger</source>
+        <translation>食指</translation>
+    </message>
+    <message>
+        <source>Middle finger</source>
+        <translation>中指</translation>
+    </message>
+    <message>
+        <source>Ring finger</source>
+        <translation>無名指</translation>
+    </message>
+    <message>
+        <source>Little finger</source>
+        <translation>小指</translation>
+    </message>
+    <message>
+        <source>Palm</source>
+        <translation>手掌</translation>
+    </message>
+    <message>
+        <source>Wrist</source>
+        <translation>手腕</translation>
+    </message>
+    <message>
+        <source>Open hand</source>
+        <translation>張開的手</translation>
+    </message>
+    <message>
+        <source>Relaxed hand</source>
+        <translation>放鬆的手</translation>
+    </message>
+    <message>
+        <source>Fist</source>
+        <translation>握拳</translation>
+    </message>
+    <message>
+        <source>Pointing hand</source>
+        <translation>指向</translation>
+    </message>
+    <message>
+        <source>Peace sign</source>
+        <translation>勝利手勢</translation>
+    </message>
+    <message>
+        <source>Reset selected part</source>
+        <translation>重設所選部位</translation>
+    </message>
+    <message>
+        <source>Add drawing figure</source>
+        <translation>新增繪畫人偶</translation>
+    </message>
+    <message>
+        <source>Drawing figure</source>
+        <translation>繪畫人偶</translation>
+    </message>
+    <message>
+        <source>Could not add drawing figure</source>
+        <translation>無法新增繪畫人偶</translation>
+    </message>
+    <message>
+        <source>Edit pose</source>
+        <translation>編輯姿勢</translation>
+    </message>
+    <message>
+        <source>Apply pose</source>
+        <translation>套用姿勢</translation>
+    </message>
+    <message>
+        <source>Pose assistance</source>
+        <translation>姿勢輔助</translation>
+    </message>
+    <message>
+        <source>Pin / unpin joint</source>
+        <translation>固定／解除固定關節</translation>
+    </message>
+    <message>
+        <source>OpenPose layer</source>
+        <translation>OpenPose圖層</translation>
+    </message>
+    <message>
+        <source>Drag joints; Alt-drag changes depth. Pink joints are pinned.</source>
+        <translation>拖曳關節；按住Alt拖曳可調整深度。粉紅色關節已固定。</translation>
+    </message>
+    <message>
+        <source>Drag joints to move; drag XYZ rings to rotate. Alt-drag changes depth. Pink joints are pinned.</source>
+        <translation>拖曳關節以移動，拖曳XYZ圓環以旋轉。按住Alt拖曳可調整深度。粉紅色關節已固定。</translation>
+    </message>
+    <message>
+        <source>Export OpenPose</source>
+        <translation>匯出OpenPose</translation>
+    </message>
+    <message>
+        <source>Could not export OpenPose</source>
+        <translation>無法匯出OpenPose</translation>
+    </message>
+    <message>
+        <source>Standing</source>
+        <translation>站立</translation>
+    </message>
+    <message>
+        <source>Arms out</source>
+        <translation>展開雙臂</translation>
+    </message>
+    <message>
+        <source>Sitting</source>
+        <translation>坐姿</translation>
+    </message>
+    <message>
+        <source>Walking</source>
+        <translation>行走</translation>
+    </message>
+    <message>
+        <source>Crouching</source>
+        <translation>蹲姿</translation>
+    </message>
+    <message>
+        <source>Reaching</source>
+        <translation>伸手</translation>
+    </message>
+    <message>
+        <source>Pelvis</source>
+        <translation>骨盆</translation>
+    </message>
+    <message>
+        <source>Waist</source>
+        <translation>腰部</translation>
+    </message>
+    <message>
+        <source>Chest</source>
+        <translation>胸部</translation>
+    </message>
+    <message>
+        <source>Neck</source>
+        <translation>頸部</translation>
+    </message>
+    <message>
+        <source>Head</source>
+        <translation>頭部</translation>
+    </message>
+    <message>
+        <source>Left Collar</source>
+        <translation>左鎖骨</translation>
+    </message>
+    <message>
+        <source>Left Shoulder</source>
+        <translation>左肩部</translation>
+    </message>
+    <message>
+        <source>Left Elbow</source>
+        <translation>左肘部</translation>
+    </message>
+    <message>
+        <source>Left Wrist</source>
+        <translation>左手腕</translation>
+    </message>
+    <message>
+        <source>Left Hip</source>
+        <translation>左髖部</translation>
+    </message>
+    <message>
+        <source>Left Knee</source>
+        <translation>左膝蓋</translation>
+    </message>
+    <message>
+        <source>Left Ankle</source>
+        <translation>左腳踝</translation>
+    </message>
+    <message>
+        <source>Right Collar</source>
+        <translation>右鎖骨</translation>
+    </message>
+    <message>
+        <source>Right Shoulder</source>
+        <translation>右肩部</translation>
+    </message>
+    <message>
+        <source>Right Elbow</source>
+        <translation>右肘部</translation>
+    </message>
+    <message>
+        <source>Right Wrist</source>
+        <translation>右手腕</translation>
+    </message>
+    <message>
+        <source>Right Hip</source>
+        <translation>右髖部</translation>
+    </message>
+    <message>
+        <source>Right Knee</source>
+        <translation>右膝蓋</translation>
+    </message>
+    <message>
+        <source>Right Ankle</source>
+        <translation>右腳踝</translation>
+    </message>
+</context>
+<context>
+    <name>DrawingFigureToolbarWidget</name>
+    <message>
+        <source>Could not export OpenPose</source>
+        <translation>無法匯出OpenPose</translation>
+    </message>
+    <message>
+        <source>Export OpenPose</source>
+        <translation>匯出OpenPose</translation>
+    </message>
+</context>
+<context>
+    <name>DrawingFigureHandEditor</name>
+    <message>
+        <source>Hand pose</source>
+        <translation>手部姿勢</translation>
+    </message>
+    <message>
+        <source>Cup palm</source>
+        <translation>彎曲手掌</translation>
+    </message>
+    <message>
+        <source>Joint</source>
+        <translation>關節</translation>
+    </message>
+</context>
+<context>
+    <name>DrawingFigurePosePresetControls</name>
+    <message>
+        <source>Choose a different name for this model.</source>
+        <translation>請為此模型使用其他名稱。</translation>
+    </message>
+    <message>
+        <source>Enter a name between 1 and 80 characters.</source>
+        <translation>請輸入1到80個字元的名稱。</translation>
+    </message>
+    <message>
+        <source>Saved poses</source>
+        <translation>已儲存的姿勢</translation>
+    </message>
+    <message>
+        <source>Select saved pose</source>
+        <translation>選擇已儲存姿勢</translation>
+    </message>
+    <message>
+        <source>Save current pose</source>
+        <translation>儲存目前姿勢</translation>
+    </message>
+    <message>
+        <source>Apply saved pose</source>
+        <translation>套用已儲存姿勢</translation>
+    </message>
+    <message>
+        <source>Delete saved pose</source>
+        <translation>刪除已儲存姿勢</translation>
+    </message>
+    <message>
+        <source>Could not load pose presets</source>
+        <translation>無法載入姿勢預設</translation>
+    </message>
+    <message>
+        <source>Pose presets</source>
+        <translation>姿勢預設</translation>
+    </message>
+    <message>
+        <source>Save pose preset</source>
+        <translation>儲存姿勢預設</translation>
+    </message>
+    <message>
+        <source>Pose preset name</source>
+        <translation>姿勢預設名稱</translation>
+    </message>
+    <message>
+        <source>Could not save pose preset</source>
+        <translation>無法儲存姿勢預設</translation>
+    </message>
+    <message>
+        <source>Could not apply pose preset</source>
+        <translation>無法套用姿勢預設</translation>
+    </message>
+    <message>
+        <source>Could not delete pose preset</source>
+        <translation>無法刪除姿勢預設</translation>
+    </message>
+    <message>
+        <source>Delete selected pose preset?</source>
+        <translation>刪除所選姿勢預設？</translation>
     </message>
 </context>
 </TS>

@@ -9,14 +9,18 @@ from __future__ import annotations
 import logging
 from typing import TYPE_CHECKING
 
-from PySide6.QtCore import QMimeData, QPoint, QRect, QSize, Qt, Signal
+from PySide6.QtCore import QMimeData, QPoint, QPointF, QRect, QRectF, QSize, Qt, Signal
 from PySide6.QtGui import (
+    QColor,
     QDrag,
     QDragEnterEvent,
     QDragMoveEvent,
     QDropEvent,
     QMouseEvent,
+    QPainter,
     QPalette,
+    QPen,
+    QWheelEvent,
 )
 from PySide6.QtWidgets import (  # noqa: F401
     QApplication,
@@ -42,6 +46,7 @@ from PySide6.QtWidgets import (  # noqa: F401
 from loomstroke.plugins.common.constants import CK_LIST, CK_PROMPT, CK_STRING, CK_TEXT
 from loomstroke.ui.translations import translated_literal_domain
 
+from . import emphasis as _emphasis
 from .selection_controls import PromptSelectionControls
 from .wrapped_chip_label import WrappedChipLabel
 
@@ -59,6 +64,26 @@ CHIP_MIME_TYPE = "application/x-loomstroke-chip-index"
 
 def _chip_ts(text: str) -> str:
     return translated_literal_domain("PromptChipWidget", text, use_fallback=True)
+
+
+# Chip tint and dot per component kind; the pill and grip are painted by the chip.
+_KIND_COLORS = {
+    CK_STRING: "#6cb6ff",
+    CK_LIST: "#f0a95b",
+    CK_TEXT: "#7fd69a",
+    CK_PROMPT: "#d29bff",
+}
+_CHIP_TEXT_LEFT = 33
+_REMOVE_BUTTON_STYLE = (
+    "QToolButton#chipRemoveButton { background: rgba(58, 58, 70, 230); color: #ffffff;"
+    " border: 1px solid #5a5a68; border-radius: 8px; padding: 0; font-size: 11px; }"
+    "QToolButton#chipRemoveButton:hover { background: #e5484d; border-color: #e5484d; }"
+)
+_ADD_BUTTON_STYLE = (
+    "QToolButton#chipAddButton { background: transparent; color: #c4b5fd;"
+    " border: 1.5px dashed #55556a; border-radius: 6px; font-size: 14px; }"
+    "QToolButton#chipAddButton:hover { border-color: #a78bfa; }"
+)
 
 
 def _configure_compact_combo(combo: QComboBox, *, min_chars: int = 6) -> None:
@@ -160,6 +185,8 @@ class PromptChipWidget(QFrame):
     removed = Signal(object)
     changed = Signal(object)
     expand_requested = Signal(object)
+    # Emphasis edits keep the LivePrompt sequence position, unlike ``changed``.
+    emphasis_changed = Signal(object)
 
     def __init__(
         self,
@@ -174,19 +201,35 @@ class PromptChipWidget(QFrame):
         self._render_func = render_func  # callable(PromptComponent) -> str
         self._popup: ChipEditPopup | None = None
         self._drag_start: QPoint | None = None
+        self._wheel_remainder = 0
+
+        self._hovered = False
+        self._selected = False
 
         self.setFrameShape(QFrame.Shape.NoFrame)
         self.setCursor(Qt.CursorShape.PointingHandCursor)
         self.setMouseTracking(True)
 
         layout = QHBoxLayout(self)
-        layout.setContentsMargins(2, 1, 2, 1)
+        # Left room for the painted grip and kind dot (see paintEvent).
+        layout.setContentsMargins(_CHIP_TEXT_LEFT, 4, 9, 4)
         layout.setSpacing(0)
 
         self._label = WrappedChipLabel(self)
         self._label.setTextFormat(Qt.TextFormat.PlainText)
         self._label.setAttribute(Qt.WidgetAttribute.WA_TransparentForMouseEvents)
         layout.addWidget(self._label)
+
+        self._remove_button = QToolButton(self)
+        self._remove_button.setObjectName("chipRemoveButton")
+        self._remove_button.setText("\u00d7")
+        self._remove_button.setToolTip(_chip_ts("Remove from LivePrompt"))
+        self._remove_button.setAccessibleName(_chip_ts("Remove from LivePrompt"))
+        self._remove_button.setCursor(Qt.CursorShape.ArrowCursor)
+        self._remove_button.setFixedSize(16, 16)
+        self._remove_button.setStyleSheet(_REMOVE_BUTTON_STYLE)
+        self._remove_button.clicked.connect(self._on_delete)
+        self._remove_button.hide()
 
         self._update_display_text()
 
@@ -199,29 +242,68 @@ class PromptChipWidget(QFrame):
         self._update_display_text()
 
     def _update_display_text(self) -> None:
-        text = self._render_func(self._component)
+        text = _emphasis.decorate(self._render_func(self._component), self._component)
         self._label.setText(text if text else "\u2026")
         self.updateGeometry()
 
-    # --- hover highlight ---
+    # --- appearance: kind-tinted pill, grip, kind dot, hover remove button ---
 
     def enterEvent(self, event: object) -> None:  # type: ignore[override]  # PySide6 override stub limitation
-        pal = self.palette()
-        highlight = pal.color(QPalette.ColorRole.Highlight)
-        highlight.setAlpha(40)
-        r, g, b, a = highlight.red(), highlight.green(), highlight.blue(), highlight.alpha()
-        self.setStyleSheet(
-            f"PromptChipWidget {{ background: rgba({r},{g},{b},{a}); border-radius: 3px; }}"
-        )
+        self._hovered = True
+        self._remove_button.show()
+        self._remove_button.raise_()
+        self.update()
         super().enterEvent(event)
 
     def leaveEvent(self, event: object) -> None:  # type: ignore[override]  # PySide6 override stub limitation
-        self.setStyleSheet("")
+        self._hovered = False
+        self._remove_button.hide()
+        self.update()
         super().leaveEvent(event)
+
+    def resizeEvent(self, event: object) -> None:  # type: ignore[override]  # PySide6 override stub limitation
+        self._remove_button.move(self.width() - self._remove_button.width() - 1, 1)
+        super().resizeEvent(event)
+
+    def _set_selected(self, selected: bool) -> None:
+        if self._selected != selected:
+            self._selected = selected
+            self.update()
+
+    def paintEvent(self, event: object) -> None:  # type: ignore[override]  # PySide6 override stub limitation
+        painter = QPainter(self)
+        painter.setRenderHint(QPainter.RenderHint.Antialiasing)
+        kind_color = QColor(_KIND_COLORS.get(self._component.kind, _KIND_COLORS[CK_TEXT]))
+        fill = QColor(kind_color)
+        fill.setAlpha(60 if self._hovered else 33)
+        border = self.palette().color(QPalette.ColorRole.Highlight)
+        painter.setPen(QPen(border, 1.5) if self._selected else Qt.PenStyle.NoPen)
+        painter.setBrush(fill)
+        painter.drawRoundedRect(QRectF(self.rect()).adjusted(0.75, 0.75, -0.75, -0.75), 6, 6)
+
+        middle = self.height() / 2
+        grip = self.palette().color(QPalette.ColorRole.PlaceholderText)
+        painter.setPen(Qt.PenStyle.NoPen)
+        painter.setBrush(grip)
+        for dx in (7.0, 11.0):
+            for dy in (-4.0, 0.0, 4.0):
+                painter.drawEllipse(QPointF(dx, middle + dy), 1.1, 1.1)
+        painter.setBrush(kind_color)
+        painter.drawEllipse(QPointF(23.0, middle), 4.0, 4.0)
+        painter.end()
 
     # --- click → popup ---
 
     def mousePressEvent(self, event: QMouseEvent) -> None:  # type: ignore[override]  # PySide6 override stub limitation
+        if event.button() == Qt.MouseButton.MiddleButton:
+            token = self._token_at(event.position().toPoint())
+            if token is not None:
+                if token in self._component.emphasis:
+                    emphasis = dict(self._component.emphasis)
+                    del emphasis[token]
+                    self._set_emphasis(emphasis)
+                event.accept()
+                return
         if event.button() == Qt.MouseButton.LeftButton:
             self._drag_start = event.pos()
         super().mousePressEvent(event)
@@ -247,6 +329,51 @@ class PromptChipWidget(QFrame):
             self._drag_start = None
             return
         super().mouseMoveEvent(event)
+
+    # --- wheel emphasis ---
+
+    def wheelEvent(self, event: QWheelEvent) -> None:  # type: ignore[override]  # PySide6 override stub limitation
+        token = self._token_at(event.position().toPoint())
+        if token is None:
+            self._wheel_remainder = 0
+            event.ignore()
+            return
+        # High-resolution wheels and touchpads send partial notches.
+        self._wheel_remainder += event.angleDelta().y()
+        notches = int(self._wheel_remainder / 120)
+        self._wheel_remainder -= notches * 120
+        delta = _emphasis.WEIGHT_STEP if notches > 0 else -_emphasis.WEIGHT_STEP
+        entry = self._component.emphasis.get(token)
+        for _ in range(abs(notches)):
+            entry = _emphasis.step(entry, delta)
+        if notches:
+            self._set_emphasis({**self._component.emphasis, token: entry})
+        event.accept()
+
+    def _token_at(self, pos: QPoint) -> str | None:
+        """Source token under ``pos`` in this chip, if it can carry emphasis."""
+        index = self._label.char_index_at(self._label.mapFrom(self, pos))
+        shown = self._label.text()
+        if not 0 <= index < len(shown) or shown[index] in ", \t\n":
+            return None
+        raw = self._render_func(self._component)
+        if self._component.chip_emphasis:
+            # The whole-chip "(" ... ":1.2)" wrapper belongs to no token.
+            inner = _emphasis.apply(raw, self._component.emphasis)
+            if not 1 <= index < 1 + len(inner):
+                return None
+        parts = raw.split(",")
+        part = shown.count(",", 0, index)
+        token = parts[part].strip() if part < len(parts) else ""
+        # ``{a|b}`` choices resolve to other text when generating.
+        if not token or ("{" in token and "|" in token):
+            return None
+        return token
+
+    def _set_emphasis(self, emphasis: dict) -> None:
+        self._component.emphasis = emphasis
+        self._update_display_text()
+        self.emphasis_changed.emit(self._component)
 
     # --- drag ---
 
@@ -278,8 +405,10 @@ class PromptChipWidget(QFrame):
             self._popup.close()
         popup = ChipEditPopup(self._component, self._catalog, parent=self)
         popup.changed.connect(self._on_popup_changed)
+        popup.emphasis_changed.connect(self._on_popup_emphasis_changed)
         popup.delete_requested.connect(self._on_delete)
         popup.expand_requested.connect(self._on_expand)
+        popup.closed.connect(lambda: self._set_selected(False))
 
         # Position below this chip
         global_pos = self.mapToGlobal(QPoint(0, self.height()))
@@ -296,10 +425,15 @@ class PromptChipWidget(QFrame):
         popup.move(global_pos)
         self._popup = popup
         popup.show()
+        self._set_selected(True)
 
     def _on_popup_changed(self, component: PromptComponent) -> None:
         self._update_display_text()
         self.changed.emit(component)
+
+    def _on_popup_emphasis_changed(self, component: PromptComponent) -> None:
+        self._update_display_text()
+        self.emphasis_changed.emit(component)
 
     def _on_delete(self) -> None:
         if self._popup is not None:
@@ -323,8 +457,10 @@ class ChipEditPopup(QFrame):
     """Popup for editing a chip's component settings."""
 
     changed = Signal(object)
+    emphasis_changed = Signal(object)
     delete_requested = Signal()
     expand_requested = Signal()
+    closed = Signal()
 
     def __init__(
         self,
@@ -343,6 +479,10 @@ class ChipEditPopup(QFrame):
         self.setFrameShape(QFrame.Shape.StyledPanel)
         self.setMinimumWidth(220)
         self._build_ui()
+
+    def hideEvent(self, event: object) -> None:  # type: ignore[override]  # PySide6 override stub limitation
+        self.closed.emit()
+        super().hideEvent(event)
 
     def _build_ui(self) -> None:
         layout = QVBoxLayout(self)
@@ -394,11 +534,62 @@ class ChipEditPopup(QFrame):
         self._selection_controls = PromptSelectionControls(self._component.selection_mode, self)
         self._selection_controls.modeChanged.connect(self._on_selection_mode_changed)
         layout.addWidget(self._selection_controls)
+        layout.addLayout(self._build_emphasis_row())
         layout.addLayout(self._build_action_row())
 
     def _on_selection_mode_changed(self, mode: str) -> None:
         self._component.selection_mode = mode
         self.changed.emit(self._component)
+
+    def _build_emphasis_row(self) -> QHBoxLayout:
+        """Whole-chip emphasis, stepped in the same order as the wheel on a token."""
+        row = QHBoxLayout()
+        row.addWidget(QLabel(_chip_ts("Emphasis"), self))
+        row.addWidget(
+            self._emphasis_button("\u2212", _chip_ts("Weaken emphasis"), -_emphasis.WEIGHT_STEP)
+        )
+        self._emphasis_value = QLabel(self)
+        self._emphasis_value.setMinimumWidth(self.fontMetrics().horizontalAdvance("0.00"))
+        self._emphasis_value.setAlignment(Qt.AlignmentFlag.AlignCenter)
+        row.addWidget(self._emphasis_value)
+        row.addWidget(
+            self._emphasis_button("+", _chip_ts("Strengthen emphasis"), _emphasis.WEIGHT_STEP)
+        )
+        self._emphasis_clear = QPushButton(_chip_ts("Clear"), self)
+        self._emphasis_clear.setFlat(True)
+        self._emphasis_clear.clicked.connect(self._clear_chip_emphasis)
+        row.addWidget(self._emphasis_clear)
+        row.addStretch(1)
+        self._update_emphasis_value()
+        return row
+
+    def _emphasis_button(self, text: str, tip: str, delta: float) -> QToolButton:
+        button = QToolButton(self)
+        button.setText(text)
+        button.setToolTip(tip)
+        button.setAccessibleName(tip)
+        button.clicked.connect(lambda: self._step_chip_emphasis(delta))
+        return button
+
+    def _step_chip_emphasis(self, delta: float) -> None:
+        self._set_chip_emphasis(_emphasis.step(self._component.chip_emphasis, delta))
+
+    def _clear_chip_emphasis(self) -> None:
+        if self._component.chip_emphasis:
+            self._set_chip_emphasis({})
+
+    def _set_chip_emphasis(self, entry: dict) -> None:
+        self._component.chip_emphasis = entry
+        self._update_emphasis_value()
+        self.emphasis_changed.emit(self._component)
+
+    def _update_emphasis_value(self) -> None:
+        entry = self._component.chip_emphasis
+        if entry.get("weight") is not None:
+            text = f"{entry['weight']:.1f}"
+        else:
+            text = "( )" if entry.get("paren") else "\u2014"
+        self._emphasis_value.setText(text)
 
     def _build_action_row(self) -> QHBoxLayout:
         action_row = QHBoxLayout()
@@ -504,6 +695,7 @@ class PromptChipFlowWidget(QScrollArea):
     """Scrollable flow area that displays chips and accepts drops."""
 
     chipInserted = Signal(str, int)  # (component_kind, insert_index)
+    snippetInserted = Signal(str, str, int)  # (component_kind, snippet_id, insert_index)
     chipMoved = Signal(int, int)  # (from_index, to_index)
 
     def __init__(self, parent: QWidget | None = None) -> None:
@@ -522,10 +714,14 @@ class PromptChipFlowWidget(QScrollArea):
 
         self._chips: list[PromptChipWidget] = []
         self._separator_labels: list[QLabel] = []
+        self._catalog: SnippetCatalog | None = None
         self._add_button = QToolButton(self._inner)
+        self._add_button.setObjectName("chipAddButton")
         self._add_button.setText("+")
         self._add_button.setToolTip(_chip_ts("Add component"))
         self._add_button.setCursor(Qt.CursorShape.PointingHandCursor)
+        self._add_button.setFixedSize(24, 24)
+        self._add_button.setStyleSheet(_ADD_BUTTON_STYLE)
         self._add_button.clicked.connect(self._on_add_clicked)
         self._flow.addWidget(self._add_button)
 
@@ -548,6 +744,7 @@ class PromptChipFlowWidget(QScrollArea):
         render_func: object,
     ) -> list[PromptChipWidget]:
         """Clear and rebuild all chips from component list."""
+        self._catalog = catalog
         # Remove existing
         self._clear_all()
 
@@ -717,6 +914,20 @@ class PromptChipFlowWidget(QScrollArea):
         self._add_button.setToolTip(_chip_ts("Add component"))
 
     def _on_add_clicked(self) -> None:
+        menu = self._build_add_menu()
+        chosen = menu.exec(self._add_button.mapToGlobal(QPoint(0, self._add_button.height())))
+        if chosen is not None:
+            self._insert_from_action(chosen)
+
+    def _insert_from_action(self, action) -> None:
+        kind, snippet_id = action.data()
+        if snippet_id is None:
+            self.chipInserted.emit(kind, len(self._chips))
+        else:
+            self.snippetInserted.emit(kind, snippet_id, len(self._chips))
+
+    def _build_add_menu(self) -> QMenu:
+        """Kind -> tag -> title; kinds without snippets insert their default directly."""
         menu = QMenu(self)
         for kind, label in [
             (CK_STRING, _chip_ts("String")),
@@ -724,8 +935,20 @@ class PromptChipFlowWidget(QScrollArea):
             (CK_TEXT, _chip_ts("Text")),
             (CK_PROMPT, _chip_ts("Prompt")),
         ]:
-            action = menu.addAction(label)
-            action.setData(kind)
-        chosen = menu.exec(self._add_button.mapToGlobal(QPoint(0, self._add_button.height())))
-        if chosen is not None:
-            self.chipInserted.emit(chosen.data(), len(self._chips))
+            catalog = self._catalog
+            snippets = catalog.iter(kind) if catalog is not None and kind != CK_TEXT else []
+            if not snippets:
+                menu.addAction(label).setData((kind, None))
+                continue
+            kind_menu = menu.addMenu(label)
+            self._add_snippet_actions(kind_menu.addMenu(_chip_ts("All tags")), kind, snippets)
+            for tag in catalog.tags(kind):
+                tag_menu = kind_menu.addMenu(tag.replace("&", "&&"))
+                self._add_snippet_actions(tag_menu, kind, catalog.iter(kind, tag=tag))
+        return menu
+
+    @staticmethod
+    def _add_snippet_actions(menu: QMenu, kind: str, snippets: list) -> None:
+        for snippet in sorted(snippets, key=lambda s: ((s.title or s.id).casefold(), s.id)):
+            title = (snippet.title or snippet.id).replace("&", "&&")
+            menu.addAction(title).setData((kind, snippet.id))
