@@ -6,7 +6,7 @@ import json
 from pathlib import Path
 from typing import Any
 
-from PySide6.QtWidgets import QComboBox, QFileDialog, QHBoxLayout
+from PySide6.QtWidgets import QComboBox, QFileDialog, QGridLayout
 
 from loomstroke.plugins.comfyui.server_registry import get_registry
 from loomstroke.plugins.comfyui.session_target import active_url, confirm
@@ -25,19 +25,25 @@ class ComfyAuthorPanel(NativePanel):
         self._server_views: dict[str, tuple[Any, Any, bool]] = {}
         self._active_server_id: str | None = None
         self.server_combo = QComboBox(self)
+        self.server_combo.setSizeAdjustPolicy(
+            QComboBox.SizeAdjustPolicy.AdjustToMinimumContentsLengthWithIcon
+        )
+        self.server_combo.setMinimumContentsLength(12)
         self.server_combo.activated.connect(self.change_server)
         self.body.insertWidget(0, self.server_combo)
         self.refresh_servers()
-        bar = QHBoxLayout()
-        for text, action in (
-            ("Open ComfyUI", self.resume_previous),
-            ("Load workflow…", self.load_file),
-            ("Apply changes to Editor", self.configure),
-            ("Release VRAM", self.release_memory),
+        bar = QGridLayout()
+        for index, (text, action) in enumerate(
+            (
+                ("Open ComfyUI", self.resume_previous),
+                ("Load workflow…", self.load_file),
+                ("Apply changes to Editor", self.configure),
+                ("Release VRAM", self.release_memory),
+            )
         ):
             button = self.button(text)
             button.clicked.connect(lambda _checked=False, action=action: self.run(action()))
-            bar.addWidget(button)
+            bar.addWidget(button, index // 2, index % 2)
         self.body.insertLayout(1, bar)
         self.status.setText(
             tr("Edit a workflow here, then configure its exposed parameters and outputs.")
@@ -113,7 +119,7 @@ class ComfyAuthorPanel(NativePanel):
             else:
                 self._source_workflow = self.manager.editor().current_workflow()
                 self._preserve_editor = False
-        view = await self.connect_view(server.url, generation=True)
+        view = await self.connect_view(server.url, generation=True, minimum_height=0)
         self._active_server_id = server.id
         return view
 

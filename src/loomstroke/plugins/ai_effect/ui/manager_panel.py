@@ -12,7 +12,7 @@ from pathlib import Path
 from typing import Any
 
 from PySide6.QtCore import QEvent, QObject, QTimer
-from PySide6.QtWidgets import QDockWidget, QTabWidget, QVBoxLayout, QWidget
+from PySide6.QtWidgets import QDockWidget, QSizePolicy, QTabWidget, QVBoxLayout, QWidget
 from shiboken6 import isValid
 
 from loomstroke.plugins.ai_effect.editor.import_preset import (
@@ -75,6 +75,15 @@ class AIEffectManagerPanel(QWidget):
 
         self._comfy_author = ComfyAuthorPanel(self)
         self._tabs.addTab(self._comfy_author, "ComfyUI")
+        self._tabs.currentChanged.connect(self._update_tab_size_policy)
+
+    def _update_tab_size_policy(self, _index: int) -> None:
+        horizontal = (
+            QSizePolicy.Policy.Ignored
+            if self._tabs.currentWidget() is self._comfy_author
+            else QSizePolicy.Policy.Expanding
+        )
+        self._tabs.setSizePolicy(horizontal, QSizePolicy.Policy.Expanding)
 
     def refresh(self) -> None:
         """Refresh the manager grid; used by the app export-sync hook."""

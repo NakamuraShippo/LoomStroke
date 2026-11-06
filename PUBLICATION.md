@@ -10,6 +10,18 @@ LoomStroke本体の `LICENSE` と `LICENSE_JA` は開発側から内容を変更
 
 ## 現行の配布スナップショット
 
+### 2026-11-06 v0.3.0.8.1 ComfyUIパネルの縮小改善
+
+開発側のv0.3.0.8.1からAI Effect ManagerのComfyUIタブに関わる本体3ファイルと
+アプリ版番号2ファイルを同期し、同版の修正項目を`CHANGELOG.md`へ追加しました。
+浮動パネルを小さくした際の固定高さと横幅の制約を緩め、4つの操作ボタンを2列に配置します。
+Effectsレイヤー側の最小高さ、ComfyUI接続・生成・保存の経路は維持します。
+内部資料・テスト・ユーザーデータは収録しません。
+本体5ファイルは開発側のコミット済み内容とSHA-256が一致しました。
+配布側の仮想環境をeditableで再登録し、本体・パッケージ情報・更新履歴を
+`0.3.0.8.1`へ揃え、`pip check`と変更Python4ファイルのRuff/Black/isortを確認しました。
+実ComfyUI接続の画面操作・全テスト・新規Windows導入は再検証していません。
+
 ### 2026-11-06 v0.3.0.8 Google Gen AI SDK 3系対応
 
 開発側のv0.3.0.8までの本体・実行資源・利用者文書を収録し、v0.3.0.7.23〜52の更新項目を
@@ -214,7 +226,7 @@ build backendが生成したパッケージMETADATAのVersionも`0.3.0.3`で一�
 - ロゴ `img/`、第三者告知 `LICENSES/`、`THIRD_PARTY_LICENSES`
 - 利用者向け文書 `docs/user/`
 - `pyproject.toml`、`requirements.txt`
-- 更新履歴 `CHANGELOG.md`（2026-10-21のv0.3から開始、現在v0.3.0.8）
+- 更新履歴 `CHANGELOG.md`（2026-10-21のv0.3から開始、現在v0.3.0.8.1）
 - `main.py`、`install.bat`、`install_python.ps1`、`boot_LoomStroke.bat`、`run.sh`
 - AI無し専用入口 `boot_LoomStroke_noAI.bat`、ZIP更新用 `update.bat` / `update.ps1`
 

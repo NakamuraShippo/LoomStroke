@@ -75,7 +75,9 @@ class NativePanel(QWidget, AsyncTaskOwner):
             operation.close()
             raise
 
-    async def connect_view(self, url: str, *, generation: bool = False) -> Any:
+    async def connect_view(
+        self, url: str, *, generation: bool = False, minimum_height: int = 380
+    ) -> Any:
         settings = get_settings_manager()
         if not is_external_services_allowed(settings):
             raise ValueError(tr("Enable external services in Preferences to use ComfyUI."))
@@ -88,7 +90,7 @@ class NativePanel(QWidget, AsyncTaskOwner):
         self.status.setText(tr("Connecting to ComfyUI…"))
         self.view = NativeComfyView(url, settings, self, persistent=generation)
         self.view.interceptor.allow_generation = generation
-        self.view.setMinimumHeight(380)
+        self.view.setMinimumHeight(minimum_height)
         self.body.addWidget(self.view, 1)
         try:
             await self.view.open_frontend()
