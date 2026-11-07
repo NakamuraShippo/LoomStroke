@@ -120,6 +120,20 @@ class DrawingAssistController:
     def set_active(self, assist_id: str | None) -> bool:
         return self.set_state(self.state().with_active(assist_id), label="Activate Assist")
 
+    def rotate_active_straight_ruler(self, degrees: float) -> bool:
+        assist = self.active_assist()
+        canvas = getattr(self._host, "canvas", None)
+        if (
+            assist is None
+            or assist.type != "parallel"
+            or assist.locked
+            or getattr(canvas, "_in_transaction", False)
+            or self.issues(assist)
+        ):
+            return False
+        angle = (assist.number("angle", 0.0) + degrees + 180.0) % 360.0 - 180.0
+        return self.update(assist.with_geometry(angle=angle))
+
     def default_assist(self, assist_type: str) -> DrawingAssist | None:
         width, height = self.canvas_size()
         cx, cy = width / 2.0, height / 2.0
@@ -156,17 +170,12 @@ class DrawingAssistController:
             return
         geometry = stroke_feedback(session, point, self.canvas_size())
         self._feedback_is_position = False
-        if geometry != self._stroke_feedback:
-            self._stroke_feedback = geometry
-            self._repaint()
+        self._stroke_feedback = geometry
 
     def clear_stroke_feedback(self) -> None:
-        changed = not self._stroke_feedback.is_empty
         self._stroke_session = None
         self._stroke_feedback = AssistOverlayGeometry()
         self._feedback_is_position = False
-        if changed:
-            self._repaint()
 
     def snap_position(self, x, y, w=0.0, h=0.0):
         assist = self.active_assist() if self.overlay_visible else None
@@ -196,7 +205,6 @@ class DrawingAssistController:
             self._stroke_feedback = geometry
             self._stroke_page = self.page_id()
             self._feedback_is_position = True
-            self._repaint()
 
     def clear_position_feedback(self):
         if self._feedback_is_position:
@@ -228,26 +236,8 @@ class DrawingAssistController:
                 for x, y, label in geometry.markers:
                     painter.drawEllipse(QPointF(x, y), 3.0, 3.0)
                     painter.drawText(QPointF(x + 4.0, y - 4.0), label)
-            if self._stroke_page == self.page_id():
-                self._draw_stroke_feedback(painter)
         finally:
             painter.restore()
-
-    def _draw_stroke_feedback(self, painter: QPainter) -> None:
-        geometry = self._stroke_feedback
-        painter.setOpacity(1)
-        scale = max(1e-6, abs(painter.transform().m11()), abs(painter.transform().m12()))
-        for color, width in ((QColor(25, 15, 35, 230), 5), (QColor(255, 190, 40), 2.5)):
-            pen = QPen(color, width)
-            pen.setCosmetic(True)
-            painter.setPen(pen)
-            for start, end in geometry.lines:
-                painter.drawLine(QPointF(*start), QPointF(*end))
-            for cx, cy, rx, ry in geometry.ellipses:
-                painter.drawEllipse(QRectF(cx - rx, cy - ry, rx * 2, ry * 2))
-            for x, y, label in geometry.markers:
-                painter.drawEllipse(QPointF(x, y), 6 / scale, 6 / scale)
-                painter.drawText(QPointF(x + 8 / scale, y - 8 / scale), label)
 
     def _pen(self, *, active: bool) -> QPen:
         color = QColor(self.overlay_color)

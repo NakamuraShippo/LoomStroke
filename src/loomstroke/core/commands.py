@@ -80,6 +80,7 @@ from .commands_image import ApplyImageCommand, FilterCommand, TransformCommand
 from .commands_layer_3d import (
     SetLayer3DCameraCommand,
     SetLayer3DDisplayModeCommand,
+    SetLayer3DLightPositionCommand,
     SetLayer3DOffsetCommand,
     SetLayer3DSceneCommand,
 )
@@ -206,6 +207,7 @@ __all__ = (
     "SetActiveColorCommand",
     "SetLayer3DCameraCommand",
     "SetLayer3DDisplayModeCommand",
+    "SetLayer3DLightPositionCommand",
     "SetLayer3DOffsetCommand",
     "SetLayer3DSceneCommand",
     "SetLayerMaskCommand",

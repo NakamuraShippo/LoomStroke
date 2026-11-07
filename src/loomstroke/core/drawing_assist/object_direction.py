@@ -25,7 +25,9 @@ def object_direction(session, *, vertical=False):
     elif isinstance(constraint, PerspectiveConstraint):
         if constraint.axis == "auto":
             return 0.0
-        if constraint.axis == "vertical":
+        if constraint.axis == "horizontal":
+            dx, dy = 1, 0
+        elif constraint.axis == "vertical":
             dx, dy = 0, 1
         else:
             index = int(constraint.axis[-1]) - 1

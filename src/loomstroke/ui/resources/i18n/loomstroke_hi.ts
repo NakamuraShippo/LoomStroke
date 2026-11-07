@@ -3,6 +3,14 @@
 <TS version="2.1" language="hi">
     <context>
         <name>MainWindow</name>
+        <message>
+            <source>Rotate Straight Ruler Left</source>
+            <translation>सीधे रूलर को बाईं ओर घुमाएँ</translation>
+        </message>
+        <message>
+            <source>Rotate Straight Ruler Right</source>
+            <translation>सीधे रूलर को दाईं ओर घुमाएँ</translation>
+        </message>
     <message>
         <source>Perspective Ruler...</source>
         <translation>परिप्रेक्ष्य रूलर...</translation>
@@ -11263,6 +11271,10 @@ Please check that all image paths in your workflow are valid.
 <context>
     <name>DrawingAssistPanel</name>
     <message>
+        <source>Angle</source>
+        <translation>कोण</translation>
+    </message>
+    <message>
         <source>Perspective ruler</source>
         <translation>परिप्रेक्ष्य रूलर</translation>
     </message>
@@ -11359,8 +11371,8 @@ Please check that all image paths in your workflow are valid.
         <translation>प्रतिबिंब</translation>
     </message>
     <message>
-        <source>parallel</source>
-        <translation>समानांतर</translation>
+        <source>Straight Ruler</source>
+        <translation>सीधा रूलर</translation>
     </message>
     <message>
         <source>perspective</source>
@@ -20793,6 +20805,14 @@ You will need to enter it again before generating.</source>
 <context>
     <name>ThreeDLayerContextToolbar</name>
     <message>
+        <source>Light position</source>
+        <translation>प्रकाश की स्थिति</translation>
+    </message>
+    <message>
+        <source>Light position in 3D scene coordinates</source>
+        <translation>3D दृश्य निर्देशांक में प्रकाश की स्थिति</translation>
+    </message>
+    <message>
         <source>3D</source>
         <translation>3D</translation>
     </message>
@@ -21225,6 +21245,18 @@ Do you want to save them?</source>
 </context>
 <context>
     <name>__shared__</name>
+    <message>
+        <source>Straight Ruler</source>
+        <translation>सीधा रूलर</translation>
+    </message>
+    <message>
+        <source>Rotate Straight Ruler Left</source>
+        <translation>सीधे रूलर को बाईं ओर घुमाएँ</translation>
+    </message>
+    <message>
+        <source>Rotate Straight Ruler Right</source>
+        <translation>सीधे रूलर को दाईं ओर घुमाएँ</translation>
+    </message>
     <message>
         <source>Choose a different name for this model.</source>
         <translation>इस मॉडल के लिए कोई दूसरा नाम चुनें।</translation>
@@ -37864,6 +37896,33 @@ Click to show as panel</source>
     <message>
         <source>Delete selected pose preset?</source>
         <translation>चयनित मुद्रा प्रीसेट हटाएँ?</translation>
+    </message>
+</context>
+<context>
+    <name>ThreeDPrimitiveAdd</name>
+    <message>
+        <source>Cube</source>
+        <translation>घन</translation>
+    </message>
+    <message>
+        <source>Sphere</source>
+        <translation>गोला</translation>
+    </message>
+    <message>
+        <source>Cylinder</source>
+        <translation>बेलन</translation>
+    </message>
+    <message>
+        <source>Add basic shape</source>
+        <translation>मूल आकृति जोड़ें</translation>
+    </message>
+    <message>
+        <source>Basic shape</source>
+        <translation>मूल आकृति</translation>
+    </message>
+    <message>
+        <source>Could not add basic shape</source>
+        <translation>मूल आकृति नहीं जोड़ी जा सकी</translation>
     </message>
 </context>
 </TS>

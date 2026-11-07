@@ -3,6 +3,7 @@
 from __future__ import annotations
 
 import logging
+import math
 from collections.abc import Mapping
 from typing import TYPE_CHECKING, Any
 
@@ -125,6 +126,42 @@ class SetLayer3DCameraCommand(Command):
         if layer is None or not self._had_old_camera:
             return False
         layer.camera_3d = self._old_camera
+        _refresh_3d_layer_preview(canvas, layer)
+        self._executed = False
+        return True
+
+
+class SetLayer3DLightPositionCommand(Command):
+    """Set the scene-space point light position without losing other lighting values."""
+
+    def __init__(
+        self, layer_id: str, position: tuple[float, float, float], *, merge_key: str | None = None
+    ) -> None:
+        super().__init__(merge_key=merge_key)
+        self.layer_id = layer_id
+        self._position = tuple(float(value) for value in position)
+        self._old_lighting: Any = None
+
+    def apply(self, canvas: Canvas) -> bool:
+        layer = _resolve_3d_layer(canvas, self.layer_id)
+        if layer is None or len(self._position) != 3 or not all(map(math.isfinite, self._position)):
+            return False
+        current = getattr(layer, "lighting_3d", None)
+        lighting = dict(current) if isinstance(current, Mapping) else {}
+        updated = {**lighting, "position": list(self._position)}
+        if current == updated:
+            return False
+        self._old_lighting = current
+        layer.lighting_3d = updated
+        _refresh_3d_layer_preview(canvas, layer)
+        self._executed = True
+        return True
+
+    def revert(self, canvas: Canvas) -> bool:
+        layer = _resolve_3d_layer(canvas, self.layer_id)
+        if layer is None or not self._executed:
+            return False
+        layer.lighting_3d = self._old_lighting
         _refresh_3d_layer_preview(canvas, layer)
         self._executed = False
         return True

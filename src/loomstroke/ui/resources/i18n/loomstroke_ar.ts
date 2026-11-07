@@ -3,6 +3,14 @@
 <TS version="2.1" language="ar">
     <context>
         <name>MainWindow</name>
+        <message>
+            <source>Rotate Straight Ruler Left</source>
+            <translation>تدوير المسطرة المستقيمة إلى اليسار</translation>
+        </message>
+        <message>
+            <source>Rotate Straight Ruler Right</source>
+            <translation>تدوير المسطرة المستقيمة إلى اليمين</translation>
+        </message>
     <message>
         <source>Perspective Ruler...</source>
         <translation>مسطرة المنظور...</translation>
@@ -11262,6 +11270,10 @@ Please check that all image paths in your workflow are valid.
 <context>
     <name>DrawingAssistPanel</name>
     <message>
+        <source>Angle</source>
+        <translation>الزاوية</translation>
+    </message>
+    <message>
         <source>Perspective ruler</source>
         <translation>مسطرة المنظور</translation>
     </message>
@@ -11358,8 +11370,8 @@ Please check that all image paths in your workflow are valid.
         <translation>مُعكوس</translation>
     </message>
     <message>
-        <source>parallel</source>
-        <translation>مُوازي</translation>
+        <source>Straight Ruler</source>
+        <translation>مسطرة مستقيمة</translation>
     </message>
     <message>
         <source>perspective</source>
@@ -20792,6 +20804,14 @@ You will need to enter it again before generating.</source>
 <context>
     <name>ThreeDLayerContextToolbar</name>
     <message>
+        <source>Light position</source>
+        <translation>موضع الضوء</translation>
+    </message>
+    <message>
+        <source>Light position in 3D scene coordinates</source>
+        <translation>موضع الضوء في إحداثيات المشهد ثلاثي الأبعاد</translation>
+    </message>
+    <message>
         <source>3D</source>
         <translation>3D</translation>
     </message>
@@ -21224,6 +21244,18 @@ Do you want to save them?</source>
 </context>
 <context>
     <name>__shared__</name>
+    <message>
+        <source>Straight Ruler</source>
+        <translation>مسطرة مستقيمة</translation>
+    </message>
+    <message>
+        <source>Rotate Straight Ruler Left</source>
+        <translation>تدوير المسطرة المستقيمة إلى اليسار</translation>
+    </message>
+    <message>
+        <source>Rotate Straight Ruler Right</source>
+        <translation>تدوير المسطرة المستقيمة إلى اليمين</translation>
+    </message>
     <message>
         <source>Choose a different name for this model.</source>
         <translation>اختر اسما آخر لهذا النموذج.</translation>
@@ -37862,6 +37894,33 @@ Click to show as panel</source>
     <message>
         <source>Delete selected pose preset?</source>
         <translation>هل تريد حذف إعداد الوضعية المحدد؟</translation>
+    </message>
+</context>
+<context>
+    <name>ThreeDPrimitiveAdd</name>
+    <message>
+        <source>Cube</source>
+        <translation>مكعب</translation>
+    </message>
+    <message>
+        <source>Sphere</source>
+        <translation>كرة</translation>
+    </message>
+    <message>
+        <source>Cylinder</source>
+        <translation>أسطوانة</translation>
+    </message>
+    <message>
+        <source>Add basic shape</source>
+        <translation>إضافة شكل أساسي</translation>
+    </message>
+    <message>
+        <source>Basic shape</source>
+        <translation>شكل أساسي</translation>
+    </message>
+    <message>
+        <source>Could not add basic shape</source>
+        <translation>تعذرت إضافة الشكل الأساسي</translation>
     </message>
 </context>
 </TS>

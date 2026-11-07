@@ -40,6 +40,7 @@ from loomstroke.rendering_3d.projection import (
     _ProjectionFaceLimitExceeded,
 )
 from loomstroke.ui.drawing_figure_add import DrawingFigureAddWidget
+from loomstroke.ui.primitive_3d_add import Primitive3DAddWidget
 from loomstroke.ui.three_d_preview_renderer import ThreeDPreviewFrame, ThreeDPreviewRenderer
 
 logger = logging.getLogger(__name__)
@@ -110,8 +111,12 @@ class Generated3DPreviewWidget(QWidget):
         layout.addWidget(self._preview, 1)
         layout.addLayout(row)
         layout.addLayout(actions)
-        layout.addWidget(DrawingFigureAddWidget(lambda: self._host, self))
+        self._add_creation_controls(layout)
         self.refresh()
+
+    def _add_creation_controls(self, layout: QVBoxLayout) -> None:
+        layout.addWidget(Primitive3DAddWidget(lambda: self._host, self))
+        layout.addWidget(DrawingFigureAddWidget(lambda: self._host, self))
 
     def set_host(self, host: HostAPI) -> None:
         if self._host is not None:

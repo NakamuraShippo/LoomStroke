@@ -3,6 +3,14 @@
 <TS version="2.1" language="pt_BR">
     <context>
         <name>MainWindow</name>
+        <message>
+            <source>Rotate Straight Ruler Left</source>
+            <translation>Girar a régua reta para a esquerda</translation>
+        </message>
+        <message>
+            <source>Rotate Straight Ruler Right</source>
+            <translation>Girar a régua reta para a direita</translation>
+        </message>
     <message>
         <source>Perspective Ruler...</source>
         <translation>Régua de perspectiva...</translation>
@@ -11263,6 +11271,10 @@ Verifique se todos os caminhos de imagem no seu fluxo de trabalho são válidos.
 <context>
     <name>DrawingAssistPanel</name>
     <message>
+        <source>Angle</source>
+        <translation>Ângulo</translation>
+    </message>
+    <message>
         <source>Perspective ruler</source>
         <translation>Régua de perspectiva</translation>
     </message>
@@ -11359,8 +11371,8 @@ Verifique se todos os caminhos de imagem no seu fluxo de trabalho são válidos.
         <translation>espelho</translation>
     </message>
     <message>
-        <source>parallel</source>
-        <translation>paralelo</translation>
+        <source>Straight Ruler</source>
+        <translation>Régua reta</translation>
     </message>
     <message>
         <source>perspective</source>
@@ -20793,6 +20805,14 @@ Você precisará digitá-la novamente antes de gerar.</translation>
 <context>
     <name>ThreeDLayerContextToolbar</name>
     <message>
+        <source>Light position</source>
+        <translation>Posição da luz</translation>
+    </message>
+    <message>
+        <source>Light position in 3D scene coordinates</source>
+        <translation>Posição da luz nas coordenadas da cena 3D</translation>
+    </message>
+    <message>
         <source>3D</source>
         <translation>3D</translation>
     </message>
@@ -21225,6 +21245,18 @@ Deseja salvá-las?</translation>
 </context>
 <context>
     <name>__shared__</name>
+    <message>
+        <source>Straight Ruler</source>
+        <translation>Régua reta</translation>
+    </message>
+    <message>
+        <source>Rotate Straight Ruler Left</source>
+        <translation>Girar a régua reta para a esquerda</translation>
+    </message>
+    <message>
+        <source>Rotate Straight Ruler Right</source>
+        <translation>Girar a régua reta para a direita</translation>
+    </message>
     <message>
         <source>Choose a different name for this model.</source>
         <translation>Escolha outro nome para este modelo.</translation>
@@ -37864,6 +37896,33 @@ Clique para exibir como quadro</translation>
     <message>
         <source>Delete selected pose preset?</source>
         <translation>Excluir a pose selecionada?</translation>
+    </message>
+</context>
+<context>
+    <name>ThreeDPrimitiveAdd</name>
+    <message>
+        <source>Cube</source>
+        <translation>Cubo</translation>
+    </message>
+    <message>
+        <source>Sphere</source>
+        <translation>Esfera</translation>
+    </message>
+    <message>
+        <source>Cylinder</source>
+        <translation>Cilindro</translation>
+    </message>
+    <message>
+        <source>Add basic shape</source>
+        <translation>Adicionar forma básica</translation>
+    </message>
+    <message>
+        <source>Basic shape</source>
+        <translation>Forma básica</translation>
+    </message>
+    <message>
+        <source>Could not add basic shape</source>
+        <translation>Não foi possível adicionar a forma básica</translation>
     </message>
 </context>
 </TS>

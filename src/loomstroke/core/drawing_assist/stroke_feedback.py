@@ -21,7 +21,9 @@ def stroke_feedback(
         constraint = session._perspective_locked or constraint
         if constraint.axis == "auto":
             return AssistOverlayGeometry()
-        if constraint.axis == "vertical":
+        if constraint.axis == "horizontal":
+            target = (anchor[0] + 1, anchor[1])
+        elif constraint.axis == "vertical":
             target = (anchor[0], anchor[1] + 1)
         elif constraint.axis in ("vp1", "vp2", "vp3") and constraint.vanishing_points:
             index = max(0, min(int(constraint.axis[2:]) - 1, len(constraint.vanishing_points) - 1))

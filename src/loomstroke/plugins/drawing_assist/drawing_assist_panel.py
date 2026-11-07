@@ -35,6 +35,10 @@ def _ts(text: str) -> str:
     return translated_literal_domain("DrawingAssistPanel", text, use_fallback=True)
 
 
+def _type_label(kind: str) -> str:
+    return _ts("Straight Ruler") if kind == "parallel" else _ts(kind)
+
+
 class DrawingAssistPanel(QWidget):
     def __init__(self, controller: DrawingAssistController, parent: QWidget | None = None) -> None:
         super().__init__(parent)
@@ -52,7 +56,7 @@ class DrawingAssistPanel(QWidget):
         row = QHBoxLayout()
         self.type_combo = QComboBox()
         for kind in KNOWN_ASSIST_TYPES:
-            self.type_combo.addItem(_ts(kind), kind)
+            self.type_combo.addItem(_type_label(kind), kind)
         row.addWidget(self.type_combo, 1)
         self.add_button = self._button(row, "Add", self.add_selected_type)
         self.remove_button = self._button(row, "Remove", self.remove_selected)
@@ -95,7 +99,7 @@ class DrawingAssistPanel(QWidget):
     def changeEvent(self, event: QEvent) -> None:
         if event.type() == QEvent.LanguageChange:
             for index in range(self.type_combo.count()):
-                self.type_combo.setItemText(index, _ts(self.type_combo.itemData(index)))
+                self.type_combo.setItemText(index, _type_label(self.type_combo.itemData(index)))
             state = self._controller.state()
             for index in range(self.list.count()):
                 item = self.list.item(index)
@@ -108,6 +112,10 @@ class DrawingAssistPanel(QWidget):
                     button.setText(_ts(source))
             self.enable_box.setText(_ts("Enabled"))
             self.overlay_box.setText(_ts("Show overlay"))
+            angle = self._fields.get(("geometry", "angle", None))
+            label = self.form.labelForField(angle) if angle is not None else None
+            if isinstance(label, QLabel):
+                label.setText(_ts("Angle"))
         super().changeEvent(event)
 
     @staticmethod
@@ -120,7 +128,7 @@ class DrawingAssistPanel(QWidget):
         if not assist.is_known:
             flags.append(_ts("unknown type"))
         suffix = f"  [{', '.join(flags)}]" if flags else ""
-        return f"{_ts(assist.type)}{suffix}"
+        return f"{_type_label(assist.type)}{suffix}"
 
     def refresh(self) -> None:
         selected = self.selected_id()
@@ -265,7 +273,8 @@ class DrawingAssistPanel(QWidget):
                 if isinstance(value, bool):
                     continue
                 if isinstance(value, (int, float)):
-                    self._add_field(source, key, None, float(value), f"{key}")
+                    label = _ts("Angle") if source == "geometry" and key == "angle" else key
+                    self._add_field(source, key, None, float(value), label)
                 elif (
                     isinstance(value, (list, tuple))
                     and len(value) == 2

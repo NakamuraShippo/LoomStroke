@@ -37,6 +37,7 @@ from loomstroke.plugins.prompt_editor.compose_widgets import (
     PromptChipFlowWidget,
     PromptChipWidget,
 )
+from loomstroke.plugins.prompt_editor.display_names import display_name_for
 from loomstroke.plugins.prompt_editor.dynamic_prompt import DynamicPromptSequence
 from loomstroke.plugins.prompt_editor.panel_plugin import (
     PromptComponent,
@@ -167,6 +168,7 @@ class PromptComposerWidget(QWidget):
         self._flow_area = ResizablePromptArea(
             self._chip_flow, getattr(self._host_api, "settings", None)
         )
+        self._flow_area.displayNameModeChanged.connect(self._chip_flow.set_show_display_names)
         root.addWidget(self._flow_area)
 
         # --- Separator row ---
@@ -233,6 +235,8 @@ class PromptComposerWidget(QWidget):
         if self._catalog:
             self._catalog.refresh()
         self._populate_composition_combo()
+        if self._components:
+            self._rebuild_chips()
 
     def _on_composition_selected(self, index: int) -> None:
         snippet_id = self._composition_combo.itemData(index)
@@ -376,6 +380,7 @@ class PromptComposerWidget(QWidget):
             self._components,
             self._catalog,
             self._render_component,
+            self._render_display_name,
         )
         self._component_widgets = chips
         for chip in chips:
@@ -474,6 +479,11 @@ class PromptComposerWidget(QWidget):
             if 0 <= index < len(items):
                 return items[index].strip()
         return ""
+
+    def _render_display_name(self, component: PromptComponent) -> str:
+        snippet = self._catalog.get(component.snippet_id) if self._catalog else None
+        index = component.list_index if component.list_index is not None else 0
+        return display_name_for(snippet, component.kind, index)
 
     def _current_separator(self) -> str:
         raw = self._separator_edit.text()

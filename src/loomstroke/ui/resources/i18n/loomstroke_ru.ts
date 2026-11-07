@@ -3,6 +3,14 @@
 <TS version="2.1" language="ru">
     <context>
         <name>MainWindow</name>
+        <message>
+            <source>Rotate Straight Ruler Left</source>
+            <translation>Повернуть прямую линейку влево</translation>
+        </message>
+        <message>
+            <source>Rotate Straight Ruler Right</source>
+            <translation>Повернуть прямую линейку вправо</translation>
+        </message>
     <message>
         <source>Perspective Ruler...</source>
         <translation>Линейка перспективы...</translation>
@@ -11339,6 +11347,10 @@ Please check that all image paths in your workflow are valid.
 <context>
     <name>DrawingAssistPanel</name>
     <message>
+        <source>Angle</source>
+        <translation>Угол</translation>
+    </message>
+    <message>
         <source>Perspective ruler</source>
         <translation>Линейка перспективы</translation>
     </message>
@@ -11435,8 +11447,8 @@ Please check that all image paths in your workflow are valid.
         <translation>зеркальный</translation>
     </message>
     <message>
-        <source>parallel</source>
-        <translation>параллельный</translation>
+        <source>Straight Ruler</source>
+        <translation>Прямая линейка</translation>
     </message>
     <message>
         <source>perspective</source>
@@ -20826,6 +20838,14 @@ You will need to enter it again before generating.</source>
 <context>
     <name>ThreeDLayerContextToolbar</name>
     <message>
+        <source>Light position</source>
+        <translation>Положение источника света</translation>
+    </message>
+    <message>
+        <source>Light position in 3D scene coordinates</source>
+        <translation>Положение источника света в координатах 3D-сцены</translation>
+    </message>
+    <message>
         <source>3D</source>
         <translation>3D</translation>
     </message>
@@ -21227,6 +21247,18 @@ Do you want to save them?</source>
 </context>
 <context>
     <name>__shared__</name>
+    <message>
+        <source>Straight Ruler</source>
+        <translation>Прямая линейка</translation>
+    </message>
+    <message>
+        <source>Rotate Straight Ruler Left</source>
+        <translation>Повернуть прямую линейку влево</translation>
+    </message>
+    <message>
+        <source>Rotate Straight Ruler Right</source>
+        <translation>Повернуть прямую линейку вправо</translation>
+    </message>
     <message>
         <source>Choose a different name for this model.</source>
         <translation>Выберите другое имя для этой модели.</translation>
@@ -37866,6 +37898,33 @@ Click to show as panel</source>
     <message>
         <source>Delete selected pose preset?</source>
         <translation>Удалить выбранный пресет позы?</translation>
+    </message>
+</context>
+<context>
+    <name>ThreeDPrimitiveAdd</name>
+    <message>
+        <source>Cube</source>
+        <translation>Куб</translation>
+    </message>
+    <message>
+        <source>Sphere</source>
+        <translation>Шар</translation>
+    </message>
+    <message>
+        <source>Cylinder</source>
+        <translation>Цилиндр</translation>
+    </message>
+    <message>
+        <source>Add basic shape</source>
+        <translation>Добавить базовую фигуру</translation>
+    </message>
+    <message>
+        <source>Basic shape</source>
+        <translation>Базовая фигура</translation>
+    </message>
+    <message>
+        <source>Could not add basic shape</source>
+        <translation>Не удалось добавить базовую фигуру</translation>
     </message>
 </context>
 </TS>

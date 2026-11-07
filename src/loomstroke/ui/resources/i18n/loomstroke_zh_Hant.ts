@@ -3,6 +3,14 @@
 <TS version="2.1" language="zh_Hant">
     <context>
         <name>MainWindow</name>
+        <message>
+            <source>Rotate Straight Ruler Left</source>
+            <translation>向左旋轉直線尺規</translation>
+        </message>
+        <message>
+            <source>Rotate Straight Ruler Right</source>
+            <translation>向右旋轉直線尺規</translation>
+        </message>
     <message>
         <source>Perspective Ruler...</source>
         <translation>透視尺...</translation>
@@ -11339,6 +11347,10 @@ Please check that all image paths in your workflow are valid.
 <context>
     <name>DrawingAssistPanel</name>
     <message>
+        <source>Angle</source>
+        <translation>角度</translation>
+    </message>
+    <message>
         <source>Perspective ruler</source>
         <translation>透視尺</translation>
     </message>
@@ -11435,8 +11447,8 @@ Please check that all image paths in your workflow are valid.
         <translation>鏡像</translation>
     </message>
     <message>
-        <source>parallel</source>
-        <translation>並行</translation>
+        <source>Straight Ruler</source>
+        <translation>直線尺規</translation>
     </message>
     <message>
         <source>perspective</source>
@@ -20826,6 +20838,14 @@ You will need to enter it again before generating.</source>
 <context>
     <name>ThreeDLayerContextToolbar</name>
     <message>
+        <source>Light position</source>
+        <translation>光源位置</translation>
+    </message>
+    <message>
+        <source>Light position in 3D scene coordinates</source>
+        <translation>3D 場景座標中的光源位置</translation>
+    </message>
+    <message>
         <source>3D</source>
         <translation>3D</translation>
     </message>
@@ -21227,6 +21247,18 @@ Do you want to save them?</source>
 </context>
 <context>
     <name>__shared__</name>
+    <message>
+        <source>Straight Ruler</source>
+        <translation>直線尺規</translation>
+    </message>
+    <message>
+        <source>Rotate Straight Ruler Left</source>
+        <translation>向左旋轉直線尺規</translation>
+    </message>
+    <message>
+        <source>Rotate Straight Ruler Right</source>
+        <translation>向右旋轉直線尺規</translation>
+    </message>
     <message>
         <source>Choose a different name for this model.</source>
         <translation>請為此模型使用其他名稱。</translation>
@@ -37866,6 +37898,33 @@ Click to show as panel</source>
     <message>
         <source>Delete selected pose preset?</source>
         <translation>刪除所選姿勢預設？</translation>
+    </message>
+</context>
+<context>
+    <name>ThreeDPrimitiveAdd</name>
+    <message>
+        <source>Cube</source>
+        <translation>立方體</translation>
+    </message>
+    <message>
+        <source>Sphere</source>
+        <translation>球體</translation>
+    </message>
+    <message>
+        <source>Cylinder</source>
+        <translation>圓柱體</translation>
+    </message>
+    <message>
+        <source>Add basic shape</source>
+        <translation>新增基本圖形</translation>
+    </message>
+    <message>
+        <source>Basic shape</source>
+        <translation>基本圖形</translation>
+    </message>
+    <message>
+        <source>Could not add basic shape</source>
+        <translation>無法新增基本圖形</translation>
     </message>
 </context>
 </TS>

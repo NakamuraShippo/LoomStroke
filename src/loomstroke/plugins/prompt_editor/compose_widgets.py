@@ -7,6 +7,7 @@ as inline text.  Hovering highlights the chip; clicking opens an edit popup.
 from __future__ import annotations
 
 import logging
+from collections.abc import Callable
 from typing import TYPE_CHECKING
 
 from PySide6.QtCore import QMimeData, QPoint, QPointF, QRect, QRectF, QSize, Qt, Signal
@@ -47,6 +48,7 @@ from loomstroke.plugins.common.constants import CK_LIST, CK_PROMPT, CK_STRING, C
 from loomstroke.ui.translations import translated_literal_domain
 
 from . import emphasis as _emphasis
+from .display_names import display_name_for, resolved_list_items
 from .selection_controls import PromptSelectionControls
 from .wrapped_chip_label import WrappedChipLabel
 
@@ -194,11 +196,16 @@ class PromptChipWidget(QFrame):
         catalog: SnippetCatalog,
         render_func: object,
         parent: QWidget | None = None,
+        *,
+        display_func: Callable[[PromptComponent], str] | None = None,
+        show_display_names: bool = True,
     ) -> None:
         super().__init__(parent)
         self._component = component
         self._catalog = catalog
         self._render_func = render_func  # callable(PromptComponent) -> str
+        self._display_func = display_func
+        self._show_display_names = show_display_names
         self._popup: ChipEditPopup | None = None
         self._drag_start: QPoint | None = None
         self._wheel_remainder = 0
@@ -241,9 +248,23 @@ class PromptChipWidget(QFrame):
         self._catalog = catalog
         self._update_display_text()
 
+    def set_show_display_names(self, enabled: bool) -> None:
+        self._show_display_names = enabled
+        self._update_display_text()
+        if self._popup is not None:
+            self._popup.set_show_display_names(enabled)
+
+    def _current_display_name(self) -> str:
+        if self._show_display_names and self._display_func is not None:
+            return self._display_func(self._component).strip()
+        return ""
+
     def _update_display_text(self) -> None:
-        text = _emphasis.decorate(self._render_func(self._component), self._component)
+        actual = _emphasis.decorate(self._render_func(self._component), self._component)
+        display_name = self._current_display_name()
+        text = display_name or actual
         self._label.setText(text if text else "\u2026")
+        self.setToolTip(actual if display_name else "")
         self.updateGeometry()
 
     # --- appearance: kind-tinted pill, grip, kind dot, hover remove button ---
@@ -352,6 +373,8 @@ class PromptChipWidget(QFrame):
 
     def _token_at(self, pos: QPoint) -> str | None:
         """Source token under ``pos`` in this chip, if it can carry emphasis."""
+        if self._current_display_name():
+            return None
         index = self._label.char_index_at(self._label.mapFrom(self, pos))
         shown = self._label.text()
         if not 0 <= index < len(shown) or shown[index] in ", \t\n":
@@ -403,7 +426,12 @@ class PromptChipWidget(QFrame):
     def _show_popup(self) -> None:
         if self._popup is not None:
             self._popup.close()
-        popup = ChipEditPopup(self._component, self._catalog, parent=self)
+        popup = ChipEditPopup(
+            self._component,
+            self._catalog,
+            parent=self,
+            show_display_names=self._show_display_names,
+        )
         popup.changed.connect(self._on_popup_changed)
         popup.emphasis_changed.connect(self._on_popup_emphasis_changed)
         popup.delete_requested.connect(self._on_delete)
@@ -467,10 +495,13 @@ class ChipEditPopup(QFrame):
         component: PromptComponent,
         catalog: SnippetCatalog,
         parent: QWidget | None = None,
+        *,
+        show_display_names: bool = True,
     ) -> None:
         super().__init__(parent, Qt.WindowType.Popup | Qt.WindowType.FramelessWindowHint)
         self._component = component
         self._catalog = catalog
+        self._show_display_names = show_display_names
         self._tag_combo: QComboBox | None = None
         self._snippet_combo: QComboBox | None = None
         self._item_combo: QComboBox | None = None
@@ -642,22 +673,23 @@ class ChipEditPopup(QFrame):
     def _populate_item_combo(self) -> None:
         if self._item_combo is None:
             return
-
-        from loomstroke.plugins.prompt_editor.panel_plugin import (  # noqa: PLC0415
-            _resolve_list_items,
-        )
-
         snippet = self._catalog.get(self._component.snippet_id)
-        items = _resolve_list_items(snippet)
+        items = resolved_list_items(snippet)
 
         self._item_combo.blockSignals(True)
         self._item_combo.clear()
         for i, item_text in enumerate(items):
-            self._item_combo.addItem(item_text, i)
+            name = display_name_for(snippet, CK_LIST, i) if self._show_display_names else ""
+            self._item_combo.addItem(name or item_text, i)
         current = self._component.list_index or 0
         if 0 <= current < self._item_combo.count():
             self._item_combo.setCurrentIndex(current)
         self._item_combo.blockSignals(False)
+
+    def set_show_display_names(self, enabled: bool) -> None:
+        if self._show_display_names != enabled:
+            self._show_display_names = enabled
+            self._populate_item_combo()
 
     def _on_tag_changed(self, _index: int) -> None:
         if self._tag_combo is not None:
@@ -700,6 +732,7 @@ class PromptChipFlowWidget(QScrollArea):
 
     def __init__(self, parent: QWidget | None = None) -> None:
         super().__init__(parent)
+        self._show_display_names = True
         self.setWidgetResizable(True)
         self.setAcceptDrops(True)
         self.setHorizontalScrollBarPolicy(Qt.ScrollBarPolicy.ScrollBarAlwaysOff)
@@ -742,6 +775,7 @@ class PromptChipFlowWidget(QScrollArea):
         components: list[PromptComponent],
         catalog: SnippetCatalog,
         render_func: object,
+        display_func: Callable[[PromptComponent], str] | None = None,
     ) -> list[PromptChipWidget]:
         """Clear and rebuild all chips from component list."""
         self._catalog = catalog
@@ -755,7 +789,14 @@ class PromptChipFlowWidget(QScrollArea):
                 self._flow.addWidget(sep)
                 self._separator_labels.append(sep)
 
-            chip = PromptChipWidget(comp, catalog, render_func, self._inner)
+            chip = PromptChipWidget(
+                comp,
+                catalog,
+                render_func,
+                self._inner,
+                display_func=display_func,
+                show_display_names=self._show_display_names,
+            )
             self._flow.addWidget(chip)
             chips.append(chip)
 
@@ -774,9 +815,17 @@ class PromptChipFlowWidget(QScrollArea):
         component: PromptComponent,
         catalog: SnippetCatalog,
         render_func: object,
+        display_func: Callable[[PromptComponent], str] | None = None,
     ) -> PromptChipWidget:
         """Insert a single chip at the given index without full rebuild."""
-        chip = PromptChipWidget(component, catalog, render_func, self._inner)
+        chip = PromptChipWidget(
+            component,
+            catalog,
+            render_func,
+            self._inner,
+            display_func=display_func,
+            show_display_names=self._show_display_names,
+        )
 
         # chips[0] at layout 0, sep at 1, chips[1] at 2, sep at 3, ...
         layout_pos = 0 if index <= 0 else index * 2
@@ -799,6 +848,11 @@ class PromptChipFlowWidget(QScrollArea):
         self._chips.insert(index, chip)
         self._inner.updateGeometry()
         return chip
+
+    def set_show_display_names(self, enabled: bool) -> None:
+        self._show_display_names = enabled
+        for chip in self._chips:
+            chip.set_show_display_names(enabled)
 
     def remove_chip(self, chip: PromptChipWidget) -> int:
         """Remove a chip and its adjacent separator. Returns removed index."""

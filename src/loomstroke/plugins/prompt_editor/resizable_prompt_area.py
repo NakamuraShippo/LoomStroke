@@ -4,8 +4,8 @@ from __future__ import annotations
 
 import logging
 
-from PySide6.QtCore import QEvent, Qt
-from PySide6.QtWidgets import QFrame, QSizePolicy, QVBoxLayout, QWidget
+from PySide6.QtCore import QEvent, Qt, Signal
+from PySide6.QtWidgets import QFrame, QHBoxLayout, QSizePolicy, QToolButton, QVBoxLayout, QWidget
 
 from loomstroke.platform.settings_manager import get_settings_manager
 from loomstroke.ui.translations import translated_literal_domain
@@ -72,6 +72,8 @@ class ResizablePromptArea(QWidget):
     language, panel-width and restoration events cannot overwrite it.
     """
 
+    displayNameModeChanged = Signal(bool)
+
     def __init__(self, content, settings=None, *, key=FLOW_HEIGHT_KEY, default_height=170):
         super().__init__(content.parentWidget())
         self.settings = settings if settings is not None else get_settings_manager()
@@ -80,6 +82,18 @@ class ResizablePromptArea(QWidget):
         layout = QVBoxLayout(self)
         layout.setContentsMargins(0, 0, 0, 0)
         layout.setSpacing(0)
+        mode_row = QHBoxLayout()
+        mode_row.setContentsMargins(0, 0, 2, 0)
+        mode_row.addStretch(1)
+        self.display_mode_button = QToolButton(self)
+        self.display_mode_button.setObjectName("livePromptDisplayModeButton")
+        self.display_mode_button.setText("Aa")
+        self.display_mode_button.setCheckable(True)
+        self.display_mode_button.setChecked(True)
+        self.display_mode_button.setAutoRaise(True)
+        self.display_mode_button.toggled.connect(self._on_display_mode_changed)
+        mode_row.addWidget(self.display_mode_button)
+        layout.addLayout(mode_row)
         layout.addWidget(content, 1)
         self.handle = _ResizeHandle(self)
         layout.addWidget(self.handle)
@@ -91,6 +105,23 @@ class ResizablePromptArea(QWidget):
         if type(height) is not int:
             height = default_height
         self.set_area_height(height)
+
+        self._retranslate_display_mode()
+
+    def changeEvent(self, event):  # noqa: N802
+        super().changeEvent(event)
+        if event.type() == QEvent.Type.LanguageChange and hasattr(self, "display_mode_button"):
+            self._retranslate_display_mode()
+
+    def _on_display_mode_changed(self, checked: bool) -> None:
+        self._retranslate_display_mode()
+        self.displayNameModeChanged.emit(checked)
+
+    def _retranslate_display_mode(self) -> None:
+        source = "Display name" if self.display_mode_button.isChecked() else "Text"
+        label = translated_literal_domain("PromptEditorPanel", source, use_fallback=True)
+        self.display_mode_button.setToolTip(label)
+        self.display_mode_button.setAccessibleName(label)
 
     def set_area_height(self, height):
         self.setFixedHeight(max(80, min(4096, height)))

@@ -45,6 +45,7 @@ struct VertexOut {
     @location(0) normal: vec3<f32>,
     @location(1) color: vec4<f32>,
     @location(2) uv: vec2<f32>,
+    @location(3) world_position: vec3<f32>,
 };
 
 @vertex
@@ -73,6 +74,7 @@ fn vs_main(in: VertexIn) -> VertexOut {
     ));
     out.color = in.color;
     out.uv = in.uv;
+    out.world_position = in.position;
     return out;
 }
 
@@ -88,9 +90,18 @@ fn fs_main(in: VertexOut) -> @location(0) vec4<f32> {
         let texel = textureSample(base_texture, base_sampler, in.uv);
         base = vec4<f32>(base.rgb * texel.rgb, base.a);
     }
-    let light_dir = normalize(params.light.xyz);
+    var light_dir = normalize(params.light.xyz);
+    if (params.row0.w > 0.5) {
+        let to_light = params.light.xyz - in.world_position;
+        let camera_light = vec3<f32>(
+            dot(to_light, params.row0.xyz),
+            dot(to_light, params.row1.xyz),
+            dot(to_light, params.row2.xyz),
+        );
+        light_dir = -normalize(camera_light + vec3<f32>(0.000001));
+    }
     var shade = clamp(dot(normalize(in.normal), -light_dir) * 0.75 + 0.35, 0.28, 1.0);
-    if (mode == 2 && params.light.w > 0.5) {
+    if (mode == 2 && params.light.w > 0.5 && params.row0.w < 0.5) {
         shade = 1.0;
     }
     let rgb = clamp(base.rgb * shade, vec3<f32>(0.0), vec3<f32>(1.0));
@@ -624,8 +635,15 @@ class Wgpu3DLayerRenderer:
         scale = min(width, height) * 0.42 * camera.zoom / radius
         mode = self._mode_id(preview_display_mode(getattr(layer, "display_mode_3d", "solid")))
         lighting = getattr(layer, "lighting_3d", None)
-        light = self._light_direction(
-            lighting.get("direction") if isinstance(lighting, dict) else None
+        position = (
+            self._light_position(lighting.get("position")) if isinstance(lighting, dict) else None
+        )
+        light = (
+            position
+            if position is not None
+            else self._light_direction(
+                lighting.get("direction") if isinstance(lighting, dict) else None
+            )
         )
         return np.asarray(
             [
@@ -640,7 +658,7 @@ class Wgpu3DLayerRenderer:
                 float(rotation[0, 0]),
                 float(rotation[0, 1]),
                 float(rotation[0, 2]),
-                0.0,
+                1.0 if position is not None else 0.0,
                 float(rotation[1, 0]),
                 float(rotation[1, 1]),
                 float(rotation[1, 2]),
@@ -884,6 +902,16 @@ class Wgpu3DLayerRenderer:
         if length <= 1e-6:
             return np.asarray((0.0, 0.0, -1.0), dtype=np.float32)
         return light / length
+
+    @staticmethod
+    def _light_position(value: Any) -> np.ndarray | None:
+        try:
+            position = np.asarray(value, dtype=np.float32)
+        except (TypeError, ValueError):
+            return None
+        if position.shape != (3,) or not np.isfinite(position).all():
+            return None
+        return position
 
     @staticmethod
     def _geometry_key(layer: Any, scene: Scene3DDocument) -> tuple[Any, ...]:

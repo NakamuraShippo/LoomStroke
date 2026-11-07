@@ -3,6 +3,7 @@
 from __future__ import annotations
 
 import logging
+import math
 from contextlib import suppress
 from typing import Any
 
@@ -10,6 +11,7 @@ from PySide6.QtCore import QRect
 from PySide6.QtWidgets import (
     QButtonGroup,
     QComboBox,
+    QDoubleSpinBox,
     QHBoxLayout,
     QLabel,
     QPushButton,
@@ -18,7 +20,11 @@ from PySide6.QtWidgets import (
 )
 
 from loomstroke.core.assets_3d.scene import Scene3DDocument
-from loomstroke.core.commands import SetLayer3DCameraCommand, SetLayer3DDisplayModeCommand
+from loomstroke.core.commands import (
+    SetLayer3DCameraCommand,
+    SetLayer3DDisplayModeCommand,
+    SetLayer3DLightPositionCommand,
+)
 from loomstroke.core.events import Events
 from loomstroke.core.layer_3d_rendering import orbit_camera_state, preview_display_mode
 from loomstroke.plugins.sdk.tool import ContextToolbarSpec
@@ -130,6 +136,25 @@ class ThreeDLayerContextToolbarController:
             )
         except Exception:
             logger.warning("3D display mode update failed", exc_info=True)
+            return False
+        if submitted and self._widget is not None:
+            self._widget.sync_from_layer(layer)
+        return submitted
+
+    def set_light_position(self, position: tuple[float, float, float]) -> bool:
+        layer = self._active_3d_layer()
+        if layer is None:
+            return False
+        command = SetLayer3DLightPositionCommand(
+            str(layer.id), position, merge_key="3d-layer-light-position"
+        )
+        submit = getattr(self._canvas, "submit", None)
+        try:
+            submitted = (
+                bool(submit(command)) if callable(submit) else bool(command.apply(self._canvas))
+            )
+        except Exception:
+            logger.warning("3D light position update failed", exc_info=True)
             return False
         if submitted and self._widget is not None:
             self._widget.sync_from_layer(layer)
@@ -338,6 +363,25 @@ class ThreeDLayerToolbarWidget(QWidget):
         )
         self._add_button(layout, "-", _ts("Zoom out"), lambda: controller.zoom(1.0 / 1.2))
         self._add_button(layout, "+", _ts("Zoom in"), lambda: controller.zoom(1.2))
+
+        light_layout = QHBoxLayout()
+        light_layout.setContentsMargins(0, 0, 0, 0)
+        light_layout.setSpacing(6)
+        outer.addLayout(light_layout)
+        light_layout.addWidget(QLabel(_ts("Light position"), self))
+        self._light_position: list[QDoubleSpinBox] = []
+        for axis in "XYZ":
+            light_layout.addWidget(QLabel(axis, self))
+            spin = QDoubleSpinBox(self)
+            spin.setRange(-10000.0, 10000.0)
+            spin.setDecimals(2)
+            spin.setSingleStep(0.1)
+            spin.setKeyboardTracking(False)
+            spin.setToolTip(_ts("Light position in 3D scene coordinates"))
+            spin.valueChanged.connect(self._on_light_position_changed)
+            light_layout.addWidget(spin)
+            self._light_position.append(spin)
+        light_layout.addStretch()
         from loomstroke.ui.drawing_figure_toolbar import DrawingFigureToolbarWidget  # noqa: PLC0415
 
         self._figure_controls = DrawingFigureToolbarWidget(controller, self)
@@ -349,6 +393,16 @@ class ThreeDLayerToolbarWidget(QWidget):
         mode = preview_display_mode(getattr(layer, "display_mode_3d", "solid"))
         self._syncing = True
         try:
+            lighting = getattr(layer, "lighting_3d", None)
+            position = lighting.get("position") if isinstance(lighting, dict) else None
+            try:
+                position = tuple(float(value) for value in position)
+            except (TypeError, ValueError):
+                position = ()
+            if len(position) != 3 or not all(map(math.isfinite, position)):
+                position = _default_light_position(layer.scene_3d)
+            for spin, value in zip(self._light_position, position, strict=True):
+                spin.setValue(value)
             for index in range(self._mode.count()):
                 if str(self._mode.itemData(index)) == mode.value:
                     self._mode.setCurrentIndex(index)
@@ -383,6 +437,11 @@ class ThreeDLayerToolbarWidget(QWidget):
             return
         mode = PreviewDisplayMode(str(self._mode.itemData(index)))
         self._controller.set_display_mode(mode)
+
+    def _on_light_position_changed(self, _value: float) -> None:
+        if self._syncing:
+            return
+        self._controller.set_light_position(tuple(spin.value() for spin in self._light_position))
 
     def _on_interaction_mode_changed(self, button_id: int) -> None:
         if self._syncing:
@@ -435,6 +494,13 @@ def _camera_payload(camera: OrbitCameraState) -> dict[str, Any]:
         "target": list(camera.target),
         "distance": float(camera.distance),
     }
+
+
+def _default_light_position(scene: Scene3DDocument) -> tuple[float, float, float]:
+    low, high = scene.bounds()
+    center = (low + high) * 0.5
+    radius = max(float(((high - low) ** 2).sum() ** 0.5) * 0.5, 1.0)
+    return (float(center[0] - radius), float(center[1] - radius), float(center[2] + radius * 2))
 
 
 def _mode_label(mode: PreviewDisplayMode) -> str:

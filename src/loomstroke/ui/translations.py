@@ -402,6 +402,8 @@ _JA_FALLBACK_TRANSLATIONS: dict[str, dict[str, str]] = {
     },
     "MainWindow": {
         "Perspective Ruler...": "パース定規...",
+        "Rotate Straight Ruler Left": "直線定規を左に回転",
+        "Rotate Straight Ruler Right": "直線定規を右に回転",
         "Cover Template...": "表紙テンプレート...",
         "Pattern Along Path": "パスに沿って模様を配置",
         "Preview Trimmed Page": "仕上がり表示",
@@ -2020,12 +2022,13 @@ _JA_FALLBACK_TRANSLATIONS["LayerPanel"].update(FILTER_LAYER_JA)
 _JA_FALLBACK_TRANSLATIONS["AppearancePanel"].update(FILTER_APPEARANCE_JA)
 _JA_FALLBACK_TRANSLATIONS["MainWindow"].update(FILTER_EXPORT_JA)
 _JA_FALLBACK_TRANSLATIONS["DrawingAssistPanel"] = {
+    "Angle": "角度",
     "Drawing Assist Panel": "作画補助パネル",
     "Symmetry, parallel / radial / concentric rulers and perspective": "対称描画・平行 / 放射 / 同心円定規・透視",
     "Drawing Assist": "作画補助",
     "mirror": "ミラー",
     "rotational": "回転対称",
-    "parallel": "平行定規",
+    "Straight Ruler": "直線定規",
     "radial": "放射定規",
     "concentric": "同心円定規",
     "perspective": "パース定規",

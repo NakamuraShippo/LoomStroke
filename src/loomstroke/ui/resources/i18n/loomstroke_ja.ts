@@ -1545,6 +1545,14 @@ Please check that all image paths in your workflow are valid.
 <context>
     <name>MainWindow</name>
     <message>
+        <source>Rotate Straight Ruler Left</source>
+        <translation>直線定規を左に回転</translation>
+    </message>
+    <message>
+        <source>Rotate Straight Ruler Right</source>
+        <translation>直線定規を右に回転</translation>
+    </message>
+    <message>
         <source>Perspective Ruler...</source>
         <translation>パース定規...</translation>
     </message>
@@ -15769,6 +15777,14 @@ Select a file to recover.</source>
 <context>
     <name>ThreeDLayerContextToolbar</name>
     <message>
+        <source>Light position</source>
+        <translation>光源位置</translation>
+    </message>
+    <message>
+        <source>Light position in 3D scene coordinates</source>
+        <translation>3Dシーン座標での光源位置</translation>
+    </message>
+    <message>
         <source>Orbit</source>
         <translation>周回回転</translation>
     </message>
@@ -15834,6 +15850,18 @@ Select a file to recover.</source>
 </context>
 <context>
     <name>__shared__</name>
+    <message>
+        <source>Straight Ruler</source>
+        <translation>直線定規</translation>
+    </message>
+    <message>
+        <source>Rotate Straight Ruler Left</source>
+        <translation>直線定規を左に回転</translation>
+    </message>
+    <message>
+        <source>Rotate Straight Ruler Right</source>
+        <translation>直線定規を右に回転</translation>
+    </message>
     <message>
         <source>Choose a different name for this model.</source>
         <translation>このモデルでは別の名前を指定してください。</translation>
@@ -33394,6 +33422,10 @@ After refreshing the token, any agents registered to this LoomStroke MCP server 
 <context>
     <name>DrawingAssistPanel</name>
     <message>
+        <source>Angle</source>
+        <translation>角度</translation>
+    </message>
+    <message>
         <source>Perspective ruler</source>
         <translation>パース定規</translation>
     </message>
@@ -33490,8 +33522,8 @@ After refreshing the token, any agents registered to this LoomStroke MCP server 
         <translation>ミラー</translation>
     </message>
     <message>
-        <source>parallel</source>
-        <translation>平行定規</translation>
+        <source>Straight Ruler</source>
+        <translation>直線定規</translation>
     </message>
     <message>
         <source>perspective</source>
@@ -37216,6 +37248,33 @@ After refreshing the token, any agents registered to this LoomStroke MCP server 
     <message>
         <source>Delete selected pose preset?</source>
         <translation>選択したポーズプリセットを削除しますか？</translation>
+    </message>
+</context>
+<context>
+    <name>ThreeDPrimitiveAdd</name>
+    <message>
+        <source>Cube</source>
+        <translation>立方体</translation>
+    </message>
+    <message>
+        <source>Sphere</source>
+        <translation>球</translation>
+    </message>
+    <message>
+        <source>Cylinder</source>
+        <translation>円柱</translation>
+    </message>
+    <message>
+        <source>Add basic shape</source>
+        <translation>基本図形を追加</translation>
+    </message>
+    <message>
+        <source>Basic shape</source>
+        <translation>基本図形</translation>
+    </message>
+    <message>
+        <source>Could not add basic shape</source>
+        <translation>基本図形を追加できませんでした</translation>
     </message>
 </context>
 </TS>

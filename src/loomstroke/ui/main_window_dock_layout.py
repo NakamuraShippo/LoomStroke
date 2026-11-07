@@ -481,7 +481,9 @@ class MainWindowDockSpacerController:
         if not getattr(self._window, "_dock_collapse_ready", False):
             return
         if getattr(self._window, "_collapse_cooldown", False):
+            self._window._dock_collapse_pending = True
             return
+        self._window._dock_collapse_pending = False
         timer = getattr(self._window, "_collapse_timer", None)
         if timer is None:
             timer = QTimer(self._window)
@@ -493,6 +495,8 @@ class MainWindowDockSpacerController:
 
     def clear_collapse_cooldown(self) -> None:
         self._window._collapse_cooldown = False
+        if getattr(self._window, "_dock_collapse_pending", False):
+            self.schedule_collapse_empty_dock_areas()
 
     def collapse_empty_dock_areas(self) -> None:
         """Redistribute space in dock areas after docks are floated."""

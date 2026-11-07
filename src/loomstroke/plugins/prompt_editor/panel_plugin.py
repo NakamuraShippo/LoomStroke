@@ -91,7 +91,10 @@ from .compose_output import OutputSection
 from .compose_separator import SeparatorSelector
 from .compose_widgets import _KIND_COLORS, PromptChipFlowWidget, PromptChipWidget  # noqa: F401
 from .composer import PromptComposer
+from .display_names import display_name_for
+from .display_names import resolved_list_items as _resolve_list_items
 from .event_handlers import PromptEditorEventHandler, SnippetEventHandler
+from .library_display_names import LibraryDisplayNamesEditor
 from .llm_pane_controller import LLMPaneController
 from .resizable_prompt_area import ResizablePromptArea
 from .storage import PromptSnippetStore
@@ -248,30 +251,6 @@ class PromptComponent:
             emphasis=_emphasis.normalize(payload.get("emphasis")),
             chip_emphasis=_emphasis.normalize_entry(payload.get("chip_emphasis")),
         )
-
-
-def _resolve_list_items(snippet: Snippet | None) -> list[str]:
-    """Return usable list entries for list-type snippets."""
-    if snippet is None:
-        return []
-    items = []
-    for value in snippet.list_items:
-        for part in str(value).split(","):
-            part = part.strip()  # noqa: PLW2901
-            if part:
-                items.append(part)
-    if items:
-        return items
-    body = (snippet.body or "").strip()
-    if not body:
-        return []
-    if "," in body:
-        parts = []
-        for line in body.splitlines():
-            parts.extend([part.strip() for part in line.split(",") if part.strip()])
-        if parts:
-            return parts
-    return [line.strip() for line in body.splitlines() if line.strip()]
 
 
 class SnippetCatalog:
@@ -492,6 +471,7 @@ class PromptEditorPanel(QWidget, AsyncTaskOwner):
         self._library_title: QLineEdit | None = None
         self._library_tags: QLineEdit | None = None
         self._library_preview: QPlainTextEdit | None = None
+        self._library_display_names: LibraryDisplayNamesEditor | None = None
         self._library_status: QLabel | None = None
         self._library_kind_combo: QComboBox | None = None
         self._library_duplicate_button: QToolButton | None = None
@@ -705,6 +685,7 @@ class PromptEditorPanel(QWidget, AsyncTaskOwner):
         self._chip_flow.setSizePolicy(QSizePolicy.Policy.Expanding, QSizePolicy.Policy.Preferred)
         # Same remembered height (ui/liveprompt/flow_height) as the shared LivePrompt composer.
         self._flow_area = ResizablePromptArea(self._chip_flow, self._host.settings)
+        self._flow_area.displayNameModeChanged.connect(self._chip_flow.set_show_display_names)
         layout.addWidget(self._flow_area)
 
         self._output_section = OutputSection(
@@ -875,6 +856,8 @@ class PromptEditorPanel(QWidget, AsyncTaskOwner):
         self._library_preview = QPlainTextEdit(tab)
         self._library_preview.setMinimumHeight(60)
         details_layout.addWidget(self._library_preview, 1)
+        self._library_display_names = LibraryDisplayNamesEditor(tab)
+        details_layout.addWidget(self._library_display_names)
         self._library_splitter.addWidget(details_box)
         self._library_splitter.setStretchFactor(0, 1)
         self._library_splitter.setStretchFactor(1, 2)
@@ -967,9 +950,13 @@ class PromptEditorPanel(QWidget, AsyncTaskOwner):
         if self._library_tags:
             self._library_tags.textChanged.connect(self._schedule_library_autosave)
         if self._library_kind_combo:
+            self._library_kind_combo.currentIndexChanged.connect(self._on_library_kind_changed)
             self._library_kind_combo.currentIndexChanged.connect(self._schedule_library_autosave)
         if self._library_preview:
+            self._library_preview.textChanged.connect(self._on_library_body_changed)
             self._library_preview.textChanged.connect(self._schedule_library_autosave)
+        if self._library_display_names:
+            self._library_display_names.changed.connect(self._schedule_library_autosave)
 
         self._set_library_actions_enabled(False)
 
@@ -1098,6 +1085,14 @@ class PromptEditorPanel(QWidget, AsyncTaskOwner):
         if self._library_autosave:
             self._library_autosave.start()
 
+    def _on_library_kind_changed(self, _index: int) -> None:
+        if not self._library_block_updates and self._library_display_names:
+            self._library_display_names.set_kind(self._library_kind_combo.currentData() or "")
+
+    def _on_library_body_changed(self) -> None:
+        if not self._library_block_updates and self._library_display_names:
+            self._library_display_names.sync_body(self._library_preview.toPlainText())
+
     def _autosave_library_changes(self) -> None:
         self._commit_library_changes(refresh=False)
 
@@ -1124,6 +1119,8 @@ class PromptEditorPanel(QWidget, AsyncTaskOwner):
         metadata["title"] = title
         metadata["tags"] = tags
         selected_kind = self._library_kind_combo.currentData() or self._selected_prompt.kind
+        if self._library_display_names:
+            self._library_display_names.apply_metadata(metadata)
         list_items: tuple[str, ...] = tuple()
         if selected_kind == SK_LIST:
             list_items = tuple()
@@ -1308,6 +1305,8 @@ class PromptEditorPanel(QWidget, AsyncTaskOwner):
                 self._library_kind_combo.setCurrentIndex(kind_index)
             self._library_preview.setPlainText(snippet.body or "")
             self._set_library_actions_enabled(True)
+        if self._library_display_names:
+            self._library_display_names.set_entry(snippet)
         self._library_title.blockSignals(title_block)
         self._library_tags.blockSignals(tags_block)
         self._library_kind_combo.blockSignals(kind_block)
@@ -1889,6 +1888,7 @@ class PromptEditorPanel(QWidget, AsyncTaskOwner):
             self._components,
             self._catalog,
             self._render_component,
+            self._render_display_name,
         )
         self._component_widgets = chips
         for chip in chips:
@@ -2121,6 +2121,11 @@ class PromptEditorPanel(QWidget, AsyncTaskOwner):
             if 0 <= index < len(items):
                 return items[index].strip()
         return ""
+
+    def _render_display_name(self, component: PromptComponent) -> str:
+        snippet = self._catalog.get(component.snippet_id)
+        index = component.list_index if component.list_index is not None else 0
+        return display_name_for(snippet, component.kind, index)
 
     def _update_preview(self) -> None:
         # Update separator display in chip flow

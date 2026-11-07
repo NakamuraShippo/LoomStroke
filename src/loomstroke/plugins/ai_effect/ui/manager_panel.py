@@ -78,12 +78,12 @@ class AIEffectManagerPanel(QWidget):
         self._tabs.currentChanged.connect(self._update_tab_size_policy)
 
     def _update_tab_size_policy(self, _index: int) -> None:
-        horizontal = (
+        policy = (
             QSizePolicy.Policy.Ignored
             if self._tabs.currentWidget() is self._comfy_author
             else QSizePolicy.Policy.Expanding
         )
-        self._tabs.setSizePolicy(horizontal, QSizePolicy.Policy.Expanding)
+        self._tabs.setSizePolicy(policy, policy)
 
     def refresh(self) -> None:
         """Refresh the manager grid; used by the app export-sync hook."""

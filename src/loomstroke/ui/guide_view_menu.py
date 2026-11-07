@@ -5,6 +5,7 @@ from __future__ import annotations
 from typing import Any
 
 from .canvas.composition_interaction import clear_composition_guides
+from .canvas.guide_canvas_bridge import guide_canvas
 from .dialogs.binding_margin_dialog import open_binding_margin
 from .dialogs.bleed_extension_dialog import open_bleed_extension
 from .dialogs.cover_template_dialog import open_cover_template
@@ -82,3 +83,31 @@ def populate_guide_view_menu(window: Any, menu: Any) -> None:
     submenu.addAction(trim_action)
     submenu.addAction(window._mk_action("Extend Bleed...", lambda: open_bleed_extension(window)))
     submenu.addAction(window._mk_action("Cover Template...", lambda: open_cover_template(window)))
+    _add_straight_ruler_shortcuts(window, submenu)
+
+
+def _add_straight_ruler_shortcuts(window: Any, submenu: Any) -> None:
+    def rotate_straight_ruler(degrees: float) -> None:
+        canvas = guide_canvas(getattr(window, "canvas", None))
+        assist = getattr(canvas, "_drawing_assist_controller", None)
+        if assist is not None:
+            assist.rotate_active_straight_ruler(degrees)
+
+    submenu.addAction(
+        window._mk_action(
+            "Rotate Straight Ruler Left",
+            lambda: rotate_straight_ruler(-15),
+            shortcut="Alt+Left",
+            action_id="view.straight_ruler.rotate_left",
+            shortcut_category="View",
+        )
+    )
+    submenu.addAction(
+        window._mk_action(
+            "Rotate Straight Ruler Right",
+            lambda: rotate_straight_ruler(15),
+            shortcut="Alt+Right",
+            action_id="view.straight_ruler.rotate_right",
+            shortcut_category="View",
+        )
+    )

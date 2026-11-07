@@ -1540,6 +1540,14 @@ Please check that all image paths in your workflow are valid.
 <context>
     <name>MainWindow</name>
     <message>
+        <source>Rotate Straight Ruler Left</source>
+        <translation>Rotate Straight Ruler Left</translation>
+    </message>
+    <message>
+        <source>Rotate Straight Ruler Right</source>
+        <translation>Rotate Straight Ruler Right</translation>
+    </message>
+    <message>
         <source>Perspective Ruler...</source>
         <translation>Perspective Ruler...</translation>
     </message>
@@ -12536,6 +12544,10 @@ Failed to initialise the GPU compositor. Please update your graphics driver and 
 <context>
     <name>DrawingAssistPanel</name>
     <message>
+        <source>Angle</source>
+        <translation>Angle</translation>
+    </message>
+    <message>
         <source>Perspective ruler</source>
         <translation>Perspective ruler</translation>
     </message>
@@ -12632,8 +12644,8 @@ Failed to initialise the GPU compositor. Please update your graphics driver and 
         <translation>mirror</translation>
     </message>
     <message>
-        <source>parallel</source>
-        <translation>parallel</translation>
+        <source>Straight Ruler</source>
+        <translation>Straight Ruler</translation>
     </message>
     <message>
         <source>perspective</source>
@@ -20934,6 +20946,14 @@ You will need to enter it again before generating.</translation>
 <context>
     <name>ThreeDLayerContextToolbar</name>
     <message>
+        <source>Light position</source>
+        <translation>Light position</translation>
+    </message>
+    <message>
+        <source>Light position in 3D scene coordinates</source>
+        <translation>Light position in 3D scene coordinates</translation>
+    </message>
+    <message>
         <source>3D</source>
         <translation>3D</translation>
     </message>
@@ -21221,6 +21241,18 @@ You will need to enter it again before generating.</translation>
 </context>
 <context>
     <name>__shared__</name>
+    <message>
+        <source>Straight Ruler</source>
+        <translation>Straight Ruler</translation>
+    </message>
+    <message>
+        <source>Rotate Straight Ruler Left</source>
+        <translation>Rotate Straight Ruler Left</translation>
+    </message>
+    <message>
+        <source>Rotate Straight Ruler Right</source>
+        <translation>Rotate Straight Ruler Right</translation>
+    </message>
     <message>
         <source>Choose a different name for this model.</source>
         <translation>Choose a different name for this model.</translation>
@@ -37860,6 +37892,33 @@ Click to show as panel</translation>
     <message>
         <source>Delete selected pose preset?</source>
         <translation>Delete selected pose preset?</translation>
+    </message>
+</context>
+<context>
+    <name>ThreeDPrimitiveAdd</name>
+    <message>
+        <source>Cube</source>
+        <translation>Cube</translation>
+    </message>
+    <message>
+        <source>Sphere</source>
+        <translation>Sphere</translation>
+    </message>
+    <message>
+        <source>Cylinder</source>
+        <translation>Cylinder</translation>
+    </message>
+    <message>
+        <source>Add basic shape</source>
+        <translation>Add basic shape</translation>
+    </message>
+    <message>
+        <source>Basic shape</source>
+        <translation>Basic shape</translation>
+    </message>
+    <message>
+        <source>Could not add basic shape</source>
+        <translation>Could not add basic shape</translation>
     </message>
 </context>
 </TS>

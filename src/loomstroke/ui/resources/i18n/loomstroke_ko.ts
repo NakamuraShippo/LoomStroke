@@ -3,6 +3,14 @@
 <TS version="2.1" language="ko">
     <context>
         <name>MainWindow</name>
+        <message>
+            <source>Rotate Straight Ruler Left</source>
+            <translation>직선 자를 왼쪽으로 회전</translation>
+        </message>
+        <message>
+            <source>Rotate Straight Ruler Right</source>
+            <translation>직선 자를 오른쪽으로 회전</translation>
+        </message>
     <message>
         <source>Perspective Ruler...</source>
         <translation>원근자...</translation>
@@ -11338,6 +11346,10 @@ Please check that all image paths in your workflow are valid.
 <context>
     <name>DrawingAssistPanel</name>
     <message>
+        <source>Angle</source>
+        <translation>각도</translation>
+    </message>
+    <message>
         <source>Perspective ruler</source>
         <translation>원근자</translation>
     </message>
@@ -11434,8 +11446,8 @@ Please check that all image paths in your workflow are valid.
         <translation>반사</translation>
     </message>
     <message>
-        <source>parallel</source>
-        <translation>병렬</translation>
+        <source>Straight Ruler</source>
+        <translation>직선 자</translation>
     </message>
     <message>
         <source>perspective</source>
@@ -20825,6 +20837,14 @@ You will need to enter it again before generating.</source>
 <context>
     <name>ThreeDLayerContextToolbar</name>
     <message>
+        <source>Light position</source>
+        <translation>광원 위치</translation>
+    </message>
+    <message>
+        <source>Light position in 3D scene coordinates</source>
+        <translation>3D 장면 좌표에서의 광원 위치</translation>
+    </message>
+    <message>
         <source>3D</source>
         <translation>3D</translation>
     </message>
@@ -21226,6 +21246,18 @@ Do you want to save them?</source>
 </context>
 <context>
     <name>__shared__</name>
+    <message>
+        <source>Straight Ruler</source>
+        <translation>직선 자</translation>
+    </message>
+    <message>
+        <source>Rotate Straight Ruler Left</source>
+        <translation>직선 자를 왼쪽으로 회전</translation>
+    </message>
+    <message>
+        <source>Rotate Straight Ruler Right</source>
+        <translation>직선 자를 오른쪽으로 회전</translation>
+    </message>
     <message>
         <source>Choose a different name for this model.</source>
         <translation>이 모델에 다른 이름을 사용하세요.</translation>
@@ -37864,6 +37896,33 @@ Click to show as panel</source>
     <message>
         <source>Delete selected pose preset?</source>
         <translation>선택한 포즈 프리셋을 삭제할까요?</translation>
+    </message>
+</context>
+<context>
+    <name>ThreeDPrimitiveAdd</name>
+    <message>
+        <source>Cube</source>
+        <translation>정육면체</translation>
+    </message>
+    <message>
+        <source>Sphere</source>
+        <translation>구</translation>
+    </message>
+    <message>
+        <source>Cylinder</source>
+        <translation>원기둥</translation>
+    </message>
+    <message>
+        <source>Add basic shape</source>
+        <translation>기본 도형 추가</translation>
+    </message>
+    <message>
+        <source>Basic shape</source>
+        <translation>기본 도형</translation>
+    </message>
+    <message>
+        <source>Could not add basic shape</source>
+        <translation>기본 도형을 추가할 수 없습니다</translation>
     </message>
 </context>
 </TS>

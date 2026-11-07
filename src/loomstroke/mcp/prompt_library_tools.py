@@ -23,6 +23,7 @@ from loomstroke.plugins.common.constants import (
 from loomstroke.plugins.common.liveprompt_defaults import default_separator
 from loomstroke.plugins.common.snippet_models import Snippet
 from loomstroke.plugins.common.snippet_repository import SnippetRepository
+from loomstroke.plugins.prompt_editor.display_names import resolved_list_items, store_display_names
 
 from .editing_common import edit_operation, invalid
 from .extension_services import get_services
@@ -94,6 +95,12 @@ TOOLS = (
             "body": {"type": "string"},
             "tags": _TAGS,
             "listItems": {"type": "array", "items": _TEXT, "maxItems": 100},
+            "displayName": {"type": "string", "maxLength": MAX_SNIPPET_LENGTH},
+            "itemDisplayNames": {
+                "type": "array",
+                "items": {"type": "string", "maxLength": MAX_SNIPPET_LENGTH},
+                "maxItems": 100,
+            },
         },
         ["kind", "title"],
     ),
@@ -298,6 +305,22 @@ async def dispatch(  # noqa: PLR0912, PLR0915 - schema branches and creation val
             category=kind,
             list_items=tuple(items),
         )
+        display_name = args.get("displayName")
+        item_names = args.get("itemDisplayNames")
+        if display_name is not None:
+            if kind != SK_TEXT or not isinstance(display_name, str):
+                raise invalid("Only String entries accept displayName text.", "displayName")
+            store_display_names(snippet.metadata, CK_STRING, [], [display_name])
+        if item_names is not None:
+            values = resolved_list_items(snippet)
+            if (
+                kind != SK_LIST
+                or not isinstance(item_names, list)
+                or len(item_names) != len(values)
+                or any(not isinstance(item, str) for item in item_names)
+            ):
+                raise invalid("itemDisplayNames must match the List items.", "itemDisplayNames")
+            store_display_names(snippet.metadata, CK_LIST, values, item_names)
     elif name == "loomstroke_create_prompt_composition":
         raw_components = args.get("components")
         if (
