@@ -18,6 +18,7 @@ from typing import Any
 from PySide6.QtWidgets import QDialog, QFileDialog, QMessageBox
 
 from ..core.export_naming import NamingContext, NamingError, detect_collisions, render_export_names
+from ..core.format_guide_geometry import layout_from_guides
 from ..core.print_mark_models import PrintMarkOptions
 from ..io.bundled_color_profiles import create_print_profile_registry
 from ..io.color_profile_registry import ColorProfileRegistry
@@ -52,6 +53,7 @@ class MainWindowPrintExportAction:
         dialog_type: Callable[[], Any] | None = None,
         message_box: Callable[[], Any] | None = None,
         pdf_exporter: Callable[..., Any] | None = None,
+        pdfx_exporter: Callable[..., Any] | None = None,
         sequence_exporter: Callable[..., Any] | None = None,
         export_gate: Any | None = None,
     ) -> None:
@@ -63,6 +65,7 @@ class MainWindowPrintExportAction:
         self._dialog_type = dialog_type or (lambda: QDialog)
         self._message_box = message_box or (lambda: QMessageBox)
         self._pdf_exporter = pdf_exporter or export_print_pdf
+        self._pdfx_exporter = pdfx_exporter
         self._sequence_exporter = sequence_exporter or export_print_sequence
         self._export_gate = export_gate or PreflightExportGate(
             window, document_metadata=self._document_metadata
@@ -94,19 +97,27 @@ class MainWindowPrintExportAction:
             canvas_size_px=self._canvas_size(),
             dpi=tuple(self._document_metadata().dpi),
             document_profile_name=self._document_profile_name(),
+            current_page_guides=self._current_page_guides(pages),
+            page_layouts=self._page_layouts(pages, summaries),
         )
         dialog = self._dialog_factory(context=context, registry=self._registry, parent=window)
         if dialog.exec() != self._dialog_type().DialogCode.Accepted:
             return False
         plan = dialog.export_plan()
-        if plan is None:
+        if plan is None or (plan.output not in {"pdf", "pdfx1a", "pdfx4"} and not plan.is_sequence):
+            if plan is not None:
+                self._warn("Not available: no PDF/X backend is installed.")
             return False
         # CT-16: fatal preflight issues need one explicit confirmation.
         if not self._export_gate.allow("Export for Print"):
             return False
         if plan.is_sequence:
             return self._export_sequence(pages, plan, names_by_id)
-        return self._export_pdf(pages, plan)
+        return (
+            self._export_pdf(pages, plan)
+            if plan.output == "pdf"
+            else self._export_pdfx(pages, plan)
+        )
 
     # -- PDF ------------------------------------------------------------------------
 
@@ -138,6 +149,65 @@ class MainWindowPrintExportAction:
         )
         return True
 
+    def _export_pdfx(self, pages: Any, plan: ExportPrintPlan) -> bool:
+        if plan.margin_options.enabled:
+            self._warn("PDF/X candidates do not support margin information.")
+            return False
+        source_id = self._source_profile_id()
+        if source_id is None or not plan.cmyk_profile_id:
+            self._warn("A CMYK profile is required for CMYK output.")
+            return False
+        window = self._window
+        document_path = getattr(window, "_document_path", None)
+        stem = Path(document_path).stem if document_path else "untitled"
+        folder = Path(document_path).parent if document_path else Path.cwd()
+        default = folder / f"{stem}-pdfx-candidate.pdf"
+        path_text, _selected = self._file_dialog().getSaveFileName(
+            window,
+            _ts("Export for Print"),
+            str(default),
+            _ts("PDF Document (*.pdf)"),
+        )
+        if not path_text:
+            return False
+        exporter = self._pdfx_exporter
+        if exporter is None:
+            try:
+                from .print_pdfx_export import export_print_pdfx  # noqa: PLC0415
+            except ImportError:
+                self._warn("Not available: no PDF/X backend is installed.")
+                return False
+
+            exporter = export_print_pdfx
+        result = exporter(
+            window,
+            pages,
+            self._document_metadata(),
+            page_ids=plan.page_ids,
+            destination=Path(path_text),
+            conformance=plan.output,
+            registry=self._registry,
+            source_profile_id=source_id,
+            cmyk_profile_id=plan.cmyk_profile_id,
+            with_marks=plan.with_marks,
+            intent=plan.intent,
+            black_point_compensation=plan.black_point_compensation,
+            mark_options=plan.mark_options,
+        )
+        if result.get("status") in {"pending_validation", "verified"}:
+            if result.get("status") == "pending_validation":
+                self._message_box().information(
+                    window,
+                    _ts("Export for Print"),
+                    _ts(
+                        "Verify the PDF/X candidate in callas pdfToolbox Desktop before submission."
+                    ),
+                )
+            return True
+        if result.get("status") == "failed":
+            self._warn("The PDF could not be written.")
+        return False
+
     # -- TIFF sequences -------------------------------------------------------------
 
     def _export_sequence(
@@ -155,6 +225,8 @@ class MainWindowPrintExportAction:
                 cmyk_profile_id=plan.cmyk_profile_id,
                 intent=plan.intent,  # type: ignore[arg-type]
                 black_point_compensation=plan.black_point_compensation,
+                threshold=plan.threshold,
+                dither=plan.dither,
             )
         except ValueError as error:
             self._warn_formatted("The output profile could not be used: {error}", error=error)
@@ -227,6 +299,38 @@ class MainWindowPrintExportAction:
     def _canvas_size(self) -> tuple[int, int]:
         metadata = self._document_metadata()
         return (int(metadata.width), int(metadata.height))
+
+    @staticmethod
+    def _current_page_guides(pages: Any) -> list[dict[str, Any]] | None:
+        reader = getattr(pages, "get_page_view_state", None)
+        active = getattr(pages, "get_active_page_id", None)
+        if not callable(reader) or not callable(active):
+            return None
+        state = reader(active()) or {}
+        guides = state.get("guides") if isinstance(state, dict) else None
+        return guides if isinstance(guides, list) else None
+
+    @staticmethod
+    def _page_layouts(pages: Any, summaries: list[Any]) -> dict[str, Any]:
+        reader = getattr(pages, "get_page_view_state", None)
+        if not callable(reader):
+            return {}
+        layouts = {}
+        for summary in summaries:
+            spec = getattr(summary, "canvas", None)
+            if spec is None:
+                continue
+            view = reader(summary.id) or {}
+            guides = view.get("guides", []) if isinstance(view, dict) else []
+            if not isinstance(guides, list):
+                guides = []
+            try:
+                layouts[str(summary.id)] = layout_from_guides(
+                    guides, (int(spec.width), int(spec.height)), tuple(spec.dpi)
+                )
+            except (TypeError, ValueError, OverflowError):
+                continue
+        return layouts
 
     def _fallback_document_metadata(self) -> DocumentMetadata:
         canvas = self._canvas()

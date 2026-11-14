@@ -133,6 +133,7 @@ class ComicToolsPlugin:
         PanelPageGeometryRegistry.register(resolve_transformed_panels, owner=self)
         VectorMetaScalerRegistry.shared().register_resampler(resample_comic_metadata, owner=self)
         self.host_api = host
+        self.frame_workflow.lifecycle.bind()
         CanvasMetaTransformRegistry.shared().register(transform_layout_metadata, owner=self)
         CanvasMetaTransformRegistry.shared().register(transform_balloon_metadata, owner=self)
         register_tool = getattr(host, "register_tool", None)
@@ -248,7 +249,7 @@ class ComicToolsPlugin:
         controls = getattr(self._panel_widget, "frame_controls", None)
         if controls:
             controls.dispose()
-        self.frame_workflow.cancel()
+        self.frame_workflow.lifecycle.dispose()
         VectorMetaScalerRegistry.shared().unregister_resampler(resample_comic_metadata, owner=self)
         CanvasMetaTransformRegistry.shared().unregister(transform_layout_metadata, owner=self)
         CanvasMetaTransformRegistry.shared().unregister(transform_balloon_metadata, owner=self)

@@ -23,6 +23,7 @@ from loomstroke.core.assets_3d.mesh import create_unit_cube_mesh
 from loomstroke.core.assets_3d.scene import Scene3DDocument, Scene3DNode
 from loomstroke.core.commands import SetLayer3DCameraCommand, SetLayer3DDisplayModeCommand
 from loomstroke.core.events import Events
+from loomstroke.core.imported_3d_layer import try_add_3d_layer_with_history
 from loomstroke.core.layer_3d_rendering import orbit_camera_state, preview_display_mode
 from loomstroke.host_api import HostAPI
 from loomstroke.plugins.sdk.base import PluginMetadata, PluginType
@@ -30,8 +31,6 @@ from loomstroke.plugins.sdk.ui import PanelDescriptor, UIPanelPlugin
 from loomstroke.rendering_3d import (
     OrbitCameraState,
     PreviewDisplayMode,
-    ProjectionImportRequest,
-    ProjectionImportService,
     SoftwarePreviewRenderer,
 )
 from loomstroke.rendering_3d.preview_renderer import PreviewRenderResult
@@ -42,6 +41,8 @@ from loomstroke.rendering_3d.projection import (
 from loomstroke.ui.drawing_figure_add import DrawingFigureAddWidget
 from loomstroke.ui.primitive_3d_add import Primitive3DAddWidget
 from loomstroke.ui.three_d_preview_renderer import ThreeDPreviewFrame, ThreeDPreviewRenderer
+
+from .preview_projection import DockProjectionImportService, DockProjectionRequest
 
 logger = logging.getLogger(__name__)
 
@@ -61,8 +62,8 @@ class Generated3DPreviewWidget(QWidget):
         self._scene = _fallback_scene()
         self._camera = OrbitCameraState.fit_to_scene(self._scene)
         self._renderer = SoftwarePreviewRenderer()
-        self._projection = ProjectionImportService(self._renderer)
         self._initialize_display_renderer()
+        self._projection = DockProjectionImportService(self._renderer, self._display_renderer)
         self._display_mode = PreviewDisplayMode.TEXTURED
         self._layer_id: str | None = None
         self._event_tokens: list[tuple[str, Any]] = []
@@ -169,15 +170,18 @@ class Generated3DPreviewWidget(QWidget):
         if self._host is None:
             return False
         try:
+            display_mode = self._display_mode
+            lighting = self._lighting if display_mode is PreviewDisplayMode.TEXTURED else None
             result = self._projection.import_to_canvas(
                 self._scene,
                 self._host.canvas,
-                ProjectionImportRequest(
+                DockProjectionRequest(
                     width=max(1, self._preview.width()),
                     height=max(1, self._preview.height()),
-                    display_mode=self._display_mode,
+                    display_mode=display_mode,
                     camera=self._camera,
                     metadata={"viewer": "generated_3d_preview_panel"},
+                    lighting=lighting,
                 ),
             )
             return result.submitted
@@ -207,12 +211,15 @@ class Generated3DPreviewWidget(QWidget):
             "distance": float(self._camera.distance),
         }
         try:
-            ref = add_layer(
-                _ts("3D Layer"),
-                scene=self._scene,
-                camera=camera,
-                display_mode=self._display_mode.value,
-            )
+            name = _ts("3D Layer")
+            values = {
+                "scene": self._scene,
+                "camera": camera,
+                "display_mode": self._display_mode.value,
+            }
+            ref = try_add_3d_layer_with_history(self._host.canvas, name, **values)
+            if ref is None:
+                ref = add_layer(name, **values)
             layer_id = getattr(ref, "id", None)
             if isinstance(layer_id, str) and layer_id:
                 self._layer_id = layer_id

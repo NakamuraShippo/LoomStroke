@@ -17,6 +17,7 @@ from PySide6.QtWidgets import (
 
 from ...core.binding_margin_service import BindingMarginService
 from ...core.book_spread_layout import BookLayout
+from ..canvas.guide_canvas_bridge import guide_canvas
 from ..translations import translate_with_fallback
 
 _FAILURE_SOURCE = (
@@ -90,7 +91,7 @@ class BindingMarginDialog(QDialog):
 
 def open_binding_margin(window: Any) -> None:
     pages = getattr(getattr(window, "_host_api", None), "pages", None)
-    controller = getattr(getattr(window, "canvas", None), "_guide_controller", None)
+    controller = getattr(guide_canvas(getattr(window, "canvas", None)), "_guide_controller", None)
     if pages is None or controller is None or controller.guides_locked:
         return
     document = window._get_document_service()

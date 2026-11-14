@@ -15,6 +15,7 @@ WEIGHT_MAX = 2.0
 WEIGHT_STEP = 0.1
 # Gateways whose prompts have no weight syntax receive the plain tokens.
 WEIGHTLESS_GATEWAYS = frozenset({"nanobanana", "gptimage2"})
+NOVELAI_MAX_LEVEL = 20
 
 
 def _clamp_weight(value: float) -> float:
@@ -25,6 +26,9 @@ def normalize_entry(entry: Any) -> dict[str, Any]:
     """One well-formed entry, or ``{}`` for anything else."""
     if not isinstance(entry, Mapping):
         return {}
+    level = entry.get("novelai_level")
+    if isinstance(level, int) and not isinstance(level, bool) and level:
+        return {"novelai_level": max(-NOVELAI_MAX_LEVEL, min(NOVELAI_MAX_LEVEL, level))}
     weight = entry.get("weight")
     if isinstance(weight, (int, float)) and not isinstance(weight, bool):
         return {"weight": _clamp_weight(float(weight))}
@@ -54,6 +58,33 @@ def format_token(token: str, entry: Mapping[str, Any] | None) -> str:
     return f"({token})" if entry.get("paren") else token
 
 
+def format_novelai_token(token: str, entry: Mapping[str, Any] | None) -> str:
+    """Render NovelAI's model-independent 1.05x bracket notation."""
+    if not entry:
+        return token
+    level = entry.get("novelai_level")
+    if isinstance(level, int) and level:
+        count = min(abs(level), NOVELAI_MAX_LEVEL)
+        bracket = "{" if level > 0 else "["
+        closing = "}" if level > 0 else "]"
+        return bracket * count + token + closing * count
+    if entry.get("paren"):
+        return "{" + token + "}"
+    weight = entry.get("weight")
+    if isinstance(weight, (int, float)):
+        return f"{float(weight):.1f}::{token}::"
+    return token
+
+
+def step_novelai(entry: Mapping[str, Any] | None, direction: int) -> dict[str, Any]:
+    """One wheel notch strengthens or weakens by one NovelAI bracket."""
+    level = entry.get("novelai_level", 0) if entry else 0
+    if not isinstance(level, int):
+        level = 0
+    level = max(-NOVELAI_MAX_LEVEL, min(NOVELAI_MAX_LEVEL, level + direction))
+    return {"novelai_level": level} if level else {}
+
+
 def step(entry: Mapping[str, Any] | None, delta: float) -> dict[str, Any]:
     """ComfyUI order: token -> (token) -> (token:1.0) -> +/-0.1 per step."""
     if entry and entry.get("weight") is not None:
@@ -67,7 +98,12 @@ def split_tokens(text: str) -> list[str]:
     return [part.strip() for part in text.split(",") if part.strip()]
 
 
-def apply(text: str, emphasis: Mapping[str, Mapping[str, Any]] | None) -> str:
+def apply(
+    text: str,
+    emphasis: Mapping[str, Mapping[str, Any]] | None,
+    *,
+    style: str = "comfyui",
+) -> str:
     """Decorate matching tokens, preserving the surrounding text untouched."""
     if not emphasis or not text:
         return text
@@ -77,11 +113,20 @@ def apply(text: str, emphasis: Mapping[str, Mapping[str, Any]] | None) -> str:
         entry = emphasis.get(token) if token else None
         if entry:
             start = len(part) - len(part.lstrip())
-            parts[index] = part[:start] + format_token(token, entry) + part[start + len(token) :]
+            formatted = (
+                format_novelai_token(token, entry)
+                if style == "novelai"
+                else format_token(token, entry)
+            )
+            parts[index] = part[:start] + formatted + part[start + len(token) :]
     return ",".join(parts)
 
 
-def decorate(text: str, component: Any) -> str:
+def decorate(text: str, component: Any, *, style: str = "comfyui") -> str:
     """Token emphasis first, then the whole-chip emphasis around the result."""
-    text = apply(text, component.emphasis)
-    return format_token(text, component.chip_emphasis) if text else text
+    text = apply(text, component.emphasis, style=style)
+    if not text:
+        return text
+    if style == "novelai":
+        return format_novelai_token(text, component.chip_emphasis)
+    return format_token(text, component.chip_emphasis)

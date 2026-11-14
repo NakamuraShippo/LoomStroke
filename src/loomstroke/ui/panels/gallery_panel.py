@@ -573,16 +573,18 @@ class GalleryPanel(QWidget):
         self._layer_chip.setToolTip(str(self._ts("Clear the layer filter")))
 
     def update_service_list(self) -> None:
-        """Refresh the service combo from registered providers."""
+        """Include stored generations even when their service has no provider."""
         if self._service_filter:
             return
         current = self._service_combo.currentData()
         self._service_combo.blockSignals(True)
         self._service_combo.clear()
         self._service_combo.addItem(str(self._ts("All Services")), "")
-        for sid in self._store.list_provider_ids():
+        names = {record.service_id: record.service_name for record in self._store.list_records()}
+        provider_ids = self._store.list_provider_ids()
+        for sid in [*provider_ids, *sorted(names.keys() - set(provider_ids))]:
             provider = self._store.get_provider(sid)
-            name = provider.service_name if provider else sid
+            name = provider.service_name if provider else (names[sid] or sid)
             self._service_combo.addItem(name, sid)
         # Restore selection
         idx = self._service_combo.findData(current)
@@ -640,6 +642,7 @@ class GalleryPanel(QWidget):
 
     def _on_record_added(self, job_id: str) -> None:
         """Incrementally add a single record to the top of the grid."""
+        self.update_service_list()
         record = self._store.get_record(job_id)
         if not record or not self._matches_current_filter(record):
             return
@@ -698,9 +701,16 @@ class GalleryPanel(QWidget):
             QMessageBox.StandardButton.Yes | QMessageBox.StandardButton.No,
             QMessageBox.StandardButton.No,
         )
-        if reply == QMessageBox.StandardButton.Yes:
-            self._store.remove_record(job_id)
+        if reply != QMessageBox.StandardButton.Yes:
+            return
+        if self._store.remove_record(job_id):
             self.delete_requested.emit(job_id)
+        else:
+            QMessageBox.warning(
+                self,
+                str(self._ts("Delete Record")),
+                str(self._ts("The generation record could not be deleted.")),
+            )
 
     def _refresh_layers(self) -> None:
         """Populate the layer combo from host_api (standalone mode)."""

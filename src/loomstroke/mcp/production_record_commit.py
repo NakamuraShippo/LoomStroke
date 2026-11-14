@@ -95,11 +95,11 @@ def _publish_finished(
     state.write(_with_journal(_finished(base, receipts, restore, stamp), finished_journal))
 
 
-def _compensate(
+def _revert_record_prefix(
     state: ChangesetState,
     store: Any,
-    base: Any,
     receipts: Any,
+    *,
     restore: bool,
     limit: int | None,
 ) -> list[dict[str, Any]]:
@@ -122,6 +122,18 @@ def _compensate(
             progress -= 1
         completed.append(receipt)
     record_progress(store, receipts, restore=restore, limit=0, guard=guard)
+    return completed
+
+
+def _compensate(
+    state: ChangesetState,
+    store: Any,
+    base: Any,
+    receipts: Any,
+    restore: bool,
+    limit: int | None,
+) -> list[dict[str, Any]]:
+    completed = _revert_record_prefix(state, store, receipts, restore=restore, limit=limit)
     state.write(base)
     return completed
 

@@ -31,7 +31,7 @@ class StoryReplacement:
         return True
 
 
-def prepare_story_replacement(canvas, target_id, new_object):
+def prepare_story_replacement(canvas, target_id, new_object, *, layer_id=None):
     story = story_of(new_object)
     if story is None:
         return None
@@ -39,7 +39,7 @@ def prepare_story_replacement(canvas, target_id, new_object):
         service = getattr(canvas, "_document_story_service", None)
         if service is None:
             raise ValueError("Document text frame services are unavailable.")
-        return service.prepare(new_object)
+        return service.prepare(new_object, layer_id=layer_id)
     ids = [frame["id"] for frame in story["frames"]]
     entries = story_objects(canvas, ids)
     entries = [

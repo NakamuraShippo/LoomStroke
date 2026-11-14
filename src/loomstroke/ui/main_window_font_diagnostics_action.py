@@ -91,11 +91,11 @@ class MainWindowFontDiagnosticsAction:
         reader = self._reader_factory(self._host())
         page_id = reader.active_page_id() or "active"
         plan = self._planner.plan(inventory, source=usage.request, target=target, scope="document")
-        refs_here = {ref[2] for ref in plan.refs_for_page(page_id)}
+        refs_here = {(ref[1], ref[2]) for ref in plan.refs_for_page(page_id)}
         other = len(plan.object_refs) - len(refs_here)
         commands: list[VectorReplaceCommand] = []
         for layer_id, obj in reader.active_page_objects():
-            if str(getattr(obj, "id", "")) not in refs_here:
+            if (layer_id, str(getattr(obj, "id", ""))) not in refs_here:
                 continue
             meta = dict(getattr(obj, "meta", {}) or {})
             meta["text_tool"] = self._planner.apply_to_payload(meta.get("text_tool") or {}, plan)
@@ -118,13 +118,13 @@ class MainWindowFontDiagnosticsAction:
     def outline(self, usage: FontUsage) -> str:
         reader = self._reader_factory(self._host())
         page_id = reader.active_page_id() or "active"
-        wanted = {ref[2] for ref in usage.object_refs if ref[0] == page_id}
+        wanted = {(ref[1], ref[2]) for ref in usage.object_refs if ref[0] == page_id}
         canvas = getattr(self._host(), "canvas", None)
         service = self._outline_factory(canvas)
         commands: list[ConvertTextToOutlinesCommand] = []
         skipped = 0
         for layer_id, obj in reader.active_page_objects():
-            if str(getattr(obj, "id", "")) not in wanted:
+            if (layer_id, str(getattr(obj, "id", ""))) not in wanted:
                 continue
             outline = service.outline(obj)
             if outline is None or outline.is_empty:

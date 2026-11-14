@@ -5,11 +5,13 @@ from dataclasses import replace
 import numpy as np
 from PySide6.QtCore import QRect
 
+from loomstroke.core.canvas_models import SelectionStateSnapshot, VectorStateSnapshot
 from loomstroke.core.native_cmyk.pixels import NativeCmykPixels
+from loomstroke.core.snapshot_vector_rasterizer import SnapshotVectorRasterizer
 
 from .native_cmyk_vector_scene import NativeCmykVectorScene
 from .page_scene_snapshot import flatten_render_layers
-from .render_scene import RenderLayerSnapshot, build_render_scene_snapshot
+from .render_scene import RenderLayerSnapshot, RenderSceneSnapshot, build_render_scene_snapshot
 from .wgpu_backend.native_cmyk_compositor import NativeCmykCompositor
 
 
@@ -32,6 +34,37 @@ class NativeCmykSceneRenderer:
             channel_view=None,
             native_selection_preview=None,
         )
+        return cls._render_scene(scene)
+
+    @classmethod
+    def from_committed_layers(cls, canvas, layers):
+        state = canvas.get_canvas_state_snapshot()
+        scratch = SnapshotVectorRasterizer(width=state.width, height=state.height)
+
+        def rasterize(layer):
+            image = scratch.rasterize(layer)
+            if image is None or image.isNull():
+                raise ValueError("Could not prepare committed vector pixels")
+            return image
+
+        roots = tuple(
+            RenderLayerSnapshot.from_layer(layer, rasterize_vector=rasterize) for layer in layers
+        )
+        flat, parents = flatten_render_layers(roots)
+        scene = RenderSceneSnapshot(
+            canvas_state=state,
+            layers=roots,
+            flat_layers=tuple(flat),
+            parent_ids=tuple(parents),
+            active_layer_id=None,
+            active_flat_index=-1,
+            selection=SelectionStateSnapshot(selection_id=""),
+            vector=VectorStateSnapshot(),
+        )
+        return cls._render_scene(scene)
+
+    @classmethod
+    def _render_scene(cls, scene):
         renderer = cls()
         try:
             return renderer.render(scene)

@@ -12,6 +12,7 @@ it stays ``not_checked`` unless the adapter actually ran.
 from __future__ import annotations
 
 import hashlib
+import json
 import re
 import zipfile
 from collections.abc import Callable, Sequence
@@ -21,6 +22,7 @@ from typing import ClassVar
 from .digital_package_request import DigitalComicPackageRequest
 from .package_issue import PackageIssue
 from .publication_item import PublicationItem
+from .publication_manifest_writer import PublicationManifestWriter
 
 __all__ = ["PublicationPackageValidator"]
 
@@ -144,13 +146,28 @@ class PublicationPackageValidator:
     def validate_directory(
         self, root: Path, request: DigitalComicPackageRequest
     ) -> tuple[PackageIssue, ...]:
-        """Image-manifest packages: every item present under ``root`` with its hash."""
+        """Reopen a staged manifest and verify its expected images and metadata."""
         issues: list[PackageIssue] = []
+        manifest_writer = PublicationManifestWriter()
+        manifest_name = manifest_writer.FILE_NAME
+        try:
+            manifest = json.loads((Path(root) / manifest_name).read_bytes())
+            created = manifest.get("created") if isinstance(manifest, dict) else None
+            if (
+                not isinstance(created, str)
+                or not created
+                or manifest != manifest_writer.payload(request, created=created)
+            ):
+                raise ValueError("Publication manifest does not match the export request")
+        except (OSError, ValueError):
+            issues.append(PackageIssue("publication_manifest_invalid", detail=manifest_name))
         for item in request.items:
             target = Path(root, *item.package_path.split("/"))
             if not target.is_file():
                 issues.append(PackageIssue("member_missing", detail=item.package_path))
                 continue
+            if item.byte_size and target.stat().st_size != item.byte_size:
+                issues.append(PackageIssue("member_size_mismatch", detail=item.package_path))
             if item.content_hash:
                 digest = hashlib.sha256(target.read_bytes()).hexdigest()
                 if digest != item.content_hash:

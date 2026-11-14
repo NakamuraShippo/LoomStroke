@@ -31,6 +31,7 @@ from loomstroke.core.gradient_preview_boundary import (
 )
 from loomstroke.core.layer_opacity_preview_boundary import _close_opacity_before_edit
 from loomstroke.core.native_cmyk.command_dispatcher import NativeCmykCommandDispatcher
+from loomstroke.core.native_cmyk.patch_command import NativeCmykPatchCommand
 
 logger = logging.getLogger(__name__)
 
@@ -266,11 +267,15 @@ class CanvasHistoryTransactionService:
                 self._canvas._transaction_label,
             )
             self.flush_deferred_paint()
-            if self._canvas._active_history_group and self._canvas._active_history_group.entries:
-                self._bookkeeping.push_group(self._canvas._active_history_group)
+            native_owner, native_damage = self._push_transaction_group()
+            if native_owner is not None and not native_owner.is_current():
+                return
             self._canvas._active_history_group = None
             self._canvas._in_transaction = False
             self._canvas._stroke_painting_active = False
+            self._publish_native_damage(native_owner, native_damage)
+            if native_owner is not None and not native_owner.is_current():
+                return
         self._canvas._in_transaction = True
         self._canvas._transaction_label = label
         self._canvas._active_history_group = None
@@ -295,8 +300,9 @@ class CanvasHistoryTransactionService:
         panel_paint = deferred_dirty is not None and panel_paint_history_only(
             self._canvas, deferred_layer_id, self._history_patch_type
         )
-        if self._canvas._active_history_group and self._canvas._active_history_group.entries:
-            self._bookkeeping.push_group(self._canvas._active_history_group)
+        native_owner, native_damage = self._push_transaction_group()
+        if native_owner is not None and not native_owner.is_current():
+            return
         self._canvas._active_history_group = None
         self._canvas._in_transaction = False
         self._canvas._stroke_painting_active = False
@@ -304,16 +310,59 @@ class CanvasHistoryTransactionService:
             self._canvas._recompose_region(deferred_dirty)
         else:
             self._canvas._recompose()
+        if native_owner is not None and not native_owner.is_current():
+            return
         if deferred_layer_id and deferred_dirty:
             layer = self._canvas._get_layer_by_id(deferred_layer_id)
             if layer is not None:
+                native = native_damage.pop(deferred_layer_id, None)
+                if native is not None and native[0] is layer:
+                    deferred_dirty = deferred_dirty.united(native[1])
                 self._canvas._emit_layer_content_changed(
                     layer,
                     deferred_dirty,
                     {"command": "paint"},
                 )
+        self._publish_native_damage(native_owner, native_damage)
+        if native_owner is not None and not native_owner.is_current():
+            return
         logger.debug("Transaction ended: %s", self._canvas._transaction_label)
         self._canvas._transaction_label = ""
+
+    def _push_transaction_group(
+        self,
+    ) -> tuple[_HistoryClearContinuation | None, dict[str, tuple[Any, QRect]]]:
+        group = self._canvas._active_history_group
+        damage: dict[str, tuple[Any, QRect]] = {}
+        if not group or not group.entries:
+            return None, damage
+        # Native patches have no RGB preimage and suppress content events while painting.
+        # Retain the original layers before history subscribers can change the canvas.
+        for entry in group.entries:
+            command = getattr(entry, "command", None)
+            if not isinstance(command, NativeCmykPatchCommand) or command.dirty_region is None:
+                continue
+            dirty = command.dirty_region
+            rect = QRect(dirty.x, dirty.y, dirty.width, dirty.height)
+            previous = damage.get(command.layer_id)
+            if previous is not None:
+                damage[command.layer_id] = (previous[0], previous[1].united(rect))
+            elif (layer := self._canvas._get_layer_by_id(command.layer_id)) is not None:
+                damage[command.layer_id] = (layer, rect)
+        owner = _HistoryClearContinuation(self._canvas) if damage else None
+        self._bookkeeping.push_group(group)
+        return owner, damage
+
+    def _publish_native_damage(
+        self,
+        owner: _HistoryClearContinuation | None,
+        damage: dict[str, tuple[Any, QRect]],
+    ) -> None:
+        for layer_id, (layer, rect) in damage.items():
+            if owner is None or not owner.is_current():
+                return
+            if self._canvas._get_layer_by_id(layer_id) is layer:
+                self._canvas._emit_layer_content_changed(layer, rect, {"command": "paint"})
 
     def flush_deferred_paint(self) -> None:
         result = self._canvas._txn_preimage_capture.take()

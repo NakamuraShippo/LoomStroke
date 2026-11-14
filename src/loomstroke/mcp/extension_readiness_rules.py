@@ -54,6 +54,21 @@ _tools(
 )
 _tools("save_document", dependencies=("document_workflow",), roots=True, file_write=True)
 _tools("effect_catalog", canvas=False, mutation=False)
+_tools(
+    "list_prompt_library get_prompt_library_entry",
+    canvas=False,
+    mutation=False,
+    file_read=True,
+    file_write=True,
+    notes=("Opening the local library can initialize its database.",),
+)
+_tools(
+    "create_prompt_library_entry create_prompt_composition",
+    canvas=False,
+    file_read=True,
+    file_write=True,
+    notes=("Library entries are saved separately from the current document.",),
+)
 
 _canvas = Requirements()
 _read_canvas = replace(_canvas, mutation=False)

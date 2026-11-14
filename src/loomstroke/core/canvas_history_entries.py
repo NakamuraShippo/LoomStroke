@@ -102,6 +102,11 @@ class _ResizeSnapshot:
     # Runtime-only metadata for editable layer geometry (e.g. panel trees).
     layer_metadata: dict[str, Any] = field(default_factory=dict)
     native_layers: dict[str, Any] = field(default_factory=dict)
+    layer_masks: list[tuple[str, bytes, int, int, QImage.Format]] = field(default_factory=list)
+    effect_masks: list[tuple[str, bytes, int, int, QImage.Format]] = field(default_factory=list)
+    layer_transforms: dict[str, Any] = field(default_factory=dict)
+    layer_offsets: dict[str, tuple[int, int]] = field(default_factory=dict)
+    image_formats: dict[str, QImage.Format] = field(default_factory=dict)
 
 
 @dataclass(slots=True)

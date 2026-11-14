@@ -43,9 +43,34 @@ class MainWindowShutdownCoordinator:
         try:
             if self._handle_unsaved_changes(event):
                 return
+            if self._handle_pending_prompt_library(event):
+                return
             self._run_shutdown_cleanup(event, base_close_event=base_close_event)
         finally:
             self._close_event_active = False
+
+    def _handle_pending_prompt_library(self, event: Any) -> bool:
+        """Flush the registered Library while its draft can still be edited."""
+        window = self._window
+        get_dock = getattr(window, "get_panel_dock", None)
+        if not callable(get_dock):
+            return False
+        panel_id = "ui.prompt_editor"
+        dock = get_dock(panel_id)
+        if dock is None or not self._is_valid_widget(dock):
+            return False
+        panel = dock.widget()
+        if panel is None or not self._is_valid_widget(panel):
+            return False
+        prepare = getattr(panel, "_prepare_library_shutdown", None)
+        if not callable(prepare) or prepare():
+            return False
+
+        event.ignore()
+        window._closing_in_progress = False
+        window.set_panel_visible(panel_id, True)
+        dock.raise_()
+        return True
 
     def _handle_unsaved_changes(self, event: Any) -> bool:
         window = self._window

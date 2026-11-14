@@ -11,12 +11,14 @@ class CanvasMaskStrokeCommitService:
     def __init__(self, owner: Any) -> None:
         self._owner = owner
 
-    def schedule_mask_commit(self) -> None:
+    def schedule_mask_commit(self, layer: Any | None = None) -> None:
         """Restart the owner mask commit debounce timer."""
 
         owner = self._owner
+        if layer is not None and owner._mask_paint_dirty and owner._mask_paint_layer_id != layer.id:
+            self.commit_mask_paint()
         if not owner._mask_paint_dirty:
-            layer = owner._get_active_layer()
+            layer = layer if layer is not None else owner._get_active_layer()
             if layer is not None and layer.layer_mask is not None:
                 owner._mask_paint_layer_id = layer.id
                 if layer.layer_type == "effect":

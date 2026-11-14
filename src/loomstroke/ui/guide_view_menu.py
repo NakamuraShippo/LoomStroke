@@ -35,7 +35,7 @@ def populate_guide_view_menu(window: Any, menu: Any) -> None:
         submenu.addAction(action)
 
     def controller() -> Any:
-        return getattr(getattr(window, "canvas", None), "_guide_controller", None)
+        return getattr(guide_canvas(getattr(window, "canvas", None)), "_guide_controller", None)
 
     def clear() -> None:
         target = controller()

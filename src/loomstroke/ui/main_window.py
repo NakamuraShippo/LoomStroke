@@ -1905,6 +1905,9 @@ class MainWindow(QMainWindow):
     def _on_new(self) -> None:
         _document_workflow_for(self).on_new()
 
+    def _on_new_from_clipboard(self) -> None:
+        _document_workflow_for(self).on_new_from_clipboard()
+
     def _on_close(self) -> None:
         _document_workflow_for(self).on_close()
 
@@ -1932,8 +1935,8 @@ class MainWindow(QMainWindow):
     def _open_recent_file(self, path: str) -> None:
         _document_workflow_for(self).open_recent_file(path)
 
-    def _apply_new_document(self, spec: StartPageCanvasSpec) -> None:
-        _document_workflow_for(self).apply_new_document(spec)
+    def _apply_new_document(self, spec: StartPageCanvasSpec) -> bool:
+        return _document_workflow_for(self).apply_new_document(spec)
 
     def _close_document(self) -> None:
         _document_workflow_for(self).close_document()
@@ -2139,8 +2142,8 @@ class MainWindow(QMainWindow):
         """Convert the selected vector object's fill area to a raster selection."""
         _edit_shape_actions_for(self).on_vector_fill_to_selection()
 
-    def _on_canvas_resize(self) -> None:
-        _image_view_actions_for(self).on_canvas_resize()
+    def _on_canvas_resize(self, suggested_size: tuple[int, int] | None = None) -> None:
+        _image_view_actions_for(self).on_canvas_resize(suggested_size)
 
     def _on_image_flip_horizontal(self) -> None:
         """Flip the entire canvas horizontally (Image menu)."""

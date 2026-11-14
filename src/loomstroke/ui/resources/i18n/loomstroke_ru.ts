@@ -2,7 +2,27 @@
 <!DOCTYPE TS>
 <TS version="2.1" language="ru">
     <context>
-        <name>MainWindow</name>
+    <name>MainWindow</name>
+    <message>
+        <source>New Document Failed</source>
+        <translation>Не удалось создать документ</translation>
+    </message>
+    <message>
+        <source>New Canvas from Clipboard Image</source>
+        <translation>Создать холст из изображения буфера обмена</translation>
+    </message>
+    <message>
+        <source>Created a canvas from the clipboard image.</source>
+        <translation>Холст создан из изображения буфера обмена.</translation>
+    </message>
+    <message>
+        <source>Could not create a canvas from the clipboard image.</source>
+        <translation>Не удалось создать холст из изображения буфера обмена.</translation>
+    </message>
+    <message>
+        <source>Some layer or effect masks are missing. The document may look different. Use Save As to keep the original file.</source>
+        <translation>Некоторые маски слоёв или эффектов отсутствуют. Документ может выглядеть иначе. Используйте «Сохранить как», чтобы сохранить исходный файл.</translation>
+    </message>
         <message>
             <source>Rotate Straight Ruler Left</source>
             <translation>Повернуть прямую линейку влево</translation>
@@ -1089,6 +1109,10 @@
 </context>
     <context>
         <name>BasicPen</name>
+    <message>
+        <source>The brush library could not be saved.</source>
+        <translation>Не удалось сохранить библиотеку кистей.</translation>
+    </message>
         <message>
             <source>Basic Settings</source>
             <translation>Основные настройки</translation>
@@ -4993,6 +5017,10 @@ After refreshing the token, any agents registered to this LoomStroke MCP server 
         <source>Clear the layer filter</source>
         <translation>Сбросить фильтр слоя</translation>
     </message>
+    <message>
+        <source>The generation record could not be deleted.</source>
+        <translation>Не удалось удалить запись о генерации.</translation>
+    </message>
 </context>
 <context>
     <name>TransformPanel</name>
@@ -7165,8 +7193,8 @@ Select a file to recover.</source>
         <translation>Ключ API не удалось сохранить в вашем ключевом хранилище. Проверьте журнал и попробуйте снова.</translation>
     </message>
     <message>
-        <source>{name} uses Google Gemini's API. The key is stored encrypted in your OS keyring and is read only when you press Generate.</source>
-        <translation>{name} использует Google Gemini's API. Ключ хранится зашифрованно в ключевом хранилище вашей ОС и читается только при нажатии Generate.</translation>
+        <source>{name} API key is stored in your OS keyring and read only when you make a request.</source>
+        <translation>Ключ API {name} хранится в хранилище ключей ОС и считывается только при отправке запроса.</translation>
     </message>
 </context>
 <context>
@@ -8466,6 +8494,10 @@ Failed to initialise the GPU compositor. Please update your graphics driver and 
     <message>
         <source>Values applied to this layer.</source>
         <translation>Значения применены к этому слою.</translation>
+    </message>
+    <message>
+        <source>ComfyUI did not finish loading. Check the server connection and reload nodes.</source>
+        <translation>ComfyUI не загрузился полностью. Проверьте соединение с сервером и перезагрузите узлы.</translation>
     </message>
 </context>
 <context>
@@ -12324,6 +12356,22 @@ Please check that all image paths in your workflow are valid.
 <context>
     <name>ExportPrintDialog</name>
     <message>
+        <source>PDF/X-1a candidate</source>
+        <translation>Кандидат PDF/X-1a (требуется ручная проверка)</translation>
+    </message>
+    <message>
+        <source>PDF/X-4 candidate</source>
+        <translation>Кандидат PDF/X-4 (требуется ручная проверка)</translation>
+    </message>
+    <message>
+        <source>Verify the PDF/X candidate in callas pdfToolbox Desktop before submission.</source>
+        <translation>Перед отправкой проверьте кандидат PDF/X в callas pdfToolbox Desktop.</translation>
+    </message>
+    <message>
+        <source>PDF/X candidates do not support margin information.</source>
+        <translation>Кандидаты PDF/X не поддерживают информацию на полях.</translation>
+    </message>
+    <message>
         <source>A CMYK profile is required for CMYK output.</source>
         <translation>Требуется профиль CMYK для вывода CMYK.</translation>
     </message>
@@ -12578,6 +12626,58 @@ Please check that all image paths in your workflow are valid.
     <message>
         <source>{count} page(s) will be exported.</source>
         <translation>{count} страниц(ы) будут экспортированы.</translation>
+    </message>
+    <message>
+        <source>Preset:</source>
+        <translation>Предустановка:</translation>
+    </message>
+    <message>
+        <source>Grayscale TIFF sequence</source>
+        <translation>Серия TIFF в градациях серого</translation>
+    </message>
+    <message>
+        <source>1-bit TIFF sequence</source>
+        <translation>Серия TIFF с глубиной 1-bit</translation>
+    </message>
+    <message>
+        <source>8-bit grayscale TIFF, one file per page.</source>
+        <translation>Один файл TIFF в градациях серого 8-bit на страницу.</translation>
+    </message>
+    <message>
+        <source>1-bit black-and-white TIFF, one file per page.</source>
+        <translation>Один чёрно-белый файл TIFF 1-bit на страницу.</translation>
+    </message>
+    <message>
+        <source>1-bit conversion</source>
+        <translation>Преобразование в 1-bit</translation>
+    </message>
+    <message>
+        <source>Threshold:</source>
+        <translation>Порог:</translation>
+    </message>
+    <message>
+        <source>Method:</source>
+        <translation>Метод:</translation>
+    </message>
+    <message>
+        <source>Threshold</source>
+        <translation>Порог</translation>
+    </message>
+    <message>
+        <source>Ordered 4x4 dither</source>
+        <translation>Упорядоченный дизеринг 4x4</translation>
+    </message>
+    <message>
+        <source>The selected print preset does not match every page's format and DPI.</source>
+        <translation>Формат и DPI выбранной предустановки печати не совпадают со всеми страницами.</translation>
+    </message>
+    <message>
+        <source>The saved CMYK profile must be loaded again.</source>
+        <translation>Сохранённый профиль CMYK необходимо загрузить повторно.</translation>
+    </message>
+    <message>
+        <source>Could not save the format preset.</source>
+        <translation>Не удалось сохранить предустановку печати.</translation>
     </message>
 </context>
 <context>
@@ -14840,6 +14940,14 @@ After refreshing the token, any agents registered to this LoomStroke MCP server 
         <translation>Невозможно сохранить документ: {path}
 {error}</translation>
     </message>
+    <message>
+        <source>No SVG-compatible vector objects to export.</source>
+        <translation>Нет векторных объектов, совместимых с экспортом в SVG.</translation>
+    </message>
+    <message>
+        <source>The current SVG export omits groups, layer placement, enabled masks, unsupported blend modes, and live filters.</source>
+        <translation>При текущем экспорте в SVG пропускаются группы, размещение слоёв, включённые маски, неподдерживаемые режимы смешивания и динамические фильтры.</translation>
+    </message>
 </context>
 <context>
     <name>MainWindowEditShapeActionsCoordinator</name>
@@ -15841,6 +15949,10 @@ Operation: {operation}
 </context>
 <context>
     <name>NewDocumentDialog</name>
+    <message>
+        <source>Include Bleed</source>
+        <translation>Включить вылеты</translation>
+    </message>
     <message>
         <source>AI</source>
         <translation>AI</translation>
@@ -17414,6 +17526,10 @@ Type: {type}</source>
         <source>{count} plugin(s) loaded</source>
         <translation>Загружено плагинов: {count}</translation>
     </message>
+    <message>
+        <source>Failed</source>
+        <translation>Ошибка</translation>
+    </message>
 </context>
 <context>
     <name>PluginUpdateDialog</name>
@@ -17643,8 +17759,8 @@ Type: {type}</source>
         <translation>Текущий чёрный (RGB)</translation>
     </message>
     <message>
-        <source>Japanese corner (current)</source>
-        <translation>Японский уголок (текущий)</translation>
+        <source>Japanese corner</source>
+        <translation>Японский уголок</translation>
     </message>
     <message>
         <source>Japanese double</source>
@@ -18543,6 +18659,18 @@ Type: {type}</source>
     <message>
         <source>Ollama's default context is short and silently cuts the start of long prompts; raise it with OLLAMA_CONTEXT_LENGTH or the model's num_ctx.</source>
         <translation>Контекст Ollama по умолчанию короткий и молча обрезает начало длинных промптов; увеличьте его через OLLAMA_CONTEXT_LENGTH или num_ctx модели.</translation>
+    </message>
+    <message>
+        <source>Aa</source>
+        <translation>Aa</translation>
+    </message>
+    <message>
+        <source>Display name</source>
+        <translation>Отображаемое имя</translation>
+    </message>
+    <message>
+        <source>Item</source>
+        <translation>Элемент</translation>
     </message>
 </context>
 <context>
@@ -21247,6 +21375,46 @@ Do you want to save them?</source>
 </context>
 <context>
     <name>__shared__</name>
+    <message>
+        <source>Include Bleed</source>
+        <translation>Включить вылеты</translation>
+    </message>
+    <message>
+        <source>PDF/X-1a candidate</source>
+        <translation>Кандидат PDF/X-1a (требуется ручная проверка)</translation>
+    </message>
+    <message>
+        <source>PDF/X-4 candidate</source>
+        <translation>Кандидат PDF/X-4 (требуется ручная проверка)</translation>
+    </message>
+    <message>
+        <source>Verify the PDF/X candidate in callas pdfToolbox Desktop before submission.</source>
+        <translation>Перед отправкой проверьте кандидат PDF/X в callas pdfToolbox Desktop.</translation>
+    </message>
+    <message>
+        <source>PDF/X candidates do not support margin information.</source>
+        <translation>Кандидаты PDF/X не поддерживают информацию на полях.</translation>
+    </message>
+    <message>
+        <source>Could not create a canvas from the clipboard image.</source>
+        <translation>Не удалось создать холст из изображения буфера обмена.</translation>
+    </message>
+    <message>
+        <source>Created a canvas from the clipboard image.</source>
+        <translation>Холст создан из изображения буфера обмена.</translation>
+    </message>
+    <message>
+        <source>New Canvas from Clipboard Image</source>
+        <translation>Создать холст из изображения буфера обмена</translation>
+    </message>
+    <message>
+        <source>The brush library could not be saved.</source>
+        <translation>Не удалось сохранить библиотеку кистей.</translation>
+    </message>
+    <message>
+        <source>Some layer or effect masks are missing. The document may look different. Use Save As to keep the original file.</source>
+        <translation>Некоторые маски слоёв или эффектов отсутствуют. Документ может выглядеть иначе. Используйте «Сохранить как», чтобы сохранить исходный файл.</translation>
+    </message>
     <message>
         <source>Straight Ruler</source>
         <translation>Прямая линейка</translation>
@@ -27966,8 +28134,8 @@ Select a file to recover.</source>
         <translation>Японский</translation>
     </message>
     <message>
-        <source>Japanese corner (current)</source>
-        <translation>Японский уголок (текущий)</translation>
+        <source>Japanese corner</source>
+        <translation>Японский уголок</translation>
     </message>
     <message>
         <source>Japanese double</source>
@@ -36182,8 +36350,8 @@ Drag onto the canvas to place</source>
         <translation>{name} не является поддерживаемым форматом изображения.</translation>
     </message>
     <message>
-        <source>{name} uses Google Gemini's API. The key is stored encrypted in your OS keyring and is read only when you press Generate.</source>
-        <translation>{name} использует Google Gemini's API. Ключ хранится зашифрованно в ключевом хранилище вашей ОС и читается только при нажатии Generate.</translation>
+        <source>{name} API key is stored in your OS keyring and read only when you make a request.</source>
+        <translation>Ключ API {name} хранится в хранилище ключей ОС и считывается только при отправке запроса.</translation>
     </message>
     <message>
         <source>{pending} pending, {running} running</source>
@@ -36588,6 +36756,406 @@ Click to show as panel</source>
     <message>
         <source>Walking</source>
         <translation>Ходьба</translation>
+    </message>
+    <message>
+        <source>AI Settings</source>
+        <translation>Настройки ИИ</translation>
+    </message>
+    <message>
+        <source>Aa</source>
+        <translation>Aa</translation>
+    </message>
+    <message>
+        <source>Add basic shape</source>
+        <translation>Добавить базовую фигуру</translation>
+    </message>
+    <message>
+        <source>Add potion</source>
+        <translation>Добавить зелье</translation>
+    </message>
+    <message>
+        <source>Advanced API parameters (JSON)</source>
+        <translation>Расширенные параметры API (JSON)</translation>
+    </message>
+    <message>
+        <source>Advanced API parameters (JSON; overrides controls)</source>
+        <translation>Расширенные параметры API (JSON; имеют приоритет над настройками интерфейса)</translation>
+    </message>
+    <message>
+        <source>Advanced Settings</source>
+        <translation>Расширенные настройки</translation>
+    </message>
+    <message>
+        <source>Basic shape</source>
+        <translation>Базовая фигура</translation>
+    </message>
+    <message>
+        <source>Character Reference</source>
+        <translation>Референс персонажа</translation>
+    </message>
+    <message>
+        <source>Character and Style</source>
+        <translation>Референс персонажа и стиля</translation>
+    </message>
+    <message>
+        <source>Collapse AI Settings</source>
+        <translation>Свернуть настройки ИИ</translation>
+    </message>
+    <message>
+        <source>Colorize</source>
+        <translation>Раскрасить</translation>
+    </message>
+    <message>
+        <source>Could not add basic shape</source>
+        <translation>Не удалось добавить базовую фигуру</translation>
+    </message>
+    <message>
+        <source>Create variation from Gallery image</source>
+        <translation>Создать вариант изображения из галереи</translation>
+    </message>
+    <message>
+        <source>Cube</source>
+        <translation>Куб</translation>
+    </message>
+    <message>
+        <source>Cylinder</source>
+        <translation>Цилиндр</translation>
+    </message>
+    <message>
+        <source>Director Tool</source>
+        <translation>Инструмент режиссёра</translation>
+    </message>
+    <message>
+        <source>Director Tools</source>
+        <translation>Инструменты режиссёра</translation>
+    </message>
+    <message>
+        <source>Emotion</source>
+        <translation>Выражение лица</translation>
+    </message>
+    <message>
+        <source>External AI services are disabled</source>
+        <translation>Внешние сервисы ИИ отключены</translation>
+    </message>
+    <message>
+        <source>Image Generation</source>
+        <translation>Генерация изображений</translation>
+    </message>
+    <message>
+        <source>Image Resolution</source>
+        <translation>Разрешение изображения</translation>
+    </message>
+    <message>
+        <source>Image Settings</source>
+        <translation>Настройки изображения</translation>
+    </message>
+    <message>
+        <source>Image2Image</source>
+        <translation>Из изображения в изображение</translation>
+    </message>
+    <message>
+        <source>Information Extracted</source>
+        <translation>Объём извлекаемой информации</translation>
+    </message>
+    <message>
+        <source>Inpaint (current selection)</source>
+        <translation>Восстановление (текущее выделение)</translation>
+    </message>
+    <message>
+        <source>Input layer</source>
+        <translation>Входной слой</translation>
+    </message>
+    <message>
+        <source>Large</source>
+        <translation>Большой размер</translation>
+    </message>
+    <message>
+        <source>Large Landscape</source>
+        <translation>Большой горизонтальный</translation>
+    </message>
+    <message>
+        <source>Large Portrait</source>
+        <translation>Большой вертикальный</translation>
+    </message>
+    <message>
+        <source>Large Square</source>
+        <translation>Большой квадратный</translation>
+    </message>
+    <message>
+        <source>Light position</source>
+        <translation>Положение источника света</translation>
+    </message>
+    <message>
+        <source>Light position in 3D scene coordinates</source>
+        <translation>Положение источника света в координатах 3D-сцены</translation>
+    </message>
+    <message>
+        <source>Line Art</source>
+        <translation>Контурный рисунок</translation>
+    </message>
+    <message>
+        <source>Line art</source>
+        <translation>Контурный рисунок</translation>
+    </message>
+    <message>
+        <source>No SVG-compatible vector objects to export.</source>
+        <translation>Нет векторных объектов, совместимых с экспортом в SVG.</translation>
+    </message>
+    <message>
+        <source>No tags found</source>
+        <translation>Теги не найдены</translation>
+    </message>
+    <message>
+        <source>Noise</source>
+        <translation>Шум</translation>
+    </message>
+    <message>
+        <source>Noise Schedule</source>
+        <translation>График изменения шума</translation>
+    </message>
+    <message>
+        <source>Normal Landscape</source>
+        <translation>Стандартный горизонтальный</translation>
+    </message>
+    <message>
+        <source>Normal Portrait</source>
+        <translation>Стандартный вертикальный</translation>
+    </message>
+    <message>
+        <source>Normal Square</source>
+        <translation>Стандартный квадратный</translation>
+    </message>
+    <message>
+        <source>NovelAI Potion (Vibe Transfer)</source>
+        <translation>Зелье NovelAI (Перенос атмосферы)</translation>
+    </message>
+    <message>
+        <source>NovelAI generation cancelled</source>
+        <translation>Генерация NovelAI отменена</translation>
+    </message>
+    <message>
+        <source>NovelAI image added to layer</source>
+        <translation>Изображение NovelAI добавлено на слой</translation>
+    </message>
+    <message>
+        <source>Number of Images</source>
+        <translation>Количество изображений</translation>
+    </message>
+    <message>
+        <source>OpenPose JSON</source>
+        <translation>OpenPose JSON</translation>
+    </message>
+    <message>
+        <source>Prompt Guidance</source>
+        <translation>Сила промпта</translation>
+    </message>
+    <message>
+        <source>Prompt Guidance Rescale</source>
+        <translation>Перемасштабирование силы промпта</translation>
+    </message>
+    <message>
+        <source>Reference layer</source>
+        <translation>Слой-референс</translation>
+    </message>
+    <message>
+        <source>Reference mode</source>
+        <translation>Режим референса</translation>
+    </message>
+    <message>
+        <source>Reference strength</source>
+        <translation>Сила референса</translation>
+    </message>
+    <message>
+        <source>Refresh layers</source>
+        <translation>Обновить список слоёв</translation>
+    </message>
+    <message>
+        <source>Remove Background</source>
+        <translation>Удалить фон</translation>
+    </message>
+    <message>
+        <source>Remove background</source>
+        <translation>Удалить фон</translation>
+    </message>
+    <message>
+        <source>Sampler</source>
+        <translation>Сэмплер</translation>
+    </message>
+    <message>
+        <source>Saved workflow: {name}</source>
+        <translation>Рабочий процесс сохранён: {name}</translation>
+    </message>
+    <message>
+        <source>Seed must be between 0 and 4294967295</source>
+        <translation>Значение сида должно быть от 0 до 4294967295</translation>
+    </message>
+    <message>
+        <source>Small</source>
+        <translation>Малый размер</translation>
+    </message>
+    <message>
+        <source>Small Landscape</source>
+        <translation>Малый горизонтальный</translation>
+    </message>
+    <message>
+        <source>Small Portrait</source>
+        <translation>Малый вертикальный</translation>
+    </message>
+    <message>
+        <source>Small Square</source>
+        <translation>Малый квадратный</translation>
+    </message>
+    <message>
+        <source>Sphere</source>
+        <translation>Шар</translation>
+    </message>
+    <message>
+        <source>Steps</source>
+        <translation>Количество шагов</translation>
+    </message>
+    <message>
+        <source>Style Reference</source>
+        <translation>Референс стиля</translation>
+    </message>
+    <message>
+        <source>Suggest tags</source>
+        <translation>Предложить теги</translation>
+    </message>
+    <message>
+        <source>Swap width and height</source>
+        <translation>Поменять ширину и высоту местами</translation>
+    </message>
+    <message>
+        <source>Tag fragment for suggestions</source>
+        <translation>Часть тега для поиска подсказок</translation>
+    </message>
+    <message>
+        <source>The current SVG export omits groups, layer placement, enabled masks, unsupported blend modes, and live filters.</source>
+        <translation>При текущем экспорте в SVG пропускаются группы, размещение слоёв, включённые маски, неподдерживаемые режимы смешивания и динамические фильтры.</translation>
+    </message>
+    <message>
+        <source>The generation record could not be deleted.</source>
+        <translation>Не удалось удалить запись о генерации.</translation>
+    </message>
+    <message>
+        <source>Undesired Content</source>
+        <translation>Нежелательное содержимое</translation>
+    </message>
+    <message>
+        <source>Upscale</source>
+        <translation>Повысить разрешение</translation>
+    </message>
+    <message>
+        <source>Variety</source>
+        <translation>Разнообразие</translation>
+    </message>
+    <message>
+        <source>Vibe Transfer</source>
+        <translation>Перенос атмосферы</translation>
+    </message>
+    <message>
+        <source>Wallpaper</source>
+        <translation>Обои</translation>
+    </message>
+    <message>
+        <source>Wallpaper Landscape</source>
+        <translation>Горизонтальные обои</translation>
+    </message>
+    <message>
+        <source>Wallpaper Portrait</source>
+        <translation>Вертикальные обои</translation>
+    </message>
+    <message>
+        <source>exponential</source>
+        <translation>Экспоненциальный</translation>
+    </message>
+    <message>
+        <source>karras</source>
+        <translation>karras</translation>
+    </message>
+    <message>
+        <source>polyexponential</source>
+        <translation>Полиэкспоненциальный</translation>
+    </message>
+    <message>
+        <source>{name} uses Google Gemini's API. The key is stored encrypted in your OS keyring and is read only when you press Generate.</source>
+        <translation>{name} использует API Google Gemini. Ключ хранится в зашифрованном виде в хранилище ключей ОС и считывается только при нажатии кнопки «Сгенерировать».</translation>
+    </message>
+    <message>
+        <source>Grayscale TIFF sequence</source>
+        <translation>Серия TIFF в градациях серого</translation>
+    </message>
+    <message>
+        <source>1-bit TIFF sequence</source>
+        <translation>Серия TIFF с глубиной 1-bit</translation>
+    </message>
+    <message>
+        <source>8-bit grayscale TIFF, one file per page.</source>
+        <translation>Один файл TIFF в градациях серого 8-bit на страницу.</translation>
+    </message>
+    <message>
+        <source>1-bit black-and-white TIFF, one file per page.</source>
+        <translation>Один чёрно-белый файл TIFF 1-bit на страницу.</translation>
+    </message>
+    <message>
+        <source>1-bit conversion</source>
+        <translation>Преобразование в 1-bit</translation>
+    </message>
+    <message>
+        <source>Threshold:</source>
+        <translation>Порог:</translation>
+    </message>
+    <message>
+        <source>Method:</source>
+        <translation>Метод:</translation>
+    </message>
+    <message>
+        <source>Ordered 4x4 dither</source>
+        <translation>Упорядоченный дизеринг 4x4</translation>
+    </message>
+    <message>
+        <source>The selected print preset does not match every page's format and DPI.</source>
+        <translation>Формат и DPI выбранной предустановки печати не совпадают со всеми страницами.</translation>
+    </message>
+    <message>
+        <source>The saved CMYK profile must be loaded again.</source>
+        <translation>Сохранённый профиль CMYK необходимо загрузить повторно.</translation>
+    </message>
+    <message>
+        <source>Added noise</source>
+        <translation>Added noise</translation>
+    </message>
+    <message>
+        <source>Change strength (i2i)</source>
+        <translation>Change strength (i2i)</translation>
+    </message>
+    <message>
+        <source>Enlarge</source>
+        <translation>Enlarge</translation>
+    </message>
+    <message>
+        <source>Input Image</source>
+        <translation>Input Image</translation>
+    </message>
+    <message>
+        <source>Randomize</source>
+        <translation>Randomize</translation>
+    </message>
+    <message>
+        <source>References</source>
+        <translation>References</translation>
+    </message>
+    <message>
+        <source>Reuse last seed</source>
+        <translation>Reuse last seed</translation>
+    </message>
+    <message>
+        <source>i2i</source>
+        <translation>i2i</translation>
+    </message>
+    <message>
+        <source>{count} items</source>
+        <translation>{count} items</translation>
     </message>
 </context>
 <context>
@@ -37810,6 +38378,10 @@ Click to show as panel</source>
         <source>Right Ankle</source>
         <translation>Справа: Лодыжка</translation>
     </message>
+    <message>
+        <source>OpenPose JSON</source>
+        <translation>OpenPose JSON</translation>
+    </message>
 </context>
 <context>
     <name>DrawingFigureToolbarWidget</name>
@@ -37925,6 +38497,556 @@ Click to show as panel</source>
     <message>
         <source>Could not add basic shape</source>
         <translation>Не удалось добавить базовую фигуру</translation>
+    </message>
+</context>
+<context>
+    <name>AISettingsWidget</name>
+    <message>
+        <source>AI Settings</source>
+        <translation>Настройки ИИ</translation>
+    </message>
+    <message>
+        <source>Advanced Settings</source>
+        <translation>Расширенные настройки</translation>
+    </message>
+    <message>
+        <source>Collapse AI Settings</source>
+        <translation>Свернуть настройки ИИ</translation>
+    </message>
+    <message>
+        <source>Noise Schedule</source>
+        <translation>График изменения шума</translation>
+    </message>
+    <message>
+        <source>Prompt Guidance</source>
+        <translation>Сила промпта</translation>
+    </message>
+    <message>
+        <source>Prompt Guidance Rescale</source>
+        <translation>Перемасштабирование силы промпта</translation>
+    </message>
+    <message>
+        <source>Random</source>
+        <translation>Случайный</translation>
+    </message>
+    <message>
+        <source>Reset</source>
+        <translation>Сбросить</translation>
+    </message>
+    <message>
+        <source>Sampler</source>
+        <translation>Сэмплер</translation>
+    </message>
+    <message>
+        <source>Seed</source>
+        <translation>Сид</translation>
+    </message>
+    <message>
+        <source>Seed must be between 0 and 4294967295</source>
+        <translation>Значение сида должно быть от 0 до 4294967295</translation>
+    </message>
+    <message>
+        <source>Steps</source>
+        <translation>Количество шагов</translation>
+    </message>
+    <message>
+        <source>Variety</source>
+        <translation>Разнообразие</translation>
+    </message>
+    <message>
+        <source>Randomize</source>
+        <translation>Randomize</translation>
+    </message>
+    <message>
+        <source>Reuse last seed</source>
+        <translation>Reuse last seed</translation>
+    </message>
+</context>
+<context>
+    <name>ImageSettingsWidget</name>
+    <message>
+        <source>Image Resolution</source>
+        <translation>Разрешение изображения</translation>
+    </message>
+    <message>
+        <source>Image Settings</source>
+        <translation>Настройки изображения</translation>
+    </message>
+    <message>
+        <source>Number of Images</source>
+        <translation>Количество изображений</translation>
+    </message>
+    <message>
+        <source>Swap width and height</source>
+        <translation>Поменять ширину и высоту местами</translation>
+    </message>
+</context>
+<context>
+    <name>NovelAIPanel</name>
+    <message>
+        <source>&lt;New Layer&gt;</source>
+        <translation>&lt;Новый слой&gt;</translation>
+    </message>
+    <message>
+        <source>AI Settings</source>
+        <translation>Настройки ИИ</translation>
+    </message>
+    <message>
+        <source>Add potion</source>
+        <translation>Добавить зелье</translation>
+    </message>
+    <message>
+        <source>Advanced API parameters (JSON)</source>
+        <translation>Расширенные параметры API (JSON)</translation>
+    </message>
+    <message>
+        <source>Advanced API parameters (JSON; overrides controls)</source>
+        <translation>Расширенные параметры API (JSON; имеют приоритет над настройками интерфейса)</translation>
+    </message>
+    <message>
+        <source>Advanced Settings</source>
+        <translation>Расширенные настройки</translation>
+    </message>
+    <message>
+        <source>Character Reference</source>
+        <translation>Референс персонажа</translation>
+    </message>
+    <message>
+        <source>Character and Style</source>
+        <translation>Референс персонажа и стиля</translation>
+    </message>
+    <message>
+        <source>Collapse AI Settings</source>
+        <translation>Свернуть настройки ИИ</translation>
+    </message>
+    <message>
+        <source>Colorize</source>
+        <translation>Раскрасить</translation>
+    </message>
+    <message>
+        <source>Create variation from Gallery image</source>
+        <translation>Создать вариант изображения из галереи</translation>
+    </message>
+    <message>
+        <source>Custom</source>
+        <translation>Пользовательский</translation>
+    </message>
+    <message>
+        <source>Director Tool</source>
+        <translation>Инструмент режиссёра</translation>
+    </message>
+    <message>
+        <source>Director Tools</source>
+        <translation>Инструменты режиссёра</translation>
+    </message>
+    <message>
+        <source>Emotion</source>
+        <translation>Выражение лица</translation>
+    </message>
+    <message>
+        <source>Enter prompt text...</source>
+        <translation>Введите текст запроса...</translation>
+    </message>
+    <message>
+        <source>External AI services are disabled</source>
+        <translation>Внешние сервисы ИИ отключены</translation>
+    </message>
+    <message>
+        <source>Generate</source>
+        <translation>Сгенерировать</translation>
+    </message>
+    <message>
+        <source>Height</source>
+        <translation>Высота</translation>
+    </message>
+    <message>
+        <source>Image Generation</source>
+        <translation>Генерация изображений</translation>
+    </message>
+    <message>
+        <source>Image Resolution</source>
+        <translation>Разрешение изображения</translation>
+    </message>
+    <message>
+        <source>Image Settings</source>
+        <translation>Настройки изображения</translation>
+    </message>
+    <message>
+        <source>Image2Image</source>
+        <translation>Из изображения в изображение</translation>
+    </message>
+    <message>
+        <source>Information Extracted</source>
+        <translation>Объём извлекаемой информации</translation>
+    </message>
+    <message>
+        <source>Inpaint (current selection)</source>
+        <translation>Восстановление (текущее выделение)</translation>
+    </message>
+    <message>
+        <source>Input layer</source>
+        <translation>Входной слой</translation>
+    </message>
+    <message>
+        <source>Landscape</source>
+        <translation>Пейзаж</translation>
+    </message>
+    <message>
+        <source>Large</source>
+        <translation>Большой размер</translation>
+    </message>
+    <message>
+        <source>Large Landscape</source>
+        <translation>Большой горизонтальный</translation>
+    </message>
+    <message>
+        <source>Large Portrait</source>
+        <translation>Большой вертикальный</translation>
+    </message>
+    <message>
+        <source>Large Square</source>
+        <translation>Большой квадратный</translation>
+    </message>
+    <message>
+        <source>Line Art</source>
+        <translation>Контурный рисунок</translation>
+    </message>
+    <message>
+        <source>Line art</source>
+        <translation>Контурный рисунок</translation>
+    </message>
+    <message>
+        <source>Live prompt</source>
+        <translation>Динамическая подсказка</translation>
+    </message>
+    <message>
+        <source>Mode</source>
+        <translation>Режим</translation>
+    </message>
+    <message>
+        <source>Model</source>
+        <translation>Модель</translation>
+    </message>
+    <message>
+        <source>No tags found</source>
+        <translation>Теги не найдены</translation>
+    </message>
+    <message>
+        <source>Noise</source>
+        <translation>Шум</translation>
+    </message>
+    <message>
+        <source>Noise Schedule</source>
+        <translation>График изменения шума</translation>
+    </message>
+    <message>
+        <source>None</source>
+        <translation>Нет</translation>
+    </message>
+    <message>
+        <source>Normal</source>
+        <translation>Нормальный</translation>
+    </message>
+    <message>
+        <source>Normal Landscape</source>
+        <translation>Стандартный горизонтальный</translation>
+    </message>
+    <message>
+        <source>Normal Portrait</source>
+        <translation>Стандартный вертикальный</translation>
+    </message>
+    <message>
+        <source>Normal Square</source>
+        <translation>Стандартный квадратный</translation>
+    </message>
+    <message>
+        <source>Nothing</source>
+        <translation>Ничего</translation>
+    </message>
+    <message>
+        <source>NovelAI Potion (Vibe Transfer)</source>
+        <translation>Зелье NovelAI (Перенос атмосферы)</translation>
+    </message>
+    <message>
+        <source>NovelAI generation cancelled</source>
+        <translation>Генерация NovelAI отменена</translation>
+    </message>
+    <message>
+        <source>NovelAI image added to layer</source>
+        <translation>Изображение NovelAI добавлено на слой</translation>
+    </message>
+    <message>
+        <source>Number of Images</source>
+        <translation>Количество изображений</translation>
+    </message>
+    <message>
+        <source>Portrait</source>
+        <translation>Портрет</translation>
+    </message>
+    <message>
+        <source>Prompt Guidance</source>
+        <translation>Сила промпта</translation>
+    </message>
+    <message>
+        <source>Prompt Guidance Rescale</source>
+        <translation>Перемасштабирование силы промпта</translation>
+    </message>
+    <message>
+        <source>Random</source>
+        <translation>Случайный</translation>
+    </message>
+    <message>
+        <source>Reference layer</source>
+        <translation>Слой-референс</translation>
+    </message>
+    <message>
+        <source>Reference mode</source>
+        <translation>Режим референса</translation>
+    </message>
+    <message>
+        <source>Reference strength</source>
+        <translation>Сила референса</translation>
+    </message>
+    <message>
+        <source>Refresh layers</source>
+        <translation>Обновить список слоёв</translation>
+    </message>
+    <message>
+        <source>Remove</source>
+        <translation>Удалить</translation>
+    </message>
+    <message>
+        <source>Remove Background</source>
+        <translation>Удалить фон</translation>
+    </message>
+    <message>
+        <source>Remove background</source>
+        <translation>Удалить фон</translation>
+    </message>
+    <message>
+        <source>Reset</source>
+        <translation>Сбросить</translation>
+    </message>
+    <message>
+        <source>Sampler</source>
+        <translation>Сэмплер</translation>
+    </message>
+    <message>
+        <source>Seed</source>
+        <translation>Сид</translation>
+    </message>
+    <message>
+        <source>Seed must be between 0 and 4294967295</source>
+        <translation>Значение сида должно быть от 0 до 4294967295</translation>
+    </message>
+    <message>
+        <source>Sketch</source>
+        <translation>Эскиз</translation>
+    </message>
+    <message>
+        <source>Small</source>
+        <translation>Малый размер</translation>
+    </message>
+    <message>
+        <source>Small Landscape</source>
+        <translation>Малый горизонтальный</translation>
+    </message>
+    <message>
+        <source>Small Portrait</source>
+        <translation>Малый вертикальный</translation>
+    </message>
+    <message>
+        <source>Small Square</source>
+        <translation>Малый квадратный</translation>
+    </message>
+    <message>
+        <source>Square</source>
+        <translation>Квадрат</translation>
+    </message>
+    <message>
+        <source>Steps</source>
+        <translation>Количество шагов</translation>
+    </message>
+    <message>
+        <source>Strength</source>
+        <translation>Сила</translation>
+    </message>
+    <message>
+        <source>Style Reference</source>
+        <translation>Референс стиля</translation>
+    </message>
+    <message>
+        <source>Suggest tags</source>
+        <translation>Предложить теги</translation>
+    </message>
+    <message>
+        <source>Swap width and height</source>
+        <translation>Поменять ширину и высоту местами</translation>
+    </message>
+    <message>
+        <source>Tag fragment for suggestions</source>
+        <translation>Часть тега для поиска подсказок</translation>
+    </message>
+    <message>
+        <source>Target layer</source>
+        <translation>Целевой слой</translation>
+    </message>
+    <message>
+        <source>Undesired Content</source>
+        <translation>Нежелательное содержимое</translation>
+    </message>
+    <message>
+        <source>Upscale</source>
+        <translation>Повысить разрешение</translation>
+    </message>
+    <message>
+        <source>Variety</source>
+        <translation>Разнообразие</translation>
+    </message>
+    <message>
+        <source>Vibe Transfer</source>
+        <translation>Перенос атмосферы</translation>
+    </message>
+    <message>
+        <source>Wallpaper</source>
+        <translation>Обои</translation>
+    </message>
+    <message>
+        <source>Wallpaper Landscape</source>
+        <translation>Горизонтальные обои</translation>
+    </message>
+    <message>
+        <source>Wallpaper Portrait</source>
+        <translation>Вертикальные обои</translation>
+    </message>
+    <message>
+        <source>Width</source>
+        <translation>Ширина</translation>
+    </message>
+    <message>
+        <source>exponential</source>
+        <translation>Экспоненциальный</translation>
+    </message>
+    <message>
+        <source>karras</source>
+        <translation>karras</translation>
+    </message>
+    <message>
+        <source>polyexponential</source>
+        <translation>Полиэкспоненциальный</translation>
+    </message>
+    <message>
+        <source>Added noise</source>
+        <translation>Added noise</translation>
+    </message>
+    <message>
+        <source>Change strength (i2i)</source>
+        <translation>Change strength (i2i)</translation>
+    </message>
+    <message>
+        <source>Enlarge</source>
+        <translation>Enlarge</translation>
+    </message>
+    <message>
+        <source>Inpaint</source>
+        <translation>Inpaint</translation>
+    </message>
+    <message>
+        <source>Input Image</source>
+        <translation>Input Image</translation>
+    </message>
+    <message>
+        <source>Randomize</source>
+        <translation>Randomize</translation>
+    </message>
+    <message>
+        <source>References</source>
+        <translation>References</translation>
+    </message>
+    <message>
+        <source>Reuse last seed</source>
+        <translation>Reuse last seed</translation>
+    </message>
+    <message>
+        <source>Tools</source>
+        <translation>Tools</translation>
+    </message>
+    <message>
+        <source>i2i</source>
+        <translation>i2i</translation>
+    </message>
+    <message>
+        <source>{count} items</source>
+        <translation>{count} items</translation>
+    </message>
+</context>
+<context>
+    <name>NovelAIPanelPlugin</name>
+    <message>
+        <source>No tags found</source>
+        <translation>Теги не найдены</translation>
+    </message>
+    <message>
+        <source>NovelAI generation cancelled</source>
+        <translation>Генерация NovelAI отменена</translation>
+    </message>
+    <message>
+        <source>NovelAI image added to layer</source>
+        <translation>Изображение NovelAI добавлено на слой</translation>
+    </message>
+</context>
+<context>
+    <name>VibeReferencesWidget</name>
+    <message>
+        <source>Add potion</source>
+        <translation>Добавить зелье</translation>
+    </message>
+    <message>
+        <source>Information Extracted</source>
+        <translation>Объём извлекаемой информации</translation>
+    </message>
+    <message>
+        <source>Nothing</source>
+        <translation>Ничего</translation>
+    </message>
+    <message>
+        <source>NovelAI Potion (Vibe Transfer)</source>
+        <translation>Зелье NovelAI (Перенос атмосферы)</translation>
+    </message>
+    <message>
+        <source>Remove</source>
+        <translation>Удалить</translation>
+    </message>
+    <message>
+        <source>Strength</source>
+        <translation>Сила</translation>
+    </message>
+</context>
+<context>
+    <name>_LibraryWriteFeedback</name>
+    <message>
+        <source>Shape Manager</source>
+        <translation>Менеджер фигур</translation>
+    </message>
+</context>
+<context>
+    <name>document_mask_recovery</name>
+    <message>
+        <source>Warning</source>
+        <translation>Предупреждение</translation>
+    </message>
+</context>
+<context>
+    <name>workflow_save_action</name>
+    <message>
+        <source>Failed to save workflow:
+{error}</source>
+        <translation>Не удалось сохранить поток работы:
+{error}</translation>
+    </message>
+    <message>
+        <source>Saved workflow: {name}</source>
+        <translation>Рабочий процесс сохранён: {name}</translation>
     </message>
 </context>
 </TS>

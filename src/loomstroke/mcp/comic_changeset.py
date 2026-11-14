@@ -4,7 +4,7 @@ from __future__ import annotations
 
 import hashlib
 import json
-from collections.abc import Mapping, Sequence
+from collections.abc import Callable, Mapping, Sequence
 from typing import Any
 
 from loomstroke.core.commands import Command
@@ -44,6 +44,7 @@ class ComicApplyCommand(Command):
         self._created_layer_ids: list[str] = []
         self._inserted_objects: list[tuple[str, int, str]] = []
         self.applied_records: list[dict[str, Any]] = []
+        self._finalize_initial_vector_edit: Callable[[], None] | None = None
 
     @property
     def created_layer_ids(self) -> list[str]:

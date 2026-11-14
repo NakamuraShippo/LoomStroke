@@ -12,7 +12,7 @@ from __future__ import annotations
 import copy
 import uuid
 from collections.abc import Mapping
-from dataclasses import dataclass, field, replace
+from dataclasses import dataclass, field, fields, replace
 from typing import TYPE_CHECKING, Any
 
 from loomstroke.core.comic_panels.models import PanelFrameError
@@ -494,6 +494,17 @@ class ComicPageController:
             if previous_text_obj is not None
             else TextProps()
         )
+        previous_props = text_props_from_object(previous_text_obj)
+        property_changes = (
+            {
+                item.name: getattr(props, item.name)
+                for item in fields(TextProps)
+                if item.name != "text"
+                and getattr(props, item.name) != getattr(previous_props, item.name)
+            }
+            if previous_text_obj is not None and text_props is not None
+            else {}
+        )
         effective_text = props.text if text is None else text
         from loomstroke.core.japanese_text.linked_story import story_of  # noqa: PLC0415
 
@@ -517,7 +528,9 @@ class ComicPageController:
                     font_size_pt=props.font_size_pt,
                     vertical=props.vertical,
                     line_height=props.line_height,
-                    measured_block=rich_text_block(previous_text_obj, effective_text, text_props),
+                    measured_block=rich_text_block(
+                        previous_text_obj, effective_text, property_changes=property_changes
+                    ),
                 ),
             )
         from .balloon_objects import build_balloon_object  # noqa: PLC0415
@@ -551,6 +564,9 @@ class ComicPageController:
                 padding_left=props.padding_left,
                 rotate_half_width=props.rotate_half_width,
                 previous_meta=previous_meta,
+                previous_object=previous_text_obj,
+                previous_record=state.balloons.get(record.balloon_id),
+                property_changes=property_changes,
             )
         from .raster_parts import is_raster_preserve  # noqa: PLC0415
 

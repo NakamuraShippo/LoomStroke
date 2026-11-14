@@ -2,7 +2,27 @@
 <!DOCTYPE TS>
 <TS version="2.1" language="zh_TW">
     <context>
-        <name>MainWindow</name>
+    <name>MainWindow</name>
+    <message>
+        <source>New Document Failed</source>
+        <translation>建立文件失敗</translation>
+    </message>
+    <message>
+        <source>New Canvas from Clipboard Image</source>
+        <translation>從剪貼簿影像建立新畫布</translation>
+    </message>
+    <message>
+        <source>Created a canvas from the clipboard image.</source>
+        <translation>已從剪貼簿影像建立畫布。</translation>
+    </message>
+    <message>
+        <source>Could not create a canvas from the clipboard image.</source>
+        <translation>無法從剪貼簿影像建立畫布。</translation>
+    </message>
+    <message>
+        <source>Some layer or effect masks are missing. The document may look different. Use Save As to keep the original file.</source>
+        <translation>部分圖層遮色片或效果遮色片遺失。文件外觀可能不同。請使用「另存新檔」保留原始檔案。</translation>
+    </message>
         <message>
             <source>Rotate Straight Ruler Left</source>
             <translation>向左旋轉直線尺規</translation>
@@ -1089,6 +1109,10 @@
 </context>
     <context>
         <name>BasicPen</name>
+    <message>
+        <source>The brush library could not be saved.</source>
+        <translation>無法儲存筆刷資料庫。</translation>
+    </message>
         <message>
             <source>Basic Settings</source>
             <translation>基礎設定</translation>
@@ -4993,6 +5017,10 @@ After refreshing the token, any agents registered to this LoomStroke MCP server 
         <source>Clear the layer filter</source>
         <translation>清除圖層篩選</translation>
     </message>
+    <message>
+        <source>The generation record could not be deleted.</source>
+        <translation>無法刪除生成紀錄。</translation>
+    </message>
 </context>
 <context>
     <name>TransformPanel</name>
@@ -7165,8 +7193,8 @@ Select a file to recover.</source>
         <translation>API金鑰無法儲存到金鑰環中。請檢視日誌獲取詳細資訊並重試。</translation>
     </message>
     <message>
-        <source>{name} uses Google Gemini's API. The key is stored encrypted in your OS keyring and is read only when you press Generate.</source>
-        <translation>{name} 使用 Google Gemini 的 API。金鑰已加密儲存在您的作業系統金鑰環中，僅在您點選生成時讀取。</translation>
+        <source>{name} API key is stored in your OS keyring and read only when you make a request.</source>
+        <translation>{name} API 金鑰儲存在作業系統鑰匙圈中，僅在傳送請求時讀取。</translation>
     </message>
 </context>
 <context>
@@ -8466,6 +8494,10 @@ Failed to initialise the GPU compositor. Please update your graphics driver and 
     <message>
         <source>Values applied to this layer.</source>
         <translation>這些值已應用到該圖層。</translation>
+    </message>
+    <message>
+        <source>ComfyUI did not finish loading. Check the server connection and reload nodes.</source>
+        <translation>ComfyUI 未成功載入。請檢查伺服器連線並重新載入節點。</translation>
     </message>
 </context>
 <context>
@@ -12324,6 +12356,22 @@ Please check that all image paths in your workflow are valid.
 <context>
     <name>ExportPrintDialog</name>
     <message>
+        <source>PDF/X-1a candidate</source>
+        <translation>PDF/X-1a 候選檔案（需手動驗證）</translation>
+    </message>
+    <message>
+        <source>PDF/X-4 candidate</source>
+        <translation>PDF/X-4 候選檔案（需手動驗證）</translation>
+    </message>
+    <message>
+        <source>Verify the PDF/X candidate in callas pdfToolbox Desktop before submission.</source>
+        <translation>送印前請用 callas pdfToolbox Desktop 驗證 PDF/X 候選檔案。</translation>
+    </message>
+    <message>
+        <source>PDF/X candidates do not support margin information.</source>
+        <translation>PDF/X 候選檔案不支援頁邊資訊。</translation>
+    </message>
+    <message>
         <source>A CMYK profile is required for CMYK output.</source>
         <translation>輸出CMYK格式時需要CMYK色彩配置檔案。</translation>
     </message>
@@ -12578,6 +12626,58 @@ Please check that all image paths in your workflow are valid.
     <message>
         <source>{count} page(s) will be exported.</source>
         <translation>{count} 頁將被匯出。</translation>
+    </message>
+    <message>
+        <source>Preset:</source>
+        <translation>預設:</translation>
+    </message>
+    <message>
+        <source>Grayscale TIFF sequence</source>
+        <translation>灰階 TIFF 序列</translation>
+    </message>
+    <message>
+        <source>1-bit TIFF sequence</source>
+        <translation>1-bit TIFF 序列</translation>
+    </message>
+    <message>
+        <source>8-bit grayscale TIFF, one file per page.</source>
+        <translation>每頁輸出一個 8-bit 灰階 TIFF 檔案。</translation>
+    </message>
+    <message>
+        <source>1-bit black-and-white TIFF, one file per page.</source>
+        <translation>每頁輸出一個黑白 1-bit TIFF 檔案。</translation>
+    </message>
+    <message>
+        <source>1-bit conversion</source>
+        <translation>1-bit 轉換</translation>
+    </message>
+    <message>
+        <source>Threshold:</source>
+        <translation>閾值:</translation>
+    </message>
+    <message>
+        <source>Method:</source>
+        <translation>方法:</translation>
+    </message>
+    <message>
+        <source>Threshold</source>
+        <translation>閾值</translation>
+    </message>
+    <message>
+        <source>Ordered 4x4 dither</source>
+        <translation>有序 4x4 抖動</translation>
+    </message>
+    <message>
+        <source>The selected print preset does not match every page's format and DPI.</source>
+        <translation>所選印刷預設的頁面格式和 DPI 與部分目標頁面不符。</translation>
+    </message>
+    <message>
+        <source>The saved CMYK profile must be loaded again.</source>
+        <translation>必須重新載入已儲存的 CMYK 描述檔。</translation>
+    </message>
+    <message>
+        <source>Could not save the format preset.</source>
+        <translation>無法儲存印刷預設。</translation>
     </message>
 </context>
 <context>
@@ -14840,6 +14940,14 @@ After refreshing the token, any agents registered to this LoomStroke MCP server 
         <translation>無法儲存文件：{path}
 {error}</translation>
     </message>
+    <message>
+        <source>No SVG-compatible vector objects to export.</source>
+        <translation>沒有可匯出為 SVG 的向量物件。</translation>
+    </message>
+    <message>
+        <source>The current SVG export omits groups, layer placement, enabled masks, unsupported blend modes, and live filters.</source>
+        <translation>目前的 SVG 匯出會省略群組、圖層位置、已啟用的遮罩、不支援的混合模式與即時濾鏡。</translation>
+    </message>
 </context>
 <context>
     <name>MainWindowEditShapeActionsCoordinator</name>
@@ -15841,6 +15949,10 @@ Operation: {operation}
 </context>
 <context>
     <name>NewDocumentDialog</name>
+    <message>
+        <source>Include Bleed</source>
+        <translation>包含出血</translation>
+    </message>
     <message>
         <source>AI</source>
         <translation>AI</translation>
@@ -17414,6 +17526,10 @@ Type: {type}</source>
         <source>{count} plugin(s) loaded</source>
         <translation>已載入 {count} 個外掛</translation>
     </message>
+    <message>
+        <source>Failed</source>
+        <translation>失敗</translation>
+    </message>
 </context>
 <context>
     <name>PluginUpdateDialog</name>
@@ -17643,8 +17759,8 @@ Type: {type}</source>
         <translation>當前黑色（RGB）</translation>
     </message>
     <message>
-        <source>Japanese corner (current)</source>
-        <translation>日語角 (當前)</translation>
+        <source>Japanese corner</source>
+        <translation>日語角</translation>
     </message>
     <message>
         <source>Japanese double</source>
@@ -18543,6 +18659,18 @@ Type: {type}</source>
     <message>
         <source>Ollama's default context is short and silently cuts the start of long prompts; raise it with OLLAMA_CONTEXT_LENGTH or the model's num_ctx.</source>
         <translation>Ollama 預設上下文較短，會在不提示的情況下截斷長提示詞的開頭；請用 OLLAMA_CONTEXT_LENGTH 或模型的 num_ctx 調大。</translation>
+    </message>
+    <message>
+        <source>Aa</source>
+        <translation>Aa</translation>
+    </message>
+    <message>
+        <source>Display name</source>
+        <translation>顯示名稱</translation>
+    </message>
+    <message>
+        <source>Item</source>
+        <translation>專案</translation>
     </message>
 </context>
 <context>
@@ -21247,6 +21375,46 @@ Do you want to save them?</source>
 </context>
 <context>
     <name>__shared__</name>
+    <message>
+        <source>Include Bleed</source>
+        <translation>包含出血</translation>
+    </message>
+    <message>
+        <source>PDF/X-1a candidate</source>
+        <translation>PDF/X-1a 候選檔案（需手動驗證）</translation>
+    </message>
+    <message>
+        <source>PDF/X-4 candidate</source>
+        <translation>PDF/X-4 候選檔案（需手動驗證）</translation>
+    </message>
+    <message>
+        <source>Verify the PDF/X candidate in callas pdfToolbox Desktop before submission.</source>
+        <translation>送印前請用 callas pdfToolbox Desktop 驗證 PDF/X 候選檔案。</translation>
+    </message>
+    <message>
+        <source>PDF/X candidates do not support margin information.</source>
+        <translation>PDF/X 候選檔案不支援頁邊資訊。</translation>
+    </message>
+    <message>
+        <source>Could not create a canvas from the clipboard image.</source>
+        <translation>無法從剪貼簿影像建立畫布。</translation>
+    </message>
+    <message>
+        <source>Created a canvas from the clipboard image.</source>
+        <translation>已從剪貼簿影像建立畫布。</translation>
+    </message>
+    <message>
+        <source>New Canvas from Clipboard Image</source>
+        <translation>從剪貼簿影像建立新畫布</translation>
+    </message>
+    <message>
+        <source>The brush library could not be saved.</source>
+        <translation>無法儲存筆刷資料庫。</translation>
+    </message>
+    <message>
+        <source>Some layer or effect masks are missing. The document may look different. Use Save As to keep the original file.</source>
+        <translation>部分圖層遮色片或效果遮色片遺失。文件外觀可能不同。請使用「另存新檔」保留原始檔案。</translation>
+    </message>
     <message>
         <source>Straight Ruler</source>
         <translation>直線尺規</translation>
@@ -27966,8 +28134,8 @@ Select a file to recover.</source>
         <translation>日語</translation>
     </message>
     <message>
-        <source>Japanese corner (current)</source>
-        <translation>日語角 (當前)</translation>
+        <source>Japanese corner</source>
+        <translation>日語角</translation>
     </message>
     <message>
         <source>Japanese double</source>
@@ -36182,8 +36350,8 @@ Drag onto the canvas to place</source>
         <translation>{name} 不是受支援的影象格式。</translation>
     </message>
     <message>
-        <source>{name} uses Google Gemini's API. The key is stored encrypted in your OS keyring and is read only when you press Generate.</source>
-        <translation>{name} 使用 Google Gemini 的 API。金鑰已加密儲存在您的作業系統金鑰環中，僅在您點選生成時讀取。</translation>
+        <source>{name} API key is stored in your OS keyring and read only when you make a request.</source>
+        <translation>{name} API 金鑰儲存在作業系統鑰匙圈中，僅在傳送請求時讀取。</translation>
     </message>
     <message>
         <source>{pending} pending, {running} running</source>
@@ -36588,6 +36756,406 @@ Click to show as panel</source>
     <message>
         <source>Walking</source>
         <translation>行走</translation>
+    </message>
+    <message>
+        <source>AI Settings</source>
+        <translation>AI 設定</translation>
+    </message>
+    <message>
+        <source>Aa</source>
+        <translation>Aa</translation>
+    </message>
+    <message>
+        <source>Add basic shape</source>
+        <translation>新增基本圖形</translation>
+    </message>
+    <message>
+        <source>Add potion</source>
+        <translation>新增藥水</translation>
+    </message>
+    <message>
+        <source>Advanced API parameters (JSON)</source>
+        <translation>進階 API 參數（JSON）</translation>
+    </message>
+    <message>
+        <source>Advanced API parameters (JSON; overrides controls)</source>
+        <translation>進階 API 參數（JSON，會覆寫畫面設定）</translation>
+    </message>
+    <message>
+        <source>Advanced Settings</source>
+        <translation>進階設定</translation>
+    </message>
+    <message>
+        <source>Basic shape</source>
+        <translation>基本圖形</translation>
+    </message>
+    <message>
+        <source>Character Reference</source>
+        <translation>角色參考</translation>
+    </message>
+    <message>
+        <source>Character and Style</source>
+        <translation>角色與風格</translation>
+    </message>
+    <message>
+        <source>Collapse AI Settings</source>
+        <translation>收合 AI 設定</translation>
+    </message>
+    <message>
+        <source>Colorize</source>
+        <translation>上色</translation>
+    </message>
+    <message>
+        <source>Could not add basic shape</source>
+        <translation>無法新增基本圖形</translation>
+    </message>
+    <message>
+        <source>Create variation from Gallery image</source>
+        <translation>從圖庫影像產生變體</translation>
+    </message>
+    <message>
+        <source>Cube</source>
+        <translation>立方體</translation>
+    </message>
+    <message>
+        <source>Cylinder</source>
+        <translation>圓柱體</translation>
+    </message>
+    <message>
+        <source>Director Tool</source>
+        <translation>導演工具</translation>
+    </message>
+    <message>
+        <source>Director Tools</source>
+        <translation>導演工具</translation>
+    </message>
+    <message>
+        <source>Emotion</source>
+        <translation>情緒</translation>
+    </message>
+    <message>
+        <source>External AI services are disabled</source>
+        <translation>外部 AI 服務已停用</translation>
+    </message>
+    <message>
+        <source>Image Generation</source>
+        <translation>影像生成</translation>
+    </message>
+    <message>
+        <source>Image Resolution</source>
+        <translation>影像解析度</translation>
+    </message>
+    <message>
+        <source>Image Settings</source>
+        <translation>影像設定</translation>
+    </message>
+    <message>
+        <source>Image2Image</source>
+        <translation>以圖生圖</translation>
+    </message>
+    <message>
+        <source>Information Extracted</source>
+        <translation>資訊擷取量</translation>
+    </message>
+    <message>
+        <source>Inpaint (current selection)</source>
+        <translation>局部重繪（目前選取範圍）</translation>
+    </message>
+    <message>
+        <source>Input layer</source>
+        <translation>輸入圖層</translation>
+    </message>
+    <message>
+        <source>Large</source>
+        <translation>大尺寸</translation>
+    </message>
+    <message>
+        <source>Large Landscape</source>
+        <translation>大尺寸橫式</translation>
+    </message>
+    <message>
+        <source>Large Portrait</source>
+        <translation>大尺寸直式</translation>
+    </message>
+    <message>
+        <source>Large Square</source>
+        <translation>大尺寸正方形</translation>
+    </message>
+    <message>
+        <source>Light position</source>
+        <translation>光源位置</translation>
+    </message>
+    <message>
+        <source>Light position in 3D scene coordinates</source>
+        <translation>3D 場景座標中的光源位置</translation>
+    </message>
+    <message>
+        <source>Line Art</source>
+        <translation>線稿</translation>
+    </message>
+    <message>
+        <source>Line art</source>
+        <translation>線稿</translation>
+    </message>
+    <message>
+        <source>No SVG-compatible vector objects to export.</source>
+        <translation>沒有可匯出為 SVG 的向量物件。</translation>
+    </message>
+    <message>
+        <source>No tags found</source>
+        <translation>找不到標籤</translation>
+    </message>
+    <message>
+        <source>Noise</source>
+        <translation>雜訊</translation>
+    </message>
+    <message>
+        <source>Noise Schedule</source>
+        <translation>雜訊排程</translation>
+    </message>
+    <message>
+        <source>Normal Landscape</source>
+        <translation>標準尺寸橫式</translation>
+    </message>
+    <message>
+        <source>Normal Portrait</source>
+        <translation>標準尺寸直式</translation>
+    </message>
+    <message>
+        <source>Normal Square</source>
+        <translation>標準尺寸正方形</translation>
+    </message>
+    <message>
+        <source>NovelAI Potion (Vibe Transfer)</source>
+        <translation>NovelAI 藥水（氛圍轉移）</translation>
+    </message>
+    <message>
+        <source>NovelAI generation cancelled</source>
+        <translation>已取消 NovelAI 生成</translation>
+    </message>
+    <message>
+        <source>NovelAI image added to layer</source>
+        <translation>已將 NovelAI 影像加入圖層</translation>
+    </message>
+    <message>
+        <source>Number of Images</source>
+        <translation>影像張數</translation>
+    </message>
+    <message>
+        <source>OpenPose JSON</source>
+        <translation>OpenPose JSON</translation>
+    </message>
+    <message>
+        <source>Prompt Guidance</source>
+        <translation>提示詞引導強度</translation>
+    </message>
+    <message>
+        <source>Prompt Guidance Rescale</source>
+        <translation>提示詞引導重新縮放</translation>
+    </message>
+    <message>
+        <source>Reference layer</source>
+        <translation>參考圖層</translation>
+    </message>
+    <message>
+        <source>Reference mode</source>
+        <translation>參考模式</translation>
+    </message>
+    <message>
+        <source>Reference strength</source>
+        <translation>參考強度</translation>
+    </message>
+    <message>
+        <source>Refresh layers</source>
+        <translation>重新整理圖層</translation>
+    </message>
+    <message>
+        <source>Remove Background</source>
+        <translation>移除背景</translation>
+    </message>
+    <message>
+        <source>Remove background</source>
+        <translation>移除背景</translation>
+    </message>
+    <message>
+        <source>Sampler</source>
+        <translation>取樣器</translation>
+    </message>
+    <message>
+        <source>Saved workflow: {name}</source>
+        <translation>已儲存工作流程：{name}</translation>
+    </message>
+    <message>
+        <source>Seed must be between 0 and 4294967295</source>
+        <translation>隨機種子必須介於 0 和 4294967295 之間</translation>
+    </message>
+    <message>
+        <source>Small</source>
+        <translation>小尺寸</translation>
+    </message>
+    <message>
+        <source>Small Landscape</source>
+        <translation>小尺寸橫式</translation>
+    </message>
+    <message>
+        <source>Small Portrait</source>
+        <translation>小尺寸直式</translation>
+    </message>
+    <message>
+        <source>Small Square</source>
+        <translation>小尺寸正方形</translation>
+    </message>
+    <message>
+        <source>Sphere</source>
+        <translation>球體</translation>
+    </message>
+    <message>
+        <source>Steps</source>
+        <translation>步數</translation>
+    </message>
+    <message>
+        <source>Style Reference</source>
+        <translation>風格參考</translation>
+    </message>
+    <message>
+        <source>Suggest tags</source>
+        <translation>建議標籤</translation>
+    </message>
+    <message>
+        <source>Swap width and height</source>
+        <translation>交換寬度與高度</translation>
+    </message>
+    <message>
+        <source>Tag fragment for suggestions</source>
+        <translation>用於取得建議的標籤片段</translation>
+    </message>
+    <message>
+        <source>The current SVG export omits groups, layer placement, enabled masks, unsupported blend modes, and live filters.</source>
+        <translation>目前的 SVG 匯出會省略群組、圖層位置、已啟用的遮罩、不支援的混合模式與即時濾鏡。</translation>
+    </message>
+    <message>
+        <source>The generation record could not be deleted.</source>
+        <translation>無法刪除生成紀錄。</translation>
+    </message>
+    <message>
+        <source>Undesired Content</source>
+        <translation>不需要的內容</translation>
+    </message>
+    <message>
+        <source>Upscale</source>
+        <translation>放大影像</translation>
+    </message>
+    <message>
+        <source>Variety</source>
+        <translation>多樣性</translation>
+    </message>
+    <message>
+        <source>Vibe Transfer</source>
+        <translation>氛圍轉移</translation>
+    </message>
+    <message>
+        <source>Wallpaper</source>
+        <translation>桌布尺寸</translation>
+    </message>
+    <message>
+        <source>Wallpaper Landscape</source>
+        <translation>橫式桌布</translation>
+    </message>
+    <message>
+        <source>Wallpaper Portrait</source>
+        <translation>直式桌布</translation>
+    </message>
+    <message>
+        <source>exponential</source>
+        <translation>指數</translation>
+    </message>
+    <message>
+        <source>karras</source>
+        <translation>karras</translation>
+    </message>
+    <message>
+        <source>polyexponential</source>
+        <translation>多項指數</translation>
+    </message>
+    <message>
+        <source>{name} uses Google Gemini's API. The key is stored encrypted in your OS keyring and is read only when you press Generate.</source>
+        <translation>{name} 使用 Google Gemini 的 API。金鑰會加密儲存在作業系統的鑰匙圈，只有在您按下「生成」時才會讀取。</translation>
+    </message>
+    <message>
+        <source>Grayscale TIFF sequence</source>
+        <translation>灰階 TIFF 序列</translation>
+    </message>
+    <message>
+        <source>1-bit TIFF sequence</source>
+        <translation>1-bit TIFF 序列</translation>
+    </message>
+    <message>
+        <source>8-bit grayscale TIFF, one file per page.</source>
+        <translation>每頁輸出一個 8-bit 灰階 TIFF 檔案。</translation>
+    </message>
+    <message>
+        <source>1-bit black-and-white TIFF, one file per page.</source>
+        <translation>每頁輸出一個黑白 1-bit TIFF 檔案。</translation>
+    </message>
+    <message>
+        <source>1-bit conversion</source>
+        <translation>1-bit 轉換</translation>
+    </message>
+    <message>
+        <source>Threshold:</source>
+        <translation>閾值:</translation>
+    </message>
+    <message>
+        <source>Method:</source>
+        <translation>方法:</translation>
+    </message>
+    <message>
+        <source>Ordered 4x4 dither</source>
+        <translation>有序 4x4 抖動</translation>
+    </message>
+    <message>
+        <source>The selected print preset does not match every page's format and DPI.</source>
+        <translation>所選印刷預設的頁面格式和 DPI 與部分目標頁面不符。</translation>
+    </message>
+    <message>
+        <source>The saved CMYK profile must be loaded again.</source>
+        <translation>必須重新載入已儲存的 CMYK 描述檔。</translation>
+    </message>
+    <message>
+        <source>Added noise</source>
+        <translation>Added noise</translation>
+    </message>
+    <message>
+        <source>Change strength (i2i)</source>
+        <translation>Change strength (i2i)</translation>
+    </message>
+    <message>
+        <source>Enlarge</source>
+        <translation>Enlarge</translation>
+    </message>
+    <message>
+        <source>Input Image</source>
+        <translation>Input Image</translation>
+    </message>
+    <message>
+        <source>Randomize</source>
+        <translation>Randomize</translation>
+    </message>
+    <message>
+        <source>References</source>
+        <translation>References</translation>
+    </message>
+    <message>
+        <source>Reuse last seed</source>
+        <translation>Reuse last seed</translation>
+    </message>
+    <message>
+        <source>i2i</source>
+        <translation>i2i</translation>
+    </message>
+    <message>
+        <source>{count} items</source>
+        <translation>{count} items</translation>
     </message>
 </context>
 <context>
@@ -37810,6 +38378,10 @@ Click to show as panel</source>
         <source>Right Ankle</source>
         <translation>右腳踝</translation>
     </message>
+    <message>
+        <source>OpenPose JSON</source>
+        <translation>OpenPose JSON</translation>
+    </message>
 </context>
 <context>
     <name>DrawingFigureToolbarWidget</name>
@@ -37925,6 +38497,556 @@ Click to show as panel</source>
     <message>
         <source>Could not add basic shape</source>
         <translation>無法新增基本圖形</translation>
+    </message>
+</context>
+<context>
+    <name>AISettingsWidget</name>
+    <message>
+        <source>AI Settings</source>
+        <translation>AI 設定</translation>
+    </message>
+    <message>
+        <source>Advanced Settings</source>
+        <translation>進階設定</translation>
+    </message>
+    <message>
+        <source>Collapse AI Settings</source>
+        <translation>收合 AI 設定</translation>
+    </message>
+    <message>
+        <source>Noise Schedule</source>
+        <translation>雜訊排程</translation>
+    </message>
+    <message>
+        <source>Prompt Guidance</source>
+        <translation>提示詞引導強度</translation>
+    </message>
+    <message>
+        <source>Prompt Guidance Rescale</source>
+        <translation>提示詞引導重新縮放</translation>
+    </message>
+    <message>
+        <source>Random</source>
+        <translation>隨機</translation>
+    </message>
+    <message>
+        <source>Reset</source>
+        <translation>重設</translation>
+    </message>
+    <message>
+        <source>Sampler</source>
+        <translation>取樣器</translation>
+    </message>
+    <message>
+        <source>Seed</source>
+        <translation>種子</translation>
+    </message>
+    <message>
+        <source>Seed must be between 0 and 4294967295</source>
+        <translation>隨機種子必須介於 0 和 4294967295 之間</translation>
+    </message>
+    <message>
+        <source>Steps</source>
+        <translation>步數</translation>
+    </message>
+    <message>
+        <source>Variety</source>
+        <translation>多樣性</translation>
+    </message>
+    <message>
+        <source>Randomize</source>
+        <translation>Randomize</translation>
+    </message>
+    <message>
+        <source>Reuse last seed</source>
+        <translation>Reuse last seed</translation>
+    </message>
+</context>
+<context>
+    <name>ImageSettingsWidget</name>
+    <message>
+        <source>Image Resolution</source>
+        <translation>影像解析度</translation>
+    </message>
+    <message>
+        <source>Image Settings</source>
+        <translation>影像設定</translation>
+    </message>
+    <message>
+        <source>Number of Images</source>
+        <translation>影像張數</translation>
+    </message>
+    <message>
+        <source>Swap width and height</source>
+        <translation>交換寬度與高度</translation>
+    </message>
+</context>
+<context>
+    <name>NovelAIPanel</name>
+    <message>
+        <source>&lt;New Layer&gt;</source>
+        <translation>&lt;新增圖層&gt;</translation>
+    </message>
+    <message>
+        <source>AI Settings</source>
+        <translation>AI 設定</translation>
+    </message>
+    <message>
+        <source>Add potion</source>
+        <translation>新增藥水</translation>
+    </message>
+    <message>
+        <source>Advanced API parameters (JSON)</source>
+        <translation>進階 API 參數（JSON）</translation>
+    </message>
+    <message>
+        <source>Advanced API parameters (JSON; overrides controls)</source>
+        <translation>進階 API 參數（JSON，會覆寫畫面設定）</translation>
+    </message>
+    <message>
+        <source>Advanced Settings</source>
+        <translation>進階設定</translation>
+    </message>
+    <message>
+        <source>Character Reference</source>
+        <translation>角色參考</translation>
+    </message>
+    <message>
+        <source>Character and Style</source>
+        <translation>角色與風格</translation>
+    </message>
+    <message>
+        <source>Collapse AI Settings</source>
+        <translation>收合 AI 設定</translation>
+    </message>
+    <message>
+        <source>Colorize</source>
+        <translation>上色</translation>
+    </message>
+    <message>
+        <source>Create variation from Gallery image</source>
+        <translation>從圖庫影像產生變體</translation>
+    </message>
+    <message>
+        <source>Custom</source>
+        <translation>自定義</translation>
+    </message>
+    <message>
+        <source>Director Tool</source>
+        <translation>導演工具</translation>
+    </message>
+    <message>
+        <source>Director Tools</source>
+        <translation>導演工具</translation>
+    </message>
+    <message>
+        <source>Emotion</source>
+        <translation>情緒</translation>
+    </message>
+    <message>
+        <source>Enter prompt text...</source>
+        <translation>輸入提示文字...</translation>
+    </message>
+    <message>
+        <source>External AI services are disabled</source>
+        <translation>外部 AI 服務已停用</translation>
+    </message>
+    <message>
+        <source>Generate</source>
+        <translation>生成</translation>
+    </message>
+    <message>
+        <source>Height</source>
+        <translation>高度</translation>
+    </message>
+    <message>
+        <source>Image Generation</source>
+        <translation>影像生成</translation>
+    </message>
+    <message>
+        <source>Image Resolution</source>
+        <translation>影像解析度</translation>
+    </message>
+    <message>
+        <source>Image Settings</source>
+        <translation>影像設定</translation>
+    </message>
+    <message>
+        <source>Image2Image</source>
+        <translation>以圖生圖</translation>
+    </message>
+    <message>
+        <source>Information Extracted</source>
+        <translation>資訊擷取量</translation>
+    </message>
+    <message>
+        <source>Inpaint (current selection)</source>
+        <translation>局部重繪（目前選取範圍）</translation>
+    </message>
+    <message>
+        <source>Input layer</source>
+        <translation>輸入圖層</translation>
+    </message>
+    <message>
+        <source>Landscape</source>
+        <translation>風景</translation>
+    </message>
+    <message>
+        <source>Large</source>
+        <translation>大尺寸</translation>
+    </message>
+    <message>
+        <source>Large Landscape</source>
+        <translation>大尺寸橫式</translation>
+    </message>
+    <message>
+        <source>Large Portrait</source>
+        <translation>大尺寸直式</translation>
+    </message>
+    <message>
+        <source>Large Square</source>
+        <translation>大尺寸正方形</translation>
+    </message>
+    <message>
+        <source>Line Art</source>
+        <translation>線稿</translation>
+    </message>
+    <message>
+        <source>Line art</source>
+        <translation>線稿</translation>
+    </message>
+    <message>
+        <source>Live prompt</source>
+        <translation>實時提示</translation>
+    </message>
+    <message>
+        <source>Mode</source>
+        <translation>模式</translation>
+    </message>
+    <message>
+        <source>Model</source>
+        <translation>模型</translation>
+    </message>
+    <message>
+        <source>No tags found</source>
+        <translation>找不到標籤</translation>
+    </message>
+    <message>
+        <source>Noise</source>
+        <translation>雜訊</translation>
+    </message>
+    <message>
+        <source>Noise Schedule</source>
+        <translation>雜訊排程</translation>
+    </message>
+    <message>
+        <source>None</source>
+        <translation>無</translation>
+    </message>
+    <message>
+        <source>Normal</source>
+        <translation>正常</translation>
+    </message>
+    <message>
+        <source>Normal Landscape</source>
+        <translation>標準尺寸橫式</translation>
+    </message>
+    <message>
+        <source>Normal Portrait</source>
+        <translation>標準尺寸直式</translation>
+    </message>
+    <message>
+        <source>Normal Square</source>
+        <translation>標準尺寸正方形</translation>
+    </message>
+    <message>
+        <source>Nothing</source>
+        <translation>無</translation>
+    </message>
+    <message>
+        <source>NovelAI Potion (Vibe Transfer)</source>
+        <translation>NovelAI 藥水（氛圍轉移）</translation>
+    </message>
+    <message>
+        <source>NovelAI generation cancelled</source>
+        <translation>已取消 NovelAI 生成</translation>
+    </message>
+    <message>
+        <source>NovelAI image added to layer</source>
+        <translation>已將 NovelAI 影像加入圖層</translation>
+    </message>
+    <message>
+        <source>Number of Images</source>
+        <translation>影像張數</translation>
+    </message>
+    <message>
+        <source>Portrait</source>
+        <translation>肖像</translation>
+    </message>
+    <message>
+        <source>Prompt Guidance</source>
+        <translation>提示詞引導強度</translation>
+    </message>
+    <message>
+        <source>Prompt Guidance Rescale</source>
+        <translation>提示詞引導重新縮放</translation>
+    </message>
+    <message>
+        <source>Random</source>
+        <translation>隨機</translation>
+    </message>
+    <message>
+        <source>Reference layer</source>
+        <translation>參考圖層</translation>
+    </message>
+    <message>
+        <source>Reference mode</source>
+        <translation>參考模式</translation>
+    </message>
+    <message>
+        <source>Reference strength</source>
+        <translation>參考強度</translation>
+    </message>
+    <message>
+        <source>Refresh layers</source>
+        <translation>重新整理圖層</translation>
+    </message>
+    <message>
+        <source>Remove</source>
+        <translation>移除</translation>
+    </message>
+    <message>
+        <source>Remove Background</source>
+        <translation>移除背景</translation>
+    </message>
+    <message>
+        <source>Remove background</source>
+        <translation>移除背景</translation>
+    </message>
+    <message>
+        <source>Reset</source>
+        <translation>重設</translation>
+    </message>
+    <message>
+        <source>Sampler</source>
+        <translation>取樣器</translation>
+    </message>
+    <message>
+        <source>Seed</source>
+        <translation>種子</translation>
+    </message>
+    <message>
+        <source>Seed must be between 0 and 4294967295</source>
+        <translation>隨機種子必須介於 0 和 4294967295 之間</translation>
+    </message>
+    <message>
+        <source>Sketch</source>
+        <translation>素描</translation>
+    </message>
+    <message>
+        <source>Small</source>
+        <translation>小尺寸</translation>
+    </message>
+    <message>
+        <source>Small Landscape</source>
+        <translation>小尺寸橫式</translation>
+    </message>
+    <message>
+        <source>Small Portrait</source>
+        <translation>小尺寸直式</translation>
+    </message>
+    <message>
+        <source>Small Square</source>
+        <translation>小尺寸正方形</translation>
+    </message>
+    <message>
+        <source>Square</source>
+        <translation>方形</translation>
+    </message>
+    <message>
+        <source>Steps</source>
+        <translation>步數</translation>
+    </message>
+    <message>
+        <source>Strength</source>
+        <translation>強度</translation>
+    </message>
+    <message>
+        <source>Style Reference</source>
+        <translation>風格參考</translation>
+    </message>
+    <message>
+        <source>Suggest tags</source>
+        <translation>建議標籤</translation>
+    </message>
+    <message>
+        <source>Swap width and height</source>
+        <translation>交換寬度與高度</translation>
+    </message>
+    <message>
+        <source>Tag fragment for suggestions</source>
+        <translation>用於取得建議的標籤片段</translation>
+    </message>
+    <message>
+        <source>Target layer</source>
+        <translation>目標圖層</translation>
+    </message>
+    <message>
+        <source>Undesired Content</source>
+        <translation>不需要的內容</translation>
+    </message>
+    <message>
+        <source>Upscale</source>
+        <translation>放大影像</translation>
+    </message>
+    <message>
+        <source>Variety</source>
+        <translation>多樣性</translation>
+    </message>
+    <message>
+        <source>Vibe Transfer</source>
+        <translation>氛圍轉移</translation>
+    </message>
+    <message>
+        <source>Wallpaper</source>
+        <translation>桌布尺寸</translation>
+    </message>
+    <message>
+        <source>Wallpaper Landscape</source>
+        <translation>橫式桌布</translation>
+    </message>
+    <message>
+        <source>Wallpaper Portrait</source>
+        <translation>直式桌布</translation>
+    </message>
+    <message>
+        <source>Width</source>
+        <translation>寬度</translation>
+    </message>
+    <message>
+        <source>exponential</source>
+        <translation>指數</translation>
+    </message>
+    <message>
+        <source>karras</source>
+        <translation>karras</translation>
+    </message>
+    <message>
+        <source>polyexponential</source>
+        <translation>多項指數</translation>
+    </message>
+    <message>
+        <source>Added noise</source>
+        <translation>Added noise</translation>
+    </message>
+    <message>
+        <source>Change strength (i2i)</source>
+        <translation>Change strength (i2i)</translation>
+    </message>
+    <message>
+        <source>Enlarge</source>
+        <translation>Enlarge</translation>
+    </message>
+    <message>
+        <source>Inpaint</source>
+        <translation>Inpaint</translation>
+    </message>
+    <message>
+        <source>Input Image</source>
+        <translation>Input Image</translation>
+    </message>
+    <message>
+        <source>Randomize</source>
+        <translation>Randomize</translation>
+    </message>
+    <message>
+        <source>References</source>
+        <translation>References</translation>
+    </message>
+    <message>
+        <source>Reuse last seed</source>
+        <translation>Reuse last seed</translation>
+    </message>
+    <message>
+        <source>Tools</source>
+        <translation>Tools</translation>
+    </message>
+    <message>
+        <source>i2i</source>
+        <translation>i2i</translation>
+    </message>
+    <message>
+        <source>{count} items</source>
+        <translation>{count} items</translation>
+    </message>
+</context>
+<context>
+    <name>NovelAIPanelPlugin</name>
+    <message>
+        <source>No tags found</source>
+        <translation>找不到標籤</translation>
+    </message>
+    <message>
+        <source>NovelAI generation cancelled</source>
+        <translation>已取消 NovelAI 生成</translation>
+    </message>
+    <message>
+        <source>NovelAI image added to layer</source>
+        <translation>已將 NovelAI 影像加入圖層</translation>
+    </message>
+</context>
+<context>
+    <name>VibeReferencesWidget</name>
+    <message>
+        <source>Add potion</source>
+        <translation>新增藥水</translation>
+    </message>
+    <message>
+        <source>Information Extracted</source>
+        <translation>資訊擷取量</translation>
+    </message>
+    <message>
+        <source>Nothing</source>
+        <translation>無</translation>
+    </message>
+    <message>
+        <source>NovelAI Potion (Vibe Transfer)</source>
+        <translation>NovelAI 藥水（氛圍轉移）</translation>
+    </message>
+    <message>
+        <source>Remove</source>
+        <translation>移除</translation>
+    </message>
+    <message>
+        <source>Strength</source>
+        <translation>強度</translation>
+    </message>
+</context>
+<context>
+    <name>_LibraryWriteFeedback</name>
+    <message>
+        <source>Shape Manager</source>
+        <translation>形狀管理器</translation>
+    </message>
+</context>
+<context>
+    <name>document_mask_recovery</name>
+    <message>
+        <source>Warning</source>
+        <translation>警告</translation>
+    </message>
+</context>
+<context>
+    <name>workflow_save_action</name>
+    <message>
+        <source>Failed to save workflow:
+{error}</source>
+        <translation>無法儲存工作流：
+{error}</translation>
+    </message>
+    <message>
+        <source>Saved workflow: {name}</source>
+        <translation>已儲存工作流程：{name}</translation>
     </message>
 </context>
 </TS>

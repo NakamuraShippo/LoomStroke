@@ -98,22 +98,33 @@ class DocumentStoryService:
             and (key[0] != self.pages.get_active_page_id() or str(obj.id) not in local_ids)
         ]
 
-    def edit_entries(self, new_object):
+    def edit_entries(self, new_object, *, layer_id=None):
         story = document_story(new_object)
         entries = self.entries([frame_key(frame) for frame in story["frames"]])
         current = self.pages.get_active_page_id()
-        if not any(key[0] == current and key[2] == str(new_object.id) for key, _ in entries):
+        matches = [
+            key
+            for key, _ in entries
+            if key[0] == current
+            and key[2] == str(new_object.id)
+            and (layer_id is None or key[1] == layer_id)
+        ]
+        if len(matches) != 1:
             raise ValueError("This copied text frame must be detached before editing its story.")
         return entries
 
-    def prepare(self, new_object):
+    def prepare(self, new_object, *, layer_id=None):
         story = document_story(new_object)
-        entries = self.edit_entries(new_object)
+        entries = self.edit_entries(new_object, layer_id=layer_id)
         current = self.pages.get_active_page_id()
-        entries = [
-            (key, new_object if key[0] == current and key[2] == str(new_object.id) else obj)
-            for key, obj in entries
-        ]
+        target = next(
+            key
+            for key, _ in entries
+            if key[0] == current
+            and key[2] == str(new_object.id)
+            and (layer_id is None or key[1] == layer_id)
+        )
+        entries = [(key, new_object if key == target else obj) for key, obj in entries]
         return DocumentStoryReplacement(
             self, assign_document_story(entries, new_object.meta["text_tool"], story["id"])
         )

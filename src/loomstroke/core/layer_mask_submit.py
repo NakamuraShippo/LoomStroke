@@ -113,7 +113,7 @@ class _PendingPaintReferences:
     """Return an unconsumed capture after a failed flush, using references only."""
 
     def __init__(
-        self, canvas: Any, scope: _MaskScope, capture: CanvasRasterPreimageCaptureService
+        self, canvas: Any, scope: _LayerCommandContext, capture: CanvasRasterPreimageCaptureService
     ) -> None:
         self.canvas, self.scope, self.capture = canvas, scope, capture
         self.fields = dict(_stored_state(capture))
@@ -168,7 +168,7 @@ class _PendingPaintReferences:
         current.update(self.fields)
 
 
-def _close_pending_mask_paint(canvas: Any, scope: _MaskScope) -> bool:
+def _close_pending_mask_paint(canvas: Any, scope: _LayerCommandContext) -> bool:
     state = _stored_state(canvas)
     capture = state.get("_txn_preimage_capture")
     if capture is not None and type(capture) is not CanvasRasterPreimageCaptureService:

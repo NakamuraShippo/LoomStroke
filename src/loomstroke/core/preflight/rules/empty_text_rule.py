@@ -4,6 +4,7 @@ from __future__ import annotations
 
 from typing import ClassVar
 
+from ..capability_missing import CapabilityMissing
 from ..document_preflight_snapshot import DocumentPreflightSnapshot
 from ..preflight_issue import IssueSeverity, PreflightIssue
 from ..preflight_profile import MangaPreflightProfile
@@ -20,6 +21,8 @@ class EmptyTextRule(PreflightRule):
     def evaluate(
         self, snapshot: DocumentPreflightSnapshot, profile: MangaPreflightProfile
     ) -> tuple[PreflightIssue, ...]:
+        if any(not page.hydrated for page in snapshot.pages):
+            raise CapabilityMissing("page_content_not_loaded")
         return tuple(
             self.issue(
                 profile,

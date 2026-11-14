@@ -35,7 +35,7 @@ def story_allows_edit(tool):
             service = getattr(tool.host_api.pages, "document_stories", None)
             if service is None:
                 return False
-            service.edit_entries(state.object_ref)
+            service.edit_entries(state.object_ref, layer_id=state.layer_id)
             return True
         story_objects(tool.host_api.canvas, [entry["id"] for entry in story["frames"]])
     except ValueError:

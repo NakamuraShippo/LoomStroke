@@ -132,7 +132,10 @@ class BrushManagerPanel(QWidget):
     def refresh_button_layout(self) -> None:
         self._update_button_layout(force=True)
 
-    def set_swatches(self, swatches: list[dict[str, Any]]) -> None:
+    def set_swatches(
+        self, swatches: list[dict[str, Any]], *, preserve_selection: bool = False
+    ) -> None:
+        selected = self.get_selected_swatch_id() if preserve_selection else None
         self._block_item_updates = True
         try:
             self._swatch_lookup = {swatch.get("id"): swatch for swatch in swatches}
@@ -156,6 +159,9 @@ class BrushManagerPanel(QWidget):
                         pix = self._tip_cache.get_pixmap(abs_path, icon_size.width())
                         item.setIcon(QIcon(pix))
             self._list.sortItems(Qt.SortOrder.AscendingOrder)
+            if selected is not None:
+                with QSignalBlocker(self._list):
+                    self.select_swatch(selected)
         finally:
             self._block_item_updates = False
 

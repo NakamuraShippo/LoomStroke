@@ -14,7 +14,7 @@ import logging
 import shutil
 import uuid
 import weakref
-from collections.abc import Mapping
+from collections.abc import Callable, Mapping
 from dataclasses import dataclass, field
 from pathlib import Path
 from typing import Any
@@ -22,10 +22,14 @@ from urllib.parse import unquote, urlsplit
 
 from loomstroke.core.events import Events, JobResultEvent
 from loomstroke.host_api import LayerRef
+from loomstroke.io.atomic_export_writer import write_atomically
 from loomstroke.platform.user_dirs import ensure_directory, plugin_data_dir
 from loomstroke.plugins.comfyui.output_targets import CREATE_NEW_3D_LAYER_ID
 from loomstroke.plugins.common.comfyui_history import (
+    _MISSING_SELECTED_IMAGE_OUTPUT_ERROR,
+    _SELECTED_MODEL_OUTPUT_ERROR,
     _STANDALONE_HISTORY_TIMEOUT_SEC,
+    _history_has_explicit_completion,
     _HistoryTerminalError,
     _raise_terminal_failure,
     history_completion,
@@ -33,6 +37,11 @@ from loomstroke.plugins.common.comfyui_history import (
 from loomstroke.plugins.common.outbound_policy import ensure_network_services_consent
 from loomstroke.plugins.sdk.base import JobResult
 
+from .generated_3d_output_commit import (
+    prepare_generated_3d_layer,
+    prepare_generated_3d_layers,
+    try_commit_new_generated_3d_layers,
+)
 from .job_cancellation import _JobTaskCleanup
 from .job_connection import (
     _capture_job_connection,
@@ -45,6 +54,7 @@ from .job_connection import (
     _stream_progress,
     _submit_workflow,
     _validate_workflow_nodes,
+    _wait_for_output_history,
 )
 from .service import ComfyUIService
 from .workflow_model import WorkflowModel
@@ -244,15 +254,11 @@ class ExtendedComfyUIService(ComfyUIService):
             workflow: Workflow model to save
             filepath: Target file path
         """
-        # Ensure parent directory exists
-        filepath.parent.mkdir(parents=True, exist_ok=True)
-
-        # Convert to JSON
         data = workflow.to_json()
         json_content = json.dumps(data, indent=2)
-
-        # Write file using helper with fallback
-        await _write_text_async(filepath, json_content)
+        await asyncio.to_thread(
+            write_atomically, filepath, lambda tmp: tmp.write_text(json_content, encoding="utf-8")
+        )
 
         # Update cache
         self._workflow_cache[str(filepath)] = workflow
@@ -745,11 +751,6 @@ class ExtendedComfyUIService(ComfyUIService):
         cancelled = False
         history_entry: dict[str, Any] | None = None
         stream_result: JobResult | None = None
-        deadline = (
-            asyncio.get_running_loop().time() + _STANDALONE_HISTORY_TIMEOUT_SEC
-            if _history_only
-            else None
-        )
         model_targets = model_targets or {}
         try:
             if not targets and not model_targets and not _history_only:
@@ -761,76 +762,76 @@ class ExtendedComfyUIService(ComfyUIService):
             if not _job_connection(self, _job):
                 logger.warning("Connection unavailable while monitoring job %s", job_id)
                 return
-            attempts = 0
-            while True:
-                if deadline is not None and asyncio.get_running_loop().time() >= deadline:
-                    raise RuntimeError("ComfyUI history never became available")
-                if _history_only and not ensure_network_services_consent(
-                    self._settings, service_name="ComfyUI"
-                ):
-                    raise RuntimeError("ComfyUI access is disabled")
-                history = await _job_connection(self, _job).get_history(job_id)
+            entry, kind, error = await _wait_for_output_history(
+                self,
+                job_id,
+                _job,
+                history_only=_history_only,
+                recovery_timeout=_STANDALONE_HISTORY_TIMEOUT_SEC,
+            )
+            if kind == "done":
+                outputs = entry.get("outputs", {}) if isinstance(entry, dict) else {}
+                image_error: Exception | None = None
+                try:
+                    if _job is None:
+                        first_image = await self._apply_job_outputs(job_id, outputs, targets)
+                    else:
+                        _job.require()
+                        first_image = await self._apply_job_outputs(
+                            job_id, outputs, targets, _job=_job
+                        )
+                except (_JobConnectionError, _HistoryTerminalError):
+                    raise
+                except Exception as exc:
+                    first_image = None
+                    image_error = exc
+                imported_models = 0
+                try:
+                    if _job is None:
+                        imported_models = await self._apply_3d_job_outputs(
+                            job_id, outputs, model_targets
+                        )
+                    else:
+                        _job.require()
+                        imported_models = await self._apply_3d_job_outputs(
+                            job_id, outputs, model_targets, _job=_job
+                        )
+                except (_JobConnectionError, _HistoryTerminalError):
+                    raise
+                except Exception as exc:
+                    if image_error is None:
+                        raise
+                    logger.error("Failed to import 3D outputs for job %s: %s", job_id, exc)
+                if image_error is not None:
+                    raise image_error
+                if _history_only:
+                    stream_result = await _history_to_result(self, job_id, entry, _job)
+                    first_image = stream_result.output if stream_result is not None else None
                 _raise_terminal_failure(_job)
-                if _history_only and _job is not None:
-                    _job.require()
-                entry = history.get(job_id) if history else None
-                kind, error = (
-                    history_completion(entry, job_id=job_id) if entry else ("pending", None)
+                if (
+                    _job is not None
+                    and not _history_only
+                    and targets
+                    and not model_targets
+                    and first_image is None
+                    and _history_has_explicit_completion(entry)
+                ):
+                    raise RuntimeError(_MISSING_SELECTED_IMAGE_OUTPUT_ERROR)
+                history_entry = entry if isinstance(entry, dict) else None
+                if history_entry is not None and first_image:
+                    history_entry = {**history_entry, "_image_bytes": first_image}
+                success_flag = (
+                    _history_only or not model_targets or imported_models >= len(model_targets)
                 )
-                if kind == "done":
-                    outputs = entry.get("outputs", {}) if isinstance(entry, dict) else {}
-                    image_error: Exception | None = None
-                    try:
-                        if _job is None:
-                            first_image = await self._apply_job_outputs(job_id, outputs, targets)
-                        else:
-                            _job.require()
-                            first_image = await self._apply_job_outputs(
-                                job_id, outputs, targets, _job=_job
-                            )
-                    except (_JobConnectionError, _HistoryTerminalError):
-                        raise
-                    except Exception as exc:
-                        first_image = None
-                        image_error = exc
-                    try:
-                        if _job is None:
-                            await self._apply_3d_job_outputs(job_id, outputs, model_targets)
-                        else:
-                            _job.require()
-                            await self._apply_3d_job_outputs(
-                                job_id, outputs, model_targets, _job=_job
-                            )
-                    except (_JobConnectionError, _HistoryTerminalError):
-                        raise
-                    except Exception as exc:
-                        if image_error is None:
-                            raise
-                        logger.error("Failed to import 3D outputs for job %s: %s", job_id, exc)
-                    if image_error is not None:
-                        raise image_error
-                    if _history_only:
-                        stream_result = await _history_to_result(self, job_id, entry, _job)
-                        first_image = stream_result.output if stream_result is not None else None
-                    _raise_terminal_failure(_job)
-                    success_flag = True
-                    history_entry = entry if isinstance(entry, dict) else None
-                    if history_entry is not None and first_image:
-                        history_entry = {**history_entry, "_image_bytes": first_image}
-                    break
-                if kind in {"error", "cancelled"}:
-                    logger.error(
-                        "ComfyUI job %s ended with status %s; skipping layer import", job_id, kind
-                    )
-                    success_flag = False
-                    error_message = str(_HistoryTerminalError(kind, error))
-                    cancelled = kind == "cancelled"
-                    break
-                delay = min(2.0, 0.5 + attempts * 0.5)
-                if deadline is not None:
-                    delay = min(delay, max(0.0, deadline - asyncio.get_running_loop().time()))
-                await asyncio.sleep(delay)
-                attempts += 1
+                if not success_flag:
+                    error_message = _SELECTED_MODEL_OUTPUT_ERROR
+            else:
+                logger.error(
+                    "ComfyUI job %s ended with status %s; skipping layer import", job_id, kind
+                )
+                success_flag = False
+                error_message = str(_HistoryTerminalError(kind, error))
+                cancelled = kind == "cancelled"
         except asyncio.CancelledError:
             raise
         except _HistoryTerminalError as failure:
@@ -844,6 +845,8 @@ class ExtendedComfyUIService(ComfyUIService):
         finally:
             if not _history_only:
                 cleanup.finish()
+                if _job is not None and success_flag is not None:
+                    _job.stop_progress_stream()
             elif stream_result is None and success_flag is not None:
                 stream_result = JobResult(job_id=job_id, success=success_flag, error=error_message)
 
@@ -884,7 +887,8 @@ class ExtendedComfyUIService(ComfyUIService):
         """Override: skip AI_JOB_RESULT when _monitor_job_outputs handles it."""
         cleanup = _JobTaskCleanup.capture(self, job_id)
         has_output_monitor = (
-            job_id in self._output_targets
+            (_job is not None and _job._monitor_task is not None)
+            or job_id in self._output_targets
             or job_id in self._model_output_targets
             or job_id in self._output_tasks
         )
@@ -993,6 +997,33 @@ class ExtendedComfyUIService(ComfyUIService):
             raise first_error
         return first_image_bytes
 
+    async def _prepare_3d_job_outputs(
+        self,
+        job_id: str,
+        outputs: dict[str, Any],
+        node_ids: tuple[str, ...],
+        *,
+        _job: _JobConnection | None = None,
+        _target_is_current: Callable[[], bool],
+    ) -> tuple[dict[str, Any], ...]:
+        def current() -> bool:
+            return (
+                ensure_network_services_consent(self._settings, service_name="ComfyUI")
+                and _target_is_current()
+            )
+
+        if not current() or not _job_connection(self, _job):
+            return ()
+        return await prepare_generated_3d_layers(
+            self,
+            self._get_generated_3d_receiver(),
+            job_id,
+            outputs,
+            node_ids,
+            job=_job,
+            current=current,
+        )
+
     async def _apply_3d_job_outputs(
         self,
         job_id: str,
@@ -1000,6 +1031,7 @@ class ExtendedComfyUIService(ComfyUIService):
         targets: dict[str, LayerRef],
         *,
         _job: _JobConnection | None = None,
+        _target_is_current: Callable[[], bool] | None = None,
     ) -> int:
         """Fetch generated 3D assets and apply them to the selected layers."""
 
@@ -1016,6 +1048,18 @@ class ExtendedComfyUIService(ComfyUIService):
             return 0
 
         receiver = self._get_generated_3d_receiver()
+        committed = await try_commit_new_generated_3d_layers(
+            self,
+            canvas,
+            receiver,
+            job_id,
+            outputs,
+            targets,
+            job=_job,
+            target_is_current=_target_is_current,
+        )
+        if committed is not None:
+            return committed
         imported = 0
         for node_id, layer in targets.items():
             try:
@@ -1033,64 +1077,18 @@ class ExtendedComfyUIService(ComfyUIService):
                     file_info = self._model_file_info(entry)
                     if file_info is None:
                         continue
-                    filename, subfolder, folder_type = file_info
-                    model_bytes = await _job_connection(self, _job).get_image(
-                        filename,
-                        subfolder=subfolder,
-                        folder_type=folder_type,
+                    values = await prepare_generated_3d_layer(
+                        self, receiver, job_id, node_id, file_info, _job
                     )
-                    _raise_terminal_failure(_job)
-                    model_path = await self._store_downloaded_model(
-                        job_id,
-                        node_id,
-                        filename,
-                        model_bytes,
-                    )
-                    if _job is None:
-                        await self._prepare_downloaded_model(
-                            model_path, source_subfolder=subfolder, folder_type=folder_type
-                        )
-                    else:
-                        _job.require()
-                        await self._prepare_downloaded_model(
-                            model_path,
-                            source_subfolder=subfolder,
-                            folder_type=folder_type,
-                            _job=_job,
-                        )
-                    _raise_terminal_failure(_job)
-                    received = receiver.receive_scene_response(
-                        "comfyui.3d",
-                        {
-                            "prompt_id": job_id,
-                            "model_file": str(model_path),
-                            "node_id": node_id,
-                            "metadata": {
-                                "filename": filename,
-                                "subfolder": subfolder,
-                                "folder_type": folder_type,
-                            },
-                        },
-                    )
-                    gen_3d = {
-                        "provider_id": "comfyui.3d",
-                        "job_id": job_id,
-                        "node_id": node_id,
-                        "asset_id": received.manifest.asset_id,
-                        "artifact": received.artifact_relative_path,
-                        "filename": filename,
-                    }
+                    if _target_is_current is not None and not _target_is_current():
+                        return imported
                     layer_id_for_log = layer.id
                     if layer.id == CREATE_NEW_3D_LAYER_ID:
                         if not callable(add_3d_layer):
                             logger.warning("Canvas cannot create a 3D layer for node %s", node_id)
                             continue
                         created = add_3d_layer(
-                            name=self._default_3d_layer_name(filename),
-                            scene=received.scene,
-                            display_mode="solid",
-                            gen_3d=gen_3d,
-                            origin={"type": "comfyui_3d_output"},
+                            name=self._default_3d_layer_name(file_info[0]), **values
                         )
                         ok = created is not None
                         layer_id_for_log = getattr(created, "id", CREATE_NEW_3D_LAYER_ID)
@@ -1098,15 +1096,7 @@ class ExtendedComfyUIService(ComfyUIService):
                         if not callable(set_scene):
                             logger.warning("Canvas cannot update 3D layer target %s", layer.id)
                             continue
-                        ok = bool(
-                            set_scene(
-                                layer.id,
-                                scene=received.scene,
-                                display_mode="solid",
-                                gen_3d=gen_3d,
-                                origin={"type": "comfyui_3d_output"},
-                            )
-                        )
+                        ok = bool(set_scene(layer.id, **values))
                     if ok:
                         imported += 1
                         logger.info(

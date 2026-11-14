@@ -7,7 +7,7 @@ from numpy.typing import NDArray
 from PySide6.QtCore import QRect
 
 from loomstroke.core.geometry import Affine2D
-from loomstroke.core.raster_edit_geometry import RasterEditGeometry, sample_mask
+from loomstroke.core.raster_edit_geometry import RasterEditGeometry, edit_coverage, sample_mask
 
 from .affine import document_rect, placement, sample, source_rect
 from .pixels import NativeCmykPixels
@@ -78,6 +78,17 @@ def selection_local(canvas: Any, layer: Any, rect: QRect, coverage: NDArray[Any]
         )
         mask = rows[:, : image.width()]
     return ((coverage.astype(np.uint16) * mask.astype(np.uint16) + 127) // 255).astype(np.uint8)
+
+
+def clip_placed_pattern_coverage(
+    canvas: Any, layer: Any, rect: QRect, coverage: NDArray[np.uint8]
+) -> NDArray[np.uint8] | None:
+    """Apply source-space layer and ancestor masks after selection and tile alpha."""
+    try:
+        mask = edit_coverage(canvas, layer, RasterEditGeometry.capture(layer), rect)
+    except ValueError:
+        return None
+    return ((coverage.astype(np.uint16) * mask + 127) // 255).astype(np.uint8)
 
 
 def clip_replay_region(canvas: Any, layer: Any, rect: QRect) -> QRect | None:

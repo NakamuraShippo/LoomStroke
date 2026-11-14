@@ -29,6 +29,8 @@ def unit_edits_allowed(canvas, object_ids):
         if obj.id not in object_ids:
             continue
         node = query.find_layer_by_id_tree(layer_id)
+        if node is not None and availability(query, node)[1]:
+            return False
         seen = set()
         while node is not None and node.id not in seen:
             seen.add(node.id)

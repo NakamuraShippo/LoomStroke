@@ -199,6 +199,7 @@ class PromptChipWidget(QFrame):
         *,
         display_func: Callable[[PromptComponent], str] | None = None,
         show_display_names: bool = True,
+        emphasis_style: str = "comfyui",
     ) -> None:
         super().__init__(parent)
         self._component = component
@@ -206,6 +207,7 @@ class PromptChipWidget(QFrame):
         self._render_func = render_func  # callable(PromptComponent) -> str
         self._display_func = display_func
         self._show_display_names = show_display_names
+        self._emphasis_style = emphasis_style
         self._popup: ChipEditPopup | None = None
         self._drag_start: QPoint | None = None
         self._wheel_remainder = 0
@@ -260,7 +262,9 @@ class PromptChipWidget(QFrame):
         return ""
 
     def _update_display_text(self) -> None:
-        actual = _emphasis.decorate(self._render_func(self._component), self._component)
+        actual = _emphasis.decorate(
+            self._render_func(self._component), self._component, style=self._emphasis_style
+        )
         display_name = self._current_display_name()
         text = display_name or actual
         self._label.setText(text if text else "\u2026")
@@ -366,9 +370,18 @@ class PromptChipWidget(QFrame):
         delta = _emphasis.WEIGHT_STEP if notches > 0 else -_emphasis.WEIGHT_STEP
         entry = self._component.emphasis.get(token)
         for _ in range(abs(notches)):
-            entry = _emphasis.step(entry, delta)
+            entry = (
+                _emphasis.step_novelai(entry, 1 if notches > 0 else -1)
+                if self._emphasis_style == "novelai"
+                else _emphasis.step(entry, delta)
+            )
         if notches:
-            self._set_emphasis({**self._component.emphasis, token: entry})
+            updated = {**self._component.emphasis}
+            if entry:
+                updated[token] = entry
+            else:
+                updated.pop(token, None)
+            self._set_emphasis(updated)
         event.accept()
 
     def _token_at(self, pos: QPoint) -> str | None:
@@ -382,8 +395,11 @@ class PromptChipWidget(QFrame):
         raw = self._render_func(self._component)
         if self._component.chip_emphasis:
             # The whole-chip "(" ... ":1.2)" wrapper belongs to no token.
-            inner = _emphasis.apply(raw, self._component.emphasis)
-            if not 1 <= index < 1 + len(inner):
+            inner = _emphasis.apply(raw, self._component.emphasis, style=self._emphasis_style)
+            prefix = 1
+            if self._emphasis_style == "novelai":
+                prefix = max(1, abs(self._component.chip_emphasis.get("novelai_level", 1)))
+            if not prefix <= index < prefix + len(inner):
                 return None
         parts = raw.split(",")
         part = shown.count(",", 0, index)
@@ -431,6 +447,7 @@ class PromptChipWidget(QFrame):
             self._catalog,
             parent=self,
             show_display_names=self._show_display_names,
+            emphasis_style=self._emphasis_style,
         )
         popup.changed.connect(self._on_popup_changed)
         popup.emphasis_changed.connect(self._on_popup_emphasis_changed)
@@ -497,11 +514,13 @@ class ChipEditPopup(QFrame):
         parent: QWidget | None = None,
         *,
         show_display_names: bool = True,
+        emphasis_style: str = "comfyui",
     ) -> None:
         super().__init__(parent, Qt.WindowType.Popup | Qt.WindowType.FramelessWindowHint)
         self._component = component
         self._catalog = catalog
         self._show_display_names = show_display_names
+        self._emphasis_style = emphasis_style
         self._tag_combo: QComboBox | None = None
         self._snippet_combo: QComboBox | None = None
         self._item_combo: QComboBox | None = None
@@ -603,7 +622,12 @@ class ChipEditPopup(QFrame):
         return button
 
     def _step_chip_emphasis(self, delta: float) -> None:
-        self._set_chip_emphasis(_emphasis.step(self._component.chip_emphasis, delta))
+        entry = (
+            _emphasis.step_novelai(self._component.chip_emphasis, 1 if delta > 0 else -1)
+            if self._emphasis_style == "novelai"
+            else _emphasis.step(self._component.chip_emphasis, delta)
+        )
+        self._set_chip_emphasis(entry)
 
     def _clear_chip_emphasis(self) -> None:
         if self._component.chip_emphasis:
@@ -616,7 +640,10 @@ class ChipEditPopup(QFrame):
 
     def _update_emphasis_value(self) -> None:
         entry = self._component.chip_emphasis
-        if entry.get("weight") is not None:
+        if self._emphasis_style == "novelai" and entry.get("novelai_level"):
+            level = entry["novelai_level"]
+            text = ("{" if level > 0 else "[") * abs(level)
+        elif entry.get("weight") is not None:
             text = f"{entry['weight']:.1f}"
         else:
             text = "( )" if entry.get("paren") else "\u2014"
@@ -732,6 +759,7 @@ class PromptChipFlowWidget(QScrollArea):
 
     def __init__(self, parent: QWidget | None = None) -> None:
         super().__init__(parent)
+        self.emphasis_style = "comfyui"
         self._show_display_names = True
         self.setWidgetResizable(True)
         self.setAcceptDrops(True)
@@ -796,6 +824,7 @@ class PromptChipFlowWidget(QScrollArea):
                 self._inner,
                 display_func=display_func,
                 show_display_names=self._show_display_names,
+                emphasis_style=self.emphasis_style,
             )
             self._flow.addWidget(chip)
             chips.append(chip)
@@ -825,6 +854,7 @@ class PromptChipFlowWidget(QScrollArea):
             self._inner,
             display_func=display_func,
             show_display_names=self._show_display_names,
+            emphasis_style=self.emphasis_style,
         )
 
         # chips[0] at layout 0, sep at 1, chips[1] at 2, sep at 3, ...

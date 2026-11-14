@@ -5,7 +5,15 @@ from __future__ import annotations
 import logging
 
 from PySide6.QtCore import QEvent, Qt, Signal
-from PySide6.QtWidgets import QFrame, QHBoxLayout, QSizePolicy, QToolButton, QVBoxLayout, QWidget
+from PySide6.QtWidgets import (
+    QFrame,
+    QHBoxLayout,
+    QSizePolicy,
+    QTextEdit,
+    QToolButton,
+    QVBoxLayout,
+    QWidget,
+)
 
 from loomstroke.platform.settings_manager import get_settings_manager
 from loomstroke.ui.translations import translated_literal_domain
@@ -78,6 +86,7 @@ class ResizablePromptArea(QWidget):
         super().__init__(content.parentWidget())
         self.settings = settings if settings is not None else get_settings_manager()
         self.key = key
+        self.height_limit = None
         self.setSizePolicy(QSizePolicy.Policy.Expanding, QSizePolicy.Policy.Fixed)
         layout = QVBoxLayout(self)
         layout.setContentsMargins(0, 0, 0, 0)
@@ -87,7 +96,6 @@ class ResizablePromptArea(QWidget):
         mode_row.addStretch(1)
         self.display_mode_button = QToolButton(self)
         self.display_mode_button.setObjectName("livePromptDisplayModeButton")
-        self.display_mode_button.setText("Aa")
         self.display_mode_button.setCheckable(True)
         self.display_mode_button.setChecked(True)
         self.display_mode_button.setAutoRaise(True)
@@ -120,14 +128,52 @@ class ResizablePromptArea(QWidget):
     def _retranslate_display_mode(self) -> None:
         source = "Display name" if self.display_mode_button.isChecked() else "Text"
         label = translated_literal_domain("PromptEditorPanel", source, use_fallback=True)
+        self.display_mode_button.setText(
+            translated_literal_domain("PromptEditorPanel", "Aa", use_fallback=True)
+        )
         self.display_mode_button.setToolTip(label)
         self.display_mode_button.setAccessibleName(label)
 
     def set_area_height(self, height):
-        self.setFixedHeight(max(80, min(4096, height)))
+        # A compact dock may impose a display limit without changing the saved preference.
+        limit = self.height_limit() if callable(self.height_limit) else 4096
+        self.setFixedHeight(max(80, min(4096, limit, height)))
 
     def save_height(self):
         try:
             self.settings.set(self.key, self.height())
         except Exception:
             logger.warning("Could not save LivePrompt input height", exc_info=True)
+
+
+class ResizableTextEditArea(QWidget):
+    """Keep a plain text editor's explicitly dragged height across panel rebuilds."""
+
+    def __init__(self, edit: QTextEdit, *, key: str, default_height: int, settings=None):
+        super().__init__(edit.parentWidget())
+        self.settings = settings if settings is not None else get_settings_manager()
+        self.key = key
+        self.height_limit = None
+        self.setSizePolicy(QSizePolicy.Policy.Expanding, QSizePolicy.Policy.Fixed)
+        layout = QVBoxLayout(self)
+        layout.setContentsMargins(0, 0, 0, 0)
+        layout.setSpacing(0)
+        layout.addWidget(edit, 1)
+        self.handle = _ResizeHandle(self)
+        layout.addWidget(self.handle)
+        try:
+            height = self.settings.get(key, default_height)
+        except Exception:
+            logger.warning("Could not read text input height", exc_info=True)
+            height = default_height
+        self.set_area_height(height if type(height) is int else default_height)
+
+    def set_area_height(self, height: int) -> None:
+        limit = self.height_limit() if callable(self.height_limit) else 4096
+        self.setFixedHeight(max(42, min(4096, limit, height)))
+
+    def save_height(self) -> None:
+        try:
+            self.settings.set(self.key, self.height())
+        except Exception:
+            logger.warning("Could not save text input height", exc_info=True)

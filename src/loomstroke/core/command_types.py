@@ -2,6 +2,7 @@
 
 from __future__ import annotations
 
+import logging
 import math
 from abc import ABC, abstractmethod
 from collections.abc import Sequence
@@ -9,7 +10,10 @@ from dataclasses import dataclass
 from enum import Enum
 from typing import TYPE_CHECKING, Any, TypeAlias
 
+from .canvas_history_clear_continuation import _HistoryClearContinuation
 from .geometry import Affine2D
+
+logger = logging.getLogger(__name__)
 
 if TYPE_CHECKING:
     from .canvas import Canvas
@@ -264,12 +268,8 @@ class CompositeCommand(Command):
 
     def apply(self, canvas: Canvas) -> bool:
         """Apply all commands in sequence."""
-        for i, command in enumerate(self.commands):
-            if not command.apply(canvas):
-                # Rollback on failure
-                for j in range(i - 1, -1, -1):
-                    self.commands[j].revert(canvas)
-                return False
+        if not self._run(canvas, undo=False):
+            return False
 
         # Compute combined dirty region
         if self.commands:
@@ -287,9 +287,40 @@ class CompositeCommand(Command):
         if not self._executed:
             return False
 
-        for command in reversed(self.commands):
-            if not command.revert(canvas):
-                return False
+        if not self._run(canvas, undo=True):
+            return False
 
         self._executed = False
         return True
+
+    def _run(self, canvas: Canvas, *, undo: bool) -> bool:
+        scope = _HistoryClearContinuation(canvas)
+        completed: list[Command] = []
+        commands = reversed(self.commands) if undo else iter(self.commands)
+        method, inverse = ("revert", "apply") if undo else ("apply", "revert")
+        for command in commands:
+            if not scope.is_current():
+                return False
+            try:
+                succeeded = getattr(command, method)(canvas)
+            except Exception:
+                self._compensate(canvas, completed, inverse, scope)
+                raise
+            if not succeeded:
+                self._compensate(canvas, completed, inverse, scope)
+                return False
+            completed.append(command)
+        return scope.is_current()
+
+    @staticmethod
+    def _compensate(canvas, completed, inverse, scope) -> None:
+        for command in reversed(completed):
+            if not scope.is_current():
+                return
+            try:
+                if not getattr(command, inverse)(canvas):
+                    logger.warning("Composite command compensation was rejected")
+                    return
+            except Exception as exc:
+                logger.warning("Composite command compensation failed (%s)", type(exc).__name__)
+                return

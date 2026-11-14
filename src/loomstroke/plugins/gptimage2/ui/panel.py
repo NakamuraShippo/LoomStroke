@@ -13,6 +13,7 @@ from PySide6.QtWidgets import (
     QGridLayout,
     QLabel,
     QPushButton,
+    QScrollArea,
     QSizePolicy,
     QSpinBox,
     QTextEdit,
@@ -26,6 +27,7 @@ from loomstroke.plugins.comfyui.ui.prompt_composer import PromptComposerWidget
 from loomstroke.plugins.common.ai_effect_register_button import AIEffectRegisterButton
 from loomstroke.plugins.common.input_layer_selector import InputLayerSelector
 from loomstroke.plugins.common.outbound_policy import is_external_services_allowed
+from loomstroke.plugins.prompt_editor.resizable_prompt_area import ResizableTextEditArea
 from loomstroke.plugins.sdk.base import JobSpec
 from loomstroke.ui._dock_safe import is_valid
 from loomstroke.ui.translations import TranslationBinder, translate_with_fallback
@@ -121,7 +123,14 @@ class GPTImage2Panel(QWidget):
 
     def _build_ui(self) -> None:  # noqa: PLR0915 - Qt widget assembly is intentionally linear
         self.setObjectName("GPTImage2Panel")
-        layout = QVBoxLayout(self)
+        root = QVBoxLayout(self)
+        root.setContentsMargins(0, 0, 0, 0)
+        scroll = QScrollArea(self)
+        scroll.setWidgetResizable(True)
+        scroll.setMinimumSize(0, 0)
+        root.addWidget(scroll)
+        content = QWidget(scroll)
+        layout = QVBoxLayout(content)
         layout.setSpacing(10)
 
         prompt_label_text = self._ts("Prompt:")
@@ -147,8 +156,10 @@ class GPTImage2Panel(QWidget):
         prompt_placeholder = self._ts("Enter prompt text...")
         self._prompt_text.setPlaceholderText(prompt_placeholder)
         self._translation_binder.register(self._prompt_text.setPlaceholderText, prompt_placeholder)
-        self._prompt_text.setFixedHeight(80)
-        layout.addWidget(self._prompt_text)
+        self._prompt_text_area = ResizableTextEditArea(
+            self._prompt_text, key="ui/gptimage2/prompt_text_height", default_height=80
+        )
+        layout.addWidget(self._prompt_text_area)
 
         self._input_layers = InputLayerSelector(MAX_INPUT_LAYERS, self)
         layout.addWidget(self._input_layers)
@@ -262,8 +273,11 @@ class GPTImage2Panel(QWidget):
         status_placeholder = self._ts("Status messages will appear here")
         self._status.setPlaceholderText(status_placeholder)
         self._translation_binder.register(self._status.setPlaceholderText, status_placeholder)
-        self._status.setFixedHeight(80)
-        layout.addWidget(self._status)
+        self._status_area = ResizableTextEditArea(
+            self._status, key="ui/gptimage2/status_height", default_height=80
+        )
+        layout.addWidget(self._status_area)
+        scroll.setWidget(content)
 
         self._populate_model_combo()
         self._populate_quality_combo()
@@ -311,7 +325,7 @@ class GPTImage2Panel(QWidget):
         self._prompt_text.blockSignals(False)
 
     def _on_prompt_mode_changed(self, composer_active: bool) -> None:
-        self._prompt_text.setVisible(not composer_active)
+        self._prompt_text_area.setVisible(not composer_active)
 
     def _reload_layers(self) -> None:
         previous_target = (

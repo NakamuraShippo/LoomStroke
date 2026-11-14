@@ -193,12 +193,13 @@ def _prepare_annotation_change(  # noqa: PLR0911 - validation failures
         if kind != "emphasis_runs"
         else []
     )
-    for other in others:
-        ruby, tcy = (additions[0], other) if kind == "ruby_runs" else (other, additions[0])
-        overlaps = ruby["start"] < tcy["end"] and tcy["start"] < ruby["end"]
-        contains = ruby["start"] <= tcy["start"] and tcy["end"] <= ruby["end"]
-        if overlaps and not contains:
-            return "annotation_cross_range", None, []
+    for addition in additions:
+        for other in others:
+            ruby, tcy = (addition, other) if kind == "ruby_runs" else (other, addition)
+            overlaps = ruby["start"] < tcy["end"] and tcy["start"] < ruby["end"]
+            contains = ruby["start"] <= tcy["start"] and tcy["end"] <= ruby["end"]
+            if overlaps and not contains:
+                return "annotation_cross_range", None, []
     return None, bounds, additions
 
 

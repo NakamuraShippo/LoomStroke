@@ -64,6 +64,7 @@ from loomstroke.plugins.ai_effect.gateway_protocol import (
     ProgressEvent,
     SlotImage,
 )
+from loomstroke.plugins.ai_effect.generation_cancellation import _cancel_acquired_job
 from loomstroke.plugins.ai_effect.param_hash import compute_param_hash
 from loomstroke.plugins.ai_effect.settings import AIEffectPreferences
 from loomstroke.plugins.ai_effect.telemetry import AIEffectTelemetry
@@ -194,6 +195,8 @@ class AIEffectGenerationController:
         # cancels every still-running task and returns whether any
         # were live.
         self._inflight_tasks: dict[str, list[asyncio.Task[GenerationOutcome]]] = {}
+        # Retain successful result bookkeeping even if its caller is cancelled.
+        self._success_commits: dict[str, asyncio.Task[None]] = {}
 
     def _lock_for(self, layer_id: str) -> asyncio.Lock:
         lock = self._locks.get(layer_id)
@@ -218,10 +221,9 @@ class AIEffectGenerationController:
         to the canvas after the layer the user cared about is gone.
         Returns True iff at least one not-yet-done Task was cancelled.
 
-        Cancellation propagates the standard way: the awaiting caller
-        sees ``asyncio.CancelledError``. The per-gateway Semaphore and
-        per-layer Lock are released by the ``async with`` machinery on
-        the way out.
+        The awaiting caller sees ``asyncio.CancelledError`` after an acquired
+        job's stop request finishes. Until then its per-gateway Semaphore and
+        per-layer Lock remain held. No handle exists while queued/submitting.
         """
         tasks = self._inflight_tasks.get(layer_id)
         if not tasks:
@@ -252,8 +254,8 @@ class AIEffectGenerationController:
 
         Returns a GenerationOutcome describing the terminal outcome. The
         state machine (``AIEffectController``) has been advanced
-        appropriately by the time this returns. Never raises — errors are
-        carried in ``GenerationOutcome``.
+        appropriately by the time this returns. Generation errors are carried
+        in ``GenerationOutcome``; external ``CancelledError`` propagates.
 
         Concurrent calls with the same ``layer_id`` are serialized by a
         per-layer ``asyncio.Lock`` (code review #6). Concurrent calls
@@ -314,6 +316,9 @@ class AIEffectGenerationController:
                         force_regenerate=force_regenerate,
                     )
             return outcome
+        except asyncio.CancelledError:
+            self._recover_cancelled_layer(layer_id, state, current_task, tracked_list)
+            raise
         finally:
             if current_task is not None:
                 with contextlib.suppress(ValueError):
@@ -343,6 +348,22 @@ class AIEffectGenerationController:
                     retry_count=retry_count,
                 )
 
+    def _recover_cancelled_layer(
+        self,
+        layer_id: str,
+        state: AIEffectState,
+        current_task: asyncio.Task[GenerationOutcome] | None,
+        tracked: list[asyncio.Task[GenerationOutcome]],
+    ) -> None:
+        commit = self._success_commits.get(layer_id)
+        if (commit is not None and not commit.done()) or any(
+            task is not current_task and not task.done() for task in tracked
+        ):
+            return
+        if self._state_machine.state_of(layer_id) in (LayerState.QUEUED, LayerState.GENERATING):
+            self._clear_generation_state(state)
+            self._state_machine.dispatch(layer_id, "cancel", state=state)
+
     async def _execute_locked(
         self,
         *,
@@ -354,6 +375,12 @@ class AIEffectGenerationController:
         source_page_id: str | None,
         force_regenerate: bool,
     ) -> GenerationOutcome:
+        # A prior caller can be cancelled after its result arrived. Let its
+        # shielded bookkeeping settle before reusing this layer's state.
+        commit = self._success_commits.get(layer_id)
+        if commit is not None:
+            await asyncio.shield(commit)
+
         # --- Validate inputs first (VALIDATION errors never touch Gateway) ---
         validation_err = self._validate_inputs(state)
         if validation_err is not None:
@@ -606,20 +633,24 @@ class AIEffectGenerationController:
             self._state_machine.dispatch(layer_id, "ack", state=state)
         self._update_generation_state(state, handle.job_id, created_at)
 
-        observed, cancelled = await self._consume_progress(handle, state, layer_id)
+        try:
+            observed, cancelled = await self._consume_progress(handle, state, layer_id)
 
-        if cancelled:
-            self._state_machine.dispatch(layer_id, "cancel", state=state)
-            self._clear_generation_state(state)
-            return GenerationOutcome(
-                status="cancelled",
-                layer_id=layer_id,
-                param_hash=pre_hash,
-                observed_progress=observed,
-            )
+            if cancelled:
+                self._state_machine.dispatch(layer_id, "cancel", state=state)
+                self._clear_generation_state(state)
+                return GenerationOutcome(
+                    status="cancelled",
+                    layer_id=layer_id,
+                    param_hash=pre_hash,
+                    observed_progress=observed,
+                )
 
-        # fetch terminal result
-        result = await handle.wait()
+            # fetch terminal result
+            result = await handle.wait()
+        except asyncio.CancelledError:
+            await _cancel_acquired_job(handle)
+            raise
         # See created_at note above — ``astimezone()`` keeps Gallery
         # display in the user's local time without a UI-side conversion.
         completed_at = datetime.now().astimezone()
@@ -675,7 +706,7 @@ class AIEffectGenerationController:
         # state machine half-transitioned (GENERATING) with the gallery
         # un-persisted. Shield lets CancelledError propagate to the
         # caller while the bookkeeping coroutine still completes.
-        await asyncio.shield(
+        commit = asyncio.create_task(
             self._commit_success(
                 layer_id=layer_id,
                 state=state,
@@ -686,6 +717,9 @@ class AIEffectGenerationController:
                 handle_job_id=handle.job_id,
             )
         )
+        self._success_commits[layer_id] = commit
+        commit.add_done_callback(lambda finished: self._forget_success_commit(layer_id, finished))
+        await asyncio.shield(commit)
 
         return GenerationOutcome(
             status="success",
@@ -695,6 +729,10 @@ class AIEffectGenerationController:
             record=record,
             observed_progress=observed,
         )
+
+    def _forget_success_commit(self, layer_id: str, commit: asyncio.Task[None]) -> None:
+        if self._success_commits.get(layer_id) is commit:
+            del self._success_commits[layer_id]
 
     async def _commit_success(
         self,

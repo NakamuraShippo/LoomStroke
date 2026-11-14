@@ -2,7 +2,27 @@
 <!DOCTYPE TS>
 <TS version="2.1" language="bn">
     <context>
-        <name>MainWindow</name>
+    <name>MainWindow</name>
+    <message>
+        <source>New Document Failed</source>
+        <translation>নতুন নথি তৈরি করা যায়নি</translation>
+    </message>
+    <message>
+        <source>New Canvas from Clipboard Image</source>
+        <translation>ক্লিপবোর্ডের ছবি থেকে নতুন ক্যানভাস তৈরি করুন</translation>
+    </message>
+    <message>
+        <source>Created a canvas from the clipboard image.</source>
+        <translation>ক্লিপবোর্ডের ছবি থেকে ক্যানভাস তৈরি হয়েছে।</translation>
+    </message>
+    <message>
+        <source>Could not create a canvas from the clipboard image.</source>
+        <translation>ক্লিপবোর্ডের ছবি থেকে ক্যানভাস তৈরি করা যায়নি।</translation>
+    </message>
+    <message>
+        <source>Some layer or effect masks are missing. The document may look different. Use Save As to keep the original file.</source>
+        <translation>কিছু লেয়ার বা ইফেক্ট মাস্ক নেই। নথিটি অন্যরকম দেখাতে পারে। মূল ফাইলটি অক্ষত রাখতে অন্য নামে সংরক্ষণ করুন।</translation>
+    </message>
         <message>
             <source>Rotate Straight Ruler Left</source>
             <translation>সরল রুলার বামে ঘোরান</translation>
@@ -1089,6 +1109,10 @@
 </context>
     <context>
         <name>BasicPen</name>
+    <message>
+        <source>The brush library could not be saved.</source>
+        <translation>ব্রাশ লাইব্রেরি সংরক্ষণ করা যায়নি।</translation>
+    </message>
         <message>
             <source>Basic Settings</source>
             <translation>বেসিক সেটিংস</translation>
@@ -4991,6 +5015,10 @@ After refreshing the token, any agents registered to this LoomStroke MCP server 
         <source>Clear the layer filter</source>
         <translation>লেয়ার ফিল্টার সরান</translation>
     </message>
+    <message>
+        <source>The generation record could not be deleted.</source>
+        <translation>ছবি তৈরির রেকর্ড মুছে ফেলা যায়নি।</translation>
+    </message>
 </context>
 <context>
     <name>ToolPropertiesPanel</name>
@@ -7038,8 +7066,8 @@ Select a file to recover.</source>
         <translation>API কী আপনার কীরিংয়ে সংরক্ষণ করা যাচ্ছে না। বিস্তারিত দেখুন লগে আবার চেষ্টা করুন।</translation>
     </message>
     <message>
-        <source>{name} uses Google Gemini's API. The key is stored encrypted in your OS keyring and is read only when you press Generate.</source>
-        <translation>{name} Google Gemini এর API ব্যবহার করে। কীটি আপনার আপনার আসল কীরিংয়ে এনক্রিপ্ট করা হয় এবং আপনি জেনারেট করার সময় মাত্র পড়া হয়।</translation>
+        <source>{name} API key is stored in your OS keyring and read only when you make a request.</source>
+        <translation>{name} API কী আপনার OS কীরিংয়ে সংরক্ষিত থাকে এবং অনুরোধ পাঠানোর সময়ই কেবল পড়া হয়।</translation>
     </message>
 </context>
 <context>
@@ -8390,6 +8418,10 @@ GPU কম্পোজিটর স্টার্ট করা যায়ন�
     <message>
         <source>Values applied to this layer.</source>
         <translation>এই লেয়ারের জন্য মান প্রয়োগ করা হয়েছে।</translation>
+    </message>
+    <message>
+        <source>ComfyUI did not finish loading. Check the server connection and reload nodes.</source>
+        <translation>ComfyUI লোড হয়নি। সার্ভার সংযোগ পরীক্ষা করুন এবং নোড রিলোড করুন।</translation>
     </message>
 </context>
 <context>
@@ -12248,6 +12280,22 @@ Please check that all image paths in your workflow are valid.
 <context>
     <name>ExportPrintDialog</name>
     <message>
+        <source>PDF/X-1a candidate</source>
+        <translation>PDF/X-1a প্রার্থী (ম্যানুয়াল যাচাই প্রয়োজন)</translation>
+    </message>
+    <message>
+        <source>PDF/X-4 candidate</source>
+        <translation>PDF/X-4 প্রার্থী (ম্যানুয়াল যাচাই প্রয়োজন)</translation>
+    </message>
+    <message>
+        <source>Verify the PDF/X candidate in callas pdfToolbox Desktop before submission.</source>
+        <translation>জমা দেওয়ার আগে callas pdfToolbox Desktop-এ PDF/X প্রার্থী যাচাই করুন।</translation>
+    </message>
+    <message>
+        <source>PDF/X candidates do not support margin information.</source>
+        <translation>PDF/X প্রার্থীতে মার্জিন তথ্য সমর্থিত নয়।</translation>
+    </message>
+    <message>
         <source>A CMYK profile is required for CMYK output.</source>
         <translation>CMYK প্রোফাইলটি CMYK আউটপুটের জন্য প্রয়োজন।</translation>
     </message>
@@ -12502,6 +12550,58 @@ Please check that all image paths in your workflow are valid.
     <message>
         <source>{count} page(s) will be exported.</source>
         <translation>{count} পেজ এক্সপোর্ট হবে।</translation>
+    </message>
+    <message>
+        <source>Preset:</source>
+        <translation>প্রিসেট:</translation>
+    </message>
+    <message>
+        <source>Grayscale TIFF sequence</source>
+        <translation>গ্রেস্কেল TIFF ক্রম</translation>
+    </message>
+    <message>
+        <source>1-bit TIFF sequence</source>
+        <translation>1-bit TIFF ক্রম</translation>
+    </message>
+    <message>
+        <source>8-bit grayscale TIFF, one file per page.</source>
+        <translation>প্রতি পৃষ্ঠায় একটি 8-bit গ্রেস্কেল TIFF ফাইল।</translation>
+    </message>
+    <message>
+        <source>1-bit black-and-white TIFF, one file per page.</source>
+        <translation>প্রতি পৃষ্ঠায় একটি সাদা-কালো 1-bit TIFF ফাইল।</translation>
+    </message>
+    <message>
+        <source>1-bit conversion</source>
+        <translation>1-bit রূপান্তর</translation>
+    </message>
+    <message>
+        <source>Threshold:</source>
+        <translation>সীমা:</translation>
+    </message>
+    <message>
+        <source>Method:</source>
+        <translation>পদ্ধতি:</translation>
+    </message>
+    <message>
+        <source>Threshold</source>
+        <translation>সীমা</translation>
+    </message>
+    <message>
+        <source>Ordered 4x4 dither</source>
+        <translation>ক্রমিক 4x4 ডিথার</translation>
+    </message>
+    <message>
+        <source>The selected print preset does not match every page's format and DPI.</source>
+        <translation>নির্বাচিত মুদ্রণ প্রিসেটের আকার ও DPI সব পৃষ্ঠার সঙ্গে মেলে না।</translation>
+    </message>
+    <message>
+        <source>The saved CMYK profile must be loaded again.</source>
+        <translation>সংরক্ষিত CMYK প্রোফাইল আবার লোড করতে হবে।</translation>
+    </message>
+    <message>
+        <source>Could not save the format preset.</source>
+        <translation>মুদ্রণ প্রিসেট সংরক্ষণ করা যায়নি।</translation>
     </message>
 </context>
 <context>
@@ -14807,6 +14907,14 @@ After refreshing the token, any agents registered to this LoomStroke MCP server 
         <translation>ডকুমেন্ট সংরক্ষণ করা যাচ্ছে না: {path}
 {error}</translation>
     </message>
+    <message>
+        <source>No SVG-compatible vector objects to export.</source>
+        <translation>এক্সপোর্ট করার মতো SVG-সামঞ্জস্যপূর্ণ ভেক্টর অবজেক্ট নেই।</translation>
+    </message>
+    <message>
+        <source>The current SVG export omits groups, layer placement, enabled masks, unsupported blend modes, and live filters.</source>
+        <translation>বর্তমান SVG এক্সপোর্টে গ্রুপ, লেয়ারের অবস্থান, সক্রিয় মাস্ক, অসমর্থিত ব্লেন্ড মোড ও লাইভ ফিল্টার বাদ যায়।</translation>
+    </message>
 </context>
 <context>
     <name>MainWindowEditShapeActionsCoordinator</name>
@@ -15808,6 +15916,10 @@ Operation: {operation}
 </context>
 <context>
     <name>NewDocumentDialog</name>
+    <message>
+        <source>Include Bleed</source>
+        <translation>ব্লিড অন্তর্ভুক্ত করুন</translation>
+    </message>
     <message>
         <source>AI</source>
         <translation>AI</translation>
@@ -17381,6 +17493,10 @@ Type: {type}</source>
         <source>{count} plugin(s) loaded</source>
         <translation>{count}টি প্লাগইন লোড হয়েছে</translation>
     </message>
+    <message>
+        <source>Failed</source>
+        <translation>ব্যর্থ</translation>
+    </message>
 </context>
 <context>
     <name>PluginUpdateDialog</name>
@@ -17610,8 +17726,8 @@ Type: {type}</source>
         <translation>বর্তমান কালো (RGB)</translation>
     </message>
     <message>
-        <source>Japanese corner (current)</source>
-        <translation>জাপানি কোণ (বর্তমান)</translation>
+        <source>Japanese corner</source>
+        <translation>জাপানি কোণ</translation>
     </message>
     <message>
         <source>Japanese double</source>
@@ -18510,6 +18626,18 @@ Type: {type}</source>
     <message>
         <source>Ollama's default context is short and silently cuts the start of long prompts; raise it with OLLAMA_CONTEXT_LENGTH or the model's num_ctx.</source>
         <translation>Ollama-র ডিফল্ট কনটেক্সট ছোট, দীর্ঘ প্রম্পটের শুরু নীরবে কেটে যায়; OLLAMA_CONTEXT_LENGTH বা মডেলের num_ctx দিয়ে বাড়ান।</translation>
+    </message>
+    <message>
+        <source>Aa</source>
+        <translation>Aa</translation>
+    </message>
+    <message>
+        <source>Display name</source>
+        <translation>প্রদর্শন নাম</translation>
+    </message>
+    <message>
+        <source>Item</source>
+        <translation>আইটেম</translation>
     </message>
 </context>
 <context>
@@ -21245,6 +21373,46 @@ Do you want to save them?</source>
 </context>
 <context>
     <name>__shared__</name>
+    <message>
+        <source>Include Bleed</source>
+        <translation>ব্লিড অন্তর্ভুক্ত করুন</translation>
+    </message>
+    <message>
+        <source>PDF/X-1a candidate</source>
+        <translation>PDF/X-1a প্রার্থী (ম্যানুয়াল যাচাই প্রয়োজন)</translation>
+    </message>
+    <message>
+        <source>PDF/X-4 candidate</source>
+        <translation>PDF/X-4 প্রার্থী (ম্যানুয়াল যাচাই প্রয়োজন)</translation>
+    </message>
+    <message>
+        <source>Verify the PDF/X candidate in callas pdfToolbox Desktop before submission.</source>
+        <translation>জমা দেওয়ার আগে callas pdfToolbox Desktop-এ PDF/X প্রার্থী যাচাই করুন।</translation>
+    </message>
+    <message>
+        <source>PDF/X candidates do not support margin information.</source>
+        <translation>PDF/X প্রার্থীতে মার্জিন তথ্য সমর্থিত নয়।</translation>
+    </message>
+    <message>
+        <source>Could not create a canvas from the clipboard image.</source>
+        <translation>ক্লিপবোর্ডের ছবি থেকে ক্যানভাস তৈরি করা যায়নি।</translation>
+    </message>
+    <message>
+        <source>Created a canvas from the clipboard image.</source>
+        <translation>ক্লিপবোর্ডের ছবি থেকে ক্যানভাস তৈরি হয়েছে।</translation>
+    </message>
+    <message>
+        <source>New Canvas from Clipboard Image</source>
+        <translation>ক্লিপবোর্ডের ছবি থেকে নতুন ক্যানভাস তৈরি করুন</translation>
+    </message>
+    <message>
+        <source>The brush library could not be saved.</source>
+        <translation>ব্রাশ লাইব্রেরি সংরক্ষণ করা যায়নি।</translation>
+    </message>
+    <message>
+        <source>Some layer or effect masks are missing. The document may look different. Use Save As to keep the original file.</source>
+        <translation>কিছু লেয়ার বা ইফেক্ট মাস্ক নেই। নথিটি অন্যরকম দেখাতে পারে। মূল ফাইলটি অক্ষত রাখতে অন্য নামে সংরক্ষণ করুন।</translation>
+    </message>
     <message>
         <source>Straight Ruler</source>
         <translation>সরল রুলার</translation>
@@ -27964,8 +28132,8 @@ Select a file to recover.</source>
         <translation>জাপানি</translation>
     </message>
     <message>
-        <source>Japanese corner (current)</source>
-        <translation>জাপানি কোণ (বর্তমান)</translation>
+        <source>Japanese corner</source>
+        <translation>জাপানি কোণ</translation>
     </message>
     <message>
         <source>Japanese double</source>
@@ -36180,8 +36348,8 @@ Drag onto the canvas to place</source>
         <translation>{name} একটি সমর্থিত ইমেজ ফরম্যাট নয়।</translation>
     </message>
     <message>
-        <source>{name} uses Google Gemini's API. The key is stored encrypted in your OS keyring and is read only when you press Generate.</source>
-        <translation>{name} Google Gemini এর API ব্যবহার করে। কীটি আপনার আপনার আসল কীরিংয়ে এনক্রিপ্ট করা হয় এবং আপনি জেনারেট করার সময় মাত্র পড়া হয়।</translation>
+        <source>{name} API key is stored in your OS keyring and read only when you make a request.</source>
+        <translation>{name} API কী আপনার OS কীরিংয়ে সংরক্ষিত থাকে এবং অনুরোধ পাঠানোর সময়ই কেবল পড়া হয়।</translation>
     </message>
     <message>
         <source>{pending} pending, {running} running</source>
@@ -36586,6 +36754,406 @@ Click to show as panel</source>
     <message>
         <source>Walking</source>
         <translation>হাঁটা</translation>
+    </message>
+    <message>
+        <source>AI Settings</source>
+        <translation>AI সেটিংস</translation>
+    </message>
+    <message>
+        <source>Aa</source>
+        <translation>Aa</translation>
+    </message>
+    <message>
+        <source>Add basic shape</source>
+        <translation>মৌলিক আকৃতি যোগ করুন</translation>
+    </message>
+    <message>
+        <source>Add potion</source>
+        <translation>পোশন যোগ করুন</translation>
+    </message>
+    <message>
+        <source>Advanced API parameters (JSON)</source>
+        <translation>উন্নত API প্যারামিটার (JSON)</translation>
+    </message>
+    <message>
+        <source>Advanced API parameters (JSON; overrides controls)</source>
+        <translation>উন্নত API প্যারামিটার (JSON; ইন্টারফেসের সেটিংসের চেয়ে অগ্রাধিকার পায়)</translation>
+    </message>
+    <message>
+        <source>Advanced Settings</source>
+        <translation>উন্নত সেটিংস</translation>
+    </message>
+    <message>
+        <source>Basic shape</source>
+        <translation>মৌলিক আকৃতি</translation>
+    </message>
+    <message>
+        <source>Character Reference</source>
+        <translation>চরিত্রের রেফারেন্স</translation>
+    </message>
+    <message>
+        <source>Character and Style</source>
+        <translation>চরিত্র ও স্টাইলের রেফারেন্স</translation>
+    </message>
+    <message>
+        <source>Collapse AI Settings</source>
+        <translation>AI সেটিংস গুটিয়ে নিন</translation>
+    </message>
+    <message>
+        <source>Colorize</source>
+        <translation>রং করুন</translation>
+    </message>
+    <message>
+        <source>Could not add basic shape</source>
+        <translation>মৌলিক আকৃতি যোগ করা যায়নি</translation>
+    </message>
+    <message>
+        <source>Create variation from Gallery image</source>
+        <translation>গ্যালারির ছবি থেকে একটি ভিন্ন সংস্করণ তৈরি করুন</translation>
+    </message>
+    <message>
+        <source>Cube</source>
+        <translation>ঘনক</translation>
+    </message>
+    <message>
+        <source>Cylinder</source>
+        <translation>সিলিন্ডার</translation>
+    </message>
+    <message>
+        <source>Director Tool</source>
+        <translation>পরিচালকের টুল</translation>
+    </message>
+    <message>
+        <source>Director Tools</source>
+        <translation>পরিচালকের টুলসমূহ</translation>
+    </message>
+    <message>
+        <source>Emotion</source>
+        <translation>মুখের অভিব্যক্তি</translation>
+    </message>
+    <message>
+        <source>External AI services are disabled</source>
+        <translation>বাহ্যিক AI পরিষেবাগুলি নিষ্ক্রিয়</translation>
+    </message>
+    <message>
+        <source>Image Generation</source>
+        <translation>ছবি তৈরি</translation>
+    </message>
+    <message>
+        <source>Image Resolution</source>
+        <translation>ছবির রেজোলিউশন</translation>
+    </message>
+    <message>
+        <source>Image Settings</source>
+        <translation>ছবির সেটিংস</translation>
+    </message>
+    <message>
+        <source>Image2Image</source>
+        <translation>ছবি থেকে ছবি</translation>
+    </message>
+    <message>
+        <source>Information Extracted</source>
+        <translation>তথ্য আহরণের পরিমাণ</translation>
+    </message>
+    <message>
+        <source>Inpaint (current selection)</source>
+        <translation>ইনপেইন্ট (বর্তমান নির্বাচন)</translation>
+    </message>
+    <message>
+        <source>Input layer</source>
+        <translation>ইনপুট লেয়ার</translation>
+    </message>
+    <message>
+        <source>Large</source>
+        <translation>বড়</translation>
+    </message>
+    <message>
+        <source>Large Landscape</source>
+        <translation>বড় আড়াআড়ি</translation>
+    </message>
+    <message>
+        <source>Large Portrait</source>
+        <translation>বড় লম্বালম্বি</translation>
+    </message>
+    <message>
+        <source>Large Square</source>
+        <translation>বড় বর্গাকার</translation>
+    </message>
+    <message>
+        <source>Light position</source>
+        <translation>আলোর অবস্থান</translation>
+    </message>
+    <message>
+        <source>Light position in 3D scene coordinates</source>
+        <translation>3D দৃশ্যের স্থানাঙ্কে আলোর অবস্থান</translation>
+    </message>
+    <message>
+        <source>Line Art</source>
+        <translation>রেখাচিত্র</translation>
+    </message>
+    <message>
+        <source>Line art</source>
+        <translation>রেখাচিত্র</translation>
+    </message>
+    <message>
+        <source>No SVG-compatible vector objects to export.</source>
+        <translation>এক্সপোর্ট করার মতো SVG-সামঞ্জস্যপূর্ণ ভেক্টর অবজেক্ট নেই।</translation>
+    </message>
+    <message>
+        <source>No tags found</source>
+        <translation>কোনো ট্যাগ পাওয়া যায়নি</translation>
+    </message>
+    <message>
+        <source>Noise</source>
+        <translation>নয়েজ</translation>
+    </message>
+    <message>
+        <source>Noise Schedule</source>
+        <translation>নয়েজ সূচি</translation>
+    </message>
+    <message>
+        <source>Normal Landscape</source>
+        <translation>সাধারণ আড়াআড়ি</translation>
+    </message>
+    <message>
+        <source>Normal Portrait</source>
+        <translation>সাধারণ লম্বালম্বি</translation>
+    </message>
+    <message>
+        <source>Normal Square</source>
+        <translation>সাধারণ বর্গাকার</translation>
+    </message>
+    <message>
+        <source>NovelAI Potion (Vibe Transfer)</source>
+        <translation>NovelAI পোশন (আবহ স্থানান্তর)</translation>
+    </message>
+    <message>
+        <source>NovelAI generation cancelled</source>
+        <translation>NovelAI-তে ছবি তৈরি বাতিল হয়েছে</translation>
+    </message>
+    <message>
+        <source>NovelAI image added to layer</source>
+        <translation>NovelAI-এর ছবি লেয়ারে যোগ করা হয়েছে</translation>
+    </message>
+    <message>
+        <source>Number of Images</source>
+        <translation>ছবির সংখ্যা</translation>
+    </message>
+    <message>
+        <source>OpenPose JSON</source>
+        <translation>OpenPose JSON</translation>
+    </message>
+    <message>
+        <source>Prompt Guidance</source>
+        <translation>প্রম্পট নির্দেশনার মাত্রা</translation>
+    </message>
+    <message>
+        <source>Prompt Guidance Rescale</source>
+        <translation>প্রম্পট নির্দেশনার স্কেল পুনর্নির্ধারণ</translation>
+    </message>
+    <message>
+        <source>Reference layer</source>
+        <translation>রেফারেন্স লেয়ার</translation>
+    </message>
+    <message>
+        <source>Reference mode</source>
+        <translation>রেফারেন্স মোড</translation>
+    </message>
+    <message>
+        <source>Reference strength</source>
+        <translation>রেফারেন্সের প্রভাব</translation>
+    </message>
+    <message>
+        <source>Refresh layers</source>
+        <translation>লেয়ারের তালিকা রিফ্রেশ করুন</translation>
+    </message>
+    <message>
+        <source>Remove Background</source>
+        <translation>ব্যাকগ্রাউন্ড সরান</translation>
+    </message>
+    <message>
+        <source>Remove background</source>
+        <translation>ব্যাকগ্রাউন্ড সরান</translation>
+    </message>
+    <message>
+        <source>Sampler</source>
+        <translation>স্যাম্পলার</translation>
+    </message>
+    <message>
+        <source>Saved workflow: {name}</source>
+        <translation>ওয়ার্কফ্লো সেভ হয়েছে: {name}</translation>
+    </message>
+    <message>
+        <source>Seed must be between 0 and 4294967295</source>
+        <translation>সিডের মান 0 থেকে 4294967295-এর মধ্যে হতে হবে</translation>
+    </message>
+    <message>
+        <source>Small</source>
+        <translation>ছোট</translation>
+    </message>
+    <message>
+        <source>Small Landscape</source>
+        <translation>ছোট আড়াআড়ি</translation>
+    </message>
+    <message>
+        <source>Small Portrait</source>
+        <translation>ছোট লম্বালম্বি</translation>
+    </message>
+    <message>
+        <source>Small Square</source>
+        <translation>ছোট বর্গাকার</translation>
+    </message>
+    <message>
+        <source>Sphere</source>
+        <translation>গোলক</translation>
+    </message>
+    <message>
+        <source>Steps</source>
+        <translation>ধাপের সংখ্যা</translation>
+    </message>
+    <message>
+        <source>Style Reference</source>
+        <translation>স্টাইলের রেফারেন্স</translation>
+    </message>
+    <message>
+        <source>Suggest tags</source>
+        <translation>ট্যাগের পরামর্শ দেখুন</translation>
+    </message>
+    <message>
+        <source>Swap width and height</source>
+        <translation>প্রস্থ ও উচ্চতা অদলবদল করুন</translation>
+    </message>
+    <message>
+        <source>Tag fragment for suggestions</source>
+        <translation>পরামর্শ খুঁজতে ট্যাগের অংশ লিখুন</translation>
+    </message>
+    <message>
+        <source>The current SVG export omits groups, layer placement, enabled masks, unsupported blend modes, and live filters.</source>
+        <translation>বর্তমান SVG এক্সপোর্টে গ্রুপ, লেয়ারের অবস্থান, সক্রিয় মাস্ক, অসমর্থিত ব্লেন্ড মোড ও লাইভ ফিল্টার বাদ যায়।</translation>
+    </message>
+    <message>
+        <source>The generation record could not be deleted.</source>
+        <translation>ছবি তৈরির রেকর্ড মুছে ফেলা যায়নি।</translation>
+    </message>
+    <message>
+        <source>Undesired Content</source>
+        <translation>অবাঞ্ছিত বিষয়বস্তু</translation>
+    </message>
+    <message>
+        <source>Upscale</source>
+        <translation>ছবির রেজোলিউশন বাড়ান</translation>
+    </message>
+    <message>
+        <source>Variety</source>
+        <translation>বৈচিত্র্য</translation>
+    </message>
+    <message>
+        <source>Vibe Transfer</source>
+        <translation>আবহ স্থানান্তর</translation>
+    </message>
+    <message>
+        <source>Wallpaper</source>
+        <translation>ওয়ালপেপার</translation>
+    </message>
+    <message>
+        <source>Wallpaper Landscape</source>
+        <translation>আড়াআড়ি ওয়ালপেপার</translation>
+    </message>
+    <message>
+        <source>Wallpaper Portrait</source>
+        <translation>লম্বালম্বি ওয়ালপেপার</translation>
+    </message>
+    <message>
+        <source>exponential</source>
+        <translation>সূচকীয়</translation>
+    </message>
+    <message>
+        <source>karras</source>
+        <translation>karras</translation>
+    </message>
+    <message>
+        <source>polyexponential</source>
+        <translation>বহু-সূচকীয়</translation>
+    </message>
+    <message>
+        <source>{name} uses Google Gemini's API. The key is stored encrypted in your OS keyring and is read only when you press Generate.</source>
+        <translation>{name} Google Gemini-এর API ব্যবহার করে। কীটি আপনার OS-এর কীরিংয়ে এনক্রিপ্ট করে রাখা হয় এবং শুধু «তৈরি করুন» চাপলেই পড়া হয়।</translation>
+    </message>
+    <message>
+        <source>Grayscale TIFF sequence</source>
+        <translation>গ্রেস্কেল TIFF ক্রম</translation>
+    </message>
+    <message>
+        <source>1-bit TIFF sequence</source>
+        <translation>1-bit TIFF ক্রম</translation>
+    </message>
+    <message>
+        <source>8-bit grayscale TIFF, one file per page.</source>
+        <translation>প্রতি পৃষ্ঠায় একটি 8-bit গ্রেস্কেল TIFF ফাইল।</translation>
+    </message>
+    <message>
+        <source>1-bit black-and-white TIFF, one file per page.</source>
+        <translation>প্রতি পৃষ্ঠায় একটি সাদা-কালো 1-bit TIFF ফাইল।</translation>
+    </message>
+    <message>
+        <source>1-bit conversion</source>
+        <translation>1-bit রূপান্তর</translation>
+    </message>
+    <message>
+        <source>Threshold:</source>
+        <translation>সীমা:</translation>
+    </message>
+    <message>
+        <source>Method:</source>
+        <translation>পদ্ধতি:</translation>
+    </message>
+    <message>
+        <source>Ordered 4x4 dither</source>
+        <translation>ক্রমিক 4x4 ডিথার</translation>
+    </message>
+    <message>
+        <source>The selected print preset does not match every page's format and DPI.</source>
+        <translation>নির্বাচিত মুদ্রণ প্রিসেটের আকার ও DPI সব পৃষ্ঠার সঙ্গে মেলে না।</translation>
+    </message>
+    <message>
+        <source>The saved CMYK profile must be loaded again.</source>
+        <translation>সংরক্ষিত CMYK প্রোফাইল আবার লোড করতে হবে।</translation>
+    </message>
+    <message>
+        <source>Added noise</source>
+        <translation>Added noise</translation>
+    </message>
+    <message>
+        <source>Change strength (i2i)</source>
+        <translation>Change strength (i2i)</translation>
+    </message>
+    <message>
+        <source>Enlarge</source>
+        <translation>Enlarge</translation>
+    </message>
+    <message>
+        <source>Input Image</source>
+        <translation>Input Image</translation>
+    </message>
+    <message>
+        <source>Randomize</source>
+        <translation>Randomize</translation>
+    </message>
+    <message>
+        <source>References</source>
+        <translation>References</translation>
+    </message>
+    <message>
+        <source>Reuse last seed</source>
+        <translation>Reuse last seed</translation>
+    </message>
+    <message>
+        <source>i2i</source>
+        <translation>i2i</translation>
+    </message>
+    <message>
+        <source>{count} items</source>
+        <translation>{count} items</translation>
     </message>
 </context>
 <context>
@@ -37808,6 +38376,10 @@ Click to show as panel</source>
         <source>Right Ankle</source>
         <translation>ডান: গোড়ালি</translation>
     </message>
+    <message>
+        <source>OpenPose JSON</source>
+        <translation>OpenPose JSON</translation>
+    </message>
 </context>
 <context>
     <name>DrawingFigureToolbarWidget</name>
@@ -37923,6 +38495,556 @@ Click to show as panel</source>
     <message>
         <source>Could not add basic shape</source>
         <translation>মৌলিক আকৃতি যোগ করা যায়নি</translation>
+    </message>
+</context>
+<context>
+    <name>AISettingsWidget</name>
+    <message>
+        <source>AI Settings</source>
+        <translation>AI সেটিংস</translation>
+    </message>
+    <message>
+        <source>Advanced Settings</source>
+        <translation>উন্নত সেটিংস</translation>
+    </message>
+    <message>
+        <source>Collapse AI Settings</source>
+        <translation>AI সেটিংস গুটিয়ে নিন</translation>
+    </message>
+    <message>
+        <source>Noise Schedule</source>
+        <translation>নয়েজ সূচি</translation>
+    </message>
+    <message>
+        <source>Prompt Guidance</source>
+        <translation>প্রম্পট নির্দেশনার মাত্রা</translation>
+    </message>
+    <message>
+        <source>Prompt Guidance Rescale</source>
+        <translation>প্রম্পট নির্দেশনার স্কেল পুনর্নির্ধারণ</translation>
+    </message>
+    <message>
+        <source>Random</source>
+        <translation>এলোমেলো</translation>
+    </message>
+    <message>
+        <source>Reset</source>
+        <translation>রিসেট</translation>
+    </message>
+    <message>
+        <source>Sampler</source>
+        <translation>স্যাম্পলার</translation>
+    </message>
+    <message>
+        <source>Seed</source>
+        <translation>সিড</translation>
+    </message>
+    <message>
+        <source>Seed must be between 0 and 4294967295</source>
+        <translation>সিডের মান 0 থেকে 4294967295-এর মধ্যে হতে হবে</translation>
+    </message>
+    <message>
+        <source>Steps</source>
+        <translation>ধাপের সংখ্যা</translation>
+    </message>
+    <message>
+        <source>Variety</source>
+        <translation>বৈচিত্র্য</translation>
+    </message>
+    <message>
+        <source>Randomize</source>
+        <translation>Randomize</translation>
+    </message>
+    <message>
+        <source>Reuse last seed</source>
+        <translation>Reuse last seed</translation>
+    </message>
+</context>
+<context>
+    <name>ImageSettingsWidget</name>
+    <message>
+        <source>Image Resolution</source>
+        <translation>ছবির রেজোলিউশন</translation>
+    </message>
+    <message>
+        <source>Image Settings</source>
+        <translation>ছবির সেটিংস</translation>
+    </message>
+    <message>
+        <source>Number of Images</source>
+        <translation>ছবির সংখ্যা</translation>
+    </message>
+    <message>
+        <source>Swap width and height</source>
+        <translation>প্রস্থ ও উচ্চতা অদলবদল করুন</translation>
+    </message>
+</context>
+<context>
+    <name>NovelAIPanel</name>
+    <message>
+        <source>&lt;New Layer&gt;</source>
+        <translation>&lt;নতুন লেয়ার&gt;</translation>
+    </message>
+    <message>
+        <source>AI Settings</source>
+        <translation>AI সেটিংস</translation>
+    </message>
+    <message>
+        <source>Add potion</source>
+        <translation>পোশন যোগ করুন</translation>
+    </message>
+    <message>
+        <source>Advanced API parameters (JSON)</source>
+        <translation>উন্নত API প্যারামিটার (JSON)</translation>
+    </message>
+    <message>
+        <source>Advanced API parameters (JSON; overrides controls)</source>
+        <translation>উন্নত API প্যারামিটার (JSON; ইন্টারফেসের সেটিংসের চেয়ে অগ্রাধিকার পায়)</translation>
+    </message>
+    <message>
+        <source>Advanced Settings</source>
+        <translation>উন্নত সেটিংস</translation>
+    </message>
+    <message>
+        <source>Character Reference</source>
+        <translation>চরিত্রের রেফারেন্স</translation>
+    </message>
+    <message>
+        <source>Character and Style</source>
+        <translation>চরিত্র ও স্টাইলের রেফারেন্স</translation>
+    </message>
+    <message>
+        <source>Collapse AI Settings</source>
+        <translation>AI সেটিংস গুটিয়ে নিন</translation>
+    </message>
+    <message>
+        <source>Colorize</source>
+        <translation>রং করুন</translation>
+    </message>
+    <message>
+        <source>Create variation from Gallery image</source>
+        <translation>গ্যালারির ছবি থেকে একটি ভিন্ন সংস্করণ তৈরি করুন</translation>
+    </message>
+    <message>
+        <source>Custom</source>
+        <translation>স্বাধীন</translation>
+    </message>
+    <message>
+        <source>Director Tool</source>
+        <translation>পরিচালকের টুল</translation>
+    </message>
+    <message>
+        <source>Director Tools</source>
+        <translation>পরিচালকের টুলসমূহ</translation>
+    </message>
+    <message>
+        <source>Emotion</source>
+        <translation>মুখের অভিব্যক্তি</translation>
+    </message>
+    <message>
+        <source>Enter prompt text...</source>
+        <translation>প্রম্পট টেক্সট লিখুন...</translation>
+    </message>
+    <message>
+        <source>External AI services are disabled</source>
+        <translation>বাহ্যিক AI পরিষেবাগুলি নিষ্ক্রিয়</translation>
+    </message>
+    <message>
+        <source>Generate</source>
+        <translation>তৈরি করুন</translation>
+    </message>
+    <message>
+        <source>Height</source>
+        <translation>উচ্চতা</translation>
+    </message>
+    <message>
+        <source>Image Generation</source>
+        <translation>ছবি তৈরি</translation>
+    </message>
+    <message>
+        <source>Image Resolution</source>
+        <translation>ছবির রেজোলিউশন</translation>
+    </message>
+    <message>
+        <source>Image Settings</source>
+        <translation>ছবির সেটিংস</translation>
+    </message>
+    <message>
+        <source>Image2Image</source>
+        <translation>ছবি থেকে ছবি</translation>
+    </message>
+    <message>
+        <source>Information Extracted</source>
+        <translation>তথ্য আহরণের পরিমাণ</translation>
+    </message>
+    <message>
+        <source>Inpaint (current selection)</source>
+        <translation>ইনপেইন্ট (বর্তমান নির্বাচন)</translation>
+    </message>
+    <message>
+        <source>Input layer</source>
+        <translation>ইনপুট লেয়ার</translation>
+    </message>
+    <message>
+        <source>Landscape</source>
+        <translation>আড়াআড়ি</translation>
+    </message>
+    <message>
+        <source>Large</source>
+        <translation>বড়</translation>
+    </message>
+    <message>
+        <source>Large Landscape</source>
+        <translation>বড় আড়াআড়ি</translation>
+    </message>
+    <message>
+        <source>Large Portrait</source>
+        <translation>বড় লম্বালম্বি</translation>
+    </message>
+    <message>
+        <source>Large Square</source>
+        <translation>বড় বর্গাকার</translation>
+    </message>
+    <message>
+        <source>Line Art</source>
+        <translation>রেখাচিত্র</translation>
+    </message>
+    <message>
+        <source>Line art</source>
+        <translation>রেখাচিত্র</translation>
+    </message>
+    <message>
+        <source>Live prompt</source>
+        <translation>রিয়েল প্রম্পট</translation>
+    </message>
+    <message>
+        <source>Mode</source>
+        <translation>মোড</translation>
+    </message>
+    <message>
+        <source>Model</source>
+        <translation>মডেল</translation>
+    </message>
+    <message>
+        <source>No tags found</source>
+        <translation>কোনো ট্যাগ পাওয়া যায়নি</translation>
+    </message>
+    <message>
+        <source>Noise</source>
+        <translation>নয়েজ</translation>
+    </message>
+    <message>
+        <source>Noise Schedule</source>
+        <translation>নয়েজ সূচি</translation>
+    </message>
+    <message>
+        <source>None</source>
+        <translation>কোনো না</translation>
+    </message>
+    <message>
+        <source>Normal</source>
+        <translation>সাধারণ</translation>
+    </message>
+    <message>
+        <source>Normal Landscape</source>
+        <translation>সাধারণ আড়াআড়ি</translation>
+    </message>
+    <message>
+        <source>Normal Portrait</source>
+        <translation>সাধারণ লম্বালম্বি</translation>
+    </message>
+    <message>
+        <source>Normal Square</source>
+        <translation>সাধারণ বর্গাকার</translation>
+    </message>
+    <message>
+        <source>Nothing</source>
+        <translation>কিছুই নয়</translation>
+    </message>
+    <message>
+        <source>NovelAI Potion (Vibe Transfer)</source>
+        <translation>NovelAI পোশন (আবহ স্থানান্তর)</translation>
+    </message>
+    <message>
+        <source>NovelAI generation cancelled</source>
+        <translation>NovelAI-তে ছবি তৈরি বাতিল হয়েছে</translation>
+    </message>
+    <message>
+        <source>NovelAI image added to layer</source>
+        <translation>NovelAI-এর ছবি লেয়ারে যোগ করা হয়েছে</translation>
+    </message>
+    <message>
+        <source>Number of Images</source>
+        <translation>ছবির সংখ্যা</translation>
+    </message>
+    <message>
+        <source>Portrait</source>
+        <translation>পোর্টুর্ট</translation>
+    </message>
+    <message>
+        <source>Prompt Guidance</source>
+        <translation>প্রম্পট নির্দেশনার মাত্রা</translation>
+    </message>
+    <message>
+        <source>Prompt Guidance Rescale</source>
+        <translation>প্রম্পট নির্দেশনার স্কেল পুনর্নির্ধারণ</translation>
+    </message>
+    <message>
+        <source>Random</source>
+        <translation>এলোমেলো</translation>
+    </message>
+    <message>
+        <source>Reference layer</source>
+        <translation>রেফারেন্স লেয়ার</translation>
+    </message>
+    <message>
+        <source>Reference mode</source>
+        <translation>রেফারেন্স মোড</translation>
+    </message>
+    <message>
+        <source>Reference strength</source>
+        <translation>রেফারেন্সের প্রভাব</translation>
+    </message>
+    <message>
+        <source>Refresh layers</source>
+        <translation>লেয়ারের তালিকা রিফ্রেশ করুন</translation>
+    </message>
+    <message>
+        <source>Remove</source>
+        <translation>সরান</translation>
+    </message>
+    <message>
+        <source>Remove Background</source>
+        <translation>ব্যাকগ্রাউন্ড সরান</translation>
+    </message>
+    <message>
+        <source>Remove background</source>
+        <translation>ব্যাকগ্রাউন্ড সরান</translation>
+    </message>
+    <message>
+        <source>Reset</source>
+        <translation>রিসেট</translation>
+    </message>
+    <message>
+        <source>Sampler</source>
+        <translation>স্যাম্পলার</translation>
+    </message>
+    <message>
+        <source>Seed</source>
+        <translation>সিড</translation>
+    </message>
+    <message>
+        <source>Seed must be between 0 and 4294967295</source>
+        <translation>সিডের মান 0 থেকে 4294967295-এর মধ্যে হতে হবে</translation>
+    </message>
+    <message>
+        <source>Sketch</source>
+        <translation>স্কেচ</translation>
+    </message>
+    <message>
+        <source>Small</source>
+        <translation>ছোট</translation>
+    </message>
+    <message>
+        <source>Small Landscape</source>
+        <translation>ছোট আড়াআড়ি</translation>
+    </message>
+    <message>
+        <source>Small Portrait</source>
+        <translation>ছোট লম্বালম্বি</translation>
+    </message>
+    <message>
+        <source>Small Square</source>
+        <translation>ছোট বর্গাকার</translation>
+    </message>
+    <message>
+        <source>Square</source>
+        <translation>স্কুয়ার</translation>
+    </message>
+    <message>
+        <source>Steps</source>
+        <translation>ধাপের সংখ্যা</translation>
+    </message>
+    <message>
+        <source>Strength</source>
+        <translation>শক্তি</translation>
+    </message>
+    <message>
+        <source>Style Reference</source>
+        <translation>স্টাইলের রেফারেন্স</translation>
+    </message>
+    <message>
+        <source>Suggest tags</source>
+        <translation>ট্যাগের পরামর্শ দেখুন</translation>
+    </message>
+    <message>
+        <source>Swap width and height</source>
+        <translation>প্রস্থ ও উচ্চতা অদলবদল করুন</translation>
+    </message>
+    <message>
+        <source>Tag fragment for suggestions</source>
+        <translation>পরামর্শ খুঁজতে ট্যাগের অংশ লিখুন</translation>
+    </message>
+    <message>
+        <source>Target layer</source>
+        <translation>লক্ষ্য লেয়ার</translation>
+    </message>
+    <message>
+        <source>Undesired Content</source>
+        <translation>অবাঞ্ছিত বিষয়বস্তু</translation>
+    </message>
+    <message>
+        <source>Upscale</source>
+        <translation>ছবির রেজোলিউশন বাড়ান</translation>
+    </message>
+    <message>
+        <source>Variety</source>
+        <translation>বৈচিত্র্য</translation>
+    </message>
+    <message>
+        <source>Vibe Transfer</source>
+        <translation>আবহ স্থানান্তর</translation>
+    </message>
+    <message>
+        <source>Wallpaper</source>
+        <translation>ওয়ালপেপার</translation>
+    </message>
+    <message>
+        <source>Wallpaper Landscape</source>
+        <translation>আড়াআড়ি ওয়ালপেপার</translation>
+    </message>
+    <message>
+        <source>Wallpaper Portrait</source>
+        <translation>লম্বালম্বি ওয়ালপেপার</translation>
+    </message>
+    <message>
+        <source>Width</source>
+        <translation>প্রস্থ</translation>
+    </message>
+    <message>
+        <source>exponential</source>
+        <translation>সূচকীয়</translation>
+    </message>
+    <message>
+        <source>karras</source>
+        <translation>karras</translation>
+    </message>
+    <message>
+        <source>polyexponential</source>
+        <translation>বহু-সূচকীয়</translation>
+    </message>
+    <message>
+        <source>Added noise</source>
+        <translation>Added noise</translation>
+    </message>
+    <message>
+        <source>Change strength (i2i)</source>
+        <translation>Change strength (i2i)</translation>
+    </message>
+    <message>
+        <source>Enlarge</source>
+        <translation>Enlarge</translation>
+    </message>
+    <message>
+        <source>Inpaint</source>
+        <translation>Inpaint</translation>
+    </message>
+    <message>
+        <source>Input Image</source>
+        <translation>Input Image</translation>
+    </message>
+    <message>
+        <source>Randomize</source>
+        <translation>Randomize</translation>
+    </message>
+    <message>
+        <source>References</source>
+        <translation>References</translation>
+    </message>
+    <message>
+        <source>Reuse last seed</source>
+        <translation>Reuse last seed</translation>
+    </message>
+    <message>
+        <source>Tools</source>
+        <translation>Tools</translation>
+    </message>
+    <message>
+        <source>i2i</source>
+        <translation>i2i</translation>
+    </message>
+    <message>
+        <source>{count} items</source>
+        <translation>{count} items</translation>
+    </message>
+</context>
+<context>
+    <name>NovelAIPanelPlugin</name>
+    <message>
+        <source>No tags found</source>
+        <translation>কোনো ট্যাগ পাওয়া যায়নি</translation>
+    </message>
+    <message>
+        <source>NovelAI generation cancelled</source>
+        <translation>NovelAI-তে ছবি তৈরি বাতিল হয়েছে</translation>
+    </message>
+    <message>
+        <source>NovelAI image added to layer</source>
+        <translation>NovelAI-এর ছবি লেয়ারে যোগ করা হয়েছে</translation>
+    </message>
+</context>
+<context>
+    <name>VibeReferencesWidget</name>
+    <message>
+        <source>Add potion</source>
+        <translation>পোশন যোগ করুন</translation>
+    </message>
+    <message>
+        <source>Information Extracted</source>
+        <translation>তথ্য আহরণের পরিমাণ</translation>
+    </message>
+    <message>
+        <source>Nothing</source>
+        <translation>কিছুই নয়</translation>
+    </message>
+    <message>
+        <source>NovelAI Potion (Vibe Transfer)</source>
+        <translation>NovelAI পোশন (আবহ স্থানান্তর)</translation>
+    </message>
+    <message>
+        <source>Remove</source>
+        <translation>সরান</translation>
+    </message>
+    <message>
+        <source>Strength</source>
+        <translation>শক্তি</translation>
+    </message>
+</context>
+<context>
+    <name>_LibraryWriteFeedback</name>
+    <message>
+        <source>Shape Manager</source>
+        <translation>আকৃতি ব্যবস্থাপক</translation>
+    </message>
+</context>
+<context>
+    <name>document_mask_recovery</name>
+    <message>
+        <source>Warning</source>
+        <translation>সতর্কতা</translation>
+    </message>
+</context>
+<context>
+    <name>workflow_save_action</name>
+    <message>
+        <source>Failed to save workflow:
+{error}</source>
+        <translation>ওয়ার্কফ্লো সেভ হয়নি:
+{error}</translation>
+    </message>
+    <message>
+        <source>Saved workflow: {name}</source>
+        <translation>ওয়ার্কফ্লো সেভ হয়েছে: {name}</translation>
     </message>
 </context>
 </TS>

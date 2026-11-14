@@ -11,6 +11,7 @@ passing instead of being resampled channel by channel.
 
 from __future__ import annotations
 
+from collections.abc import Callable
 from typing import ClassVar
 
 import numpy as np
@@ -43,12 +44,22 @@ class RasterResampleService:
     ) -> QImage:
         """Return *image* scaled to ``width`` x ``height`` as ARGB32 premultiplied."""
         target_w, target_h = self._target_size(width, height)
+        kernel = self._filter(mode)
+        return self.sample_premultiplied(
+            image, lambda source: source.resize((target_w, target_h), kernel)
+        )
+
+    def sample_premultiplied(
+        self, image: QImage, sample: Callable[[Image.Image], Image.Image]
+    ) -> QImage:
+        """Run a Pillow sampling operation on the premultiplied pixel channels."""
         source = image
         if source.format() != QImage.Format.Format_RGBA8888_Premultiplied:
             source = source.convertToFormat(QImage.Format.Format_RGBA8888_Premultiplied)
         data = self._packed_array(source, 4).tobytes()
         pil = Image.frombuffer("RGBa", (source.width(), source.height()), data, "raw", "RGBa", 0, 1)
-        resized = pil.resize((target_w, target_h), resample=self._filter(mode))
+        resized = sample(pil)
+        target_w, target_h = resized.size
         raw = resized.tobytes()
         result = QImage(
             raw,

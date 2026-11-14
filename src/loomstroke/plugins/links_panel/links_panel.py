@@ -223,11 +223,11 @@ class LinksPanel(QWidget):
             self._coordinator.go_to_layer(consumers[0])
 
     def _after_mutation(self, count: int, error: str, template: str) -> None:
+        self.refresh()
         if error:
             self._report(_ts("Nothing changed: {code}").format(code=error))
         else:
             self._report(template.format(count=count))
-        self.refresh()
 
     def _report(self, text: str) -> None:
         self.status_label.setText(text)

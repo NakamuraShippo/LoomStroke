@@ -26,6 +26,7 @@ from ..core.clipboard.decoded_clipboard_payload import DecodedClipboardPayload
 from ..core.clipboard.selection_clipboard_codec import SelectionClipboardCodec
 from ..core.commands_selection_content import PasteSelectionCommand
 from ..core.commands_selection_mask import UpdateSelectionMaskCommand
+from ..core.paste_new_layer_command import PasteToNewLayerCommand
 from ..core.selection_clipboard import SelectionPayload
 
 logger = logging.getLogger(__name__)
@@ -100,7 +101,21 @@ class SystemClipboardBridge:
         submit = getattr(canvas, "submit", None)
         if canvas is None or not callable(submit):
             return False, "canvas_unavailable"
+        if PasteToNewLayerCommand.supports(canvas):
+            command = PasteToNewLayerCommand(
+                self._selection_payload(decoded),
+                self._paste_position(canvas, decoded),
+                name=self.PASTE_LAYER_NAME,
+            )
+            try:
+                accepted = bool(submit(command))
+            except Exception:
+                logger.warning("system clipboard paste failed", exc_info=True)
+                accepted = False
+            return (True, reason) if accepted else (False, "clipboard_paste_rejected")
         layer_id = self._create_paste_layer(canvas)
+        if layer_id is None:
+            return False, "clipboard_paste_rejected"
         command = PasteSelectionCommand(
             self._selection_payload(decoded),
             position=self._paste_position(canvas, decoded),

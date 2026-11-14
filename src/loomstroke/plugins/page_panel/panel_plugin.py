@@ -38,6 +38,7 @@ from loomstroke.core.book_spread_layout import (
 )
 from loomstroke.core.events import Events
 from loomstroke.core.folio_resolver import resolve_folios
+from loomstroke.core.page_template_edit_scope import capture_page_template_edit_scope
 from loomstroke.host_api import HostAPI, PageSummary, PageTemplateSummary
 from loomstroke.plugins.page_panel.empty_slot_insert_controller import (
     EmptySlotInsertController,
@@ -60,6 +61,10 @@ from loomstroke.plugins.page_panel.spread_view import SpreadListView
 from loomstroke.plugins.page_panel.template_dialogs import (
     TemplateCaptureDialog,
     TemplateManagerDialog,
+    discard_other_template_input,
+    discard_template_input,
+    recall_template_input,
+    retain_template_input,
 )
 from loomstroke.plugins.sdk.base import PluginMetadata, PluginType
 from loomstroke.plugins.sdk.ui import PanelDescriptor, UIPanelPlugin
@@ -261,6 +266,8 @@ class PagePanelWidget(QWidget):
         self._host = host
         self._page_service = host.pages
         self._settings = host.settings
+        self._template_input_draft = None
+        self.destroyed.connect(lambda *_args: discard_template_input(self))
 
         self._thumbnail_height = int(
             self._settings.get("ui/pages_panel/thumbnail_size", DEFAULT_THUMBNAIL_HEIGHT)
@@ -444,6 +451,7 @@ class PagePanelWidget(QWidget):
         self.set_active_page(self._page_service.get_active_page_id())
 
     def set_active_page(self, page_id: str) -> None:
+        discard_other_template_input(self, page_id)
         self.spread_view.set_active_page(page_id)
         item = self._item_map.get(page_id)
         if item is None:
@@ -1147,10 +1155,12 @@ class PagePanelWidget(QWidget):
     def _on_save_current_page_template(self) -> None:
         page_id = self._current_page_id()
         if not page_id:
+            discard_template_input(self)
             return
 
         save_template = getattr(self._page_service, "save_page_as_template", None)
         if not callable(save_template):
+            discard_template_input(self)
             request_widget_page_failure(
                 self,
                 self._ts("Page Operation Failed"),
@@ -1159,21 +1169,41 @@ class PagePanelWidget(QWidget):
             )
             return
 
+        scope = capture_page_template_edit_scope(self._page_service)
+        key = ("capture", page_id)
+        suggested_name, previous_options = recall_template_input(
+            self, key, (self._suggest_template_name(), None)
+        )
         estimate = getattr(self._page_service, "estimate_page_template_raster_bytes", None)
         dialog = TemplateCaptureDialog(
-            suggested_name=self._suggest_template_name(),
+            suggested_name=suggested_name,
             estimated_raster_bytes=int(estimate(page_id)) if callable(estimate) else 0,
             parent=self,
         )
+        restore_options = getattr(dialog, "set_capture_options", None)
+        if previous_options is not None and callable(restore_options):
+            restore_options(previous_options)
         if dialog.exec() != QDialog.DialogCode.Accepted:
+            discard_template_input(self)
+            return
+        if self._current_page_id() != page_id or not scope.matches(
+            capture_page_template_edit_scope(self._page_service)
+        ):
+            discard_template_input(self)
             return
         normalized_name = dialog.template_name()
         if not normalized_name:
+            discard_template_input(self)
             return
 
+        options = dialog.capture_options()
         failure_before = page_failure_checkpoint(self, self._ts)
-        template_id = save_template(page_id, normalized_name, options=dialog.capture_options())
+        template_id = save_template(page_id, normalized_name, options=options)
         if not isinstance(template_id, str) or not template_id:
+            name_edit = getattr(dialog, "name_edit", None)
+            raw_name = name_edit.text() if name_edit is not None else normalized_name
+            if self._current_page_id() == page_id:
+                retain_template_input(self, key, (raw_name, options), scope)
             # A silent no-op here hid a real save crash (vector pages,
             # 2026-08-03) — failures must be visible.
             if failure_before is not None:
@@ -1187,6 +1217,7 @@ class PagePanelWidget(QWidget):
             return
 
         # Saving a template does not select it: it only adds it to the menu.
+        discard_template_input(self)
         self._refresh_template_menu()
         show_message = getattr(self._host.ui, "show_message", None)
         if callable(show_message):
@@ -1299,6 +1330,7 @@ class PagePanelPlugin(UIPanelPlugin):
         self._unsubscribe_events()
         dismiss_page_failure_notice(self)
         if self._panel is not None and isValid(self._panel):
+            discard_template_input(self._panel)
             # The canvas follows this panel's view mode; leaving it in Spread
             # after the panel is gone would strand the viewport with no way
             # back (CT-06 B4-c4).

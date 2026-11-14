@@ -20,10 +20,16 @@ from PySide6.QtWidgets import (
 )
 
 from ...core.book_spread_layout import BookLayout
-from ...core.comic_document_profile import BUILTIN_COMIC_PROFILES, PhysicalPageLayout, comic_profile
+from ...core.comic_document_profile import (
+    BUILTIN_COMIC_PROFILES,
+    PhysicalPageLayout,
+    canvas_pixel_size,
+    comic_profile,
+)
 from ...core.format_guide_service import FormatGuideService
 from ...core.page_templates import PageTemplateStore
 from ...core.print_format_library import PrintFormat, PrintFormatLibrary
+from ..canvas.guide_canvas_bridge import guide_canvas
 from ..translations import translate_with_fallback
 
 _FIELDS = (
@@ -88,6 +94,10 @@ class FormatGuidesDialog(QDialog):
         self.note = QLabel(self)
         self.note.setWordWrap(True)
         form.addRow(self.note)
+        self.resize_button = QPushButton(self)
+        self.resize_button.clicked.connect(self._request_canvas_resize)
+        self.all_pages.toggled.connect(lambda checked: self.resize_button.setEnabled(not checked))
+        form.addRow(self.resize_button)
         self.error = QLabel(self)
         self.error.setWordWrap(True)
         form.addRow(self.error)
@@ -183,6 +193,25 @@ class FormatGuidesDialog(QDialog):
             return
         super().accept()
 
+    def _request_canvas_resize(self) -> None:
+        try:
+            if self.all_pages.isChecked():
+                raise ValueError("Canvas resize applies to the active page only")
+            target = canvas_pixel_size(self.layout_value())
+            current = self.service.pages.get_active_canvas_spec()
+            if target[0] > 16384 or target[1] > 16384:
+                raise ValueError("Canvas dimensions exceed the supported range")
+            if target[0] < current.width or target[1] < current.height:
+                raise ValueError("The requested format would shrink the canvas")
+            if target == (current.width, current.height):
+                raise ValueError("The canvas already matches the requested format")
+        except (ValueError, OSError, RuntimeError):
+            self._error_source = _FAILURE
+            self.error.setText(self._ts(self._error_source))
+            return
+        self.requested_canvas_size = target
+        self.done(2)
+
     @staticmethod
     def _ts(source: str) -> str:
         return translate_with_fallback("FormatGuidesDialog", source)
@@ -196,6 +225,7 @@ class FormatGuidesDialog(QDialog):
             self.preset.setItemText(index, self._ts(profile.name))
         self.all_pages.setText(self._ts("All pages"))
         self.save_button.setText(self._ts("Save Format Preset"))
+        self.resize_button.setText(translate_with_fallback("CanvasResizeDialog", "Canvas Size"))
         self.note.setText(self._ts("Guides use each page's DPI. Canvas size is unchanged."))
         if self._error_source:
             self.error.setText(self._ts(self._error_source))
@@ -208,12 +238,14 @@ class FormatGuidesDialog(QDialog):
 
 def open_format_guides(window: Any) -> None:
     pages = getattr(getattr(window, "_host_api", None), "pages", None)
-    controller = getattr(getattr(window, "canvas", None), "_guide_controller", None)
+    controller = getattr(guide_canvas(getattr(window, "canvas", None)), "_guide_controller", None)
     if pages is None or controller is None or controller.guides_locked:
         return
     document = window._get_document_service()
     resolve = getattr(document, "resolve_book_layout", None)
     layout = resolve() if callable(resolve) else BookLayout()
     dialog = FormatGuidesDialog(FormatGuideService(pages, layout), parent=window)
-    dialog.exec()
+    result = dialog.exec()
     controller.reload_page_state()
+    if result == 2:
+        window._on_canvas_resize(dialog.requested_canvas_size)

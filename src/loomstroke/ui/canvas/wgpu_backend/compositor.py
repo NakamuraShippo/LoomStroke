@@ -981,6 +981,8 @@ class WgpuCompositor:
             width=self._three_d_render_width(scene.width),
             height=self._three_d_render_height(scene.height),
             create_target=self.create_target,
+            canvas_width=scene.width,
+            canvas_height=scene.height,
         )
         if result is None:
             return self._unchanged_draw(
@@ -1016,10 +1018,7 @@ class WgpuCompositor:
             current_target,
             source_texture,
             canvas_size=(float(composite_width), float(composite_height)),
-            dest_origin=(
-                float(getattr(layer, "offset_x", 0)),
-                float(getattr(layer, "offset_y", 0)),
-            ),
+            dest_origin=(0.0, 0.0),
             dest_size=(float(scene.width), float(scene.height)),
             uv_origin=(0.0, 0.0),
             uv_size=(1.0, 1.0),

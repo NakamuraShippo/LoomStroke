@@ -179,18 +179,15 @@ class AIEffectOutputMaterializer:
             return None
         sibling_list, parent_idx = parent_result
 
-        decoded = self._decode_ai_effect_output_png(parent_effect_id, png_bytes)
-        if decoded is None:
-            return None
-
-        layer = self._create_ai_effect_output_layer(
+        layer = self.prepare_ai_effect_output_layer(
             parent,
-            parent_effect_id=parent_effect_id,
             name=name,
-            image=decoded,
+            png_bytes=png_bytes,
             output_internal_id=output_internal_id,
             generation_index=generation_index,
         )
+        if layer is None:
+            return None
 
         insert_at = parent_idx + 1
         if insert_at >= len(sibling_list):
@@ -230,18 +227,21 @@ class AIEffectOutputMaterializer:
             decoded = decoded.convertToFormat(QImage.Format.Format_ARGB32_Premultiplied)
         return decoded
 
-    def _create_ai_effect_output_layer(
+    def prepare_ai_effect_output_layer(
         self,
         parent: Any,
         *,
-        parent_effect_id: str,
         name: str,
-        image: QImage,
+        png_bytes: bytes,
         output_internal_id: str | None,
         generation_index: int,
-    ) -> Any:
+    ) -> Any | None:
+        """Prepare pixels and placement without attaching or notifying a layer."""
         from loomstroke.plugins.ai_effect.data_model import LayerOrigin  # noqa: PLC0415
 
+        image = self._decode_ai_effect_output_png(parent.id, png_bytes)
+        if image is None:
+            return None
         new_id = f"ai-effect-output-{len(self._canvas._layers)}-{time.time_ns()}"
         layer = self._layer_type(
             id=new_id,
@@ -253,7 +253,7 @@ class AIEffectOutputMaterializer:
             parent_id=parent.parent_id,
             origin=LayerOrigin(
                 type="ai_effect_output",
-                parent_effect_id=parent_effect_id,
+                parent_effect_id=parent.id,
                 output_slot_id=output_internal_id,
                 generation_index=int(generation_index),
             ),

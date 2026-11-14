@@ -8,9 +8,9 @@ import numpy as np
 from numpy.typing import NDArray
 from PySide6.QtCore import QRect
 
-from loomstroke.core.canvas_command_commit_guard import CanvasCommandCommitGuard
 from loomstroke.core.recontour.limits import MAX_REGION_BYTES
 
+from .edit_history import commit_native_raster_command
 from .patch_command import NativeCmykPatchCommand
 from .pixels import NativeCmykPixels
 
@@ -105,12 +105,5 @@ def commit_native_image(
     local = region.translated(-layer.offset_x, -layer.offset_y)
     rect = (local.x(), local.y(), local.width(), local.height())
     command = NativeCmykPatchCommand(layer.id, rect, before.snapshot(), after.snapshot())
-    guard = CanvasCommandCommitGuard(canvas)
-    try:
-        if not command.apply(canvas):
-            raise ValueError("Native stroke replacement could not be committed")
-        canvas._record_history_command(label, command)
-    except Exception:
-        if command._executed:
-            guard.rollback(command)
-        raise
+    if not commit_native_raster_command(canvas, command, label):
+        raise ValueError("Native stroke replacement could not be committed")

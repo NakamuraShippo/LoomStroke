@@ -5,6 +5,8 @@ from __future__ import annotations
 from typing import Any
 
 from .channels.channel_command_capture import ChannelCommandCapture
+from .command_layer_access import _resolve_target_layer
+from .raster_history_commit import RasterBackingState, record_raster_history
 
 
 class CanvasFillGradientSubmitService:
@@ -27,7 +29,11 @@ class CanvasFillGradientSubmitService:
             return False
         saved_alpha: Any | None = None
         alpha_layer: Any | None = None
+        original = None
         if not isinstance(cmd, self._flood_fill_to_new_layer_type):
+            target = _resolve_target_layer(self._owner, getattr(cmd, "reference_layer_id", None))
+            if target is not None:
+                original = RasterBackingState(target)
             alpha_layer, saved_alpha = self._owner._alpha_preservation().save_flood_fill_alpha(
                 getattr(cmd, "reference_layer_id", None)
             )
@@ -40,13 +46,25 @@ class CanvasFillGradientSubmitService:
 
         is_pattern = isinstance(cmd, self._pattern_fill_type)
         label = "Pattern Fill" if is_pattern else "Bucket Fill"
+
         # Placed fills already freeze component-limited source patches; the
         # legacy capture uses offset-only patch coordinates.
-        if capture is not None and getattr(cmd, "_placed_edit", None) is None:
-            if not capture.record(cmd, label):
-                return False
-        else:
-            self._owner._record_history_command(label, cmd)
+        def record() -> bool | None:
+            if capture is not None and getattr(cmd, "_placed_edit", None) is None:
+                recorded = capture.record(cmd, label)
+                if not recorded and original is not None:
+                    original.restore()
+                return recorded
+            return self._owner._record_history_command(label, cmd)
+
+        def restore() -> None:
+            if not cmd.revert(self._owner):
+                raise RuntimeError("Could not restore rejected fill")
+            if original is not None:
+                original.restore()
+
+        if not record_raster_history(self._owner, record, restore):
+            return False
         dirty = cmd.dirty_region
         target_layer_id = getattr(cmd, "target_layer_id", None)
         self._owner._command_dirty_region().notify_layer_dirty_region(

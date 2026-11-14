@@ -11,6 +11,7 @@ from __future__ import annotations
 
 import copy
 import logging
+from collections.abc import Callable
 from contextlib import suppress
 from typing import Any
 
@@ -24,7 +25,9 @@ from loomstroke.core.canvas_history_entries import (
     _decompress_qimage,
     _HistoryGroup,
     _ResizeEntry,
+    _ResizeSnapshot,
 )
+from loomstroke.core.command_layer_access import _set_layer_transform
 from loomstroke.core.command_types import LayerTransform
 from loomstroke.core.events import DocumentChangeEvent
 from loomstroke.core.native_cmyk.geometry import NativeCmykGeometry
@@ -34,6 +37,7 @@ from .interpolation import InterpolationMode
 from .metadata_resample_plan import prepare_metadata
 from .raster_resample_service import RasterResampleService
 from .resample_snapshot import MaskSnapshot, ResampleSnapshot, SelectionSnapshot
+from .rotated_raster_resample import ResampledRotatedRaster, prepare_rotated_rasters
 from .vector_geometry_scale_service import VectorGeometryScaleService
 
 logger = logging.getLogger(__name__)
@@ -112,12 +116,27 @@ class CanvasResampleService:
                 )
 
                 validate_prepared_resample(canvas, prepared, scale_x, scale_y)
-            except (ValueError, TypeError, KeyError, IndexError):
-                logger.exception("Cannot resample canvas metadata; document left unchanged")
+                rotated = prepare_rotated_rasters(
+                    [layer for layer, _, _ in prepared],
+                    scale_x,
+                    scale_y,
+                    interpolation,
+                    self._raster,
+                )
+            except (
+                ValueError,
+                TypeError,
+                KeyError,
+                IndexError,
+                OverflowError,
+                MemoryError,
+                OSError,
+            ):
+                logger.exception("Cannot prepare canvas resample; document left unchanged")
                 return False
         before = self.take_snapshot()
         if size_changed:
-            self._apply_scale(width, height, scale_x, scale_y, interpolation, prepared)
+            self._apply_scale(width, height, scale_x, scale_y, interpolation, prepared, rotated)
         canvas._dpi = new_dpi
         if size_changed:
             self._finish(width, height, change_type="resize")
@@ -140,16 +159,34 @@ class CanvasResampleService:
     def take_snapshot(self) -> ResampleSnapshot:
         """Capture size, DPI, every layer buffer / mask / transform and the selection."""
         canvas = self._canvas
+        return ResampleSnapshot(
+            width=int(canvas._width),
+            height=int(canvas._height),
+            dpi=int(getattr(canvas, "_dpi", 96) or 96),
+            selection=self._selection_snapshot(),
+            **self.capture_layer_state(),
+        )
+
+    def capture_layer_state(
+        self,
+        compress_qimage: Callable[
+            [QImage], tuple[bytes, int, int, QImage.Format]
+        ] = _compress_qimage,
+    ) -> dict[str, Any]:
+        """Capture the layer payload shared by viewport and pixel-size history."""
+        layers = self._canvas._flatten_layers()
         layer_images: list[tuple[str, bytes, int, int, int, int]] = []
         layer_vectors: dict[str, list[Any]] = {}
         layer_masks: list[MaskSnapshot] = []
         filter_masks: list[MaskSnapshot] = []
         transforms: dict[str, Any] = {}
+        offsets: dict[str, tuple[int, int]] = {}
         image_formats: dict[str, QImage.Format] = {}
-        for layer in canvas._flatten_layers():
+        for layer in layers:
+            offsets[layer.id] = int(layer.offset_x), int(layer.offset_y)
             image = getattr(layer, "image", None)
             if image is not None:
-                data, w, h, image_format = _compress_qimage(image)
+                data, w, h, image_format = compress_qimage(image)
                 image_formats[layer.id] = image_format
                 layer_images.append(
                     (layer.id, data, w, h, int(layer.offset_x), int(layer.offset_y))
@@ -158,29 +195,25 @@ class CanvasResampleService:
                 layer_vectors[layer.id] = list(layer.vector_objects)
             mask = getattr(layer, "layer_mask", None)
             if mask is not None:
-                layer_masks.append((layer.id, *_compress_qimage(mask)))
+                layer_masks.append((layer.id, *compress_qimage(mask)))
             filter_mask = getattr(layer, "filter_mask", getattr(layer, "effect_mask", None))
             if filter_mask is not None:
-                filter_masks.append((layer.id, *_compress_qimage(filter_mask)))
+                filter_masks.append((layer.id, *compress_qimage(filter_mask)))
             transform = getattr(layer, "transform", None)
             if transform is not None:
                 transforms[layer.id] = transform
-        return ResampleSnapshot(
-            width=int(canvas._width),
-            height=int(canvas._height),
+        return dict(
             layer_images=layer_images,
             layer_vectors=layer_vectors,
-            dpi=int(getattr(canvas, "_dpi", 96) or 96),
             layer_masks=layer_masks,
             effect_masks=filter_masks,
             layer_transforms=transforms,
+            layer_offsets=offsets,
             image_formats=image_formats,
-            selection=self._selection_snapshot(),
             layer_metadata={
-                layer.id: copy.deepcopy(getattr(layer, "metadata", None))
-                for layer in canvas._flatten_layers()
+                layer.id: copy.deepcopy(getattr(layer, "metadata", None)) for layer in layers
             },
-            native_layers=NativeCmykGeometry.capture(canvas._flatten_layers()),
+            native_layers=NativeCmykGeometry.capture(layers),
         )
 
     def restore_snapshot(self, snapshot: ResampleSnapshot) -> None:
@@ -189,11 +222,15 @@ class CanvasResampleService:
         canvas._width = int(snapshot.width)
         canvas._height = int(snapshot.height)
         canvas._dpi = int(snapshot.dpi)
+        self.restore_layer_state(snapshot)
+        self._restore_selection(snapshot.selection)
+        self._finish(int(snapshot.width), int(snapshot.height), change_type="resize")
 
+    def restore_layer_state(self, snapshot: _ResizeSnapshot) -> None:
         images = {item[0]: item[1:] for item in snapshot.layer_images}
         masks = {item[0]: item[1:] for item in snapshot.layer_masks}
-        filter_masks = {item[0]: item[1:] for item in snapshot.filter_masks}
-        for layer in canvas._flatten_layers():
+        filter_masks = {item[0]: item[1:] for item in snapshot.effect_masks}
+        for layer in self._canvas._flatten_layers():
             image_entry = images.get(layer.id)
             NativeCmykGeometry.restore(layer, snapshot)
             if layer.id in snapshot.layer_metadata:
@@ -208,13 +245,20 @@ class CanvasResampleService:
                 )
                 layer.offset_x = int(offset_x)
                 layer.offset_y = int(offset_y)
+            elif layer.id in snapshot.layer_offsets:
+                layer.image = None
+            if layer.id in snapshot.layer_offsets:
+                layer.offset_x, layer.offset_y = snapshot.layer_offsets[layer.id]
             vectors = snapshot.layer_vectors.get(layer.id)
             if vectors is not None:
                 layer.vector_objects = list(vectors)
             elif getattr(layer, "vector_objects", None):
                 layer.vector_objects = []
-            self._restore_mask(layer, "layer_mask", masks.get(layer.id))
-            if self._restore_mask(layer, _filter_mask_attribute(layer), filter_masks.get(layer.id)):
+            mask_changed = self._restore_mask(layer, "layer_mask", masks.get(layer.id))
+            filter_changed = self._restore_mask(
+                layer, _filter_mask_attribute(layer), filter_masks.get(layer.id)
+            )
+            if filter_changed:
                 self._bump_filter_mask_version(layer)
             transform = snapshot.layer_transforms.get(layer.id)
             if transform is not None and transform != getattr(layer, "transform", None):
@@ -222,10 +266,10 @@ class CanvasResampleService:
                 self._bump_transform_version(layer)
             self._clear_filter_cache(layer)
             layer.texture_version += 1
-            self._mark_mask_dirty(layer)
-
-        self._restore_selection(snapshot.selection)
-        self._finish(int(snapshot.width), int(snapshot.height), change_type="resize")
+            if mask_changed or filter_changed:
+                dirty = getattr(self._canvas, "_gpu_mask_dirty_layers", None)
+                if isinstance(dirty, set):
+                    dirty.add(layer.id)
 
     # -- validation -------------------------------------------------------------
 
@@ -273,6 +317,7 @@ class CanvasResampleService:
         scale_y: float,
         mode: InterpolationMode,
         prepared: list[Any],
+        rotated: dict[str, ResampledRotatedRaster],
     ) -> None:
         canvas = self._canvas
         old_width = int(canvas._width)
@@ -285,6 +330,7 @@ class CanvasResampleService:
                 scale_x=scale_x,
                 scale_y=scale_y,
                 mode=mode,
+                rotated=rotated.get(layer.id),
             )
             if metadata is not None:
                 layer.metadata = metadata
@@ -309,11 +355,16 @@ class CanvasResampleService:
         scale_x: float,
         scale_y: float,
         mode: InterpolationMode,
+        rotated: ResampledRotatedRaster | None = None,
     ) -> None:
         image = getattr(layer, "image", None)
-        if image is not None and not image.isNull():
-            offset_x = int(layer.offset_x)
-            offset_y = int(layer.offset_y)
+        offset_x, offset_y = int(layer.offset_x), int(layer.offset_y)
+        if rotated is not None:
+            layer.image = rotated.image
+            if rotated.native_cmyk is not None:
+                layer.native_cmyk = rotated.native_cmyk
+            _set_layer_transform(layer, LayerTransform.translation(rotated.x, rotated.y))
+        elif image is not None and not image.isNull():
             target_w, target_h = self._scaled_buffer_size(
                 (image.width(), image.height()),
                 (offset_x, offset_y),
@@ -324,6 +375,7 @@ class CanvasResampleService:
             )
             layer.image = self._raster.resample_premultiplied(image, target_w, target_h, mode)
             NativeCmykGeometry.resample(layer, target_w, target_h, mode)
+        if rotated is None and ((image is not None and not image.isNull()) or layer.vector_objects):
             layer.offset_x = self._planner.round_half_up(offset_x * scale_x)
             layer.offset_y = self._planner.round_half_up(offset_y * scale_y)
 
@@ -361,7 +413,7 @@ class CanvasResampleService:
             self._bump_filter_mask_version(layer)
 
         transform = getattr(layer, "transform", None)
-        if transform is not None and transform != LayerTransform.identity():
+        if rotated is None and transform is not None and transform != LayerTransform.identity():
             layer.transform = LayerTransform(
                 tx=float(transform.tx) * scale_x,
                 ty=float(transform.ty) * scale_y,

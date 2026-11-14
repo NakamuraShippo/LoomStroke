@@ -9,7 +9,7 @@ from __future__ import annotations
 import logging
 import uuid
 
-from loomstroke.core.event_bus_extensions import ExtendedEventBus
+from loomstroke.core.event_bus_extensions import EventBusTimeoutError, ExtendedEventBus
 from loomstroke.plugins.common.constants import DEFAULT_SEPARATOR, EventTypes
 from loomstroke.plugins.common.events import PluginEvent
 from loomstroke.plugins.common.models import (
@@ -72,7 +72,7 @@ class PromptComposer:
                         f"{response.get('error', 'Unknown error')}"
                     )
 
-            except (TimeoutError, AttributeError, KeyError, ValueError) as e:
+            except (EventBusTimeoutError, TimeoutError, AttributeError, KeyError, ValueError) as e:
                 logger.error(f"Error fetching snippet {snippet_id}: {e}")
                 continue
 

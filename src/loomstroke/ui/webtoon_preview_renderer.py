@@ -12,12 +12,14 @@ from __future__ import annotations
 import logging
 from collections import OrderedDict
 from collections.abc import Callable
+from dataclasses import replace
 from typing import Any
 
 import numpy as np
 from PySide6.QtCore import Qt
 from PySide6.QtGui import QImage
 
+from ..core.document_capture_guard import assert_document_capture_ready
 from ..io.layer_io import DocumentMetadata
 from .canvas.page_scene_snapshot import array_to_qimage
 from .offscreen_page_renderer import OffscreenPageRenderer
@@ -38,6 +40,7 @@ class WebtoonPreviewRenderer:
         document_metadata: DocumentMetadata,
         *,
         render_page: RenderPage | None = None,
+        live_canvas: Any = None,
         max_width: int = 320,
         cache_size: int = 8,
     ) -> None:
@@ -45,6 +48,7 @@ class WebtoonPreviewRenderer:
         self._metadata = document_metadata
         self._offscreen: OffscreenPageRenderer | None = None
         self._render_page = render_page
+        self._live_canvas = live_canvas
         self._max_width = max(16, int(max_width))
         self._cache_size = max(1, int(cache_size))
         self._cache: OrderedDict[str, QImage | None] = OrderedDict()
@@ -76,6 +80,10 @@ class WebtoonPreviewRenderer:
             page = self._pages.get_page_snapshot(page_id)
             if page is None:
                 return None
+            capture = getattr(self._live_canvas, "get_document_layer_snapshots", None)
+            if callable(capture) and page_id == self._pages.get_active_page_id():
+                assert_document_capture_ready(self._live_canvas)
+                page = replace(page, layers=capture())
             rgba = self._render(page)
             image = array_to_qimage(np.ascontiguousarray(rgba))
             if image.width() > self._max_width:

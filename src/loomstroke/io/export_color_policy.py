@@ -2,10 +2,10 @@
 
 ``embed`` tags RGB pixels with the document's compatible RGB ICC bytes, ``untagged``
 writes no profile, ``convert_srgb`` transforms the pixels with the
-authoritative CPU transform (CT-11 P1) and tags sRGB.  Nothing here ever
-fabricates a profile the document does not have: a document without a
-profile is "treated as sRGB", and the issue codes say so instead of
-silently tagging it.
+authoritative CPU transform (CT-11 P1) and tags sRGB. Known sRGB render
+output already has the intended colour values and can be tagged without
+another transform. An unknown, untagged RGB source remains distinct from
+that known output and is reported through the policy's existing issues.
 """
 
 from __future__ import annotations
@@ -30,6 +30,11 @@ class ResolvedColorPolicy:
     issues: tuple[ExportIssue, ...] = ()
     transform: RgbaTransform | None = None
 
+    @property
+    def blocked(self) -> bool:
+        """Whether the chosen policy can be applied to the supplied colour space."""
+        return any(issue.severity == "error" for issue in self.issues)
+
 
 class ExportColorPolicy:
     """Turn a policy id + document profile bytes into encoder inputs."""
@@ -41,9 +46,14 @@ class ExportColorPolicy:
     def registry(self) -> ColorProfileRegistry:
         return self._registry
 
-    def resolve(self, policy: str, *, document_profile: bytes | None) -> ResolvedColorPolicy:
+    def resolve(
+        self, policy: str, *, document_profile: bytes | None, rendered_srgb: bool = False
+    ) -> ResolvedColorPolicy:
         if policy == "untagged":
             return ResolvedColorPolicy(icc_bytes=None)
+        if rendered_srgb and policy in ("embed", "convert_srgb"):
+            profile_id = self._registry.srgb().profile_id
+            return ResolvedColorPolicy(icc_bytes=self._registry.profile_bytes(profile_id))
         if policy == "embed":
             return self._resolve_embed(document_profile)
         if policy == "convert_srgb":
@@ -97,6 +107,18 @@ class ExportColorPolicy:
         info = self._register(document_profile)
         if info is None:
             return ResolvedColorPolicy(icc_bytes=srgb_bytes, issues=(self._invalid_issue(),))
+        if info.colorspace.strip().upper() != "RGB":
+            return ResolvedColorPolicy(
+                icc_bytes=None,
+                issues=(
+                    ExportIssue(
+                        code="document_profile_invalid",
+                        message="the document ICC profile is not RGB; "
+                        "conversion to sRGB was refused",
+                        severity="error",
+                    ),
+                ),
+            )
         if info.profile_id == srgb.profile_id:
             return ResolvedColorPolicy(icc_bytes=srgb_bytes)
         registry = self._registry

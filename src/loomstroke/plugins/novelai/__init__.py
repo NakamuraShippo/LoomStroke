@@ -1,0 +1,1 @@
+"""NovelAI image panel integration."""

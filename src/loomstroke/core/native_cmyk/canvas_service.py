@@ -18,6 +18,8 @@ from .affine import placement
 from .buffer import NativeCmykBuffer
 from .color_transform import CmykColorTransform
 from .convert_command import ConvertNativeCmykCommand
+from .edit_history import commit_native_raster_command
+from .fill_spans import pattern_source_paint
 from .patch_command import NativeCmykPatchCommand
 from .pixel_operations import NativeCmykPixelOperations
 from .pixels import NativeCmykPixels
@@ -180,29 +182,17 @@ class CanvasNativeCmykService:
             PatternFillCommand,
         )
 
-        color: Any
         if isinstance(command, PatternFillCommand):
-            pattern = command._scaled_pattern()
-            ph, pw = pattern.shape[:2]
-            ox, oy = command._pattern_offset
-            yy, xx = np.mgrid[ry : ry + rh, rx : rx + rw]
-            if is_placed(layer):
-                mapping = placement(layer)
-                xx, yy = (
-                    mapping.a * (xx + 0.5) + mapping.b * (yy + 0.5) + mapping.tx,
-                    mapping.c * (xx + 0.5) + mapping.d * (yy + 0.5) + mapping.ty,
-                )
-                xx, yy = np.floor(xx).astype(np.int64), np.floor(yy).astype(np.int64)
-            else:
-                xx, yy = xx + layer.offset_x, yy + layer.offset_y
-            rgba = pattern[(yy + oy) % ph, (xx + ox) % pw]
-            inks, alpha = CmykColorTransform.from_rgb(rgba, native.profile)
-            color = inks.astype(native.inks.dtype) * scale
-            coverage = ((coverage.astype(np.uint16) * alpha + 127) // 255).astype(np.uint8)
+            paint = pattern_source_paint(command, self.canvas, layer, bounds, coverage)
+            if paint is None:
+                return False
+            color, coverage = paint
         else:
             color = self.color(command.fill_rgba, layer)
-        coverage = selection_local(self.canvas, layer, bounds, coverage)
-        return self._commit_local(layer, bounds, color, coverage, label="CMYK Fill")
+            coverage = selection_local(self.canvas, layer, bounds, coverage)
+        return self._commit_local(
+            layer, bounds, color, coverage, label="CMYK Fill", guard_history=True
+        )
 
     def gradient(self, command) -> bool:
         layer = self._target(command._layer_id)
@@ -312,6 +302,7 @@ class CanvasNativeCmykService:
         *,
         erase: bool = False,
         label: str,
+        guard_history: bool = False,
     ) -> bool:
         if not np.any(coverage):
             return False
@@ -322,7 +313,7 @@ class CanvasNativeCmykService:
         )
         if np.array_equal(before.inks, after.inks) and np.array_equal(before.alpha, after.alpha):
             return False
-        return self._submit(layer, rect, before, after, label)
+        return self._submit(layer, rect, before, after, label, guard_history=guard_history)
 
     def _submit(
         self,
@@ -331,8 +322,12 @@ class CanvasNativeCmykService:
         before: NativeCmykPixels,
         after: NativeCmykPixels,
         label: str,
+        *,
+        guard_history: bool = False,
     ) -> bool:
         command = NativeCmykPatchCommand(layer.id, rect, before, after)
+        if guard_history:
+            return commit_native_raster_command(self.canvas, command, label)
         if not command.apply(self.canvas):
             return False
         self.canvas._record_history_command(label, command)

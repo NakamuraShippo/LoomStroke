@@ -1,4 +1,4 @@
-"""Modal dialog for setting / clearing the NanoBanana API key.
+"""Modal dialog for setting / clearing paid Gateway API keys.
 
 Phase 8a "read-on-demand" policy in action:
 - The QLineEdit is always password-mode; no reveal toggle.
@@ -10,8 +10,7 @@ Phase 8a "read-on-demand" policy in action:
   lives on ``self.*`` of the dialog.
 - On [Cancel] the field is cleared first so the typed-but-unsaved
   value is dropped before the dialog goes away.
-- "Get your API key" routes the user to
-  ``https://aistudio.google.com/app/api-keys`` via
+- "Get your API key" opens the configured provider URL via
   ``QDesktopServices`` — purely a browser hand-off, no keyring read.
 
 Designed to be reusable across future paid Gateways (OpenAI,
@@ -88,8 +87,8 @@ class APIKeyDialog(QDialog):
 
         intro = QLabel(
             self.tr(
-                "{name} uses Google Gemini's API. The key is stored encrypted "
-                "in your OS keyring and is read only when you press Generate."
+                "{name} API key is stored in your OS keyring and read only "
+                "when you make a request."
             ).format(name=display_name),
             self,
         )

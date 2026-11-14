@@ -195,6 +195,8 @@ class DocumentMetadata:
     created: str | None = None
     modified: str | None = None
     ui_layout: dict[str, Any] | None = None
+    # Recovery information is runtime-only and is never serialized to the manifest.
+    missing_mask_count: int = field(default=0, compare=False, repr=False)
 
     def ensure_timestamps(self) -> None:
         """Populate created/modified timestamps when missing."""
@@ -410,6 +412,9 @@ class LayerIO:
 
                 self._validate_format_version(manifest, strict=strict)
                 metadata = self._metadata_from_manifest(manifest)
+                from .lstroke_mask_recovery import missing_mask_count  # noqa: PLC0415
+
+                metadata.missing_mask_count = missing_mask_count(self, archive, manifest)
                 pages = self._pages_from_manifest(manifest, archive, metadata, strict=strict)
                 NativeCmykArchiveCodec.attach(self, archive, manifest, pages)
                 thumbnails = self._read_page_thumbnails(archive, pages)
@@ -739,10 +744,9 @@ class LayerIO:
             mask_enabled = bool(entry.get("mask_enabled", True))
             layer_mask_path = entry.get("layer_mask")
             if isinstance(layer_mask_path, str):
-                try:
-                    layer_mask_image = self._read_image_from_archive(archive, layer_mask_path)
-                except ValueError:
-                    logger.warning("Failed to load layer mask at %s", layer_mask_path)
+                from .lstroke_mask_recovery import read_optional_mask  # noqa: PLC0415
+
+                layer_mask_image = read_optional_mask(self, archive, layer_mask_path, strict=strict)
             # --- Effect fields ---
             effect_type: str | None = None
             effect_params: dict[str, Any] = {}
@@ -754,10 +758,11 @@ class LayerIO:
                 effect_params = dict(raw_params) if isinstance(raw_params, dict) else {}
                 effect_mask_path = entry.get("effect_mask")
                 if isinstance(effect_mask_path, str):
-                    try:
-                        effect_mask_image = self._read_image_from_archive(archive, effect_mask_path)
-                    except ValueError:
-                        logger.warning("Failed to load effect mask at %s", effect_mask_path)
+                    from .lstroke_mask_recovery import read_optional_mask  # noqa: PLC0415
+
+                    effect_mask_image = read_optional_mask(
+                        self, archive, effect_mask_path, strict=strict
+                    )
             # --- Children (recursive) ---
             children: list[LayerSnapshot] = []
             raw_children = entry.get("children")
@@ -992,6 +997,9 @@ class LayerIO:
                 archive, validate_manifest=validate_manifest, strict=strict
             )
             metadata = self._metadata_from_manifest(manifest)
+            from .lstroke_mask_recovery import missing_mask_count  # noqa: PLC0415
+
+            metadata.missing_mask_count = missing_mask_count(self, archive, manifest)
             entries: list[PageDirectoryEntry] = []
             raw_pages = manifest.get("pages")
             if isinstance(raw_pages, list) and raw_pages:

@@ -2327,7 +2327,9 @@ class LoomStrokeMcpService:
         cancelled = False
         if job.cancel is not None:
             cancelled = bool(job.cancel())
-        elif self._generation_canceller is not None and job.related_layer_id:
+        elif task is None and self._generation_canceller is not None and job.related_layer_id:
+            # A layer-wide cancel can also stop other generation jobs for the same layer.
+            # A tracked task already propagates cancellation to its own acquired handle.
             cancelled = bool(self._generation_canceller(job.related_layer_id))
         if task is not None and not task.done():
             task.cancel()
@@ -3699,6 +3701,10 @@ class LoomStrokeMcpService:
     async def apply_changeset(self, arguments: Mapping[str, Any]) -> dict[str, Any]:
         from .production_changeset_creation import _blocked_applied_comic  # noqa: PLC0415
         from .production_changeset_state import ChangesetState  # noqa: PLC0415
+        from .production_mixed_commit import (  # noqa: PLC0415
+            apply_comic_changeset,
+            publish_applied_changeset,
+        )
         from .production_record_commit import commit_records, reject_pending_apply  # noqa: PLC0415
 
         changeset_id = self._required_str(arguments, "changesetId")
@@ -3739,12 +3745,11 @@ class LoomStrokeMcpService:
         record_result = commit_records(self, state, changeset, restore=False)
         if record_result is not None:
             return record_result
+        comic_result = apply_comic_changeset(self, state, changeset)
+        if comic_result is not None:
+            return comic_result
         applied = self._apply_pct_changeset_operations(changeset)
-        changeset["status"] = "applied"
-        changeset["appliedAt"] = datetime.now(UTC).isoformat()
-        changeset["updatedAt"] = changeset["appliedAt"]
-        changeset["appliedRecords"] = applied
-        changeset = state.write(changeset)
+        changeset = publish_applied_changeset(state, changeset, applied)
         return pct.pct_response(
             {"changeset": changeset, "appliedRecords": applied},
             requires_confirmation=True,
@@ -4024,36 +4029,34 @@ class LoomStrokeMcpService:
         changeset: Mapping[str, Any],
     ) -> dict[str, Any]:
         from .comic_changeset import ComicApplyCommand  # noqa: PLC0415
+        from .production_mixed_commit import _comic_apply_record  # noqa: PLC0415
 
-        if self.canvas_service is None:
+        command = ComicApplyCommand(operations)
+        self._submit_comic_changeset_command(self.canvas_service, command, changeset)
+        return _comic_apply_record(command, operations, changeset)
+
+    def _submit_comic_changeset_command(
+        self, canvas: Any, command: Any, changeset: Mapping[str, Any]
+    ) -> None:
+        if canvas is None:
             raise McpStructuredError(
                 ReasonCode.CAPABILITY_UNAVAILABLE,
                 "Canvas service is not available.",
                 details={"changesetId": changeset.get("changesetId")},
             )
-        submit = getattr(self.canvas_service, "submit", None)
+        submit = getattr(canvas, "submit", None)
         if not callable(submit):
             raise McpStructuredError(
                 ReasonCode.CAPABILITY_UNAVAILABLE,
                 "Canvas service cannot submit commands.",
                 details={"changesetId": changeset.get("changesetId")},
             )
-        command = ComicApplyCommand(operations)
         if not bool(submit(command)):
             raise McpStructuredError(
                 ReasonCode.BACKEND_FAILED,
                 "Comic changeset apply failed.",
                 details={"changesetId": changeset.get("changesetId")},
             )
-        return {
-            "kind": "comic_page",
-            "recordType": "canvas_history_command",
-            "recordId": changeset.get("changesetId"),
-            "operationCount": len(operations),
-            "createdLayerIds": command.created_layer_ids,
-            "vectorObjectIds": command.vector_object_ids,
-            "operationRecords": command.applied_records,
-        }
 
     def _rollback_pct_changeset_records(self, changeset: Mapping[str, Any]) -> list[dict[str, Any]]:
         from .production_record_changeset import rollback_record_operations  # noqa: PLC0415

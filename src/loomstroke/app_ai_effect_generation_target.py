@@ -96,7 +96,7 @@ class _NormalGenerationTarget:
             and any(item is self._page_state for item in page_set)
         )
 
-    def is_current(self, app: Any) -> bool:
+    def is_current(self, app: Any, *, owner_only: bool = False) -> bool:
         if not self._owners_current(app):
             return False
         canvas, state = self._references["canvas"](), self._references["state"]()
@@ -107,9 +107,14 @@ class _NormalGenerationTarget:
                 and canvas._find_layer_by_id_tree(self.layer_id) is layer
                 and layer.layer_type == "ai_effect"
                 and layer.ai_effect is state
-                and _intent(state) == self._intent
-                and tuple(_freeze(getattr(layer, name), set()) for name in _LAYER_SCALARS)
-                == self._scalars
+                and (
+                    owner_only
+                    or (
+                        _intent(state) == self._intent
+                        and tuple(_freeze(getattr(layer, name), set()) for name in _LAYER_SCALARS)
+                        == self._scalars
+                    )
+                )
                 and self._owners_current(app)
             )
         except Exception:

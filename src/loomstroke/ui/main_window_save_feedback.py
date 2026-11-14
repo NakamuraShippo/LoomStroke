@@ -9,7 +9,7 @@ from pathlib import Path
 @dataclass
 class ManualSaveFeedback:
     target: Path
-    deferred_notice_shown: bool = False
+    failure_notice_shown: bool = False
 
     def matches_path(self, path: Path | None) -> bool:
         """Match the built-in writer's existing .lstroke suffix normalization."""

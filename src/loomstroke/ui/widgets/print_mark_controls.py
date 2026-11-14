@@ -17,7 +17,7 @@ from ...core.print_mark_models import PrintMarkOptions
 from ..translations import translate_with_fallback
 
 STYLES = (
-    ("jp_corner", "Japanese corner (current)"),
+    ("jp_corner", "Japanese corner"),
     ("jp_double", "Japanese double"),
     ("western", "Western crop marks"),
 )
@@ -38,6 +38,7 @@ class PrintMarkControls(QGroupBox):
         self.style_label, self.color_label = QLabel(self), QLabel(self)
         for value, source in STYLES:
             self.style.addItem(source, value)
+        self.style.setCurrentIndex(self.style.findData(PrintMarkOptions().style))
         for value, source in COLORS:
             self.color.addItem(source, value)
         form.addRow(self.style_label, self.style)
@@ -73,6 +74,14 @@ class PrintMarkControls(QGroupBox):
             offset_pt=self.offset_pt.value(),
             **{key: box.isChecked() for key, box in self.flags.items()},
         )
+
+    def set_options(self, options: PrintMarkOptions) -> None:
+        self.style.setCurrentIndex(self.style.findData(options.style))
+        self.color.setCurrentIndex(self.color.findData(options.color))
+        for key, box in self.flags.items():
+            box.setChecked(getattr(options, key))
+        self.width_pt.setValue(options.width_pt)
+        self.offset_pt.setValue(options.offset_pt)
 
     @staticmethod
     def _ts(source: str) -> str:

@@ -13,6 +13,7 @@ import json
 import os
 from collections.abc import Mapping, Sequence
 from datetime import UTC, datetime
+from functools import partial
 from pathlib import Path
 from typing import Any
 from urllib.parse import quote
@@ -38,6 +39,7 @@ from loomstroke.ai_selection import (
 from . import production as pct
 from .generation_capabilities import production_generation_blocks
 from .production_generation_preflight import preflight_generation
+from .production_runner_job_state import cancel_queued_runner_job, finish_runner_job
 from .types import JobRecord, McpStructuredError, ReasonCode
 
 RUNNER_SCHEMA_VERSION = "production.recipe.runner.v1"
@@ -364,6 +366,9 @@ async def run_production_recipe(  # noqa: PLR0911
             "planId": plan["planId"],
         },
     )
+    mcp_job.cancel = partial(
+        cancel_queued_runner_job, service._production_store, mcp_job, job  # noqa: SLF001
+    )
     service._jobs[job_id] = mcp_job  # noqa: SLF001
     task = asyncio.create_task(_execute_runner_job(service, job_id))
     service._job_tasks[job_id] = task  # noqa: SLF001
@@ -385,6 +390,7 @@ async def _execute_runner_job(service: Any, job_id: str) -> None:  # noqa: PLR09
     mcp_job = service._jobs.get(job_id)  # noqa: SLF001
     if job is None or mcp_job is None:
         return
+    mcp_job.cancel = None
     if _sam3_recipe_descriptor_by_id(str(job.get("recipeId") or "")) is not None:
         await _execute_sam3_runner_job(service, store, job, mcp_job)
         return
@@ -450,21 +456,16 @@ async def _execute_runner_job(service: Any, job_id: str) -> None:  # noqa: PLR09
         )
         mcp_job.touch()
     except asyncio.CancelledError:
-        _update_job_status(store, mcp_job, job, "cancelled", progress=None)
+        finish_runner_job(store, mcp_job, job, "cancelled")
         raise
     except Exception as exc:  # pragma: no cover - defensive metadata failure path
-        job.update(
-            {
-                "status": "failed",
-                "error": {"type": exc.__class__.__name__, "message": str(exc)},
-                "updatedAt": _now_iso(),
-            }
+        finish_runner_job(
+            store,
+            mcp_job,
+            job,
+            "failed",
+            error={"type": type(exc).__name__, "message": str(exc)},
         )
-        store.add_job(job)
-        mcp_job.status = "failed"
-        mcp_job.progress = None
-        mcp_job.metadata["error"] = dict(job["error"])
-        mcp_job.touch()
 
 
 class _Sam3RunnerJobError(RuntimeError):
@@ -589,10 +590,7 @@ async def _execute_sam3_runner_job(
         )
         mcp_job.touch()
     except asyncio.CancelledError:
-        # "cancelled" (double l) matches the service terminal-status set; the
-        # generic executor's "canceled" spelling is a known mismatch we must
-        # not replicate here.
-        _update_job_status(store, mcp_job, job, "cancelled", progress=None)
+        finish_runner_job(store, mcp_job, job, "cancelled")
         raise
     except _Sam3RunnerJobError as exc:
         _fail_sam3_runner_job(
@@ -623,18 +621,7 @@ def _fail_sam3_runner_job(
         # Stable readiness codes only (never messages/diagnostics): they make
         # a worker_unavailable failure actionable while staying secret-free.
         error["blockedReasonCodes"] = list(blocked_reason_codes)
-    job.update(
-        {
-            "status": "failed",
-            "error": error,
-            "updatedAt": _now_iso(),
-        }
-    )
-    store.add_job(job)
-    mcp_job.status = "failed"
-    mcp_job.progress = None
-    mcp_job.metadata["error"] = dict(job["error"])
-    mcp_job.touch()
+    finish_runner_job(store, mcp_job, job, "failed", error=error)
 
 
 def _sam3_blocked_reason_codes(exc: Any) -> tuple[str, ...]:

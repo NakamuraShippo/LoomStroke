@@ -66,7 +66,7 @@ fn vs_main(in: VertexIn) -> VertexOut {
     let depth = clamp(0.5 + cam.z / (depth_radius * 2.0), 0.0, 1.0);
 
     var out: VertexOut;
-    out.position = vec4<f32>(ndc.x, ndc.y, depth, 1.0);
+    out.position = vec4<f32>(ndc.x + params.row1.w, ndc.y - params.row2.w, depth, 1.0);
     out.normal = normalize(vec3<f32>(
         dot(in.normal, params.row0.xyz),
         dot(in.normal, params.row1.xyz),
@@ -194,7 +194,11 @@ class Wgpu3DLayerRenderer:
         width: int,
         height: int,
         create_target: Any,
+        canvas_width: int | None = None,
+        canvas_height: int | None = None,
     ) -> Wgpu3DRenderResult | None:
+        canvas_width = width if canvas_width is None else canvas_width
+        canvas_height = height if canvas_height is None else canvas_height
         layer_id = str(getattr(layer, "id", ""))
         scene = getattr(layer, "scene_3d", None)
         if not isinstance(scene, Scene3DDocument):
@@ -214,6 +218,8 @@ class Wgpu3DLayerRenderer:
             geometry,
             width=width,
             height=height,
+            canvas_width=canvas_width,
+            canvas_height=canvas_height,
             mode=mode,
         )
         existing = self._render_cache.get(layer_id)
@@ -275,6 +281,8 @@ class Wgpu3DLayerRenderer:
                     layer,
                     width=width,
                     height=height,
+                    canvas_width=canvas_width,
+                    canvas_height=canvas_height,
                     texture=texture or default_texture,
                     use_texture=use_texture,
                 )
@@ -581,6 +589,8 @@ class Wgpu3DLayerRenderer:
         *,
         width: int,
         height: int,
+        canvas_width: int,
+        canvas_height: int,
         texture: _SceneTextureHandle,
         use_texture: bool,
     ) -> Any:
@@ -589,6 +599,8 @@ class Wgpu3DLayerRenderer:
             layer,
             width=width,
             height=height,
+            canvas_width=canvas_width,
+            canvas_height=canvas_height,
             use_texture=use_texture,
         )
         uniform = self._device.create_buffer_with_data(
@@ -625,6 +637,8 @@ class Wgpu3DLayerRenderer:
         width: int,
         height: int,
         use_texture: bool,
+        canvas_width: int | None = None,
+        canvas_height: int | None = None,
     ) -> np.ndarray:
         camera = orbit_camera_state(getattr(layer, "camera_3d", None), scene)
         rotation = camera.rotation_matrix()
@@ -662,11 +676,11 @@ class Wgpu3DLayerRenderer:
                 float(rotation[1, 0]),
                 float(rotation[1, 1]),
                 float(rotation[1, 2]),
-                0.0,
+                float(getattr(layer, "offset_x", 0)) * 2.0 / max(1, canvas_width or width),
                 float(rotation[2, 0]),
                 float(rotation[2, 1]),
                 float(rotation[2, 2]),
-                0.0,
+                float(getattr(layer, "offset_y", 0)) * 2.0 / max(1, canvas_height or height),
                 float(light[0]),
                 float(light[1]),
                 float(light[2]),
@@ -823,6 +837,8 @@ class Wgpu3DLayerRenderer:
         *,
         width: int,
         height: int,
+        canvas_width: int,
+        canvas_height: int,
         mode: PreviewDisplayMode,
     ) -> tuple[Any, ...]:
         texture_ids = tuple(
@@ -843,6 +859,10 @@ class Wgpu3DLayerRenderer:
             str(getattr(layer, "id", "")),
             int(width),
             int(height),
+            int(canvas_width),
+            int(canvas_height),
+            int(getattr(layer, "offset_x", 0)),
+            int(getattr(layer, "offset_y", 0)),
             str(mode.value),
             geometry.key,
             self._camera_signature(layer, scene),

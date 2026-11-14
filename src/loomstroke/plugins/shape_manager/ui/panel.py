@@ -77,6 +77,12 @@ from .library_load_feedback import (
     request_library_load_feedback,
     retire_library_load_feedback,
 )
+from .library_write_feedback import (
+    notify_library_write_failure,
+    refresh_library_write_feedback,
+    retire_library_write_feedback,
+    run_library_write,
+)
 
 logger = logging.getLogger(__name__)
 
@@ -212,6 +218,7 @@ class ShapeManagerPanel(QWidget):
 
     def detach_host(self) -> None:
         retire_library_load_feedback(self)
+        retire_library_write_feedback(self)
         self._unsubscribe_drop_event()
         self._host = None
         self._settings = None
@@ -237,9 +244,11 @@ class ShapeManagerPanel(QWidget):
         layout.setContentsMargins(0, 0, 0, 0)
         layout.setSpacing(6)
 
-        self._import_button.clicked.connect(self._on_import_svg)
+        self._import_button.clicked.connect(lambda: run_library_write(self, self._on_import_svg))
         self._register_button.clicked.connect(self._on_register_selection)
-        self._delete_button.clicked.connect(self._on_delete_selected_shape)
+        self._delete_button.clicked.connect(
+            lambda: run_library_write(self, self._on_delete_selected_shape)
+        )
         header_row = QHBoxLayout()
         header_row.setContentsMargins(0, 0, 0, 0)
         header_row.setSpacing(6)
@@ -296,7 +305,9 @@ class ShapeManagerPanel(QWidget):
         name_row.setSpacing(4)
         name_row.addWidget(self._label_name)
         self._name_edit.setPlaceholderText(self._ts("Select a shape"))
-        self._name_edit.editingFinished.connect(self._apply_shape_edits)
+        self._name_edit.editingFinished.connect(
+            lambda: run_library_write(self, self._apply_shape_edits)
+        )
         name_row.addWidget(self._name_edit, 1)
         editor.addLayout(name_row)
 
@@ -305,7 +316,9 @@ class ShapeManagerPanel(QWidget):
         category_edit_row.setSpacing(4)
         category_edit_row.addWidget(self._label_category_edit)
         self._category_edit.setPlaceholderText(self._ts("custom"))
-        self._category_edit.editingFinished.connect(self._apply_shape_edits)
+        self._category_edit.editingFinished.connect(
+            lambda: run_library_write(self, self._apply_shape_edits)
+        )
         category_edit_row.addWidget(self._category_edit, 1)
         editor.addLayout(category_edit_row)
 
@@ -314,7 +327,9 @@ class ShapeManagerPanel(QWidget):
         tags_row.setSpacing(4)
         tags_row.addWidget(self._label_tags)
         self._tags_edit.setPlaceholderText(self._ts("comma-separated"))
-        self._tags_edit.editingFinished.connect(self._apply_shape_edits)
+        self._tags_edit.editingFinished.connect(
+            lambda: run_library_write(self, self._apply_shape_edits)
+        )
         tags_row.addWidget(self._tags_edit, 1)
         editor.addLayout(tags_row)
 
@@ -529,6 +544,7 @@ class ShapeManagerPanel(QWidget):
         self._retranslate_ui()
 
         refresh_library_load_feedback(self)
+        refresh_library_write_feedback(self)
 
     def _subscribe_language_event(self) -> None:
         if self._language_event_token is not None:
@@ -565,6 +581,7 @@ class ShapeManagerPanel(QWidget):
 
     def _on_destroyed(self, _obj: object | None = None) -> None:
         retire_library_load_feedback(self, final=True)
+        retire_library_write_feedback(self)
         self._unsubscribe_language_event()
         self._unsubscribe_drop_event()
 
@@ -923,13 +940,13 @@ class ShapeManagerPanel(QWidget):
         delete_action = menu.addAction(self._ts("Delete"))
         action = menu.exec(self._list_widget.mapToGlobal(pos))
         if action == rename_action:
-            self._rename_shape(shape_id)
+            run_library_write(self, self._rename_shape, shape_id)
         elif action == tags_action:
-            self._edit_tags(shape_id)
+            run_library_write(self, self._edit_tags, shape_id)
         elif action == duplicate_action:
-            self._duplicate_shape(shape_id)
+            run_library_write(self, self._duplicate_shape, shape_id)
         elif action == delete_action:
-            self._delete_shape(shape_id)
+            run_library_write(self, self._delete_shape, shape_id)
 
     def _on_import_svg(self) -> None:
         path, _ = QFileDialog.getOpenFileName(
@@ -956,8 +973,8 @@ class ShapeManagerPanel(QWidget):
             if tags is None:
                 return
             record = self._persist_shape(Path(path).stem, sanitized, template, tags=tags)
-        except Exception as exc:
-            self._notify(f"{self._ts('Saving shape failed')}: {exc}")
+        except Exception:
+            notify_library_write_failure(self)
             return
         self._index.add(record)
         self._refresh_categories()
@@ -1023,11 +1040,11 @@ class ShapeManagerPanel(QWidget):
             self._refresh_categories()
             self._refresh_list()
             if failures:
-                self._notify(self._ts("Registered {} shape(s). Some failed.").format(success))
+                notify_library_write_failure(self, "Registered {} shape(s). Some failed.", success)
             else:
                 self._notify(self._ts("Registered {} shape(s).").format(success))
         else:
-            self._notify(self._ts("No shapes were registered."))
+            notify_library_write_failure(self, "No shapes were registered.")
 
     def register_selection(self) -> None:
         self._on_register_selection()
@@ -1085,7 +1102,7 @@ class ShapeManagerPanel(QWidget):
             self._index.add(record)
         except Exception:
             logger.debug("Failed to register merged shape", exc_info=True)
-            self._notify(self._ts("Failed to register shape."))
+            notify_library_write_failure(self, "Failed to register shape.")
             return
 
         self._refresh_categories()

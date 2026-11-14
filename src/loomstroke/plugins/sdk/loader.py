@@ -13,6 +13,7 @@ import importlib.util
 import keyword
 import logging
 import os
+import re
 import shutil
 import stat
 import sys
@@ -33,6 +34,9 @@ from .validator import (
 )
 
 logger = logging.getLogger(__name__)
+_MANAGED_PACKAGE_DIRECTORY = re.compile(
+    r"\..+\.(?:backup|install_staging|rollback_staging)\.[0-9a-f]{32}"
+)
 
 
 class PluginLoadError(Exception):
@@ -199,7 +203,7 @@ class PluginLoader:
 
         # Look for plugin directories
         for item in self.plugins_dir.iterdir():
-            if item.is_dir():
+            if not _MANAGED_PACKAGE_DIRECTORY.fullmatch(item.name) and item.is_dir():
                 manifest_path = item / "plugin.toml"
                 if manifest_path.exists():
                     try:
@@ -425,48 +429,31 @@ class PluginLoader:
         preserved_backup: Path | None = None
 
         try:
-            if backup.exists():
-                shutil.rmtree(backup, ignore_errors=True)
-            if staging.exists():
-                shutil.rmtree(staging, ignore_errors=True)
+            # ZIP extraction and both destinations are on the same volume.
+            # A failed rename must not fall back to copying and deleting the old tree.
+            source_root.rename(staging)
             if target.exists():
-                shutil.move(str(target), str(backup))
+                target.rename(backup)
                 preserved_backup = backup
-            if not source_root.exists():
-                raise PluginLoadError(f"Plugin source not found after extraction: {source_root}")
-            shutil.move(str(source_root), str(staging))
-            shutil.move(str(staging), str(target))
-            if preserved_backup is not None and not keep_backup:
-                shutil.rmtree(backup, ignore_errors=True)
-                preserved_backup = None
-            return target, preserved_backup
-        except Exception as e:
+            staging.rename(target)
+        except OSError as exc:
             if preserved_backup is not None:
-                restored_from_backup = False
-                with suppress(Exception):
-                    if target.exists():
-                        shutil.rmtree(target, ignore_errors=True)
-                    shutil.move(str(preserved_backup), str(target))
-                    restored_from_backup = True
-                if restored_from_backup:
-                    preserved_backup = None
-            elif staging.exists():
-                with suppress(Exception):
-                    # Try to restore extracted content to the original location for diagnosability
-                    shutil.move(str(staging), str(source_root))
-            if staging.exists():
-                shutil.rmtree(staging, ignore_errors=True)
-            if not keep_backup and preserved_backup is not None and preserved_backup.exists():
-                shutil.rmtree(backup, ignore_errors=True)
-                preserved_backup = None
-            raise PluginLoadError(f"Plugin installation failed: {plugin_id}") from e
-
+                try:
+                    preserved_backup.rename(target)
+                except OSError as restore_error:
+                    raise PluginLoadError(
+                        f"Plugin installation failed: {plugin_id}. "
+                        f"Could not restore installed package from {preserved_backup.name}"
+                    ) from restore_error
+            raise PluginLoadError(f"Plugin installation failed: {plugin_id}") from exc
         finally:
-            # Keep a clean temp space in all paths.
             if staging.exists():
                 shutil.rmtree(staging, ignore_errors=True)
-            if not keep_backup and preserved_backup is not None:
-                shutil.rmtree(preserved_backup, ignore_errors=True)
+
+        if preserved_backup is not None and not keep_backup:
+            shutil.rmtree(preserved_backup, ignore_errors=True)
+            preserved_backup = None
+        return target, preserved_backup
 
     def validate_plugin(
         self,
@@ -835,23 +822,28 @@ class PluginLoader:
             if hasattr(plugin, "cleanup"):
                 plugin.cleanup()
 
-            # Remove from loaded plugins
-            del self.loaded_plugins[plugin_id]
-            del self.plugin_manifests[plugin_id]
-
-            # Remove from sys.modules
-            module_prefix = f"plugins.{plugin_id}"
-            modules_to_remove = [name for name in sys.modules if name.startswith(module_prefix)]
-            for name in modules_to_remove:
-                del sys.modules[name]
-
-            self._unregister_import_policy(plugin_id)
+            self._forget_plugin_load(plugin_id)
             logger.info(f"Unloaded plugin: {plugin_id}")
             return True
 
         except Exception as e:
             logger.error(f"Failed to unload plugin {plugin_id}: {e}")
             return False
+
+    def _forget_plugin_load(self, plugin_id: str) -> None:
+        """Release loader-owned state after an update candidate is discarded."""
+        self.loaded_plugins.pop(plugin_id, None)
+        self.plugin_manifests.pop(plugin_id, None)
+        module_prefix = f"plugins.{plugin_id}."
+        other_prefixes = tuple(
+            f"plugins.{loaded_id}."
+            for loaded_id in self.loaded_plugins
+            if loaded_id.startswith(f"{plugin_id}.")
+        )
+        for name in tuple(sys.modules):
+            if name.startswith(module_prefix) and not name.startswith(other_prefixes):
+                sys.modules.pop(name, None)
+        self._unregister_import_policy(plugin_id)
 
     def reload_plugin(self, plugin_id: str) -> PluginBase | None:
         """
@@ -871,17 +863,10 @@ class PluginLoader:
 
         # Find plugin path
         plugin_path = None
-        for item in self.plugins_dir.iterdir():
-            if item.is_dir():
-                manifest_path = item / "plugin.toml"
-                if manifest_path.exists():
-                    try:
-                        test_manifest = PluginManifest.from_toml(manifest_path)
-                        if test_manifest.id == plugin_id:
-                            plugin_path = item
-                            break
-                    except Exception:
-                        logger.debug("plugin manifest probe failed", exc_info=True)
+        for item, candidate in self.discover_plugins():
+            if candidate.id == plugin_id:
+                plugin_path = item
+                break
 
         if not plugin_path:
             logger.error(f"Cannot find plugin path for: {plugin_id}")

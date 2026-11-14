@@ -5,7 +5,7 @@ from __future__ import annotations
 import math
 from dataclasses import dataclass
 
-MARK_MARGIN_PT = 17.0
+MARK_MARGIN_PT = 20.0
 MARK_LENGTH_PT = 14.0
 MARK_GAP_PT = 3.0
 
@@ -20,7 +20,7 @@ class CropMark:
 
 @dataclass(frozen=True, slots=True)
 class PrintMarkOptions:
-    style: str = "jp_corner"
+    style: str = "jp_double"
     crop: bool = True
     bleed: bool = False
     registration: bool = False
@@ -45,6 +45,5 @@ class PrintMarkOptions:
 
     @property
     def margin(self) -> float:
-        if self == PrintMarkOptions():
-            return MARK_MARGIN_PT
-        return max(MARK_MARGIN_PT, self.gap + MARK_LENGTH_PT + self.width_pt / 2)
+        # Leave at least two points beyond the outer end of every stroke.
+        return max(MARK_MARGIN_PT, math.ceil(self.gap + MARK_LENGTH_PT + self.width_pt / 2 + 2))

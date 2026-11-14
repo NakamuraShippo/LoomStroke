@@ -15,7 +15,13 @@ from loomstroke.core.canvas_composited_pixmap_state_service import (
     CanvasCompositedPixmapStateService,
 )
 
+from .canvas_layer_geometry import (
+    rebase_layer_placement,
+    translate_layer_placement,
+    update_layer_masks,
+)
 from .canvas_meta_transform_registry import CanvasMetaTransformRegistry
+from .comic_panels.canvas_transform_basis import page_matrix, transform_mask
 from .events import DocumentChangeEvent
 from .native_cmyk.geometry import NativeCmykGeometry
 
@@ -72,6 +78,7 @@ class CanvasGeometryService:
             horizontal=horizontal,
             vertical=vertical,
             vec_mode=self._flip_vector_mode(horizontal, vertical),
+            managed=bool(frame_attributes),
         )
         from .comic_panels.canvas_transform_plan import (  # noqa: PLC0415
             install_frame_page_attributes,
@@ -122,6 +129,7 @@ class CanvasGeometryService:
             old_width=old_width,
             old_height=old_height,
             vec_mode=self._rotation_vector_mode(angle),
+            managed=bool(frame_attributes),
         )
         from .comic_panels.canvas_transform_plan import (  # noqa: PLC0415
             install_frame_page_attributes,
@@ -231,13 +239,19 @@ class CanvasGeometryService:
         horizontal: bool,
         vertical: bool,
         vec_mode: str,
+        managed: bool,
     ) -> None:
+        page = None if managed else page_matrix(vec_mode, width, height)
         for layer in self._canvas._flatten_layers():
+            if page is not None:
+                update_layer_masks(self._canvas, layer, lambda mask: mask.flipped(orientations))
             if layer.image is None and not layer.vector_objects:
                 continue
+            old_image_size = None
             if layer.image is not None:
                 lw = layer.image.width()
                 lh = layer.image.height()
+                old_image_size = (lw, lh)
                 layer.image = layer.image.flipped(orientations)
                 NativeCmykGeometry.flip(layer, horizontal, vertical)
                 if horizontal:
@@ -251,6 +265,8 @@ class CanvasGeometryService:
                     old_w=width,
                     old_h=height,
                 )
+            if page is not None:
+                rebase_layer_placement(layer, page, vec_mode, old_image_size)
             layer.texture_version += 1
 
     def _rotation_dimensions(
@@ -285,11 +301,17 @@ class CanvasGeometryService:
         old_width: int,
         old_height: int,
         vec_mode: str,
+        managed: bool,
     ) -> None:
+        page = None if managed else page_matrix(vec_mode, old_width, old_height)
         for layer in self._canvas._flatten_layers():
+            if page is not None:
+                update_layer_masks(self._canvas, layer, lambda mask: transform_mask(mask, vec_mode))
             if layer.image is None and not layer.vector_objects:
                 continue
+            old_image_size = None
             if layer.image is not None:
+                old_image_size = (layer.image.width(), layer.image.height())
                 self._rotate_layer_image(
                     layer,
                     angle=angle,
@@ -304,6 +326,8 @@ class CanvasGeometryService:
                     old_w=old_width,
                     old_h=old_height,
                 )
+            if page is not None:
+                rebase_layer_placement(layer, page, vec_mode, old_image_size)
             layer.texture_version += 1
 
     def _rotate_layer_image(
@@ -337,35 +361,33 @@ class CanvasGeometryService:
     def take_resize_snapshot(self) -> Any:
         """Capture current canvas size and all layer images for undo/redo."""
         from .comic_panels.membership import PART_KEY  # noqa: PLC0415
+        from .image_size.canvas_resample_service import CanvasResampleService  # noqa: PLC0415
 
+        resample = CanvasResampleService(self._canvas)
         if any((layer.metadata or {}).get(PART_KEY) for layer in self._canvas._flatten_layers()):
-            from .image_size.canvas_resample_service import CanvasResampleService  # noqa: PLC0415
-
-            return CanvasResampleService(self._canvas).take_snapshot()
-        layer_images: list[tuple[str, bytes, int, int, int, int]] = []
-        layer_vectors: dict[str, list[Any]] = {}
-        layer_metadata: dict[str, Any] = {}
-        for layer in self._canvas._flatten_layers():
-            layer_metadata[layer.id] = copy.deepcopy(getattr(layer, "metadata", None))
-            if layer.image is not None:
-                data, w, h, _fmt = self._compress_qimage(layer.image)
-                layer_images.append((layer.id, data, w, h, layer.offset_x, layer.offset_y))
-            if layer.vector_objects:
-                layer_vectors[layer.id] = list(layer.vector_objects)
+            return resample.take_snapshot()
         return self._resize_snapshot_type(
             width=self._canvas._width,
             height=self._canvas._height,
-            layer_images=layer_images,
-            layer_vectors=layer_vectors,
-            layer_metadata=layer_metadata,
-            native_layers=NativeCmykGeometry.capture(self._canvas._flatten_layers()),
+            **resample.capture_layer_state(self._compress_qimage),
         )
 
     def restore_resize_snapshot(self, snapshot: Any) -> None:
         """Restore canvas state from a resize snapshot."""
         self._canvas._width = snapshot.width
         self._canvas._height = snapshot.height
+        if getattr(snapshot, "layer_offsets", {}):
+            from .image_size.canvas_resample_service import CanvasResampleService  # noqa: PLC0415
 
+            CanvasResampleService(self._canvas).restore_layer_state(snapshot)
+        else:
+            self._restore_legacy_resize_layers(snapshot)
+        self._clear_geometry_selection_state()
+        self._reset_composited(snapshot.width, snapshot.height)
+        self._finish_geometry_mutation(reset_composited=False)
+        self._emit_geometry_changed("resize", 0, 0, snapshot.width, snapshot.height)
+
+    def _restore_legacy_resize_layers(self, snapshot: Any) -> None:
         image_lookup: dict[str, tuple[bytes, int, int, int, int]] = {}
         for lid, data, w, h, ox, oy in snapshot.layer_images:
             image_lookup[lid] = (data, w, h, ox, oy)
@@ -397,10 +419,6 @@ class CanvasGeometryService:
             elif layer.vector_objects:
                 layer.vector_objects = []
             layer.texture_version += 1
-        self._clear_geometry_selection_state()
-        self._reset_composited(snapshot.width, snapshot.height)
-        self._finish_geometry_mutation(reset_composited=False)
-        self._emit_geometry_changed("resize", 0, 0, snapshot.width, snapshot.height)
 
     def resize_canvas(
         self,
@@ -439,33 +457,27 @@ class CanvasGeometryService:
         shift_y = round(anchor_y * (height - old_height))
 
         for layer in self._canvas._flatten_layers():
+            update_layer_masks(
+                self._canvas, layer, lambda mask: mask.copy(-shift_x, -shift_y, width, height)
+            )
+            retained = translate_layer_placement(layer, shift_x, shift_y)
+            if layer.vector_objects and (shift_x or shift_y):
+                layer.vector_objects = self.shift_vector_objects(
+                    layer.vector_objects, shift_x, shift_y
+                )
+            if retained or layer.image is None:
+                continue
             native = NativeCmykGeometry.resized(layer, width, height, shift_x, shift_y)
             new_image = QImage(width, height, QImage.Format.Format_ARGB32_Premultiplied)
             new_image.fill(Qt.GlobalColor.transparent)
-            if layer.image is not None:
-                painter = QPainter(new_image)
-                mode = getattr(QPainter, "CompositionMode_SourceOver", None)
-                if mode is None:
-                    mode = getattr(QPainter.CompositionMode, "CompositionMode_SourceOver", None)
-                if mode is not None:
-                    painter.setCompositionMode(mode)
-                painter.drawImage(
-                    layer.offset_x + shift_x,
-                    layer.offset_y + shift_y,
-                    layer.image,
-                )
-                painter.end()
+            painter = QPainter(new_image)
+            painter.drawImage(layer.offset_x + shift_x, layer.offset_y + shift_y, layer.image)
+            painter.end()
             layer.image = new_image
             if native is not None:
                 layer.native_cmyk = native
             layer.offset_x = 0
             layer.offset_y = 0
-            if layer.vector_objects and (shift_x or shift_y):
-                layer.vector_objects = self.shift_vector_objects(
-                    layer.vector_objects,
-                    shift_x,
-                    shift_y,
-                )
 
         self._clear_geometry_selection_state()
         self._reset_composited(width, height)

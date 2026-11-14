@@ -19,6 +19,7 @@ from PySide6.QtWidgets import (
 
 from ...core.guide_template_service import GuideTemplateService
 from ...core.page_templates import PageTemplateStore
+from ..canvas.guide_canvas_bridge import guide_canvas
 from ..translations import translate_with_fallback
 
 
@@ -133,7 +134,7 @@ def open_guide_templates(window: Any) -> None:
     pages = getattr(host, "pages", None)
     if pages is None:
         return
-    controller = getattr(getattr(window, "canvas", None), "_guide_controller", None)
+    controller = getattr(guide_canvas(getattr(window, "canvas", None)), "_guide_controller", None)
     service = GuideTemplateService(PageTemplateStore(), pages)
     dialog = GuideTemplatesDialog(
         service, locked=bool(controller and controller.guides_locked), parent=window

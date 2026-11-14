@@ -1,21 +1,20 @@
 """Place / Reload / Relink / Embed of resource-backed layers through canvas commands (CT-18).
 
-Standard RGB Place and Embed commit one prepared command. Existing Reload and
-Relink retain their transaction-based image/metadata path; source files are
-never written. Only consumers on the active page are mutated.
+Standard RGB operations commit one prepared command. Source files are never
+written, and only consumers on the active page are mutated.
 """
 
 from __future__ import annotations
 
 import logging
 from collections.abc import Callable
+from dataclasses import dataclass, field, replace
 from inspect import getattr_static
 from pathlib import Path
 from typing import Any
 
 import numpy as np
-from PySide6.QtCore import Qt
-from PySide6.QtGui import QImage, QImageReader, QPainter
+from PySide6.QtGui import QImage, QImageReader
 
 from loomstroke.core.canvas_service_simple import SimpleCanvasService
 from loomstroke.core.canvas_service_simple_command_api import _DEFAULT_RESOURCE_METADATA_HOOKS
@@ -26,6 +25,7 @@ from loomstroke.core.commands_layer_resource import SetLayerResourceCommand
 from loomstroke.core.document_service import _DEFAULT_IMPORT_LAYER, DocumentServiceImpl
 from loomstroke.core.layer_command_commit_context import _LayerCommandContext
 from loomstroke.core.linked_assets import (
+    MediaTypeTable,
     PlaceResourcePlan,
     RelinkPlan,
     ResourceConsumer,
@@ -38,12 +38,18 @@ from loomstroke.core.linked_assets import (
     ResourceStatus,
     ResourceStatusService,
 )
+from loomstroke.core.linked_assets.resource_content_hasher import ResourceContentHasher
 from loomstroke.core.resource_embed_submit import (
     _capture_embed_scope,
     _prepare_resource_embed,
     _ResourceEmbedRejected,
 )
 from loomstroke.core.resource_place_command import PlaceResourceCommand
+from loomstroke.core.resource_refresh_command import resource_replacement_image
+from loomstroke.core.resource_refresh_submit import (
+    _prepare_resource_refresh,
+    _ResourceRefreshScope,
+)
 
 from .document_resource_reader import DocumentResourceReader
 
@@ -51,6 +57,11 @@ __all__ = ["ResourceLinkCoordinator"]
 
 ImageReader = Callable[[Path], Any | None]
 logger = logging.getLogger(__name__)
+
+
+@dataclass(frozen=True, slots=True, kw_only=True)
+class _ScopedRelinkPlan(RelinkPlan):
+    scope: _ResourceRefreshScope = field(compare=False, repr=False)
 
 
 class ResourceLinkCoordinator:
@@ -162,6 +173,7 @@ class ResourceLinkCoordinator:
 
     def reload(self, resource_id: str) -> tuple[int, str]:
         """Re-read the linked file into every consumer on the active page."""
+        scope = self._standard_refresh_scope(resource_id)
         index = self.index()
         record = index.record(resource_id)
         if record is None or not record.is_linked:
@@ -172,17 +184,47 @@ class ResourceLinkCoordinator:
         updated = record.with_content(
             locator=record.locator, content_hash=status.current_hash, byte_size=status.byte_size
         )
+        if scope is not None:
+            return self._refresh_prepared(
+                scope, index, record, status.resolved_path, updated, "Reload Resource"
+            )
         return self._refresh_consumers(index, status.resolved_path, updated, "Reload Resource")
 
     def plan_relink(self, resource_id: str, path: Path) -> RelinkPlan | None:
+        scope = self._standard_refresh_scope(resource_id)
         record = self.index().record(resource_id)
         if record is None:
             return None
-        return ResourceRelinkPlanner(self.resolver()).plan(record, path)
+        plan = ResourceRelinkPlanner(self.resolver()).plan(record, path)
+        if scope is None:
+            return plan
+        return _ScopedRelinkPlan(
+            plan.record,
+            plan.source_path,
+            plan.new_locator,
+            plan.new_hash,
+            plan.byte_size,
+            plan.warnings,
+            scope=scope,
+        )
 
     def relink(self, plan: RelinkPlan) -> tuple[int, str]:
         if not plan.is_readable:
             return 0, "resource_unreadable"
+        scope = (
+            plan.scope
+            if isinstance(plan, _ScopedRelinkPlan)
+            else self._standard_refresh_scope(plan.record.resource_id)
+        )
+        if scope is not None:
+            return self._refresh_prepared(
+                scope,
+                self.index(),
+                plan.record,
+                plan.source_path,
+                plan.updated_record(),
+                "Relink Resource",
+            )
         width, height = self._probe_size(plan.source_path)
         updated = plan.updated_record(width=width or None, height=height or None)
         return self._refresh_consumers(self.index(), plan.source_path, updated, "Relink Resource")
@@ -258,6 +300,78 @@ class ResourceLinkCoordinator:
 
     # -- internals ---------------------------------------------------------------------
 
+    def _standard_refresh_scope(self, resource_id: str) -> _ResourceRefreshScope | None:
+        canvas = self._host.canvas
+        if not isinstance(canvas, SimpleCanvasService) or any(
+            getattr_static(canvas, name, None) is not original
+            for name, original in _DEFAULT_RESOURCE_METADATA_HOOKS.items()
+        ):
+            return None
+        scope = _ResourceRefreshScope(canvas, resource_id)
+        return scope if scope.pages is getattr(self._host, "pages", None) else None
+
+    def _refresh_prepared(self, scope, index, original, path, record, label) -> tuple[int, str]:
+        if not self._refresh_scope_current(scope):
+            return 0, "resource_scope_changed"
+        consumers = index.consumers_on_page(record.resource_id, self.active_page_id())
+        if not consumers:
+            return 0, "no_consumer_on_page"
+        try:
+            image, error = self._read_refresh_source(path, record)
+            if image is None or not self._refresh_scope_current(scope):
+                return 0, error or "resource_scope_changed"
+            updated = record.with_content(
+                locator=record.locator,
+                content_hash=record.content_hash,
+                byte_size=record.byte_size,
+                width=image.width(),
+                height=image.height(),
+            )
+            media_type = MediaTypeTable.for_path(path)
+            if MediaTypeTable.is_decodable(media_type):
+                updated = replace(updated, media_type=media_type)
+            command, error = _prepare_resource_refresh(
+                scope.canvas, scope, original, consumers, image, updated, label
+            )
+            if command is not None and scope.canvas.submit(command):
+                return (
+                    (len(consumers), "")
+                    if self._refresh_scope_current(scope)
+                    else (0, "resource_scope_changed")
+                )
+            return 0, error or "resource_refresh_rejected"
+        except Exception:
+            logger.exception("Resource refresh preparation failed")
+            return 0, "resource_refresh_failed"
+
+    def _refresh_scope_current(self, scope: _ResourceRefreshScope) -> bool:
+        return (
+            self._host.canvas is scope.canvas
+            and getattr(self._host, "pages", None) is scope.pages
+            and scope.current()
+        )
+
+    def _read_refresh_source(self, path: Path, record: ResourceRecord) -> tuple[QImage | None, str]:
+        resolver = self.resolver()
+        if resolver.is_symlink(path):
+            return None, "resource_symlink"
+        array = self._image_reader(path)
+        image = self._qimage_from_array(array) if array is not None else None
+        if image is None or image.isNull():
+            return None, "resource_decode_failed"
+        # The source can be replaced between confirmation and decoding. Never
+        # pair the freshly decoded pixels with the earlier hash in that case.
+        if (
+            resolver.is_symlink(path)
+            or path.stat().st_size != record.byte_size
+            or ResourceContentHasher().hash_file(path) != record.content_hash
+        ):
+            return None, "resource_source_changed"
+        located = self.resolver().resolve(record.locator) if record.locator is not None else None
+        if located is None or located.absolute() != path.absolute():
+            return None, "resource_scope_changed"
+        return image, ""
+
     def _refresh_consumers(
         self, index: ResourceConsumerIndex, path: Path, record: ResourceRecord, label: str
     ) -> tuple[int, str]:
@@ -269,6 +383,7 @@ class ResourceLinkCoordinator:
         if qimage is None:
             return 0, "resource_decode_failed"
         canvas = self._host.canvas
+        count = 0
         self._begin(canvas, label)
         try:
             for consumer in consumers:
@@ -276,11 +391,13 @@ class ResourceLinkCoordinator:
                 if layer is None:
                     continue
                 replacement = self._layer_image_for(layer, qimage)
-                canvas.submit(ReplaceLayerImageCommand(consumer.layer_id, replacement))
-                canvas.submit(SetLayerResourceCommand(consumer.layer_id, record))
+                if canvas.submit(ReplaceLayerImageCommand(consumer.layer_id, replacement)) and (
+                    canvas.submit(SetLayerResourceCommand(consumer.layer_id, record))
+                ):
+                    count += 1
         finally:
             self._end(canvas)
-        return len(consumers), ""
+        return (count, "") if count else (0, "resource_refresh_rejected")
 
     @staticmethod
     def _begin(canvas: Any, label: str) -> None:
@@ -317,18 +434,7 @@ class ResourceLinkCoordinator:
     @staticmethod
     def _layer_image_for(layer: Any, qimage: QImage) -> QImage:
         """Same semantics as import: image at the origin, buffer never shrinks."""
-        current = getattr(layer, "image", None)
-        width = max(qimage.width(), current.width() if isinstance(current, QImage) else 0)
-        height = max(qimage.height(), current.height() if isinstance(current, QImage) else 0)
-        if width == qimage.width() and height == qimage.height():
-            return qimage
-        expanded = QImage(width, height, QImage.Format.Format_ARGB32_Premultiplied)
-        expanded.fill(Qt.GlobalColor.transparent)
-        painter = QPainter(expanded)
-        painter.setCompositionMode(QPainter.CompositionMode.CompositionMode_Source)
-        painter.drawImage(0, 0, qimage)
-        painter.end()
-        return expanded
+        return resource_replacement_image(layer, qimage)
 
     def _default_image_reader(self, path: Path) -> Any | None:
         document = getattr(self._host, "document", None)

@@ -71,6 +71,8 @@ from .history_failure_reporting import (
 from .layer import Layer
 from .layout_serialization import payload_to_snapshot, snapshot_to_payload
 from .page_service import PageServiceImpl
+from .resource_place_command import import_prepared_rgb_image, supports_prepared_rgb_import
+from .rgb_layer_import import import_rgb_into_layer
 
 UILayoutPayload = dict[str, Any]
 
@@ -428,6 +430,11 @@ class DocumentServiceImpl(DocumentServiceBase):
         from .image_document_preparation import prepare_image_document  # noqa: PLC0415
 
         return prepare_image_document(self, Path(path), layered=layered)
+
+    def _prepare_clipboard_image_document(self, image: NDArray[np.uint8]) -> Any:
+        from .image_document_preparation import prepare_clipboard_image_document  # noqa: PLC0415
+
+        return prepare_clipboard_image_document(self, image)
 
     def _commit_image_document(
         self, prepared: Any, *, on_committed: Callable[[], None] | None = None
@@ -832,6 +839,14 @@ class DocumentServiceImpl(DocumentServiceBase):
                 source_profile=meta.color_profile.data if meta.color_profile else None,
             )
             return command.layer_id if canvas.submit(command) else None
+
+        if supports_prepared_rgb_import(canvas, as_new):
+            return import_prepared_rgb_image(
+                canvas, image, self._resolve_import_layer_name(meta), insert_above
+            )
+
+        if not as_new and canvas._layers and supports_prepared_rgb_import(canvas, True):
+            return import_rgb_into_layer(canvas, image)
 
         # Defer recompose so that add_layer / move_layer / set_active_layer
         # do not trigger intermediate composites while the layer stack is

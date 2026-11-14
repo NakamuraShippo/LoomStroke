@@ -15,12 +15,48 @@ _SCALAR_WIDGETS = {
     "BOOLEAN": {"toggle"},
     "STRING": {"text", "customtext"},
 }
+_SEED_MODES = {"fixed", "randomize", "increment", "decrement"}
 
 
 @dataclass(frozen=True)
 class NodeWidgetClassification:
     kind: str
     reason: str = ""
+
+
+def standard_seed_control(
+    node: Mapping[str, Any], target: Mapping[str, Any]
+) -> Mapping[str, Any] | None:
+    """Return a verified ComfyUI seed control linked to an INT widget."""
+    name = target.get("name")
+    schema = node.get("inputSchema", {})
+    if not isinstance(name, str) or "seed" not in name.lower() or not isinstance(schema, Mapping):
+        return None
+    required, optional = schema.get("required", {}), schema.get("optional", {})
+    if not isinstance(required, Mapping) or not isinstance(optional, Mapping):
+        return None
+    specs = {**required, **optional}
+    head, options = split_input_spec(specs.get(name))
+    linked = target.get("linkedWidgets")
+    if (
+        head != "INT"
+        or options.get("control_after_generate") is not True
+        or target.get("type") not in _SCALAR_WIDGETS["INT"]
+        or not isinstance(linked, list)
+        or len(linked) != 1
+    ):
+        return None
+    control = linked[0]
+    if not isinstance(control, Mapping):
+        return None
+    if (
+        not isinstance(control.get("name"), str)
+        or not control["name"].endswith("control_after_generate")
+        or control.get("type") != "combo"
+        or control.get("value") not in _SEED_MODES
+    ):
+        return None
+    return control
 
 
 def classify_node(  # noqa: PLR0911 - conservative fallbacks retain the native editor
@@ -49,8 +85,23 @@ def classify_node(  # noqa: PLR0911 - conservative fallbacks retain the native e
         if not isinstance(inputs, Mapping):
             return NodeWidgetClassification("unknown", "Invalid input schema")
         specs.update(inputs)
+    control_names = {
+        control["name"]
+        for widget in widgets
+        if isinstance(widget, Mapping)
+        if (control := standard_seed_control(node, widget)) is not None
+    }
     for widget in widgets:
         name = widget.get("name")
+        if name in control_names:
+            if (
+                widget.get("type") != "combo"
+                or widget.get("dom")
+                or widget.get("customDraw")
+                or widget.get("customSerialize")
+            ):
+                return NodeWidgetClassification("unknown", str(name))
+            continue
         head, options = split_input_spec(specs.get(name))
         allowed = {"combo"} if is_combo_head(head) else _SCALAR_WIDGETS.get(str(head), set())
         if widget.get("type") not in allowed or options.get("forceInput"):

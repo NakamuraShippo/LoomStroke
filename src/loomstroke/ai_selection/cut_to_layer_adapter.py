@@ -85,6 +85,7 @@ def build_extract_to_new_layer_command(
         mask_image,
         extract_mode,
         image_builder=build_masked_layer_image,
+        placed_image_builder=_build_placed_masked_image,
         legacy_apply=_apply_extract_to_new_layer,
     )
 
@@ -147,20 +148,45 @@ def _build_masked_layer_image(
     if width <= 0 or height <= 0:
         return None
 
-    from PySide6.QtGui import QImage  # noqa: PLC0415
-
-    source = source_image.convertToFormat(QImage.Format.Format_ARGB32_Premultiplied)
     local_mask = _canvas_mask_to_layer_local(source_layer, canvas_mask_image, width, height)
-    mask_alpha = _effective_mask_alpha(local_mask, mode=mode)
+    return _apply_extraction_mask(source_image, local_mask, mode=mode)
+
+
+def _build_placed_masked_image(
+    canvas: Any, source_layer: Any, canvas_mask: QImage, *, mode: Sam3ExtractLayerMode
+) -> QImage | None:
+    """Extract on the same page grid used to create SAM's input image."""
+    from loomstroke.core.raster_source_image import placed_source_image  # noqa: PLC0415
+
+    image = source_layer.image
+    if image is None or image.isNull():
+        return None
+    placed = placed_source_image(
+        canvas, source_layer, image, canvas_mask.width(), canvas_mask.height()
+    )
+    if placed is None:
+        return None
+    return _apply_extraction_mask(placed, canvas_mask, mode=mode, require_visible=True)
+
+
+def _apply_extraction_mask(
+    image: QImage, mask: QImage, *, mode: Sam3ExtractLayerMode, require_visible: bool = False
+) -> QImage | None:
+    mask_alpha = _effective_mask_alpha(mask, mode=mode)
     if not bool(mask_alpha.any()):
         return None
 
     import numpy as np  # noqa: PLC0415
+    from PySide6.QtGui import QImage  # noqa: PLC0415
 
+    source = image.convertToFormat(QImage.Format.Format_ARGB32_Premultiplied)
     source_data = _qimage_bgra_data(source)
     masked = (
         (source_data.astype(np.uint16) * mask_alpha[:, :, None].astype(np.uint16) + 127) // 255
     ).astype(np.uint8)
+    if require_visible and not bool(masked[:, :, 3].any()):
+        return None
+    width, height = source.width(), source.height()
     return QImage(
         masked.data,
         width,

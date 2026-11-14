@@ -26,10 +26,15 @@ from PySide6.QtCore import QMarginsF, QRectF, QSizeF
 from PySide6.QtGui import QPageLayout, QPageSize, QPainter, QPdfWriter
 from PySide6.QtWidgets import QMessageBox, QProgressDialog, QWidget
 
+from ..core.bleed_geometry import trim_bounds
 from ..core.print_margin_geometry import annotate_print_geometry
 from ..core.print_margin_models import PrintMarginContext, PrintMarginOptions
 from ..core.print_mark_models import PrintMarkOptions
-from ..core.print_page_geometry import PrintPageGeometry, geometry_for_canvas
+from ..core.print_page_geometry import (
+    PrintPageGeometry,
+    geometry_for_canvas,
+    geometry_for_trim_bounds,
+)
 from ..io.atomic_export_writer import write_atomically
 from ..io.layer_io import DocumentMetadata
 from .canvas.page_scene_snapshot import array_to_qimage
@@ -217,6 +222,18 @@ def _page_geometry(
     page_canvas = getattr(page, "canvas", None)
     dpi = tuple(page_canvas.dpi) if page_canvas is not None else tuple(document_metadata.dpi)
     height, width = rgba.shape[:2]
+    view_state = getattr(page, "view_state", None)
+    guides = view_state.get("guides") if isinstance(view_state, dict) else None
+    trim = trim_bounds(guides, (width, height)) if isinstance(guides, list) else None
+    if trim is not None:
+        return geometry_for_trim_bounds(
+            width,
+            height,
+            (float(dpi[0]), float(dpi[1])),
+            trim,
+            with_marks=with_marks,
+            mark_options=mark_options,
+        )
     return geometry_for_canvas(
         width,
         height,

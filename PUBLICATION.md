@@ -1,4 +1,4 @@
-> **最終照合: 2026-11-08**
+> **最終照合: 2026-11-14**
 
 # 公開用ソースの対象範囲
 
@@ -9,6 +9,12 @@
 LoomStroke本体の `LICENSE` と `LICENSE_JA` は開発側から内容を変更せず収録しています。
 
 ## 現行の配布スナップショット
+
+### 2026-11-14 v0.3.0.8.121 開発版の最新版を同期
+
+開発版のコミット `995fcc66` にある公開対象を同期し、本体・実行資源・版番号の286ファイル（新規55、更新231）を反映しました。公開対象2,575ファイルのSHA-256は開発版と一致します。`AGENTS.md`・内部資料・テスト・ユーザーデータは収録していません。
+`CHANGELOG.md`にはv0.3.0.8.11〜v0.3.0.8.121の111版を追加し、開発版の版番号・日付・更新項目と一致させました。PDF/Xの実行依存として`pikepdf`と`lxml`を依存一覧・第三者告知に追加しました。
+配布側ソースを読み込む版番号・AI Effect・ComfyUI・PDF/X・NovelAI・更新履歴の関連94件、全本体PythonのRuff/Black/isort、配布環境の`pip check`と版番号・依存バージョン一致を確認しました。全テスト、実アプリ手操作、実AI生成、新規Windows環境への導入は今回未実施です。
 
 ### 2026-11-08 v0.3.0.8.10 空ドック領域の修正と更新同期
 
@@ -235,7 +241,7 @@ build backendが生成したパッケージMETADATAのVersionも`0.3.0.3`で一�
 - ロゴ `img/`、第三者告知 `LICENSES/`、`THIRD_PARTY_LICENSES`
 - 利用者向け文書 `docs/user/`
 - `pyproject.toml`、`requirements.txt`
-- 更新履歴 `CHANGELOG.md`（2026-10-21のv0.3から開始、現在v0.3.0.8.10）
+- 更新履歴 `CHANGELOG.md`（2026-10-21のv0.3から開始、現在v0.3.0.8.121）
 - `main.py`、`install.bat`、`install_python.ps1`、`boot_LoomStroke.bat`、`run.sh`
 - AI無し専用入口 `boot_LoomStroke_noAI.bat`、ZIP更新用 `update.bat` / `update.ps1`
 

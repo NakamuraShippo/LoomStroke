@@ -96,6 +96,17 @@ class CanvasResizeDialog(QDialog):
     def canvas_size(self) -> tuple[int, int]:
         return self._width_spin.value(), self._height_spin.value()
 
+    def set_canvas_size(self, width: int, height: int) -> None:
+        if not 1 <= width <= 16384 or not 1 <= height <= 16384:
+            raise ValueError("Canvas dimensions exceed the supported range")
+        self._updating = True
+        try:
+            self._width_spin.setValue(width)
+            self._height_spin.setValue(height)
+        finally:
+            self._updating = False
+        self._preset_combo.setCurrentIndex(0)
+
     def anchor(self) -> AnchorPos:
         button = self._anchor_group.checkedButton()
         if button is None:

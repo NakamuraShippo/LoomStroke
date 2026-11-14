@@ -8,7 +8,7 @@ from __future__ import annotations
 
 import asyncio
 import logging
-from collections.abc import Mapping
+from collections.abc import Callable, Mapping
 from typing import Any, cast
 
 from PySide6.QtWidgets import QMainWindow
@@ -17,6 +17,8 @@ from .app_ai_effect_gallery import _AIEffectGalleryAdapter
 from .app_ai_effect_generation_commit import (
     _apply_cached_generation_output,
     _apply_normal_generation_outputs,
+    _can_commit_mixed_outputs,
+    _try_commit_generation_result,
 )
 from .app_ai_effect_generation_target import (
     _capture_normal_generation_target,
@@ -25,11 +27,29 @@ from .app_ai_effect_generation_target import (
 )
 from .app_ai_effect_output_names import output_layer_names
 from .app_ai_effect_output_result import AIEffectOutputApplication, observed_output_application
+from .plugins.ai_effect.gateways.comfyui_model_application import (
+    _ModelApplicationResult,
+    _scope_model_application,
+)
 
 logger = logging.getLogger(__name__)
 
 _AI_EFFECT_MANAGER_PANEL_ID = "ui.ai_effect_manager"
 _AI_EFFECT_MANAGER_PANEL_OWNER = "loomstroke.ai_effect"
+
+
+def _mcp_image_asset(image: Any) -> dict[str, Any] | None:
+    png_bytes = getattr(image, "png_bytes", None)
+    if not isinstance(png_bytes, bytes | bytearray):
+        return None
+    return {
+        "internalId": str(getattr(image, "internal_id", "") or ""),
+        "pngBytes": bytes(png_bytes),
+        "dimensions": {
+            "width": int(getattr(image, "width", 0) or 0),
+            "height": int(getattr(image, "height", 0) or 0),
+        },
+    }
 
 
 class AIEffectCoordinator:
@@ -903,136 +923,188 @@ class AIEffectCoordinator:
     async def _mcp_submit_generation(self, arguments: Mapping[str, Any]) -> dict[str, Any]:
         """Run an AI Effect generation from the MCP job boundary."""
 
+        from .mcp.ai_effect_state import (  # noqa: PLC0415
+            _temporary_ai_effect_generation_state,
+            apply_ai_effect_state_update,
+            has_ai_effect_state_update,
+        )
         from .mcp.types import McpStructuredError, ReasonCode  # noqa: PLC0415
         from .plugins.ai_effect.resolve_inputs import HostResolveInputs  # noqa: PLC0415
 
         layer_id, controller, registry, canvas, state = self._mcp_generation_context(arguments)
-        state_backup = self._mcp_apply_generation_overrides(
-            arguments,
-            canvas=canvas,
-            layer_id=layer_id,
-            state=state,
-        )
-        if state_backup is not None or self._mcp_generation_has_state_update(arguments):
-            layer = self._mcp_ai_effect_layer(canvas, layer_id)
-            state = getattr(layer, "ai_effect", state)
+        target = self._mcp_capture_generation_target(layer_id, state)
+        untracked_layer = self._mcp_ai_effect_layer(canvas, layer_id) if target is None else None
+        untracked_doc = getattr(canvas, "_doc", None) if target is None else None
 
-        try:
-            resolver = HostResolveInputs(canvas_service=canvas, gateway_registry=registry)
+        def owns_target() -> bool:
+            if target is not None:
+                return target.is_current(self._app, owner_only=True)
             try:
-                gateway, layer_versions, slot_images, source_page_id = await resolver(
-                    layer_id,
-                    state,
+                return (
+                    self._canvas_service is canvas
+                    and getattr(canvas, "_doc", None) is untracked_doc
+                    and canvas._find_layer_by_id_tree(layer_id) is untracked_layer
+                    and getattr(untracked_layer, "ai_effect", None) is state
                 )
-            except Exception as exc:
-                raise McpStructuredError(
-                    ReasonCode.BACKEND_FAILED,
-                    "AI Effect input resolution failed.",
-                    details={"layerId": layer_id, "error": exc.__class__.__name__},
-                ) from exc
+            except Exception:
+                return False
 
-            force_regenerate = bool(arguments.get("forceRegenerate", False))
-            try:
+        def target_is_current() -> bool:
+            if target is None:
+                return owns_target()
+            return _normal_generation_target_is_current(target, self._app)
+
+        request_state = state
+        if has_ai_effect_state_update(arguments):
+            if bool(arguments.get("persistOverrides", True)):
+                apply_ai_effect_state_update(canvas, layer_id, arguments, owns_target=owns_target)
+                if not owns_target():
+                    raise self._mcp_generation_target_changed(layer_id)
+                if target is not None:
+                    target = self._mcp_capture_generation_target(layer_id, state) or target
+            else:
+                request_state = _temporary_ai_effect_generation_state(state, arguments)
+
+        resolver = HostResolveInputs(canvas_service=canvas, gateway_registry=registry)
+        try:
+            gateway, layer_versions, slot_images, source_page_id = await resolver(
+                layer_id, request_state
+            )
+        except Exception as exc:
+            raise McpStructuredError(
+                ReasonCode.BACKEND_FAILED,
+                "AI Effect input resolution failed.",
+                details={"layerId": layer_id, "error": exc.__class__.__name__},
+            ) from exc
+        if not target_is_current():
+            raise self._mcp_generation_target_changed(layer_id)
+
+        apply_to_canvas = bool(arguments.get("applyToCanvas", True))
+        try:
+            with _scope_model_application(
+                target_is_current,
+                apply_to_canvas=apply_to_canvas,
+                defer_mixed=apply_to_canvas and _can_commit_mixed_outputs(self._app, target),
+            ):
                 outcome = await controller.execute(
                     layer_id=layer_id,
-                    state=state,
+                    state=request_state,
                     gateway=gateway,
                     layer_versions=layer_versions,
                     slot_images=slot_images,
                     source_page_id=source_page_id,
-                    force_regenerate=force_regenerate,
+                    force_regenerate=bool(arguments.get("forceRegenerate", False)),
                 )
-            except asyncio.CancelledError:
-                raise
-            except Exception as exc:
-                raise McpStructuredError(
-                    ReasonCode.BACKEND_FAILED,
-                    "AI Effect generation failed.",
-                    details={"layerId": layer_id, "error": exc.__class__.__name__},
-                ) from exc
+        except asyncio.CancelledError:
+            raise
+        except Exception as exc:
+            raise McpStructuredError(
+                ReasonCode.BACKEND_FAILED,
+                "AI Effect generation failed.",
+                details={"layerId": layer_id, "error": exc.__class__.__name__},
+            ) from exc
 
-            apply_to_canvas = bool(arguments.get("applyToCanvas", True))
-            application = None
-            if outcome.status == "success" and apply_to_canvas:
-                try:
-                    applied = self._app._apply_ai_effect_outputs(layer_id, state, outcome)
-                    application = observed_output_application(applied, outcome)
-                except Exception:
-                    logger.exception("MCP AI Effect outputs application failed for %s", layer_id)
-                    application = observed_output_application(False, outcome)
-                if application.complete:
-                    self._app._maybe_show_first_gen_banner()
-
-            if outcome.error is not None:
-                self._app._notify_ai_effect_error(outcome.error)
-
-            payload = self._mcp_generation_payload(
-                layer_id,
-                outcome,
-                apply_to_canvas=apply_to_canvas,
-            )
-            if application is not None:
-                application.update_payload(payload)
-            return payload
-        finally:
-            if state_backup is not None:
-                try:
-                    self._mcp_restore_generation_overrides(
-                        canvas=canvas,
-                        layer_id=layer_id,
-                        state=state,
-                        state_backup=state_backup,
-                    )
-                except Exception:
-                    logger.exception(
-                        "MCP AI Effect temporary override restore failed for %s",
-                        layer_id,
-                    )
-
-    @staticmethod
-    def _mcp_generation_has_state_update(arguments: Mapping[str, Any]) -> bool:
-        from .mcp.ai_effect_state import has_ai_effect_state_update  # noqa: PLC0415
-
-        return has_ai_effect_state_update(arguments)
-
-    @staticmethod
-    def _mcp_apply_generation_overrides(
-        arguments: Mapping[str, Any],
-        *,
-        canvas: Any,
-        layer_id: str,
-        state: Any,
-    ) -> Any:
-        from .mcp.ai_effect_state import (  # noqa: PLC0415
-            apply_ai_effect_state_update,
-            has_ai_effect_state_update,
-            make_ai_effect_state_backup,
-            restore_ai_effect_state_backup,
+        return self._mcp_finish_generation(
+            layer_id,
+            request_state,
+            outcome,
+            apply_to_canvas=apply_to_canvas,
+            live_state=state,
+            target=target,
+            target_is_current=target_is_current,
         )
 
-        if not has_ai_effect_state_update(arguments):
-            return None
-        persist_overrides = bool(arguments.get("persistOverrides", True))
-        state_backup = None if persist_overrides else make_ai_effect_state_backup(state)
-        try:
-            apply_ai_effect_state_update(canvas, layer_id, arguments)
-        except Exception:
-            if state_backup is not None:
-                restore_ai_effect_state_backup(canvas, layer_id, state, state_backup)
-            raise
-        return state_backup
-
-    @staticmethod
-    def _mcp_restore_generation_overrides(
-        *,
-        canvas: Any,
+    def _mcp_finish_generation(
+        self,
         layer_id: str,
         state: Any,
-        state_backup: Any,
-    ) -> None:
-        from .mcp.ai_effect_state import restore_ai_effect_state_backup  # noqa: PLC0415
+        outcome: Any,
+        *,
+        apply_to_canvas: bool,
+        live_state: Any,
+        target: Any,
+        target_is_current: Callable[[], bool],
+    ) -> dict[str, Any]:
+        """Expose produced assets even if their original canvas can no longer be edited."""
+        result = getattr(outcome, "result", None)
+        application = None
+        if outcome.status == "success" and apply_to_canvas:
+            applied = False
+            if target_is_current():
+                try:
+                    applied = _try_commit_generation_result(
+                        self._app,
+                        layer_id,
+                        live_state,
+                        outcome,
+                        target,
+                        output_state=state,
+                        report_via_mcp=True,
+                    )
+                    if applied is None:
+                        applied = self._app._apply_ai_effect_outputs(layer_id, state, outcome)
+                except Exception:
+                    logger.exception("MCP AI Effect outputs application failed for %s", layer_id)
+            application = observed_output_application(applied, outcome)
+            application.include_model_outputs(result)
+            if application.complete:
+                self._app._maybe_show_first_gen_banner()
+        if outcome.error is not None:
+            self._app._notify_ai_effect_error(outcome.error)
+        payload = self._mcp_generation_payload(layer_id, outcome, apply_to_canvas=apply_to_canvas)
+        if application is not None:
+            application.update_payload(payload)
+        if not apply_to_canvas and outcome.status == "cache_hit":
+            self._mcp_add_cached_asset(payload, outcome)
+        elif not apply_to_canvas and isinstance(result, _ModelApplicationResult):
+            notice = {
+                "class": "BACKEND",
+                "code": "model_asset_only_unsupported",
+                "title": "This generation request cannot return 3D model assets",
+            }
+            if payload.get("assets"):
+                payload["warnings"] = [notice]
+            else:
+                payload.update(status="failed", canvasMutation="none", error=notice)
+        return payload
 
-        restore_ai_effect_state_backup(canvas, layer_id, state, state_backup)
+    def _mcp_add_cached_asset(self, payload: dict[str, Any], outcome: Any) -> None:
+        store = getattr(self._app, "_generation_history", None)
+        try:
+            image = _AIEffectGalleryAdapter(store)._read_cached_image(
+                outcome.cached_record, payload["paramHash"]
+            )
+            asset = _mcp_image_asset(image)
+            if asset is None or getattr(self._app, "_generation_history", None) is not store:
+                raise ValueError("Cached image owner changed or the image is unavailable")
+        except (OSError, ValueError):
+            payload["status"] = "failed"
+            payload["assets"] = []
+            payload["error"] = {
+                "class": "BACKEND",
+                "code": "cached_output_unavailable",
+                "title": "Cached generated image is unavailable",
+                "detail": "The Gallery cache could not supply an owned image.",
+            }
+            return
+        payload["assets"] = [asset]
+        payload["canvasMutation"] = "asset_only"
+
+    def _mcp_capture_generation_target(self, layer_id: str, state: Any) -> Any:
+        try:
+            return _capture_normal_generation_target(self._app, layer_id, state)
+        except (_GenerationTargetRejected, RecursionError) as exc:
+            raise self._mcp_generation_target_changed(layer_id) from exc
+
+    @staticmethod
+    def _mcp_generation_target_changed(layer_id: str) -> Exception:
+        from .mcp.types import McpStructuredError, ReasonCode  # noqa: PLC0415
+
+        return McpStructuredError(
+            ReasonCode.CONFLICT,
+            "AI Effect generation target changed.",
+            details={"layerId": layer_id},
+        )
 
     def _mcp_generation_context(
         self,
@@ -1140,19 +1212,9 @@ class AIEffectCoordinator:
             payload["durationSec"] = float(getattr(result, "duration_sec", 0.0) or 0.0)
             assets: list[dict[str, Any]] = []
             for image in getattr(result, "output_images", []) or []:
-                png_bytes = getattr(image, "png_bytes", None)
-                if not isinstance(png_bytes, bytes | bytearray):
-                    continue
-                assets.append(
-                    {
-                        "internalId": str(getattr(image, "internal_id", "") or ""),
-                        "pngBytes": bytes(png_bytes),
-                        "dimensions": {
-                            "width": int(getattr(image, "width", 0) or 0),
-                            "height": int(getattr(image, "height", 0) or 0),
-                        },
-                    }
-                )
+                asset = _mcp_image_asset(image)
+                if asset is not None:
+                    assets.append(asset)
             payload["assets"] = assets
         error = getattr(outcome, "error", None)
         if error is not None:
@@ -1194,26 +1256,28 @@ class AIEffectCoordinator:
         if not _normal_generation_target_is_current(target, self._app):
             return
         try:
-            outcome = await controller.execute(
-                layer_id=layer_id,
-                state=state,
-                gateway=gateway,
-                layer_versions=layer_versions,
-                slot_images=slot_images,
-                source_page_id=source_page_id,
-            )
+            with _scope_model_application(
+                lambda: _normal_generation_target_is_current(target, self._app),
+                defer_mixed=_can_commit_mixed_outputs(self._app, target),
+            ):
+                outcome = await controller.execute(
+                    layer_id=layer_id,
+                    state=state,
+                    gateway=gateway,
+                    layer_versions=layer_versions,
+                    slot_images=slot_images,
+                    source_page_id=source_page_id,
+                )
         except Exception:
             logger.exception("Generate dispatch: controller.execute raised for %s", layer_id)
             return
         if not _normal_generation_target_is_current(target, self._app):
             return
         status = getattr(outcome, "status", "?")
-        # Standard single-self results commit through document history.
-        # Other outputs and custom callbacks retain their original route.
         if status == "success":
             if not _normal_generation_target_is_current(target, self._app):
                 return
-            _apply_normal_generation_outputs(self._app, layer_id, state, outcome, target)
+            status = _apply_normal_generation_outputs(self._app, layer_id, state, outcome, target)
         elif status == "cache_hit":
             _apply_cached_generation_output(self._app, layer_id, state, outcome, target)
         err = getattr(outcome, "error", None)

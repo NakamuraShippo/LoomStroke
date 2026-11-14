@@ -8,6 +8,8 @@ from datetime import datetime
 from enum import Enum
 from typing import Any, ClassVar
 
+from loomstroke.core.event_bus_extensions import EventBusTimeoutError
+
 from ..common.events import PluginEvent
 from ..common.models import ComposedPrompt
 from .bus_utils import request_with_timeout
@@ -170,7 +172,7 @@ class ComfyUIBridge:
                 result.error_message = response.get("error", "Unknown error")
                 logger.error(f"ワークフロー送信失敗: {result.error_message}")
 
-        except TimeoutError:
+        except (EventBusTimeoutError, TimeoutError):
             result.status = WorkflowStatus.FAILED
             result.error_message = "ComfyUI response timeout"
             logger.error("ComfyUIからの応答がタイムアウトしました")
@@ -210,7 +212,7 @@ class ComfyUIBridge:
                 logger.info(f"ワークフローキャンセル成功: {workflow_id}")
                 return True
 
-        except (TimeoutError, AttributeError, RuntimeError, ValueError) as e:
+        except (EventBusTimeoutError, TimeoutError, AttributeError, RuntimeError, ValueError) as e:
             logger.error(f"ワークフローキャンセルエラー: {e}")
 
         return False

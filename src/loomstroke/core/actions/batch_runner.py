@@ -21,7 +21,7 @@ from .macro_planner import MacroPlanner
 __all__ = ["BatchRunner"]
 
 ContextFactory = Callable[[str], ActionContext]
-TargetHook = Callable[[str], None]
+TargetHook = Callable[[str], bool | None]
 CancelCheck = Callable[[], bool]
 
 
@@ -53,19 +53,22 @@ class BatchRunner:
                 cancelled = True
                 records.append(BatchTargetRecord(target_id, "cancelled"))
                 continue
-            if before_target is not None:
-                before_target(target_id)
+            activated = before_target(target_id) if before_target is not None else None
             try:
-                record = self._run_target(
-                    definition, target_id, context_factory, bindings, policy, cancel
-                )
+                if activated is False:
+                    status = "skipped" if policy == "skip_blocked" else "blocked"
+                    record = BatchTargetRecord(target_id, status, "page_switch_failed")
+                else:
+                    record = self._run_target(
+                        definition, target_id, context_factory, bindings, policy, cancel
+                    )
             finally:
                 if after_target is not None:
                     after_target(target_id)
             records.append(record)
             if record.run is not None and record.run.cancelled:
                 cancelled = True
-            elif record.status in {"failed", "blocked"} and policy == "stop":
+            elif record.status in {"failed", "blocked", "partial"} and policy == "stop":
                 stopped = record.reason_code or record.status
             del index
         return BatchRunResult(policy, tuple(records), cancelled, stopped)

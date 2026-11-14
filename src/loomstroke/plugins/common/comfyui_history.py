@@ -10,6 +10,9 @@ from loomstroke.plugins.ai_effect.errors import AIError, ErrorClass
 from loomstroke.plugins.sdk.base import ProgressEvent
 
 _STANDALONE_HISTORY_TIMEOUT_SEC = 30.0
+_HISTORY_UNAVAILABLE_ERROR = "ComfyUI history never became available"
+_MISSING_SELECTED_IMAGE_OUTPUT_ERROR = "ComfyUI completed without any of the selected image outputs"
+_SELECTED_MODEL_OUTPUT_ERROR = "Generated outputs could not be fully applied"
 
 
 class _PendingHistoryProgress(ProgressEvent):
@@ -34,6 +37,27 @@ def _raise_terminal_failure(job: Any) -> None:
     failure = getattr_static(job, "_terminal_failure", None) if job is not None else None
     if isinstance(failure, tuple):
         raise _HistoryTerminalError(*failure)
+
+
+def _history_status_label(status: Any) -> str:
+    if isinstance(status, str):
+        return status.lower()
+    if isinstance(status, dict):
+        label = status.get("status_str") or status.get("status") or status.get("state") or ""
+        return str(label).lower()
+    return ""
+
+
+def _history_has_explicit_completion(record: Any) -> bool:
+    """Distinguish a classified success from a status-less legacy history."""
+    if not isinstance(record, dict):
+        return False
+    status = record.get("status")
+    return (
+        record.get("completed") is True
+        or (isinstance(status, dict) and status.get("completed") is True)
+        or _history_status_label(status) in {"success", "completed"}
+    )
 
 
 def history_completion(history: Any, *, job_id: str) -> tuple[str, AIError | None]:
@@ -78,13 +102,7 @@ def history_completion(history: Any, *, job_id: str) -> tuple[str, AIError | Non
                 "exception_type": exception_type,
             },
         )
-    label = (
-        status_fields.get("status_str")
-        or status_fields.get("status")
-        or status_fields.get("state")
-        or (status if isinstance(status, str) else "")
-    )
-    label = str(label).lower()
+    label = _history_status_label(status)
     if label in {"error", "failed"} or record.get("error"):
         return "error", AIError(
             class_=ErrorClass.BACKEND,

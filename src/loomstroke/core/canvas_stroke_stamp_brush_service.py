@@ -33,7 +33,7 @@ class CanvasStrokeStampBrushService:
     def apply_stamp_brush(  # noqa: PLR0911 - reject distinct empty/invalid edits before painting
         self, cmd: StampBrushCommand
     ) -> QRect | None:
-        """Apply stamp brush command to active layer. Returns dirty rect or None."""
+        """Apply stamp brush command to its target layer. Returns dirty rect or None."""
         owner = self._owner
         layer = owner._stamp_target_layer(cmd)
         if layer is None:
@@ -85,8 +85,7 @@ class CanvasStrokeStampBrushService:
             white_level=255.0,
         )
         opacity = max(0.0, min(1.0, float(cmd.brush.opacity)))
-        flow = max(0.0, min(1.0, float(cmd.brush.flow)))
-        alpha_scale = opacity * flow
+        alpha_scale = opacity * max(0.0, min(1.0, float(cmd.brush.flow)))
         if alpha_scale <= 0.0:
             return None
 
@@ -120,6 +119,7 @@ class CanvasStrokeStampBrushService:
             metadata: dict[str, Any] = {"command": "stamp_brush"}
             if getattr(owner, "_mask_edit_flag", False):
                 metadata["mask_edit"] = True
+                owner._normalize_mask_to_grayscale(after_patch)
             owner._record_history_patch(
                 "Stamp Brush",
                 owner._history_patch_from_images(

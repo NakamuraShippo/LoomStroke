@@ -16,6 +16,7 @@ _AI_PLUGIN_PACKAGES = frozenset(
         "llm_gateway",
         "gptimage2",
         "nanobanana",
+        "novelai",
         "prompt_editor",
         "three_d_generation",
     }

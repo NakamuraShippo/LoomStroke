@@ -14,8 +14,9 @@ from loomstroke.plugins.ai_effect.ui.dynamic_prompt_submission import advance_li
 from loomstroke.plugins.ai_effect.ui.param_widgets import SeedParamWidget, create_param_widget
 
 from .panel import tr
+from .seed_control import sync_qt_seed_modes
 from .values import parameter_bindings, prompt_ui_state
-from .widget_classification import NodeWidgetClassification, classify_node
+from .widget_classification import NodeWidgetClassification, classify_node, standard_seed_control
 
 logger = logging.getLogger(__name__)
 
@@ -33,6 +34,7 @@ class QtNodeForms(QStackedWidget):
         self.widgets: dict[str, Any] = {}
         self.pages: dict[str, QWidget] = {}
         self.classifications: dict[str, NodeWidgetClassification] = {}
+        self._seed_modes: dict[str, str] = {}
         self._updating = False
         self.hide()
 
@@ -41,13 +43,14 @@ class QtNodeForms(QStackedWidget):
         self.widgets.clear()
         self.pages.clear()
         self.classifications.clear()
+        self._seed_modes.clear()
         while self.count():
             page = self.widget(0)
             self.removeWidget(page)
             page.hide()
             page.deleteLater()
 
-    def rebuild(self, info: dict, state: Any) -> None:
+    def rebuild(self, info: dict, state: Any) -> None:  # noqa: PLR0915 - bounded Qt form assembly
         self.clear()
         bindings = parameter_bindings(state)
         entries = state.preset_snapshot.get("manifest", {}).get("parameters", [])
@@ -66,6 +69,7 @@ class QtNodeForms(QStackedWidget):
             form = QFormLayout(page)
             form.setFieldGrowthPolicy(QFormLayout.FieldGrowthPolicy.AllNonFixedFieldsGrow)
             pending = {}
+            seed_modes = {}
             try:
                 for entry in published:
                     internal_id = entry["internal_id"]
@@ -73,15 +77,24 @@ class QtNodeForms(QStackedWidget):
                     if not any(w["name"] == ref["input"] for w in node["widgets"]):
                         raise ValueError("Published widget is missing")
                     effective = self._entry(entry, node, ref["input"])
-                    widget = create_param_widget(
-                        effective, page, host_api=getattr(self.panel.section, "_host", None)
-                    )
+                    target = next(w for w in node["widgets"] if w["name"] == ref["input"])
+                    control = standard_seed_control(node, target)
+                    if control is not None and effective["type"] == "int":
+                        widget = SeedParamWidget(effective, page)
+                    else:
+                        widget = create_param_widget(
+                            effective, page, host_api=getattr(self.panel.section, "_host", None)
+                        )
                     value = state.param_values.get(internal_id, effective.get("default"))
                     widget.set_value(value)
                     # Do not substitute a clamped/rounded value for a saved one.
                     if widget.get_value() != value:
                         raise ValueError("Qt control cannot represent the saved value")
-                    widget.set_ui_state(state.param_ui_state.get(internal_id, {}))
+                    saved_ui = state.param_ui_state.get(internal_id, {})
+                    if control is not None and isinstance(widget, SeedParamWidget):
+                        widget.set_ui_state({"seed_mode": control["value"]})
+                        seed_modes[internal_id] = control["value"]
+                    widget.set_ui_state(saved_ui)
                     if widget.get_value() != value:
                         widget.set_value(value)
                     widget.value_changed.connect(self._changed)
@@ -93,6 +106,7 @@ class QtNodeForms(QStackedWidget):
                 page.deleteLater()
                 continue
             self.widgets.update(pending)
+            self._seed_modes.update(seed_modes)
             self.pages[key] = page
             self.addWidget(page)
 
@@ -148,7 +162,7 @@ class QtNodeForms(QStackedWidget):
                 value = state.param_values.get(key)
                 widget.set_value(value)
                 if isinstance(widget, SeedParamWidget):
-                    widget.set_mode("fixed")
+                    widget.set_mode(self._seed_modes.get(key, "fixed"))
                 widget.set_ui_state(state.param_ui_state.get(key, {}))
                 if widget.get_value() != value:
                     invalid_nodes.add(str(bindings[key]["node_id"]))
@@ -163,6 +177,7 @@ class QtNodeForms(QStackedWidget):
             for key, ref in bindings.items():
                 if str(ref["node_id"]) == node_id:
                     self.widgets.pop(key, None)
+                    self._seed_modes.pop(key, None)
         if invalid_nodes and self.panel.nodes.currentData() is not None:
             self.select(self.panel.nodes.currentData())
 
@@ -182,6 +197,8 @@ class QtNodeForms(QStackedWidget):
         widget = self.widgets[key]
         values = dict(state.param_values, **{key: value})
         updates = {key: widget.get_ui_state()}
+        if key in self._seed_modes and isinstance(widget, SeedParamWidget):
+            updates[key] = {"seed_mode": widget.get_mode()}
         ui = prompt_ui_state(state.param_ui_state, values, updates)
         if not panel.section._host.canvas.set_ai_effect_layer_state(
             panel.layer_id, param_values=values, slot_refs=state.slot_refs, param_ui_state=ui
@@ -210,3 +227,8 @@ class QtNodeForms(QStackedWidget):
             if key in self.widgets and key in state.param_values and key not in exclude
         ]
         await self.panel.view.evaluate("window.loomstrokeApplyValues(" + json.dumps(entries) + ")")
+        await sync_qt_seed_modes(
+            self.panel.view,
+            state,
+            {key: self.widgets[key] for key in self._seed_modes if key in self.widgets},
+        )

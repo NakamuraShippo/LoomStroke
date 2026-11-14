@@ -6,6 +6,7 @@ import logging
 from contextlib import nullcontext
 from typing import Any
 
+from .ai_effect_output_layer_submit import _capture_output_restore_notice
 from .ai_effect_result_command import _ApplyAIEffectResultCommand, _is_standard_result_command
 from .ai_effect_result_payload import _prepare_result, _standard_result_canvas
 from .canvas_layer_model import _Layer
@@ -50,6 +51,7 @@ class _ResultRestoreNotice(_ResultScope):
 
 
 def _capture_result_restore_notice(canvas: Any, group: Any, inner: Any) -> Any:
+    inner = _capture_output_restore_notice(canvas, group, inner)
     identifiers = tuple(
         dict.fromkeys(
             entry.command.layer_id

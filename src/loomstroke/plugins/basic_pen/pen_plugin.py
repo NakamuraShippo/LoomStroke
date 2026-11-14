@@ -10,6 +10,15 @@ from ...host_api import StrokePoint as HostStrokePoint
 from ..sdk import ToolDescriptor
 from ..sdk.base import PluginBase
 from . import pen_tool as facade
+from .abr_extraction_cache import load_extracted_tips
+from .abr_source_import import store_abr_source
+from .abr_tip_import import publish_abr_tip
+from .brush_write_feedback import (
+    clear_brush_write_feedback,
+    run_brush_write,
+    show_brush_operation_notice,
+    show_png_import_failure_summary,
+)
 from .pen_settings import PenSettings
 from .pen_startup_feedback import clear_startup_feedback, show_startup_failure
 from .pen_tool import (
@@ -30,7 +39,6 @@ from .pen_tool import (
     invalidate_tip_cache,
     is_valid,
     logger,
-    shutil,
     uuid,
 )
 from .selection_tip_creation import commit_selection_tip
@@ -179,6 +187,8 @@ class BasicPenPlugin(PluginBase):
 
         clear_selection_tip_feedback(self)
 
+        clear_brush_write_feedback(self)
+
         if self._pen_presets is not None:
             self._pen_presets.unbind()
 
@@ -256,7 +266,9 @@ class BasicPenPlugin(PluginBase):
 
             self._panel.requestCreateTipFromSelection.connect(self._on_create_tip_from_selection)
 
-            self._panel.requestSaveParamsToSelected.connect(self._on_save_params_to_swatch)
+            self._panel.requestSaveParamsToSelected.connect(
+                lambda: run_brush_write(self, self._on_save_params_to_swatch)
+            )
 
             self._panel.requestImportABR.connect(self._on_import_abr)
 
@@ -264,9 +276,15 @@ class BasicPenPlugin(PluginBase):
 
             self._panel.requestImportImages.connect(self._on_import_tip_images)
 
-            self._panel.requestDeleteSelected.connect(self._on_delete_selected_swatch)
+            self._panel.requestDeleteSelected.connect(
+                lambda: run_brush_write(self, self._on_delete_selected_swatch)
+            )
 
-            self._panel.swatchRenamed.connect(self._on_rename_swatch)
+            self._panel.swatchRenamed.connect(
+                lambda identifier, label: run_brush_write(
+                    self, self._on_rename_swatch, identifier, label
+                )
+            )
 
             self._pen_presets = PenPresetController(self, self._panel.pen_panel)
 
@@ -432,7 +450,7 @@ class BasicPenPlugin(PluginBase):
 
         QTimer.singleShot(200, _retry)
 
-    def _refresh_panel(self) -> None:
+    def _refresh_panel(self, *, preserve_selection: bool = False) -> None:
 
         if not self._panel:
 
@@ -454,7 +472,7 @@ class BasicPenPlugin(PluginBase):
 
             resolved.append(swatch_copy)
 
-        self._panel.set_swatches(resolved)
+        self._panel.set_swatches(resolved, preserve_selection=preserve_selection)
 
     def _apply_initial_swatch(self) -> None:
 
@@ -769,19 +787,11 @@ class BasicPenPlugin(PluginBase):
 
             return
 
-        dest = self._store.abr_imports_dir / Path(file_path).name
-
-        if not dest.exists():
-
-            try:
-
-                shutil.copy(file_path, dest)
-
-            except Exception as exc:
-
-                self._notify(_ts("Failed to copy ABR: {error}").format(error=exc), level="error")
-
-                return
+        try:
+            dest = store_abr_source(Path(file_path), self._store.abr_imports_dir)
+        except OSError as exc:
+            self._notify(_ts("Failed to copy ABR: {error}").format(error=exc), level="error")
+            return
 
         created, error = self._import_abr_file(dest, notify_errors=True)
 
@@ -876,13 +886,7 @@ class BasicPenPlugin(PluginBase):
 
         if not created:
 
-            message = _ts("No PNG tips imported")
-
-            if skipped:
-
-                message = _ts("No PNG tips imported ({skipped} skipped)").format(skipped=skipped)
-
-            self._notify(message, level="warning")
+            show_png_import_failure_summary(self, 0, skipped)
 
             return
 
@@ -892,12 +896,7 @@ class BasicPenPlugin(PluginBase):
 
         if skipped:
 
-            self._notify(
-                _ts("Imported {count} PNG tips ({skipped} skipped)").format(
-                    count=len(created),
-                    skipped=skipped,
-                )
-            )
+            show_png_import_failure_summary(self, len(created), skipped)
 
         else:
 
@@ -912,6 +911,9 @@ class BasicPenPlugin(PluginBase):
             return
 
         ui = getattr(host, "ui", None)
+
+        if level in {"error", "warning"} and show_brush_operation_notice(self, message):
+            return
 
         if ui and hasattr(ui, "show_message"):
 
@@ -990,9 +992,8 @@ class BasicPenPlugin(PluginBase):
 
                 errors.append(f"{abr_file.name}: {error}")
 
-        if created_total:
-
-            self._refresh_panel()
+        if created_total or force_extract:
+            self._refresh_panel(preserve_selection=force_extract)
 
         return created_total, errors
 
@@ -1002,18 +1003,8 @@ class BasicPenPlugin(PluginBase):
 
         if errors:
 
-            summary = "\n".join(errors[:5])
-
-            if len(errors) > 5:
-
-                summary += "\n" + self._ts("...and {more_count} more").format(
-                    more_count=len(errors) - 5
-                )
-
-            self._notify(
-                f"{self._ts('ABR import errors:')}\n{summary}",
-                level="warning",
-            )
+            summary = self._summarize_abr_errors(errors)
+            self._notify(f"{self._ts('ABR import errors:')}\n{summary}", level="warning")
 
             return
 
@@ -1024,6 +1015,14 @@ class BasicPenPlugin(PluginBase):
         else:
 
             self._notify(self._ts("No new ABR tips found"))
+
+    def _summarize_abr_errors(self, errors: list[str]) -> str:
+        summary = "\n".join(errors[:5])
+        if len(errors) > 5:
+            summary += "\n" + self._ts("...and {more_count} more").format(
+                more_count=len(errors) - 5
+            )
+        return summary
 
     def _import_abr_file(
         self,
@@ -1053,6 +1052,7 @@ class BasicPenPlugin(PluginBase):
             return [], error
 
         created: list[str] = []
+        errors: list[str] = []
 
         for idx, tip in enumerate(tips):
 
@@ -1062,19 +1062,14 @@ class BasicPenPlugin(PluginBase):
 
             target = self._store.brush_tips_dir / filename
 
-            if force_extract or not target.exists():
-
-                try:
-
-                    shutil.copy(tip, target)
-
+            try:
+                if force_extract or swatch_id not in existing_ids or not target.exists():
+                    publish_abr_tip(tip, target)
                     invalidate_tip_cache(str(target))
-
                     self._tip_cache.invalidate(str(target))
-
-                except Exception:
-
-                    continue
+            except Exception as exc:
+                errors.append(f"{filename}: {exc}")
+                continue
 
             if swatch_id in existing_ids:
 
@@ -1106,15 +1101,27 @@ class BasicPenPlugin(PluginBase):
 
                 self._store.add_swatch(swatch)
 
-            except Exception:
-
+            except Exception as exc:
+                # Keep the verified PNG for retry in case registration did
+                # reach disk. Only a successful registration counts here.
+                errors.append(f"{filename}: {exc}")
                 continue
 
             created.append(swatch_id)
 
             existing_ids.add(swatch_id)
 
-        return created, None
+        if not errors:
+            return created, None
+        summary = self._summarize_abr_errors(errors)
+        if notify_errors:
+            self._notify(
+                f"{self._ts('ABR import errors:')}\n{summary}",
+                level="warning" if created else "error",
+            )
+        else:
+            logger.warning("ABR tip import failed for %s: %s", abr_path, summary)
+        return created, summary
 
     def _load_abr_tips(
         self,
@@ -1123,23 +1130,16 @@ class BasicPenPlugin(PluginBase):
         *,
         notify_errors: bool,
         force_extract: bool,
-    ) -> tuple[list[str], str | None]:
-
-        if not force_extract:
-
-            cached = self._cached_tips(out_dir)
-
-            if cached:
-
-                return cached, None
-
-        else:
-
-            self._clear_cached_tips(out_dir)
+    ) -> tuple[list[Path], str | None]:
 
         try:
 
-            return self._abr_importer.extract_tips(str(abr_path), str(out_dir)), None
+            return (
+                load_extracted_tips(
+                    self._abr_importer, abr_path, out_dir, force_extract=force_extract
+                ),
+                None,
+            )
 
         except Exception as exc:
 
@@ -1152,34 +1152,6 @@ class BasicPenPlugin(PluginBase):
                 logger.warning("ABR import failed for %s: %s", abr_path, exc)
 
             return [], str(exc)
-
-    @staticmethod
-    def _cached_tips(out_dir: Path) -> list[str]:
-
-        if not out_dir.exists():
-
-            return []
-
-        tips = sorted(out_dir.glob("*.png"))
-
-        return [str(path) for path in tips]
-
-    @staticmethod
-    def _clear_cached_tips(out_dir: Path) -> None:
-
-        if not out_dir.exists():
-
-            return
-
-        for path in out_dir.glob("*.png"):
-
-            try:
-
-                path.unlink()
-
-            except Exception:
-
-                continue
 
     def get_tools(self) -> list[BasicPenTool]:
         """Return tools exposed by this plugin (new SDK)."""

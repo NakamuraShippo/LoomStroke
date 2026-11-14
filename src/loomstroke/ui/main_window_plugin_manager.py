@@ -5,14 +5,16 @@ from __future__ import annotations
 import json
 import logging
 from collections.abc import Callable, Mapping
-from contextlib import suppress
+from contextlib import nullcontext, suppress
 from datetime import datetime
 from typing import Any, TypedDict, cast
 
 from ..plugins.sdk import PluginRegistry
 from ..plugins.sdk.base import PluginType
-from ..plugins.sdk.errors import PluginInitError, PluginLifecycleError
+from ..plugins.sdk.errors import PluginLifecycleError
 from ..plugins.sdk.validator import ValidationResult
+from .plugin_manager_update_request import _PluginUpdateOutcome, _PluginUpdateRequest
+from .plugin_update_panel_refresh import PluginUpdatePanelRefresh
 
 logger = logging.getLogger(__name__)
 plugin_audit_logger = logging.getLogger("loomstroke.audit.plugins")
@@ -82,6 +84,7 @@ class MainWindowPluginManagerCoordinator:
                 "ui.plugins.manager event ignored: plugin registry unavailable action=%s",
                 action,
             )
+            _PluginUpdateRequest.reply_to(payload, "failed")
             return
 
         if action == "open":
@@ -93,10 +96,12 @@ class MainWindowPluginManagerCoordinator:
             return
 
         if action == "update":
-            self.handle_plugin_manager_update(plugin_id, payload, registry)
+            outcome = self.handle_plugin_manager_update(plugin_id, payload, registry)
+            _PluginUpdateRequest.reply_to(payload, outcome)
             return
         if action == "rollback":
-            self.handle_plugin_manager_rollback(plugin_id, registry)
+            outcome = self.handle_plugin_manager_rollback(plugin_id, registry)
+            _PluginUpdateRequest.reply_to(payload, outcome)
             return
 
         if plugin is None and plugin_id is not None:
@@ -371,7 +376,7 @@ class MainWindowPluginManagerCoordinator:
         plugin_id: str | None,
         payload: Mapping[str, Any],
         registry: PluginRegistry,
-    ) -> None:
+    ) -> _PluginUpdateOutcome:
         if plugin_id is None:
             logger.warning("ui.plugins.manager update requires plugin_id")
             self.append_plugin_audit_record(
@@ -381,7 +386,7 @@ class MainWindowPluginManagerCoordinator:
                 result="failed",
                 reason="missing plugin_id",
             )
-            return
+            return "failed"
 
         source = self.extract_plugin_manager_source(payload)
         if source is None:
@@ -394,7 +399,7 @@ class MainWindowPluginManagerCoordinator:
                 reason="missing module path",
                 details={"phase": "extract"},
             )
-            return
+            return "failed"
         source_path = source.strip()
         previous_metadata = registry.get_metadata(plugin_id)
         previous_version = previous_metadata.version if previous_metadata is not None else None
@@ -431,7 +436,7 @@ class MainWindowPluginManagerCoordinator:
                 source_path,
                 exc,
             )
-            return
+            return "failed"
 
         if manifest.id != plugin_id:
             self.append_plugin_audit_record(
@@ -460,7 +465,7 @@ class MainWindowPluginManagerCoordinator:
                 manifest.id,
                 source_path,
             )
-            return
+            return "failed"
 
         if validation_result != ValidationResult.VALID:
             self.append_plugin_audit_record(
@@ -489,7 +494,7 @@ class MainWindowPluginManagerCoordinator:
                     )
                 ),
             )
-            return
+            return "failed"
 
         granted_permissions = registry.get_granted_permissions(plugin_id)
         install_approved = False
@@ -520,15 +525,22 @@ class MainWindowPluginManagerCoordinator:
                 reason="dialog cancelled",
                 details={"phase": "consent"},
             )
-            return
+            return "cancelled"
 
+        previous_plugin = registry.get(plugin_id)
+        panels = PluginUpdatePanelRefresh(
+            self._window, plugin_id, previous_plugin, self._resync_updated_plugin_panel
+        )
+        confirm = getattr(registry, "_confirm_plugin_update", None)
         try:
-            registry.update_from_module(
-                source_path,
-                plugin_id=plugin_id,
-                granted_permissions=granted_permissions,
-            )
+            with confirm(plugin_id, panels.confirm) if callable(confirm) else nullcontext():
+                registry.update_from_module(
+                    source_path,
+                    plugin_id=plugin_id,
+                    granted_permissions=granted_permissions,
+                )
         except Exception as exc:
+            panels.after_failure(registry.get(plugin_id))
             self.append_plugin_audit_record(
                 action="update",
                 plugin_id=plugin_id,
@@ -556,9 +568,9 @@ class MainWindowPluginManagerCoordinator:
                         "Permission check failed. Please grant all required permissions."
                     ),
                 )
-                return
+                return "failed"
             self._warning("Plugin Update Failed", str(exc))
-            return
+            return "failed"
 
         self.append_plugin_audit_record(
             action="update",
@@ -579,16 +591,19 @@ class MainWindowPluginManagerCoordinator:
             source_path,
         )
 
-        registry.set_granted_permissions(plugin_id, granted_permissions)
-        plugin = registry.get(plugin_id)
-        if plugin is None:
-            return
-        self._window._unsync_ui_panel_plugin(plugin_id)
-        types = getattr(getattr(plugin, "metadata", None), "types", None)
-        if PluginType.UI_PANEL in (types or []):
-            with suppress(Exception):
-                if getattr(plugin, "enabled", False):
-                    self._window._sync_ui_panel_plugin(plugin)
+        panels.after_success(registry.get(plugin_id))
+        return "success"
+
+    def _resync_updated_plugin_panel(self, plugin_id: str, plugin: Any) -> bool:
+        try:
+            self._window._unsync_ui_panel_plugin(plugin_id)
+            types = getattr(getattr(plugin, "metadata", None), "types", None)
+            if PluginType.UI_PANEL in (types or []) and getattr(plugin, "enabled", False):
+                return bool(self._window._sync_ui_panel_plugin(plugin))
+        except Exception:
+            logger.warning("Failed to refresh updated plugin panel: %s", plugin_id, exc_info=True)
+            return False
+        return True
 
     @staticmethod
     def extract_plugin_manager_source(payload: Mapping[str, Any]) -> str | None:
@@ -847,7 +862,7 @@ class MainWindowPluginManagerCoordinator:
         self,
         plugin_id: str | None,
         registry: PluginRegistry,
-    ) -> None:
+    ) -> _PluginUpdateOutcome:
         if plugin_id is None:
             logger.warning("ui.plugins.manager rollback requires plugin_id")
             self.append_plugin_audit_record(
@@ -858,7 +873,7 @@ class MainWindowPluginManagerCoordinator:
                 reason="missing plugin_id",
                 details={"phase": "request"},
             )
-            return
+            return "failed"
 
         plugin = registry.get(plugin_id)
         previous_version = (
@@ -890,23 +905,40 @@ class MainWindowPluginManagerCoordinator:
                 "ui.plugins.manager rollback blocked: no backup plugin_id=%s",
                 plugin_id,
             )
-            return
+            return "failed"
 
+        panels = PluginUpdatePanelRefresh(
+            self._window, plugin_id, plugin, self._resync_updated_plugin_panel
+        )
         unsync_error = None
         unsync_count = 0
-        try:
-            unsync_count = self._window._unsync_ui_panel_plugin(plugin_id)
-        except Exception as exc:
-            unsync_error = str(exc)
-            logger.warning(
-                "plugin manager rollback unsync failed plugin_id=%s error=%s",
-                plugin_id,
-                exc,
-            )
+        unsynced = False
 
+        def unsync_panels() -> None:
+            nonlocal unsync_error, unsync_count, unsynced
+            unsynced = True
+            try:
+                unsync_count = self._window._unsync_ui_panel_plugin(plugin_id)
+            except Exception as exc:
+                unsync_error = str(exc)
+                logger.warning(
+                    "plugin manager rollback unsync failed plugin_id=%s error=%s",
+                    plugin_id,
+                    exc,
+                )
+
+        after_retirement = getattr(registry, "_after_rollback_retirement", None)
+        panel_scope = (
+            after_retirement(plugin_id, unsync_panels)
+            if callable(after_retirement)
+            else nullcontext()
+        )
         try:
-            registry.rollback_plugin(plugin_id)
-        except PluginInitError as exc:
+            with panel_scope:
+                registry.rollback_plugin(plugin_id)
+        except Exception as exc:
+            if unsynced:
+                panels.after_failure(registry.get(plugin_id), panels_removed=unsync_count > 0)
             self.append_plugin_audit_record(
                 action="rollback",
                 plugin_id=plugin_id,
@@ -927,30 +959,10 @@ class MainWindowPluginManagerCoordinator:
                 plugin_id,
                 exc,
             )
-            return
-        except Exception as exc:
-            self.append_plugin_audit_record(
-                action="rollback",
-                plugin_id=plugin_id,
-                source=None,
-                result="failed",
-                reason=str(exc),
-                details={
-                    "phase": "rollback",
-                    "error": str(exc),
-                    "previous_version": previous_version,
-                    "has_backup_before": has_backup_before,
-                    "unsync_count": unsync_count,
-                    "unsync_error": unsync_error,
-                },
-            )
-            logger.warning(
-                "plugin manager rollback unexpected error plugin_id=%s error=%s",
-                plugin_id,
-                exc,
-            )
-            return
+            return "failed"
 
+        if not unsynced:
+            unsync_panels()
         plugin = registry.get(plugin_id)
         after_version = (
             getattr(getattr(plugin, "metadata", None), "version", None)
@@ -973,7 +985,7 @@ class MainWindowPluginManagerCoordinator:
                     "unsync_error": unsync_error,
                 },
             )
-            return
+            return "failed"
 
         types = getattr(getattr(plugin, "metadata", None), "types", None)
         if PluginType.UI_PANEL in (types or []):
@@ -1000,6 +1012,7 @@ class MainWindowPluginManagerCoordinator:
                 "unsync_error": unsync_error,
             },
         )
+        return "success"
 
     def _translate(self, text: str) -> str:
         return cast(str, self._window._ts(text))

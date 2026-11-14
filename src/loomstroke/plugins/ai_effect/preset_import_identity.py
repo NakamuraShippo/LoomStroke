@@ -11,11 +11,19 @@ from loomstroke.plugins.ai_effect.manifest_validator import validate_manifest
 from loomstroke.plugins.ai_effect.preset import AIEffectPreset
 
 logger = logging.getLogger(__name__)
-_BACKUP_NAME = re.compile(r".+\.bak-[0-9]{8}T[0-9]{6}Z\.lsfx", re.IGNORECASE)
+_BACKUP_NAME = re.compile(r"(.+)\.bak-[0-9]{8}T[0-9]{6}Z\.lsfx", re.IGNORECASE)
 
 
 def is_generated_backup(path: Path) -> bool:
     return _BACKUP_NAME.fullmatch(path.name) is not None
+
+
+def backup_restore_name(path: Path) -> str | None:
+    """Use the ordinary basename of a generated backup, including older nested backups."""
+    name = path.name
+    while match := _BACKUP_NAME.fullmatch(name):
+        name = f"{match[1]}.lsfx"
+    return name if name != path.name else None
 
 
 def ordered_preset_paths(directory: Path) -> list[Path]:

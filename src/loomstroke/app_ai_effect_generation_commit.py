@@ -1,4 +1,4 @@
-"""Commit normal single-self results without replacing compatibility callbacks."""
+"""Commit ordinary RGB results without replacing compatibility callbacks."""
 
 from __future__ import annotations
 
@@ -9,13 +9,20 @@ from typing import Any
 
 from .app_ai_effect_gallery import _AIEffectGalleryAdapter
 from .app_ai_effect_generation_target import _normal_generation_target_is_current
-from .app_ai_effect_output_result import AIEffectOutputApplication
+from .app_ai_effect_output_names import output_layer_names
+from .app_ai_effect_output_result import AIEffectOutputApplication, observed_output_application
+from .core.ai_effect_output_layer_command import (
+    _CreateAIEffectOutputLayersCommand,
+    _NewLayerOutput,
+    _standard_output_canvas,
+)
 from .core.ai_effect_result_command import _ApplyAIEffectResultCommand
 from .core.canvas_history_clear_continuation import _stored_state
 from .core.generation_record import GenerationRecord
 from .core.layer_command_commit_context import _LayerCommandContext
 from .plugins.ai_effect.errors import AIError, ErrorClass
 from .plugins.ai_effect.gateway_protocol import OutputImage
+from .plugins.ai_effect.gateways.comfyui_model_application import _ModelApplicationResult
 
 logger = logging.getLogger(__name__)
 
@@ -59,6 +66,11 @@ def _eligible_route(app: Any, target: Any) -> tuple[Any, Any, tuple[tuple[str, A
     if any(getattr_static(canvas, name, None) is not original for name, original in hooks.items()):
         return None
     return canvas, _DEFAULT_AI_EFFECT_OUTPUT_APPLICATION, tuple(hooks.items())
+
+
+def _can_commit_mixed_outputs(app: Any, target: Any) -> bool:
+    route = _eligible_route(app, target)
+    return route is not None and _standard_output_canvas(route[0])
 
 
 class _NormalResultAttempt:
@@ -135,15 +147,12 @@ def _single_output_mode(state: Any, image: Any) -> str:
 def _notify_application(
     attempt: _NormalResultAttempt,
     application: AIEffectOutputApplication,
-    *,
-    show_banner: bool = True,
 ) -> None:
-    if not attempt.current():
-        return
     try:
+        if not attempt.current():
+            return
         if application.complete:
-            if show_banner:
-                attempt.app._maybe_show_first_gen_banner()
+            attempt.app._maybe_show_first_gen_banner()
         else:
             payload: dict[str, Any] = {}
             application.update_payload(payload)
@@ -161,65 +170,224 @@ def _notify_application(
         logger.warning("Normal AI result notification failed (%s)", type(exc).__name__)
 
 
-def _commit_result_png(
-    attempt: _NormalResultAttempt, png: Any, *, show_banner: bool = True
-) -> bool:
+def _commit_result_png(attempt: _NormalResultAttempt, png: Any) -> AIEffectOutputApplication | None:
     application = AIEffectOutputApplication(expected_count=1, failed_count=1)
     if isinstance(png, (bytes, bytearray)) and png:
         command = _ApplyAIEffectResultCommand(attempt.layer.id, bytes(png))
         if not attempt.before_commit():
-            return False
+            return None
         application.failed_count = 0
         application.attempt(attempt.canvas.submit, command)
     elif not attempt.before_commit():
+        return None
+    return application
+
+
+def _prepare_output_command(
+    attempt: _NormalResultAttempt,
+    images: Any,
+    *,
+    self_index: int | None,
+    output_state: Any,
+    models: tuple[dict[str, Any], ...] = (),
+) -> _CreateAIEffectOutputLayersCommand | None:
+    names = output_layer_names(attempt.canvas, attempt.layer.id, state=output_state)
+    if names is None:
+        return None
+    outputs = []
+    self_png = None
+    for index, image in enumerate(images):
+        png = getattr(image, "png_bytes", None)
+        if not isinstance(png, (bytes, bytearray)) or not png:
+            return None
+        if index == self_index:
+            self_png = bytes(png)
+        else:
+            slot = getattr(image, "internal_id", "") or ""
+            outputs.append(_NewLayerOutput(names(slot), slot or None, bytes(png)))
+    if not attempt.before_commit():
+        return None
+    return _CreateAIEffectOutputLayersCommand(
+        attempt.layer.id, tuple(outputs), self_png=self_png, model_layers=models
+    )
+
+
+def _commit_output_layers(
+    attempt: _NormalResultAttempt, images: Any, *, self_index: int | None, output_state: Any
+) -> AIEffectOutputApplication:
+    expected = len(images)
+    application = AIEffectOutputApplication(expected_count=expected, failed_count=expected)
+    command = _prepare_output_command(
+        attempt, images, self_index=self_index, output_state=output_state
+    )
+    if command is not None:
+        application.failed_count = 0
+        if application.attempt(attempt.canvas.submit, command):
+            application.applied_count = expected
+        else:
+            application.failed_count = expected
+    return application
+
+
+def _submit_mixed_outputs(
+    attempt: _NormalResultAttempt, result: _ModelApplicationResult, output_state: Any
+) -> bool:
+    images = result.output_images
+    models = result.prepared_models
+    if (
+        not images
+        or not models
+        or len(models) != result.expected_models
+        or result.unavailable_images
+        or not _standard_output_canvas(attempt.canvas)
+    ):
         return False
-    if not show_banner and not application.complete:
-        _notify_cached_image_error(attempt, missing=False, preparation=False)
-    else:
-        _notify_application(attempt, application, show_banner=show_banner)
-    return application.complete
+    modes = tuple(_single_output_mode(output_state, image) for image in images)
+    if modes.count("self") > 1 and getattr(output_state, "output_mode_override", None) != "self":
+        return False
+    command = _prepare_output_command(
+        attempt,
+        images,
+        self_index=modes.index("self") if "self" in modes else None,
+        output_state=output_state,
+        models=models,
+    )
+    return command is not None and bool(attempt.canvas.submit(command))
 
 
-def _try_commit_normal_single_self(  # noqa: PLR0911 - separate unhandled, stale and refused results
-    app: Any, layer_id: str, state: Any, outcome: Any, target: Any
-) -> bool | None:
-    """None preserves the old route; True/False never request a direct retry."""
+def _commit_mixed_result(
+    app: Any,
+    layer_id: str,
+    state: Any,
+    result: _ModelApplicationResult,
+    target: Any,
+    output_state: Any,
+    *,
+    report_via_mcp: bool,
+) -> AIEffectOutputApplication:
+    expected = len(result.output_images) + result.unavailable_images + result.expected_models
+    application = AIEffectOutputApplication(expected_count=expected, failed_count=expected)
+    route = _eligible_route(app, target)
+    if route is None or not _normal_generation_target_is_current(target, app):
+        return application
+    canvas, callback, hooks = route
+    layer = canvas._find_layer_by_id_tree(layer_id)
+    if layer is None:
+        return application
+    attempt = _NormalResultAttempt(
+        app, canvas, layer, state, target, callback=callback, hooks=hooks
+    )
+    try:
+        if attempt.before_commit() and _submit_mixed_outputs(attempt, result, output_state):
+            application.applied_count = expected
+            application.failed_count = 0
+    except Exception as exc:
+        logger.warning("Mixed AI output preparation failed (%s)", type(exc).__name__)
+    if not report_via_mcp:
+        _notify_application(attempt, application)
+    return application
+
+
+def _try_commit_normal_result(  # noqa: PLR0911 - separate unhandled, stale and refused results
+    app: Any,
+    layer_id: str,
+    state: Any,
+    outcome: Any,
+    target: Any,
+    *,
+    output_state: Any = None,
+    report_via_mcp: bool = False,
+) -> AIEffectOutputApplication | None:
+    """Return the observed result, or leave an unsupported route to its existing callback."""
+    result = getattr(outcome, "result", None)
     route = _eligible_route(app, target)
     if route is None:
         return None
     canvas, callback, hooks = route
     attempt = None
     try:
-        if not _normal_generation_target_is_current(target, app):
-            return False
-        layer = canvas._find_layer_by_id_tree(layer_id)
+        layer = (
+            canvas._find_layer_by_id_tree(layer_id)
+            if _normal_generation_target_is_current(target, app)
+            else None
+        )
         if layer is None:
-            return False
+            return observed_output_application(False, outcome)
         attempt = _NormalResultAttempt(
             app, canvas, layer, state, target, callback=callback, hooks=hooks
         )
-        result = getattr(outcome, "result", None)
         images = getattr(result, "output_images", None) or []
         models = getattr(result, "output_models", None) or []
         if not attempt.before_commit():
-            return False
-        if models or (type(images) is not list and type(images) is not tuple) or len(images) != 1:
+            return observed_output_application(False, outcome)
+        if (
+            type(images) not in (list, tuple)
+            or not images
+            or (models and not isinstance(result, _ModelApplicationResult))
+        ):
             return None
-        image = images[0]
-        mode = _single_output_mode(state, image)
+        output_state = state if output_state is None else output_state
+        modes = tuple(_single_output_mode(output_state, image) for image in images)
         if not attempt.before_commit():
-            return False
-        if mode != "self":
+            return observed_output_application(False, outcome)
+        # The explicit self override sends everything after the first image
+        # to sibling layers. Other multiple-self manifests retain their route.
+        if (
+            modes.count("self") > 1
+            and getattr(output_state, "output_mode_override", None) != "self"
+        ):
             return None
-        png = getattr(image, "png_bytes", None)
-        return _commit_result_png(attempt, png)
+        single_self = modes == ("self",)
+        if (report_via_mcp or not single_self) and not _standard_output_canvas(canvas):
+            return None
+        if single_self:
+            application = _commit_result_png(attempt, getattr(images[0], "png_bytes", None))
+            if application is None:
+                return observed_output_application(False, outcome)
+        else:
+            self_index = modes.index("self") if "self" in modes else None
+            application = _commit_output_layers(
+                attempt, images, self_index=self_index, output_state=output_state
+            )
     except Exception as exc:
         logger.warning("Normal AI result preparation failed (%s)", type(exc).__name__)
-        if attempt is not None:
-            _notify_application(
-                attempt, AIEffectOutputApplication(expected_count=1, failed_count=1)
-            )
-        return False
+        application = observed_output_application(False, outcome)
+    if attempt is not None and not report_via_mcp:
+        application.include_model_outputs(result)
+        _notify_application(attempt, application)
+    return application
+
+
+def _try_commit_generation_result(
+    app: Any,
+    layer_id: str,
+    state: Any,
+    outcome: Any,
+    target: Any,
+    *,
+    output_state: Any = None,
+    report_via_mcp: bool = False,
+) -> AIEffectOutputApplication | None:
+    result = getattr(outcome, "result", None)
+    if isinstance(result, _ModelApplicationResult) and result.prepared_models is not None:
+        return _commit_mixed_result(
+            app,
+            layer_id,
+            state,
+            result,
+            target,
+            state if output_state is None else output_state,
+            report_via_mcp=report_via_mcp,
+        )
+    return _try_commit_normal_result(
+        app,
+        layer_id,
+        state,
+        outcome,
+        target,
+        output_state=output_state,
+        report_via_mcp=report_via_mcp,
+    )
 
 
 def _notify_cached_image_error(
@@ -285,7 +453,9 @@ def _apply_cached_generation_output(
         cached_image = _AIEffectGalleryAdapter(store)._read_cached_image(record, outcome.param_hash)
         if not attempt.before_commit():
             return
-        _commit_result_png(attempt, cached_image.png_bytes, show_banner=False)
+        application = _commit_result_png(attempt, cached_image.png_bytes)
+        if application is not None and not application.complete:
+            _notify_cached_image_error(attempt, missing=False, preparation=False)
     except Exception as exc:
         logger.warning("Cached AI image preparation failed (%s)", type(exc).__name__)
         if attempt is not None:
@@ -294,11 +464,20 @@ def _apply_cached_generation_output(
 
 def _apply_normal_generation_outputs(
     app: Any, layer_id: str, state: Any, outcome: Any, target: Any
-) -> None:
-    if _try_commit_normal_single_self(app, layer_id, state, outcome, target) is not None:
-        return
+) -> str:
+    application = _try_commit_generation_result(app, layer_id, state, outcome, target)
+    if application is not None:
+        result = getattr(outcome, "result", None)
+        if (
+            isinstance(result, _ModelApplicationResult)
+            and result.prepared_models is not None
+            and not application.complete
+        ):
+            return "error"
+        return "success"
     try:
         app._apply_ai_effect_outputs(layer_id, state, outcome)
     except Exception:
         logger.exception("AI Effect outputs application failed for %s", layer_id)
     app._maybe_show_first_gen_banner()
+    return "success"

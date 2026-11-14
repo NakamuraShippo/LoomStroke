@@ -11,6 +11,7 @@ from PySide6.QtGui import QColor, QImage, QPainter
 from PySide6.QtWidgets import QDialog, QFileDialog
 
 from ...ui.translations import translated_literal_domain
+from .brush_write_feedback import show_brush_operation_notice
 from .pen_preset import PenPreset
 from .pen_preset_store import PenPresetStore
 
@@ -95,8 +96,15 @@ class PenPresetController(QObject):
 
     def _error(self, exc: Exception) -> None:
         logger.warning("Pen preset operation failed", exc_info=exc)
+        error = str(exc)
+
+        def render() -> str:
+            return _ts("Pen preset operation failed: {error}").format(error=error)
+
+        if show_brush_operation_notice(self.plugin, render(), render=render):
+            return
         self.plugin._notify(
-            _ts("Pen preset operation failed: {error}").format(error=str(exc)), level="error"
+            _ts("Pen preset operation failed: {error}").format(error=error), level="error"
         )
 
     def _can_apply(self) -> bool:

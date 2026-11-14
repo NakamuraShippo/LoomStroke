@@ -30,6 +30,7 @@ from ..commands import (
     _supports_layer_expansion,
 )
 from ..layer import Layer
+from ..layer_creation_history import CreatedLayerHistory
 from ..raster_edit_geometry import uses_placed_pixels
 from .flood_fill import flood_fill_spans
 from .placed_fill import apply_placed_fill, prepare_placed_spans
@@ -403,6 +404,10 @@ class FloodFillToNewLayerCommand(_FloodFillBase):
             return False
         if self.fill_rgba[3] <= 0:
             return False
+        if CreatedLayerHistory.supports(canvas) and not any(
+            getattr(item, "native_cmyk", None) is not None for item in canvas._flatten_layers()
+        ):
+            return self._apply_detached(canvas)
         layer, layer_id, insert_index, active_id = _create_fill_layer(
             canvas,
             name=self._layer_name or "Fill",
@@ -413,8 +418,30 @@ class FloodFillToNewLayerCommand(_FloodFillBase):
         self._created_layer_id = layer_id
         self._created_layer_index = insert_index
         self._active_layer_id = active_id
+        try:
+            self._executed = self._apply_to_layer(canvas, layer, record_backup=False)
+            return self._executed
+        finally:
+            if not self._executed:
+                _remove_layer_by_id(canvas, layer_id)
+                if active_id:
+                    _restore_active_layer(canvas, active_id)
+
+    def _apply_detached(self, canvas: Any) -> bool:
+        created = CreatedLayerHistory()
+        created.active_before = _active_layer_id(canvas)
+        created.index = _compute_insert_index(canvas._active_index, self._created_layer_index)
+        layer = canvas._layer_tree()._prepare_layer_for_history(self._layer_name or "Fill")
         if not self._apply_to_layer(canvas, layer, record_backup=False):
             return False
+        created.layer = layer
+        if not created.restore(canvas):
+            return False
+        self._created_layer_id = layer.id
+        self._created_layer_index = created.index
+        self._active_layer_id = created.active_before
+        if self._active_layer_id:
+            _restore_active_layer(canvas, self._active_layer_id)
         self._executed = True
         return True
 

@@ -40,6 +40,7 @@ from loomstroke.plugins.ai_effect.preset_import_commit import (
     commit_retiring_import,
 )
 from loomstroke.plugins.ai_effect.preset_import_identity import (
+    backup_restore_name,
     find_installed_uuid,
     inspect_import_target,
     is_generated_backup,
@@ -47,6 +48,7 @@ from loomstroke.plugins.ai_effect.preset_import_identity import (
     paths_refer_to_same_file,
     read_validated_preset,
     refreshed_self_sync_index,
+    unique_normal_uuid_owner,
 )
 
 logger = logging.getLogger(__name__)
@@ -306,28 +308,25 @@ class AIEffectPresetLibrary:
                 f"(existing={existing.lsfx_path}, new={source})"
             )
 
-        self._user_dir.mkdir(parents=True, exist_ok=True)
-        if not is_generated_backup(target) and (
-            existing is None
-            or (
-                existing.lsfx_path is not None
-                and _paths_refer_to_same_file(existing.lsfx_path, target)
-            )
+        backup_name = backup_restore_name(source)
+        if backup_name is not None:
+            return self._restore_imported_backup(source, preset, backup_name, overwrite=overwrite)
+
+        if (
+            existing is not None
+            and existing.lsfx_path is not None
+            and is_generated_backup(existing.lsfx_path)
         ):
-            preset, candidate_index = commit_regular_import(
-                source,
-                target,
-                preset,
-                existing,
-                self._presets,
-                backup_timestamp=_backup_timestamp() if existing is not None else None,
-            )
-            self._presets = candidate_index
-            return preset
+            existing = unique_normal_uuid_owner(self._user_dir, preset.preset_id)
+
+        self._user_dir.mkdir(parents=True, exist_ok=True)
+        if existing is None or (
+            existing.lsfx_path is not None and _paths_refer_to_same_file(existing.lsfx_path, target)
+        ):
+            return self._commit_regular_preset(source, target, preset, existing)
 
         if (
             occupant is None
-            and not is_generated_backup(target)
             and existing is not None
             and existing.lsfx_path is not None
             and not is_generated_backup(existing.lsfx_path)
@@ -368,6 +367,42 @@ class AIEffectPresetLibrary:
         preset = read_lsfx(target, source="user")
         self._presets[preset.preset_id] = preset
         return preset
+
+    def _restore_imported_backup(
+        self, source: Path, preset: AIEffectPreset, name: str, *, overwrite: bool
+    ) -> AIEffectPreset:
+        # A backup name is lower priority on restart. Install the chosen content
+        # at its UUID's ordinary owner and keep every existing backup in place.
+        owner = unique_normal_uuid_owner(self._user_dir, preset.preset_id)
+        if owner is not None and owner.lsfx_path is not None:
+            target = owner.lsfx_path
+        else:
+            target = self._user_dir / name
+            owner = inspect_import_target(target)
+        if owner is not None:
+            if owner.preset_id != preset.preset_id:
+                raise DuplicatePresetError("Import destination belongs to a different preset UUID")
+            if not overwrite:
+                raise DuplicatePresetError(f"Preset {preset.preset_id!r} already installed")
+        return self._commit_regular_preset(source, target, preset, owner)
+
+    def _commit_regular_preset(
+        self,
+        source: Path,
+        target: Path,
+        preset: AIEffectPreset,
+        existing: AIEffectPreset | None,
+    ) -> AIEffectPreset:
+        installed, candidate_index = commit_regular_import(
+            source,
+            target,
+            preset,
+            existing,
+            self._presets,
+            backup_timestamp=_backup_timestamp() if existing is not None else None,
+        )
+        self._presets = candidate_index
+        return installed
 
     def delete(self, preset_id: str) -> bool:
         """Remove preset by id. Returns True if the file was removed.

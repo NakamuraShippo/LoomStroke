@@ -67,7 +67,8 @@ class LinkOverlay(QWidget):
         painter.setBrush(Qt.BrushStyle.NoBrush)
         centers = {}
         for number, (key, hit) in enumerate(self.picker.visible_frames(), 1):
-            x0, y0, x1, y1 = hit.rect
+            x0, y0, width, height = hit.rect
+            x1, y1 = x0 + width, y0 + height
             points = [(x0, y0), (x1, y0), (x1, y1), (x0, y1)]
             angle = math.radians(self.picker.tool._payload_rotation(hit.payload))
             cx, cy = (x0 + x1) / 2, (y0 + y1) / 2

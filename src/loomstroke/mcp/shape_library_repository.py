@@ -19,12 +19,18 @@ def register_shape(panel, obj, args):
         raise McpStructuredError(
             ReasonCode.BACKEND_FAILED, "The shape library index could not be committed."
         ) from exc
-    record = panel._persist_shape_from_vector(
-        args["name"],
-        deepcopy(obj),
-        category=args.get("category", "custom"),
-        tags=tuple(args.get("tags", [])),
-    )
+    try:
+        record = panel._persist_shape_from_vector(
+            args["name"],
+            deepcopy(obj),
+            category=args.get("category", "custom"),
+            tags=tuple(args.get("tags", [])),
+        )
+    except OSError as exc:
+        raise McpStructuredError(
+            ReasonCode.BACKEND_FAILED,
+            "The shape assets could not be saved and the library index was not committed.",
+        ) from exc
     assets.observe(record)
     if not assets.target_current(panel._index, panel._data_root):
         # A replacement owner may already use the output; preserve its state

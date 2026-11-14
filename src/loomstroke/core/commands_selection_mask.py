@@ -335,12 +335,16 @@ class UpdateSelectionMaskCommand(Command):
         merge_key: str | None = None,
         source: str | None = None,
         full_bounds: SelectionRect | None = None,
+        preview_base: SelectionSnapshot | None = None,
+        feather_radius: int = 0,
     ) -> None:
         super().__init__(merge_key=merge_key)
         self.rect = rect
         self.operation = self._normalize_op(operation)
         self.source = source
         self.full_bounds = _normalize_bounds(full_bounds)
+        self._preview_base = preview_base
+        self._feather_radius = feather_radius
         self._before: SelectionSnapshot | None = None
         self._after: SelectionSnapshot | None = None
         self._before_full_bounds: SelectionRect | None = None
@@ -371,12 +375,20 @@ class UpdateSelectionMaskCommand(Command):
         self._before = SelectionSnapshot(mask=self._clone_mask(old_mask), bounds=old_bounds)
         self._before_full_bounds = _get_selection_full_bounds(canvas)
         self._before_full_mask = _get_selection_full_mask(canvas)
-        self._before_full_mask = _get_selection_full_mask(canvas)
 
         old_np = self._mask_to_numpy(old_mask, width, height)
         rect = self._normalize_rect(self.rect, width, height)
         rect_mask = self._rect_to_mask(rect, width, height) if rect else None
-        new_np = self._compose_mask(old_np, rect_mask, self.operation, old_mask is not None)
+        base = self._preview_base if self.source == "preview" else None
+        base_mask = base.mask if base is not None else old_mask
+        base_np = self._mask_to_numpy(base_mask, width, height) if base is not None else old_np
+        new_np = self._compose_mask(base_np, rect_mask, self.operation, base_mask is not None)
+        full_bounds = self.full_bounds
+        if new_np is not None and self._feather_radius > 0:
+            feathered = ModifySelectionMaskCommand._feather(new_np, self._feather_radius)
+            if not np.array_equal(feathered, new_np):
+                new_np = feathered
+                full_bounds = None
         if new_np is not None and not np.any(new_np):
             new_np = None
         new_bounds = self._mask_bounds(new_np)
@@ -386,8 +398,7 @@ class UpdateSelectionMaskCommand(Command):
 
         new_mask = self._convert_mask_for_canvas(canvas, new_np, width, height)
         self._set_selection(canvas, new_mask, new_bounds)
-        full_bounds = self.full_bounds if self.full_bounds is not None else new_bounds
-        _set_selection_full_bounds(canvas, full_bounds)
+        _set_selection_full_bounds(canvas, full_bounds if full_bounds is not None else new_bounds)
         if self.source != "preview":
             _set_selection_full_mask(canvas, None)
         self._after = SelectionSnapshot(mask=self._clone_mask(new_mask), bounds=new_bounds)

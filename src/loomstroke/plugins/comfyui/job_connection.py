@@ -15,17 +15,25 @@ import aiohttp
 from loomstroke.core.events import Events, JobProgressEvent, JobResultEvent
 from loomstroke.plugins.ai_effect.errors import AIError
 from loomstroke.plugins.common.comfyui_history import (
+    _HISTORY_UNAVAILABLE_ERROR,
     _HistoryTerminalError,
     _PendingHistoryEvent,
     _PendingHistoryProgress,
+    _raise_terminal_failure,
     history_completion,
 )
 from loomstroke.plugins.common.outbound_policy import ensure_network_services_consent
 from loomstroke.plugins.sdk.base import JobResult, ProgressEvent
 
-from .job_cancellation import _cancel_local_job
+from .job_cancellation import _cancel_local_job, _JobTaskCleanup
+from .job_queue_presence import QueueAbsence, queue_reader
 
 logger = logging.getLogger(__name__)
+_HISTORY_POLL_INITIAL_SEC = 0.5
+_HISTORY_POLL_MAX_SEC = 2.0
+_QUEUE_POLL_INTERVAL_SEC = 5.0
+_QUEUE_ABSENCE_GRACE_SEC = 30.0
+_UNMAPPED_HISTORY_TIMEOUT_SEC = 60.0
 
 
 class _JobConnectionError(RuntimeError):
@@ -52,6 +60,7 @@ class _JobConnection:
     _tasks_bound: bool = False
     _stream_task: weakref.ReferenceType[asyncio.Task] | None = None
     _monitor_task: weakref.ReferenceType[asyncio.Task] | None = None
+    _output_history_wait: tuple[asyncio.Timeout, float] | None = None
 
     def require(self) -> Any:
         if not _standard_job_service(self.service):
@@ -71,6 +80,21 @@ class _JobConnection:
             self.connection = self.service._connection
         self.require()
 
+    def defer_terminal_history_to_monitor(self) -> bool:
+        """Give the monitor the recovery window or leave its completed result alone."""
+        if self._output_history_wait is None:
+            return self._monitor_task is not None
+        timer, seconds = self._output_history_wait
+        if timer.when() is None:
+            timer.reschedule(asyncio.get_running_loop().time() + seconds)
+        return True
+
+    def stop_progress_stream(self) -> None:
+        task = self._stream_task() if self._stream_task is not None else None
+        if task is not None and task is not asyncio.current_task() and not task.done():
+            # Give a just-created stream a chance to install its tracking cleanup.
+            asyncio.get_running_loop().call_soon(task.cancel)
+
 
 def _capture_job_connection(service: Any, connection: Any) -> _JobConnection | None:
     if not _standard_job_service(service):
@@ -85,6 +109,71 @@ def _capture_job_connection(service: Any, connection: Any) -> _JobConnection | N
 
 def _job_connection(service: Any, job: _JobConnection | None) -> Any:
     return job.require() if job is not None else service._connection
+
+
+async def _read_terminal_history(
+    service: Any, job_id: str, job: _JobConnection | None
+) -> tuple[Any, str, AIError | None] | None:
+    history = await _job_connection(service, job).get_history(job_id)
+    _raise_terminal_failure(job)
+    if job is not None:
+        job.require()
+    entry = history.get(job_id) if history else None
+    if entry:
+        kind, error = history_completion(entry, job_id=job_id)
+        if kind != "pending":
+            return entry, kind, error
+    return None
+
+
+async def _wait_for_output_history(
+    service: Any,
+    job_id: str,
+    job: _JobConnection | None,
+    *,
+    history_only: bool,
+    recovery_timeout: float,
+) -> tuple[Any, str, AIError | None]:
+    # The mapped-output monitor starts alongside an arbitrarily long queue/run.
+    # Its own terminal WebSocket hint can arm a deadline. Without that hint,
+    # only sustained, observed absence from the server queue can end the wait.
+    timer = asyncio.timeout(recovery_timeout if history_only else None)
+    watch = (timer, recovery_timeout)
+    absence = QueueAbsence(interval=_QUEUE_POLL_INTERVAL_SEC, grace=_QUEUE_ABSENCE_GRACE_SEC)
+    try:
+        async with timer:
+            if job is not None and not history_only:
+                job._output_history_wait = watch
+            delay = _HISTORY_POLL_INITIAL_SEC
+            while True:
+                if history_only and not ensure_network_services_consent(
+                    service._settings, service_name="ComfyUI"
+                ):
+                    raise RuntimeError("ComfyUI access is disabled")
+                result = await _read_terminal_history(service, job_id, job)
+                if result is not None:
+                    return result
+                if (
+                    job is not None
+                    and timer.when() is None
+                    and await absence.confirmed(job.require(), job_id)
+                ):
+                    # History may become visible while the last queue read is in flight.
+                    result = await _read_terminal_history(service, job_id, job)
+                    if result is not None:
+                        return result
+                    if timer.when() is None:
+                        raise RuntimeError(_HISTORY_UNAVAILABLE_ERROR)
+                await asyncio.sleep(delay)
+                delay = min(_HISTORY_POLL_MAX_SEC, delay + _HISTORY_POLL_INITIAL_SEC)
+    except TimeoutError as exc:
+        if timer.expired():
+            _raise_terminal_failure(job)
+            raise RuntimeError(_HISTORY_UNAVAILABLE_ERROR) from exc
+        raise
+    finally:
+        if job is not None and job._output_history_wait is watch:
+            job._output_history_wait = None
 
 
 def _validate_workflow_nodes(workflow: Any, get_schema: Any) -> dict[str, Any]:
@@ -165,15 +254,20 @@ async def _stream_progress(
         elif update["type"] in {"executed", "complete", "execution_success", "execution_complete"}:
             yield await _terminal_progress(service, job_id, prompt_id, job)
             return
-    # A node reaching its own maximum is not a terminal hint while the stream
-    # stays open. Only normal EOF makes the existing history fallback necessary.
-    if saw_full_progress:
+    # With a queue-aware monitor, EOF cannot turn a node's maximum into
+    # a completion signal. Keep the older fallback for other connections.
+    if saw_full_progress and not (
+        job is not None and job._monitor_task is not None and callable(queue_reader(connection))
+    ):
         yield await _terminal_progress(service, job_id, prompt_id, job)
 
 
 async def _terminal_progress(
     service: Any, job_id: str, prompt_id: str, job: _JobConnection | None
 ) -> ProgressEvent:
+    if job is not None and job.defer_terminal_history_to_monitor():
+        # The mapped-output monitor owns the history request and final event.
+        return _PendingHistoryProgress(job_id=job_id, step=0, total=0)
     history = await _job_connection(service, job).get_result(prompt_id)
     if job is not None:
         job.require()
@@ -299,6 +393,45 @@ async def _cancel_job(service: Any, job_id: str, job: _JobConnection | None = No
     return await _cancel_local_job(service, job_id, job)
 
 
+async def _monitor_unmapped_job(service: Any, job_id: str, job: _JobConnection) -> None:
+    """Publish terminal history for Gallery-only and AI Gateway submissions."""
+    cleanup = _JobTaskCleanup.capture(service, job_id, monitor=True)
+    try:
+        entry, kind, error = await _wait_for_output_history(
+            service,
+            job_id,
+            job,
+            history_only=False,
+            recovery_timeout=_UNMAPPED_HISTORY_TIMEOUT_SEC,
+        )
+        if kind != "done":
+            raise _HistoryTerminalError(kind, error)
+        # The Gateway reads selected outputs from the history on its bound connection.
+        result = None
+        if not job._gateway_history_owner:
+            result = await _history_to_result(service, job_id, entry, job)
+            if result is not None and result.output:
+                entry = {**entry, "_image_bytes": result.output}
+        _raise_terminal_failure(job)
+        if service._event_bus:
+            service._event_bus.emit(
+                Events.AI_JOB_RESULT,
+                JobResultEvent(job_id=job_id, success=True, result=result, result_data=entry),
+            )
+    except _HistoryTerminalError as failure:
+        _emit_history_failure(service, job_id, failure)
+    except Exception as exc:  # noqa: BLE001 - send job failures to the same event consumers
+        if service._event_bus:
+            error_message = str(exc)
+            service._event_bus.emit(
+                Events.AI_JOB_RESULT,
+                JobResultEvent(job_id=job_id, success=False, result=None, error=error_message),
+            )
+    finally:
+        cleanup.finish()
+        job.stop_progress_stream()
+
+
 def _start_job_tasks(
     service: Any,
     prompt_id: str,
@@ -315,6 +448,10 @@ def _start_job_tasks(
             service._schedule_output_import(
                 prompt_id, output_targets or {}, model_targets or {}, _job=job
             )
+    if job is not None and job._monitor_task is None and callable(queue_reader(job.require())):
+        monitor = asyncio.create_task(_monitor_unmapped_job(service, prompt_id, job))
+        service._output_tasks[prompt_id] = monitor
+        job._monitor_task = weakref.ref(monitor)
     if job is None:
         task = asyncio.create_task(service._stream_job(prompt_id, prompt_id))
     else:

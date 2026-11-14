@@ -53,11 +53,11 @@ def availability(query, layer, _owner_seen=frozenset()):
     return visible, locked
 
 
-def panel_stroke_reason(canvas):  # noqa: PLR0911 - report distinct fail-closed target states
+def panel_stroke_reason(canvas, layer=None):  # noqa: PLR0911 - distinct fail-closed target states
     if not callable(getattr(canvas, "_layer_tree", None)):
         return ""
     query = canvas._layer_tree()
-    layer = canvas._get_active_layer()
+    layer = layer if layer is not None else canvas._get_active_layer()
     if layer is None:
         return ""
     node, seen, managed, shared, content = layer, set(), False, None, False
@@ -156,7 +156,11 @@ def refresh_shared_masks(canvas):
             )
         prepared.append((source, result, key))
     for source, result, key in prepared:
-        if source.layer_mask != result:
+        # Saved coverage may come back as opaque grayscale. Preserve its
+        # restored image when recomputation yields the same coverage so the
+        # next history replay still sees the captured layer state.
+        current = source.layer_mask
+        if current is None or current.isNull() or mask_coverage_alpha8(current) != result:
             source.layer_mask = result
             canvas.bump_layer_texture_versions([source.id])
         source._comic_shared_mask_key = key

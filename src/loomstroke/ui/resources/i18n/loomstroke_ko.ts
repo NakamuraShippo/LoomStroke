@@ -2,7 +2,27 @@
 <!DOCTYPE TS>
 <TS version="2.1" language="ko">
     <context>
-        <name>MainWindow</name>
+    <name>MainWindow</name>
+    <message>
+        <source>New Document Failed</source>
+        <translation>새 문서 생성 실패</translation>
+    </message>
+    <message>
+        <source>New Canvas from Clipboard Image</source>
+        <translation>클립보드 이미지로 새 캔버스 만들기</translation>
+    </message>
+    <message>
+        <source>Created a canvas from the clipboard image.</source>
+        <translation>클립보드 이미지로 캔버스를 만들었습니다.</translation>
+    </message>
+    <message>
+        <source>Could not create a canvas from the clipboard image.</source>
+        <translation>클립보드 이미지로 캔버스를 만들 수 없습니다.</translation>
+    </message>
+    <message>
+        <source>Some layer or effect masks are missing. The document may look different. Use Save As to keep the original file.</source>
+        <translation>일부 레이어 마스크 또는 효과 마스크가 없습니다. 문서가 다르게 보일 수 있습니다. 원본 파일을 보존하려면 다른 이름으로 저장하세요.</translation>
+    </message>
         <message>
             <source>Rotate Straight Ruler Left</source>
             <translation>직선 자를 왼쪽으로 회전</translation>
@@ -1089,6 +1109,10 @@
 </context>
     <context>
         <name>BasicPen</name>
+    <message>
+        <source>The brush library could not be saved.</source>
+        <translation>브러시 라이브러리를 저장하지 못했습니다.</translation>
+    </message>
         <message>
             <source>Basic Settings</source>
             <translation>기본 설정</translation>
@@ -4993,6 +5017,10 @@ After refreshing the token, any agents registered to this LoomStroke MCP server 
         <source>Clear the layer filter</source>
         <translation>레이어 필터 해제</translation>
     </message>
+    <message>
+        <source>The generation record could not be deleted.</source>
+        <translation>생성 기록을 삭제할 수 없습니다.</translation>
+    </message>
 </context>
 <context>
     <name>TransformPanel</name>
@@ -7165,8 +7193,8 @@ Select a file to recover.</source>
         <translation>API 키가 키링에 저장되지 않았습니다. 상세 정보를 로그에서 확인하고 다시 시도하세요.</translation>
     </message>
     <message>
-        <source>{name} uses Google Gemini's API. The key is stored encrypted in your OS keyring and is read only when you press Generate.</source>
-        <translation>{name}은 Google Gemini의 API를 사용합니다. 키는 당신의 OS 키링에 암호화되어 저장되며, 생성 버튼을 누를 때만 읽힙니다.</translation>
+        <source>{name} API key is stored in your OS keyring and read only when you make a request.</source>
+        <translation>{name} API 키는 OS 키링에 저장되며 요청을 보낼 때만 읽습니다.</translation>
     </message>
 </context>
 <context>
@@ -8466,6 +8494,10 @@ GPU 콤플리터 초기화에 실패했습니다. 그래픽 드라이버를 업�
     <message>
         <source>Values applied to this layer.</source>
         <translation>이 레이어에 적용된 값들</translation>
+    </message>
+    <message>
+        <source>ComfyUI did not finish loading. Check the server connection and reload nodes.</source>
+        <translation>ComfyUI가 정상적으로 로드되지 않았습니다. 서버 연결을 확인하고 노드를 다시 로드하세요.</translation>
     </message>
 </context>
 <context>
@@ -12323,6 +12355,22 @@ Please check that all image paths in your workflow are valid.
 <context>
     <name>ExportPrintDialog</name>
     <message>
+        <source>PDF/X-1a candidate</source>
+        <translation>PDF/X-1a 후보(수동 검증 필요)</translation>
+    </message>
+    <message>
+        <source>PDF/X-4 candidate</source>
+        <translation>PDF/X-4 후보(수동 검증 필요)</translation>
+    </message>
+    <message>
+        <source>Verify the PDF/X candidate in callas pdfToolbox Desktop before submission.</source>
+        <translation>입고 전에 callas pdfToolbox Desktop에서 PDF/X 후보를 검증하세요.</translation>
+    </message>
+    <message>
+        <source>PDF/X candidates do not support margin information.</source>
+        <translation>PDF/X 후보에는 여백 정보를 사용할 수 없습니다.</translation>
+    </message>
+    <message>
         <source>A CMYK profile is required for CMYK output.</source>
         <translation>CMYK 출력을 위해 CMYK 프로파일이 필요합니다.</translation>
     </message>
@@ -12577,6 +12625,58 @@ Please check that all image paths in your workflow are valid.
     <message>
         <source>{count} page(s) will be exported.</source>
         <translation>{count} 페이지가 내보내집니다.</translation>
+    </message>
+    <message>
+        <source>Preset:</source>
+        <translation>사전 설정:</translation>
+    </message>
+    <message>
+        <source>Grayscale TIFF sequence</source>
+        <translation>그레이스케일 TIFF 연속 파일</translation>
+    </message>
+    <message>
+        <source>1-bit TIFF sequence</source>
+        <translation>1-bit TIFF 연속 파일</translation>
+    </message>
+    <message>
+        <source>8-bit grayscale TIFF, one file per page.</source>
+        <translation>페이지마다 8-bit 그레이스케일 TIFF 파일 하나를 출력합니다.</translation>
+    </message>
+    <message>
+        <source>1-bit black-and-white TIFF, one file per page.</source>
+        <translation>페이지마다 흑백 1-bit TIFF 파일 하나를 출력합니다.</translation>
+    </message>
+    <message>
+        <source>1-bit conversion</source>
+        <translation>1-bit 변환</translation>
+    </message>
+    <message>
+        <source>Threshold:</source>
+        <translation>임계값:</translation>
+    </message>
+    <message>
+        <source>Method:</source>
+        <translation>방식:</translation>
+    </message>
+    <message>
+        <source>Threshold</source>
+        <translation>임계값</translation>
+    </message>
+    <message>
+        <source>Ordered 4x4 dither</source>
+        <translation>순서형 4x4 디더링</translation>
+    </message>
+    <message>
+        <source>The selected print preset does not match every page's format and DPI.</source>
+        <translation>선택한 인쇄 사전 설정의 판형과 DPI가 모든 대상 페이지와 일치하지 않습니다.</translation>
+    </message>
+    <message>
+        <source>The saved CMYK profile must be loaded again.</source>
+        <translation>저장한 CMYK 프로필을 다시 불러와야 합니다.</translation>
+    </message>
+    <message>
+        <source>Could not save the format preset.</source>
+        <translation>인쇄 사전 설정을 저장할 수 없습니다.</translation>
     </message>
 </context>
 <context>
@@ -14839,6 +14939,14 @@ After refreshing the token, any agents registered to this LoomStroke MCP server 
         <translation>문서를 저장할 수 없습니다: {path}
 {error}</translation>
     </message>
+    <message>
+        <source>No SVG-compatible vector objects to export.</source>
+        <translation>SVG로 내보낼 수 있는 벡터 개체가 없습니다.</translation>
+    </message>
+    <message>
+        <source>The current SVG export omits groups, layer placement, enabled masks, unsupported blend modes, and live filters.</source>
+        <translation>현재 SVG 내보내기에는 그룹, 레이어 배치, 활성화된 마스크, 지원되지 않는 혼합 모드 및 실시간 필터가 포함되지 않습니다.</translation>
+    </message>
 </context>
 <context>
     <name>MainWindowEditShapeActionsCoordinator</name>
@@ -15840,6 +15948,10 @@ Operation: {operation}
 </context>
 <context>
     <name>NewDocumentDialog</name>
+    <message>
+        <source>Include Bleed</source>
+        <translation>도련 포함</translation>
+    </message>
     <message>
         <source>AI</source>
         <translation>AI</translation>
@@ -17413,6 +17525,10 @@ Type: {type}</source>
         <source>{count} plugin(s) loaded</source>
         <translation>{count}개의 플러그인 로드됨</translation>
     </message>
+    <message>
+        <source>Failed</source>
+        <translation>실패</translation>
+    </message>
 </context>
 <context>
     <name>PluginUpdateDialog</name>
@@ -17642,8 +17758,8 @@ Type: {type}</source>
         <translation>현재 검정색 (RGB)</translation>
     </message>
     <message>
-        <source>Japanese corner (current)</source>
-        <translation>일본어 모서리 (현재)</translation>
+        <source>Japanese corner</source>
+        <translation>일본어 모서리</translation>
     </message>
     <message>
         <source>Japanese double</source>
@@ -18542,6 +18658,18 @@ Type: {type}</source>
     <message>
         <source>Ollama's default context is short and silently cuts the start of long prompts; raise it with OLLAMA_CONTEXT_LENGTH or the model's num_ctx.</source>
         <translation>Ollama의 기본 컨텍스트는 짧아 긴 프롬프트의 앞부분이 알림 없이 잘립니다. OLLAMA_CONTEXT_LENGTH 또는 모델의 num_ctx로 늘리세요.</translation>
+    </message>
+    <message>
+        <source>Aa</source>
+        <translation>Aa</translation>
+    </message>
+    <message>
+        <source>Display name</source>
+        <translation>표시 이름</translation>
+    </message>
+    <message>
+        <source>Item</source>
+        <translation>항목</translation>
     </message>
 </context>
 <context>
@@ -21246,6 +21374,46 @@ Do you want to save them?</source>
 </context>
 <context>
     <name>__shared__</name>
+    <message>
+        <source>Include Bleed</source>
+        <translation>도련 포함</translation>
+    </message>
+    <message>
+        <source>PDF/X-1a candidate</source>
+        <translation>PDF/X-1a 후보(수동 검증 필요)</translation>
+    </message>
+    <message>
+        <source>PDF/X-4 candidate</source>
+        <translation>PDF/X-4 후보(수동 검증 필요)</translation>
+    </message>
+    <message>
+        <source>Verify the PDF/X candidate in callas pdfToolbox Desktop before submission.</source>
+        <translation>입고 전에 callas pdfToolbox Desktop에서 PDF/X 후보를 검증하세요.</translation>
+    </message>
+    <message>
+        <source>PDF/X candidates do not support margin information.</source>
+        <translation>PDF/X 후보에는 여백 정보를 사용할 수 없습니다.</translation>
+    </message>
+    <message>
+        <source>Could not create a canvas from the clipboard image.</source>
+        <translation>클립보드 이미지로 캔버스를 만들 수 없습니다.</translation>
+    </message>
+    <message>
+        <source>Created a canvas from the clipboard image.</source>
+        <translation>클립보드 이미지로 캔버스를 만들었습니다.</translation>
+    </message>
+    <message>
+        <source>New Canvas from Clipboard Image</source>
+        <translation>클립보드 이미지로 새 캔버스 만들기</translation>
+    </message>
+    <message>
+        <source>The brush library could not be saved.</source>
+        <translation>브러시 라이브러리를 저장하지 못했습니다.</translation>
+    </message>
+    <message>
+        <source>Some layer or effect masks are missing. The document may look different. Use Save As to keep the original file.</source>
+        <translation>일부 레이어 마스크 또는 효과 마스크가 없습니다. 문서가 다르게 보일 수 있습니다. 원본 파일을 보존하려면 다른 이름으로 저장하세요.</translation>
+    </message>
     <message>
         <source>Straight Ruler</source>
         <translation>직선 자</translation>
@@ -27965,8 +28133,8 @@ Select a file to recover.</source>
         <translation>일본어</translation>
     </message>
     <message>
-        <source>Japanese corner (current)</source>
-        <translation>일본어 모서리 (현재)</translation>
+        <source>Japanese corner</source>
+        <translation>일본어 모서리</translation>
     </message>
     <message>
         <source>Japanese double</source>
@@ -36180,8 +36348,8 @@ Drag onto the canvas to place</source>
         <translation>{name}은 지원되지 않는 이미지 형식입니다.</translation>
     </message>
     <message>
-        <source>{name} uses Google Gemini's API. The key is stored encrypted in your OS keyring and is read only when you press Generate.</source>
-        <translation>{name}은 Google Gemini의 API를 사용합니다. 키는 당신의 OS 키링에 암호화되어 저장되며, 생성 버튼을 누를 때만 읽힙니다.</translation>
+        <source>{name} API key is stored in your OS keyring and read only when you make a request.</source>
+        <translation>{name} API 키는 OS 키링에 저장되며 요청을 보낼 때만 읽습니다.</translation>
     </message>
     <message>
         <source>{pending} pending, {running} running</source>
@@ -36586,6 +36754,406 @@ Click to show as panel</source>
     <message>
         <source>Walking</source>
         <translation>걷기</translation>
+    </message>
+    <message>
+        <source>AI Settings</source>
+        <translation>AI 설정</translation>
+    </message>
+    <message>
+        <source>Aa</source>
+        <translation>Aa</translation>
+    </message>
+    <message>
+        <source>Add basic shape</source>
+        <translation>기본 도형 추가</translation>
+    </message>
+    <message>
+        <source>Add potion</source>
+        <translation>포션 추가</translation>
+    </message>
+    <message>
+        <source>Advanced API parameters (JSON)</source>
+        <translation>고급 API 매개변수 (JSON)</translation>
+    </message>
+    <message>
+        <source>Advanced API parameters (JSON; overrides controls)</source>
+        <translation>고급 API 매개변수 (JSON, 화면 설정을 덮어씀)</translation>
+    </message>
+    <message>
+        <source>Advanced Settings</source>
+        <translation>고급 설정</translation>
+    </message>
+    <message>
+        <source>Basic shape</source>
+        <translation>기본 도형</translation>
+    </message>
+    <message>
+        <source>Character Reference</source>
+        <translation>캐릭터 참조</translation>
+    </message>
+    <message>
+        <source>Character and Style</source>
+        <translation>캐릭터와 스타일</translation>
+    </message>
+    <message>
+        <source>Collapse AI Settings</source>
+        <translation>AI 설정 접기</translation>
+    </message>
+    <message>
+        <source>Colorize</source>
+        <translation>채색</translation>
+    </message>
+    <message>
+        <source>Could not add basic shape</source>
+        <translation>기본 도형을 추가할 수 없습니다</translation>
+    </message>
+    <message>
+        <source>Create variation from Gallery image</source>
+        <translation>갤러리 이미지에서 변형 생성</translation>
+    </message>
+    <message>
+        <source>Cube</source>
+        <translation>정육면체</translation>
+    </message>
+    <message>
+        <source>Cylinder</source>
+        <translation>원기둥</translation>
+    </message>
+    <message>
+        <source>Director Tool</source>
+        <translation>디렉터 도구</translation>
+    </message>
+    <message>
+        <source>Director Tools</source>
+        <translation>디렉터 도구</translation>
+    </message>
+    <message>
+        <source>Emotion</source>
+        <translation>감정</translation>
+    </message>
+    <message>
+        <source>External AI services are disabled</source>
+        <translation>외부 AI 서비스가 비활성화되어 있습니다</translation>
+    </message>
+    <message>
+        <source>Image Generation</source>
+        <translation>이미지 생성</translation>
+    </message>
+    <message>
+        <source>Image Resolution</source>
+        <translation>이미지 해상도</translation>
+    </message>
+    <message>
+        <source>Image Settings</source>
+        <translation>이미지 설정</translation>
+    </message>
+    <message>
+        <source>Image2Image</source>
+        <translation>이미지에서 이미지 생성</translation>
+    </message>
+    <message>
+        <source>Information Extracted</source>
+        <translation>정보 추출량</translation>
+    </message>
+    <message>
+        <source>Inpaint (current selection)</source>
+        <translation>인페인트 (현재 선택 영역)</translation>
+    </message>
+    <message>
+        <source>Input layer</source>
+        <translation>입력 레이어</translation>
+    </message>
+    <message>
+        <source>Large</source>
+        <translation>큰 크기</translation>
+    </message>
+    <message>
+        <source>Large Landscape</source>
+        <translation>큰 가로형</translation>
+    </message>
+    <message>
+        <source>Large Portrait</source>
+        <translation>큰 세로형</translation>
+    </message>
+    <message>
+        <source>Large Square</source>
+        <translation>큰 정사각형</translation>
+    </message>
+    <message>
+        <source>Light position</source>
+        <translation>광원 위치</translation>
+    </message>
+    <message>
+        <source>Light position in 3D scene coordinates</source>
+        <translation>3D 장면 좌표에서의 광원 위치</translation>
+    </message>
+    <message>
+        <source>Line Art</source>
+        <translation>선화</translation>
+    </message>
+    <message>
+        <source>Line art</source>
+        <translation>선화</translation>
+    </message>
+    <message>
+        <source>No SVG-compatible vector objects to export.</source>
+        <translation>SVG로 내보낼 수 있는 벡터 개체가 없습니다.</translation>
+    </message>
+    <message>
+        <source>No tags found</source>
+        <translation>태그를 찾을 수 없습니다</translation>
+    </message>
+    <message>
+        <source>Noise</source>
+        <translation>노이즈</translation>
+    </message>
+    <message>
+        <source>Noise Schedule</source>
+        <translation>노이즈 스케줄</translation>
+    </message>
+    <message>
+        <source>Normal Landscape</source>
+        <translation>표준 가로형</translation>
+    </message>
+    <message>
+        <source>Normal Portrait</source>
+        <translation>표준 세로형</translation>
+    </message>
+    <message>
+        <source>Normal Square</source>
+        <translation>표준 정사각형</translation>
+    </message>
+    <message>
+        <source>NovelAI Potion (Vibe Transfer)</source>
+        <translation>NovelAI 포션 (분위기 전송)</translation>
+    </message>
+    <message>
+        <source>NovelAI generation cancelled</source>
+        <translation>NovelAI 생성이 취소되었습니다</translation>
+    </message>
+    <message>
+        <source>NovelAI image added to layer</source>
+        <translation>NovelAI 이미지가 레이어에 추가되었습니다</translation>
+    </message>
+    <message>
+        <source>Number of Images</source>
+        <translation>이미지 수</translation>
+    </message>
+    <message>
+        <source>OpenPose JSON</source>
+        <translation>OpenPose JSON</translation>
+    </message>
+    <message>
+        <source>Prompt Guidance</source>
+        <translation>프롬프트 가이던스</translation>
+    </message>
+    <message>
+        <source>Prompt Guidance Rescale</source>
+        <translation>프롬프트 가이던스 재조정</translation>
+    </message>
+    <message>
+        <source>Reference layer</source>
+        <translation>참조 레이어</translation>
+    </message>
+    <message>
+        <source>Reference mode</source>
+        <translation>참조 모드</translation>
+    </message>
+    <message>
+        <source>Reference strength</source>
+        <translation>참조 강도</translation>
+    </message>
+    <message>
+        <source>Refresh layers</source>
+        <translation>레이어 새로 고침</translation>
+    </message>
+    <message>
+        <source>Remove Background</source>
+        <translation>배경 제거</translation>
+    </message>
+    <message>
+        <source>Remove background</source>
+        <translation>배경 제거</translation>
+    </message>
+    <message>
+        <source>Sampler</source>
+        <translation>샘플러</translation>
+    </message>
+    <message>
+        <source>Saved workflow: {name}</source>
+        <translation>워크플로 저장 완료: {name}</translation>
+    </message>
+    <message>
+        <source>Seed must be between 0 and 4294967295</source>
+        <translation>시드는 0에서 4294967295 사이여야 합니다</translation>
+    </message>
+    <message>
+        <source>Small</source>
+        <translation>작은 크기</translation>
+    </message>
+    <message>
+        <source>Small Landscape</source>
+        <translation>작은 가로형</translation>
+    </message>
+    <message>
+        <source>Small Portrait</source>
+        <translation>작은 세로형</translation>
+    </message>
+    <message>
+        <source>Small Square</source>
+        <translation>작은 정사각형</translation>
+    </message>
+    <message>
+        <source>Sphere</source>
+        <translation>구</translation>
+    </message>
+    <message>
+        <source>Steps</source>
+        <translation>단계 수</translation>
+    </message>
+    <message>
+        <source>Style Reference</source>
+        <translation>스타일 참조</translation>
+    </message>
+    <message>
+        <source>Suggest tags</source>
+        <translation>태그 추천</translation>
+    </message>
+    <message>
+        <source>Swap width and height</source>
+        <translation>너비와 높이 바꾸기</translation>
+    </message>
+    <message>
+        <source>Tag fragment for suggestions</source>
+        <translation>추천에 사용할 태그 일부</translation>
+    </message>
+    <message>
+        <source>The current SVG export omits groups, layer placement, enabled masks, unsupported blend modes, and live filters.</source>
+        <translation>현재 SVG 내보내기에는 그룹, 레이어 배치, 활성화된 마스크, 지원되지 않는 혼합 모드 및 실시간 필터가 포함되지 않습니다.</translation>
+    </message>
+    <message>
+        <source>The generation record could not be deleted.</source>
+        <translation>생성 기록을 삭제할 수 없습니다.</translation>
+    </message>
+    <message>
+        <source>Undesired Content</source>
+        <translation>원하지 않는 내용</translation>
+    </message>
+    <message>
+        <source>Upscale</source>
+        <translation>이미지 확대</translation>
+    </message>
+    <message>
+        <source>Variety</source>
+        <translation>다양성</translation>
+    </message>
+    <message>
+        <source>Vibe Transfer</source>
+        <translation>분위기 전송</translation>
+    </message>
+    <message>
+        <source>Wallpaper</source>
+        <translation>배경 화면</translation>
+    </message>
+    <message>
+        <source>Wallpaper Landscape</source>
+        <translation>가로형 배경 화면</translation>
+    </message>
+    <message>
+        <source>Wallpaper Portrait</source>
+        <translation>세로형 배경 화면</translation>
+    </message>
+    <message>
+        <source>exponential</source>
+        <translation>지수</translation>
+    </message>
+    <message>
+        <source>karras</source>
+        <translation>karras</translation>
+    </message>
+    <message>
+        <source>polyexponential</source>
+        <translation>다항 지수</translation>
+    </message>
+    <message>
+        <source>{name} uses Google Gemini's API. The key is stored encrypted in your OS keyring and is read only when you press Generate.</source>
+        <translation>{name}에서 Google Gemini API를 사용합니다. 키는 운영 체제의 키링에 암호화되어 저장되며 생성 버튼을 눌렀을 때만 읽습니다.</translation>
+    </message>
+    <message>
+        <source>Grayscale TIFF sequence</source>
+        <translation>그레이스케일 TIFF 연속 파일</translation>
+    </message>
+    <message>
+        <source>1-bit TIFF sequence</source>
+        <translation>1-bit TIFF 연속 파일</translation>
+    </message>
+    <message>
+        <source>8-bit grayscale TIFF, one file per page.</source>
+        <translation>페이지마다 8-bit 그레이스케일 TIFF 파일 하나를 출력합니다.</translation>
+    </message>
+    <message>
+        <source>1-bit black-and-white TIFF, one file per page.</source>
+        <translation>페이지마다 흑백 1-bit TIFF 파일 하나를 출력합니다.</translation>
+    </message>
+    <message>
+        <source>1-bit conversion</source>
+        <translation>1-bit 변환</translation>
+    </message>
+    <message>
+        <source>Threshold:</source>
+        <translation>임계값:</translation>
+    </message>
+    <message>
+        <source>Method:</source>
+        <translation>방식:</translation>
+    </message>
+    <message>
+        <source>Ordered 4x4 dither</source>
+        <translation>순서형 4x4 디더링</translation>
+    </message>
+    <message>
+        <source>The selected print preset does not match every page's format and DPI.</source>
+        <translation>선택한 인쇄 사전 설정의 판형과 DPI가 모든 대상 페이지와 일치하지 않습니다.</translation>
+    </message>
+    <message>
+        <source>The saved CMYK profile must be loaded again.</source>
+        <translation>저장한 CMYK 프로필을 다시 불러와야 합니다.</translation>
+    </message>
+    <message>
+        <source>Added noise</source>
+        <translation>Added noise</translation>
+    </message>
+    <message>
+        <source>Change strength (i2i)</source>
+        <translation>Change strength (i2i)</translation>
+    </message>
+    <message>
+        <source>Enlarge</source>
+        <translation>Enlarge</translation>
+    </message>
+    <message>
+        <source>Input Image</source>
+        <translation>Input Image</translation>
+    </message>
+    <message>
+        <source>Randomize</source>
+        <translation>Randomize</translation>
+    </message>
+    <message>
+        <source>References</source>
+        <translation>References</translation>
+    </message>
+    <message>
+        <source>Reuse last seed</source>
+        <translation>Reuse last seed</translation>
+    </message>
+    <message>
+        <source>i2i</source>
+        <translation>i2i</translation>
+    </message>
+    <message>
+        <source>{count} items</source>
+        <translation>{count} items</translation>
     </message>
 </context>
 <context>
@@ -37808,6 +38376,10 @@ Click to show as panel</source>
         <source>Right Ankle</source>
         <translation>오른쪽 발목</translation>
     </message>
+    <message>
+        <source>OpenPose JSON</source>
+        <translation>OpenPose JSON</translation>
+    </message>
 </context>
 <context>
     <name>DrawingFigureToolbarWidget</name>
@@ -37923,6 +38495,556 @@ Click to show as panel</source>
     <message>
         <source>Could not add basic shape</source>
         <translation>기본 도형을 추가할 수 없습니다</translation>
+    </message>
+</context>
+<context>
+    <name>AISettingsWidget</name>
+    <message>
+        <source>AI Settings</source>
+        <translation>AI 설정</translation>
+    </message>
+    <message>
+        <source>Advanced Settings</source>
+        <translation>고급 설정</translation>
+    </message>
+    <message>
+        <source>Collapse AI Settings</source>
+        <translation>AI 설정 접기</translation>
+    </message>
+    <message>
+        <source>Noise Schedule</source>
+        <translation>노이즈 스케줄</translation>
+    </message>
+    <message>
+        <source>Prompt Guidance</source>
+        <translation>프롬프트 가이던스</translation>
+    </message>
+    <message>
+        <source>Prompt Guidance Rescale</source>
+        <translation>프롬프트 가이던스 재조정</translation>
+    </message>
+    <message>
+        <source>Random</source>
+        <translation>랜덤</translation>
+    </message>
+    <message>
+        <source>Reset</source>
+        <translation>재설정</translation>
+    </message>
+    <message>
+        <source>Sampler</source>
+        <translation>샘플러</translation>
+    </message>
+    <message>
+        <source>Seed</source>
+        <translation>시드</translation>
+    </message>
+    <message>
+        <source>Seed must be between 0 and 4294967295</source>
+        <translation>시드는 0에서 4294967295 사이여야 합니다</translation>
+    </message>
+    <message>
+        <source>Steps</source>
+        <translation>단계 수</translation>
+    </message>
+    <message>
+        <source>Variety</source>
+        <translation>다양성</translation>
+    </message>
+    <message>
+        <source>Randomize</source>
+        <translation>Randomize</translation>
+    </message>
+    <message>
+        <source>Reuse last seed</source>
+        <translation>Reuse last seed</translation>
+    </message>
+</context>
+<context>
+    <name>ImageSettingsWidget</name>
+    <message>
+        <source>Image Resolution</source>
+        <translation>이미지 해상도</translation>
+    </message>
+    <message>
+        <source>Image Settings</source>
+        <translation>이미지 설정</translation>
+    </message>
+    <message>
+        <source>Number of Images</source>
+        <translation>이미지 수</translation>
+    </message>
+    <message>
+        <source>Swap width and height</source>
+        <translation>너비와 높이 바꾸기</translation>
+    </message>
+</context>
+<context>
+    <name>NovelAIPanel</name>
+    <message>
+        <source>&lt;New Layer&gt;</source>
+        <translation>&lt;새 레이어&gt;</translation>
+    </message>
+    <message>
+        <source>AI Settings</source>
+        <translation>AI 설정</translation>
+    </message>
+    <message>
+        <source>Add potion</source>
+        <translation>포션 추가</translation>
+    </message>
+    <message>
+        <source>Advanced API parameters (JSON)</source>
+        <translation>고급 API 매개변수 (JSON)</translation>
+    </message>
+    <message>
+        <source>Advanced API parameters (JSON; overrides controls)</source>
+        <translation>고급 API 매개변수 (JSON, 화면 설정을 덮어씀)</translation>
+    </message>
+    <message>
+        <source>Advanced Settings</source>
+        <translation>고급 설정</translation>
+    </message>
+    <message>
+        <source>Character Reference</source>
+        <translation>캐릭터 참조</translation>
+    </message>
+    <message>
+        <source>Character and Style</source>
+        <translation>캐릭터와 스타일</translation>
+    </message>
+    <message>
+        <source>Collapse AI Settings</source>
+        <translation>AI 설정 접기</translation>
+    </message>
+    <message>
+        <source>Colorize</source>
+        <translation>채색</translation>
+    </message>
+    <message>
+        <source>Create variation from Gallery image</source>
+        <translation>갤러리 이미지에서 변형 생성</translation>
+    </message>
+    <message>
+        <source>Custom</source>
+        <translation>맞춤형</translation>
+    </message>
+    <message>
+        <source>Director Tool</source>
+        <translation>디렉터 도구</translation>
+    </message>
+    <message>
+        <source>Director Tools</source>
+        <translation>디렉터 도구</translation>
+    </message>
+    <message>
+        <source>Emotion</source>
+        <translation>감정</translation>
+    </message>
+    <message>
+        <source>Enter prompt text...</source>
+        <translation>프롬프트 텍스트 입력...</translation>
+    </message>
+    <message>
+        <source>External AI services are disabled</source>
+        <translation>외부 AI 서비스가 비활성화되어 있습니다</translation>
+    </message>
+    <message>
+        <source>Generate</source>
+        <translation>생성</translation>
+    </message>
+    <message>
+        <source>Height</source>
+        <translation>높이</translation>
+    </message>
+    <message>
+        <source>Image Generation</source>
+        <translation>이미지 생성</translation>
+    </message>
+    <message>
+        <source>Image Resolution</source>
+        <translation>이미지 해상도</translation>
+    </message>
+    <message>
+        <source>Image Settings</source>
+        <translation>이미지 설정</translation>
+    </message>
+    <message>
+        <source>Image2Image</source>
+        <translation>이미지에서 이미지 생성</translation>
+    </message>
+    <message>
+        <source>Information Extracted</source>
+        <translation>정보 추출량</translation>
+    </message>
+    <message>
+        <source>Inpaint (current selection)</source>
+        <translation>인페인트 (현재 선택 영역)</translation>
+    </message>
+    <message>
+        <source>Input layer</source>
+        <translation>입력 레이어</translation>
+    </message>
+    <message>
+        <source>Landscape</source>
+        <translation>경관</translation>
+    </message>
+    <message>
+        <source>Large</source>
+        <translation>큰 크기</translation>
+    </message>
+    <message>
+        <source>Large Landscape</source>
+        <translation>큰 가로형</translation>
+    </message>
+    <message>
+        <source>Large Portrait</source>
+        <translation>큰 세로형</translation>
+    </message>
+    <message>
+        <source>Large Square</source>
+        <translation>큰 정사각형</translation>
+    </message>
+    <message>
+        <source>Line Art</source>
+        <translation>선화</translation>
+    </message>
+    <message>
+        <source>Line art</source>
+        <translation>선화</translation>
+    </message>
+    <message>
+        <source>Live prompt</source>
+        <translation>실시간 프롬프트</translation>
+    </message>
+    <message>
+        <source>Mode</source>
+        <translation>모드</translation>
+    </message>
+    <message>
+        <source>Model</source>
+        <translation>모델</translation>
+    </message>
+    <message>
+        <source>No tags found</source>
+        <translation>태그를 찾을 수 없습니다</translation>
+    </message>
+    <message>
+        <source>Noise</source>
+        <translation>노이즈</translation>
+    </message>
+    <message>
+        <source>Noise Schedule</source>
+        <translation>노이즈 스케줄</translation>
+    </message>
+    <message>
+        <source>None</source>
+        <translation>없음</translation>
+    </message>
+    <message>
+        <source>Normal</source>
+        <translation>표준</translation>
+    </message>
+    <message>
+        <source>Normal Landscape</source>
+        <translation>표준 가로형</translation>
+    </message>
+    <message>
+        <source>Normal Portrait</source>
+        <translation>표준 세로형</translation>
+    </message>
+    <message>
+        <source>Normal Square</source>
+        <translation>표준 정사각형</translation>
+    </message>
+    <message>
+        <source>Nothing</source>
+        <translation>없음</translation>
+    </message>
+    <message>
+        <source>NovelAI Potion (Vibe Transfer)</source>
+        <translation>NovelAI 포션 (분위기 전송)</translation>
+    </message>
+    <message>
+        <source>NovelAI generation cancelled</source>
+        <translation>NovelAI 생성이 취소되었습니다</translation>
+    </message>
+    <message>
+        <source>NovelAI image added to layer</source>
+        <translation>NovelAI 이미지가 레이어에 추가되었습니다</translation>
+    </message>
+    <message>
+        <source>Number of Images</source>
+        <translation>이미지 수</translation>
+    </message>
+    <message>
+        <source>Portrait</source>
+        <translation>포트레이트</translation>
+    </message>
+    <message>
+        <source>Prompt Guidance</source>
+        <translation>프롬프트 가이던스</translation>
+    </message>
+    <message>
+        <source>Prompt Guidance Rescale</source>
+        <translation>프롬프트 가이던스 재조정</translation>
+    </message>
+    <message>
+        <source>Random</source>
+        <translation>랜덤</translation>
+    </message>
+    <message>
+        <source>Reference layer</source>
+        <translation>참조 레이어</translation>
+    </message>
+    <message>
+        <source>Reference mode</source>
+        <translation>참조 모드</translation>
+    </message>
+    <message>
+        <source>Reference strength</source>
+        <translation>참조 강도</translation>
+    </message>
+    <message>
+        <source>Refresh layers</source>
+        <translation>레이어 새로 고침</translation>
+    </message>
+    <message>
+        <source>Remove</source>
+        <translation>제거</translation>
+    </message>
+    <message>
+        <source>Remove Background</source>
+        <translation>배경 제거</translation>
+    </message>
+    <message>
+        <source>Remove background</source>
+        <translation>배경 제거</translation>
+    </message>
+    <message>
+        <source>Reset</source>
+        <translation>재설정</translation>
+    </message>
+    <message>
+        <source>Sampler</source>
+        <translation>샘플러</translation>
+    </message>
+    <message>
+        <source>Seed</source>
+        <translation>시드</translation>
+    </message>
+    <message>
+        <source>Seed must be between 0 and 4294967295</source>
+        <translation>시드는 0에서 4294967295 사이여야 합니다</translation>
+    </message>
+    <message>
+        <source>Sketch</source>
+        <translation>스케치</translation>
+    </message>
+    <message>
+        <source>Small</source>
+        <translation>작은 크기</translation>
+    </message>
+    <message>
+        <source>Small Landscape</source>
+        <translation>작은 가로형</translation>
+    </message>
+    <message>
+        <source>Small Portrait</source>
+        <translation>작은 세로형</translation>
+    </message>
+    <message>
+        <source>Small Square</source>
+        <translation>작은 정사각형</translation>
+    </message>
+    <message>
+        <source>Square</source>
+        <translation>정사각형</translation>
+    </message>
+    <message>
+        <source>Steps</source>
+        <translation>단계 수</translation>
+    </message>
+    <message>
+        <source>Strength</source>
+        <translation>강도</translation>
+    </message>
+    <message>
+        <source>Style Reference</source>
+        <translation>스타일 참조</translation>
+    </message>
+    <message>
+        <source>Suggest tags</source>
+        <translation>태그 추천</translation>
+    </message>
+    <message>
+        <source>Swap width and height</source>
+        <translation>너비와 높이 바꾸기</translation>
+    </message>
+    <message>
+        <source>Tag fragment for suggestions</source>
+        <translation>추천에 사용할 태그 일부</translation>
+    </message>
+    <message>
+        <source>Target layer</source>
+        <translation>대상 레이어</translation>
+    </message>
+    <message>
+        <source>Undesired Content</source>
+        <translation>원하지 않는 내용</translation>
+    </message>
+    <message>
+        <source>Upscale</source>
+        <translation>이미지 확대</translation>
+    </message>
+    <message>
+        <source>Variety</source>
+        <translation>다양성</translation>
+    </message>
+    <message>
+        <source>Vibe Transfer</source>
+        <translation>분위기 전송</translation>
+    </message>
+    <message>
+        <source>Wallpaper</source>
+        <translation>배경 화면</translation>
+    </message>
+    <message>
+        <source>Wallpaper Landscape</source>
+        <translation>가로형 배경 화면</translation>
+    </message>
+    <message>
+        <source>Wallpaper Portrait</source>
+        <translation>세로형 배경 화면</translation>
+    </message>
+    <message>
+        <source>Width</source>
+        <translation>너비</translation>
+    </message>
+    <message>
+        <source>exponential</source>
+        <translation>지수</translation>
+    </message>
+    <message>
+        <source>karras</source>
+        <translation>karras</translation>
+    </message>
+    <message>
+        <source>polyexponential</source>
+        <translation>다항 지수</translation>
+    </message>
+    <message>
+        <source>Added noise</source>
+        <translation>Added noise</translation>
+    </message>
+    <message>
+        <source>Change strength (i2i)</source>
+        <translation>Change strength (i2i)</translation>
+    </message>
+    <message>
+        <source>Enlarge</source>
+        <translation>Enlarge</translation>
+    </message>
+    <message>
+        <source>Inpaint</source>
+        <translation>Inpaint</translation>
+    </message>
+    <message>
+        <source>Input Image</source>
+        <translation>Input Image</translation>
+    </message>
+    <message>
+        <source>Randomize</source>
+        <translation>Randomize</translation>
+    </message>
+    <message>
+        <source>References</source>
+        <translation>References</translation>
+    </message>
+    <message>
+        <source>Reuse last seed</source>
+        <translation>Reuse last seed</translation>
+    </message>
+    <message>
+        <source>Tools</source>
+        <translation>Tools</translation>
+    </message>
+    <message>
+        <source>i2i</source>
+        <translation>i2i</translation>
+    </message>
+    <message>
+        <source>{count} items</source>
+        <translation>{count} items</translation>
+    </message>
+</context>
+<context>
+    <name>NovelAIPanelPlugin</name>
+    <message>
+        <source>No tags found</source>
+        <translation>태그를 찾을 수 없습니다</translation>
+    </message>
+    <message>
+        <source>NovelAI generation cancelled</source>
+        <translation>NovelAI 생성이 취소되었습니다</translation>
+    </message>
+    <message>
+        <source>NovelAI image added to layer</source>
+        <translation>NovelAI 이미지가 레이어에 추가되었습니다</translation>
+    </message>
+</context>
+<context>
+    <name>VibeReferencesWidget</name>
+    <message>
+        <source>Add potion</source>
+        <translation>포션 추가</translation>
+    </message>
+    <message>
+        <source>Information Extracted</source>
+        <translation>정보 추출량</translation>
+    </message>
+    <message>
+        <source>Nothing</source>
+        <translation>없음</translation>
+    </message>
+    <message>
+        <source>NovelAI Potion (Vibe Transfer)</source>
+        <translation>NovelAI 포션 (분위기 전송)</translation>
+    </message>
+    <message>
+        <source>Remove</source>
+        <translation>제거</translation>
+    </message>
+    <message>
+        <source>Strength</source>
+        <translation>강도</translation>
+    </message>
+</context>
+<context>
+    <name>_LibraryWriteFeedback</name>
+    <message>
+        <source>Shape Manager</source>
+        <translation>도형 관리자</translation>
+    </message>
+</context>
+<context>
+    <name>document_mask_recovery</name>
+    <message>
+        <source>Warning</source>
+        <translation>경고</translation>
+    </message>
+</context>
+<context>
+    <name>workflow_save_action</name>
+    <message>
+        <source>Failed to save workflow:
+{error}</source>
+        <translation>워크플로우를 저장할 수 없습니다:
+{error}</translation>
+    </message>
+    <message>
+        <source>Saved workflow: {name}</source>
+        <translation>워크플로 저장 완료: {name}</translation>
     </message>
 </context>
 </TS>

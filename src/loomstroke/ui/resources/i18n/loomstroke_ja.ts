@@ -147,6 +147,10 @@
 <context>
     <name>BasicPen</name>
     <message>
+        <source>The brush library could not be saved.</source>
+        <translation>ブラシライブラリを保存できませんでした。</translation>
+    </message>
+    <message>
         <source>Basic Settings</source>
         <translation>基本</translation>
     </message>
@@ -1545,6 +1549,26 @@ Please check that all image paths in your workflow are valid.
 <context>
     <name>MainWindow</name>
     <message>
+        <source>New Document Failed</source>
+        <translation>新規文書を作成できませんでした</translation>
+    </message>
+    <message>
+        <source>New Canvas from Clipboard Image</source>
+        <translation>クリップボードからキャンバスの新規作成</translation>
+    </message>
+    <message>
+        <source>Created a canvas from the clipboard image.</source>
+        <translation>クリップボードの画像からキャンバスを作成しました。</translation>
+    </message>
+    <message>
+        <source>Could not create a canvas from the clipboard image.</source>
+        <translation>クリップボードの画像からキャンバスを作成できませんでした。</translation>
+    </message>
+    <message>
+        <source>Some layer or effect masks are missing. The document may look different. Use Save As to keep the original file.</source>
+        <translation>一部のレイヤーマスクまたはエフェクトマスクが見つかりません。原稿の見え方が変わる可能性があります。元のファイルを保つには、別名で保存してください。</translation>
+    </message>
+    <message>
         <source>Rotate Straight Ruler Left</source>
         <translation>直線定規を左に回転</translation>
     </message>
@@ -2725,6 +2749,10 @@ Please check that all image paths in your workflow are valid.
 <context>
     <name>NewDocumentDialog</name>
     <message>
+        <source>Include Bleed</source>
+        <translation>キャンバスに塗り足しを含める</translation>
+    </message>
+    <message>
         <source>Preset Name</source>
         <translation>プリセット名</translation>
     </message>
@@ -3664,6 +3692,18 @@ Type: {type}</source>
     <message>
         <source>Ollama's default context is short and silently cuts the start of long prompts; raise it with OLLAMA_CONTEXT_LENGTH or the model's num_ctx.</source>
         <translation>Ollama は既定で扱える長さが短く、長いプロンプトは先頭が黙って切り捨てられます。OLLAMA_CONTEXT_LENGTH やモデルの num_ctx で広げてください。</translation>
+    </message>
+    <message>
+        <source>Aa</source>
+        <translation>Aa</translation>
+    </message>
+    <message>
+        <source>Display name</source>
+        <translation>表示名</translation>
+    </message>
+    <message>
+        <source>Item</source>
+        <translation>内容</translation>
     </message>
 </context>
 <context>
@@ -9072,6 +9112,10 @@ Use "Edit Filters" to add.</source>
         <source>Clear the layer filter</source>
         <translation>レイヤーの絞り込みを解除</translation>
     </message>
+    <message>
+        <source>The generation record could not be deleted.</source>
+        <translation>生成履歴を削除できませんでした。</translation>
+    </message>
 </context>
 <context>
     <name>PluginManagerDialog</name>
@@ -9322,6 +9366,10 @@ Use "Edit Filters" to add.</source>
     <message>
         <source>{action} requested: {plugin_id}</source>
         <translation>{action} を要求しました: {plugin_id}</translation>
+    </message>
+    <message>
+        <source>Failed</source>
+        <translation>失敗</translation>
     </message>
 </context>
 <context>
@@ -11311,7 +11359,7 @@ Drag onto the canvas to place</source>
 <context>
     <name>PrintMarkControls</name>
     <message><source>Print marks</source><translation>印刷マーク</translation></message>
-    <message><source>Japanese corner (current)</source><translation>日本式角トンボ (従来)</translation></message>
+    <message><source>Japanese corner</source><translation>日本式角トンボ</translation></message>
     <message><source>Japanese double</source><translation>日本式ダブルトンボ</translation></message>
     <message><source>Western crop marks</source><translation>海外式裁断マーク</translation></message>
     <message><source>Current black (RGB)</source><translation>従来の黒 (RGB)</translation></message>
@@ -11435,8 +11483,8 @@ Drag onto the canvas to place</source>
         <translation>{name} のAPIキーを設定</translation>
     </message>
     <message>
-        <source>{name} uses Google Gemini's API. The key is stored encrypted in your OS keyring and is read only when you press Generate.</source>
-        <translation>{name} はGoogle GeminiのAPIを使用します。キーはOSのキーリングに暗号化して保存され、「生成」を押したときだけ読み取られます。</translation>
+        <source>{name} API key is stored in your OS keyring and read only when you make a request.</source>
+        <translation>{name} の API キーは OS のキーリングに保存され、リクエストを送るときだけ読み取られます。</translation>
     </message>
     <message>
         <source>Get your API key…</source>
@@ -13385,6 +13433,22 @@ GPU合成処理を初期化できませんでした。グラフィックスド�
 <context>
     <name>ExportPrintDialog</name>
     <message>
+        <source>PDF/X-1a candidate</source>
+        <translation>PDF/X-1a 候補（手動検証が必要）</translation>
+    </message>
+    <message>
+        <source>PDF/X-4 candidate</source>
+        <translation>PDF/X-4 候補（手動検証が必要）</translation>
+    </message>
+    <message>
+        <source>Verify the PDF/X candidate in callas pdfToolbox Desktop before submission.</source>
+        <translation>入稿前に callas pdfToolbox Desktop で PDF/X 候補を検証してください。</translation>
+    </message>
+    <message>
+        <source>PDF/X candidates do not support margin information.</source>
+        <translation>PDF/X 候補では余白情報を使用できません。</translation>
+    </message>
+    <message>
         <source>Cancel</source>
         <translation>キャンセル</translation>
     </message>
@@ -13639,6 +13703,58 @@ GPU合成処理を初期化できませんでした。グラフィックスド�
     <message>
         <source>{count} page(s) will be exported.</source>
         <translation>{count} ページを書き出します。</translation>
+    </message>
+    <message>
+        <source>Preset:</source>
+        <translation>プリセット:</translation>
+    </message>
+    <message>
+        <source>Grayscale TIFF sequence</source>
+        <translation>グレースケール TIFF 連番</translation>
+    </message>
+    <message>
+        <source>1-bit TIFF sequence</source>
+        <translation>白黒 1-bit TIFF 連番</translation>
+    </message>
+    <message>
+        <source>8-bit grayscale TIFF, one file per page.</source>
+        <translation>8-bitグレースケールTIFFを1ページ1ファイルで書き出します。</translation>
+    </message>
+    <message>
+        <source>1-bit black-and-white TIFF, one file per page.</source>
+        <translation>白黒1-bit TIFFを1ページ1ファイルで書き出します。</translation>
+    </message>
+    <message>
+        <source>1-bit conversion</source>
+        <translation>1-bit変換</translation>
+    </message>
+    <message>
+        <source>Threshold:</source>
+        <translation>しきい値:</translation>
+    </message>
+    <message>
+        <source>Method:</source>
+        <translation>変換方式:</translation>
+    </message>
+    <message>
+        <source>Threshold</source>
+        <translation>しきい値</translation>
+    </message>
+    <message>
+        <source>Ordered 4x4 dither</source>
+        <translation>順序付き4x4ディザ</translation>
+    </message>
+    <message>
+        <source>The selected print preset does not match every page's format and DPI.</source>
+        <translation>選択した印刷プリセットの判型・DPIが対象ページと一致しません。</translation>
+    </message>
+    <message>
+        <source>The saved CMYK profile must be loaded again.</source>
+        <translation>保存済みのCMYKプロファイルを再度読み込んでください。</translation>
+    </message>
+    <message>
+        <source>Could not save the format preset.</source>
+        <translation>印刷プリセットを保存できませんでした。</translation>
     </message>
 </context>
 <context>
@@ -14587,6 +14703,14 @@ GPU合成処理を初期化できませんでした。グラフィックスド�
 {error}</source>
         <translation>ドキュメントを保存できません: {path}
 {error}</translation>
+    </message>
+    <message>
+        <source>No SVG-compatible vector objects to export.</source>
+        <translation>SVGに書き出せるベクターオブジェクトがありません。</translation>
+    </message>
+    <message>
+        <source>The current SVG export omits groups, layer placement, enabled masks, unsupported blend modes, and live filters.</source>
+        <translation>現在のSVG書き出しには、グループ、レイヤーの配置、有効なマスク、未対応の合成モード、ライブフィルターは含まれません。</translation>
     </message>
 </context>
 <context>
@@ -15850,6 +15974,46 @@ Select a file to recover.</source>
 </context>
 <context>
     <name>__shared__</name>
+    <message>
+        <source>Include Bleed</source>
+        <translation>キャンバスに塗り足しを含める</translation>
+    </message>
+    <message>
+        <source>PDF/X-1a candidate</source>
+        <translation>PDF/X-1a 候補（手動検証が必要）</translation>
+    </message>
+    <message>
+        <source>PDF/X-4 candidate</source>
+        <translation>PDF/X-4 候補（手動検証が必要）</translation>
+    </message>
+    <message>
+        <source>Verify the PDF/X candidate in callas pdfToolbox Desktop before submission.</source>
+        <translation>入稿前に callas pdfToolbox Desktop で PDF/X 候補を検証してください。</translation>
+    </message>
+    <message>
+        <source>PDF/X candidates do not support margin information.</source>
+        <translation>PDF/X 候補では余白情報を使用できません。</translation>
+    </message>
+    <message>
+        <source>Could not create a canvas from the clipboard image.</source>
+        <translation>クリップボードの画像からキャンバスを作成できませんでした。</translation>
+    </message>
+    <message>
+        <source>Created a canvas from the clipboard image.</source>
+        <translation>クリップボードの画像からキャンバスを作成しました。</translation>
+    </message>
+    <message>
+        <source>New Canvas from Clipboard Image</source>
+        <translation>クリップボードからキャンバスの新規作成</translation>
+    </message>
+    <message>
+        <source>The brush library could not be saved.</source>
+        <translation>ブラシライブラリを保存できませんでした。</translation>
+    </message>
+    <message>
+        <source>Some layer or effect masks are missing. The document may look different. Use Save As to keep the original file.</source>
+        <translation>一部のレイヤーマスクまたはエフェクトマスクが見つかりません。原稿の見え方が変わる可能性があります。元のファイルを保つには、別名で保存してください。</translation>
+    </message>
     <message>
         <source>Straight Ruler</source>
         <translation>直線定規</translation>
@@ -17583,8 +17747,8 @@ You will need to enter it again before generating.</source>
         <translation>{name} のAPIキーを設定</translation>
     </message>
     <message>
-        <source>{name} uses Google Gemini's API. The key is stored encrypted in your OS keyring and is read only when you press Generate.</source>
-        <translation>{name} はGoogle GeminiのAPIを使用します。キーはOSのキーリングに暗号化して保存され、「生成」を押したときだけ読み取られます。</translation>
+        <source>{name} API key is stored in your OS keyring and read only when you make a request.</source>
+        <translation>{name} の API キーは OS のキーリングに保存され、リクエストを送るときだけ読み取られます。</translation>
     </message>
     <message>
         <source>Enable 'Allow external AI services' in Preferences to connect to ComfyUI.</source>
@@ -23639,8 +23803,8 @@ Click to show as panel</source>
         <translation>和文</translation>
     </message>
     <message>
-        <source>Japanese corner (current)</source>
-        <translation>日本式角トンボ (従来)</translation>
+        <source>Japanese corner</source>
+        <translation>日本式角トンボ</translation>
     </message>
     <message>
         <source>Japanese double</source>
@@ -31192,6 +31356,406 @@ After refreshing the token, any agents registered to this LoomStroke MCP server 
         <source>Walking</source>
         <translation>歩き姿</translation>
     </message>
+    <message>
+        <source>AI Settings</source>
+        <translation>AI設定</translation>
+    </message>
+    <message>
+        <source>Aa</source>
+        <translation>Aa</translation>
+    </message>
+    <message>
+        <source>Add basic shape</source>
+        <translation>基本図形を追加</translation>
+    </message>
+    <message>
+        <source>Add potion</source>
+        <translation>ポーションを追加</translation>
+    </message>
+    <message>
+        <source>Advanced API parameters (JSON)</source>
+        <translation>詳細APIパラメータ (JSON)</translation>
+    </message>
+    <message>
+        <source>Advanced API parameters (JSON; overrides controls)</source>
+        <translation>詳細APIパラメータ (JSON・上の設定より優先)</translation>
+    </message>
+    <message>
+        <source>Advanced Settings</source>
+        <translation>詳細設定</translation>
+    </message>
+    <message>
+        <source>Basic shape</source>
+        <translation>基本図形</translation>
+    </message>
+    <message>
+        <source>Character Reference</source>
+        <translation>キャラクター参照</translation>
+    </message>
+    <message>
+        <source>Character and Style</source>
+        <translation>キャラクターとスタイル参照</translation>
+    </message>
+    <message>
+        <source>Collapse AI Settings</source>
+        <translation>AI設定を折りたたむ</translation>
+    </message>
+    <message>
+        <source>Colorize</source>
+        <translation>着色</translation>
+    </message>
+    <message>
+        <source>Could not add basic shape</source>
+        <translation>基本図形を追加できませんでした</translation>
+    </message>
+    <message>
+        <source>Create variation from Gallery image</source>
+        <translation>ギャラリー画像の別バージョンを作成</translation>
+    </message>
+    <message>
+        <source>Cube</source>
+        <translation>立方体</translation>
+    </message>
+    <message>
+        <source>Cylinder</source>
+        <translation>円柱</translation>
+    </message>
+    <message>
+        <source>Director Tool</source>
+        <translation>ディレクターツール</translation>
+    </message>
+    <message>
+        <source>Director Tools</source>
+        <translation>ディレクターツール</translation>
+    </message>
+    <message>
+        <source>Emotion</source>
+        <translation>表情</translation>
+    </message>
+    <message>
+        <source>External AI services are disabled</source>
+        <translation>外部AIサービスが無効です</translation>
+    </message>
+    <message>
+        <source>Image Generation</source>
+        <translation>画像生成</translation>
+    </message>
+    <message>
+        <source>Image Resolution</source>
+        <translation>画像サイズ</translation>
+    </message>
+    <message>
+        <source>Image Settings</source>
+        <translation>画像設定</translation>
+    </message>
+    <message>
+        <source>Image2Image</source>
+        <translation>画像から画像</translation>
+    </message>
+    <message>
+        <source>Information Extracted</source>
+        <translation>抽出する情報量</translation>
+    </message>
+    <message>
+        <source>Inpaint (current selection)</source>
+        <translation>インペイント (現在の選択範囲)</translation>
+    </message>
+    <message>
+        <source>Input layer</source>
+        <translation>入力レイヤー</translation>
+    </message>
+    <message>
+        <source>Large</source>
+        <translation>大サイズ</translation>
+    </message>
+    <message>
+        <source>Large Landscape</source>
+        <translation>大・横長</translation>
+    </message>
+    <message>
+        <source>Large Portrait</source>
+        <translation>大・縦長</translation>
+    </message>
+    <message>
+        <source>Large Square</source>
+        <translation>大・正方形</translation>
+    </message>
+    <message>
+        <source>Light position</source>
+        <translation>光源位置</translation>
+    </message>
+    <message>
+        <source>Light position in 3D scene coordinates</source>
+        <translation>3Dシーン座標での光源位置</translation>
+    </message>
+    <message>
+        <source>Line Art</source>
+        <translation>線画</translation>
+    </message>
+    <message>
+        <source>Line art</source>
+        <translation>線画</translation>
+    </message>
+    <message>
+        <source>No SVG-compatible vector objects to export.</source>
+        <translation>SVGに書き出せるベクターオブジェクトがありません。</translation>
+    </message>
+    <message>
+        <source>No tags found</source>
+        <translation>タグ候補はありません</translation>
+    </message>
+    <message>
+        <source>Noise</source>
+        <translation>ノイズ</translation>
+    </message>
+    <message>
+        <source>Noise Schedule</source>
+        <translation>ノイズスケジュール</translation>
+    </message>
+    <message>
+        <source>Normal Landscape</source>
+        <translation>標準・横長</translation>
+    </message>
+    <message>
+        <source>Normal Portrait</source>
+        <translation>標準・縦長</translation>
+    </message>
+    <message>
+        <source>Normal Square</source>
+        <translation>標準・正方形</translation>
+    </message>
+    <message>
+        <source>NovelAI Potion (Vibe Transfer)</source>
+        <translation>NovelAIポーション (Vibe Transfer)</translation>
+    </message>
+    <message>
+        <source>NovelAI generation cancelled</source>
+        <translation>NovelAI生成を中止しました</translation>
+    </message>
+    <message>
+        <source>NovelAI image added to layer</source>
+        <translation>NovelAI画像をレイヤーへ追加しました</translation>
+    </message>
+    <message>
+        <source>Number of Images</source>
+        <translation>同時生成数</translation>
+    </message>
+    <message>
+        <source>OpenPose JSON</source>
+        <translation>OpenPose JSON</translation>
+    </message>
+    <message>
+        <source>Prompt Guidance</source>
+        <translation>プロンプト誘導</translation>
+    </message>
+    <message>
+        <source>Prompt Guidance Rescale</source>
+        <translation>プロンプトガイダンスの再調整</translation>
+    </message>
+    <message>
+        <source>Reference layer</source>
+        <translation>参照レイヤー</translation>
+    </message>
+    <message>
+        <source>Reference mode</source>
+        <translation>参照モード</translation>
+    </message>
+    <message>
+        <source>Reference strength</source>
+        <translation>参照強度</translation>
+    </message>
+    <message>
+        <source>Refresh layers</source>
+        <translation>レイヤーを更新</translation>
+    </message>
+    <message>
+        <source>Remove Background</source>
+        <translation>背景を除去</translation>
+    </message>
+    <message>
+        <source>Remove background</source>
+        <translation>背景を除去</translation>
+    </message>
+    <message>
+        <source>Sampler</source>
+        <translation>サンプラー</translation>
+    </message>
+    <message>
+        <source>Saved workflow: {name}</source>
+        <translation>ワークフローを保存しました: {name}</translation>
+    </message>
+    <message>
+        <source>Seed must be between 0 and 4294967295</source>
+        <translation>シード値は0から4294967295で指定してください</translation>
+    </message>
+    <message>
+        <source>Small</source>
+        <translation>小サイズ</translation>
+    </message>
+    <message>
+        <source>Small Landscape</source>
+        <translation>小・横長</translation>
+    </message>
+    <message>
+        <source>Small Portrait</source>
+        <translation>小・縦長</translation>
+    </message>
+    <message>
+        <source>Small Square</source>
+        <translation>小・正方形</translation>
+    </message>
+    <message>
+        <source>Sphere</source>
+        <translation>球</translation>
+    </message>
+    <message>
+        <source>Steps</source>
+        <translation>ステップ数</translation>
+    </message>
+    <message>
+        <source>Style Reference</source>
+        <translation>スタイル参照</translation>
+    </message>
+    <message>
+        <source>Suggest tags</source>
+        <translation>タグ候補を検索</translation>
+    </message>
+    <message>
+        <source>Swap width and height</source>
+        <translation>幅と高さを入れ替え</translation>
+    </message>
+    <message>
+        <source>Tag fragment for suggestions</source>
+        <translation>タグ候補の検索語</translation>
+    </message>
+    <message>
+        <source>The current SVG export omits groups, layer placement, enabled masks, unsupported blend modes, and live filters.</source>
+        <translation>現在のSVG書き出しには、グループ、レイヤーの配置、有効なマスク、未対応の合成モード、ライブフィルターは含まれません。</translation>
+    </message>
+    <message>
+        <source>The generation record could not be deleted.</source>
+        <translation>生成履歴を削除できませんでした。</translation>
+    </message>
+    <message>
+        <source>Undesired Content</source>
+        <translation>除外したい内容</translation>
+    </message>
+    <message>
+        <source>Upscale</source>
+        <translation>アップスケール</translation>
+    </message>
+    <message>
+        <source>Variety</source>
+        <translation>多様性</translation>
+    </message>
+    <message>
+        <source>Vibe Transfer</source>
+        <translation>バイブ転送</translation>
+    </message>
+    <message>
+        <source>Wallpaper</source>
+        <translation>壁紙サイズ</translation>
+    </message>
+    <message>
+        <source>Wallpaper Landscape</source>
+        <translation>壁紙・横長</translation>
+    </message>
+    <message>
+        <source>Wallpaper Portrait</source>
+        <translation>壁紙・縦長</translation>
+    </message>
+    <message>
+        <source>exponential</source>
+        <translation>指数</translation>
+    </message>
+    <message>
+        <source>karras</source>
+        <translation>karras</translation>
+    </message>
+    <message>
+        <source>polyexponential</source>
+        <translation>多項指数</translation>
+    </message>
+    <message>
+        <source>{name} uses Google Gemini's API. The key is stored encrypted in your OS keyring and is read only when you press Generate.</source>
+        <translation>{name} はGoogle GeminiのAPIを使用します。キーはOSのキーリングに暗号化して保存され、「生成」を押したときだけ読み取られます。</translation>
+    </message>
+    <message>
+        <source>Grayscale TIFF sequence</source>
+        <translation>グレースケール TIFF 連番</translation>
+    </message>
+    <message>
+        <source>1-bit TIFF sequence</source>
+        <translation>白黒 1-bit TIFF 連番</translation>
+    </message>
+    <message>
+        <source>8-bit grayscale TIFF, one file per page.</source>
+        <translation>8-bitグレースケールTIFFを1ページ1ファイルで書き出します。</translation>
+    </message>
+    <message>
+        <source>1-bit black-and-white TIFF, one file per page.</source>
+        <translation>白黒1-bit TIFFを1ページ1ファイルで書き出します。</translation>
+    </message>
+    <message>
+        <source>1-bit conversion</source>
+        <translation>1-bit変換</translation>
+    </message>
+    <message>
+        <source>Threshold:</source>
+        <translation>しきい値:</translation>
+    </message>
+    <message>
+        <source>Method:</source>
+        <translation>変換方式:</translation>
+    </message>
+    <message>
+        <source>Ordered 4x4 dither</source>
+        <translation>順序付き4x4ディザ</translation>
+    </message>
+    <message>
+        <source>The selected print preset does not match every page's format and DPI.</source>
+        <translation>選択した印刷プリセットの判型・DPIが対象ページと一致しません。</translation>
+    </message>
+    <message>
+        <source>The saved CMYK profile must be loaded again.</source>
+        <translation>保存済みのCMYKプロファイルを再度読み込んでください。</translation>
+    </message>
+    <message>
+        <source>Added noise</source>
+        <translation>追加ノイズ</translation>
+    </message>
+    <message>
+        <source>Change strength (i2i)</source>
+        <translation>変化の強さ (i2i)</translation>
+    </message>
+    <message>
+        <source>Enlarge</source>
+        <translation>拡大</translation>
+    </message>
+    <message>
+        <source>Input Image</source>
+        <translation>入力画像</translation>
+    </message>
+    <message>
+        <source>Randomize</source>
+        <translation>ランダム化</translation>
+    </message>
+    <message>
+        <source>References</source>
+        <translation>参照・Vibe Transfer</translation>
+    </message>
+    <message>
+        <source>Reuse last seed</source>
+        <translation>前回のシードを再利用</translation>
+    </message>
+    <message>
+        <source>i2i</source>
+        <translation>i2i</translation>
+    </message>
+    <message>
+        <source>{count} items</source>
+        <translation>{count}件</translation>
+    </message>
 </context>
 <context>
     <name>app_ai_effect_generation_commit</name>
@@ -31949,6 +32513,10 @@ After refreshing the token, any agents registered to this LoomStroke MCP server 
     <message>
         <source>Values applied to this layer.</source>
         <translation>このレイヤーに値を反映しました。</translation>
+    </message>
+    <message>
+        <source>ComfyUI did not finish loading. Check the server connection and reload nodes.</source>
+        <translation>ComfyUIの読み込みがタイムアウトしました。サーバーの接続状態を確認して、ノードを再読み込みしてください。</translation>
     </message>
 </context>
 <context>
@@ -37160,6 +37728,10 @@ After refreshing the token, any agents registered to this LoomStroke MCP server 
         <source>Right Ankle</source>
         <translation>右足首</translation>
     </message>
+    <message>
+        <source>OpenPose JSON</source>
+        <translation>OpenPose JSON</translation>
+    </message>
 </context>
 <context>
     <name>DrawingFigureToolbarWidget</name>
@@ -37275,6 +37847,556 @@ After refreshing the token, any agents registered to this LoomStroke MCP server 
     <message>
         <source>Could not add basic shape</source>
         <translation>基本図形を追加できませんでした</translation>
+    </message>
+</context>
+<context>
+    <name>AISettingsWidget</name>
+    <message>
+        <source>AI Settings</source>
+        <translation>AI設定</translation>
+    </message>
+    <message>
+        <source>Advanced Settings</source>
+        <translation>詳細設定</translation>
+    </message>
+    <message>
+        <source>Collapse AI Settings</source>
+        <translation>AI設定を折りたたむ</translation>
+    </message>
+    <message>
+        <source>Noise Schedule</source>
+        <translation>ノイズスケジュール</translation>
+    </message>
+    <message>
+        <source>Prompt Guidance</source>
+        <translation>プロンプト誘導</translation>
+    </message>
+    <message>
+        <source>Prompt Guidance Rescale</source>
+        <translation>プロンプトガイダンスの再調整</translation>
+    </message>
+    <message>
+        <source>Random</source>
+        <translation>ランダム</translation>
+    </message>
+    <message>
+        <source>Reset</source>
+        <translation>リセット</translation>
+    </message>
+    <message>
+        <source>Sampler</source>
+        <translation>サンプラー</translation>
+    </message>
+    <message>
+        <source>Seed</source>
+        <translation>シード</translation>
+    </message>
+    <message>
+        <source>Seed must be between 0 and 4294967295</source>
+        <translation>シード値は0から4294967295で指定してください</translation>
+    </message>
+    <message>
+        <source>Steps</source>
+        <translation>ステップ数</translation>
+    </message>
+    <message>
+        <source>Variety</source>
+        <translation>多様性</translation>
+    </message>
+    <message>
+        <source>Randomize</source>
+        <translation>ランダム化</translation>
+    </message>
+    <message>
+        <source>Reuse last seed</source>
+        <translation>前回のシードを再利用</translation>
+    </message>
+</context>
+<context>
+    <name>ImageSettingsWidget</name>
+    <message>
+        <source>Image Resolution</source>
+        <translation>画像サイズ</translation>
+    </message>
+    <message>
+        <source>Image Settings</source>
+        <translation>画像設定</translation>
+    </message>
+    <message>
+        <source>Number of Images</source>
+        <translation>同時生成数</translation>
+    </message>
+    <message>
+        <source>Swap width and height</source>
+        <translation>幅と高さを入れ替え</translation>
+    </message>
+</context>
+<context>
+    <name>NovelAIPanel</name>
+    <message>
+        <source>&lt;New Layer&gt;</source>
+        <translation>&lt;新規レイヤー&gt;</translation>
+    </message>
+    <message>
+        <source>AI Settings</source>
+        <translation>AI設定</translation>
+    </message>
+    <message>
+        <source>Add potion</source>
+        <translation>ポーションを追加</translation>
+    </message>
+    <message>
+        <source>Advanced API parameters (JSON)</source>
+        <translation>詳細APIパラメータ (JSON)</translation>
+    </message>
+    <message>
+        <source>Advanced API parameters (JSON; overrides controls)</source>
+        <translation>詳細APIパラメータ (JSON・上の設定より優先)</translation>
+    </message>
+    <message>
+        <source>Advanced Settings</source>
+        <translation>詳細設定</translation>
+    </message>
+    <message>
+        <source>Character Reference</source>
+        <translation>キャラクター参照</translation>
+    </message>
+    <message>
+        <source>Character and Style</source>
+        <translation>キャラクターとスタイル参照</translation>
+    </message>
+    <message>
+        <source>Collapse AI Settings</source>
+        <translation>AI設定を折りたたむ</translation>
+    </message>
+    <message>
+        <source>Colorize</source>
+        <translation>着色</translation>
+    </message>
+    <message>
+        <source>Create variation from Gallery image</source>
+        <translation>ギャラリー画像の別バージョンを作成</translation>
+    </message>
+    <message>
+        <source>Custom</source>
+        <translation>カスタム</translation>
+    </message>
+    <message>
+        <source>Director Tool</source>
+        <translation>ディレクターツール</translation>
+    </message>
+    <message>
+        <source>Director Tools</source>
+        <translation>ディレクターツール</translation>
+    </message>
+    <message>
+        <source>Emotion</source>
+        <translation>表情</translation>
+    </message>
+    <message>
+        <source>Enter prompt text...</source>
+        <translation>プロンプトを入力...</translation>
+    </message>
+    <message>
+        <source>External AI services are disabled</source>
+        <translation>外部AIサービスが無効です</translation>
+    </message>
+    <message>
+        <source>Generate</source>
+        <translation>生成</translation>
+    </message>
+    <message>
+        <source>Height</source>
+        <translation>高さ</translation>
+    </message>
+    <message>
+        <source>Image Generation</source>
+        <translation>画像生成</translation>
+    </message>
+    <message>
+        <source>Image Resolution</source>
+        <translation>画像サイズ</translation>
+    </message>
+    <message>
+        <source>Image Settings</source>
+        <translation>画像設定</translation>
+    </message>
+    <message>
+        <source>Image2Image</source>
+        <translation>画像から画像</translation>
+    </message>
+    <message>
+        <source>Information Extracted</source>
+        <translation>抽出する情報量</translation>
+    </message>
+    <message>
+        <source>Inpaint (current selection)</source>
+        <translation>インペイント (現在の選択範囲)</translation>
+    </message>
+    <message>
+        <source>Input layer</source>
+        <translation>入力レイヤー</translation>
+    </message>
+    <message>
+        <source>Landscape</source>
+        <translation>横長</translation>
+    </message>
+    <message>
+        <source>Large</source>
+        <translation>大サイズ</translation>
+    </message>
+    <message>
+        <source>Large Landscape</source>
+        <translation>大・横長</translation>
+    </message>
+    <message>
+        <source>Large Portrait</source>
+        <translation>大・縦長</translation>
+    </message>
+    <message>
+        <source>Large Square</source>
+        <translation>大・正方形</translation>
+    </message>
+    <message>
+        <source>Line Art</source>
+        <translation>線画</translation>
+    </message>
+    <message>
+        <source>Line art</source>
+        <translation>線画</translation>
+    </message>
+    <message>
+        <source>Live prompt</source>
+        <translation>ライブプロンプト</translation>
+    </message>
+    <message>
+        <source>Mode</source>
+        <translation>モード</translation>
+    </message>
+    <message>
+        <source>Model</source>
+        <translation>モデル</translation>
+    </message>
+    <message>
+        <source>No tags found</source>
+        <translation>タグ候補はありません</translation>
+    </message>
+    <message>
+        <source>Noise</source>
+        <translation>ノイズ</translation>
+    </message>
+    <message>
+        <source>Noise Schedule</source>
+        <translation>ノイズスケジュール</translation>
+    </message>
+    <message>
+        <source>None</source>
+        <translation>なし</translation>
+    </message>
+    <message>
+        <source>Normal</source>
+        <translation>普通サイズ</translation>
+    </message>
+    <message>
+        <source>Normal Landscape</source>
+        <translation>標準・横長</translation>
+    </message>
+    <message>
+        <source>Normal Portrait</source>
+        <translation>標準・縦長</translation>
+    </message>
+    <message>
+        <source>Normal Square</source>
+        <translation>標準・正方形</translation>
+    </message>
+    <message>
+        <source>Nothing</source>
+        <translation>なし</translation>
+    </message>
+    <message>
+        <source>NovelAI Potion (Vibe Transfer)</source>
+        <translation>NovelAIポーション (Vibe Transfer)</translation>
+    </message>
+    <message>
+        <source>NovelAI generation cancelled</source>
+        <translation>NovelAI生成を中止しました</translation>
+    </message>
+    <message>
+        <source>NovelAI image added to layer</source>
+        <translation>NovelAI画像をレイヤーへ追加しました</translation>
+    </message>
+    <message>
+        <source>Number of Images</source>
+        <translation>同時生成数</translation>
+    </message>
+    <message>
+        <source>Portrait</source>
+        <translation>縦長</translation>
+    </message>
+    <message>
+        <source>Prompt Guidance</source>
+        <translation>プロンプト誘導</translation>
+    </message>
+    <message>
+        <source>Prompt Guidance Rescale</source>
+        <translation>プロンプトガイダンスの再調整</translation>
+    </message>
+    <message>
+        <source>Random</source>
+        <translation>ランダム</translation>
+    </message>
+    <message>
+        <source>Reference layer</source>
+        <translation>参照レイヤー</translation>
+    </message>
+    <message>
+        <source>Reference mode</source>
+        <translation>参照モード</translation>
+    </message>
+    <message>
+        <source>Reference strength</source>
+        <translation>参照強度</translation>
+    </message>
+    <message>
+        <source>Refresh layers</source>
+        <translation>レイヤーを更新</translation>
+    </message>
+    <message>
+        <source>Remove</source>
+        <translation>削除</translation>
+    </message>
+    <message>
+        <source>Remove Background</source>
+        <translation>背景を除去</translation>
+    </message>
+    <message>
+        <source>Remove background</source>
+        <translation>背景を除去</translation>
+    </message>
+    <message>
+        <source>Reset</source>
+        <translation>リセット</translation>
+    </message>
+    <message>
+        <source>Sampler</source>
+        <translation>サンプラー</translation>
+    </message>
+    <message>
+        <source>Seed</source>
+        <translation>シード値</translation>
+    </message>
+    <message>
+        <source>Seed must be between 0 and 4294967295</source>
+        <translation>シード値は0から4294967295で指定してください</translation>
+    </message>
+    <message>
+        <source>Sketch</source>
+        <translation>スケッチ</translation>
+    </message>
+    <message>
+        <source>Small</source>
+        <translation>小サイズ</translation>
+    </message>
+    <message>
+        <source>Small Landscape</source>
+        <translation>小・横長</translation>
+    </message>
+    <message>
+        <source>Small Portrait</source>
+        <translation>小・縦長</translation>
+    </message>
+    <message>
+        <source>Small Square</source>
+        <translation>小・正方形</translation>
+    </message>
+    <message>
+        <source>Square</source>
+        <translation>正方形</translation>
+    </message>
+    <message>
+        <source>Steps</source>
+        <translation>ステップ数</translation>
+    </message>
+    <message>
+        <source>Strength</source>
+        <translation>強度</translation>
+    </message>
+    <message>
+        <source>Style Reference</source>
+        <translation>スタイル参照</translation>
+    </message>
+    <message>
+        <source>Suggest tags</source>
+        <translation>タグ候補を検索</translation>
+    </message>
+    <message>
+        <source>Swap width and height</source>
+        <translation>幅と高さを入れ替え</translation>
+    </message>
+    <message>
+        <source>Tag fragment for suggestions</source>
+        <translation>タグ候補の検索語</translation>
+    </message>
+    <message>
+        <source>Target layer</source>
+        <translation>出力先レイヤー</translation>
+    </message>
+    <message>
+        <source>Undesired Content</source>
+        <translation>除外したい内容</translation>
+    </message>
+    <message>
+        <source>Upscale</source>
+        <translation>アップスケール</translation>
+    </message>
+    <message>
+        <source>Variety</source>
+        <translation>多様性</translation>
+    </message>
+    <message>
+        <source>Vibe Transfer</source>
+        <translation>バイブ転送</translation>
+    </message>
+    <message>
+        <source>Wallpaper</source>
+        <translation>壁紙サイズ</translation>
+    </message>
+    <message>
+        <source>Wallpaper Landscape</source>
+        <translation>壁紙・横長</translation>
+    </message>
+    <message>
+        <source>Wallpaper Portrait</source>
+        <translation>壁紙・縦長</translation>
+    </message>
+    <message>
+        <source>Width</source>
+        <translation>幅</translation>
+    </message>
+    <message>
+        <source>exponential</source>
+        <translation>指数</translation>
+    </message>
+    <message>
+        <source>karras</source>
+        <translation>karras</translation>
+    </message>
+    <message>
+        <source>polyexponential</source>
+        <translation>多項指数</translation>
+    </message>
+    <message>
+        <source>Added noise</source>
+        <translation>追加ノイズ</translation>
+    </message>
+    <message>
+        <source>Change strength (i2i)</source>
+        <translation>変化の強さ (i2i)</translation>
+    </message>
+    <message>
+        <source>Enlarge</source>
+        <translation>拡大</translation>
+    </message>
+    <message>
+        <source>Inpaint</source>
+        <translation>インペイント</translation>
+    </message>
+    <message>
+        <source>Input Image</source>
+        <translation>入力画像</translation>
+    </message>
+    <message>
+        <source>Randomize</source>
+        <translation>ランダム化</translation>
+    </message>
+    <message>
+        <source>References</source>
+        <translation>参照・Vibe Transfer</translation>
+    </message>
+    <message>
+        <source>Reuse last seed</source>
+        <translation>前回のシードを再利用</translation>
+    </message>
+    <message>
+        <source>Tools</source>
+        <translation>加工</translation>
+    </message>
+    <message>
+        <source>i2i</source>
+        <translation>i2i</translation>
+    </message>
+    <message>
+        <source>{count} items</source>
+        <translation>{count}件</translation>
+    </message>
+</context>
+<context>
+    <name>NovelAIPanelPlugin</name>
+    <message>
+        <source>No tags found</source>
+        <translation>タグ候補はありません</translation>
+    </message>
+    <message>
+        <source>NovelAI generation cancelled</source>
+        <translation>NovelAI生成を中止しました</translation>
+    </message>
+    <message>
+        <source>NovelAI image added to layer</source>
+        <translation>NovelAI画像をレイヤーへ追加しました</translation>
+    </message>
+</context>
+<context>
+    <name>VibeReferencesWidget</name>
+    <message>
+        <source>Add potion</source>
+        <translation>ポーションを追加</translation>
+    </message>
+    <message>
+        <source>Information Extracted</source>
+        <translation>抽出する情報量</translation>
+    </message>
+    <message>
+        <source>Nothing</source>
+        <translation>なし</translation>
+    </message>
+    <message>
+        <source>NovelAI Potion (Vibe Transfer)</source>
+        <translation>NovelAIポーション (Vibe Transfer)</translation>
+    </message>
+    <message>
+        <source>Remove</source>
+        <translation>削除</translation>
+    </message>
+    <message>
+        <source>Strength</source>
+        <translation>強度</translation>
+    </message>
+</context>
+<context>
+    <name>_LibraryWriteFeedback</name>
+    <message>
+        <source>Shape Manager</source>
+        <translation>シェイプマネージャー</translation>
+    </message>
+</context>
+<context>
+    <name>document_mask_recovery</name>
+    <message>
+        <source>Warning</source>
+        <translation>警告</translation>
+    </message>
+</context>
+<context>
+    <name>workflow_save_action</name>
+    <message>
+        <source>Failed to save workflow:
+{error}</source>
+        <translation>ワークフローを保存できませんでした:
+{error}</translation>
+    </message>
+    <message>
+        <source>Saved workflow: {name}</source>
+        <translation>ワークフローを保存しました: {name}</translation>
     </message>
 </context>
 </TS>

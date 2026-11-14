@@ -29,6 +29,7 @@ from loomstroke.core.commands import (
     LayerVisibilityCommand,
     SetLayer3DSceneCommand,
 )
+from loomstroke.core.imported_3d_layer import try_add_3d_layer_with_history
 from loomstroke.core.selection_clipboard import SelectionPayload
 from loomstroke.core.selection_state import SelectionStateService
 from loomstroke.host_api import DocumentRef, LayerRef, Selection
@@ -396,13 +397,17 @@ class CanvasServiceLayerApiMixin(_CanvasServiceLayerApiBase):
 
         source = Path(path).expanduser().resolve()
         scene = load_scene(source)
-        return self.add_3d_layer(
-            name or source.stem or None,
-            scene=scene,
-            display_mode=display_mode,
-            gen_3d=gen_3d,
-            origin=origin if origin is not None else self._layer_origin("import"),
-        )
+        layer_name = name or source.stem or None
+        values = {
+            "scene": scene,
+            "display_mode": display_mode,
+            "gen_3d": gen_3d,
+            "origin": origin if origin is not None else self._layer_origin("import"),
+        }
+        reference = try_add_3d_layer_with_history(self, layer_name, **values)
+        if reference is not None:
+            return reference
+        return self.add_3d_layer(layer_name, **values)
 
     def set_3d_layer_scene(
         self,
@@ -697,6 +702,7 @@ class CanvasServiceLayerApiMixin(_CanvasServiceLayerApiBase):
 
 _DEFAULT_REPLACE_LAYERS = CanvasServiceLayerApiMixin.replace_layers
 _DEFAULT_REMOVE_LAYER = CanvasServiceLayerApiMixin.remove_layer
+_DEFAULT_ADD_3D_LAYER = CanvasServiceLayerApiMixin.add_3d_layer
 _DEFAULT_PLACEMENT_HOOKS = {
     name: getattr(CanvasServiceLayerApiMixin, name)
     for name in ("add_layer", "move_layer", "set_active_layer")
@@ -714,3 +720,4 @@ _DEFAULT_MASK_LAYER_HOOKS = {
     for name in ("add_layer_mask", "remove_layer_mask")
 }
 _DEFAULT_SELECTION_TO_LAYER_MASK = CanvasServiceLayerApiMixin.selection_to_layer_mask
+_DEFAULT_INVERT_MASK_LAYER = CanvasServiceLayerApiMixin.invert_mask_layer

@@ -6,8 +6,8 @@ from typing import TYPE_CHECKING, Any
 
 from ...core.commands import (
     CutSelectionCommand,
-    ModifySelectionMaskCommand,
     SelectionOp,
+    SelectionSnapshot,
     UpdateSelectionMaskCommand,
 )
 from ...core.geometry import Affine2D
@@ -48,6 +48,9 @@ class RasterSelectionState:
     base_mask: Any | None = None
     base_bounds: Any | None = None
     base_full_bounds: Any | None = None
+    base_full_mask: Any | None = None
+    base_captured: bool = False
+    preview_queued: bool = False
     preview_enabled: bool = True
     drag_mode: str = "create"
     drag_offset: tuple[float, float] = (0.0, 0.0)
@@ -81,9 +84,13 @@ class RasterSelectionController:
 
     def reset_pointer_state(self) -> None:
         self.assist.reset()
+        self._discard_queued_preview()
         self.state.base_mask = None
         self.state.base_bounds = None
         self.state.base_full_bounds = None
+        self.state.base_full_mask = None
+        self.state.base_captured = False
+        self.state.preview_queued = False
         self.state.drag_mode = "create"
         self.state.drag_offset = (0.0, 0.0)
 
@@ -196,6 +203,7 @@ class RasterSelectionController:
         )
 
         if rect is None:
+            self._discard_queued_preview()
             tool._restore_base_selection(recompose=True)
             return
         full_bounds = full_rect if operation == SelectionOp.REPLACE else None
@@ -204,13 +212,18 @@ class RasterSelectionController:
             self.assist.preview(full_rect or rect)
             return
 
-        tool._pending_commands.append(
+        self._queue_preview(
             UpdateSelectionMaskCommand(
                 rect,
                 operation,
                 merge_key="selection.preview",
                 source="preview",
                 full_bounds=full_bounds,
+                preview_base=(
+                    SelectionSnapshot(self.state.base_mask, self.state.base_bounds)
+                    if operation != SelectionOp.REPLACE
+                    else None
+                ),
             )
         )
 
@@ -222,6 +235,10 @@ class RasterSelectionController:
         if not tool._start or not tool.host_api:
             return
         tool._current = pt
+
+        if self.state.preview_queued:
+            self._discard_queued_preview()
+            tool._restore_base_selection(recompose=True)
 
         if tool._drag_mode == "move_selection":
             self._queue_move_commit(pt)
@@ -246,7 +263,7 @@ class RasterSelectionController:
         rect, full_rect = self._moved_selection_rect(tool._current)
         if rect is None:
             return
-        tool._pending_commands.append(
+        self._queue_preview(
             UpdateSelectionMaskCommand(
                 rect,
                 SelectionOp.REPLACE,
@@ -255,6 +272,19 @@ class RasterSelectionController:
                 full_bounds=full_rect,
             )
         )
+
+    def _discard_queued_preview(self) -> None:
+        pending = self._tool._pending_commands
+        pending[:] = [
+            command
+            for command in pending
+            if not (isinstance(command, UpdateSelectionMaskCommand) and command.source == "preview")
+        ]
+
+    def _queue_preview(self, command: UpdateSelectionMaskCommand) -> None:
+        self._discard_queued_preview()
+        self.state.preview_queued = True
+        self._tool._pending_commands.append(command)
 
     def _queue_move_commit(self, pt: StrokePoint) -> None:
         tool = self._tool
@@ -282,13 +312,15 @@ class RasterSelectionController:
         elif rect is not None:
             full_bounds = full_rect if operation == SelectionOp.REPLACE else None
             tool._pending_commands.append(
-                UpdateSelectionMaskCommand(rect, operation, full_bounds=full_bounds)
-            )
-
-            if tool.settings.feather_enabled and tool.settings.feather_radius > 0:
-                tool._pending_commands.append(
-                    ModifySelectionMaskCommand("feather", tool.settings.feather_radius)
+                UpdateSelectionMaskCommand(
+                    rect,
+                    operation,
+                    full_bounds=full_bounds,
+                    feather_radius=(
+                        tool.settings.feather_radius if tool.settings.feather_enabled else 0
+                    ),
                 )
+            )
         else:
             tool._restore_base_selection(recompose=True)
 

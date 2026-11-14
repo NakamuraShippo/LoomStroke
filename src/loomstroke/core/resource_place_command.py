@@ -3,6 +3,7 @@
 from __future__ import annotations
 
 from copy import deepcopy
+from inspect import getattr_static
 
 from PySide6.QtCore import Qt
 from PySide6.QtGui import QImage, QPainter
@@ -17,13 +18,24 @@ from .linked_assets.resource_layer_metadata_codec import ResourceLayerMetadataCo
 class PlaceResourceCommand(Command):
     """Keep prepared pixels; never decode the source again during history."""
 
-    def __init__(self, image: QImage, record, *, name: str = "Imported Layer") -> None:
+    def __init__(
+        self, image: QImage, record, *, name: str = "Imported Layer", insert_above: bool = True
+    ) -> None:
         super().__init__()
         self._image = image.copy()
         self._record = deepcopy(record)
         self._name = name
+        self._insert_above = insert_above
         self._created = CreatedLayerHistory()
         self._submitting = False
+
+    @property
+    def history_label(self) -> str:
+        return "Place Image" if self._record is not None else "Import"
+
+    @property
+    def change_type(self) -> str:
+        return "resource.place" if self._record is not None else "image.import"
 
     @property
     def layer_id(self) -> str | None:
@@ -46,14 +58,16 @@ class PlaceResourceCommand(Command):
         painter.drawImage(0, 0, self._image)
         painter.end()
         layer.image = image
-        layer.metadata = ResourceLayerMetadataCodec().write(layer.metadata, self._record)
+        if self._record is not None:
+            layer.metadata = ResourceLayerMetadataCodec().write(layer.metadata, self._record)
         self._created.layer = layer
         self._created.active_before = canvas.current_layer().id if canvas._layers else None
         # Match RGB import's root insertion immediately above the old active
         # entry, retaining its background/root-zero protection.
         end = len(canvas._layers)
         active = canvas._active_index
-        self._created.index = max(min(1, end), min(active + 1, end)) if active >= 0 else end
+        position = active + int(self._insert_above)
+        self._created.index = max(min(1, end), min(position, end)) if active >= 0 else end
         # Redo owns the complete placed layer; discard the second source buffer.
         self._image = QImage()
 
@@ -91,4 +105,26 @@ class PlaceResourceCommand(Command):
 
     def _notify(self, canvas) -> None:
         if not self._submitting:
-            canvas._emit_doc_changed(DocumentChangeEvent(change_type="resource.place"))
+            canvas._emit_doc_changed(DocumentChangeEvent(change_type=self.change_type))
+
+
+def supports_prepared_rgb_import(canvas, as_new: bool) -> bool:
+    from .canvas_service_simple_layer_api import _DEFAULT_PLACEMENT_HOOKS  # noqa: PLC0415
+
+    return (as_new or not canvas._layers) and all(
+        getattr_static(canvas, name, None) is original
+        for name, original in _DEFAULT_PLACEMENT_HOOKS.items()
+    )
+
+
+def import_prepared_rgb_image(canvas, pixels, name: str, insert_above: bool) -> str | None:
+    image = canvas._numpy_to_qimage(pixels, 1.0)
+    if image is None or image.isNull():
+        return None
+    command = PlaceResourceCommand(image, None, name=name, insert_above=insert_above)
+    if not canvas.submit(command):
+        return None
+    layer_id = command.layer_id
+    if layer_id is None or find_layer(canvas, layer_id) is not command._created.layer:
+        return None
+    return layer_id

@@ -1096,11 +1096,19 @@ class PromptEditorPanel(QWidget, AsyncTaskOwner):
     def _autosave_library_changes(self) -> None:
         self._commit_library_changes(refresh=False)
 
-    def _flush_pending_library_autosave(self) -> None:
+    def _flush_pending_library_autosave(self) -> bool:
         if self._library_autosave:
             self._library_autosave.stop()
         if self._library_dirty:
             self._commit_library_changes(refresh=False)
+        return not self._library_dirty
+
+    def _prepare_library_shutdown(self) -> bool:
+        if self._flush_pending_library_autosave():
+            return True
+        if self._tabs is not None and self._library_tab is not None:
+            self._tabs.setCurrentWidget(self._library_tab)
+        return False
 
     def _commit_library_changes(self, *, refresh: bool = True) -> None:
         if not self._library_dirty or not self._selected_prompt:
@@ -1229,7 +1237,7 @@ class PromptEditorPanel(QWidget, AsyncTaskOwner):
         return sorted(snippets, key=lambda snippet: (snippet.title or snippet.id).lower())
 
     def _refresh_library_list(self) -> None:
-        if self._library_list is None:
+        if self._library_list is None or not self._flush_pending_library_autosave():
             return
         current_id = self._selected_prompt.id if self._selected_prompt else None
         snippets = self._filtered_prompt_snippets()
@@ -1260,13 +1268,16 @@ class PromptEditorPanel(QWidget, AsyncTaskOwner):
         current: QListWidgetItem | None,
         _previous: QListWidgetItem | None,
     ) -> None:
-        self._flush_pending_library_autosave()
         snippet_id = current.data(Qt.UserRole) if current else None
+        if not self._flush_pending_library_autosave():
+            if self._selected_prompt:
+                self._select_library_prompt(self._selected_prompt.id, update_details=False)
+            return
         snippet = self._catalog.get(snippet_id) if snippet_id else None
         self._selected_prompt = snippet
         self._update_library_details(snippet)
 
-    def _select_library_prompt(self, prompt_id: str | None) -> None:
+    def _select_library_prompt(self, prompt_id: str | None, *, update_details: bool = True) -> None:
         if self._library_list is None or not prompt_id:
             return
         for row in range(self._library_list.count()):
@@ -1275,7 +1286,8 @@ class PromptEditorPanel(QWidget, AsyncTaskOwner):
                 block = self._library_list.blockSignals(True)
                 self._library_list.setCurrentRow(row)
                 self._library_list.blockSignals(block)
-                self._on_library_selection_changed(item, None)
+                if update_details:
+                    self._on_library_selection_changed(item, None)
                 return
 
     def _update_library_details(self, snippet: Snippet | None) -> None:
@@ -1315,6 +1327,8 @@ class PromptEditorPanel(QWidget, AsyncTaskOwner):
         self._library_block_updates = False
 
     def _duplicate_selected_prompt(self) -> None:
+        if not self._flush_pending_library_autosave():
+            return
         if not self._selected_prompt:
             self._set_library_status_translated("No prompt selected.")
             return
@@ -1371,6 +1385,8 @@ class PromptEditorPanel(QWidget, AsyncTaskOwner):
         self._set_library_status_translated("Exported to {path}.", path=path)
 
     def _create_library_item(self) -> None:
+        if not self._flush_pending_library_autosave():
+            return
         kind = SK_PROMPT
         if self._library_kind_combo:
             selection = self._library_kind_combo.currentData()
@@ -1408,7 +1424,7 @@ class PromptEditorPanel(QWidget, AsyncTaskOwner):
             "",
             self._ts("Text Files (*.txt);;All Files (*.*)"),
         )
-        if not path:
+        if not path or not self._flush_pending_library_autosave():
             return
         try:
             body = Path(path).read_text(encoding="utf-8").strip()
@@ -1483,6 +1499,8 @@ class PromptEditorPanel(QWidget, AsyncTaskOwner):
         if not body:
             return
         if kind not in (SK_TEXT, SK_LIST, SK_PROMPT):
+            return
+        if not self._flush_pending_library_autosave():
             return
         label = self._library_kind_label(kind)
         title = f"New {label}"

@@ -16,6 +16,10 @@ class CanvasDocumentEventService:
     def emit_doc_changed(self, payload: DocumentChangeEvent) -> None:
         if getattr(self._owner, "_suppress_doc_events", 0):
             return
+        pending = getattr(self._owner, "_pending_native_raster_doc_events", None)
+        if pending is not None and pending[0].is_current():
+            pending[1].append(payload)
+            return
         event_bus = getattr(self._owner, "_event_bus", None)
         publish = getattr(event_bus, "publish", None)
         if callable(publish):

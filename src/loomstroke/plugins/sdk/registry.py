@@ -13,13 +13,14 @@ import logging
 import os
 import shutil
 import uuid
-from collections.abc import Iterable, Mapping
-from contextlib import suppress
+from collections.abc import Callable, Iterable, Iterator, Mapping
+from contextlib import contextmanager, suppress
+from copy import deepcopy
 from pathlib import Path
 from typing import Any
 
 from ...platform.launch_options import ai_features_enabled, is_ai_plugin_module
-from ...platform.settings_manager import get_settings_manager
+from ...platform.settings_manager import SettingsManager, get_settings_manager
 from ...platform.user_dirs import plugin_data_root
 from .base import PluginLifecycle, PluginMetadata, PluginType
 from .errors import PluginInitError, PluginLifecycleError
@@ -42,6 +43,8 @@ class PluginRegistry:
         self._metadata: dict[str, PluginMetadata] = {}
         self._by_type: dict[PluginType, list[str]] = {plugin_type: [] for plugin_type in PluginType}
         self._host_api: Any | None = None
+        self._update_confirmation: tuple[str, Callable[[PluginLifecycle], None]] | None = None
+        self._rollback_retired: tuple[str, Callable[[], None]] | None = None
         self._settings_manager = get_settings_manager()
         trusted_keys = self._normalize_trusted_keys(
             self._settings_manager.get("plugins/trusted_keys", [])
@@ -185,6 +188,18 @@ class PluginRegistry:
         except Exception as e:
             raise PluginInitError(f"Failed to load plugin from {module_path}: {e}") from e
 
+    @contextmanager
+    def _confirm_plugin_update(
+        self, plugin_id: str, confirm: Callable[[PluginLifecycle], None]
+    ) -> Iterator[None]:
+        """Allow the desktop host to confirm the updated plugin's contributions."""
+        previous = self._update_confirmation
+        self._update_confirmation = (plugin_id, confirm)
+        try:
+            yield
+        finally:
+            self._update_confirmation = previous
+
     def update_from_module(
         self,
         module_path: str,
@@ -215,6 +230,8 @@ class PluginRegistry:
                 f"Cannot update plugin '{target_id}': plugin not installed in {plugin_root}"
             )
 
+        permission_key = f"plugins/permissions/{target_id}"
+        old_permission_value = deepcopy(self._settings_manager.get(permission_key))
         old_permissions = self._load_granted_permissions(target_id)
         effective_permissions = (
             self._normalize_permissions(granted_permissions)
@@ -226,21 +243,25 @@ class PluginRegistry:
         old_was_enabled = bool(getattr(old_plugin, "enabled", False))
         old_was_registered = target_id in self._plugins
         backup_path: Path | None = None
+        candidate_started = False
+        permissions_started = False
         logger.info(
             "plugin registry update requested plugin_id=%s path=%s",
             target_id,
             module_path,
         )
 
+        if old_was_enabled:
+            self._stop_plugin_for_update(target_id, old_plugin)
         if old_was_registered:
-            with suppress(Exception):
-                self.deactivate(target_id)
             self._remove_registered_plugin(target_id, clear_permissions=False)
 
         with suppress(Exception):
             self._loader.unload_plugin(target_id)
 
         try:
+            if target_id in self._loader.loaded_plugins:
+                raise PluginInitError(f"Could not unload plugin '{target_id}' before update")
             installed_path, installed_manifest, backup = self._loader.install_from_source(
                 module_path,
                 keep_backup=True,
@@ -252,6 +273,7 @@ class PluginRegistry:
                     f"Plugin package ID mismatch during update: {installed_manifest.id}"
                 )
 
+            candidate_started = True
             plugin_obj = self._loader.load_plugin(
                 installed_path,
                 installed_manifest,
@@ -263,13 +285,20 @@ class PluginRegistry:
             new_metadata = plugin_obj.metadata
             if not isinstance(new_metadata, PluginMetadata):
                 raise PluginInitError(f"Plugin metadata from {module_path} is invalid")
+            if new_metadata.id != target_id:
+                raise PluginInitError(f"Plugin metadata ID mismatch during update: {target_id}")
 
             self.register(plugin_obj, new_metadata)
             if old_was_enabled and self._host_api:
-                with suppress(Exception):
-                    self.activate(target_id)
+                self.activate(target_id)
 
+            permissions_started = True
             self.set_granted_permissions(target_id, effective_permissions)
+            if isinstance(self._settings_manager, SettingsManager):
+                self._settings_manager._require_persisted()
+            confirmation = self._update_confirmation
+            if confirmation is not None and target_id == confirmation[0]:
+                confirmation[1](plugin_obj)
             self._cleanup_plugin_backups(target_id, keep_backup=backup_path)
             logger.info(
                 "plugin registry update succeeded plugin_id=%s backup=%s",
@@ -285,9 +314,18 @@ class PluginRegistry:
                 backup_path,
                 exc,
             )
-            self._restore_plugin_from_backup(target_id, backup_path)
-            if old_was_registered:
-                try:
+            try:
+                if candidate_started:
+                    self._discard_package_candidate(target_id)
+                self._restore_plugin_from_backup(target_id, backup_path)
+                if permissions_started:
+                    if old_permission_value is None:
+                        self._clear_granted_permissions(target_id)
+                    else:
+                        self._settings_manager.set(
+                            permission_key, old_permission_value, emit_event=False
+                        )
+                if old_was_registered:
                     restored_plugin, restored_metadata = self._load_packaged_plugin(
                         plugin_root,
                         str(plugin_root),
@@ -295,15 +333,55 @@ class PluginRegistry:
                     )
                     self.register(restored_plugin, restored_metadata)
                     if old_was_enabled and self._host_api:
-                        with suppress(Exception):
-                            self.activate(target_id)
-                except Exception as restore_exc:
-                    logger.warning(
-                        "plugin registry update rollback load failed plugin_id=%s error=%s",
-                        target_id,
-                        restore_exc,
-                    )
+                        self.activate(target_id)
+            except Exception as restore_exc:
+                logger.warning(
+                    "plugin registry update rollback failed plugin_id=%s error=%s",
+                    target_id,
+                    restore_exc,
+                )
+                raise PluginInitError(
+                    f"Failed to update plugin '{target_id}': {exc}. "
+                    f"Rollback failed: {restore_exc}"
+                ) from exc
             raise PluginInitError(f"Failed to update plugin '{target_id}': {exc}") from exc
+
+    def _stop_plugin_for_update(self, plugin_id: str, plugin: PluginLifecycle | None) -> None:
+        try:
+            self.deactivate(plugin_id)
+        except PluginLifecycleError as exc:
+            if self._host_api and not getattr(plugin, "enabled", False):
+                try:
+                    self.activate(plugin_id)
+                except PluginLifecycleError as restore_error:
+                    raise PluginInitError(
+                        f"Failed to update plugin '{plugin_id}': {exc}. "
+                        f"Rollback failed: {restore_error}"
+                    ) from exc
+            raise PluginInitError(f"Failed to update plugin '{plugin_id}': {exc}") from exc
+
+    def _discard_package_candidate(self, plugin_id: str) -> None:
+        if plugin_id in self._plugins:
+            with suppress(PluginLifecycleError):
+                # Activation may have registered resources before setting enabled.
+                self.deactivate(plugin_id)
+            self._remove_registered_plugin(plugin_id, clear_permissions=False)
+        if plugin_id not in self._loader.loaded_plugins or not self._loader.unload_plugin(
+            plugin_id
+        ):
+            self._loader._forget_plugin_load(plugin_id)
+
+    @contextmanager
+    def _after_rollback_retirement(
+        self, plugin_id: str, notify: Callable[[], None]
+    ) -> Iterator[None]:
+        """Let the desktop detach the old panel once its package is safely aside."""
+        previous = self._rollback_retired
+        self._rollback_retired = (plugin_id, notify)
+        try:
+            yield
+        finally:
+            self._rollback_retired = previous
 
     def rollback_plugin(self, plugin_id: str) -> None:
         """
@@ -324,24 +402,27 @@ class PluginRegistry:
         staging_path = plugin_path.parent / f".{plugin_id}.rollback_staging.{uuid.uuid4().hex}"
         logger.info("plugin registry rollback requested plugin_id=%s", plugin_id)
 
+        if was_enabled:
+            with suppress(Exception):
+                self.deactivate(plugin_id)
+        retired = self._retire_for_rollback(plugin_id, plugin_path, staging_path, was_enabled)
+        copying_backup = False
+        candidate_started = False
         try:
+            retirement_callback = self._rollback_retired
+            if retirement_callback is not None and retirement_callback[0] == plugin_id:
+                retirement_callback[1]()
             if was_registered:
-                with suppress(Exception):
-                    self.deactivate(plugin_id)
                 self._remove_registered_plugin(plugin_id, clear_permissions=False)
             with suppress(Exception):
                 self._loader.unload_plugin(plugin_id)
+            if plugin_id in self._loader.loaded_plugins:
+                raise PluginInitError(f"Could not unload plugin '{plugin_id}' before rollback")
 
-            if plugin_path.exists():
-                if staging_path.exists():
-                    shutil.rmtree(staging_path, ignore_errors=True)
-                shutil.move(str(plugin_path), str(staging_path))
-
-            with suppress(Exception):
-                if plugin_path.exists():
-                    shutil.rmtree(plugin_path, ignore_errors=True)
+            copying_backup = True
             shutil.copytree(backup_path, plugin_path)
 
+            candidate_started = True
             plugin_obj, metadata = self._load_packaged_plugin(
                 plugin_path,
                 str(plugin_path),
@@ -350,24 +431,20 @@ class PluginRegistry:
             self.register(plugin_obj, metadata)
 
             if was_enabled and self._host_api:
-                with suppress(Exception):
-                    self.activate(plugin_id)
-
-            # Keep rollback only as the explicitly requested restoration target.
-            self._cleanup_plugin_backups(plugin_id, keep_backup=None)
-            logger.info("plugin registry rollback succeeded plugin_id=%s", plugin_id)
+                self.activate(plugin_id)
+                if not getattr(plugin_obj, "enabled", False):
+                    raise PluginLifecycleError(f"Plugin '{plugin_id}' did not become enabled")
 
         except Exception as exc:
             logger.warning("plugin rollback failed, restoring pre-rollback state: %s", exc)
-            with suppress(Exception):
-                if plugin_path.exists():
-                    shutil.rmtree(plugin_path, ignore_errors=True)
-            with suppress(Exception):
-                if staging_path.exists():
-                    shutil.move(str(staging_path), str(plugin_path))
-
-            if was_registered:
-                with suppress(Exception):
+            try:
+                if candidate_started:
+                    self._discard_package_candidate(plugin_id)
+                if copying_backup and plugin_path.exists():
+                    shutil.rmtree(plugin_path)
+                if retired:
+                    staging_path.rename(plugin_path)
+                if was_registered:
                     restored_plugin, restored_metadata = self._load_packaged_plugin(
                         plugin_path,
                         str(plugin_path),
@@ -375,14 +452,52 @@ class PluginRegistry:
                     )
                     self.register(restored_plugin, restored_metadata)
                     if was_enabled and self._host_api:
-                        with suppress(Exception):
-                            self.activate(plugin_id)
+                        self.activate(plugin_id)
+                        if not getattr(restored_plugin, "enabled", False):
+                            raise PluginLifecycleError(
+                                f"Plugin '{plugin_id}' did not become enabled"
+                            )
+            except Exception as restore_error:
+                raise PluginInitError(
+                    f"Failed to rollback plugin '{plugin_id}': {exc}. "
+                    f"Could not restore the previously installed plugin: {restore_error}"
+                ) from exc
 
             raise PluginInitError(f"Failed to rollback plugin '{plugin_id}': {exc}") from exc
-        finally:
-            with suppress(Exception):
-                if staging_path.exists():
-                    shutil.rmtree(staging_path, ignore_errors=True)
+
+        try:
+            self._cleanup_plugin_backups(plugin_id, keep_backup=None)
+        except OSError:
+            logger.warning("Could not clean up rollback backups: %s", plugin_id, exc_info=True)
+        logger.info("plugin registry rollback succeeded plugin_id=%s", plugin_id)
+        if retired:
+            shutil.rmtree(staging_path, ignore_errors=True)
+
+    def _retire_for_rollback(
+        self, plugin_id: str, installed: Path, staging: Path, was_enabled: bool
+    ) -> bool:
+        try:
+            if not installed.exists():
+                return False
+            if staging.exists() or staging.is_symlink():
+                raise FileExistsError(f"Rollback staging path already exists: {staging.name}")
+            # Keep the installed tree intact if an in-place rename is refused.
+            installed.rename(staging)
+        except OSError as exc:
+            if (
+                was_enabled
+                and self._host_api
+                and not getattr(self.get(plugin_id), "enabled", False)
+            ):
+                try:
+                    self.activate(plugin_id)
+                except PluginLifecycleError as restore_error:
+                    raise PluginInitError(
+                        f"Failed to rollback plugin '{plugin_id}': {exc}. "
+                        f"Could not reactivate current plugin: {restore_error}"
+                    ) from exc
+            raise PluginInitError(f"Failed to rollback plugin '{plugin_id}': {exc}") from exc
+        return True
 
     def has_rollback_backup(self, plugin_id: str) -> bool:
         """Return whether a rollback backup is currently available."""
@@ -645,10 +760,11 @@ class PluginRegistry:
         if backup_path is None:
             return
         plugin_path = self._loader.plugins_dir / plugin_id
-        with suppress(Exception):
-            if plugin_path.exists():
-                shutil.rmtree(plugin_path, ignore_errors=True)
-            shutil.move(str(backup_path), str(plugin_path))
+        if not backup_path.is_dir():
+            raise PluginInitError(f"Update backup is unavailable for plugin '{plugin_id}'")
+        if plugin_path.exists():
+            shutil.rmtree(plugin_path)
+        backup_path.rename(plugin_path)
 
     def _remove_registered_plugin(self, plugin_id: str, *, clear_permissions: bool) -> None:
         if plugin_id not in self._plugins:

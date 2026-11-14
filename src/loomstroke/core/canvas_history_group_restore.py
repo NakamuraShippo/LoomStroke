@@ -18,6 +18,8 @@ from .layer_mask_submit import _capture_mask_restore_notice
 from .layer_opacity_submit import _capture_opacity_restore_notice
 from .layer_rename_submit import _capture_rename_restore_notice
 from .resource_embed_submit import _capture_embed_restore_notice
+from .resource_refresh_submit import _capture_resource_refresh_restore_notice
+from .standalone_mask_invert import _capture_standalone_mask_restore_notice
 
 logger = logging.getLogger(__name__)
 
@@ -45,9 +47,11 @@ class _GroupRestoreAttempt:
         existing_notice = (
             _capture_rename_restore_notice(canvas, self.group)
             or _capture_embed_restore_notice(canvas, self.group)
+            or _capture_resource_refresh_restore_notice(canvas, self.group)
             or _capture_blend_restore_notice(canvas, self.group)
             or _capture_opacity_restore_notice(canvas, self.group)
             or _capture_mask_restore_notice(canvas, self.group)
+            or _capture_standalone_mask_restore_notice(canvas, self.group)
         )
         self.document_notice = _capture_result_restore_notice(canvas, self.group, existing_notice)
         self.completed: list[Any] = []

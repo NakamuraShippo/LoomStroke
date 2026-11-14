@@ -550,6 +550,7 @@ class LoomStrokeAppEnhanced:
             "loomstroke.plugins.gptimage2.panel_plugin",
             "loomstroke.plugins.nanobanana.service",
             "loomstroke.plugins.nanobanana.panel_plugin",
+            "loomstroke.plugins.novelai.panel_plugin",
             "loomstroke.plugins.prompt_editor.panel_plugin",
             "loomstroke.plugins.reference_viewer",
             "loomstroke.plugins.three_d_generation.preview_panel",

@@ -6,10 +6,11 @@ import base64
 import json
 import struct
 from pathlib import Path
-from typing import Any, cast
+from typing import Any
 
 import numpy as np
 
+from .gltf_static_geometry import bake_static_geometry
 from .material import MaterialAsset
 from .mesh import MeshAsset, MeshPrimitive
 from .scene import Scene3DDocument, Scene3DNode
@@ -19,6 +20,7 @@ _COMPONENT_FLOAT = 5126
 _COMPONENT_UBYTE = 5121
 _COMPONENT_USHORT = 5123
 _COMPONENT_UINT = 5125
+_INDEX_COMPONENTS = {_COMPONENT_UBYTE, _COMPONENT_USHORT, _COMPONENT_UINT}
 _ARRAY_BUFFER = 34962
 _ELEMENT_ARRAY_BUFFER = 34963
 _TYPE_COUNTS = {"SCALAR": 1, "VEC2": 2, "VEC3": 3}
@@ -343,8 +345,12 @@ def _scene_from_gltf(
     for mesh_index, raw_mesh in enumerate(raw.get("meshes", [])):
         primitives = []
         for raw_primitive in raw_mesh.get("primitives", []):
+            if raw_primitive.get("mode", 4) != 4:
+                raise ValueError("only glTF triangle primitives are supported")
             attributes = raw_primitive.get("attributes", {})
             vertices = _read_accessor("POSITION", attributes, accessors, buffer_views, buffers)
+            if vertices is None:
+                raise ValueError("glTF primitive POSITION is required")
             normals = _read_accessor("NORMAL", attributes, accessors, buffer_views, buffers)
             uvs = _read_accessor("TEXCOORD_0", attributes, accessors, buffer_views, buffers)
             indices = _read_indices(raw_primitive.get("indices"), accessors, buffer_views, buffers)
@@ -354,7 +360,7 @@ def _scene_from_gltf(
                 material_id = materials[material_index].id
             primitives.append(
                 MeshPrimitive(
-                    vertices=cast(np.ndarray, vertices),
+                    vertices=vertices,
                     indices=indices.reshape((-1, 3)),
                     normals=normals,
                     uvs=uvs,
@@ -373,37 +379,14 @@ def _scene_from_gltf(
             )
         )
 
-    nodes = []
-    for node_index, raw_node in enumerate(raw.get("nodes", [])):
-        mesh_index = raw_node.get("mesh")
-        node_mesh_id = (
-            meshes[mesh_index].id
-            if isinstance(mesh_index, int) and 0 <= mesh_index < len(meshes)
-            else None
-        )
-        node_extras: dict[str, Any] = (
-            raw_node.get("extras") if isinstance(raw_node.get("extras"), dict) else {}
-        )
-        node_id = str(node_extras.get("id") or f"node_{node_index}")
-        nodes.append(
-            Scene3DNode(
-                id=node_id,
-                name=str(raw_node.get("name") or node_id),
-                mesh_id=node_mesh_id,
-            )
-        )
-    if not nodes:
-        nodes = [
-            Scene3DNode(id=f"node_{index}", name=mesh.name, mesh_id=mesh.id)
-            for index, mesh in enumerate(meshes)
-        ]
+    nodes, placed_meshes = bake_static_geometry(raw, meshes)
     raw_extras = raw.get("extras")
     scene_extras: dict[str, Any] = raw_extras if isinstance(raw_extras, dict) else {}
     scene_id = str(scene_extras.get("loomstroke_scene_id") or "gltf_scene")
     return Scene3DDocument(
         id=scene_id,
-        nodes=tuple(nodes),
-        meshes=tuple(meshes),
+        nodes=nodes,
+        meshes=placed_meshes,
         materials=materials,
         textures=textures,
         root_node_ids=tuple(node.id for node in nodes),
@@ -651,12 +634,25 @@ def _read_accessor(
     accessor_index = attributes.get(name)
     if accessor_index is None:
         return None
-    return _read_accessor_by_index(
-        accessor_index,
-        accessors,
+    accessor = accessors[accessor_index]
+    component = accessor.get("componentType")
+    normalized = accessor.get("normalized", False)
+    integer_uv = name == "TEXCOORD_0" and component in (_COMPONENT_UBYTE, _COMPONENT_USHORT)
+    expected_type = "VEC2" if name == "TEXCOORD_0" else "VEC3"
+    if accessor.get("type") != expected_type or not (
+        (component == _COMPONENT_FLOAT and not normalized) or (integer_uv and normalized)
+    ):
+        raise ValueError(f"unsupported glTF {name} accessor type")
+    array = _read_accessor_data(
+        accessor,
         buffer_views,
         buffers,
-    ).astype(np.float32)
+        vertex_attribute=True,
+    )
+    converted = array.astype(np.float32, copy=False)
+    if integer_uv:
+        converted /= np.iinfo(array.dtype).max
+    return converted
 
 
 def _read_indices(
@@ -667,31 +663,54 @@ def _read_indices(
 ) -> np.ndarray:
     if accessor_index is None:
         raise ValueError("glTF primitive indices are required")
-    return _read_accessor_by_index(
-        accessor_index,
-        accessors,
-        buffer_views,
-        buffers,
-    ).astype(np.uint32)
+    accessor = accessors[accessor_index]
+    if (
+        accessor.get("type") != "SCALAR"
+        or accessor.get("componentType") not in _INDEX_COMPONENTS
+        or accessor.get("normalized", False)
+    ):
+        raise ValueError("unsupported glTF index accessor type")
+    return _read_accessor_data(accessor, buffer_views, buffers).astype(np.uint32, copy=False)
 
 
-def _read_accessor_by_index(
-    accessor_index: int,
-    accessors: list[dict[str, Any]],
+def _read_accessor_data(
+    accessor: dict[str, Any],
     buffer_views: list[dict[str, Any]],
     buffers: list[bytes],
+    *,
+    vertex_attribute: bool = False,
 ) -> np.ndarray:
-    accessor = accessors[accessor_index]
+    if "sparse" in accessor or "bufferView" not in accessor:
+        raise ValueError("sparse or implicit glTF accessors are not supported")
     view = buffer_views[int(accessor["bufferView"])]
     buffer = buffers[int(view.get("buffer", 0))]
-    component_type = int(accessor["componentType"])
-    try:
-        dtype = _COMPONENT_DTYPES[component_type]
-    except KeyError as exc:
-        raise ValueError(f"unsupported glTF component type: {component_type}") from exc
+    dtype = np.dtype(_COMPONENT_DTYPES[accessor["componentType"]]).newbyteorder("<")
     count = int(accessor["count"])
     type_count = _TYPE_COUNTS[str(accessor["type"])]
-    byte_offset = int(view.get("byteOffset", 0)) + int(accessor.get("byteOffset", 0))
-    byte_length = count * type_count * np.dtype(dtype).itemsize
-    array = np.frombuffer(buffer[byte_offset : byte_offset + byte_length], dtype=dtype).copy()
-    return array.reshape((count, type_count))
+    element_size = type_count * dtype.itemsize
+    stride = view.get("byteStride", element_size)
+    if "byteStride" in view and (
+        not vertex_attribute
+        or not isinstance(stride, int)
+        or not max(4, element_size) <= stride <= 252
+        or stride % 4
+    ):
+        raise ValueError("invalid glTF accessor stride")
+    view_offset = int(view.get("byteOffset", 0))
+    view_length = int(view.get("byteLength", -1))
+    accessor_offset = int(accessor.get("byteOffset", 0))
+    span = (count - 1) * stride + element_size if count else 0
+    if (
+        min(count, view_offset, view_length, accessor_offset) < 0
+        or view_offset + view_length > len(buffer)
+        or accessor_offset + span > view_length
+        or (view_offset + accessor_offset) % dtype.itemsize
+    ):
+        raise ValueError("glTF accessor exceeds its buffer view or has an invalid offset")
+    return np.ndarray(
+        shape=(count, type_count),
+        dtype=dtype,
+        buffer=buffer,
+        offset=view_offset + accessor_offset,
+        strides=(stride, dtype.itemsize),
+    ).copy()

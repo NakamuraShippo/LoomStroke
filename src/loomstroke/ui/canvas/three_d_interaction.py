@@ -3,16 +3,22 @@
 from __future__ import annotations
 
 import logging
-from dataclasses import dataclass
+from dataclasses import dataclass, replace
 from typing import Any
 
 from PySide6.QtCore import Qt
 
 from loomstroke.core.assets_3d.scene import Scene3DDocument
-from loomstroke.core.commands import SetLayer3DCameraCommand, SetLayer3DOffsetCommand
+from loomstroke.core.commands import (
+    SetLayer3DCameraCommand,
+    SetLayer3DLightPositionCommand,
+)
+from loomstroke.core.drawing_figures.projection import screen_delta_to_world
+from loomstroke.core.layer_3d_light import light_position
 from loomstroke.core.layer_3d_rendering import orbit_camera_state
 from loomstroke.rendering_3d import OrbitCameraState
 
+from . import three_d_light_handle
 from .drawing_figure_interaction import DrawingFigureInteraction
 from .guide_canvas_bridge import update_guide_overlay
 
@@ -30,7 +36,11 @@ class _InteractionState:
     start_widget: tuple[float, float]
     start_canvas: tuple[float, float]
     start_camera: OrbitCameraState
-    start_offset: tuple[int, int]
+    start_light: tuple[float, float, float]
+    start_lighting: Any
+    light_drag_origin: tuple[float, float] | None = None
+    light_proxy_direction: tuple[float, float] | None = None
+    light_drag_axis: int | None = None
     changed: bool = False
 
 
@@ -43,7 +53,7 @@ class Canvas3DLayerInteractionController:
         self._drag_mode = "orbit"
         self.figure = DrawingFigureInteraction(self)
 
-    def handle_mouse_press(self, event: Any) -> bool:
+    def handle_mouse_press(self, event: Any) -> bool:  # noqa: PLR0911 - input gates
         if self.is_active():
             event.accept()
             return True
@@ -53,7 +63,20 @@ class Canvas3DLayerInteractionController:
             return False
         widget_pos = _event_widget_pos(event)
         canvas_pos = self._widget.viewport.widget_to_canvas(*widget_pos)
-        if not self._is_inside_canvas(canvas_pos):
+        light_marker = None
+        if (
+            event.button() == Qt.MouseButton.LeftButton
+            and self._drag_mode == "light"
+            and not _has_modifier(event.modifiers(), Qt.KeyboardModifier.ShiftModifier)
+        ):
+            light_marker = three_d_light_handle.placement(layer, self._widget)
+        light_target = (
+            three_d_light_handle.target_at(layer, self._widget, widget_pos, light_marker)
+            if light_marker is not None
+            else None
+        )
+        light_hit = light_target is not None
+        if not self._is_inside_canvas(canvas_pos) and not light_hit:
             return False
         button = event.button()
         modifiers = event.modifiers()
@@ -63,7 +86,11 @@ class Canvas3DLayerInteractionController:
                 if _has_modifier(modifiers, Qt.KeyboardModifier.ShiftModifier)
                 else self._drag_mode
             )
-            if mode == "pose" or (mode == "orbit" and self.figure.hand_editor_active):
+            if mode == "light" and not light_hit:
+                mode = "orbit"
+            if mode == "pose" or (
+                mode == "orbit" and self._drag_mode == "orbit" and self.figure.hand_editor_active
+            ):
                 if self.figure.press(event):
                     return True
                 mode = "orbit"
@@ -77,9 +104,22 @@ class Canvas3DLayerInteractionController:
             start_widget=widget_pos,
             start_canvas=(float(canvas_pos[0]), float(canvas_pos[1])),
             start_camera=orbit_camera_state(getattr(layer, "camera_3d", None), layer.scene_3d),
-            start_offset=(
-                int(getattr(layer, "offset_x", 0)),
-                int(getattr(layer, "offset_y", 0)),
+            start_light=light_position(layer),
+            start_lighting=getattr(layer, "lighting_3d", None),
+            light_drag_origin=(
+                light_marker.light_canvas
+                if mode == "light" and light_target == "proxy" and light_marker is not None
+                else None
+            ),
+            light_proxy_direction=(
+                _proxy_direction(light_marker, self._widget)
+                if mode == "light" and light_target == "proxy" and light_marker is not None
+                else None
+            ),
+            light_drag_axis=(
+                "xyz".index(light_target)
+                if mode == "light" and light_target in {"x", "y", "z"}
+                else None
             ),
         )
         event.accept()
@@ -91,6 +131,9 @@ class Canvas3DLayerInteractionController:
         state = self._state
         if state is None:
             return self.figure.hover.move(event)
+        if self._active_3d_layer() is not state.layer:
+            self.cancel()
+            return False
         widget_pos = _event_widget_pos(event)
         if state.mode == "orbit":
             dx = widget_pos[0] - state.start_widget[0]
@@ -100,15 +143,65 @@ class Canvas3DLayerInteractionController:
                 pitch_delta=-dy * _PITCH_DEGREES_PER_PIXEL,
             )
             self._apply_camera(state.layer, camera)
+        elif state.mode == "light":
+            if state.light_proxy_direction is not None:
+                dx = widget_pos[0] - state.start_widget[0]
+                dy = widget_pos[1] - state.start_widget[1]
+                along = dx * state.light_proxy_direction[0] + dy * state.light_proxy_direction[1]
+                if abs(along) < 4.0:
+                    event.accept()
+                    return True
+                widget_pos = (
+                    state.start_widget[0] + along * state.light_proxy_direction[0],
+                    state.start_widget[1] + along * state.light_proxy_direction[1],
+                )
+            canvas_pos = self._widget.viewport.widget_to_canvas(*widget_pos)
+            origin = state.light_drag_origin or state.start_canvas
+            delta = (
+                float(canvas_pos[0]) - origin[0],
+                float(canvas_pos[1]) - origin[1],
+            )
+            world_delta = screen_delta_to_world(
+                delta,
+                state.layer.scene_3d,
+                state.start_camera,
+                int(self._widget.state.width),
+                int(self._widget.state.height),
+            )
+            position = list(state.start_light)
+            if state.light_drag_axis is not None:
+                axis = state.light_drag_axis
+                rotation = state.start_camera.rotation_matrix()
+                projected_sq = float(rotation[0, axis] ** 2 + rotation[1, axis] ** 2)
+                position[axis] += float(world_delta[axis]) / projected_sq
+            else:
+                position = [
+                    float(a + b) for a, b in zip(state.start_light, world_delta, strict=True)
+                ]
+            self._apply_light(
+                state.layer,
+                tuple(position),
+            )
         else:
             canvas_pos = self._widget.viewport.widget_to_canvas(*widget_pos)
-            dx = float(canvas_pos[0]) - state.start_canvas[0]
-            dy = float(canvas_pos[1]) - state.start_canvas[1]
-            self._apply_offset(
-                state.layer,
+            world_delta = screen_delta_to_world(
                 (
-                    round(state.start_offset[0] + dx),
-                    round(state.start_offset[1] + dy),
+                    float(canvas_pos[0]) - state.start_canvas[0],
+                    float(canvas_pos[1]) - state.start_canvas[1],
+                ),
+                state.layer.scene_3d,
+                state.start_camera,
+                int(self._widget.state.width),
+                int(self._widget.state.height),
+            )
+            self._apply_camera(
+                state.layer,
+                replace(
+                    state.start_camera,
+                    target=tuple(
+                        float(a - b)
+                        for a, b in zip(state.start_camera.target, world_delta, strict=True)
+                    ),
                 ),
             )
         state.changed = True
@@ -123,12 +216,15 @@ class Canvas3DLayerInteractionController:
         state = self._state
         if state is None:
             return False
+        if self._active_3d_layer() is not state.layer:
+            self.cancel()
+            return False
         self._state = None
         if state.changed:
-            if state.mode == "orbit":
+            if state.mode in {"orbit", "move"}:
                 self._commit_camera(state)
-            else:
-                self._commit_offset(state)
+            elif state.mode == "light":
+                self._commit_light(state)
         event.accept()
         if self._drag_mode == "pose":
             self.figure.hover.move(event)
@@ -169,13 +265,17 @@ class Canvas3DLayerInteractionController:
 
     def draw_overlay(self, painter: Any) -> None:
         self.figure.draw(painter)
+        if self._drag_mode == "light":
+            layer = self._active_3d_layer()
+            if layer is not None:
+                three_d_light_handle.draw(painter, layer, self._widget)
 
     def drag_mode(self) -> str:
         return self._drag_mode
 
     def set_drag_mode(self, mode: str) -> bool:
         token = str(mode or "").strip().lower()
-        if token not in {"orbit", "move", "pose"}:
+        if token not in {"orbit", "move", "pose", "light"}:
             return False
         self.cancel()
         self._drag_mode = token
@@ -188,10 +288,41 @@ class Canvas3DLayerInteractionController:
         self._state = None
         if state is None:
             return
-        if state.mode == "orbit":
+        if state.mode in {"orbit", "move"}:
             self._apply_camera(state.layer, state.start_camera)
-        else:
-            self._apply_offset(state.layer, state.start_offset)
+        elif state.mode == "light":
+            self._restore_light(state)
+
+    def cancel_if_invalid(self) -> None:
+        if self._state is not None and self._active_3d_layer() is not self._state.layer:
+            self.cancel()
+
+    def _commit_light(self, state: _InteractionState) -> None:
+        position = light_position(state.layer)
+        if position == state.start_light:
+            self._restore_light(state)
+            return
+        self._restore_light(state)
+        if not self._submit(
+            SetLayer3DLightPositionCommand(
+                str(getattr(state.layer, "id", "")),
+                position,
+                merge_key="3d-layer-drag-light",
+            )
+        ):
+            self._restore_light(state)
+
+    def _restore_light(self, state: _InteractionState) -> None:
+        state.layer.lighting_3d = state.start_lighting
+        self._refresh_layer(state.layer)
+
+    def _apply_light(self, layer: Any, position: tuple[float, float, float]) -> None:
+        lighting = getattr(layer, "lighting_3d", None)
+        layer.lighting_3d = {
+            **(lighting if isinstance(lighting, dict) else {}),
+            "position": list(position),
+        }
+        self._refresh_layer(layer)
 
     def _commit_camera(self, state: _InteractionState) -> None:
         camera = orbit_camera_state(
@@ -200,37 +331,19 @@ class Canvas3DLayerInteractionController:
         )
         if _camera_payload(camera) == _camera_payload(state.start_camera):
             return
-        self._submit(
+        submitted = self._submit(
             SetLayer3DCameraCommand(
                 str(getattr(state.layer, "id", "")),
                 _camera_payload(camera),
                 old_camera=_camera_payload(state.start_camera),
-                merge_key="3d-layer-drag-camera",
+                merge_key=("3d-layer-drag-pan" if state.mode == "move" else "3d-layer-drag-camera"),
             )
         )
-
-    def _commit_offset(self, state: _InteractionState) -> None:
-        current = (
-            int(getattr(state.layer, "offset_x", 0)),
-            int(getattr(state.layer, "offset_y", 0)),
-        )
-        if current == state.start_offset:
-            return
-        self._submit(
-            SetLayer3DOffsetCommand(
-                str(getattr(state.layer, "id", "")),
-                current,
-                old_offset=state.start_offset,
-                merge_key="3d-layer-drag-offset",
-            )
-        )
+        if not submitted and state.mode == "move":
+            self._apply_camera(state.layer, state.start_camera)
 
     def _apply_camera(self, layer: Any, camera: OrbitCameraState) -> None:
         layer.camera_3d = _camera_payload(camera)
-        self._refresh_layer(layer)
-
-    def _apply_offset(self, layer: Any, offset: tuple[int, int]) -> None:
-        layer.offset_x, layer.offset_y = offset
         self._refresh_layer(layer)
 
     def _refresh_layer(self, layer: Any) -> None:
@@ -243,7 +356,7 @@ class Canvas3DLayerInteractionController:
         if callable(recompose):
             recompose()
         self._widget.update()
-        if self._drag_mode == "pose":
+        if self._drag_mode in {"pose", "light"}:
             update_guide_overlay(self._widget)
 
     def _submit(self, command: Any) -> bool:
@@ -310,6 +423,16 @@ class Canvas3DLayerInteractionController:
 def _event_widget_pos(event: Any) -> tuple[float, float]:
     pos = event.position()
     return float(pos.x()), float(pos.y())
+
+
+def _proxy_direction(
+    marker: three_d_light_handle.LightHandlePlacement, widget: Any
+) -> tuple[float, float]:
+    light_widget = widget.viewport.canvas_to_widget(*marker.light_canvas)
+    dx = light_widget[0] - marker.widget[0]
+    dy = light_widget[1] - marker.widget[1]
+    length = (dx * dx + dy * dy) ** 0.5
+    return dx / length, dy / length
 
 
 def _has_modifier(modifiers: Any, modifier: Qt.KeyboardModifier) -> bool:

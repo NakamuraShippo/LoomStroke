@@ -265,7 +265,7 @@ def submit_resource_place(canvas, command):
                     if recovered:
                         capture.release()
                     return False
-                canvas._record_history_command("Place Image", command)
+                canvas._record_history_command(command.history_label, command)
                 if not fence.recorded():
                     recovered = fence.rollback_if_owned()
                     if recovered:
@@ -282,7 +282,7 @@ def submit_resource_place(canvas, command):
                 notifications.return_ownership()
                 # Keep capture protected during DOC_CHANGED too: a nested
                 # synchronous save cannot finalize a pre-revision snapshot.
-                canvas._emit_doc_changed(DocumentChangeEvent(change_type="resource.place"))
+                canvas._emit_doc_changed(DocumentChangeEvent(change_type=command.change_type))
                 capture.release()
     finally:
         command._submitting = False

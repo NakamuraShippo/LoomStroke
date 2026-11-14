@@ -16,6 +16,7 @@ from PySide6.QtWidgets import (
     QWidget,
 )
 
+from loomstroke.core.japanese_text.linked_story import _locked
 from loomstroke.host_api import HostAPI
 from loomstroke.plugins.shape_manager.ops.bbox import compute_object_bbox
 from loomstroke.plugins.shape_manager.ops.selection_ops import (
@@ -43,6 +44,7 @@ class TransformPanel(QWidget):
         self._event_tokens: list[tuple[str, Any]] = []
         self._canvas_changed_handler: Any | None = None
         self._updating = False  # guard against recursive updates
+        self._displayed_target: tuple[Any, ...] | None = None
         self._refresh_timer = QTimer(self)
         self._refresh_timer.setSingleShot(True)
         self._refresh_timer.setInterval(50)
@@ -189,6 +191,7 @@ class TransformPanel(QWidget):
 
     def _do_refresh(self) -> None:
         info = self._get_selected_info()
+        self._displayed_target = self._target_scope(info)
         if info is None:
             self._set_all_enabled(False)
             self._status_label.setText(_ts("No selection"))
@@ -382,10 +385,49 @@ class TransformPanel(QWidget):
     # Apply changes
     # ------------------------------------------------------------------
 
+    def _target_scope(self, info: dict[str, Any] | None) -> tuple[Any, ...] | None:
+        if self._host is None or info is None:
+            return None
+        canvas = self._host.canvas
+        pages = getattr(self._host, "pages", None)
+        page_id = getattr(pages, "get_active_page_id", lambda: None)()
+        if info["kind"] == "layer":
+            layer = info["layer"]
+            references = ((layer.id, id(layer)),)
+        else:
+            items = info.get("items") or [(info["vec_id"], info.get("layer_id"), info["obj"])]
+            references = tuple((vec_id, layer_id, id(obj)) for vec_id, layer_id, obj in items)
+        return (
+            id(canvas),
+            id(getattr(canvas, "_doc", None)),
+            page_id,
+            info["kind"],
+            references,
+            info["bbox"],
+            info["angle"],
+        )
+
+    def _get_edit_info(self) -> dict[str, Any] | None:
+        info = self._get_selected_info()
+        current = self._target_scope(info)
+        # Callers without a populated UI retain the existing direct-edit contract.
+        displayed = self.__dict__.get("_displayed_target", current)
+        if displayed != current:
+            self._refresh()
+            return None
+        if (
+            info is not None
+            and info["kind"] == "layer"
+            and _locked(self._host.canvas, info["layer"])
+        ):
+            self._refresh()
+            return None
+        return info
+
     def _on_position_changed(self) -> None:
         if self._updating:
             return
-        info = self._get_selected_info()
+        info = self._get_edit_info()
         if info is None:
             return
 
@@ -406,7 +448,7 @@ class TransformPanel(QWidget):
     def _on_size_changed(self) -> None:
         if self._updating:
             return
-        info = self._get_selected_info()
+        info = self._get_edit_info()
         if info is None or info["kind"] == "layer":
             return
 
@@ -427,7 +469,7 @@ class TransformPanel(QWidget):
     def _on_angle_changed(self) -> None:
         if self._updating:
             return
-        info = self._get_selected_info()
+        info = self._get_edit_info()
         if info is None:
             return
         angle_deg = self._spin_angle.value()

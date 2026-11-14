@@ -39,36 +39,30 @@ class _Target:
 class _Targets:
     """Simulate only target choice; no canvas state or normalized payload is kept."""
 
-    def __init__(self, canvas: Any, get_layer: Callable[[Any, str], Any]) -> None:
-        self.canvas = canvas
-        self.get_layer = get_layer
-        self.views: dict[int, _Target] = {}
-        self.named: dict[str, _Target] = {}
-        self.aliases: dict[str, _Target] = {}
-        self.roots = [self._view(layer) for layer in canvas._layers]
-        self.active = self._view(canvas._get_active_layer())
-        self.can_restore = callable(getattr(canvas, "restore_vector_layer", None))
-
-    def _view(self, layer: Any) -> _Target | None:
-        if layer is None:
-            return None
-        key = id(layer)
-        if key not in self.views:
-            objects = getattr(layer, "vector_objects", ())
-            target = _Target(
-                str(getattr(layer, "name", "") or ""),
-                getattr(layer, "layer_type", None) == "vector",
-                str(getattr(layer, "vector_kind", "draw") or "draw"),
+    def __init__(self, canvas: Any, _get_layer: Callable[[Any, str], Any]) -> None:
+        tree = canvas.get_layer_tree_snapshot()
+        vectors = canvas.get_vector_state_snapshot()
+        objects_by_id = {layer.layer_id: layer.vector_objects for layer in vectors.layers}
+        self.views: dict[str, _Target] = {}
+        for layer in tree.layers:
+            objects = objects_by_id.get(layer.id, ())
+            self.views[layer.id] = _Target(
+                str(layer.name or ""),
+                layer.layer_type == "vector",
+                str(layer.vector_kind or "draw"),
                 {ensure_vector_object_id(obj) for obj in objects},
                 any(_text(obj) for obj in objects),
             )
-            self.views[key] = target
-        return self.views[key]
+        self.named: dict[str, _Target] = {}
+        self.aliases: dict[str, _Target] = {}
+        self.roots = [self.views[identifier] for identifier in tree.root_layer_ids]
+        self.active = self.views.get(tree.active_layer_id)
+        self.can_restore = callable(getattr(canvas, "restore_vector_layer", None))
 
     def _lookup(self, identifier: str) -> _Target | None:
         if not identifier:
             return None
-        return self.named.get(identifier) or self._view(self.get_layer(self.canvas, identifier))
+        return self.named.get(identifier) or self.views.get(identifier)
 
     def create(self, operation: Mapping[str, Any]) -> None:
         raw = str(operation.get("layerId") or "")

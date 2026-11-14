@@ -25,6 +25,7 @@ import numpy as np
 from numpy.typing import NDArray
 from PIL import Image, ImageCms
 
+from ..core.print_modes.mono1_bit_packer import Mono1BitPacker
 from .atomic_export_writer import write_atomically
 from .color_profile_registry import _INTENTS, ColorProfileRegistry, RenderingIntent
 
@@ -32,8 +33,10 @@ __all__ = [
     "flatten_to_paper",
     "rgba_to_cmyk",
     "rgba_to_grayscale_k",
+    "write_bilevel_tiff",
     "write_cmyk_tiff",
     "write_grayscale_k_tiff",
+    "write_grayscale_tiff",
 ]
 
 
@@ -152,3 +155,37 @@ def write_grayscale_k_tiff(
         image.save(temp_path, format="TIFF", dpi=dpi)
 
     return write_atomically(Path(destination), _encode)
+
+
+def write_grayscale_tiff(
+    destination: Path, k_plane: NDArray[np.uint8], *, dpi: tuple[float, float]
+) -> int:
+    """Write an 8-bit grayscale TIFF; white paper is 255."""
+    if k_plane.ndim != 2 or k_plane.dtype != np.uint8:
+        raise ValueError("write_grayscale_tiff expects a K8 plane (H x W)")
+    image = Image.fromarray(np.ascontiguousarray(255 - k_plane), mode="L")
+    return write_atomically(
+        Path(destination), lambda temp: image.save(temp, format="TIFF", dpi=dpi)
+    )
+
+
+def write_bilevel_tiff(
+    destination: Path,
+    k_plane: NDArray[np.uint8],
+    *,
+    dpi: tuple[float, float],
+    threshold: int = 128,
+    dither: str = "threshold",
+) -> int:
+    """Write exact black/white pixels as a 1-bit TIFF."""
+    if k_plane.ndim != 2 or k_plane.dtype != np.uint8:
+        raise ValueError("write_bilevel_tiff expects a K8 plane (H x W)")
+    if not 0 <= threshold <= 255 or dither not in ("threshold", "ordered4x4"):
+        raise ValueError("Invalid bilevel conversion options")
+    ink = Mono1BitPacker().binarize(255 - k_plane, threshold=threshold, mode=dither)
+    image = Image.fromarray(Mono1BitPacker.to_gray(ink), mode="L").convert(
+        "1", dither=Image.Dither.NONE
+    )
+    return write_atomically(
+        Path(destination), lambda temp: image.save(temp, format="TIFF", dpi=dpi)
+    )

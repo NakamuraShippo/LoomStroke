@@ -3,7 +3,7 @@
 from __future__ import annotations
 
 import copy
-from collections.abc import Mapping
+from collections.abc import Callable, Mapping
 from dataclasses import dataclass
 from typing import Any
 
@@ -14,6 +14,7 @@ from .types import McpStructuredError, ReasonCode
 _MISSING = object()
 _VALID_TRIGGERS = {"manual", "on_change", "debounced"}
 _VALID_OUTPUT_OVERRIDES = {"self", "new_layer_above"}
+_GENERATION_RUNTIME_FIELDS = frozenset({"state", "generation", "last_result", "last_error"})
 
 
 @dataclass
@@ -24,6 +25,22 @@ class AIEffectStateBackup:
     trigger: str
     target_server_id: str | None
     output_mode_override: str | None
+
+
+class _TemporaryGenerationState:
+    """Give the generation controller local inputs and the original runtime fields."""
+
+    __slots__ = ("_draft", "_live")
+
+    def __init__(self, live: Any, draft: Any) -> None:
+        object.__setattr__(self, "_live", live)
+        object.__setattr__(self, "_draft", draft)
+
+    def __getattr__(self, name: str) -> Any:
+        return getattr(self._live if name in _GENERATION_RUNTIME_FIELDS else self._draft, name)
+
+    def __setattr__(self, name: str, value: Any) -> None:
+        setattr(self._live if name in _GENERATION_RUNTIME_FIELDS else self._draft, name, value)
 
 
 def has_ai_effect_state_update(arguments: Mapping[str, Any]) -> bool:
@@ -38,6 +55,23 @@ def has_ai_effect_state_update(arguments: Mapping[str, Any]) -> bool:
             ("outputModeOverride", "output_mode_override"),
         )
     )
+
+
+def _temporary_ai_effect_generation_state(state: Any, arguments: Mapping[str, Any]) -> Any:
+    """Resolve temporary MCP overrides without publishing them on the canvas."""
+    draft = copy.copy(state)
+    draft.preset_snapshot = copy.deepcopy(state.preset_snapshot)
+    draft.param_values = _updated_param_values(state, arguments)
+    draft.slot_refs = _updated_slot_refs(state, arguments)
+    param_ui_state = _updated_param_ui_state(state, arguments)
+    draft.param_ui_state = (
+        copy.deepcopy(state.param_ui_state) if param_ui_state is None else param_ui_state
+    )
+    _apply_direct_state_fields(draft, arguments)
+    override = _read_output_override(arguments)
+    if override is not _MISSING:
+        draft.output_mode_override = override
+    return _TemporaryGenerationState(state, draft)
 
 
 def find_live_ai_effect_layer(canvas: Any, layer_id: str) -> Any:
@@ -102,6 +136,8 @@ def apply_ai_effect_state_update(
     canvas: Any,
     layer_id: str,
     arguments: Mapping[str, Any],
+    *,
+    owns_target: Callable[[], bool] | None = None,
 ) -> dict[str, Any]:
     layer = find_live_ai_effect_layer(canvas, layer_id)
     state = layer.ai_effect
@@ -111,6 +147,12 @@ def apply_ai_effect_state_update(
     param_ui_state = _updated_param_ui_state(state, arguments)
     _apply_direct_state_fields(state, arguments)
     _write_canvas_state(canvas, layer_id, param_values, slot_refs, param_ui_state)
+    if owns_target is not None and not owns_target():
+        raise McpStructuredError(
+            ReasonCode.CONFLICT,
+            "AI Effect generation target changed.",
+            details={"layerId": layer_id},
+        )
     _apply_output_override(canvas, layer_id, state, arguments)
 
     return {
@@ -212,20 +254,9 @@ def _apply_output_override(
     state: Any,
     arguments: Mapping[str, Any],
 ) -> None:
-    raw_output_override = _value(
-        arguments,
-        "outputModeOverride",
-        "output_mode_override",
-        default=_MISSING,
-    )
-    if raw_output_override is _MISSING:
+    output_override = _read_output_override(arguments)
+    if output_override is _MISSING:
         return
-    output_override = _optional_str(raw_output_override)
-    if output_override is not None and output_override not in _VALID_OUTPUT_OVERRIDES:
-        raise _invalid(
-            "outputModeOverride must be self, new_layer_above, or null.",
-            "outputModeOverride",
-        )
     output_setter = getattr(canvas, "set_ai_effect_layer_output_mode_override", None)
     if not callable(output_setter):
         state.output_mode_override = output_override
@@ -236,6 +267,24 @@ def _apply_output_override(
             "AI Effect output mode override update failed.",
             details={"layerId": layer_id, "outputModeOverride": output_override},
         )
+
+
+def _read_output_override(arguments: Mapping[str, Any]) -> Any:
+    raw_output_override = _value(
+        arguments,
+        "outputModeOverride",
+        "output_mode_override",
+        default=_MISSING,
+    )
+    if raw_output_override is _MISSING:
+        return _MISSING
+    output_override = _optional_str(raw_output_override)
+    if output_override is not None and output_override not in _VALID_OUTPUT_OVERRIDES:
+        raise _invalid(
+            "outputModeOverride must be self, new_layer_above, or null.",
+            "outputModeOverride",
+        )
+    return output_override
 
 
 def build_ai_effect_layer_state_schema(

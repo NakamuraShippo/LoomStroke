@@ -2,20 +2,25 @@
 
 from __future__ import annotations
 
+from dataclasses import replace
 from typing import Any
 
-from PySide6.QtCore import QEvent, QSignalBlocker
+from PySide6.QtCore import QEvent, QSignalBlocker, Qt
+from PySide6.QtGui import QAction
 from PySide6.QtWidgets import (
     QComboBox,
     QHBoxLayout,
     QInputDialog,
     QLabel,
+    QMenu,
     QMessageBox,
     QPushButton,
+    QToolButton,
     QWidget,
 )
 
 from loomstroke.core.drawing_figures.model import pose_from_layer
+from loomstroke.core.drawing_figures.presets import PRESETS, preset_pose
 from loomstroke.core.drawing_figures.user_pose_presets import FigurePosePresetStore
 
 from .drawing_figure_add import figure_text as tr
@@ -31,8 +36,9 @@ class DrawingFigurePosePresetControls(QWidget):
         self._binder = TranslationBinder(tr)
         row = QHBoxLayout(self)
         row.setContentsMargins(0, 0, 0, 0)
+        row.setSpacing(4)
         label = QLabel(self)
-        self._binder.register(label.setText, "Saved poses")
+        self._binder.register(label.setText, "Pose presets")
         row.addWidget(label)
         self.presets = QComboBox(self)
         self.presets.setMinimumContentsLength(12)
@@ -43,23 +49,35 @@ class DrawingFigurePosePresetControls(QWidget):
         self.presets.addItem(tr("Select saved pose"), None)
         self.presets.currentIndexChanged.connect(self._update_actions)
         row.addWidget(self.presets)
-        self.save_button = self._button(row, "Save current pose", self._save_clicked)
-        self.apply_button = self._button(row, "Apply saved pose", self.apply_selected)
-        self.delete_button = self._button(row, "Delete saved pose", self.delete_selected)
+        self.apply_button = QPushButton(self)
+        self._binder.register(self.apply_button.setText, "Apply pose")
+        self.apply_button.clicked.connect(self.apply_selected)
+        row.addWidget(self.apply_button)
+        self.more_button = QToolButton(self)
+        self.more_button.setText("⋯")
+        self.more_button.setToolTip(tr("Pose presets"))
+        self.more_button.setPopupMode(QToolButton.ToolButtonPopupMode.InstantPopup)
+        self.menu = QMenu(self.more_button)
+        self.save_button = QAction(self.menu)
+        self._binder.register(self.save_button.setText, "Save current pose")
+        self.save_button.triggered.connect(self._save_clicked)
+        self.menu.addAction(self.save_button)
+        self.delete_button = QAction(self.menu)
+        self._binder.register(self.delete_button.setText, "Delete saved pose")
+        self.delete_button.triggered.connect(self.delete_selected)
+        self.menu.addAction(self.delete_button)
+        self.more_button.setMenu(self.menu)
+        row.addWidget(self.more_button)
         self.status = QLabel(self)
         self.status.hide()
         row.addWidget(self.status)
         self._update_actions()
 
-    def _button(self, row: QHBoxLayout, source: str, callback: Any) -> QPushButton:
-        button = QPushButton(self)
-        self._binder.register(button.setText, source)
-        button.clicked.connect(callback)
-        row.addWidget(button)
-        return button
-
     def _selected_layer(self) -> Any:
         return self.toolbar._layer()
+
+    def _selected_kind(self) -> str | None:
+        return self.presets.currentData(Qt.ItemDataRole.UserRole + 1)
 
     def refresh(self, *, force: bool = False) -> None:
         layer = self._selected_layer()
@@ -68,22 +86,40 @@ class DrawingFigurePosePresetControls(QWidget):
         if not force and model == self._model:
             self._update_actions()
             return
-        selected = self.presets.currentData()
+        selected = (self._selected_kind(), self.presets.currentData())
         self._model = model
         with QSignalBlocker(self.presets):
             self.presets.clear()
-            self.presets.addItem(tr("Select saved pose"), None)
+            if model is None:
+                self.presets.addItem(tr("Select saved pose"), None)
+            else:
+                for key, source in PRESETS.items():
+                    self.presets.addItem(tr(source), key)
+                    self.presets.setItemData(
+                        self.presets.count() - 1, "built_in", Qt.ItemDataRole.UserRole + 1
+                    )
             try:
                 if model is not None:
-                    for item in self.store.list(model):
+                    saved = self.store.list(model)
+                    if saved:
+                        self.presets.insertSeparator(self.presets.count())
+                    for item in saved:
                         self.presets.addItem(item.name, item.id)
+                        self.presets.setItemData(
+                            self.presets.count() - 1, "saved", Qt.ItemDataRole.UserRole + 1
+                        )
                 self.status.hide()
                 self.status.setToolTip("")
             except (OSError, ValueError, RuntimeError) as error:
                 self.status.setText(tr("Could not load pose presets"))
                 self.status.setToolTip(str(error))
                 self.status.show()
-            index = self.presets.findData(selected) if selected is not None else 0
+            index = self.presets.findData(selected[1]) if selected[1] is not None else 0
+            if (
+                index >= 0
+                and self.presets.itemData(index, Qt.ItemDataRole.UserRole + 1) != selected[0]
+            ):
+                index = 0
             self.presets.setCurrentIndex(max(index, 0))
         self._update_actions()
 
@@ -91,9 +127,9 @@ class DrawingFigurePosePresetControls(QWidget):
         layer = self._selected_layer()
         available = pose_from_layer(layer) is not None and not bool(getattr(layer, "locked", False))
         self.save_button.setEnabled(available)
-        chosen = available and self.presets.currentData() is not None
+        chosen = available and self._selected_kind() in {"built_in", "saved"}
         self.apply_button.setEnabled(chosen)
-        self.delete_button.setEnabled(chosen)
+        self.delete_button.setEnabled(available and self._selected_kind() == "saved")
         self.presets.setToolTip(self.presets.currentText() if chosen else "")
 
     def _warn(self, source: str, error: Exception) -> None:
@@ -132,7 +168,14 @@ class DrawingFigurePosePresetControls(QWidget):
         layer = self._selected_layer()
         pose = pose_from_layer(layer)
         preset_id = self.presets.currentData()
+        kind = self._selected_kind()
         if pose is None or getattr(layer, "locked", False) or not isinstance(preset_id, str):
+            return False
+        if kind == "built_in":
+            return self.toolbar._submit(
+                replace(preset_pose(pose.model, preset_id), hand_rotations=pose.hand_rotations)
+            )
+        if kind != "saved":
             return False
         try:
             saved = self.store.get(preset_id)
@@ -148,7 +191,12 @@ class DrawingFigurePosePresetControls(QWidget):
         layer = self._selected_layer()
         pose = pose_from_layer(layer)
         preset_id = self.presets.currentData()
-        if pose is None or getattr(layer, "locked", False) or not isinstance(preset_id, str):
+        if (
+            pose is None
+            or getattr(layer, "locked", False)
+            or not isinstance(preset_id, str)
+            or self._selected_kind() != "saved"
+        ):
             return False
         try:
             saved = self.store.get(preset_id)
@@ -171,6 +219,13 @@ class DrawingFigurePosePresetControls(QWidget):
         super().changeEvent(event)
         if event.type() == QEvent.Type.LanguageChange:
             self._binder.retranslate()
-            self.presets.setItemText(0, tr("Select saved pose"))
+            self.more_button.setToolTip(tr("Pose presets"))
+            if self._model is None:
+                self.presets.setItemText(0, tr("Select saved pose"))
+            else:
+                for key, source in PRESETS.items():
+                    index = self.presets.findData(key)
+                    if index >= 0:
+                        self.presets.setItemText(index, tr(source))
             if not self.status.isHidden():
                 self.status.setText(tr("Could not load pose presets"))

@@ -9,6 +9,8 @@ from typing import Any, Protocol
 from loomstroke.core.events import DocumentChangeEvent
 
 from .canvas_command_commit_guard import CanvasCommandCommitGuard
+from .canvas_vector_apply_recovery import VectorApplyRecovery
+from .vector_initial_edit_policy import allows_initial_vector_edit
 
 logger = logging.getLogger(__name__)
 
@@ -29,16 +31,31 @@ class CanvasVectorCommandSubmitService:
         return hasattr(cmd, "vector_object") or hasattr(cmd, "new_object")
 
     def submit(self, cmd: _VectorCommand) -> bool:
+        finalize = getattr(cmd, "_finalize_initial_vector_edit", None)
+        if callable(finalize):
+            from .canvas_vector_commit_boundary import submit_vector_with_finalizer  # noqa: PLC0415
+
+            return submit_vector_with_finalizer(self, cmd, finalize)
         guard = CanvasCommandCommitGuard(self._owner)
+        recovery = VectorApplyRecovery.capture(self._owner)
         try:
             target_layer_id = getattr(cmd, "layer_id", None) or getattr(cmd, "_layer_id", None)
             if target_layer_id is None:
                 self._owner.ensure_vector_layer()
+            if recovery is not None and not allows_initial_vector_edit(self._owner, cmd):
+                recovery.recover(guard)
+                return False
             applied = cmd.apply(self._owner)
+            if recovery is not None and not recovery.scope.current():
+                return False
         except Exception as exc:  # pragma: no cover - defensive
+            if recovery is not None:
+                recovery.recover(guard)
             logger.warning("Failed to apply vector command: %s", exc)
             return False
         if not applied:
+            if recovery is not None:
+                recovery.recover(guard)
             logger.debug("Vector command apply returned False: %s", type(cmd).__name__)
             return False
 
@@ -48,8 +65,7 @@ class CanvasVectorCommandSubmitService:
             guard.rollback(cmd)
             raise
 
-    def _commit(self, cmd: _VectorCommand) -> bool:
-
+    def _record(self, cmd: _VectorCommand) -> None:
         label = "Vector"
         if hasattr(cmd, "vector_object"):
             label = "Vector Create"
@@ -71,6 +87,9 @@ class CanvasVectorCommandSubmitService:
                     layer.texture_version += 1
 
         self._owner._record_history_command(label, cmd)
+
+    def _commit(self, cmd: _VectorCommand) -> bool:
+        self._record(cmd)
         logger.info(
             "Vector command applied; vectors=%s preview=%s layer=%s",
             sum(

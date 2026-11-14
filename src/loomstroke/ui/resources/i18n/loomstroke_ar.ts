@@ -2,7 +2,27 @@
 <!DOCTYPE TS>
 <TS version="2.1" language="ar">
     <context>
-        <name>MainWindow</name>
+    <name>MainWindow</name>
+    <message>
+        <source>New Document Failed</source>
+        <translation>فشل إنشاء مستند جديد</translation>
+    </message>
+    <message>
+        <source>New Canvas from Clipboard Image</source>
+        <translation>إنشاء لوحة جديدة من صورة الحافظة</translation>
+    </message>
+    <message>
+        <source>Created a canvas from the clipboard image.</source>
+        <translation>تم إنشاء لوحة من صورة الحافظة.</translation>
+    </message>
+    <message>
+        <source>Could not create a canvas from the clipboard image.</source>
+        <translation>تعذر إنشاء لوحة من صورة الحافظة.</translation>
+    </message>
+    <message>
+        <source>Some layer or effect masks are missing. The document may look different. Use Save As to keep the original file.</source>
+        <translation>بعض أقنعة الطبقات أو التأثيرات مفقودة. قد يبدو المستند مختلفًا. استخدم «حفظ باسم» للاحتفاظ بالملف الأصلي.</translation>
+    </message>
         <message>
             <source>Rotate Straight Ruler Left</source>
             <translation>تدوير المسطرة المستقيمة إلى اليسار</translation>
@@ -1089,6 +1109,10 @@
 </context>
     <context>
         <name>BasicPen</name>
+    <message>
+        <source>The brush library could not be saved.</source>
+        <translation>تعذّر حفظ مكتبة الفُرَش.</translation>
+    </message>
         <message>
             <source>Basic Settings</source>
             <translation>الإعدادات الأساسية</translation>
@@ -4991,6 +5015,10 @@ After refreshing the token, any agents registered to this LoomStroke MCP server 
         <source>Clear the layer filter</source>
         <translation>إلغاء تصفية الطبقة</translation>
     </message>
+    <message>
+        <source>The generation record could not be deleted.</source>
+        <translation>تعذّر حذف سجل الإنشاء.</translation>
+    </message>
 </context>
 <context>
     <name>ToolPropertiesPanel</name>
@@ -7038,8 +7066,8 @@ Select a file to recover.</source>
         <translation>لم يتم حفظ مفتاح API في مُخزن المفاتيح. تحقق من السجل للحصول على التفاصيل وحاول مرة أخرى.</translation>
     </message>
     <message>
-        <source>{name} uses Google Gemini's API. The key is stored encrypted in your OS keyring and is read only when you press Generate.</source>
-        <translation>يستخدم {name} واجهة API الخاصة بـ Google Gemini. يُخزّن المفتاح مشفّرًا في مخزن مفاتيح نظام التشغيل، ولا يُقرأ إلا عند الضغط على «توليد».</translation>
+        <source>{name} API key is stored in your OS keyring and read only when you make a request.</source>
+        <translation>يُحفظ مفتاح API الخاص بـ {name} في مخزن مفاتيح نظام التشغيل، ولا يُقرأ إلا عند إرسال طلب.</translation>
     </message>
 </context>
 <context>
@@ -8390,6 +8418,10 @@ Failed to initialise the GPU compositor. Please update your graphics driver and 
     <message>
         <source>Values applied to this layer.</source>
         <translation>تم تطبيق القيم على هذه الطبقة.</translation>
+    </message>
+    <message>
+        <source>ComfyUI did not finish loading. Check the server connection and reload nodes.</source>
+        <translation>ComfyUI لم يكتمل التحميل. تحقق من اتصال الخادم وقم بتحديث العقد.</translation>
     </message>
 </context>
 <context>
@@ -12247,6 +12279,22 @@ Please check that all image paths in your workflow are valid.
 <context>
     <name>ExportPrintDialog</name>
     <message>
+        <source>PDF/X-1a candidate</source>
+        <translation>ملف PDF/X-1a مرشح (يتطلب تحققًا يدويًا)</translation>
+    </message>
+    <message>
+        <source>PDF/X-4 candidate</source>
+        <translation>ملف PDF/X-4 مرشح (يتطلب تحققًا يدويًا)</translation>
+    </message>
+    <message>
+        <source>Verify the PDF/X candidate in callas pdfToolbox Desktop before submission.</source>
+        <translation>تحقق من ملف PDF/X المرشح في callas pdfToolbox Desktop قبل التسليم.</translation>
+    </message>
+    <message>
+        <source>PDF/X candidates do not support margin information.</source>
+        <translation>لا تدعم ملفات PDF/X المرشحة معلومات الهوامش.</translation>
+    </message>
+    <message>
         <source>A CMYK profile is required for CMYK output.</source>
         <translation>يلزم ملف تعريف CMYK للإخراج بنظام CMYK.</translation>
     </message>
@@ -12501,6 +12549,58 @@ Please check that all image paths in your workflow are valid.
     <message>
         <source>{count} page(s) will be exported.</source>
         <translation>سيتم تصدير {count} صفحة.</translation>
+    </message>
+    <message>
+        <source>Preset:</source>
+        <translation>إعداد مسبق:</translation>
+    </message>
+    <message>
+        <source>Grayscale TIFF sequence</source>
+        <translation>تسلسل TIFF بتدرج الرمادي</translation>
+    </message>
+    <message>
+        <source>1-bit TIFF sequence</source>
+        <translation>تسلسل TIFF بدقة 1-bit</translation>
+    </message>
+    <message>
+        <source>8-bit grayscale TIFF, one file per page.</source>
+        <translation>ملف TIFF بتدرج رمادي بدقة 8-bit لكل صفحة.</translation>
+    </message>
+    <message>
+        <source>1-bit black-and-white TIFF, one file per page.</source>
+        <translation>ملف TIFF أبيض وأسود بدقة 1-bit لكل صفحة.</translation>
+    </message>
+    <message>
+        <source>1-bit conversion</source>
+        <translation>تحويل إلى 1-bit</translation>
+    </message>
+    <message>
+        <source>Threshold:</source>
+        <translation>العتبة:</translation>
+    </message>
+    <message>
+        <source>Method:</source>
+        <translation>الطريقة:</translation>
+    </message>
+    <message>
+        <source>Threshold</source>
+        <translation>العتبة</translation>
+    </message>
+    <message>
+        <source>Ordered 4x4 dither</source>
+        <translation>تدرج منتظم 4x4</translation>
+    </message>
+    <message>
+        <source>The selected print preset does not match every page's format and DPI.</source>
+        <translation>تنسيق الصفحات وDPI في إعداد الطباعة المحدد لا يطابقان جميع الصفحات.</translation>
+    </message>
+    <message>
+        <source>The saved CMYK profile must be loaded again.</source>
+        <translation>يجب إعادة تحميل ملف تعريف CMYK المحفوظ.</translation>
+    </message>
+    <message>
+        <source>Could not save the format preset.</source>
+        <translation>تعذر حفظ إعداد الطباعة المسبق.</translation>
     </message>
 </context>
 <context>
@@ -14806,6 +14906,14 @@ After refreshing the token, any agents registered to this LoomStroke MCP server 
         <translation>لا يمكن حفظ الوثيقة: {path}
 {error}</translation>
     </message>
+    <message>
+        <source>No SVG-compatible vector objects to export.</source>
+        <translation>لا توجد عناصر متجهة متوافقة مع SVG لتصديرها.</translation>
+    </message>
+    <message>
+        <source>The current SVG export omits groups, layer placement, enabled masks, unsupported blend modes, and live filters.</source>
+        <translation>لا يتضمن تصدير SVG الحالي المجموعات أو مواضع الطبقات أو الأقنعة المفعّلة أو أوضاع المزج غير المدعومة أو المرشحات الحية.</translation>
+    </message>
 </context>
 <context>
     <name>MainWindowEditShapeActionsCoordinator</name>
@@ -15807,6 +15915,10 @@ Operation: {operation}
 </context>
 <context>
     <name>NewDocumentDialog</name>
+    <message>
+        <source>Include Bleed</source>
+        <translation>تضمين مساحة النزف</translation>
+    </message>
     <message>
         <source>AI</source>
         <translation>AI</translation>
@@ -17380,6 +17492,10 @@ Type: {type}</source>
         <source>{count} plugin(s) loaded</source>
         <translation>تم تحميل {count} إضافة</translation>
     </message>
+    <message>
+        <source>Failed</source>
+        <translation>فشل</translation>
+    </message>
 </context>
 <context>
     <name>PluginUpdateDialog</name>
@@ -17609,8 +17725,8 @@ Type: {type}</source>
         <translation>الأسود الحالي (RGB)</translation>
     </message>
     <message>
-        <source>Japanese corner (current)</source>
-        <translation>الزاوية اليابانية (الحالية)</translation>
+        <source>Japanese corner</source>
+        <translation>الزاوية اليابانية</translation>
     </message>
     <message>
         <source>Japanese double</source>
@@ -18509,6 +18625,18 @@ Type: {type}</source>
     <message>
         <source>Ollama's default context is short and silently cuts the start of long prompts; raise it with OLLAMA_CONTEXT_LENGTH or the model's num_ctx.</source>
         <translation>سياق Ollama الافتراضي قصير ويقطع بداية الموجّهات الطويلة دون تنبيه؛ زِده عبر OLLAMA_CONTEXT_LENGTH أو num_ctx للنموذج.</translation>
+    </message>
+    <message>
+        <source>Aa</source>
+        <translation>Aa</translation>
+    </message>
+    <message>
+        <source>Display name</source>
+        <translation>اسم العرض</translation>
+    </message>
+    <message>
+        <source>Item</source>
+        <translation>عنصر</translation>
     </message>
 </context>
 <context>
@@ -21244,6 +21372,46 @@ Do you want to save them?</source>
 </context>
 <context>
     <name>__shared__</name>
+    <message>
+        <source>Include Bleed</source>
+        <translation>تضمين مساحة النزف</translation>
+    </message>
+    <message>
+        <source>PDF/X-1a candidate</source>
+        <translation>ملف PDF/X-1a مرشح (يتطلب تحققًا يدويًا)</translation>
+    </message>
+    <message>
+        <source>PDF/X-4 candidate</source>
+        <translation>ملف PDF/X-4 مرشح (يتطلب تحققًا يدويًا)</translation>
+    </message>
+    <message>
+        <source>Verify the PDF/X candidate in callas pdfToolbox Desktop before submission.</source>
+        <translation>تحقق من ملف PDF/X المرشح في callas pdfToolbox Desktop قبل التسليم.</translation>
+    </message>
+    <message>
+        <source>PDF/X candidates do not support margin information.</source>
+        <translation>لا تدعم ملفات PDF/X المرشحة معلومات الهوامش.</translation>
+    </message>
+    <message>
+        <source>Could not create a canvas from the clipboard image.</source>
+        <translation>تعذر إنشاء لوحة من صورة الحافظة.</translation>
+    </message>
+    <message>
+        <source>Created a canvas from the clipboard image.</source>
+        <translation>تم إنشاء لوحة من صورة الحافظة.</translation>
+    </message>
+    <message>
+        <source>New Canvas from Clipboard Image</source>
+        <translation>إنشاء لوحة جديدة من صورة الحافظة</translation>
+    </message>
+    <message>
+        <source>The brush library could not be saved.</source>
+        <translation>تعذّر حفظ مكتبة الفُرَش.</translation>
+    </message>
+    <message>
+        <source>Some layer or effect masks are missing. The document may look different. Use Save As to keep the original file.</source>
+        <translation>بعض أقنعة الطبقات أو التأثيرات مفقودة. قد يبدو المستند مختلفًا. استخدم «حفظ باسم» للاحتفاظ بالملف الأصلي.</translation>
+    </message>
     <message>
         <source>Straight Ruler</source>
         <translation>مسطرة مستقيمة</translation>
@@ -27963,8 +28131,8 @@ Select a file to recover.</source>
         <translation>الياباني</translation>
     </message>
     <message>
-        <source>Japanese corner (current)</source>
-        <translation>الزاوية اليابانية (الحالية)</translation>
+        <source>Japanese corner</source>
+        <translation>الزاوية اليابانية</translation>
     </message>
     <message>
         <source>Japanese double</source>
@@ -36178,8 +36346,8 @@ Drag onto the canvas to place</source>
         <translation>{name} ليس تنسيقًا صورة مدعومًا.</translation>
     </message>
     <message>
-        <source>{name} uses Google Gemini's API. The key is stored encrypted in your OS keyring and is read only when you press Generate.</source>
-        <translation>يستخدم {name} واجهة API الخاصة بـ Google Gemini. يُخزّن المفتاح مشفّرًا في مخزن مفاتيح نظام التشغيل، ولا يُقرأ إلا عند الضغط على «توليد».</translation>
+        <source>{name} API key is stored in your OS keyring and read only when you make a request.</source>
+        <translation>يُحفظ مفتاح API الخاص بـ {name} في مخزن مفاتيح نظام التشغيل، ولا يُقرأ إلا عند إرسال طلب.</translation>
     </message>
     <message>
         <source>{pending} pending, {running} running</source>
@@ -36584,6 +36752,406 @@ Click to show as panel</source>
     <message>
         <source>Walking</source>
         <translation>مشي</translation>
+    </message>
+    <message>
+        <source>AI Settings</source>
+        <translation>إعدادات الذكاء الاصطناعي</translation>
+    </message>
+    <message>
+        <source>Aa</source>
+        <translation>Aa</translation>
+    </message>
+    <message>
+        <source>Add basic shape</source>
+        <translation>إضافة شكل أساسي</translation>
+    </message>
+    <message>
+        <source>Add potion</source>
+        <translation>إضافة جرعة</translation>
+    </message>
+    <message>
+        <source>Advanced API parameters (JSON)</source>
+        <translation>معلمات API المتقدمة (JSON)</translation>
+    </message>
+    <message>
+        <source>Advanced API parameters (JSON; overrides controls)</source>
+        <translation>معلمات API المتقدمة (JSON؛ لها أولوية على إعدادات الواجهة)</translation>
+    </message>
+    <message>
+        <source>Advanced Settings</source>
+        <translation>إعدادات متقدمة</translation>
+    </message>
+    <message>
+        <source>Basic shape</source>
+        <translation>شكل أساسي</translation>
+    </message>
+    <message>
+        <source>Character Reference</source>
+        <translation>مرجع الشخصية</translation>
+    </message>
+    <message>
+        <source>Character and Style</source>
+        <translation>مرجع الشخصية والنمط</translation>
+    </message>
+    <message>
+        <source>Collapse AI Settings</source>
+        <translation>طي إعدادات الذكاء الاصطناعي</translation>
+    </message>
+    <message>
+        <source>Colorize</source>
+        <translation>تلوين</translation>
+    </message>
+    <message>
+        <source>Could not add basic shape</source>
+        <translation>تعذرت إضافة الشكل الأساسي</translation>
+    </message>
+    <message>
+        <source>Create variation from Gallery image</source>
+        <translation>إنشاء نسخة بديلة من صورة في المعرض</translation>
+    </message>
+    <message>
+        <source>Cube</source>
+        <translation>مكعب</translation>
+    </message>
+    <message>
+        <source>Cylinder</source>
+        <translation>أسطوانة</translation>
+    </message>
+    <message>
+        <source>Director Tool</source>
+        <translation>أداة الإخراج</translation>
+    </message>
+    <message>
+        <source>Director Tools</source>
+        <translation>أدوات الإخراج</translation>
+    </message>
+    <message>
+        <source>Emotion</source>
+        <translation>تعبير الوجه</translation>
+    </message>
+    <message>
+        <source>External AI services are disabled</source>
+        <translation>خدمات الذكاء الاصطناعي الخارجية معطّلة</translation>
+    </message>
+    <message>
+        <source>Image Generation</source>
+        <translation>إنشاء الصور</translation>
+    </message>
+    <message>
+        <source>Image Resolution</source>
+        <translation>دقة الصورة</translation>
+    </message>
+    <message>
+        <source>Image Settings</source>
+        <translation>إعدادات الصورة</translation>
+    </message>
+    <message>
+        <source>Image2Image</source>
+        <translation>من صورة إلى صورة</translation>
+    </message>
+    <message>
+        <source>Information Extracted</source>
+        <translation>مقدار المعلومات المستخرجة</translation>
+    </message>
+    <message>
+        <source>Inpaint (current selection)</source>
+        <translation>إعادة التصحيح (التحديد الحالي)</translation>
+    </message>
+    <message>
+        <source>Input layer</source>
+        <translation>طبقة الإدخال</translation>
+    </message>
+    <message>
+        <source>Large</source>
+        <translation>حجم كبير</translation>
+    </message>
+    <message>
+        <source>Large Landscape</source>
+        <translation>كبير أفقي</translation>
+    </message>
+    <message>
+        <source>Large Portrait</source>
+        <translation>كبير عمودي</translation>
+    </message>
+    <message>
+        <source>Large Square</source>
+        <translation>كبير مربع</translation>
+    </message>
+    <message>
+        <source>Light position</source>
+        <translation>موضع الضوء</translation>
+    </message>
+    <message>
+        <source>Light position in 3D scene coordinates</source>
+        <translation>موضع الضوء في إحداثيات المشهد ثلاثي الأبعاد</translation>
+    </message>
+    <message>
+        <source>Line Art</source>
+        <translation>رسم خطي</translation>
+    </message>
+    <message>
+        <source>Line art</source>
+        <translation>رسم خطي</translation>
+    </message>
+    <message>
+        <source>No SVG-compatible vector objects to export.</source>
+        <translation>لا توجد عناصر متجهة متوافقة مع SVG لتصديرها.</translation>
+    </message>
+    <message>
+        <source>No tags found</source>
+        <translation>لم يُعثر على أي وسوم</translation>
+    </message>
+    <message>
+        <source>Noise</source>
+        <translation>الضوضاء</translation>
+    </message>
+    <message>
+        <source>Noise Schedule</source>
+        <translation>جدول الضوضاء</translation>
+    </message>
+    <message>
+        <source>Normal Landscape</source>
+        <translation>قياسي أفقي</translation>
+    </message>
+    <message>
+        <source>Normal Portrait</source>
+        <translation>قياسي عمودي</translation>
+    </message>
+    <message>
+        <source>Normal Square</source>
+        <translation>قياسي مربع</translation>
+    </message>
+    <message>
+        <source>NovelAI Potion (Vibe Transfer)</source>
+        <translation>جرعة NovelAI (نقل الطابع)</translation>
+    </message>
+    <message>
+        <source>NovelAI generation cancelled</source>
+        <translation>أُلغي الإنشاء باستخدام NovelAI</translation>
+    </message>
+    <message>
+        <source>NovelAI image added to layer</source>
+        <translation>أُضيفت صورة NovelAI إلى الطبقة</translation>
+    </message>
+    <message>
+        <source>Number of Images</source>
+        <translation>عدد الصور</translation>
+    </message>
+    <message>
+        <source>OpenPose JSON</source>
+        <translation>OpenPose JSON</translation>
+    </message>
+    <message>
+        <source>Prompt Guidance</source>
+        <translation>قوة التوجيه النصي</translation>
+    </message>
+    <message>
+        <source>Prompt Guidance Rescale</source>
+        <translation>إعادة ضبط مقياس التوجيه النصي</translation>
+    </message>
+    <message>
+        <source>Reference layer</source>
+        <translation>الطبقة المرجعية</translation>
+    </message>
+    <message>
+        <source>Reference mode</source>
+        <translation>وضع المرجع</translation>
+    </message>
+    <message>
+        <source>Reference strength</source>
+        <translation>قوة تأثير المرجع</translation>
+    </message>
+    <message>
+        <source>Refresh layers</source>
+        <translation>تحديث الطبقات</translation>
+    </message>
+    <message>
+        <source>Remove Background</source>
+        <translation>إزالة الخلفية</translation>
+    </message>
+    <message>
+        <source>Remove background</source>
+        <translation>إزالة الخلفية</translation>
+    </message>
+    <message>
+        <source>Sampler</source>
+        <translation>خوارزمية أخذ العينات</translation>
+    </message>
+    <message>
+        <source>Saved workflow: {name}</source>
+        <translation>حُفظ سير العمل: {name}</translation>
+    </message>
+    <message>
+        <source>Seed must be between 0 and 4294967295</source>
+        <translation>يجب أن تكون قيمة البذرة بين 0 و4294967295</translation>
+    </message>
+    <message>
+        <source>Small</source>
+        <translation>حجم صغير</translation>
+    </message>
+    <message>
+        <source>Small Landscape</source>
+        <translation>صغير أفقي</translation>
+    </message>
+    <message>
+        <source>Small Portrait</source>
+        <translation>صغير عمودي</translation>
+    </message>
+    <message>
+        <source>Small Square</source>
+        <translation>صغير مربع</translation>
+    </message>
+    <message>
+        <source>Sphere</source>
+        <translation>كرة</translation>
+    </message>
+    <message>
+        <source>Steps</source>
+        <translation>عدد الخطوات</translation>
+    </message>
+    <message>
+        <source>Style Reference</source>
+        <translation>مرجع النمط</translation>
+    </message>
+    <message>
+        <source>Suggest tags</source>
+        <translation>اقتراح وسوم</translation>
+    </message>
+    <message>
+        <source>Swap width and height</source>
+        <translation>تبديل العرض والارتفاع</translation>
+    </message>
+    <message>
+        <source>Tag fragment for suggestions</source>
+        <translation>جزء من وسم للبحث عن اقتراحات</translation>
+    </message>
+    <message>
+        <source>The current SVG export omits groups, layer placement, enabled masks, unsupported blend modes, and live filters.</source>
+        <translation>لا يتضمن تصدير SVG الحالي المجموعات أو مواضع الطبقات أو الأقنعة المفعّلة أو أوضاع المزج غير المدعومة أو المرشحات الحية.</translation>
+    </message>
+    <message>
+        <source>The generation record could not be deleted.</source>
+        <translation>تعذّر حذف سجل الإنشاء.</translation>
+    </message>
+    <message>
+        <source>Undesired Content</source>
+        <translation>المحتوى غير المرغوب فيه</translation>
+    </message>
+    <message>
+        <source>Upscale</source>
+        <translation>رفع دقة الصورة</translation>
+    </message>
+    <message>
+        <source>Variety</source>
+        <translation>التنوع</translation>
+    </message>
+    <message>
+        <source>Vibe Transfer</source>
+        <translation>نقل الطابع</translation>
+    </message>
+    <message>
+        <source>Wallpaper</source>
+        <translation>حجم خلفية الشاشة</translation>
+    </message>
+    <message>
+        <source>Wallpaper Landscape</source>
+        <translation>خلفية شاشة أفقية</translation>
+    </message>
+    <message>
+        <source>Wallpaper Portrait</source>
+        <translation>خلفية شاشة عمودية</translation>
+    </message>
+    <message>
+        <source>exponential</source>
+        <translation>أُسّي</translation>
+    </message>
+    <message>
+        <source>karras</source>
+        <translation>karras</translation>
+    </message>
+    <message>
+        <source>polyexponential</source>
+        <translation>متعدد الأُسّيات</translation>
+    </message>
+    <message>
+        <source>{name} uses Google Gemini's API. The key is stored encrypted in your OS keyring and is read only when you press Generate.</source>
+        <translation>يستخدم {name} واجهة Google Gemini API. يُخزَّن المفتاح مشفّرًا في مخزن مفاتيح نظام التشغيل، ولا يُقرأ إلا عند الضغط على «إنشاء».</translation>
+    </message>
+    <message>
+        <source>Grayscale TIFF sequence</source>
+        <translation>تسلسل TIFF بتدرج الرمادي</translation>
+    </message>
+    <message>
+        <source>1-bit TIFF sequence</source>
+        <translation>تسلسل TIFF بدقة 1-bit</translation>
+    </message>
+    <message>
+        <source>8-bit grayscale TIFF, one file per page.</source>
+        <translation>ملف TIFF بتدرج رمادي بدقة 8-bit لكل صفحة.</translation>
+    </message>
+    <message>
+        <source>1-bit black-and-white TIFF, one file per page.</source>
+        <translation>ملف TIFF أبيض وأسود بدقة 1-bit لكل صفحة.</translation>
+    </message>
+    <message>
+        <source>1-bit conversion</source>
+        <translation>تحويل إلى 1-bit</translation>
+    </message>
+    <message>
+        <source>Threshold:</source>
+        <translation>العتبة:</translation>
+    </message>
+    <message>
+        <source>Method:</source>
+        <translation>الطريقة:</translation>
+    </message>
+    <message>
+        <source>Ordered 4x4 dither</source>
+        <translation>تدرج منتظم 4x4</translation>
+    </message>
+    <message>
+        <source>The selected print preset does not match every page's format and DPI.</source>
+        <translation>تنسيق الصفحات وDPI في إعداد الطباعة المحدد لا يطابقان جميع الصفحات.</translation>
+    </message>
+    <message>
+        <source>The saved CMYK profile must be loaded again.</source>
+        <translation>يجب إعادة تحميل ملف تعريف CMYK المحفوظ.</translation>
+    </message>
+    <message>
+        <source>Added noise</source>
+        <translation>Added noise</translation>
+    </message>
+    <message>
+        <source>Change strength (i2i)</source>
+        <translation>Change strength (i2i)</translation>
+    </message>
+    <message>
+        <source>Enlarge</source>
+        <translation>Enlarge</translation>
+    </message>
+    <message>
+        <source>Input Image</source>
+        <translation>Input Image</translation>
+    </message>
+    <message>
+        <source>Randomize</source>
+        <translation>Randomize</translation>
+    </message>
+    <message>
+        <source>References</source>
+        <translation>References</translation>
+    </message>
+    <message>
+        <source>Reuse last seed</source>
+        <translation>Reuse last seed</translation>
+    </message>
+    <message>
+        <source>i2i</source>
+        <translation>i2i</translation>
+    </message>
+    <message>
+        <source>{count} items</source>
+        <translation>{count} items</translation>
     </message>
 </context>
 <context>
@@ -37806,6 +38374,10 @@ Click to show as panel</source>
         <source>Right Ankle</source>
         <translation>يمين: الكاحل</translation>
     </message>
+    <message>
+        <source>OpenPose JSON</source>
+        <translation>OpenPose JSON</translation>
+    </message>
 </context>
 <context>
     <name>DrawingFigureToolbarWidget</name>
@@ -37921,6 +38493,556 @@ Click to show as panel</source>
     <message>
         <source>Could not add basic shape</source>
         <translation>تعذرت إضافة الشكل الأساسي</translation>
+    </message>
+</context>
+<context>
+    <name>AISettingsWidget</name>
+    <message>
+        <source>AI Settings</source>
+        <translation>إعدادات الذكاء الاصطناعي</translation>
+    </message>
+    <message>
+        <source>Advanced Settings</source>
+        <translation>إعدادات متقدمة</translation>
+    </message>
+    <message>
+        <source>Collapse AI Settings</source>
+        <translation>طي إعدادات الذكاء الاصطناعي</translation>
+    </message>
+    <message>
+        <source>Noise Schedule</source>
+        <translation>جدول الضوضاء</translation>
+    </message>
+    <message>
+        <source>Prompt Guidance</source>
+        <translation>قوة التوجيه النصي</translation>
+    </message>
+    <message>
+        <source>Prompt Guidance Rescale</source>
+        <translation>إعادة ضبط مقياس التوجيه النصي</translation>
+    </message>
+    <message>
+        <source>Random</source>
+        <translation>عشوائي</translation>
+    </message>
+    <message>
+        <source>Reset</source>
+        <translation>إعادة تعيين</translation>
+    </message>
+    <message>
+        <source>Sampler</source>
+        <translation>خوارزمية أخذ العينات</translation>
+    </message>
+    <message>
+        <source>Seed</source>
+        <translation>البذرة</translation>
+    </message>
+    <message>
+        <source>Seed must be between 0 and 4294967295</source>
+        <translation>يجب أن تكون قيمة البذرة بين 0 و4294967295</translation>
+    </message>
+    <message>
+        <source>Steps</source>
+        <translation>عدد الخطوات</translation>
+    </message>
+    <message>
+        <source>Variety</source>
+        <translation>التنوع</translation>
+    </message>
+    <message>
+        <source>Randomize</source>
+        <translation>Randomize</translation>
+    </message>
+    <message>
+        <source>Reuse last seed</source>
+        <translation>Reuse last seed</translation>
+    </message>
+</context>
+<context>
+    <name>ImageSettingsWidget</name>
+    <message>
+        <source>Image Resolution</source>
+        <translation>دقة الصورة</translation>
+    </message>
+    <message>
+        <source>Image Settings</source>
+        <translation>إعدادات الصورة</translation>
+    </message>
+    <message>
+        <source>Number of Images</source>
+        <translation>عدد الصور</translation>
+    </message>
+    <message>
+        <source>Swap width and height</source>
+        <translation>تبديل العرض والارتفاع</translation>
+    </message>
+</context>
+<context>
+    <name>NovelAIPanel</name>
+    <message>
+        <source>&lt;New Layer&gt;</source>
+        <translation>&lt;طبقة جديدة&gt;</translation>
+    </message>
+    <message>
+        <source>AI Settings</source>
+        <translation>إعدادات الذكاء الاصطناعي</translation>
+    </message>
+    <message>
+        <source>Add potion</source>
+        <translation>إضافة جرعة</translation>
+    </message>
+    <message>
+        <source>Advanced API parameters (JSON)</source>
+        <translation>معلمات API المتقدمة (JSON)</translation>
+    </message>
+    <message>
+        <source>Advanced API parameters (JSON; overrides controls)</source>
+        <translation>معلمات API المتقدمة (JSON؛ لها أولوية على إعدادات الواجهة)</translation>
+    </message>
+    <message>
+        <source>Advanced Settings</source>
+        <translation>إعدادات متقدمة</translation>
+    </message>
+    <message>
+        <source>Character Reference</source>
+        <translation>مرجع الشخصية</translation>
+    </message>
+    <message>
+        <source>Character and Style</source>
+        <translation>مرجع الشخصية والنمط</translation>
+    </message>
+    <message>
+        <source>Collapse AI Settings</source>
+        <translation>طي إعدادات الذكاء الاصطناعي</translation>
+    </message>
+    <message>
+        <source>Colorize</source>
+        <translation>تلوين</translation>
+    </message>
+    <message>
+        <source>Create variation from Gallery image</source>
+        <translation>إنشاء نسخة بديلة من صورة في المعرض</translation>
+    </message>
+    <message>
+        <source>Custom</source>
+        <translation>مخصص</translation>
+    </message>
+    <message>
+        <source>Director Tool</source>
+        <translation>أداة الإخراج</translation>
+    </message>
+    <message>
+        <source>Director Tools</source>
+        <translation>أدوات الإخراج</translation>
+    </message>
+    <message>
+        <source>Emotion</source>
+        <translation>تعبير الوجه</translation>
+    </message>
+    <message>
+        <source>Enter prompt text...</source>
+        <translation>أدخل نص التوجيه...</translation>
+    </message>
+    <message>
+        <source>External AI services are disabled</source>
+        <translation>خدمات الذكاء الاصطناعي الخارجية معطّلة</translation>
+    </message>
+    <message>
+        <source>Generate</source>
+        <translation>إنشاء</translation>
+    </message>
+    <message>
+        <source>Height</source>
+        <translation>الارتفاع</translation>
+    </message>
+    <message>
+        <source>Image Generation</source>
+        <translation>إنشاء الصور</translation>
+    </message>
+    <message>
+        <source>Image Resolution</source>
+        <translation>دقة الصورة</translation>
+    </message>
+    <message>
+        <source>Image Settings</source>
+        <translation>إعدادات الصورة</translation>
+    </message>
+    <message>
+        <source>Image2Image</source>
+        <translation>من صورة إلى صورة</translation>
+    </message>
+    <message>
+        <source>Information Extracted</source>
+        <translation>مقدار المعلومات المستخرجة</translation>
+    </message>
+    <message>
+        <source>Inpaint (current selection)</source>
+        <translation>إعادة التصحيح (التحديد الحالي)</translation>
+    </message>
+    <message>
+        <source>Input layer</source>
+        <translation>طبقة الإدخال</translation>
+    </message>
+    <message>
+        <source>Landscape</source>
+        <translation>أفقي</translation>
+    </message>
+    <message>
+        <source>Large</source>
+        <translation>حجم كبير</translation>
+    </message>
+    <message>
+        <source>Large Landscape</source>
+        <translation>كبير أفقي</translation>
+    </message>
+    <message>
+        <source>Large Portrait</source>
+        <translation>كبير عمودي</translation>
+    </message>
+    <message>
+        <source>Large Square</source>
+        <translation>كبير مربع</translation>
+    </message>
+    <message>
+        <source>Line Art</source>
+        <translation>رسم خطي</translation>
+    </message>
+    <message>
+        <source>Line art</source>
+        <translation>رسم خطي</translation>
+    </message>
+    <message>
+        <source>Live prompt</source>
+        <translation>مُدخل تفاعلي</translation>
+    </message>
+    <message>
+        <source>Mode</source>
+        <translation>الوضع</translation>
+    </message>
+    <message>
+        <source>Model</source>
+        <translation>النموذج</translation>
+    </message>
+    <message>
+        <source>No tags found</source>
+        <translation>لم يُعثر على أي وسوم</translation>
+    </message>
+    <message>
+        <source>Noise</source>
+        <translation>الضوضاء</translation>
+    </message>
+    <message>
+        <source>Noise Schedule</source>
+        <translation>جدول الضوضاء</translation>
+    </message>
+    <message>
+        <source>None</source>
+        <translation>لا شيء</translation>
+    </message>
+    <message>
+        <source>Normal</source>
+        <translation>مُعتاد</translation>
+    </message>
+    <message>
+        <source>Normal Landscape</source>
+        <translation>قياسي أفقي</translation>
+    </message>
+    <message>
+        <source>Normal Portrait</source>
+        <translation>قياسي عمودي</translation>
+    </message>
+    <message>
+        <source>Normal Square</source>
+        <translation>قياسي مربع</translation>
+    </message>
+    <message>
+        <source>Nothing</source>
+        <translation>لا شيء</translation>
+    </message>
+    <message>
+        <source>NovelAI Potion (Vibe Transfer)</source>
+        <translation>جرعة NovelAI (نقل الطابع)</translation>
+    </message>
+    <message>
+        <source>NovelAI generation cancelled</source>
+        <translation>أُلغي الإنشاء باستخدام NovelAI</translation>
+    </message>
+    <message>
+        <source>NovelAI image added to layer</source>
+        <translation>أُضيفت صورة NovelAI إلى الطبقة</translation>
+    </message>
+    <message>
+        <source>Number of Images</source>
+        <translation>عدد الصور</translation>
+    </message>
+    <message>
+        <source>Portrait</source>
+        <translation>صورة مُستقيمة</translation>
+    </message>
+    <message>
+        <source>Prompt Guidance</source>
+        <translation>قوة التوجيه النصي</translation>
+    </message>
+    <message>
+        <source>Prompt Guidance Rescale</source>
+        <translation>إعادة ضبط مقياس التوجيه النصي</translation>
+    </message>
+    <message>
+        <source>Random</source>
+        <translation>عشوائي</translation>
+    </message>
+    <message>
+        <source>Reference layer</source>
+        <translation>الطبقة المرجعية</translation>
+    </message>
+    <message>
+        <source>Reference mode</source>
+        <translation>وضع المرجع</translation>
+    </message>
+    <message>
+        <source>Reference strength</source>
+        <translation>قوة تأثير المرجع</translation>
+    </message>
+    <message>
+        <source>Refresh layers</source>
+        <translation>تحديث الطبقات</translation>
+    </message>
+    <message>
+        <source>Remove</source>
+        <translation>إزالة</translation>
+    </message>
+    <message>
+        <source>Remove Background</source>
+        <translation>إزالة الخلفية</translation>
+    </message>
+    <message>
+        <source>Remove background</source>
+        <translation>إزالة الخلفية</translation>
+    </message>
+    <message>
+        <source>Reset</source>
+        <translation>إعادة تعيين</translation>
+    </message>
+    <message>
+        <source>Sampler</source>
+        <translation>خوارزمية أخذ العينات</translation>
+    </message>
+    <message>
+        <source>Seed</source>
+        <translation>البذرة</translation>
+    </message>
+    <message>
+        <source>Seed must be between 0 and 4294967295</source>
+        <translation>يجب أن تكون قيمة البذرة بين 0 و4294967295</translation>
+    </message>
+    <message>
+        <source>Sketch</source>
+        <translation>رسم تخطيطي</translation>
+    </message>
+    <message>
+        <source>Small</source>
+        <translation>حجم صغير</translation>
+    </message>
+    <message>
+        <source>Small Landscape</source>
+        <translation>صغير أفقي</translation>
+    </message>
+    <message>
+        <source>Small Portrait</source>
+        <translation>صغير عمودي</translation>
+    </message>
+    <message>
+        <source>Small Square</source>
+        <translation>صغير مربع</translation>
+    </message>
+    <message>
+        <source>Square</source>
+        <translation>مربع</translation>
+    </message>
+    <message>
+        <source>Steps</source>
+        <translation>عدد الخطوات</translation>
+    </message>
+    <message>
+        <source>Strength</source>
+        <translation>القوة</translation>
+    </message>
+    <message>
+        <source>Style Reference</source>
+        <translation>مرجع النمط</translation>
+    </message>
+    <message>
+        <source>Suggest tags</source>
+        <translation>اقتراح وسوم</translation>
+    </message>
+    <message>
+        <source>Swap width and height</source>
+        <translation>تبديل العرض والارتفاع</translation>
+    </message>
+    <message>
+        <source>Tag fragment for suggestions</source>
+        <translation>جزء من وسم للبحث عن اقتراحات</translation>
+    </message>
+    <message>
+        <source>Target layer</source>
+        <translation>الطبقة المستهدفة</translation>
+    </message>
+    <message>
+        <source>Undesired Content</source>
+        <translation>المحتوى غير المرغوب فيه</translation>
+    </message>
+    <message>
+        <source>Upscale</source>
+        <translation>رفع دقة الصورة</translation>
+    </message>
+    <message>
+        <source>Variety</source>
+        <translation>التنوع</translation>
+    </message>
+    <message>
+        <source>Vibe Transfer</source>
+        <translation>نقل الطابع</translation>
+    </message>
+    <message>
+        <source>Wallpaper</source>
+        <translation>حجم خلفية الشاشة</translation>
+    </message>
+    <message>
+        <source>Wallpaper Landscape</source>
+        <translation>خلفية شاشة أفقية</translation>
+    </message>
+    <message>
+        <source>Wallpaper Portrait</source>
+        <translation>خلفية شاشة عمودية</translation>
+    </message>
+    <message>
+        <source>Width</source>
+        <translation>العرض</translation>
+    </message>
+    <message>
+        <source>exponential</source>
+        <translation>أُسّي</translation>
+    </message>
+    <message>
+        <source>karras</source>
+        <translation>karras</translation>
+    </message>
+    <message>
+        <source>polyexponential</source>
+        <translation>متعدد الأُسّيات</translation>
+    </message>
+    <message>
+        <source>Added noise</source>
+        <translation>Added noise</translation>
+    </message>
+    <message>
+        <source>Change strength (i2i)</source>
+        <translation>Change strength (i2i)</translation>
+    </message>
+    <message>
+        <source>Enlarge</source>
+        <translation>Enlarge</translation>
+    </message>
+    <message>
+        <source>Inpaint</source>
+        <translation>Inpaint</translation>
+    </message>
+    <message>
+        <source>Input Image</source>
+        <translation>Input Image</translation>
+    </message>
+    <message>
+        <source>Randomize</source>
+        <translation>Randomize</translation>
+    </message>
+    <message>
+        <source>References</source>
+        <translation>References</translation>
+    </message>
+    <message>
+        <source>Reuse last seed</source>
+        <translation>Reuse last seed</translation>
+    </message>
+    <message>
+        <source>Tools</source>
+        <translation>Tools</translation>
+    </message>
+    <message>
+        <source>i2i</source>
+        <translation>i2i</translation>
+    </message>
+    <message>
+        <source>{count} items</source>
+        <translation>{count} items</translation>
+    </message>
+</context>
+<context>
+    <name>NovelAIPanelPlugin</name>
+    <message>
+        <source>No tags found</source>
+        <translation>لم يُعثر على أي وسوم</translation>
+    </message>
+    <message>
+        <source>NovelAI generation cancelled</source>
+        <translation>أُلغي الإنشاء باستخدام NovelAI</translation>
+    </message>
+    <message>
+        <source>NovelAI image added to layer</source>
+        <translation>أُضيفت صورة NovelAI إلى الطبقة</translation>
+    </message>
+</context>
+<context>
+    <name>VibeReferencesWidget</name>
+    <message>
+        <source>Add potion</source>
+        <translation>إضافة جرعة</translation>
+    </message>
+    <message>
+        <source>Information Extracted</source>
+        <translation>مقدار المعلومات المستخرجة</translation>
+    </message>
+    <message>
+        <source>Nothing</source>
+        <translation>لا شيء</translation>
+    </message>
+    <message>
+        <source>NovelAI Potion (Vibe Transfer)</source>
+        <translation>جرعة NovelAI (نقل الطابع)</translation>
+    </message>
+    <message>
+        <source>Remove</source>
+        <translation>إزالة</translation>
+    </message>
+    <message>
+        <source>Strength</source>
+        <translation>القوة</translation>
+    </message>
+</context>
+<context>
+    <name>_LibraryWriteFeedback</name>
+    <message>
+        <source>Shape Manager</source>
+        <translation>مدير الأشكال</translation>
+    </message>
+</context>
+<context>
+    <name>document_mask_recovery</name>
+    <message>
+        <source>Warning</source>
+        <translation>تحذير</translation>
+    </message>
+</context>
+<context>
+    <name>workflow_save_action</name>
+    <message>
+        <source>Failed to save workflow:
+{error}</source>
+        <translation>فشل في حفظ المُسار:
+{error}</translation>
+    </message>
+    <message>
+        <source>Saved workflow: {name}</source>
+        <translation>حُفظ سير العمل: {name}</translation>
     </message>
 </context>
 </TS>

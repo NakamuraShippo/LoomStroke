@@ -1070,7 +1070,7 @@ class VectorReplaceCommand(Command):
 
         try:
             self._story_replacement = prepare_story_replacement(
-                canvas, self.target_id, self.new_object
+                canvas, self.target_id, self.new_object, layer_id=self._layer_id
             )
         except ValueError as error:
             logger.warning("Linked text replacement rejected: %s", error)

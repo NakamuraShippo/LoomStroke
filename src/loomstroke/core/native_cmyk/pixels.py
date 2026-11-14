@@ -4,6 +4,7 @@ from __future__ import annotations
 
 import hashlib
 from dataclasses import dataclass
+from typing import ClassVar
 
 import numpy as np
 
@@ -12,6 +13,8 @@ from .color_transform import CmykColorTransform
 
 @dataclass(frozen=True, slots=True, eq=False)
 class NativeCmykPixels:
+    MAX_DECODED_BYTES: ClassVar[int] = 256 * 1024 * 1024
+
     inks: np.ndarray
     alpha: np.ndarray
     profile: bytes
@@ -22,7 +25,7 @@ class NativeCmykPixels:
             raise ValueError("CMYK requires H x W x 4 unsigned 8/16-bit samples")
         if alpha.shape != inks.shape[:2] or alpha.dtype != inks.dtype:
             raise ValueError("Alpha must have the same size and bit depth as the ink planes")
-        if min(inks.shape[:2]) < 1 or inks.nbytes + alpha.nbytes > 256 * 1024 * 1024:
+        if min(inks.shape[:2]) < 1 or inks.nbytes + alpha.nbytes > self.MAX_DECODED_BYTES:
             raise ValueError("CMYK layer exceeds the decoded layer budget")
         profile = CmykColorTransform.validate_profile(bytes(self.profile))
         # Immutable bytes, rather than only an ndarray writeable flag which a caller can undo.

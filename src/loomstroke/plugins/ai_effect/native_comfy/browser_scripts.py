@@ -174,7 +174,11 @@ FRONTEND = r"""/* Compatibility probe for the real ComfyUI frontend, never a wid
         dom: Boolean(w.element), value: w.value,
         ...(includeWidgetMetadata ? {domTag: w.element?.tagName,
           customDraw: typeof w.draw === 'function',
-          customSerialize: typeof w.serializeValue === 'function'} : {})}))})),
+          customSerialize: typeof w.serializeValue === 'function',
+          linkedWidgets: (w.linkedWidgets ?? []).map(linked => ({
+            name: typeof linked.name === 'string' ? linked.name : null,
+            type: typeof linked.type === 'string' ? linked.type : null,
+            value: typeof linked.value === 'string' ? linked.value : null}))} : {})}))})),
     canvas: {width: canvas.width, height: canvas.height},
   });
   const checkTopology = () => {

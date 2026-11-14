@@ -12,7 +12,9 @@ from __future__ import annotations
 
 import math
 import re
+from collections.abc import Mapping
 from dataclasses import dataclass
+from typing import Any
 
 from loomstroke.plugins.text_tool.common import TextToolSettings, ensure_text_vector_object
 from loomstroke.plugins.vector_tools.common import VectorObject
@@ -199,8 +201,22 @@ def build_balloon_text_object(
     padding_left: float = 0.0,
     rotate_half_width: bool = False,
     previous_meta: dict | None = None,
+    previous_object: VectorObject | None = None,
+    previous_record: BalloonRecord | None = None,
+    property_changes: Mapping[str, Any] | None = None,
 ) -> VectorObject:
     """Create/refresh the balloon's text-frame vector object."""
+
+    if previous_object is not None:
+        from .text_update import update_existing_balloon_text  # noqa: PLC0415
+
+        return update_existing_balloon_text(
+            previous_object,
+            record,
+            text,
+            previous_record=previous_record,
+            property_changes=property_changes,
+        )
 
     rect = balloon_text_rect(record)
     settings = TextToolSettings(

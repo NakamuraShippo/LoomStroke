@@ -3,6 +3,7 @@
 from __future__ import annotations
 
 import logging
+from dataclasses import replace
 from typing import Any, cast
 from uuid import uuid4
 
@@ -10,6 +11,7 @@ from PySide6.QtCore import QEvent, Qt, Signal
 from PySide6.QtGui import QColor, QGuiApplication
 from PySide6.QtWidgets import (
     QButtonGroup,
+    QCheckBox,
     QColorDialog,
     QComboBox,
     QDialog,
@@ -28,8 +30,15 @@ from PySide6.QtWidgets import (
     QWidget,
 )
 
+from ...core.comic_document_profile import (
+    BUILTIN_COMIC_PROFILES,
+    PhysicalPageLayout,
+    canvas_pixel_size,
+)
 from ...core.event_bus_extensions import get_extended_event_bus
 from ...core.events import Events
+from ...core.page_templates import PageTemplateStore
+from ...core.print_format_library import PrintFormatLibrary
 from ..startpage_models import (
     BackgroundSpec,
     CanvasPreset,
@@ -136,6 +145,7 @@ class NewDocumentDialog(QDialog):
         self._preset_name_title = self._ts("Preset Name")
         self._preset_name_label = self._ts("Preset name:")
         self._spec: StartPageCanvasSpec | None = None
+        self._print_formats = PrintFormatLibrary(PageTemplateStore()).formats()
         self._custom_color = QColor(255, 255, 255, 255)
         self._updating_from_preset = False
         self._register_translation_templates()
@@ -145,6 +155,19 @@ class NewDocumentDialog(QDialog):
 
     def spec(self) -> StartPageCanvasSpec | None:
         return self._spec
+
+    def print_layout(self) -> tuple[PhysicalPageLayout, float] | None:
+        selected = self._print_combo.currentData()
+        if selected is None:
+            return None
+        layout, gutter = selected
+        if not self._include_bleed.isChecked():
+            layout = replace(layout, bleed_mm=(0.0, 0.0, 0.0, 0.0))
+        if canvas_pixel_size(layout) != (self._width_spin.value(), self._height_spin.value()):
+            return None
+        if layout.dpi != (self._dpi_spin.value(), self._dpi_spin.value()):
+            return None
+        return layout, gutter
 
     def _build_ui(self) -> None:
         self._translation_binder.register(self.setWindowTitle, self._ts("New Document"))
@@ -161,6 +184,7 @@ class NewDocumentDialog(QDialog):
         buttons = self._build_dialog_buttons()
         self._color_controls.validity_changed.connect(self._ok_button.setEnabled)
         layout.addWidget(preset_group)
+        layout.addWidget(self._build_print_group())
         layout.addWidget(size_group)
         layout.addWidget(dpi_group)
         layout.addWidget(self._color_controls)
@@ -182,6 +206,69 @@ class NewDocumentDialog(QDialog):
         self.resize(520, min(650, available_height))
 
         self._populate_category_combo()
+
+    def _build_print_group(self) -> QGroupBox:
+        group = QGroupBox(self)
+        self._print_group = group
+        form = QFormLayout(group)
+        self._print_label = QLabel(group)
+        self._print_combo = QComboBox(group)
+        self._print_combo.addItem("", None)
+        for profile in BUILTIN_COMIC_PROFILES:
+            self._print_combo.addItem(profile.name, (profile.layout, 0.0))
+        for value in self._print_formats.values():
+            self._print_combo.addItem(value.name, (value.layout, value.gutter_mm))
+        self._print_combo.currentIndexChanged.connect(self._on_print_format_changed)
+        form.addRow(self._print_label, self._print_combo)
+        self._include_bleed = QCheckBox(group)
+        self._include_bleed.setEnabled(False)
+        self._include_bleed.toggled.connect(
+            lambda _checked: self._on_print_format_changed(self._print_combo.currentIndex())
+        )
+        self._translation_binder.register(self._include_bleed.setText, self._ts("Include Bleed"))
+        form.addRow(self._include_bleed)
+        self._refresh_print_translations()
+        return group
+
+    def _refresh_print_translations(self) -> None:
+        def translate(source: str) -> str:
+            return translate_with_fallback("FormatGuidesDialog", source)
+
+        self._print_group.setTitle(translate("Page Format Guides"))
+        self._print_label.setText(translate("Preset"))
+        self._print_combo.setItemText(0, translate("Custom"))
+        for index, profile in enumerate(BUILTIN_COMIC_PROFILES, 1):
+            self._print_combo.setItemText(index, translate(profile.name))
+
+    def _on_print_format_changed(self, index: int) -> None:
+        selected = self._print_combo.itemData(index)
+        self._include_bleed.setEnabled(selected is not None)
+        if selected is None:
+            blocked = self._include_bleed.blockSignals(True)
+            self._include_bleed.setChecked(False)
+            self._include_bleed.blockSignals(blocked)
+            return
+        layout, _gutter = selected
+        if not self._include_bleed.isChecked():
+            layout = replace(layout, bleed_mm=(0.0, 0.0, 0.0, 0.0))
+        width, height = canvas_pixel_size(layout)
+        if (
+            width > 16384
+            or height > 16384
+            or not 1 <= layout.dpi[0] <= 1200
+            or layout.dpi[0] != layout.dpi[1]
+            or layout.dpi[0] != int(layout.dpi[0])
+        ):
+            self._print_combo.setCurrentIndex(0)
+            return
+        self._updating_from_preset = True
+        try:
+            self._preset_combo.setCurrentIndex(0)
+            self._dpi_spin.setValue(int(layout.dpi[0]))
+            self._width_spin.setValue(width)
+            self._height_spin.setValue(height)
+        finally:
+            self._updating_from_preset = False
 
     def _build_preset_group(self) -> QGroupBox:
         preset_group = QGroupBox()
@@ -385,9 +472,11 @@ class NewDocumentDialog(QDialog):
     def _on_preset_changed(self, index: int) -> None:
         preset = self._preset_combo.itemData(index)
         if isinstance(preset, CanvasPreset):
+            self._print_combo.setCurrentIndex(0)
             self._apply_preset(preset)
 
     def _apply_preset(self, preset: CanvasPreset) -> None:
+        self._print_combo.setCurrentIndex(0)
         dimensions = paper_dimensions(preset, self._dpi_spin.value())
         width, height = dimensions or (preset.width_px, preset.height_px)
         self._updating_from_preset = True
@@ -398,6 +487,9 @@ class NewDocumentDialog(QDialog):
             self._updating_from_preset = False
 
     def _on_dpi_changed(self, _: int) -> None:
+        if self._updating_from_preset:
+            return
+        self._print_combo.setCurrentIndex(0)
         preset = self._preset_combo.currentData()
         if isinstance(preset, CanvasPreset):
             self._apply_preset(preset)
@@ -405,6 +497,7 @@ class NewDocumentDialog(QDialog):
     def _on_dimension_changed(self, _: int) -> None:
         if self._updating_from_preset:
             return
+        self._print_combo.setCurrentIndex(0)
         if self._preset_combo.currentIndex() != 0:
             self._preset_combo.setCurrentIndex(0)
 
@@ -532,6 +625,7 @@ class NewDocumentDialog(QDialog):
         self._update_category_combo_labels()
         self._update_preset_combo_labels()
         self._color_controls.refresh_translations()
+        self._refresh_print_translations()
 
     def _translate_runtime(self, text: str) -> str:
         return translate_with_fallback("NewDocumentDialog", text)

@@ -11,6 +11,7 @@ from PySide6.QtGui import QColor
 
 from .. import __version__
 from ..host_api import DocumentRef
+from ..io.file_io import ImageMetadata
 from ..io.layer_io import DOCUMENT_FORMAT_VERSION, CanvasSpec, DocumentMetadata, PageSnapshot
 from ..io.psd_document_reader import PsdDocumentReader
 from .canvas_service_simple import SimpleCanvasService
@@ -34,12 +35,14 @@ def _source_identity(path: Path) -> tuple[int, int, int, int]:
     return stat.st_dev, stat.st_ino, stat.st_size, stat.st_mtime_ns
 
 
-def _staging_canvas(live: SimpleCanvasService, width: int, height: int) -> SimpleCanvasService:
+def _staging_canvas(
+    live: SimpleCanvasService, width: int, height: int, *, dpi: int | None = None
+) -> SimpleCanvasService:
     stage = SimpleCanvasService(
         width=width,
         height=height,
         background=QColor(0, 0, 0, 0),
-        dpi=live._dpi,
+        dpi=live._dpi if dpi is None else dpi,
         tile_size=live._tile_size,
         max_layers=live._max_layers,
         max_history_steps=live._history_limit,
@@ -48,13 +51,15 @@ def _staging_canvas(live: SimpleCanvasService, width: int, height: int) -> Simpl
     return stage
 
 
-def _prepare_raster(owner: Any, live: SimpleCanvasService, file_data: Any) -> SimpleCanvasService:
+def _prepare_raster(
+    owner: Any, live: SimpleCanvasService, file_data: Any, *, dpi: int | None = None
+) -> SimpleCanvasService:
     if file_data is None:
         raise ValueError("The image could not be decoded")
     image, image_metadata = file_data
     image = owner._ensure_rgba(image)
     height, width = image.shape[:2]
-    stage = _staging_canvas(live, width, height)
+    stage = _staging_canvas(live, width, height, dpi=dpi)
     identifier = owner._import_into_simple_canvas_inner(stage, image, image_metadata, True, True)
     if identifier is None:
         raise ValueError("The decoded image could not be prepared")
@@ -124,8 +129,35 @@ def prepare_image_document(
         if layered
         else _prepare_raster(owner, live, owner._file_io.read(source))
     )
+    prepared = _finish_prepared_document(stage, source, check_budget=layered)
+    if _source_identity(source) != identity:
+        raise ValueError("The source image changed while it was being prepared")
+    return prepared
+
+
+def prepare_clipboard_image_document(owner: Any, image: Any) -> PreparedImageDocument:
+    """Build a complete raster document from captured clipboard pixels."""
+    live = owner._canvas
+    if not isinstance(live, SimpleCanvasService):
+        raise ValueError("Clipboard document preparation requires a supported canvas")
+    rgba = owner._ensure_rgba(image)
+    height, width = rgba.shape[:2]
+    metadata = ImageMetadata(
+        width=width,
+        height=height,
+        channels=4,
+        bit_depth=8,
+        extra={"layer_name": "Clipboard Image"},
+    )
+    stage = _prepare_raster(owner, live, (rgba, metadata), dpi=72)
+    return _finish_prepared_document(stage, Path("<clipboard>"))
+
+
+def _finish_prepared_document(
+    stage: SimpleCanvasService, source: Path, *, check_budget: bool = False
+) -> PreparedImageDocument:
     _validate_layer_images(stage)
-    if layered:
+    if check_budget:
         _validate_snapshot_budget(stage)
     stage.history_clear()
     metadata = DocumentMetadata(
@@ -148,6 +180,4 @@ def prepare_image_document(
             dpi=metadata.dpi,
         ),
     )
-    if _source_identity(source) != identity:
-        raise ValueError("The source image changed while it was being prepared")
     return PreparedImageDocument(source, stage, metadata, page)

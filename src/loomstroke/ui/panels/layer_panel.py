@@ -466,13 +466,13 @@ class LayerItemWidget(QWidget):
         # shift every other widget down 3 px).
         self.progress_overlay = LayerProgressOverlay(accent_hex=_AI_ACCENT_HEX, parent=self)
         self.progress_fill = self.progress_overlay.fill
-        # 100 ms poll while "generating" — the source layer's
-        # ``ai_effect.generation.progress`` mutates outside the panel
-        # rebuild cadence, so we pull instead of rebuilding the tree.
+        # Poll busy rows since their generation state and progress can change
+        # without rebuilding the tree.
         self._progress_timer = QTimer(self)
         self._progress_timer.setInterval(100)
         self._progress_timer.timeout.connect(self._on_progress_tick)
         self._progress_fetcher: Callable[[], tuple[str | None, float | None]] | None = None
+        self._watch_generation = False
         self._apply_row_accent(entry)
         self._configure_for_slot(entry)
         self._configure_ref_count(entry)
@@ -862,23 +862,17 @@ class LayerItemWidget(QWidget):
         )
 
     def _configure_progress(self, entry: LayerEntry) -> None:
-        """Install the 3px progress overlay while the row is generating.
-
-        Hides and stops the poll timer in every other state (idle /
-        queued / done / error) so the widget draws zero extra CPU
-        when no generation is in flight.
-        """
-        state = entry.ai_effect_state
-        if state != "generating" or entry.slot_info is not None:
-            self.progress_overlay.setVisible(False)
-            if self._progress_timer.isActive():
-                self._progress_timer.stop()
-            return
-        self.progress_overlay.setVisible(True)
-        self._reposition_progress_overlay()
-        self._apply_progress_value(entry.ai_effect_progress)
-        if not self._progress_timer.isActive() and self._progress_fetcher is not None:
-            self._progress_timer.start()
+        """Watch queued and generating rows, drawing progress only while generating."""
+        self._watch_generation = (
+            entry.layer_type == "ai_effect"
+            and entry.slot_info is None
+            and entry.ai_effect_state in ("queued", "generating")
+        )
+        self._show_generation_progress(
+            self._watch_generation and entry.ai_effect_state == "generating",
+            entry.ai_effect_progress,
+        )
+        self._sync_progress_timer()
 
     def set_progress_fetcher(
         self, fetcher: Callable[[], tuple[str | None, float | None]] | None
@@ -891,14 +885,25 @@ class LayerItemWidget(QWidget):
         layer after a canvas clear.
         """
         self._progress_fetcher = fetcher
-        if fetcher is None and self._progress_timer.isActive():
+        self._sync_progress_timer()
+
+    def _sync_progress_timer(self) -> None:
+        if not self._watch_generation or self._progress_fetcher is None:
             self._progress_timer.stop()
+        elif not self._progress_timer.isActive():
+            self._progress_timer.start()
+
+    def _show_generation_progress(self, visible: bool, progress: float | None) -> None:
+        self.progress_overlay.setVisible(visible)
+        if visible:
+            self._reposition_progress_overlay()
+            self._apply_progress_value(progress)
 
     @Slot()
     def _on_progress_tick(self) -> None:
         """Poll the source layer for a fresh (state, progress) pair.
 
-        Stops itself when the layer transitions out of "generating" so
+        Stops itself when the layer leaves the queued / generating states so
         the 100 ms timer never out-lives the underlying job. A fetcher
         raising an exception is downgraded to "job ended" — better to
         hide the bar than loop on a bad closure.
@@ -924,11 +929,12 @@ class LayerItemWidget(QWidget):
             logger.debug("progress fetch failed", exc_info=True)
             state, progress = (None, None)
         if state not in ("queued", "generating"):
+            self._watch_generation = False
             self._progress_timer.stop()
             self.progress_overlay.setVisible(False)
             self.generate_btn.setEnabled(True)
             return
-        self._apply_progress_value(progress)
+        self._show_generation_progress(state == "generating", progress)
 
     def _apply_progress_value(self, progress: float | None) -> None:
         """Resize the fill rectangle inside the overlay.
@@ -3160,7 +3166,9 @@ class LayerPanel(QWidget):
         canvas = getattr(host, "canvas", None)
         if canvas is None:
             return
-        rasterize = getattr(canvas, "rasterize_layer", None)
+        rasterize = getattr(canvas, "rasterize_layer_undoable", None)
+        if not callable(rasterize):
+            rasterize = getattr(canvas, "rasterize_layer", None)
         if not callable(rasterize):
             logger.debug("Canvas does not support rasterize_layer")
             return
@@ -3294,12 +3302,9 @@ class LayerPanel(QWidget):
             fn(layer_id)
 
     def _invert_mask_layer(self, layer_id: str) -> None:
-        canvas = self._get_canvas()
-        if canvas is None:
-            return
-        fn = getattr(canvas, "invert_mask_layer", None)
-        if callable(fn) and fn(layer_id):
-            self._add_default_layers()
+        from .layer_panel_mask_actions import _invert_standalone_mask_from_panel  # noqa: PLC0415
+
+        _invert_standalone_mask_from_panel(self, layer_id)
 
     def _get_canvas(self) -> Any | None:
         host = self._host_api

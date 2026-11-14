@@ -202,6 +202,7 @@ class MainWindowDefaultPanelsCoordinator:
             window._setup_prompt_editor_panel_if_available()
             window._setup_nano_banana_panel_if_available()
             window._setup_gptimage2_panel_if_available()
+            self.setup_novelai_panel_if_available()
             window._setup_comfyui_panel_if_available()
             window._setup_gallery_panel_if_available()
             self.setup_canvas_copilot_panel_if_available()
@@ -364,6 +365,16 @@ class MainWindowDefaultPanelsCoordinator:
             )
         except Exception as exc:
             logger.error("Failed to add GPT Image 2 panel: %s", exc, exc_info=True)
+
+    def setup_novelai_panel_if_available(self) -> None:
+        try:
+            self._window._setup_ui_panel_plugin_if_available(
+                "novelai_panel",
+                area_override="right",
+                title_context="MainWindow",
+            )
+        except Exception as exc:
+            logger.error("Failed to add NovelAI panel: %s", exc, exc_info=True)
 
     def setup_production_control_panel_if_available(self) -> None:
         window = self._window

@@ -13,7 +13,7 @@ from datetime import datetime
 from pathlib import Path
 from typing import TYPE_CHECKING, Any
 
-from PySide6.QtCore import QEvent, QSize, Qt, QTimer, Signal
+from PySide6.QtCore import QEvent, QSignalBlocker, QSize, Qt, QTimer, Signal
 from PySide6.QtGui import QIcon
 from PySide6.QtWidgets import (
     QComboBox,
@@ -51,6 +51,11 @@ from loomstroke.core.event_bus_extensions import get_extended_event_bus
 from loomstroke.core.events import Events
 from loomstroke.platform.settings_manager import get_settings_manager
 from loomstroke.platform.user_dirs import ensure_directory, plugin_data_dir
+from loomstroke.plugins.common.comfyui_history import (
+    _HISTORY_UNAVAILABLE_ERROR,
+    _MISSING_SELECTED_IMAGE_OUTPUT_ERROR,
+    _SELECTED_MODEL_OUTPUT_ERROR,
+)
 from loomstroke.plugins.common.outbound_policy import is_external_services_allowed
 from loomstroke.ui.translations import (
     TranslationBinder,
@@ -60,6 +65,7 @@ from loomstroke.ui.translations import (
 
 from .connection_bar import ConnectionBar
 from .workflow_manager import WorkflowManager
+from .workflow_save_action import save_displayed_workflow
 
 logger = logging.getLogger(__name__)
 _PANEL_MINIMUM_SIZE_HINT = QSize(100, 50)
@@ -114,6 +120,8 @@ class ComfyUIMainPanel(QWidget):
 
         # Track workflow state
         self.current_workflow: WorkflowModel | None = None
+        self._workflow_file: Path | None = None
+        self._workflow_save_task: Task[None] | None = None
         self.current_job_id: str | None = None
         self._loading_workflow_from_combo = False
         # Ensure plugin-local data roots exist under user_data/
@@ -291,6 +299,13 @@ class ComfyUIMainPanel(QWidget):
     def _ts(self, text: str) -> str:
         return translated_literal_domain("ComfyUIMainPanel", text, use_fallback=True)
 
+    def _job_message_text(self, message: str) -> str:
+        if message == _MISSING_SELECTED_IMAGE_OUTPUT_ERROR:
+            return translated_literal_domain("__shared__", "No image available", use_fallback=True)
+        if message == _SELECTED_MODEL_OUTPUT_ERROR:
+            return translated_literal_domain("__shared__", message, use_fallback=True)
+        return message
+
     def changeEvent(self, event: QEvent) -> None:
         super().changeEvent(event)
         if event.type() == QEvent.Type.LanguageChange:
@@ -381,7 +396,7 @@ class ComfyUIMainPanel(QWidget):
         _set(2, self._format_queue_progress(job))
         _set(3, str(job.get("workflow", self._ts("Workflow"))))
         _set(4, job.get("started_display", "--:--:--"))
-        _set(5, job.get("message", ""))
+        _set(5, self._job_message_text(job.get("message", "")))
 
     def _format_queue_progress(self, job: dict[str, Any]) -> str:
         step = job.get("progress") or job.get("step") or 0
@@ -563,7 +578,7 @@ class ComfyUIMainPanel(QWidget):
             tooltip=save_text,
             theme_icon="document-save",
             fallback_icon=QStyle.SP_DialogSaveButton,
-            handler=lambda: None,
+            handler=lambda: save_displayed_workflow(self),
         )
         self.save_workflow_button.setEnabled(False)
         workflow_layout.addWidget(self.save_workflow_button)
@@ -860,7 +875,7 @@ class ComfyUIMainPanel(QWidget):
                 if error_text:
                     message = self._ts("{message}: {error}").format(
                         message=message,
-                        error=error_text,
+                        error=self._job_message_text(error_text),
                     )
                 self.status_message.emit(message)
             else:
@@ -875,10 +890,23 @@ class ComfyUIMainPanel(QWidget):
             import asyncio  # noqa: PLC0415
 
             result_data = self._extract_event_field(payload, "result_data")
+            record_result_image = error_text not in (
+                _HISTORY_UNAVAILABLE_ERROR,
+                _MISSING_SELECTED_IMAGE_OUTPUT_ERROR,
+            )
+            if error_text == _SELECTED_MODEL_OUTPUT_ERROR:
+                record_result_image = isinstance(result_data, dict) and bool(
+                    result_data.get("_image_bytes")
+                )
             try:
                 loop = asyncio.get_event_loop()
                 task = loop.create_task(  # noqa: RUF006
-                    self._record_history(job_id, status, result_data=result_data)
+                    self._record_history(
+                        job_id,
+                        status,
+                        result_data=result_data,
+                        record_result_image=record_result_image,
+                    )
                 )
                 task.add_done_callback(lambda t: t.exception() if not t.cancelled() else None)
             except RuntimeError:
@@ -890,6 +918,7 @@ class ComfyUIMainPanel(QWidget):
         status: str,
         *,
         result_data: dict[str, Any] | None = None,
+        record_result_image: bool = True,
     ) -> None:
         """Record generation history for a completed/failed/cancelled job."""
         import asyncio  # noqa: PLC0415
@@ -915,22 +944,23 @@ class ComfyUIMainPanel(QWidget):
                 if images:
                     record.output_images = images
 
-            # Use pre-fetched image bytes if available, otherwise fetch
-            try:
-                image_bytes: bytes | None = None
-                if isinstance(result_data, dict):
-                    image_bytes = result_data.get("_image_bytes")
-                if not image_bytes:
-                    image_bytes = await self._generation_provider.fetch_result_image(record)
-                if image_bytes:
-                    record.image_path = self._history_store.save_image(job_id, image_bytes)
-                    thumb_bytes = await asyncio.to_thread(_generate_thumbnail, image_bytes)
-                    if thumb_bytes:
-                        record.thumbnail_path = self._history_store.save_thumbnail(
-                            job_id, thumb_bytes
-                        )
-            except Exception:
-                logger.exception("Failed to save generation image for %s", job_id)
+            if record_result_image:
+                # Prefer bytes from the selected output over a Gallery history lookup.
+                try:
+                    image_bytes: bytes | None = None
+                    if isinstance(result_data, dict):
+                        image_bytes = result_data.get("_image_bytes")
+                    if not image_bytes:
+                        image_bytes = await self._generation_provider.fetch_result_image(record)
+                    if image_bytes:
+                        record.image_path = self._history_store.save_image(job_id, image_bytes)
+                        thumb_bytes = await asyncio.to_thread(_generate_thumbnail, image_bytes)
+                        if thumb_bytes:
+                            record.thumbnail_path = self._history_store.save_thumbnail(
+                                job_id, thumb_bytes
+                            )
+                except Exception:
+                    logger.exception("Failed to save generation image for %s", job_id)
 
             self._history_store.add_record(record)
             if record.image_path:
@@ -1150,16 +1180,18 @@ class ComfyUIMainPanel(QWidget):
 
                 # Update UI
                 saved_path = self.service.last_workflow_path() or path
-                index = self.workflow_combo.findData(str(saved_path))
-                if index == -1:
-                    self.workflow_combo.addItem(saved_path.name, str(saved_path))
+                self._workflow_file = saved_path
+                with QSignalBlocker(self.workflow_combo):
                     index = self.workflow_combo.findData(str(saved_path))
-                if index >= 0:
-                    self.workflow_combo.setCurrentIndex(index)
+                    if index == -1:
+                        self.workflow_combo.addItem(saved_path.name, str(saved_path))
+                        index = self.workflow_combo.findData(str(saved_path))
+                    if index >= 0:
+                        self.workflow_combo.setCurrentIndex(index)
 
                 # Enable execution
                 self.queue_button.setEnabled(True)
-                self.save_workflow_button.setEnabled(True)
+                self.save_workflow_button.setEnabled(self._workflow_save_task is None)
 
                 self.status_message.emit(self._ts("Loaded workflow: {name}").format(name=path.name))
 

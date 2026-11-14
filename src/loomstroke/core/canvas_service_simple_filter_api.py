@@ -367,3 +367,4 @@ _CanvasServiceEffectApiBase = _CanvasServiceFilterApiBase
 _DEFAULT_AI_RESULT_HOOKS = {
     "set_ai_effect_layer_image": CanvasServiceFilterApiMixin.set_ai_effect_layer_image,
 }
+_DEFAULT_AI_OUTPUT_CREATE = CanvasServiceFilterApiMixin.create_ai_effect_output_layer

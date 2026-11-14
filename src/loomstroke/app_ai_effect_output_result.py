@@ -7,6 +7,8 @@ from collections.abc import Callable
 from dataclasses import dataclass
 from typing import Any
 
+from .plugins.ai_effect.gateways.comfyui_model_application import _ModelApplicationResult
+
 logger = logging.getLogger(__name__)
 
 
@@ -60,13 +62,24 @@ class AIEffectOutputApplication:
                 "detail": "Generated assets remain available; check the target layer and retry.",
             }
 
+    def include_model_outputs(self, result: Any) -> None:
+        if isinstance(result, _ModelApplicationResult) and result.prepared_models is None:
+            self.expected_count += result.expected_models + result.unavailable_images
+            self.applied_count += result.applied_models
+            self.failed_count += (
+                result.expected_models - result.applied_models + result.unavailable_images
+            )
+
 
 def observed_output_application(result: Any, outcome: Any) -> AIEffectOutputApplication:
     """Respect app overrides that explicitly report success or failure."""
     if isinstance(result, AIEffectOutputApplication):
         return result
-    images = getattr(getattr(outcome, "result", None), "output_images", None) or []
+    generated = getattr(outcome, "result", None)
+    images = getattr(generated, "output_images", None) or []
     count = len(images)
+    if isinstance(generated, _ModelApplicationResult) and generated.prepared_models is not None:
+        count += generated.expected_models + generated.unavailable_images
     return AIEffectOutputApplication(
         expected_count=count,
         applied_count=count if result is True else 0,

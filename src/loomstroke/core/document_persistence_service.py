@@ -353,6 +353,8 @@ class DocumentPersistenceService:
                 "strict": bool(opts.strict),
                 "validate_manifest": bool(opts.validate_manifest),
             }
+            if snapshot.metadata.missing_mask_count:
+                payload["missing_mask_count"] = snapshot.metadata.missing_mask_count
             owner._event_bus.emit(Events.DOC_LOADED, payload)  # noqa: SLF001
             owner._event_bus.emit(Events.DOC_OPENED, payload)  # noqa: SLF001
             return True

@@ -6,16 +6,15 @@ with atomic writes, automatic pruning, and provider dispatch.
 
 from __future__ import annotations
 
-import contextlib
 import json
 import logging
-import os
 from pathlib import Path
 from typing import TYPE_CHECKING
 
 from PySide6.QtCore import QObject, QTimer, Signal
 
 from loomstroke.core.generation_record import GenerationRecord
+from loomstroke.io.atomic_export_writer import write_atomically
 
 if TYPE_CHECKING:
     from loomstroke.plugins.sdk.generation_provider import GenerationProvider
@@ -102,21 +101,35 @@ class GenerationHistoryStore(QObject):
 
     def save(self) -> None:
         """Persist records to ``index.json`` atomically."""
-        self._ensure_dirs()
+        self._save_with_pruning()
+
+    def _save_with_pruning(self) -> bool:
+        limit = max(0, self._max_records)
+        return self._commit_records(self._records[:limit], self._records[limit:])
+
+    def _commit_records(
+        self, records: list[GenerationRecord], removed: list[GenerationRecord]
+    ) -> bool:
+        """Publish the replacement index before unlinking its retired assets."""
         index_path = self._base / _INDEX_FILE
-        tmp_path = index_path.with_suffix(".json.tmp")
         try:
+            self._ensure_dirs()
             payload = json.dumps(
-                [r.to_dict() for r in self._records],
+                [r.to_dict() for r in records],
                 ensure_ascii=False,
                 indent=2,
             )
-            tmp_path.write_text(payload, encoding="utf-8")
-            os.replace(str(tmp_path), str(index_path))
+            write_atomically(index_path, lambda tmp: tmp.write_text(payload, encoding="utf-8"))
         except Exception:
             logger.exception("Failed to save generation history index")
-            with contextlib.suppress(OSError):
-                tmp_path.unlink(missing_ok=True)
+            return False
+        self._save_timer.stop()
+        self._records = records
+        if removed:
+            self._delete_record_files(removed)
+            for record in removed:
+                self.record_removed.emit(record.job_id)
+        return True
 
     # ------------------------------------------------------------------
     # CRUD
@@ -130,22 +143,17 @@ class GenerationHistoryStore(QObject):
     def add_record(self, record: GenerationRecord) -> None:
         """Add a record, pruning oldest when over the limit."""
         self._records.insert(0, record)
-        # Prune oldest records beyond the limit
-        while len(self._records) > self._max_records:
-            old = self._records.pop()
-            self._delete_record_files(old)
-        self._schedule_save()
+        if len(self._records) <= self._max_records or not self._save_with_pruning():
+            # An index write failure keeps every old record and the new result.
+            self._schedule_save()
         self.record_added.emit(record.job_id)
 
     def remove_record(self, job_id: str) -> bool:
         """Remove a record and its associated image files."""
         for i, rec in enumerate(self._records):
             if rec.job_id == job_id:
-                removed = self._records.pop(i)
-                self._delete_record_files(removed)
-                self._schedule_save()
-                self.record_removed.emit(job_id)
-                return True
+                remaining = self._records[:i] + self._records[i + 1 :]
+                return self._commit_records(remaining, [rec])
         return False
 
     def get_record(self, job_id: str) -> GenerationRecord | None:
@@ -198,14 +206,39 @@ class GenerationHistoryStore(QObject):
         full.write_bytes(thumbnail_bytes)
         return rel
 
-    def _delete_record_files(self, record: GenerationRecord) -> None:
-        """Delete image and thumbnail files for a record."""
-        for rel in (record.image_path, record.thumbnail_path):
-            if rel:
+    def _delete_record_files(self, removed: list[GenerationRecord]) -> None:
+        """Clean up only unreferenced files in the store's asset directories."""
+        retained = {
+            Path(rel)
+            for record in self._records
+            for rel in (record.image_path, record.thumbnail_path)
+            if isinstance(rel, str) and rel
+        }
+        for record in removed:
+            for rel, folder, suffix in (
+                (record.image_path, _IMAGES_DIR, ".png"),
+                (record.thumbnail_path, _THUMBNAILS_DIR, ".webp"),
+            ):
+                if not isinstance(rel, str) or not rel:
+                    continue
+                relative = Path(rel)
+                if (
+                    relative in retained
+                    or relative.parent != Path(folder)
+                    or relative.suffix.lower() != suffix
+                ):
+                    continue
+                asset = self._base / relative
                 try:
-                    (self._base / rel).unlink(missing_ok=True)
-                except OSError:
-                    logger.debug("Failed to delete %s", rel)
+                    if (
+                        not asset.is_symlink()
+                        and asset.resolve().parent == self._base.resolve() / folder
+                    ):
+                        asset.unlink(missing_ok=True)
+                except (OSError, RuntimeError, ValueError):
+                    logger.debug(
+                        "Failed to remove an unused generation history asset", exc_info=True
+                    )
 
     # ------------------------------------------------------------------
     # Provider management

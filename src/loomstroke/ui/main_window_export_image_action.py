@@ -11,6 +11,7 @@ from __future__ import annotations
 
 import logging
 from collections.abc import Callable
+from inspect import getattr_static
 from pathlib import Path
 from typing import Any
 
@@ -19,10 +20,13 @@ from numpy.typing import NDArray
 from PySide6.QtGui import QImage, QPixmap
 from PySide6.QtWidgets import QDialog, QFileDialog, QMessageBox
 
+from ..core.canvas_service_simple_channels_api import CanvasServiceChannelsApiMixin
 from ..io.export_color_policy import ExportColorPolicy
 from ..io.export_image_request import ExportImageRequest
+from ..io.file_io import ColorProfile
 from ..io.raster_export import export_raster
 from .dialogs.export_image_dialog import ExportImageDialog
+from .translations import translated_literal_domain
 
 logger = logging.getLogger(__name__)
 
@@ -66,7 +70,7 @@ class MainWindowExportImageAction:
         if canvas is None:
             self._warn("Export Unavailable", "Canvas service is not available.")
             return False
-        profile = self._document_profile(canvas)
+        profile, _ = self._readback_color_source(canvas)
         dialog = self._dialog_factory(
             width=int(getattr(canvas, "_width", 1) or 1),
             height=int(getattr(canvas, "_height", 1) or 1),
@@ -97,11 +101,23 @@ class MainWindowExportImageAction:
             self._warn("Export Unavailable", "Canvas composite is not available.")
             return False
         rgba = self._pixmap_to_rgba(pixmap)
-        profile = self._document_profile(canvas)
+        profile, rendered_srgb = self._readback_color_source(canvas)
         resolved = self._color_policy.resolve(
             request.color_policy,
             document_profile=getattr(profile, "data", None) if profile else None,
+            rendered_srgb=rendered_srgb,
         )
+        if resolved.blocked:
+            self._message_box().critical(
+                window,
+                window._ts("Export Failed"),
+                translated_literal_domain(
+                    "__shared__",
+                    "The document profile is not a usable ICC profile.",
+                    use_fallback=True,
+                ),
+            )
+            return False
         if resolved.transform is not None:
             rgba = resolved.transform(rgba)
         result = self._exporter(
@@ -158,11 +174,17 @@ class MainWindowExportImageAction:
         return getattr(host_api, "canvas", None) if host_api else None
 
     @staticmethod
-    def _document_profile(canvas: Any) -> Any | None:
+    def _readback_color_source(canvas: Any) -> tuple[Any | None, bool]:
+        # The standard canvas export readback composites native inks into sRGB.
+        if (
+            getattr_static(canvas, "native_cmyk", None) is CanvasServiceChannelsApiMixin.native_cmyk
+            and canvas.native_cmyk().profile() is not None
+        ):
+            return ColorProfile.srgb(), True
         profile = getattr(canvas, "color_profile", None)
         if profile is None or not getattr(profile, "data", None):
-            return None
-        return profile
+            return None, False
+        return profile, False
 
     @staticmethod
     def _canvas_dpi(canvas: Any) -> tuple[float, float]:

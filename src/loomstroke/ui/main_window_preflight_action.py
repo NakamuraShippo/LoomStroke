@@ -92,6 +92,7 @@ class MainWindowPreflightAction:
             roles_by_id=self._roles_by_id(pages),
             book_layout=self._book_layout(),
             live_canvas=getattr(getattr(self._window, "_host_api", None), "canvas", None),
+            document_revision=PreflightExportGate.document_revision(self._window),
         )
         snapshot = builder.build(page_ids)
         report = self._service.run(snapshot, profile)

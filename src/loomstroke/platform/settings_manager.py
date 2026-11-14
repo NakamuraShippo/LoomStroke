@@ -88,12 +88,23 @@ class _FileSettingsBackend:
             logger.warning("Failed to load settings file %s: %s", self._path, exc)
 
     def _save(self) -> None:
-        self._path.parent.mkdir(parents=True, exist_ok=True)
+        if self._batch_depth > 0 or not self._dirty:
+            return
+
+        # The I/O package's autosave module imports SettingsManager.
+        from loomstroke.io.atomic_export_writer import write_atomically  # noqa: PLC0415
+
         payload = json.dumps(self._data, ensure_ascii=False, indent=2)
+
+        def encode(temporary: Path) -> None:
+            temporary.write_text(payload, encoding="utf-8")
+
         try:
-            self._path.write_text(payload, encoding="utf-8")
+            write_atomically(self._path, encode)
         except OSError as exc:
             logger.error("Failed to persist settings file %s: %s", self._path, exc)
+        else:
+            self._dirty = False
 
     # Batch API ----------------------------------------------------------------
     def begin_batch(self) -> None:
@@ -105,9 +116,7 @@ class _FileSettingsBackend:
         """End a batch; flush to disk if dirty and no outer batch remains."""
         with self._lock:
             self._batch_depth = max(0, self._batch_depth - 1)
-            if self._batch_depth == 0 and self._dirty:
-                self._save()
-                self._dirty = False
+            self._save()
 
     # QSettings-like API -----------------------------------------------------
     def value(self, key: str, default: Any = None) -> Any:
@@ -116,10 +125,8 @@ class _FileSettingsBackend:
     def setValue(self, key: str, value: Any) -> None:
         with self._lock:
             self._data[str(key)] = value
-            if self._batch_depth > 0:
-                self._dirty = True
-            else:
-                self._save()
+            self._dirty = True
+            self._save()
 
     def contains(self, key: str) -> bool:
         return str(key) in self._data
@@ -127,18 +134,14 @@ class _FileSettingsBackend:
     def remove(self, key: str) -> None:
         with self._lock:
             self._data.pop(str(key), None)
-            if self._batch_depth > 0:
-                self._dirty = True
-            else:
-                self._save()
+            self._dirty = True
+            self._save()
 
     def clear(self) -> None:
         with self._lock:
             self._data.clear()
-            if self._batch_depth > 0:
-                self._dirty = True
-            else:
-                self._save()
+            self._dirty = True
+            self._save()
 
     def allKeys(self) -> list[str]:
         return list(self._data.keys())
@@ -146,9 +149,13 @@ class _FileSettingsBackend:
     def sync(self) -> None:
         """Flush pending changes to disk."""
         with self._lock:
+            self._save()
+
+    def require_persisted(self) -> None:
+        """Check the latest flush when another operation depends on this write."""
+        with self._lock:
             if self._dirty:
-                self._save()
-                self._dirty = False
+                raise OSError("Settings file changes could not be saved")
 
     @property
     def fileName(self) -> str:
@@ -188,6 +195,9 @@ class SettingsManager(QObject):
         EnvironmentSettings.log_environment()
 
         logger.info("SettingsManager initialized: %s", self.settings.fileName)
+
+    def _require_persisted(self) -> None:
+        self.settings.require_persisted()
 
     def _initialize_defaults(self) -> None:
         """Initialize default settings if not present."""

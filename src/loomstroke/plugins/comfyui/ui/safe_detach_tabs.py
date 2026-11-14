@@ -7,6 +7,7 @@ Uses MovingAwareDock for maximum crash safety.
 from __future__ import annotations
 
 import logging
+from collections.abc import Iterator
 
 from PySide6.QtCore import Qt, Signal
 from PySide6.QtGui import QCursor, QMouseEvent
@@ -134,11 +135,13 @@ class SafeDetachableTabWidget(QTabWidget):
             lambda: logger.debug(f"Tab {index} dock ended native move - updates resumed")
         )
 
-        # Remove widget from tab (it's now in the dock)
-        self.removeTab(index)
+        # Reparenting into the dock can already remove the tab in Qt.
+        remaining_index = self.indexOf(widget)
+        if remaining_index >= 0:
+            self.removeTab(remaining_index)
 
-        # Store reference with weak reference
-        self.detached_docks[index] = WeakBox(dock)
+        dock_key = id(dock)
+        self.detached_docks[dock_key] = WeakBox(dock)
 
         # Get cursor position before any window operations
         cursor_pos = QCursor.pos()
@@ -165,17 +168,14 @@ class SafeDetachableTabWidget(QTabWidget):
         original_close = dock.closeEvent
 
         def handle_close(event):
-            # Option to re-add to tabs
-            if is_valid(widget):
-                try:
-                    self.addTab(widget, title)
-                    logger.debug(f"Returned tab {title} from closed dock")
-                except Exception as e:
-                    logger.debug(f"Could not return tab to widget: {e}")
-            if index in self.detached_docks:
-                del self.detached_docks[index]
-            if callable(original_close):
-                original_close(event)
+            original_close(event)
+            if not event.isAccepted():
+                return
+            registered = self.detached_docks.pop(dock_key, None)
+            if registered is not None and is_valid(self) and is_valid(widget):
+                self.addTab(widget, title)
+                logger.debug("Returned tab %s from closed dock", title)
+            dock.deleteLater()
 
         dock.closeEvent = handle_close
 
@@ -183,6 +183,18 @@ class SafeDetachableTabWidget(QTabWidget):
         self.tab_detached.emit(index, dock)
 
         logger.info(f"Tab {index} safely detached as MovingAwareDock '{title}'")
+
+    def content_widgets(self) -> Iterator[QWidget]:
+        """Yield the current tab contents, including editors in floating docks."""
+        for index in range(self.count()):
+            widget = self.widget(index)
+            if widget is not None:
+                yield widget
+        for dock_ref in tuple(self.detached_docks.values()):
+            dock = dock_ref.value
+            widget = dock.widget() if dock is not None else None
+            if widget is not None and is_valid(widget):
+                yield widget
 
     def find_main_window(self) -> QMainWindow | None:
         """Find the main window.
@@ -208,11 +220,11 @@ class SafeDetachableTabWidget(QTabWidget):
 
     def cleanup(self) -> None:
         """Clean up detached docks."""
-        for dock in self.detached_docks.values():
-            if dock:
-                try:
-                    dock.close()
-                except Exception as e:
-                    logger.debug(f"Error closing detached dock: {e}")
+        docks = tuple(self.detached_docks.values())
         self.detached_docks.clear()
+        for dock_ref in docks:
+            dock = dock_ref.value
+            if dock is not None:
+                dock.close()
+                dock.deleteLater()
         logger.debug("Cleaned up all detached docks")

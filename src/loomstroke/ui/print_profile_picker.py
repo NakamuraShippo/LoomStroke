@@ -88,6 +88,13 @@ class PrintProfilePicker(QWidget):
         data = self._combo.currentData()
         return str(data) if data else None
 
+    def select_profile_id(self, profile_id: str) -> bool:
+        index = self._combo.findData(profile_id)
+        if index < 0:
+            return False
+        self._combo.setCurrentIndex(index)
+        return True
+
     def profile_name(self) -> str | None:
         info = self._registry.info(self.profile_id() or "")
         return info.name if info else None

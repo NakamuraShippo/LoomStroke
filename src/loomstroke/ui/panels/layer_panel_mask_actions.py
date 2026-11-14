@@ -6,6 +6,10 @@ import logging
 from typing import Any
 
 from loomstroke.core.commands import AddLayerMaskCommand, RemoveLayerMaskCommand
+from loomstroke.core.standalone_mask_invert import (
+    _standalone_mask_invert_action,
+    _supports_standalone_mask_invert,
+)
 
 logger = logging.getLogger(__name__)
 
@@ -87,3 +91,23 @@ def _mask_action_from_panel(panel: Any, layer_id: str, *, add: bool) -> None:
         logger.debug("%s_layer_mask failed for %s", operation, layer_id, exc_info=True)
     finally:
         panel._release_layer_op()
+
+
+def _invert_standalone_mask_from_panel(panel: Any, layer_id: str) -> None:
+    canvas = panel._get_canvas()
+    if canvas is None:
+        return
+    if not _supports_standalone_mask_invert(canvas):
+        legacy = getattr(canvas, "invert_mask_layer", None)
+        if callable(legacy) and legacy(layer_id):
+            panel._add_default_layers()
+        return
+    try:
+        layer = panel._resolve_canvas_layer(layer_id)
+        if layer is None or layer.layer_type != "mask":
+            return
+        scope = _MaskActionScope(panel, canvas, layer)
+        if _standalone_mask_invert_action(canvas, layer, scope.current) and scope.current():
+            panel._add_default_layers()
+    except Exception:
+        logger.exception("Standalone mask inversion could not finish")

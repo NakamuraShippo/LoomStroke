@@ -168,6 +168,7 @@ class CanvasStrokePixelCommitService:
             metadata: dict[str, Any] = {"command": "paint"}
             if getattr(owner, "_mask_edit_flag", False):
                 metadata["mask_edit"] = True
+                owner._normalize_mask_to_grayscale(after_patch)
             owner._record_history_patch(
                 "Paint Stroke",
                 owner._history_patch_from_images(

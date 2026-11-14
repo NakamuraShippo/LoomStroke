@@ -8,6 +8,7 @@ dirty state (spec 07 §9).
 from __future__ import annotations
 
 import logging
+from dataclasses import dataclass
 from typing import Any
 
 from PySide6.QtCore import Qt
@@ -28,6 +29,10 @@ from PySide6.QtWidgets import (
     QWidget,
 )
 
+from loomstroke.core.page_template_edit_scope import (
+    PageTemplateEditScope,
+    capture_page_template_edit_scope,
+)
 from loomstroke.core.page_templates import TemplateCaptureOptions
 from loomstroke.core.template_raster_codec import TemplateRasterCodec
 from loomstroke.ui.translations import translated_literal_domain
@@ -37,6 +42,72 @@ logger = logging.getLogger(__name__)
 
 def _ts(text: str) -> str:
     return translated_literal_domain("PagePanelPlugin", text, use_fallback=True)
+
+
+@dataclass(frozen=True, slots=True)
+class _TemplateInputDraft:
+    scope: PageTemplateEditScope
+    key: tuple[str, str]
+    value: Any
+
+
+def discard_template_input(owner: Any) -> None:
+    owner._template_input_draft = None
+
+
+def recall_template_input(owner: Any, key: tuple[str, str], default: Any) -> Any:
+    draft = getattr(owner, "_template_input_draft", None)
+    if (
+        draft is not None
+        and draft.key == key
+        and draft.scope.matches(capture_page_template_edit_scope(owner._page_service))
+    ):
+        return draft.value
+    discard_template_input(owner)
+    return default
+
+
+def retain_template_input(
+    owner: Any, key: tuple[str, str], value: Any, scope: PageTemplateEditScope
+) -> None:
+    if scope.matches(capture_page_template_edit_scope(owner._page_service)):
+        owner._template_input_draft = _TemplateInputDraft(scope, key, value)
+    else:
+        discard_template_input(owner)
+
+
+def discard_other_template_input(owner: Any, target: str | None) -> None:
+    draft = getattr(owner, "_template_input_draft", None)
+    if draft is not None and draft.key[1] != target:
+        discard_template_input(owner)
+
+
+def _edit_library_input(
+    owner: Any,
+    template_id: str,
+    action: str,
+    title: str,
+    label: str,
+    default: str,
+    operation: Any,
+) -> None:
+    scope = capture_page_template_edit_scope(owner._page_service)
+    key = (action, template_id)
+    text, accepted = QInputDialog.getText(
+        owner, title, label, text=recall_template_input(owner, key, default)
+    )
+    if not accepted or not text.strip():
+        discard_template_input(owner)
+        return
+    if owner._selected_id() != template_id or not scope.matches(
+        capture_page_template_edit_scope(owner._page_service)
+    ):
+        discard_template_input(owner)
+        return
+    if owner._run_library_operation(operation, template_id, text.strip()):
+        discard_template_input(owner)
+    elif owner._selected_id() == template_id:
+        retain_template_input(owner, key, text, scope)
 
 
 class TemplateCaptureDialog(QDialog):
@@ -97,6 +168,11 @@ class TemplateCaptureDialog(QDialog):
             include_raster_artwork=self.include_raster_box.isChecked(),
         )
 
+    def set_capture_options(self, options: TemplateCaptureOptions) -> None:
+        self.include_vectors_box.setChecked(options.include_vector_objects)
+        self.include_guides_box.setChecked(options.include_guides)
+        self.include_raster_box.setChecked(options.include_raster_artwork)
+
     def _refresh_raster_note(self) -> None:
         if not self.include_raster_box.isChecked():
             self.raster_size_label.setText("")
@@ -117,6 +193,9 @@ class TemplateManagerDialog(QDialog):
     def __init__(self, *, page_service: Any, parent: QWidget | None = None) -> None:
         super().__init__(parent)
         self._page_service = page_service
+        self._template_input_draft = None
+        self.finished.connect(lambda *_args: discard_template_input(self))
+        self.destroyed.connect(lambda *_args: discard_template_input(self))
         self.setWindowTitle(_ts("Manage Templates"))
         self.resize(420, 360)
 
@@ -202,6 +281,7 @@ class TemplateManagerDialog(QDialog):
         return pixmap if pixmap.loadFromData(payload, "PNG") else None
 
     def _refresh_buttons(self) -> None:
+        discard_other_template_input(self, self._selected_id())
         has_selection = self._selected_id() is not None
         is_user = self._selected_is_user()
         self.rename_button.setEnabled(is_user)
@@ -218,25 +298,31 @@ class TemplateManagerDialog(QDialog):
             return
         current = self.list_widget.currentItem()
         current_name = current.text().rsplit("  [", 1)[0] if current else ""
-        name, ok = QInputDialog.getText(
-            self, _ts("Rename Template"), _ts("Template name:"), text=current_name
-        )
-        if not ok or not name.strip():
-            return
         rename = getattr(self._page_service, "rename_page_template", None)
-        self._run_library_operation(rename, template_id, name.strip())
+        _edit_library_input(
+            self,
+            template_id,
+            "rename",
+            _ts("Rename Template"),
+            _ts("Template name:"),
+            current_name,
+            rename,
+        )
 
     def _on_category(self) -> None:
         template_id = self._selected_id()
         if template_id is None or not self._selected_is_user():
             return
-        category, ok = QInputDialog.getText(
-            self, _ts("Template Category"), _ts("Template category:"), text="custom"
-        )
-        if not ok or not category.strip():
-            return
         set_category = getattr(self._page_service, "set_page_template_category", None)
-        self._run_library_operation(set_category, template_id, category.strip())
+        _edit_library_input(
+            self,
+            template_id,
+            "category",
+            _ts("Template Category"),
+            _ts("Template category:"),
+            "custom",
+            set_category,
+        )
 
     def _on_duplicate(self) -> None:
         template_id = self._selected_id()
@@ -259,7 +345,7 @@ class TemplateManagerDialog(QDialog):
         delete = getattr(self._page_service, "delete_page_template", None)
         self._run_library_operation(delete, template_id)
 
-    def _run_library_operation(self, operation: Any, *args: Any) -> None:
+    def _run_library_operation(self, operation: Any, *args: Any) -> bool:
         try:
             succeeded = callable(operation) and bool(operation(*args))
         except Exception:
@@ -273,3 +359,4 @@ class TemplateManagerDialog(QDialog):
                 _ts("Manage Templates"),
                 _ts("The template could not be saved. See the log for details."),
             )
+        return succeeded

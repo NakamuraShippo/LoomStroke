@@ -8,12 +8,18 @@ from collections.abc import Callable, Sequence
 from typing import Any, cast
 
 import numpy as np
-from PySide6.QtCore import Qt
+from PySide6.QtCore import QRect, Qt
 from PySide6.QtGui import QImage, QPainter
 
 from loomstroke.core.canvas_blend_service import CanvasBlendService
 from loomstroke.core.canvas_layer_query_service import CanvasLayerQueryService
+from loomstroke.core.canvas_masked_raster_merge import (
+    submit_masked_raster_merge,
+    supports_masked_raster_merge,
+)
+from loomstroke.core.command_image_utils import _affine_bounds
 from loomstroke.core.commands import BlendMode
+from loomstroke.core.geometry import Affine2D
 from loomstroke.core.layer_3d_rendering import refresh_3d_layer_preview, render_3d_layer
 from loomstroke.core.mask_coverage import mask_coverage_alpha8
 from loomstroke.core.native_cmyk.merge_service import NativeCmykMergeService
@@ -81,6 +87,14 @@ def _invert_affine(
     inv_c = -c / det
     inv_d = a / det
     return (inv_a, inv_b, inv_c, inv_d, -(inv_a * tx + inv_b * ty), -(inv_c * tx + inv_d * ty))
+
+
+def _raster_merge_bounds(layer: Any) -> tuple[int, int, int, int] | None:
+    width, height = layer.image.width(), layer.image.height()
+    affine = _layer_affine(layer)
+    if affine is None:
+        return (int(layer.offset_x), int(layer.offset_y), width, height)
+    return _affine_bounds(Affine2D(*affine), width, height)
 
 
 def _qimage_to_rgba(image: QImage) -> np.ndarray:
@@ -155,12 +169,18 @@ class CanvasMergeFlattenService:
         if getattr(target, "layer_type", "") == "3d":
             return False
         self._refresh_3d_layer_image(source)
-        if source.image is None or target.image is None:
-            return False
 
         source_index = self.find_top_level_layer_index(owner._layers, source_id)
-        if source_index < 0:
+        if source.image is None or target.image is None or source_index < 0:
             return False
+        if (
+            source_index > 0
+            and owner._layers[source_index - 1] is target
+            and supports_masked_raster_merge(source, target)
+        ):
+            return submit_masked_raster_merge(
+                owner, source, target, self.layer_canvas_image, _raster_merge_bounds
+            )
 
         src_data, sw, sh, sfmt = self._compress_qimage(source.image)
         tgt_data, tw, th, tfmt = self._compress_qimage(target.image)
@@ -599,20 +619,23 @@ class CanvasMergeFlattenService:
             i = j
         return result
 
-    def _blank_canvas(self) -> QImage:
-        owner = self._owner
-        image = QImage(owner._width, owner._height, QImage.Format.Format_ARGB32_Premultiplied)
+    def _blank_canvas(self, region: QRect | None = None) -> QImage:
+        if region is None:
+            width, height = self._owner._width, self._owner._height
+        else:
+            width, height = region.width(), region.height()
+        image = QImage(width, height, QImage.Format.Format_ARGB32_Premultiplied)
         image.fill(Qt.GlobalColor.transparent)
         return image
 
-    def layer_canvas_image(self, layer: Any) -> QImage | None:
+    def layer_canvas_image(self, layer: Any, region: QRect | None = None) -> QImage | None:
         """Return *layer*'s contribution in canvas space.
 
         Applies, in the order the wgpu compositor does: the layer's own
         content (group children composited, or image/vector plus child
         effects), its transform, then its layer mask.  Blend mode and opacity
         stay with the caller because a clipping group applies them once for
-        the whole group.
+        the whole group. Merge Down can request a raster's world-space extent.
         """
 
         if not getattr(layer, "visible", True):
@@ -629,20 +652,24 @@ class CanvasMergeFlattenService:
             source = self.get_filtered_image(layer)
             if source is None:
                 return None
-            canvas_image = self._place_on_canvas(layer, source)
+            canvas_image = self._place_on_canvas(layer, source, region)
 
-        self._apply_layer_mask(canvas_image, layer)
+        offset = (region.x(), region.y()) if region is not None else (0, 0)
+        self._apply_layer_mask(canvas_image, layer, offset)
         return canvas_image
 
-    def _place_on_canvas(self, layer: Any, source: QImage) -> QImage:
+    def _place_on_canvas(self, layer: Any, source: QImage, region: QRect | None) -> QImage:
         """Draw a layer-local image into canvas space, honouring its transform."""
 
         affine = _layer_affine(layer)
         if affine is not None:
-            return self._place_with_affine(source, affine)
-        canvas_image = self._blank_canvas()
+            return self._place_with_affine(source, affine, region)
+        canvas_image = self._blank_canvas(region)
+        if canvas_image.isNull():
+            return canvas_image
+        x, y = (region.x(), region.y()) if region is not None else (0, 0)
         painter = QPainter(canvas_image)
-        painter.drawImage(int(layer.offset_x), int(layer.offset_y), source)
+        painter.drawImage(int(layer.offset_x) - x, int(layer.offset_y) - y, source)
         painter.end()
         return canvas_image
 
@@ -650,6 +677,7 @@ class CanvasMergeFlattenService:
         self,
         source: QImage,
         affine: tuple[float, float, float, float, float, float],
+        region: QRect | None,
     ) -> QImage:
         """Resample *source* through *affine* exactly the way the shader does.
 
@@ -663,17 +691,18 @@ class CanvasMergeFlattenService:
         """
 
         inverse = _invert_affine(affine)
-        canvas_image = self._blank_canvas()
         if inverse is None:
-            return canvas_image
-        width, height = self._owner._width, self._owner._height
+            return self._blank_canvas(region)
+        if region is None:
+            region = QRect(0, 0, self._owner._width, self._owner._height)
+        width, height = region.width(), region.height()
         source_rgba = _qimage_to_rgba(source)
         source_h, source_w = source_rgba.shape[:2]
 
         inv_a, inv_b, inv_c, inv_d, inv_tx, inv_ty = inverse
         centres_y, centres_x = np.mgrid[0:height, 0:width]
-        pixel_x = centres_x + 0.5
-        pixel_y = centres_y + 0.5
+        pixel_x = centres_x + (region.x() + 0.5)
+        pixel_y = centres_y + (region.y() + 0.5)
         local_x = inv_a * pixel_x + inv_b * pixel_y + inv_tx
         local_y = inv_c * pixel_x + inv_d * pixel_y + inv_ty
 
@@ -698,13 +727,20 @@ class CanvasMergeFlattenService:
         return _rgba_to_qimage(out)
 
     @staticmethod
-    def _apply_layer_mask(canvas_image: QImage, layer: Any) -> None:
+    def _apply_layer_mask(
+        canvas_image: QImage, layer: Any, offset: tuple[int, int] = (0, 0)
+    ) -> None:
         mask = getattr(layer, "layer_mask", None)
-        if mask is None or mask.isNull() or not bool(getattr(layer, "mask_enabled", True)):
+        if (
+            canvas_image.isNull()
+            or mask is None
+            or mask.isNull()
+            or not bool(getattr(layer, "mask_enabled", True))
+        ):
             return
         painter = QPainter(canvas_image)
         painter.setCompositionMode(QPainter.CompositionMode.CompositionMode_DestinationIn)
-        painter.drawImage(0, 0, mask_coverage_alpha8(mask))
+        painter.drawImage(-offset[0], -offset[1], mask_coverage_alpha8(mask))
         painter.end()
 
     def get_filtered_image(self, layer: Any) -> QImage | None:

@@ -608,6 +608,17 @@ class BasicMoveTool:
             )
             return
         # Reset to original offsets and masks before issuing command
+        self._restore_layer_drag_originals()
+        self._set_layer_transform_payload(self._offset_bounds(self._layer_bounds0, dx, dy))
+        if not self._live_capture.finish_restore():
+            return
+        if dx == 0 and dy == 0:
+            return
+        self._pending_commands.append(MoveLayerCommand(dx, dy, layer_id=self._layer_id))
+
+    def _restore_layer_drag_originals(self) -> None:
+        if self._layer_ref is None or self._layer_offset0 is None:
+            return
         if hasattr(self._layer_ref, "offset_x") and hasattr(self._layer_ref, "offset_y"):
             self._layer_ref.offset_x = int(self._layer_offset0[0])
             self._layer_ref.offset_y = int(self._layer_offset0[1])
@@ -620,12 +631,6 @@ class BasicMoveTool:
         # Restore vector objects to originals
         for child_layer, original in self._group_vec_originals:
             self._replace_vector_object(child_layer, original)
-        self._set_layer_transform_payload(self._offset_bounds(self._layer_bounds0, dx, dy))
-        if not self._live_capture.finish_restore():
-            return
-        if dx == 0 and dy == 0:
-            return
-        self._pending_commands.append(MoveLayerCommand(dx, dy, layer_id=self._layer_id))
 
     def _hit_test_layer_transform(self, pt: StrokePoint) -> tuple[str, str] | None:
         selection = self._layer_transform_selection()
@@ -1279,7 +1284,6 @@ class BasicMoveTool:
         dx, dy = self._apply_snap_vector(dx, dy)
         # Restore originals and mask without recompose to avoid visible flash
         self._restore_vector_drag_originals_quiet()
-        self._restore_mask(self._vector_drag_mask_layer, self._vector_drag_mask_snapshot)
         if not self._live_capture.finish_restore():
             return
         if dx != 0.0 or dy != 0.0:
@@ -1343,6 +1347,7 @@ class BasicMoveTool:
             return
         for vec_id, layer_id, original in self._vector_drag_originals:
             self._apply_vector_replacement(canvas, vec_id=vec_id, layer_id=layer_id, obj=original)
+        self._restore_mask(self._vector_drag_mask_layer, self._vector_drag_mask_snapshot)
 
     def _selected_vector_hit(self) -> _VectorHit | None:  # noqa: PLR0911, PLR0912
         if not self.host_api:
@@ -2813,15 +2818,10 @@ class BasicMoveTool:
             self._recompose_canvas()
         elif self._mode == "layer":
             self._clear_runtime_layer_preview_transform()
-            if (
-                self._layer_ref
-                and self._layer_offset0
-                and hasattr(self._layer_ref, "offset_x")
-                and hasattr(self._layer_ref, "offset_y")
-            ):
-                self._layer_ref.offset_x = int(self._layer_offset0[0])
-                self._layer_ref.offset_y = int(self._layer_offset0[1])
-                self._recompose_canvas()
+            if not _is_qimage_layer(self._layer_ref):
+                self._restore_layer_drag_originals()
+            self._set_layer_transform_payload(self._layer_bounds0)
+            self._recompose_canvas()
             self._live_capture.finish_restore()
 
     def _finish_pointer(self) -> None:
@@ -2839,11 +2839,17 @@ class BasicMoveTool:
         self._layer_drag_transform0 = None
         self._layer_size = (0.0, 0.0)
         self._layer_bounds0 = None
+        self._layer_mask_snapshot = None
+        self._group_child_offsets.clear()
+        self._group_child_mask_snapshots.clear()
+        self._group_vec_originals.clear()
         self._layer_transform_state = None
         self._pressed_vector_hit = None
         self._vector_drag_originals = []
         self._vector_drag_items = []
         self._vector_drag_bounds = None
+        self._vector_drag_mask_layer = None
+        self._vector_drag_mask_snapshot = None
         self._vector_drag_start = None
         self._vector_last_delta = (0.0, 0.0)
         self._vector_transform_state = None

@@ -8,6 +8,7 @@ from typing import Any
 
 from PySide6.QtGui import QImage
 
+from loomstroke.ui.canvas.render_scene import RenderSceneSnapshot
 from loomstroke.ui.canvas.wgpu_backend import WgpuOffscreenRenderer
 from loomstroke.ui.canvas.wgpu_backend.types import WgpuBackendError, WgpuUnavailableError
 
@@ -35,6 +36,14 @@ def _render(scene: Any, invalidation: Any) -> Any:
 
 
 async def composite_image(service: Any, arguments: Mapping[str, Any] | None = None) -> QImage:
+    image, _ = await capture_composite_image(service, arguments)
+    return image
+
+
+async def capture_composite_image(
+    service: Any, arguments: Mapping[str, Any] | None = None
+) -> tuple[QImage, RenderSceneSnapshot]:
+    """Return the readback with the detached scene it actually rendered."""
     check_gui_thread()
     before = current_revision(service)
     canvas = service.canvas_service
@@ -48,4 +57,5 @@ async def composite_image(service: Any, arguments: Mapping[str, Any] | None = No
         raise McpStructuredError(ReasonCode.CONFLICT, "The document changed during GPU readback.")
     rgba = result.rgba
     height, width = rgba.shape[:2]
-    return QImage(rgba.data, width, height, rgba.strides[0], QImage.Format.Format_RGBA8888).copy()
+    image = QImage(rgba.data, width, height, rgba.strides[0], QImage.Format.Format_RGBA8888).copy()
+    return image, scene

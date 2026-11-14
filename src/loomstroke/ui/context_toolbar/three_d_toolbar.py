@@ -3,18 +3,21 @@
 from __future__ import annotations
 
 import logging
-import math
 from contextlib import suppress
 from typing import Any
 
-from PySide6.QtCore import QRect
+from PySide6.QtCore import QEvent, QPointF, QRect, Qt
+from PySide6.QtGui import QIcon, QPainter, QPen, QPixmap
 from PySide6.QtWidgets import (
     QButtonGroup,
     QComboBox,
     QDoubleSpinBox,
     QHBoxLayout,
     QLabel,
+    QMenu,
     QPushButton,
+    QStyle,
+    QToolButton,
     QVBoxLayout,
     QWidget,
 )
@@ -25,10 +28,14 @@ from loomstroke.core.commands import (
     SetLayer3DDisplayModeCommand,
     SetLayer3DLightPositionCommand,
 )
+from loomstroke.core.drawing_figures.model import pose_from_layer
 from loomstroke.core.events import Events
+from loomstroke.core.layer_3d_light import light_position
 from loomstroke.core.layer_3d_rendering import orbit_camera_state, preview_display_mode
 from loomstroke.plugins.sdk.tool import ContextToolbarSpec
 from loomstroke.rendering_3d import OrbitCameraState, PreviewDisplayMode
+from loomstroke.ui.drawing_figure_add import figure_text
+from loomstroke.ui.translations import translated_literal_domain
 
 logger = logging.getLogger(__name__)
 
@@ -77,10 +84,17 @@ class ThreeDLayerContextToolbarController:
         figure = getattr(self._interaction_controller(), "figure", None)
         if figure is not None:
             figure.cancel_if_invalid()
+        interaction = self._interaction_controller()
+        if interaction is not None:
+            cancel_if_invalid = getattr(interaction, "cancel_if_invalid", None)
+            if callable(cancel_if_invalid):
+                cancel_if_invalid()
         layer = self._active_3d_layer()
         if layer is None:
             self._hide()
             return False
+        if pose_from_layer(layer) is None and self.interaction_mode() == "pose":
+            self.set_interaction_mode("orbit")
         if self._widget is not None:
             self._widget.sync_from_layer(layer)
         self._manager.show_external(self.provider_id, self._anchor_rect(layer))
@@ -165,13 +179,15 @@ class ThreeDLayerContextToolbarController:
         getter = getattr(controller, "drag_mode", None)
         if callable(getter):
             mode = str(getter())
-            if mode in {"orbit", "move", "pose"}:
+            if mode in {"orbit", "move", "pose", "light"}:
                 self._interaction_mode = mode
         return self._interaction_mode
 
     def set_interaction_mode(self, mode: str) -> bool:
         token = str(mode or "").strip().lower()
-        if token not in {"orbit", "move", "pose"}:
+        if token not in {"orbit", "move", "pose", "light"}:
+            return False
+        if token == "pose" and pose_from_layer(self._active_3d_layer()) is None:
             return False
         self._interaction_mode = token
         controller = self._interaction_controller()
@@ -298,7 +314,7 @@ class ThreeDLayerContextToolbarController:
 class ThreeDLayerToolbarWidget(QWidget):
     """Compact controls for the active 3D layer."""
 
-    def __init__(
+    def __init__(  # noqa: PLR0915 - compact widget wiring
         self,
         controller: ThreeDLayerContextToolbarController,
         *,
@@ -325,54 +341,73 @@ class ThreeDLayerToolbarWidget(QWidget):
         self._mode.currentIndexChanged.connect(self._on_mode_changed)
         layout.addWidget(self._mode)
 
+        mode_container = QWidget(self)
+        mode_layout = QHBoxLayout(mode_container)
+        mode_layout.setContentsMargins(0, 0, 0, 0)
+        mode_layout.setSpacing(0)
+        layout.addWidget(mode_container)
         self._interaction_group = QButtonGroup(self)
         self._interaction_group.setExclusive(True)
         self._orbit_button = self._add_mode_button(
-            layout,
+            mode_layout,
             _ts("Orbit"),
             _ts("Left drag rotates the 3D layer"),
             0,
         )
         self._move_button = self._add_mode_button(
-            layout,
+            mode_layout,
             _ts("Move"),
-            _ts("Left drag moves the 3D layer on the canvas"),
+            _ts("Move"),
             1,
+        )
+        self._light_button = self._add_mode_button(
+            mode_layout,
+            _ts("Light position"),
+            _ts("Light position in 3D scene coordinates"),
+            2,
+        )
+        self._pose_button = self._add_mode_button(
+            mode_layout,
+            figure_text("Edit pose"),
+            figure_text("Edit pose"),
+            3,
         )
         self._interaction_group.idClicked.connect(self._on_interaction_mode_changed)
         self.sync_interaction_mode(controller.interaction_mode())
 
-        self._add_button(layout, _ts("Fit"), _ts("Fit 3D view"), controller.fit_to_view)
-        self._add_button(
-            layout, "Yaw -", _ts("Rotate left"), lambda: controller.rotate(yaw_delta=-18.0)
+        self._fit_button = self._add_button(
+            layout, _ts("Fit"), _ts("Fit 3D view"), controller.fit_to_view
         )
-        self._add_button(
-            layout, "Yaw +", _ts("Rotate right"), lambda: controller.rotate(yaw_delta=18.0)
-        )
-        self._add_button(
-            layout,
-            "Pitch -",
-            _ts("Tilt down"),
-            lambda: controller.rotate(pitch_delta=-12.0),
-        )
-        self._add_button(
-            layout,
-            "Pitch +",
-            _ts("Tilt up"),
-            lambda: controller.rotate(pitch_delta=12.0),
-        )
-        self._add_button(layout, "-", _ts("Zoom out"), lambda: controller.zoom(1.0 / 1.2))
-        self._add_button(layout, "+", _ts("Zoom in"), lambda: controller.zoom(1.2))
+        self._view_buttons: list[tuple[QToolButton, str]] = []
+        for icon, tooltip, callback in (
+            ("left", "Rotate left", lambda: controller.rotate(yaw_delta=-18.0)),
+            ("right", "Rotate right", lambda: controller.rotate(yaw_delta=18.0)),
+            ("down", "Tilt down", lambda: controller.rotate(pitch_delta=-12.0)),
+            ("up", "Tilt up", lambda: controller.rotate(pitch_delta=12.0)),
+            ("zoom_out", "Zoom out", lambda: controller.zoom(1.0 / 1.2)),
+            ("zoom_in", "Zoom in", lambda: controller.zoom(1.2)),
+        ):
+            button = QToolButton(self)
+            button.setAutoRaise(True)
+            button.setFixedSize(28, 24)
+            button.setIcon(_view_icon(self, icon))
+            button.setToolTip(_ts(tooltip))
+            button.clicked.connect(callback)
+            layout.addWidget(button)
+            self._view_buttons.append((button, tooltip))
+        layout.addStretch(1)
 
-        light_layout = QHBoxLayout()
+        self._light_controls = QWidget(self)
+        light_layout = QHBoxLayout(self._light_controls)
         light_layout.setContentsMargins(0, 0, 0, 0)
         light_layout.setSpacing(6)
-        outer.addLayout(light_layout)
-        light_layout.addWidget(QLabel(_ts("Light position"), self))
+        outer.addWidget(self._light_controls)
+        self._light_label = QLabel(_ts("Light position"), self._light_controls)
+        light_layout.addWidget(self._light_label)
         self._light_position: list[QDoubleSpinBox] = []
         for axis in "XYZ":
-            light_layout.addWidget(QLabel(axis, self))
-            spin = QDoubleSpinBox(self)
+            light_layout.addWidget(QLabel(axis, self._light_controls))
+            spin = QDoubleSpinBox(self._light_controls)
             spin.setRange(-10000.0, 10000.0)
             spin.setDecimals(2)
             spin.setSingleStep(0.1)
@@ -387,20 +422,32 @@ class ThreeDLayerToolbarWidget(QWidget):
         self._figure_controls = DrawingFigureToolbarWidget(controller, self)
         self._figure_controls.hide()
         outer.addWidget(self._figure_controls)
+        self._openpose_button = QToolButton(self)
+        self._openpose_button.setText("OpenPose")
+        self._openpose_button.setPopupMode(QToolButton.ToolButtonPopupMode.InstantPopup)
+        self._openpose_menu = QMenu(self._openpose_button)
+        self._openpose_layer_action = self._openpose_menu.addAction(figure_text("OpenPose layer"))
+        self._openpose_layer_action.triggered.connect(self._figure_controls.add_openpose_layer)
+        self._openpose_json_action = self._openpose_menu.addAction(
+            translated_literal_domain("DrawingFigure", "OpenPose JSON", use_fallback=True)
+        )
+        self._openpose_json_action.triggered.connect(
+            lambda: self._figure_controls.export_pose("json")
+        )
+        self._openpose_button.setMenu(self._openpose_menu)
+        layout.addWidget(self._openpose_button)
+        self._sync_mode_rows(controller.interaction_mode())
 
     def sync_from_layer(self, layer: Any) -> None:
-        self._figure_controls.sync_from_layer(layer)
+        has_pose = pose_from_layer(layer) is not None
+        self._pose_button.setVisible(has_pose)
+        self._pose_button.setEnabled(has_pose and not bool(getattr(layer, "locked", False)))
+        self._openpose_button.setVisible(has_pose)
+        self._openpose_button.setEnabled(has_pose and not bool(getattr(layer, "locked", False)))
         mode = preview_display_mode(getattr(layer, "display_mode_3d", "solid"))
         self._syncing = True
         try:
-            lighting = getattr(layer, "lighting_3d", None)
-            position = lighting.get("position") if isinstance(lighting, dict) else None
-            try:
-                position = tuple(float(value) for value in position)
-            except (TypeError, ValueError):
-                position = ()
-            if len(position) != 3 or not all(map(math.isfinite, position)):
-                position = _default_light_position(layer.scene_3d)
+            position = light_position(layer)
             for spin, value in zip(self._light_position, position, strict=True):
                 spin.setValue(value)
             for index in range(self._mode.count()):
@@ -410,6 +457,7 @@ class ThreeDLayerToolbarWidget(QWidget):
             self._sync_interaction_mode_unchecked(self._controller.interaction_mode())
         finally:
             self._syncing = False
+        self._sync_mode_rows(self._controller.interaction_mode(), layer)
 
     def sync_interaction_mode(self, mode: str) -> None:
         self._syncing = True
@@ -418,7 +466,13 @@ class ThreeDLayerToolbarWidget(QWidget):
         finally:
             self._syncing = False
         if hasattr(self, "_figure_controls"):
-            self._figure_controls.sync_from_layer(self._controller._active_3d_layer())
+            self._sync_mode_rows(mode)
+
+    def _sync_mode_rows(self, mode: str, layer: Any | None = None) -> None:
+        self._light_controls.setVisible(mode == "light")
+        self._figure_controls.sync_from_layer(
+            layer if layer is not None else self._controller._active_3d_layer()
+        )
 
     def set_value(self, key: str, value: Any) -> None:
         if key == "display_mode":
@@ -446,13 +500,17 @@ class ThreeDLayerToolbarWidget(QWidget):
     def _on_interaction_mode_changed(self, button_id: int) -> None:
         if self._syncing:
             return
-        self._controller.set_interaction_mode("move" if button_id == 1 else "orbit")
+        self._controller.set_interaction_mode(
+            {0: "orbit", 1: "move", 2: "light", 3: "pose"}[button_id]
+        )
 
     def _sync_interaction_mode_unchecked(self, mode: str) -> None:
         token = str(mode).strip().lower()
         self._interaction_group.setExclusive(False)
         self._move_button.setChecked(token == "move")
-        self._orbit_button.setChecked(token not in {"move", "pose"})
+        self._light_button.setChecked(token == "light")
+        self._pose_button.setChecked(token == "pose")
+        self._orbit_button.setChecked(token == "orbit")
         self._interaction_group.setExclusive(True)
 
     def _add_mode_button(
@@ -467,6 +525,11 @@ class ThreeDLayerToolbarWidget(QWidget):
         button.setMinimumHeight(20)
         button.setMaximumHeight(24)
         button.setToolTip(tooltip)
+        button.setStyleSheet(
+            "QPushButton { border: 1px solid palette(mid); border-radius: 0; padding: 2px 6px; }"
+            "QPushButton:checked { background: palette(highlight); "
+            "color: palette(highlighted-text); }"
+        )
         self._interaction_group.addButton(button, button_id)
         layout.addWidget(button)
         return button
@@ -477,13 +540,64 @@ class ThreeDLayerToolbarWidget(QWidget):
         label: str,
         tooltip: str,
         callback: Any,
-    ) -> None:
+    ) -> QPushButton:
         button = QPushButton(label, self)
         button.setMinimumHeight(20)
         button.setMaximumHeight(24)
         button.setToolTip(tooltip)
         button.clicked.connect(lambda _checked=False: callback())
         layout.addWidget(button)
+        return button
+
+    def changeEvent(self, event: QEvent) -> None:  # noqa: N802 - Qt override
+        super().changeEvent(event)
+        if event.type() == QEvent.Type.PaletteChange and hasattr(self, "_view_buttons"):
+            for button, source in self._view_buttons:
+                if source in {"Zoom in", "Zoom out"}:
+                    button.setIcon(
+                        _view_icon(self, "zoom_in" if source == "Zoom in" else "zoom_out")
+                    )
+        if event.type() != QEvent.Type.LanguageChange or not hasattr(self, "_view_buttons"):
+            return
+        self._orbit_button.setText(_ts("Orbit"))
+        self._move_button.setText(_ts("Move"))
+        self._light_button.setText(_ts("Light position"))
+        self._pose_button.setText(figure_text("Edit pose"))
+        self._fit_button.setText(_ts("Fit"))
+        self._light_label.setText(_ts("Light position"))
+        for button, source in self._view_buttons:
+            button.setToolTip(_ts(source))
+        for spin in self._light_position:
+            spin.setToolTip(_ts("Light position in 3D scene coordinates"))
+        self._openpose_layer_action.setText(figure_text("OpenPose layer"))
+        self._openpose_json_action.setText(
+            translated_literal_domain("DrawingFigure", "OpenPose JSON", use_fallback=True)
+        )
+        for index, mode in enumerate(PreviewDisplayMode):
+            self._mode.setItemText(index, _ts(_mode_label(mode)))
+
+
+def _view_icon(widget: QWidget, kind: str) -> QIcon:
+    arrows = {
+        "left": QStyle.StandardPixmap.SP_ArrowLeft,
+        "right": QStyle.StandardPixmap.SP_ArrowRight,
+        "up": QStyle.StandardPixmap.SP_ArrowUp,
+        "down": QStyle.StandardPixmap.SP_ArrowDown,
+    }
+    if kind in arrows:
+        return widget.style().standardIcon(arrows[kind])
+    pixmap = QPixmap(20, 20)
+    pixmap.fill(Qt.GlobalColor.transparent)
+    painter = QPainter(pixmap)
+    painter.setRenderHint(QPainter.RenderHint.Antialiasing)
+    painter.setPen(QPen(widget.palette().windowText().color(), 1.8))
+    painter.drawEllipse(QPointF(8, 8), 5, 5)
+    painter.drawLine(QPointF(12, 12), QPointF(18, 18))
+    painter.drawLine(QPointF(5, 8), QPointF(11, 8))
+    if kind == "zoom_in":
+        painter.drawLine(QPointF(8, 5), QPointF(8, 11))
+    painter.end()
+    return QIcon(pixmap)
 
 
 def _camera_payload(camera: OrbitCameraState) -> dict[str, Any]:
@@ -494,13 +608,6 @@ def _camera_payload(camera: OrbitCameraState) -> dict[str, Any]:
         "target": list(camera.target),
         "distance": float(camera.distance),
     }
-
-
-def _default_light_position(scene: Scene3DDocument) -> tuple[float, float, float]:
-    low, high = scene.bounds()
-    center = (low + high) * 0.5
-    radius = max(float(((high - low) ** 2).sum() ** 0.5) * 0.5, 1.0)
-    return (float(center[0] - radius), float(center[1] - radius), float(center[2] + radius * 2))
 
 
 def _mode_label(mode: PreviewDisplayMode) -> str:

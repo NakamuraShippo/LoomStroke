@@ -462,6 +462,7 @@ class CutSelectionCommand(Command):
                 return False
             offset_x, offset_y = _layer_offset(layer)
             painter = QPainter(image)
+            painter.setCompositionMode(QPainter.CompositionMode.CompositionMode_Source)
             painter.drawImage(int(x - offset_x), int(y - offset_y), self._before_layer)
             painter.end()
         else:
@@ -698,6 +699,7 @@ class PasteSelectionCommand(Command):
                 return False
             offset_x, offset_y = _layer_offset(layer)
             painter = QPainter(image)
+            painter.setCompositionMode(QPainter.CompositionMode.CompositionMode_Source)
             painter.drawImage(int(x - offset_x), int(y - offset_y), self._before_layer)
             painter.end()
         else:
@@ -1011,6 +1013,7 @@ class TransformSelectionCommand(Command):
                 return False
             offset_x, offset_y = _layer_offset(layer)
             painter = QPainter(image)
+            painter.setCompositionMode(QPainter.CompositionMode.CompositionMode_Source)
             painter.drawImage(int(x - offset_x), int(y - offset_y), self._before_layer)
             painter.end()
         else:

@@ -173,12 +173,16 @@ class DrawingAssistPanel(QWidget):
         return assist
 
     def remove_selected(self) -> None:
+        if not self._editing_is_current():
+            return
         assist_id = self.selected_id()
         if assist_id:
             self._controller.remove(assist_id)
             self.refresh()
 
     def activate_selected(self) -> None:
+        if not self._editing_is_current():
+            return
         assist_id = self.selected_id()
         if assist_id:
             self._controller.set_active(assist_id)
@@ -213,6 +217,8 @@ class DrawingAssistPanel(QWidget):
         )
 
     def submit_assist(self, updated: DrawingAssist) -> bool:
+        if not self._editing_is_current():
+            return False
         issues = self._controller.issues(updated)
         if issues:
             self.status_label.setText(
@@ -228,6 +234,14 @@ class DrawingAssistPanel(QWidget):
     def _show_submit_error(self) -> None:
         self.status_label.setText(_ts("Not applied: {codes}").format(codes="assist_submit_failed"))
 
+    def _editing_is_current(self) -> bool:
+        current = (self._controller.page_id(), self._controller.state())
+        if self._displayed_state != current:
+            self.refresh()
+            self._show_submit_error()
+            return False
+        return True
+
     # -- internals ---------------------------------------------------------------------
 
     def _on_selection(self) -> None:
@@ -239,6 +253,8 @@ class DrawingAssistPanel(QWidget):
         self._rebuild_form(assist)
 
     def _on_enabled_toggled(self, checked: bool) -> None:
+        if not self._editing_is_current():
+            return
         assist = self._editing
         if assist is None or assist.enabled == checked:
             return

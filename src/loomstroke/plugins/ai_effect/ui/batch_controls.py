@@ -51,7 +51,7 @@ class BatchGenerationControls(QWidget):
         self.count = QSpinBox(self)
         self.count.setObjectName("aiBatchCount")
         self.count.setRange(1, 1000000)
-        self.count.setValue(10)
+        self.count.setValue(1)
         options.addWidget(self.mode, 1)
         options.addWidget(self.count)
         layout.addLayout(options)

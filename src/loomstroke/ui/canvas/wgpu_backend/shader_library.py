@@ -371,7 +371,8 @@ fn fs_main(in: VertexOut) -> @location(0) vec4<f32> {
         );
     }
     return vec4<f32>(
-        blended * src_alpha + dst.rgb * (1.0 - src_alpha),
+        (src_rgb * (1.0 - dst.a) + blended * dst.a) * src_alpha
+            + dst.rgb * (1.0 - src_alpha),
         clamp(src_alpha + dst.a * (1.0 - src_alpha), 0.0, 1.0),
     );
 }

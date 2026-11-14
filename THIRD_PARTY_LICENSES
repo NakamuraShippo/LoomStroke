@@ -125,3 +125,12 @@ rendercanvas 2.6.3 (dependency of wgpu-py)
     License URL: https://creativecommons.org/publicdomain/zero/1.0/
     Bundled assets are converted numeric mesh, skeleton, and skin weight data.
     Coordinates and weights were adapted for LoomStroke.
+
+17. pikepdf (PDF/X export dependency)
+    License: MPL-2.0
+    https://github.com/pikepdf/pikepdf/blob/main/LICENSE.txt
+    Its installed wheel includes its license and third-party notices.
+
+18. lxml (dependency of pikepdf)
+    License: BSD-3-Clause
+    https://github.com/lxml/lxml/blob/master/LICENSES.txt

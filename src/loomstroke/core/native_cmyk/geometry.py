@@ -76,36 +76,42 @@ class NativeCmykGeometry:
         if native is None:
             return
         kernel = RasterResampleService._FILTERS[InterpolationMode.normalize(mode)]
+        layer.native_cmyk = NativeCmykGeometry.sample_buffer(
+            native,
+            lambda image: image.resize((width, height), kernel),
+            nearest=kernel == Image.Resampling.NEAREST,
+        )
+
+    @staticmethod
+    def sample_buffer(native, sample, *, nearest):
+        """Apply a common raster sampling operation to inks and alpha."""
         maximum = np.iinfo(native.inks.dtype).max
 
         def plane(values):
             return np.asarray(
-                Image.fromarray(values.astype(np.float32)).resize((width, height), kernel),
+                sample(Image.fromarray(values.astype(np.float32))),
                 dtype=np.float64,
             )
 
-        if kernel == Image.Resampling.NEAREST:
+        def encode(values):
+            return np.rint(np.clip(values, 0, maximum)).astype(native.inks.dtype)
+
+        if nearest:
             # Preserve hidden ink in transparent pixels for nearest-neighbour copies.
             alpha = plane(native.alpha)
-            inks = np.stack([plane(native.inks[:, :, index]) for index in range(4)], axis=2)
+            inks = np.stack([encode(plane(native.inks[:, :, index])) for index in range(4)], axis=2)
         else:
             source_alpha = native.alpha.astype(np.float64) / maximum
             # Negative-lobe kernels can overshoot alpha. Unpremultiply by
             # the same filtered alpha before clamping output coverage;
             # clamping first changes constant plate colours at opaque edges.
             alpha = plane(source_alpha)
-            inks = np.stack(
-                [plane(native.inks[:, :, index] * source_alpha) for index in range(4)],
-                axis=2,
-            )
-            inks = np.divide(
-                inks, alpha[:, :, None], out=np.zeros_like(inks), where=alpha[:, :, None] > 0
-            )
+            visible = alpha > 0
+            inks = np.empty((*alpha.shape, 4), dtype=native.inks.dtype)
+            for index in range(4):
+                filtered = plane(native.inks[:, :, index] * source_alpha)
+                np.divide(filtered, alpha, out=filtered, where=visible)
+                filtered[~visible] = 0
+                inks[:, :, index] = encode(filtered)
             alpha *= maximum
-        layer.native_cmyk = NativeCmykBuffer(
-            NativeCmykPixels(
-                np.rint(np.clip(inks, 0, maximum)).astype(native.inks.dtype),
-                np.rint(np.clip(alpha, 0, maximum)).astype(native.alpha.dtype),
-                native.profile,
-            )
-        )
+        return NativeCmykBuffer(NativeCmykPixels(inks, encode(alpha), native.profile))

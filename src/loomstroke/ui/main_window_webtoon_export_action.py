@@ -50,7 +50,7 @@ class MainWindowWebtoonExportAction:
         self._window = window
         self._document_metadata = document_metadata or self._fallback_document_metadata
         self._dialog_factory = dialog_factory or ExportWebtoonDialog
-        self._preview_factory = preview_factory or WebtoonPreviewRenderer
+        self._preview_factory = preview_factory
         self._file_dialog = file_dialog or (lambda: QFileDialog)
         self._dialog_type = dialog_type or (lambda: QDialog)
         self._message_box = message_box or (lambda: QMessageBox)
@@ -78,7 +78,14 @@ class MainWindowWebtoonExportAction:
             },
             document_name=self._document_name(),
         )
-        preview = self._preview_factory(pages, metadata)
+        if self._preview_factory is None:
+            preview = WebtoonPreviewRenderer(
+                pages,
+                metadata,
+                live_canvas=getattr(getattr(window, "_host_api", None), "canvas", None),
+            )
+        else:
+            preview = self._preview_factory(pages, metadata)
         try:
             dialog = self._dialog_factory(
                 context=context, thumbnail_provider=preview.thumbnail, parent=window

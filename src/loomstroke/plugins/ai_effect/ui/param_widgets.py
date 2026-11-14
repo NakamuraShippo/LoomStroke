@@ -59,6 +59,7 @@ from PySide6.QtWidgets import (
     QWidget,
 )
 
+from loomstroke.plugins.prompt_editor.resizable_prompt_area import ResizableTextEditArea
 from loomstroke.ui.widget_translations import bind_combo_texts, bind_widget_text
 from loomstroke.ui.widgets.spinbox_sizing import fit_spinbox_to_values
 
@@ -488,7 +489,12 @@ class StringParamWidget(ParamWidget):
             self._text: QTextEdit | QLineEdit = QTextEdit(self)
             self._text.setPlainText(default_str)  # type: ignore[union-attr]
             self._text.textChanged.connect(self._on_text_changed)
-            layout.addWidget(self._text, stretch=1)
+            self._text_area = ResizableTextEditArea(
+                self._text,
+                key=f"ui/ai_effect/text_height/{self.internal_id}",
+                default_height=80,
+            )
+            layout.addWidget(self._text_area, stretch=1)
         else:
             layout = QHBoxLayout(self)
             layout.setContentsMargins(0, 0, 0, 0)
@@ -553,7 +559,7 @@ class StringParamWidget(ParamWidget):
         if not isinstance(self._text, QTextEdit):
             return
         should_hide = self._composer_active or self._composer_has_input
-        self._text.setVisible(not should_hide)
+        self._text_area.setVisible(not should_hide)
 
     def _on_text_changed(self) -> None:
         # QTextEdit.textChanged is parameter-less; fetch the value explicitly.

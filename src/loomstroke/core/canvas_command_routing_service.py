@@ -5,6 +5,8 @@ from __future__ import annotations
 import logging
 from typing import Any, cast
 
+from loomstroke.core.ai_effect_output_layer_command import _CreateAIEffectOutputLayersCommand
+from loomstroke.core.ai_effect_output_layer_submit import _submit_ai_effect_output_layers
 from loomstroke.core.ai_effect_result_command import _ApplyAIEffectResultCommand
 from loomstroke.core.ai_effect_result_submit import _submit_ai_effect_result
 from loomstroke.core.commands import (
@@ -48,6 +50,7 @@ from loomstroke.core.commands_layer_image_replace import ReplaceLayerImageComman
 from loomstroke.core.commands_layer_metadata_key import SetLayerMetadataKeyCommand
 from loomstroke.core.commands_layer_opacity import SetLayerOpacityCommand
 from loomstroke.core.commands_layer_rename import RenameLayerCommand
+from loomstroke.core.commands_layer_resource import SetLayerResourceCommand
 from loomstroke.core.commands_page_view_state_key import SetPageViewStateKeyCommand
 from loomstroke.core.fill.commands_fill import (
     FloodFillCommand,
@@ -58,15 +61,31 @@ from loomstroke.core.filter_pen.command import (
     FilterPenStrokeCommand,
     submit_filter_pen_command,
 )
+from loomstroke.core.imported_3d_layer import (
+    _AddPrepared3DLayerCommand,
+    _AddPrepared3DLayersCommand,
+    submit_prepared_3d_layer,
+)
 from loomstroke.core.layer_blend_submit import _submit_blend_command
 from loomstroke.core.layer_opacity_submit import _submit_opacity_command
+from loomstroke.core.paste_new_layer_command import PasteToNewLayerCommand
 from loomstroke.core.pen_taper_command import PenTaperCommand
 from loomstroke.core.recontour.commands import RecontourCommand
 from loomstroke.core.resource_embed_command import _EmbedResourceConsumersCommand
 from loomstroke.core.resource_embed_submit import _submit_resource_embed
 from loomstroke.core.resource_place_command import PlaceResourceCommand
 from loomstroke.core.resource_place_submit import submit_resource_place
+from loomstroke.core.resource_refresh_command import _ResourceRefreshCommand
+from loomstroke.core.resource_refresh_submit import (
+    _submit_resource_refresh,
+    _submit_set_layer_resource,
+)
+from loomstroke.core.rgb_layer_import import ImportIntoLayerCommand, submit_rgb_layer_import
 from loomstroke.core.screentone.create_screentone_command import CreateScreentoneCommand
+from loomstroke.core.standalone_mask_invert import (
+    _InvertStandaloneMaskCommand,
+    _submit_standalone_mask_invert,
+)
 from loomstroke.plugins.basic_gradient.gradient_command import GradientCommand
 
 logger = logging.getLogger("loomstroke.core.canvas_service_simple")
@@ -88,6 +107,14 @@ class CanvasCommandRoutingService:
             filter_pen.before_command(cmd)
         handlers = (
             (_ApplyAIEffectResultCommand, lambda command: _submit_ai_effect_result(owner, command)),
+            (
+                (_AddPrepared3DLayerCommand, _AddPrepared3DLayersCommand),
+                lambda command: submit_prepared_3d_layer(owner, command),
+            ),
+            (
+                _CreateAIEffectOutputLayersCommand,
+                lambda command: _submit_ai_effect_output_layers(owner, command),
+            ),
             (PenTaperCommand, lambda command: command.apply(owner)),
             (FilterPenStrokeCommand, lambda command: submit_filter_pen_command(owner, command)),
             (RecontourCommand, lambda command: command.apply(owner)),
@@ -100,11 +127,24 @@ class CanvasCommandRoutingService:
                 owner._submit_flood_fill,
             ),
             (ApplyImageCommand, owner._apply_image_command),
-            (PlaceResourceCommand, lambda command: submit_resource_place(owner, command)),
+            (ImportIntoLayerCommand, lambda command: submit_rgb_layer_import(owner, command)),
+            (
+                _InvertStandaloneMaskCommand,
+                lambda command: _submit_standalone_mask_invert(owner, command),
+            ),
+            (
+                (PlaceResourceCommand, PasteToNewLayerCommand),
+                lambda command: submit_resource_place(owner, command),
+            ),
             (
                 _EmbedResourceConsumersCommand,
                 lambda command: _submit_resource_embed(owner, command),
             ),
+            (
+                _ResourceRefreshCommand,
+                lambda command: _submit_resource_refresh(owner, command),
+            ),
+            (SetLayerResourceCommand, lambda command: _submit_set_layer_resource(owner, command)),
             (GradientCommand, owner._submit_gradient),
             (UpdateSelectionMaskCommand, owner._submit_update_selection_mask),
             (ApplySelectionMaskCommand, owner._submit_apply_selection_mask),

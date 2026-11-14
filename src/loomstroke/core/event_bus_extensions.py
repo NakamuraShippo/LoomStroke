@@ -43,13 +43,13 @@ class ExtendedEventBus(EventBus):
 
         Args:
             event: The event to send (should have correlation_id)
-            timeout: Maximum time to wait for response (seconds)
+            timeout: Shared deadline for async dispatch and response (seconds)
 
         Returns:
             The response data from the handler
 
         Raises:
-            EventBusTimeoutError: If no response within timeout
+            EventBusTimeoutError: If dispatch or response exceeds the deadline
         """
         # Ensure event has correlation_id
         if not event.correlation_id:
@@ -62,7 +62,7 @@ class ExtendedEventBus(EventBus):
         correlation_id = event.correlation_id
 
         # Create future for response
-        future = asyncio.Future()
+        future = asyncio.get_running_loop().create_future()
         self._pending_requests[correlation_id] = future
 
         # Register temporary response handler
@@ -70,32 +70,29 @@ class ExtendedEventBus(EventBus):
             """Handle response for this specific request."""
             if (
                 response_event.correlation_id == correlation_id
-                and correlation_id in self._pending_requests
+                and self._pending_requests.get(correlation_id) is future
+                and not future.done()
             ):
-                self._pending_requests[correlation_id].set_result(response_event.payload)
+                future.set_result(response_event.payload)
 
         # Subscribe to response event
         response_event_type = f"{event.event_type}.response"
         response_token = self.on(response_event_type, response_handler)
 
         try:
-            # Emit the request
-            await self.emit_async(event.event_type, event)
-
-            # Wait for response with timeout
-            result = await asyncio.wait_for(future, timeout=timeout)
-            return result
-
-        except TimeoutError:
+            async with asyncio.timeout(timeout):
+                await self.emit_async(event.event_type, event)
+                return await future
+        except TimeoutError as exc:
             logger.warning(
                 f"Request timeout for {event.event_type} (correlation_id: {correlation_id})"
             )
-            raise EventBusTimeoutError(  # noqa: B904
+            raise EventBusTimeoutError(
                 f"No response received for {event.event_type} within {timeout}s"
-            )
+            ) from exc
 
         finally:
-            # Clean up
+            future.cancel()
             self._pending_requests.pop(correlation_id, None)
             self.off(response_event_type, response_token)
 

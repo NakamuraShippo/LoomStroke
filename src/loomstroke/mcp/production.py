@@ -964,16 +964,44 @@ def merge_mcp_and_production_jobs(
     mcp_jobs: Sequence[Mapping[str, Any]],
     production_jobs: Sequence[Mapping[str, Any]],
 ) -> list[dict[str, Any]]:
+    stored_runner_ids = {
+        job.get("jobId")
+        for job in production_jobs
+        if job.get("source") == "production_recipe_runner" and isinstance(job.get("jobId"), str)
+    }
+    runtime_runner_jobs = {}
     jobs: list[dict[str, Any]] = []
     for job in mcp_jobs:
+        job_id = job.get("jobId")
+        if (
+            job.get("jobClass") == "production_recipe"
+            and isinstance(job_id, str)
+            and job_id in stored_runner_ids
+        ):
+            runtime_runner_jobs[job_id] = job
+            continue
         item = scrub_for_pct(dict(job))
         item.setdefault("schemaVersion", "pct.production_job.v1")
         item["source"] = "mcp"
         jobs.append(item)
     for job in production_jobs:
-        item = scrub_for_pct(dict(job))
+        item = dict(job)
         item.setdefault("source", "production_store")
-        jobs.append(item)
+        job_id = item.get("jobId")
+        if item["source"] == "production_recipe_runner" and isinstance(job_id, str):
+            runtime = runtime_runner_jobs.get(job_id)
+            if runtime is not None:
+                item.update(
+                    {
+                        key: runtime[key]
+                        for key in ("status", "progress", "updatedAt")
+                        if key in runtime
+                    }
+                )
+                metadata = runtime.get("metadata")
+                if isinstance(metadata, Mapping) and isinstance(metadata.get("error"), Mapping):
+                    item["error"] = dict(metadata["error"])
+        jobs.append(scrub_for_pct(item))
     jobs.sort(key=lambda item: str(item.get("createdAt") or item.get("updatedAt") or ""))
     return jobs
 

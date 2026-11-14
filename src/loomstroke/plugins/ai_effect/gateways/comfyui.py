@@ -70,6 +70,10 @@ from loomstroke.plugins.ai_effect.gateways.comfyui_handle_cancellation import (
     _cancel_handle_progress,
 )
 from loomstroke.plugins.ai_effect.gateways.comfyui_history import history_completion
+from loomstroke.plugins.ai_effect.gateways.comfyui_model_application import (
+    _model_application_scope,
+    _ModelApplicationResult,
+)
 from loomstroke.plugins.comfyui.job_connection import (
     _cancel_job,
     _capture_job_connection,
@@ -78,7 +82,11 @@ from loomstroke.plugins.comfyui.job_connection import (
 )
 from loomstroke.plugins.comfyui.object_info_spec import combo_choices, is_combo_head
 from loomstroke.plugins.comfyui.session_target import active_url, bind_service, confirm
-from loomstroke.plugins.common.comfyui_history import _PendingHistoryEvent
+from loomstroke.plugins.common.comfyui_history import (
+    _HistoryTerminalError,
+    _PendingHistoryEvent,
+    _raise_terminal_failure,
+)
 
 logger = logging.getLogger(__name__)
 
@@ -112,14 +120,19 @@ class _ServiceBackedJobHandle(JobHandle):
         output_node_ids: list[str],
         output_internal_ids: dict[str, str],
         _job: _JobConnection | None = None,
+        _image_output_nodes: tuple[str, ...] = (),
+        _model_output_nodes: tuple[str, ...] = (),
     ) -> None:
         self.job_id = prompt_id
         self.request_id = request.request_id
         self._service = service
         self._job = _job
         self._request = request
+        self._model_scope = _model_application_scope.get()
         self._output_node_ids = list(output_node_ids)
         self._output_internal_ids = dict(output_internal_ids)
+        self._image_output_nodes = _image_output_nodes
+        self._model_output_nodes = _model_output_nodes
         self._progress_consumed = False
         self._cancelled = False
         self._progress_queue: asyncio.Queue[ProgressEvent] = asyncio.Queue()
@@ -447,17 +460,25 @@ class _ServiceBackedJobHandle(JobHandle):
                     raw={"job_id": self.job_id},
                 ),
             )
+        missing_images: set[str] | None = set() if self._mixed_output_deferred() else None
         outputs = _extract_outputs(
             history=self._result_data,
             job_id=self.job_id,
             output_node_ids=self._output_node_ids,
             output_internal_ids=self._output_internal_ids,
+            expected_image_nodes=self._image_output_nodes,
+            missing_image_nodes=missing_images,
         )
         model_outputs = _extract_model_outputs(
             history=self._result_data,
             job_id=self.job_id,
             output_node_ids=self._output_node_ids,
             output_internal_ids=self._output_internal_ids,
+        )
+        defer_mixed = (
+            self._mixed_output_deferred()
+            and bool(outputs or self._image_output_nodes)
+            and bool(model_outputs or self._model_output_nodes)
         )
         if not outputs and not model_outputs:
             # Diagnostic: the poll succeeded and we have a history record
@@ -507,28 +528,17 @@ class _ServiceBackedJobHandle(JobHandle):
                 ),
             )
         imported_models = 0
-        if model_outputs:
-            try:
-                imported_models = await self._import_3d_model_outputs(model_outputs)
-            except Exception as exc:  # noqa: BLE001 - report as terminal result below
-                logger.exception("ComfyUI 3D output import failed for job=%s", self.job_id)
-                return JobResult(
-                    status="failed",
-                    output_images=[],
-                    duration_sec=0.0,
-                    error=AIError(
-                        class_=ErrorClass.BACKEND,
-                        title="Could not import ComfyUI 3D output",
-                        detail=str(exc),
-                        raw={"job_id": self.job_id},
-                    ),
-                    output_models=model_outputs,
-                )
+        if model_outputs and self._model_scope is None:
+            # Preserve the direct gateway's model-first contract.
+            model_result = await self._complete_model_application(model_outputs)
+            if isinstance(model_result, JobResult):
+                return model_result
+            imported_models = model_result
         collected: list[OutputImage] = []
-        total_files = 0
+        total_files = sum(len(files) for _, files in outputs)
+        expected_images = total_files + len(missing_images or ())
         for internal_id, files in outputs:
             for f in files:
-                total_files += 1
                 try:
                     if self._job is not None:
                         connection = self._job.require()
@@ -538,6 +548,11 @@ class _ServiceBackedJobHandle(JobHandle):
                         folder_type=f.get("type", "output"),
                     )
                 except _JobConnectionError:
+                    if defer_mixed:
+                        # The same bound connection is required for every remaining artifact.
+                        return await self._prepare_mixed_outputs(
+                            collected, model_outputs, expected_images - len(collected)
+                        )
                     return JobResult(
                         status="failed",
                         output_images=[],
@@ -565,6 +580,17 @@ class _ServiceBackedJobHandle(JobHandle):
                         height=height,
                     )
                 )
+        model_application_enabled = self._model_scope is None or self._model_scope.apply_to_canvas
+        if defer_mixed:
+            return await self._prepare_mixed_outputs(
+                collected, model_outputs, expected_images - len(collected)
+            )
+        if model_outputs and self._model_scope is not None and model_application_enabled:
+            # For document-owned jobs, an image connection failure must precede any model edit.
+            model_result = await self._complete_model_application(model_outputs)
+            if isinstance(model_result, JobResult):
+                return model_result
+            imported_models = model_result
         if total_files > 0 and not collected and imported_models <= 0:
             return JobResult(
                 status="failed",
@@ -577,7 +603,7 @@ class _ServiceBackedJobHandle(JobHandle):
                 ),
                 output_models=model_outputs,
             )
-        if model_outputs and imported_models <= 0 and not collected:
+        if model_outputs and model_application_enabled and imported_models <= 0 and not collected:
             return JobResult(
                 status="failed",
                 output_images=[],
@@ -602,11 +628,76 @@ class _ServiceBackedJobHandle(JobHandle):
             imported_models,
             total_files,
         )
+        if model_outputs and self._model_scope is not None:
+            return _ModelApplicationResult(
+                status="completed",
+                output_images=collected,
+                duration_sec=0.0,
+                output_models=model_outputs,
+                expected_models=len({model.node_id for model in model_outputs}),
+                applied_models=imported_models,
+                unavailable_images=total_files - len(collected),
+            )
         return JobResult(
             status="completed",
             output_images=collected,
             duration_sec=0.0,
             output_models=model_outputs,
+        )
+
+    def _mixed_output_deferred(self) -> bool:
+        scope = self._model_scope
+        return scope is not None and scope.apply_to_canvas and scope.defer_mixed
+
+    async def _prepare_mixed_outputs(
+        self,
+        images: list[OutputImage],
+        models: list[OutputModel],
+        unavailable_images: int,
+    ) -> _ModelApplicationResult:
+        node_ids = tuple(dict.fromkeys((*self._model_output_nodes, *(m.node_id for m in models))))
+        prepared: tuple[dict[str, Any], ...] = ()
+        scope = self._model_scope
+        prepare = getattr(self._service, "_prepare_3d_job_outputs", None)
+        try:
+            _raise_terminal_failure(self._job)
+            if images and not unavailable_images and scope is not None and callable(prepare):
+                resolved_models = {model.node_id for model in models}
+                if all(node_id in resolved_models for node_id in node_ids):
+                    candidates = await prepare(
+                        self.job_id,
+                        _history_outputs_dict(history=self._result_data, job_id=self.job_id),
+                        node_ids,
+                        _job=self._job,
+                        _target_is_current=lambda: (
+                            not self._cancelled and scope.target_is_current()
+                        ),
+                    )
+                    if isinstance(candidates, tuple) and len(candidates) == len(node_ids):
+                        prepared = candidates
+            _raise_terminal_failure(self._job)
+            if self._job is not None:
+                self._job.require()
+        except _HistoryTerminalError as exc:
+            return _ModelApplicationResult(
+                status="cancelled" if exc.kind == "cancelled" else "failed",
+                output_images=[],
+                duration_sec=0.0,
+                error=exc.error,
+            )
+        except Exception as exc:  # noqa: BLE001 - preserve already downloaded images for Gallery
+            logger.warning("ComfyUI mixed model preparation failed (%s)", type(exc).__name__)
+            prepared = ()
+        if self._cancelled:
+            return _ModelApplicationResult(status="cancelled", output_images=[], duration_sec=0.0)
+        return _ModelApplicationResult(
+            status="completed",
+            output_images=images,
+            duration_sec=0.0,
+            output_models=models,
+            expected_models=len(node_ids),
+            unavailable_images=unavailable_images,
+            prepared_models=prepared,
         )
 
     async def cancel(self) -> None:
@@ -636,7 +727,32 @@ class _ServiceBackedJobHandle(JobHandle):
                 return None
         return getattr(self._service, "_connection", None)
 
+    async def _complete_model_application(
+        self, model_outputs: list[OutputModel]
+    ) -> int | JobResult:
+        try:
+            return await self._import_3d_model_outputs(model_outputs)
+        except Exception as exc:  # noqa: BLE001 - report as a terminal result
+            logger.exception("ComfyUI 3D output import failed for job=%s", self.job_id)
+            return JobResult(
+                status="failed",
+                output_images=[],
+                duration_sec=0.0,
+                error=AIError(
+                    class_=ErrorClass.BACKEND,
+                    title="Could not import ComfyUI 3D output",
+                    detail=str(exc),
+                    raw={"job_id": self.job_id},
+                ),
+                output_models=model_outputs,
+            )
+
     async def _import_3d_model_outputs(self, model_outputs: list[OutputModel]) -> int:
+        target_is_current = (
+            None if self._model_scope is None else self._model_scope.target_is_current
+        )
+        if target_is_current is not None and not target_is_current():
+            return 0
         apply_3d = getattr(self._service, "_apply_3d_job_outputs", None)
         if not callable(apply_3d):
             logger.warning("ComfyUI service has no 3D output importer")
@@ -661,11 +777,13 @@ class _ServiceBackedJobHandle(JobHandle):
             )
         if not targets:
             return 0
-        if self._job is None:
-            imported = await apply_3d(self.job_id, history_outputs, targets)
-        else:
+        options: dict[str, Any] = {}
+        if target_is_current is not None:
+            options["_target_is_current"] = target_is_current
+        if self._job is not None:
             self._job.require()
-            imported = await apply_3d(self.job_id, history_outputs, targets, _job=self._job)
+            options["_job"] = self._job
+        imported = await apply_3d(self.job_id, history_outputs, targets, **options)
         try:
             return int(imported)
         except (TypeError, ValueError):
@@ -1418,6 +1536,9 @@ class ComfyUIGateway(AIGateway):
             prompt_id,
             output_internal_ids,
         )
+        image_output_nodes, model_output_nodes = _declared_output_kinds(
+            patched, output_internal_ids
+        )
 
         return _ServiceBackedJobHandle(
             service=self._service,
@@ -1426,6 +1547,8 @@ class ComfyUIGateway(AIGateway):
             output_node_ids=list(output_internal_ids.keys()),
             output_internal_ids=output_internal_ids,
             _job=job,
+            _image_output_nodes=image_output_nodes,
+            _model_output_nodes=model_output_nodes,
         )
 
     async def dispose(self) -> None:
@@ -1750,6 +1873,25 @@ def _snapshot_slot_png_for_diagnosis(internal_id: str, png_bytes: bytes) -> None
         logger.debug("Slot image diagnostic skipped")
 
 
+_IMAGE_OUTPUT_NODE_TYPES = ("PreviewImage", "SaveImage", "D2 Save Image", "D2 Save Image Eagle")
+
+
+def _declared_output_kinds(
+    workflow: dict[str, Any], output_internal_ids: dict[str, str]
+) -> tuple[tuple[str, ...], tuple[str, ...]]:
+    image_nodes, model_nodes = [], []
+    for node_id in output_internal_ids:
+        node = workflow.get(node_id)
+        if not isinstance(node, dict):
+            continue
+        node_type = str(node.get("class_type", ""))
+        if node_type in _IMAGE_OUTPUT_NODE_TYPES:
+            image_nodes.append(node_id)
+        elif _is_preview_3d_node_type(node_type) or _is_3d_artifact_output_node_type(node_type):
+            model_nodes.append(node_id)
+    return tuple(image_nodes), tuple(model_nodes)
+
+
 def _resolve_output_candidate_ref(
     node_id: str,
     node: dict[str, Any],
@@ -1765,7 +1907,7 @@ def _resolve_output_candidate_ref(
     """
     class_type = str(node.get("class_type", ""))
     # These D2 nodes return standard history `images`, including Eagle saves.
-    if class_type in ("PreviewImage", "SaveImage", "D2 Save Image", "D2 Save Image Eagle"):
+    if class_type in _IMAGE_OUTPUT_NODE_TYPES:
         return node_id, f"Node#{node_id} {class_type}"
     if _is_preview_3d_node_type(class_type):
         inputs = node.get("inputs")
@@ -1961,6 +2103,8 @@ def _extract_outputs(
     job_id: str,
     output_node_ids: list[str],
     output_internal_ids: dict[str, str],
+    expected_image_nodes: tuple[str, ...] = (),
+    missing_image_nodes: set[str] | None = None,
 ) -> list[tuple[str, list[dict[str, Any]]]]:
     """Pick ``{filename, subfolder, type}`` triples out of the history record.
 
@@ -1981,11 +2125,9 @@ def _extract_outputs(
       extractor only handled the wrapped shape; production was sending
       unwrapped, so every output-lookup silently returned empty.
     """
-    if not isinstance(history, dict):
-        return []
     outputs = _history_outputs_dict(history=history, job_id=job_id)
-    if not outputs:
-        return []
+    if missing_image_nodes is not None:
+        missing_image_nodes.update(expected_image_nodes)
     result: list[tuple[str, list[dict[str, Any]]]] = []
     for node_id in output_node_ids:
         node_out = outputs.get(node_id)
@@ -2000,6 +2142,8 @@ def _extract_outputs(
         ]
         if file_refs:
             result.append((internal_id, file_refs))
+            if missing_image_nodes is not None and len(file_refs) == len(images):
+                missing_image_nodes.discard(node_id)
     return result
 
 

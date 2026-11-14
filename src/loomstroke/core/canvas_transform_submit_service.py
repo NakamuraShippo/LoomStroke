@@ -5,6 +5,8 @@ from __future__ import annotations
 from types import MethodType
 from typing import Any
 
+from .raster_history_commit import RasterBackingState, record_raster_history
+
 
 def _target_layer_for_command(canvas: Any, command: Any) -> Any | None:
     layer_id = getattr(command, "layer_id", None)
@@ -82,6 +84,7 @@ class CanvasTransformSubmitService:
         transformed = self._owner._transform_image().transformed_image(layer.image, ttype, params)
         if transformed is None:
             return False
+        original = RasterBackingState(layer)
         layer.image = transformed
 
         layer.texture_version += 1
@@ -92,6 +95,13 @@ class CanvasTransformSubmitService:
         cmd.apply = MethodType(_apply_qimage_transform, cmd)
         cmd.revert = MethodType(_revert_qimage_transform, cmd)
 
-        self._owner._record_history_command("Transform", cmd)
+        def restore() -> None:
+            original.restore()
+            cmd._executed = False  # noqa: SLF001
+
+        if not record_raster_history(
+            self._owner, lambda: self._owner._record_history_command("Transform", cmd), restore
+        ):
+            return False
         self._owner._recompose()
         return True

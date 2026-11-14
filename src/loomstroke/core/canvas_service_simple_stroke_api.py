@@ -78,9 +78,9 @@ class CanvasServiceStrokeApiMixin(_CanvasServiceStrokeApiBase):
         """Draw semi-transparent red overlay for mask stroke on composited."""
         self._mask_stroke().draw_mask_stroke_preview(dirty, layer)
 
-    def _schedule_mask_commit(self) -> None:
+    def _schedule_mask_commit(self, layer: _Layer | None = None) -> None:
         """Restart the mask commit debounce timer."""
-        self._mask_stroke_commit().schedule_mask_commit()
+        self._mask_stroke_commit().schedule_mask_commit(layer)
 
     def _commit_mask_paint(self) -> None:
         """Apply full recompose after mask stroke ends."""
@@ -273,11 +273,16 @@ class CanvasServiceStrokeApiMixin(_CanvasServiceStrokeApiBase):
         )
 
     def _apply_paint(self, cmd: PaintCommand) -> QRect | None:
-        """Apply paint command to active layer. Returns dirty rect or None."""
+        """Apply paint command to its target layer. Returns dirty rect or None."""
         return self._stroke_application().apply_paint(cmd)
 
-    def _resolve_paint_target(self) -> _Layer | None:
-        return cast("_Layer | None", self._stroke_target().resolve_paint_target())
+    def _resolve_paint_target(
+        self, layer_id: str | None = None, *, mask_edit: bool | None = None
+    ) -> _Layer | None:
+        return cast(
+            "_Layer | None",
+            self._stroke_target().resolve_paint_target(layer_id, mask_edit=mask_edit),
+        )
 
     @staticmethod
     def _paint_color_from_brush(brush: Any) -> QColor:

@@ -7,6 +7,7 @@ the original active page is restored afterwards.
 from __future__ import annotations
 
 from collections.abc import Callable, Mapping, Sequence
+from dataclasses import replace
 from pathlib import Path
 from typing import Any, Literal
 
@@ -27,6 +28,7 @@ from loomstroke.core.actions import (
     TargetSelector,
 )
 from loomstroke.core.actions.adapters import register_builtin_actions
+from loomstroke.core.layer_tree_service import LayerTreeQueryService
 from loomstroke.platform.user_dirs import default_user_root
 
 from .actions import register_ui_actions
@@ -146,7 +148,41 @@ class ActionService:
         page_id: str | None = None,
         bindings: Mapping[str, Any] | None = None,
     ) -> MacroPlan:
-        return self._planner.plan(definition, self.context_for(page_id), bindings)
+        context = self.context_for(page_id)
+        if context.page_id == self.active_page_id():
+            return self._planner.plan(definition, context, bindings)
+        getter = getattr(context.pages, "get_page_snapshot", None)
+        try:
+            try:
+                page = getter(context.page_id) if callable(getter) else None
+            except Exception:
+                page = None
+            if page is None:
+                return MacroPlan(
+                    definition.macro_id,
+                    definition.name,
+                    context.page_id,
+                    (),
+                    ("page_content_not_loaded",),
+                )
+            layers = tuple(getattr(page, "layers", ()) or ())
+            # Match the standard installer's retained ID or final-root fallback.
+            active_id = context.active_layer_id()
+            retained = LayerTreeQueryService(context.canvas).find_layer_by_id_tree(
+                active_id or "", list(layers)
+            )
+            if retained is None:
+                active_id = str(layers[-1].id) if layers else None
+            context = replace(
+                context,
+                planning_layers=layers,
+                planning_active_layer_id=active_id,
+            )
+            return self._planner.plan(definition, context, bindings)
+        finally:
+            evict = getattr(context.pages, "evict_pages_to_budget", None)
+            if callable(evict):
+                evict()
 
     def run_on_page(
         self,
@@ -158,7 +194,8 @@ class ActionService:
     ) -> MacroRunResult:
         target = page_id or self.active_page_id()
         original = self.active_page_id()
-        self._switch_page(target)
+        if not self._switch_page(target):
+            return MacroRunResult(definition.macro_id, target, stopped_reason="page_switch_failed")
         try:
             context = self.context_for(target)
             plan = self._planner.plan(definition, context, bindings)
@@ -213,10 +250,11 @@ class ActionService:
 
     # -- internals ---------------------------------------------------------------------
 
-    def _switch_page(self, page_id: str) -> None:
+    def _switch_page(self, page_id: str) -> bool:
         if not page_id or page_id == self.active_page_id():
-            return
+            return True
         pages = getattr(self._host, "pages", None)
         setter = getattr(pages, "set_active_page", None)
         if callable(setter):
             setter(page_id)
+        return page_id == self.active_page_id()

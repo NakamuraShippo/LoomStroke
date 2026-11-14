@@ -21,19 +21,26 @@ from .native_cmyk_print_output import NativeCmykPrintOutput
 from .print_color_output import (
     rgba_to_cmyk,
     rgba_to_grayscale_k,
+    write_bilevel_tiff,
     write_cmyk_tiff,
     write_grayscale_k_tiff,
+    write_grayscale_tiff,
 )
 
 __all__ = ["PrintOutput", "PrintPageConverter"]
 
-PrintOutput = Literal["cmyk_tiff", "grayscale_k_tiff"]
+PrintOutput = Literal["cmyk_tiff", "grayscale_k_tiff", "grayscale_tiff", "bilevel_tiff"]
 
 
 class PrintPageConverter:
     """Flatten + separate one page and write it atomically as a TIFF."""
 
-    OUTPUTS: ClassVar[tuple[str, ...]] = ("cmyk_tiff", "grayscale_k_tiff")
+    OUTPUTS: ClassVar[tuple[str, ...]] = (
+        "cmyk_tiff",
+        "grayscale_k_tiff",
+        "grayscale_tiff",
+        "bilevel_tiff",
+    )
     EXTENSION: ClassVar[str] = "tif"
 
     def __init__(
@@ -45,6 +52,8 @@ class PrintPageConverter:
         cmyk_profile_id: str | None = None,
         intent: RenderingIntent = "relative",
         black_point_compensation: bool = True,
+        threshold: int = 128,
+        dither: str = "threshold",
     ) -> None:
         if output not in self.OUTPUTS:
             raise ValueError(f"unsupported print output: {output}")
@@ -55,6 +64,10 @@ class PrintPageConverter:
         self._source_profile_id = source_profile_id
         self._intent: RenderingIntent = intent
         self._black_point_compensation = bool(black_point_compensation)
+        if not 0 <= threshold <= 255 or dither not in ("threshold", "ordered4x4"):
+            raise ValueError("Invalid bilevel conversion options")
+        self._threshold = threshold
+        self._dither = dither
         self._cmyk_profile_id: str | None = None
         self._cmyk_bytes: bytes | None = None
         if output == "cmyk_tiff":
@@ -111,7 +124,13 @@ class PrintPageConverter:
         k_plane = rgba_to_grayscale_k(
             rgba, self._registry, source_profile_id=self._source_profile_id
         )
-        return write_grayscale_k_tiff(Path(destination), k_plane, dpi=dpi)
+        if self._output == "grayscale_k_tiff":
+            return write_grayscale_k_tiff(Path(destination), k_plane, dpi=dpi)
+        if self._output == "grayscale_tiff":
+            return write_grayscale_tiff(Path(destination), k_plane, dpi=dpi)
+        return write_bilevel_tiff(
+            Path(destination), k_plane, dpi=dpi, threshold=self._threshold, dither=self._dither
+        )
 
     def write_native_page(self, pixels, destination, *, dpi):
         if self._output != "cmyk_tiff" or self._cmyk_bytes is None:

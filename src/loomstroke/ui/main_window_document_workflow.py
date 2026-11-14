@@ -17,8 +17,11 @@ from PySide6.QtWidgets import QWidget
 from shiboken6 import isValid
 
 from ..core.book_layout_service import BookLayoutService
+from ..core.book_spread_layout import BookLayout
+from ..core.comic_document_profile import PhysicalPageLayout, canvas_pixel_size
 from ..core.events import Events
 from ..core.folio_resolver import resolve_folios
+from ..core.format_guide_service import FormatGuideService
 from ..core.history_failure_reporting import history_failure_event_is_current
 from ..core.save_outcome_claim import (
     UNMATCHABLE_CLAIM,
@@ -31,8 +34,10 @@ from ..core.save_outcome_claim import (
 from ..host_api import DocumentService, LoadOptions, SaveOptions
 from ..io.atomic_export_writer import write_atomically
 from ..io.raster_export import export_raster
+from .canvas.guide_canvas_bridge import guide_canvas
 from .dialogs.export_pages_dialog import ExportPagesContext, ExportPagesDialog
 from .export_pages_runner import run_export_pages
+from .main_window_clipboard_document import create_clipboard_document, read_clipboard_image
 from .main_window_document_close import close_document_session
 from .main_window_document_guard import DocumentReplacementGuard, guard_document_replacement
 from .main_window_image_open import open_image_document
@@ -40,6 +45,7 @@ from .main_window_save_feedback import ManualSaveFeedback
 from .new_document_canvas_reset import reset_new_document_canvas
 from .new_document_guides import reset_new_document_guides
 from .startpage_models import StartPageCanvasSpec
+from .svg_export_layer_subset import select_svg_layers
 from .translations import translate_with_fallback
 
 logger = logging.getLogger(__name__)
@@ -127,10 +133,56 @@ class MainWindowDocumentWorkflowCoordinator:
         except Exception:
             logger.debug("_on_create_document_request: suppressed exception", exc_info=True)
             return
-        self._window._apply_new_document(spec)
+        print_layout = payload.get("_print_layout")
+        gutter = payload.get("_print_gutter_mm", 0.0)
+        if print_layout is not None:
+            if not isinstance(print_layout, PhysicalPageLayout) or not isinstance(
+                gutter, (int, float)
+            ):
+                return
+            if canvas_pixel_size(print_layout) != (spec.width_px, spec.height_px):
+                return
+            if print_layout.dpi != (spec.dpi, spec.dpi):
+                return
+        if self._window._apply_new_document(spec) is not True or print_layout is None:
+            return
+        pages = getattr(getattr(self._window, "_host_api", None), "pages", None)
+        document = self._window._get_document_service()
+        resolve = getattr(document, "resolve_book_layout", None)
+        book_layout = resolve() if callable(resolve) else BookLayout()
+        if pages is not None:
+            try:
+                FormatGuideService(pages, book_layout).apply(print_layout, gutter_mm=float(gutter))
+                controller = getattr(
+                    guide_canvas(getattr(self._window, "canvas", None)),
+                    "_guide_controller",
+                    None,
+                )
+                if controller is not None:
+                    controller.reload_page_state()
+            except (ValueError, OSError, RuntimeError):
+                logger.exception("Failed to apply new-document page format guides")
+                self._message_box().warning(
+                    self._window,
+                    translate_with_fallback("FormatGuidesDialog", "Page Format Guides"),
+                    translate_with_fallback(
+                        "FormatGuidesDialog",
+                        "Could not apply the page guides. The format must match the existing "
+                        "canvas size and leave a valid safe area. Some pages may already have "
+                        "been updated.",
+                    ),
+                )
 
     def on_new(self) -> None:
         self._window._event_bus.emit("file.new", {})
+
+    def on_new_from_clipboard(self) -> bool:
+        decoded = read_clipboard_image(self)
+        return decoded is not None and self._create_document_from_clipboard(decoded)
+
+    @guard_document_replacement(False)
+    def _create_document_from_clipboard(self, decoded: Any) -> bool:
+        return create_clipboard_document(self, decoded)
 
     def on_close(self) -> None:
         self._window._event_bus.emit("file.close", {})
@@ -162,7 +214,12 @@ class MainWindowDocumentWorkflowCoordinator:
             self._window._event_bus, "publish", None
         )
         if callable(emitter):
-            emitter("ui.request.create_document", spec.to_payload())
+            payload = spec.to_payload()
+            read_print_layout = getattr(dialog, "print_layout", None)
+            selected = read_print_layout() if callable(read_print_layout) else None
+            if selected is not None:
+                payload["_print_layout"], payload["_print_gutter_mm"] = selected
+            emitter("ui.request.create_document", payload)
 
     def load_recent_files(self) -> None:
         """Load recent file paths from the StartPage settings namespace."""
@@ -287,7 +344,7 @@ class MainWindowDocumentWorkflowCoordinator:
         self._window._open_path(path)
 
     @guard_document_replacement(None)
-    def apply_new_document(self, spec: StartPageCanvasSpec) -> None:
+    def apply_new_document(self, spec: StartPageCanvasSpec) -> bool:
         width = int(spec.width_px)
         height = int(spec.height_px)
         dpi = max(1, int(spec.dpi))
@@ -313,7 +370,7 @@ class MainWindowDocumentWorkflowCoordinator:
                         "Could not create the document. Check the CMYK profile and canvas size.",
                     ),
                 )
-                return
+                return False
 
         service = self._window._get_document_service()
         if service is not None:
@@ -343,6 +400,7 @@ class MainWindowDocumentWorkflowCoordinator:
             "background": bg.to_payload(),
         }
         self._emit_document_created(payload)
+        return True
 
     def _emit_document_created(self, payload: dict[str, Any]) -> None:
         """Emit ``DOC_CREATED`` exactly once for a successfully built document.
@@ -492,6 +550,7 @@ class MainWindowDocumentWorkflowCoordinator:
         service = self._window._get_document_service()
         if service is None:
             return False
+        self._window._document_load_recovered = False
         try:
             loaded = bool(service.load(str(path), LoadOptions()))
         except Exception as exc:  # pragma: no cover - dialog fallback
@@ -509,6 +568,8 @@ class MainWindowDocumentWorkflowCoordinator:
                 self._window._ts("Unable to load document: {path}").format(path=path),
             )
             return False
+        if self._window._document_load_recovered:
+            return True
         self._window._document_path = path
         self._window._document_dirty = False
         if not self._window._has_document:
@@ -602,19 +663,20 @@ class MainWindowDocumentWorkflowCoordinator:
             saved = bool(service.save(str(target), SaveOptions()))
         except Exception as exc:  # pragma: no cover - dialog fallback
             logger.exception("Failed to save document: %s", exc)
-            self._message_box().critical(
-                self._window,
-                self._window._ts("Save Failed"),
-                self._window._ts("Unable to save document: {path}\n{error}").format(
-                    path=target,
-                    error=exc,
-                ),
-            )
+            if not feedback.failure_notice_shown:
+                self._message_box().critical(
+                    self._window,
+                    self._window._ts("Save Failed"),
+                    self._window._ts("Unable to save document: {path}\n{error}").format(
+                        path=target,
+                        error=exc,
+                    ),
+                )
             return False
         finally:
             self._active_manual_save_feedback = previous_feedback
         if not saved:
-            if not feedback.deferred_notice_shown:
+            if not feedback.failure_notice_shown:
                 self._message_box().critical(
                     self._window,
                     self._window._ts("Save Failed"),
@@ -681,18 +743,19 @@ class MainWindowDocumentWorkflowCoordinator:
                 saved = bool(await service.save_async(str(target), SaveOptions()))
             except Exception as exc:  # pragma: no cover - dialog fallback
                 logger.exception("Failed to save document (async): %s", exc)
-                self._message_box().critical(
-                    self._window,
-                    self._window._ts("Save Failed"),
-                    self._window._ts("Unable to save document: {path}\n{error}").format(
-                        path=target,
-                        error=exc,
-                    ),
-                )
+                if not feedback.failure_notice_shown:
+                    self._message_box().critical(
+                        self._window,
+                        self._window._ts("Save Failed"),
+                        self._window._ts("Unable to save document: {path}\n{error}").format(
+                            path=target,
+                            error=exc,
+                        ),
+                    )
                 self._window.statusBar().clearMessage()
                 return False
             if not saved:
-                if not feedback.deferred_notice_shown:
+                if not feedback.failure_notice_shown:
                     self._message_box().critical(
                         self._window,
                         self._window._ts("Save Failed"),
@@ -1018,24 +1081,15 @@ class MainWindowDocumentWorkflowCoordinator:
             return False
 
         layers = getattr(canvas, "_layers", None) or []
-        layer_groups = []
-        object_count = 0
-        omitted_unsupported = 0
-        for layer in layers:
-            if getattr(layer, "layer_type", "raster") != "vector":
-                continue
-            if not getattr(layer, "visible", True):
-                continue
-            if self.svg_vector_layer_export_issue(layer) is not None:
-                omitted_unsupported += 1
-                continue
-            layer_objects = list(getattr(layer, "vector_objects", []) or [])
-            if not layer_objects:
-                continue
-            layer_groups.append((layer_objects, getattr(layer, "opacity", 1.0)))
-            object_count += len(layer_objects)
-
-        if object_count == 0:
+        layer_groups, omitted_unsupported, omitted_layout = select_svg_layers(
+            layers, self.svg_vector_layer_export_issue
+        )
+        if not layer_groups:
+            if omitted_layout:
+                self._warn_svg_layout_omission(
+                    self._window._ts("No SVG-compatible vector objects to export.")
+                )
+                return False
             if omitted_unsupported:
                 self._message_box().warning(
                     self._window,
@@ -1067,17 +1121,30 @@ class MainWindowDocumentWorkflowCoordinator:
                 self._window._ts("Unable to export image: {path}").format(path=path) + f"\n{exc}",
             )
             return False
-        if omitted_unsupported:
-            self._window._show_svg_export_omission_warning(path.name, omitted_unsupported)
+        omitted = omitted_unsupported + omitted_layout
+        if omitted:
+            summary = self._window._ts(
+                "Exported {name}; omitted {count} unsupported vector layer(s)."
+            ).format(name=path.name, count=omitted)
+            if omitted_layout:
+                self._warn_svg_layout_omission(summary)
+            else:
+                self._window._show_svg_export_omission_warning(path.name, omitted)
             self._window.statusBar().showMessage(
-                self._window._ts(
-                    "Exported {name}; omitted {count} unsupported vector layer(s)."
-                ).format(name=path.name, count=omitted_unsupported),
+                summary,
                 5000,
             )
         else:
             self._window.statusBar().showMessage(f"Exported {path.name}", 3000)
         return True
+
+    def _warn_svg_layout_omission(self, summary: str) -> None:
+        window = self._window
+        details = window._ts(
+            "The current SVG export omits groups, layer placement, enabled masks, "
+            "unsupported blend modes, and live filters."
+        )
+        self._message_box().warning(window, window._ts("Export SVG"), f"{summary}\n\n{details}")
 
     def show_svg_export_omission_warning(self, name: str, count: int) -> None:
         if not isinstance(self._window, QWidget):
@@ -1375,6 +1442,10 @@ class MainWindowDocumentWorkflowCoordinator:
 
     def on_document_loaded_event(self, payload: Any) -> None:
         self._replacement_guard.document_replaced()
+        from .document_mask_recovery import show_missing_mask_recovery  # noqa: PLC0415
+
+        if show_missing_mask_recovery(self, payload):
+            return
         path = self._window._extract_document_path(payload)
         if path:
             self._window._document_path = path
@@ -1411,14 +1482,19 @@ class MainWindowDocumentWorkflowCoordinator:
         if getattr(self._window, "_mcp_document_operation_in_flight", False):
             return
         path = self._window._extract_document_path(payload)
-        if isinstance(payload, Mapping) and payload.get("reason_code") == "document_edit_pending":
-            if payload.get("autosave") is True:
+        is_event_mapping = isinstance(payload, Mapping)
+        deferred = is_event_mapping and payload.get("reason_code") == "document_edit_pending"
+        autosave = (
+            payload.get("autosave") if is_event_mapping else getattr(payload, "autosave", None)
+        )
+        if deferred and autosave is True:
+            return
+        feedback = self._active_manual_save_feedback
+        if autosave is not True and feedback is not None and feedback.matches_path(path):
+            if feedback.failure_notice_shown:
                 return
-            feedback = self._active_manual_save_feedback
-            if feedback is not None and feedback.matches_path(path):
-                if feedback.deferred_notice_shown:
-                    return
-                feedback.deferred_notice_shown = True
+            feedback.failure_notice_shown = True
+        if deferred:
             self._message_box().warning(
                 self._window,
                 self._window._ts("Save Failed"),

@@ -372,7 +372,9 @@ class MainWindowLayerActionsCoordinator:
         source_layer_id = getattr(source_layer, "id", None)
         if not isinstance(source_layer_id, str):
             return
-        rasterize = getattr(canvas, "rasterize_layer", None)
+        rasterize = getattr(canvas, "rasterize_layer_undoable", None)
+        if not callable(rasterize):
+            rasterize = getattr(canvas, "rasterize_layer", None)
         if not callable(rasterize):
             return
         if rasterize(source_layer_id):

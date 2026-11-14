@@ -66,6 +66,26 @@ class ProjectionImportService:
         scene: Scene3DDocument,
         request: ProjectionImportRequest,
     ) -> tuple[ApplyImageCommand, PreviewRenderResult]:
+        preview = self._render_projection(scene, request)
+        metadata = {
+            "source": "3d_projection",
+            "scene_id": scene.id,
+            "display_mode": request.display_mode.value,
+            "map_outputs": ("depth", "normal", "segmentation"),
+            **dict(request.metadata),
+        }
+        if request.target_layer_id:
+            metadata["target_layer_id"] = request.target_layer_id
+        command = ApplyImageCommand(
+            image=qimage_to_rgba_array(preview.image),
+            position=request.position,
+            metadata=metadata,
+        )
+        return command, preview
+
+    def _render_projection(
+        self, scene: Scene3DDocument, request: ProjectionImportRequest
+    ) -> PreviewRenderResult:
         options: dict[str, Any] = {
             "width": request.width,
             "height": request.height,
@@ -84,22 +104,7 @@ class ProjectionImportService:
             options["max_faces"] = None
         # Unknown injected renderers retain their existing call shape. The
         # complete-face guarantee above is limited to the standard renderer.
-        preview = self._renderer.render(scene, **options)
-        metadata = {
-            "source": "3d_projection",
-            "scene_id": scene.id,
-            "display_mode": request.display_mode.value,
-            "map_outputs": ("depth", "normal", "segmentation"),
-            **dict(request.metadata),
-        }
-        if request.target_layer_id:
-            metadata["target_layer_id"] = request.target_layer_id
-        command = ApplyImageCommand(
-            image=qimage_to_rgba_array(preview.image),
-            position=request.position,
-            metadata=metadata,
-        )
-        return command, preview
+        return self._renderer.render(scene, **options)
 
     def import_to_canvas(
         self,
@@ -108,12 +113,16 @@ class ProjectionImportService:
         request: ProjectionImportRequest,
     ) -> ProjectionImportResult:
         command, preview = self.build_command(scene, request)
-        submit = getattr(canvas, "submit", None)
-        if callable(submit):
-            submitted = bool(submit(command, merge_key="3d_projection_import"))
-        else:
-            submitted = bool(command.apply(canvas))
-        return ProjectionImportResult(submitted=submitted, command=command, preview=preview)
+        return ProjectionImportResult(
+            submitted=_submit_projection(canvas, command), command=command, preview=preview
+        )
+
+
+def _submit_projection(canvas: Any, command: ApplyImageCommand) -> bool:
+    submit = getattr(canvas, "submit", None)
+    if callable(submit):
+        return bool(submit(command, merge_key="3d_projection_import"))
+    return bool(command.apply(canvas))
 
 
 def qimage_to_rgba_array(image: QImage) -> np.ndarray:

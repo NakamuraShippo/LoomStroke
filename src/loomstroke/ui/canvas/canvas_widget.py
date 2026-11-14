@@ -57,7 +57,7 @@ from .render_scene import (
 )
 from .screen_space_overlay import ScreenSpaceOverlayManager
 from .three_d_interaction import Canvas3DLayerInteractionController
-from .trim_preview_overlay import draw_trim_preview
+from .trim_preview_overlay import draw_bleed_overlay, draw_trim_preview
 from .vector_selection_overlay import draw_vector_selection_overlay
 from .viewport import Viewport
 from .wgpu_backend import WgpuBackendError, WgpuDeviceLostError, WgpuUnavailableError
@@ -589,10 +589,13 @@ class CanvasWidget(_CanvasWidgetBase):
     def _ensure_wgpu_bitmap_presenter(self) -> WgpuBitmapPresenter | None:
         return cast("WgpuBitmapPresenter | None", self._wgpu_bitmap().ensure_presenter())
 
-    def render_native_cmyk_layers(self, layers):
+    def render_native_cmyk_layers(self, layers, *, committed_vectors=False):
         from .native_cmyk_scene_renderer import NativeCmykSceneRenderer  # noqa: PLC0415
 
-        return NativeCmykSceneRenderer.from_canvas(self._get_canvas_service(), layers)
+        canvas = self._get_canvas_service()
+        if committed_vectors:
+            return NativeCmykSceneRenderer.from_committed_layers(canvas, layers)
+        return NativeCmykSceneRenderer.from_canvas(canvas, layers)
 
     def _disable_wgpu_bitmap(self, reason: str, canvas: Any | None = None) -> None:
         self._wgpu_bitmap().disable(reason, canvas)
@@ -979,6 +982,7 @@ class CanvasWidget(_CanvasWidgetBase):
         """Draw grid, guides, buffers, and marching ants."""
         if self.state.grid_visible:
             self._draw_grid(painter)
+        draw_bleed_overlay(painter, self)
         self._draw_guides(painter)
         self._draw_drawing_assist(painter)
         draw_composition_overlay(painter, self)
@@ -1319,7 +1323,7 @@ class CanvasWidget(_CanvasWidgetBase):
 
     def hideEvent(self, event: Any) -> None:
         """Handle hide/minimize resource release for optional presenters."""
-        self._three_d_interaction.figure.cancel()
+        self._three_d_interaction.cancel()
         self._invalidate_wgpu_bitmap_resources("widget hidden")
         super().hideEvent(event)
 

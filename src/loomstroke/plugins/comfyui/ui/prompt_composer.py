@@ -92,12 +92,14 @@ class PromptComposerWidget(QWidget):
         parent: QWidget | None = None,
         *,
         emphasis_output: bool = True,
+        emphasis_style: str = "comfyui",
     ) -> None:
         super().__init__(parent)
         self._host_api = host_api
         # False for gateways without weight syntax: chips keep their ComfyUI
         # emphasis, but the composed and generated text leave it out.
         self._emphasis_output = emphasis_output
+        self._emphasis_style = emphasis_style
 
         # Data
         self._components: list[PromptComponent] = []
@@ -108,6 +110,7 @@ class PromptComposerWidget(QWidget):
         self._dynamic_sequence = DynamicPromptSequence()
 
         self._build_ui()
+        self._chip_flow.emphasis_style = emphasis_style
         # Defer catalog / combo population until the widget is first shown
         # to avoid blocking the UI thread during panel construction.
 
@@ -513,7 +516,7 @@ class PromptComposerWidget(QWidget):
     def _decorate(self, component: PromptComponent, text: str) -> str:
         if not self._emphasis_output:
             return text
-        return _emphasis.decorate(text, component)
+        return _emphasis.decorate(text, component, style=self._emphasis_style)
 
     def _recompose(self) -> None:
         self.composedTextChanged.emit(self._compose_text())

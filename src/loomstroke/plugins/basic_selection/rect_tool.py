@@ -82,6 +82,7 @@ from .rect_raster_controller import RasterTransformDragState as _TransformDragSt
 from .rect_vector_controller import VectorSelectionController
 from .selection_settings import SelectionSettings as SelectionSettings  # noqa: PLC0414
 from .selection_transform_overlay import SelectionTransformOverlay
+from .vector_selection_targets import resolve_vector_selection_targets
 
 logger = logging.getLogger(__name__)
 
@@ -1001,6 +1002,11 @@ class BasicSelectionRectTool:
         self._base_full_bounds = self._normalize_bounds(
             getattr(canvas, "_selection_bounds_full", None)
         )
+        state = self._raster_controller.state
+        state.base_full_mask = UpdateSelectionMaskCommand._clone_mask(
+            getattr(canvas, "_selection_mask_full", None)
+        )
+        state.base_captured = True
 
     def _restore_base_selection(self, *, recompose: bool = False) -> None:
         if not self.host_api:
@@ -1011,24 +1017,22 @@ class BasicSelectionRectTool:
         mask = self._base_mask
         bounds = self._base_bounds
 
-        # Guard against None state restoration if we never captured
-        if mask is None and bounds is None:
+        state = self._raster_controller.state
+        if not state.base_captured:
             return
 
         setter = getattr(canvas, "set_selection_mask", None)
         if callable(setter):
             setter(mask, bounds)
-            if hasattr(canvas, "_selection_bounds_full"):
-                canvas._selection_bounds_full = self._base_full_bounds
-            return
-
-        # Fallback for direct attribute access (legacy)
-        if hasattr(canvas, "_selection_mask"):
-            canvas._selection_mask = mask
-        if hasattr(canvas, "_selection_bounds"):
-            canvas._selection_bounds = bounds
+        else:
+            if hasattr(canvas, "_selection_mask"):
+                canvas._selection_mask = mask
+            if hasattr(canvas, "_selection_bounds"):
+                canvas._selection_bounds = bounds
         if hasattr(canvas, "_selection_bounds_full"):
             canvas._selection_bounds_full = self._base_full_bounds
+        if hasattr(canvas, "_selection_mask_full"):
+            canvas._selection_mask_full = state.base_full_mask
         if recompose:
             recomposer = getattr(canvas, "_recompose", None)
             if callable(recomposer):
@@ -1578,19 +1582,7 @@ class BasicSelectionRectTool:
         if not store:
             return None
         bounds: tuple[float, float, float, float] | None = None
-        lookup: dict[str, tuple[str | None, Any]] = {}
-        for layer_id, obj in store:
-            vec_id = getattr(obj, "id", None)
-            if isinstance(vec_id, str):
-                lookup[vec_id] = (layer_id, obj)
-        for item in items:
-            vec_id = item.get("id")
-            if not isinstance(vec_id, str):
-                continue
-            entry = lookup.get(vec_id)
-            if entry is None:
-                continue
-            obj = entry[1]
+        for _item, _layer_id, obj in resolve_vector_selection_targets(store, items):
             bbox = self._vector_bbox(obj)
             if bbox is None:
                 continue
@@ -1845,21 +1837,10 @@ class BasicSelectionRectTool:
         store = self._vector_store()
         if not store:
             return False
-        lookup: dict[str, tuple[str | None, Any]] = {}
-        for layer_id, obj in store:
-            vec_id = getattr(obj, "id", None)
-            if isinstance(vec_id, str):
-                lookup[vec_id] = (layer_id, obj)
         originals: list[tuple[str, str | None, VectorObject]] = []
         valid_items: list[dict[str, Any]] = []
-        for item in items:
-            vec_id = item.get("id")
-            if not isinstance(vec_id, str):
-                continue
-            entry = lookup.get(vec_id)
-            if entry is None:
-                continue
-            layer_id, obj = entry
+        for item, layer_id, obj in resolve_vector_selection_targets(store, items):
+            vec_id = item["id"]
             try:
                 original = copy_vector_object(obj)
             except Exception:
@@ -1988,8 +1969,7 @@ class BasicSelectionRectTool:
                 if callable(end_tx):
                     end_tx()
 
-        bounds_objects = [obj for _vec_id, _layer_id, obj in transformed]
-        bounds = self._vector_bounds_for_objects(bounds_objects)
+        bounds = self._vector_selection_bounds_for_items(self._vector_drag_items)
         self._set_vector_selection(self._vector_drag_items, bounds)
         self._finish_pointer()
 
@@ -2004,20 +1984,9 @@ class BasicSelectionRectTool:
         pivot = ((bounds[0] + bounds[2]) * 0.5, (bounds[1] + bounds[3]) * 0.5)
         store = self._vector_store()
         updates: list[tuple[str, str | None, VectorObject]] = []
-        for item in items:
-            vec_id = item.get("id")
-            if not isinstance(vec_id, str):
-                continue
-            layer_hint = item.get("layer_id")
-            layer_hint = layer_hint if isinstance(layer_hint, str) else None
-            for layer_id, obj in store:
-                if layer_hint is not None and layer_id != layer_hint:
-                    continue
-                if str(getattr(obj, "id", "")) != vec_id:
-                    continue
-                flipped = scale_object(obj, pivot, fx, fy, keep_stroke_width=True)
-                updates.append((vec_id, layer_id, flipped))
-                break
+        for item, layer_id, obj in resolve_vector_selection_targets(store, items):
+            flipped = scale_object(obj, pivot, fx, fy, keep_stroke_width=True)
+            updates.append((item["id"], layer_id, flipped))
         if not updates:
             return False
         label = "Flip Vector Selection Horizontal" if fx < 0.0 else "Flip Vector Selection Vertical"

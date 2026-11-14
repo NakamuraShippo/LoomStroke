@@ -41,6 +41,7 @@ class DrawingAssistPanelSync(QObject):
             self._timer.start(0)
 
     def _boundary_refresh(self, payload):
+        self._panel._displayed_state = None
         self._controller.clear_stroke_feedback()
         self._request_refresh(payload)
 

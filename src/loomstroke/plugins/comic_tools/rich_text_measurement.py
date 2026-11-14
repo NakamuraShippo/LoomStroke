@@ -7,12 +7,16 @@ from loomstroke.core.japanese_text.typography_layout import build_japanese_layou
 from loomstroke.plugins.text_tool.common import TextToolSettings, ensure_text_vector_object
 from loomstroke.plugins.text_tool.editing_metadata import replace_edited_text
 
+from .text_update import apply_balloon_text_properties
 
-def rich_text_block(previous, text, props=None):
+
+def rich_text_block(previous, text, props=None, *, property_changes=None):
     if previous is None or not has_typography(previous.meta.get("text_tool", {})):
         return None
     edited = replace_edited_text(previous, text)
-    if props is not None:
+    if property_changes is not None:
+        edited = apply_balloon_text_properties(edited, property_changes)
+    elif props is not None:
         settings = TextToolSettings(
             **{
                 field.name: getattr(props, field.name)

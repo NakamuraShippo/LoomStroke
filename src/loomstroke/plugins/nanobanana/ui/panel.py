@@ -16,6 +16,7 @@ from PySide6.QtWidgets import (
     QHBoxLayout,
     QLabel,
     QPushButton,
+    QScrollArea,
     QSizePolicy,
     QTextEdit,
     QVBoxLayout,
@@ -27,6 +28,7 @@ from loomstroke.core.events import DocumentChangeEvent, Events
 from loomstroke.plugins.comfyui.ui.prompt_composer import PromptComposerWidget
 from loomstroke.plugins.common.ai_effect_register_button import AIEffectRegisterButton
 from loomstroke.plugins.common.outbound_policy import is_external_services_allowed
+from loomstroke.plugins.prompt_editor.resizable_prompt_area import ResizableTextEditArea
 from loomstroke.plugins.sdk.base import JobSpec
 from loomstroke.ui._dock_safe import is_valid
 from loomstroke.ui.translations import TranslationBinder, translate_with_fallback
@@ -127,7 +129,14 @@ class NanoBananaPanel(QWidget):
     # ------------------------------------------------------------------
     def _build_ui(self) -> None:  # noqa: PLR0915
         self.setObjectName("NanoBananaPanel")
-        layout = QVBoxLayout(self)
+        root = QVBoxLayout(self)
+        root.setContentsMargins(0, 0, 0, 0)
+        scroll = QScrollArea(self)
+        scroll.setWidgetResizable(True)
+        scroll.setMinimumSize(0, 0)
+        root.addWidget(scroll)
+        content = QWidget(scroll)
+        layout = QVBoxLayout(content)
         layout.setSpacing(10)
 
         # Prompt composition
@@ -153,8 +162,10 @@ class NanoBananaPanel(QWidget):
         prompt_placeholder = self._ts("Enter prompt text...")
         self._prompt_text.setPlaceholderText(prompt_placeholder)
         self._translation_binder.register(self._prompt_text.setPlaceholderText, prompt_placeholder)
-        self._prompt_text.setFixedHeight(80)
-        layout.addWidget(self._prompt_text)
+        self._prompt_text_area = ResizableTextEditArea(
+            self._prompt_text, key="ui/nanobanana/prompt_text_height", default_height=80
+        )
+        layout.addWidget(self._prompt_text_area)
 
         # Input layers
         self._input_layers_label = QLabel("", self)
@@ -299,8 +310,11 @@ class NanoBananaPanel(QWidget):
         status_placeholder = self._ts("Status messages will appear here")
         self._status.setPlaceholderText(status_placeholder)
         self._translation_binder.register(self._status.setPlaceholderText, status_placeholder)
-        self._status.setFixedHeight(80)
-        layout.addWidget(self._status)
+        self._status_area = ResizableTextEditArea(
+            self._status, key="ui/nanobanana/status_height", default_height=80
+        )
+        layout.addWidget(self._status_area)
+        scroll.setWidget(content)
 
     # ------------------------------------------------------------------
     def append_status(self, message: str) -> None:
@@ -344,7 +358,7 @@ class NanoBananaPanel(QWidget):
 
     def _on_prompt_mode_changed(self, composer_active: bool) -> None:
         """Toggle between composer mode and flat-text mode."""
-        self._prompt_text.setVisible(not composer_active)
+        self._prompt_text_area.setVisible(not composer_active)
 
     # ------------------------------------------------------------------
 

@@ -65,6 +65,8 @@ class NativeSelectionMaskCommand(Command):
         mask, bounds, full_bounds, full_mask = state
         if isinstance(bounds, QRect):
             bounds = bounds.getRect()
-        UpdateSelectionMaskCommand._set_selection(canvas, _clone_mask(mask), bounds)
+        visible = _clone_mask(mask)
+        full = _clone_mask(full_mask)
+        UpdateSelectionMaskCommand._set_selection(canvas, visible, bounds)
         _set_selection_full_bounds(canvas, full_bounds)
-        _set_selection_full_mask(canvas, _clone_mask(full_mask))
+        _set_selection_full_mask(canvas, full)

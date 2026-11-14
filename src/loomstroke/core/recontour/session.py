@@ -14,6 +14,7 @@ from PySide6.QtGui import QImage
 from ..commands import StampBrushCommand, _load_tip_mask
 from ..dab_variation import DabVariation
 from ..native_cmyk.stroke_image import NativeStrokeImage, commit_native_image
+from ..raster_history_commit import RasterBackingState, record_raster_history
 from .geometry import Anchor, Curve, fit
 from .preimage import Preimage, check_size
 from .raster import StrokeImage, command_bounds, crop, paste, render, stroke_pixel_bytes
@@ -276,13 +277,13 @@ class RasterStrokeSession:
         # All fallible rendering/patch construction precedes mutation of the live image.
         if not self.valid(canvas):
             return False
+        original = RasterBackingState(self.layer)
+        mask_version = self.layer.filter_mask_version
+        mask_was_dirty = self.layer.id in canvas._gpu_mask_dirty_layers
+        x = self.rect.x() - self.layer.offset_x
+        y = self.rect.y() - self.layer.offset_y
         if self.mask:
-            paste(
-                self.layer.layer_mask,
-                candidate,
-                self.rect.x() - self.layer.offset_x,
-                self.rect.y() - self.layer.offset_y,
-            )
+            paste(self.layer.layer_mask, candidate, x, y)
             self.layer.filter_mask_version += 1
             canvas._gpu_mask_dirty_layers.add(self.layer.id)
         else:
@@ -294,9 +295,25 @@ class RasterStrokeSession:
                 self.rect.y() - self.layer.offset_y,
             )
             self.layer.texture_version += 1
+
+        def restore() -> None:
+            if self.mask:
+                paste(self.layer.layer_mask, previous, x, y)
+                self.layer.filter_mask_version = mask_version
+                if not mask_was_dirty:
+                    canvas._gpu_mask_dirty_layers.discard(self.layer.id)
+            elif self.layer.image is original.image:
+                paste(self.layer.image, previous, x, y)
+            original.restore()
+
+        if not record_raster_history(
+            canvas, lambda: canvas._record_history_patch("Recontour", patch), restore
+        ):
+            self.error = "Recontour could not edit this stroke. The raster stroke was preserved."
+            self.close()
+            return False
         self.expected = self._signature(canvas)
         self.edited = dict(edited)
-        canvas._record_history_patch("Recontour", patch)
         canvas._emit_layer_content_changed(self.layer, self.rect, metadata)
         canvas._recompose_region(self.rect)
         return True

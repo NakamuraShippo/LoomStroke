@@ -86,8 +86,8 @@ class MembershipChange:
     layer: Any
     before_objects: list[Any]
     after_objects: list[Any]
-    before_metadata: dict[str, Any]
-    after_metadata: dict[str, Any]
+    before_metadata: dict[str, Any] | None
+    after_metadata: dict[str, Any] | None
 
     def install(self, *, before: bool = False) -> None:
         self.layer.vector_objects = copy.deepcopy(
@@ -109,17 +109,18 @@ def prepare_reparent_membership(
     changes: list[MembershipChange] = []
 
     def visit(node: Any, current_owner: str) -> None:
-        metadata = copy.deepcopy(getattr(node, "metadata", None) or {})
-        node_marker = metadata.get(PART_KEY, {})
+        metadata = copy.deepcopy(getattr(node, "metadata", None))
+        node_marker = (metadata or {}).get(PART_KEY, {})
         if node_marker.get("role") == "panel":
             current_owner = _panel_for_group(node)
         after_metadata = copy.deepcopy(metadata)
-        front = after_metadata.get(FRONT_KEY)
+        front = (after_metadata or {}).get(FRONT_KEY)
         if isinstance(front, Mapping):
             if front.get("version") != 1:
                 raise PanelFrameError("unsupported page-front membership version")
             # An ordinary layer move leaves the explicit page-front plane. An
             # owner-only panel edit uses its dedicated metadata command instead.
+            assert after_metadata is not None
             del after_metadata[FRONT_KEY]
         objects = list(getattr(node, "vector_objects", ()) or ())
         updated = []

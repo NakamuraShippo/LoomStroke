@@ -21,6 +21,8 @@ class MissingFontRule(PreflightRule):
     def evaluate(
         self, snapshot: DocumentPreflightSnapshot, profile: MangaPreflightProfile
     ) -> tuple[PreflightIssue, ...]:
+        if any(not page.hydrated for page in snapshot.pages):
+            raise CapabilityMissing("page_content_not_loaded")
         texts = [(page, text) for page in snapshot.pages for text in page.texts]
         if texts and all(text.font_available is None for _page, text in texts):
             raise CapabilityMissing("font_database_unavailable")

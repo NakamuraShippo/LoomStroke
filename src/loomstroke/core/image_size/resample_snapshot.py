@@ -9,8 +9,7 @@ persisted to ``.lstroke``.
 
 from __future__ import annotations
 
-from dataclasses import dataclass, field
-from typing import Any
+from dataclasses import dataclass
 
 from PySide6.QtGui import QImage
 
@@ -27,13 +26,7 @@ class ResampleSnapshot(_ResizeSnapshot):
     """Canvas state captured before / after ``resample_canvas``."""
 
     dpi: int = 96
-    layer_masks: list[MaskSnapshot] = field(default_factory=list)
-    effect_masks: list[MaskSnapshot] = field(default_factory=list)
-    #: layer_id -> LayerTransform (frozen dataclass, shared by reference)
-    layer_transforms: dict[str, Any] = field(default_factory=dict)
     selection: SelectionSnapshot | None = None
-    #: Retain byte order, precision and premultiplication of original buffers.
-    image_formats: dict[str, QImage.Format] = field(default_factory=dict)
 
     @property
     def filter_masks(self) -> list[MaskSnapshot]:

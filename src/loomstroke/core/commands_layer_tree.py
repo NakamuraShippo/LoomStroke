@@ -532,7 +532,7 @@ class ReparentLayerCommand(Command):
         self._new_position = position
         self._old_parent_id: str | None = None
         self._old_position: int = -1
-        self._membership_before: tuple[Any, ...] = ()
+        self._membership_before: tuple[Any, ...] | None = None
 
     def apply(self, canvas: Canvas) -> bool:
         # Save current position for revert
@@ -570,7 +570,9 @@ class ReparentLayerCommand(Command):
         fn = getattr(canvas, "reparent_layer", None)
         if not callable(fn):
             return False
-        if self._membership_before:
+        if self._membership_before is not None:
+            # Undo targets the actual old parent, even when no ownership
+            # metadata needed changing. Normal moves redirect panel rows.
             return bool(
                 canvas._layer_tree().reparent_layer(
                     self._layer_id,

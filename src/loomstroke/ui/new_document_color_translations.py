@@ -2,9 +2,9 @@
 
 NEW_DOCUMENT_COLOR_JA = {
     "Color Mode": "カラーモード",
-    "RGB / 8 bit": "RGB / 8 bit",
-    "CMYK / 8 bit": "CMYK / 8 bit",
-    "CMYK / 16 bit": "CMYK / 16 bit",
+    "RGB / 8 bit": "RGB / 8ビット",
+    "CMYK / 8 bit": "CMYK / 8ビット",
+    "CMYK / 16 bit": "CMYK / 16ビット",
     "Choose a CMYK ICC profile to create a CMYK document.": (
         "CMYK文書の作成に使用するCMYK ICCプロファイルを選択してください。"
     ),

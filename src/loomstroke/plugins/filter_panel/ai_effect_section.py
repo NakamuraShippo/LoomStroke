@@ -6,6 +6,7 @@ import contextlib
 import copy
 import logging
 import time
+import weakref
 from collections.abc import Mapping
 from typing import Any
 
@@ -62,6 +63,16 @@ class AIEffectPanelSection(QWidget, AsyncTaskOwner):
         self._ai_trigger_timer = QTimer(self)
         self._ai_trigger_timer.setSingleShot(True)
         self._ai_trigger_timer.timeout.connect(self._on_ai_trigger_timer_fired)
+        self._ai_trigger_target: (
+            tuple[
+                str,
+                weakref.ReferenceType[Any],
+                weakref.ReferenceType[Any],
+                weakref.ReferenceType[Any],
+            ]
+            | None
+        ) = None
+        self._advancing_seed_mode = False
         self._object_info_fetch_task: Any = None
         self._preview_label: QLabel | None = None
         self._auto_connect_banner: QWidget | None = None
@@ -92,6 +103,7 @@ class AIEffectPanelSection(QWidget, AsyncTaskOwner):
 
     def set_host(self, host: Any) -> None:
         del host
+        self._clear_ai_trigger()
         self._last_auto_connect_attempt_t = float("-inf")
 
     def detach_host(self) -> None:
@@ -376,8 +388,7 @@ class AIEffectPanelSection(QWidget, AsyncTaskOwner):
         # Cancel any pending auto-fire so a layer-switch or
         # layer-deletion during a debounce window doesn't fire
         # generation against a stale id.
-        if self._ai_trigger_timer.isActive():
-            self._ai_trigger_timer.stop()
+        self._clear_ai_trigger()
         if self._ai_effect_group is not None:
             self._root_layout.removeWidget(self._ai_effect_group)
             self._ai_effect_group.deleteLater()
@@ -1259,7 +1270,7 @@ class AIEffectPanelSection(QWidget, AsyncTaskOwner):
         - Drop other ``ai_effect`` layers (circular reference).
         - Drop ``group`` / ``mask`` (not composable rasters on their own;
           group children still surface via the recursion).
-        - Keep ``raster`` / ``vector``.
+        - Keep ``raster`` / ``vector`` / ``3d`` (renderable slot inputs).
         """
         if self._host is None:
             return []
@@ -1282,7 +1293,7 @@ class AIEffectPanelSection(QWidget, AsyncTaskOwner):
                         if isinstance(children, list):
                             _walk(children)
                     continue
-                if ltype not in ("raster", "vector"):
+                if ltype not in ("raster", "vector", "3d"):
                     continue
                 if not isinstance(lid, str) or not lid or lid == exclude_id:
                     continue
@@ -1329,11 +1340,13 @@ class AIEffectPanelSection(QWidget, AsyncTaskOwner):
             self._select_slot_target(combo, None)
         self._write_slot_ref(internal_id, None)
 
-    def _write_slot_ref(self, internal_id: str, target_layer_id: str | None) -> None:
+    def _write_slot_ref(
+        self, internal_id: str, target_layer_id: str | None, *, effect_layer_id: str | None = None
+    ) -> None:
         """Push an updated SlotRef through ``set_ai_effect_layer_state``."""
         from loomstroke.plugins.ai_effect.data_model import SlotRef  # noqa: PLC0415
 
-        layer_id = self._current_ai_effect_id
+        layer_id = self._current_ai_effect_id if effect_layer_id is None else effect_layer_id
         if layer_id is None or self._host is None:
             return
         canvas = getattr(self._host, "canvas", None)
@@ -1361,11 +1374,12 @@ class AIEffectPanelSection(QWidget, AsyncTaskOwner):
             exclude_blend = bool(getattr(previous, "exclude_blend", False))
             slot_refs[internal_id] = SlotRef(layer_id=target_layer_id, exclude_blend=exclude_blend)
         param_values = dict(getattr(ai_state, "param_values", {}) or {})
-        setter(layer_id, param_values=param_values, slot_refs=slot_refs)
-        logger.debug("Updated AI effect %s slot %s -> %s", layer_id, internal_id, target_layer_id)
-        # Phase 6-i: slot rebinding counts as an input change → run
-        # the same auto-fire dispatch that param edits go through.
-        self._maybe_schedule_auto_generate(ai_state)
+        if setter(layer_id, param_values=param_values, slot_refs=slot_refs) is not False:
+            logger.debug(
+                "Updated AI effect %s slot %s -> %s", layer_id, internal_id, target_layer_id
+            )
+            # Slot rebinding counts as an input change, like a parameter edit.
+            self._maybe_schedule_auto_generate(ai_state, effect_layer_id=layer_id)
 
     # ------------------------------------------------------------------
     # Step 4: Trigger combo + Generate button
@@ -1549,8 +1563,8 @@ class AIEffectPanelSection(QWidget, AsyncTaskOwner):
         # rather than firing one last time when the timer expires.
         # Switching to ``on_change`` / ``debounced`` does NOT pre-arm
         # the timer — generation only fires after an actual edit.
-        if value == "manual" and self._ai_trigger_timer.isActive():
-            self._ai_trigger_timer.stop()
+        if value == "manual":
+            self._clear_ai_trigger(layer_id)
 
     def _select_ai_server_value(self, target_server_id: Any) -> None:
         combo = self._ai_server_combo
@@ -1701,6 +1715,7 @@ class AIEffectPanelSection(QWidget, AsyncTaskOwner):
             and layer_id == self._current_ai_effect_id
         ):
             return
+        self._clear_ai_trigger(layer_id)
         if layer_id == self._current_ai_effect_id and self._native_comfy_panel is not None:
             self._native_comfy_panel.run(self._native_comfy_panel.commit(generate=True))
             return
@@ -1712,7 +1727,12 @@ class AIEffectPanelSection(QWidget, AsyncTaskOwner):
             if not advance_live_prompts(self._ai_effect_widgets, self._host, layer_id):
                 logger.warning("Could not prepare LivePrompt values for generation")
                 return
-            self._apply_seed_mode_pre_generate()
+            previous = self._advancing_seed_mode
+            self._advancing_seed_mode = True
+            try:
+                self._apply_seed_mode_pre_generate()
+            finally:
+                self._advancing_seed_mode = previous
         self.ai_generate_requested.emit(layer_id)
         logger.debug("AI effect generate requested for %s", layer_id)
 
@@ -1829,44 +1849,13 @@ class AIEffectPanelSection(QWidget, AsyncTaskOwner):
         Panel's combo refresh all fire identically regardless of
         which UI surfaced the bind.
 
-        Guards (all silent no-ops, mirroring
-        :meth:`apply_exclude_blend_toggle`'s defensive style):
-
-        - The drop arrives even when the user has a different layer
-          selected, so we have to drive the write against
-          ``effect_layer_id`` rather than ``self._current_ai_effect_id``.
-          Temporarily swap the panel's "current" id so
-          ``_write_slot_ref`` operates on the right layer, then
-          restore it.
-        - Source layer id is rejected when empty / synthetic — the
-          dropEvent already filters synthetic ids out, but we
-          double-check here so a future caller can't misuse the
-          method.
+        The dropped slot can belong to a different layer than the visible
+        form. Keep the visible selection unchanged during the synchronous
+        layer change notification.
         """
-        if not source_layer_id or source_layer_id.startswith("__slot::"):
+        if not effect_layer_id or not source_layer_id or source_layer_id.startswith("__slot::"):
             return
-        if self._host is None:
-            return
-        canvas = getattr(self._host, "canvas", None)
-        if canvas is None:
-            return
-        finder = getattr(canvas, "_find_layer_by_id_tree", None)
-        if not callable(finder):
-            return
-        if finder(effect_layer_id) is None:
-            return
-        previous = self._current_ai_effect_id
-        self._current_ai_effect_id = effect_layer_id
-        try:
-            self._write_slot_ref(slot_id, source_layer_id)
-        finally:
-            self._current_ai_effect_id = previous
-        logger.debug(
-            "slot bind via drop: layer=%s slot=%s -> source=%s",
-            effect_layer_id,
-            slot_id,
-            source_layer_id,
-        )
+        self._write_slot_ref(slot_id, source_layer_id, effect_layer_id=effect_layer_id)
 
     def _on_ai_param_changed(  # noqa: PLR0911 - guard chain for defensive write-back
         self, internal_id: str, value: Any
@@ -1908,7 +1897,7 @@ class AIEffectPanelSection(QWidget, AsyncTaskOwner):
                 logger.debug("get_value failed on %s", wid_id, exc_info=True)
         param_ui_state = self._collect_ai_param_ui_state(ai_state)
         slot_refs = dict(getattr(ai_state, "slot_refs", {}) or {})
-        setter(
+        applied = setter(
             layer_id,
             param_values=param_values,
             slot_refs=slot_refs,
@@ -1918,12 +1907,21 @@ class AIEffectPanelSection(QWidget, AsyncTaskOwner):
         # Phase 6-i: param edits auto-fire generation when the layer's
         # trigger is non-manual. Slot binding writes go through their
         # own helper so they share the same dispatch.
-        self._maybe_schedule_auto_generate(ai_state)
+        if applied is not False and not self._advancing_seed_mode:
+            self._maybe_schedule_auto_generate(ai_state, effect_layer_id=layer_id)
 
     # ------------------------------------------------------------------
     # Phase 6-i: Trigger dispatch (on_change / debounced)
     # ------------------------------------------------------------------
-    def _maybe_schedule_auto_generate(self, ai_state: Any) -> None:
+    def _clear_ai_trigger(self, layer_id: str | None = None) -> None:
+        target = self._ai_trigger_target
+        if layer_id is None or (target is not None and target[0] == layer_id):
+            self._ai_trigger_target = None
+            self._ai_trigger_timer.stop()
+
+    def _maybe_schedule_auto_generate(
+        self, ai_state: Any, *, effect_layer_id: str | None = None
+    ) -> None:
         """Restart the per-layer auto-fire timer based on ``ai_state.trigger``.
 
         - ``manual``: no auto-fire — the user clicks Generate.
@@ -1936,20 +1934,35 @@ class AIEffectPanelSection(QWidget, AsyncTaskOwner):
         so a slot rebind triggers re-generation just like a param edit
         does — both are inputs to the gateway run.
         """
+        layer_id = self._current_ai_effect_id if effect_layer_id is None else effect_layer_id
+        if layer_id is None:
+            return
         if getattr(self, "_batch_controls", None) is not None and self._batch_controls.running:
-            self._ai_trigger_timer.stop()
+            self._clear_ai_trigger()
             return
         trigger = str(getattr(ai_state, "trigger", "manual") or "manual")
-        if trigger == "manual":
-            self._ai_trigger_timer.stop()
-            return
         if trigger == "on_change":
             delay_ms = 250
         elif trigger == "debounced":
             delay_ms = self._resolve_debounce_ms()
         else:
-            # Unknown trigger value — do nothing rather than guess.
-            self._ai_trigger_timer.stop()
+            self._clear_ai_trigger(layer_id)
+            return
+        canvas = getattr(self._host, "canvas", None)
+        finder = getattr(canvas, "_find_layer_by_id_tree", None)
+        layer = finder(layer_id) if callable(finder) else None
+        if layer is None or getattr(layer, "ai_effect", None) is not ai_state:
+            return
+        try:
+            self._ai_trigger_target = (
+                layer_id,
+                weakref.ref(canvas),
+                weakref.ref(layer),
+                weakref.ref(ai_state),
+            )
+        except TypeError:
+            # The reservation must not keep a removed canvas layer alive.
+            self._clear_ai_trigger(layer_id)
             return
         self._ai_trigger_timer.start(max(0, int(delay_ms)))
 
@@ -1997,14 +2010,22 @@ class AIEffectPanelSection(QWidget, AsyncTaskOwner):
         return param_ui_state
 
     def _on_ai_trigger_timer_fired(self) -> None:
-        """Timer expiry → fire generation for the bound layer.
-
-        Re-resolves the bound layer rather than capturing it at start
-        time so a layer-switch or layer-deletion mid-debounce does
-        not fire generation against a stale id.
-        """
-        layer_id = self._current_ai_effect_id
-        if not isinstance(layer_id, str) or not layer_id:
+        """Fire only for the layer and state that reserved the timer."""
+        target, self._ai_trigger_target = self._ai_trigger_target, None
+        if target is None:
+            return
+        layer_id, canvas_ref, layer_ref, state_ref = target
+        canvas, layer, state = canvas_ref(), layer_ref(), state_ref()
+        if (
+            canvas is None
+            or layer is None
+            or state is None
+            or getattr(self._host, "canvas", None) is not canvas
+            or canvas._find_layer_by_id_tree(layer_id) is not layer
+            or getattr(layer, "layer_type", None) != "ai_effect"
+            or getattr(layer, "ai_effect", None) is not state
+            or getattr(state, "trigger", None) not in {"on_change", "debounced"}
+        ):
             return
         logger.debug("AI effect trigger timer fired for %s", layer_id)
         self.request_generate(layer_id)

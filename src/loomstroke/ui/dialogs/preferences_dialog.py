@@ -18,10 +18,12 @@ from PySide6.QtWidgets import (
     QDialogButtonBox,
     QFileDialog,
     QFormLayout,
+    QFrame,
     QGroupBox,
     QHBoxLayout,
     QKeySequenceEdit,
     QLabel,
+    QLayout,
     QLineEdit,
     QListWidget,
     QListWidgetItem,
@@ -2175,7 +2177,10 @@ class AIEffectPage(PreferencesPage):
         self._translation_binder.register(group.setTitle, self._ts("API Keys"))
         layout = QVBoxLayout(group)
         layout.setContentsMargins(8, 12, 8, 8)
-        layout.setSpacing(6)
+        layout.setSpacing(8)
+        # Keep the boxed rows at their minimum height when the page is
+        # scrolled or the application style is applied after construction.
+        layout.setSizeConstraint(QLayout.SizeConstraint.SetMinimumSize)
 
         # Row identity is ``(service, username)``: NanoBanana stores
         # under ``("nanobanana", "api")``; LLM Gateway distinguishes
@@ -2235,6 +2240,12 @@ class AIEffectPage(PreferencesPage):
                 "https://platform.openai.com/api-keys",
             ),
             (
+                "novelai",
+                "api",
+                "NovelAI",
+                "https://docs.novelai.net/en/text/usersettings/account/",
+            ),
+            (
                 "llm_gateway",
                 "openai",
                 "OpenAI",
@@ -2263,10 +2274,13 @@ class AIEffectPage(PreferencesPage):
         username: str = "api",
         help_url: str = "",
     ) -> None:
-        row = QWidget(self)
+        row = QFrame(self)
+        row.setFrameShape(QFrame.Shape.Box)
+        row.setFrameShadow(QFrame.Shadow.Plain)
+        row.setLineWidth(1)
         row_layout = QVBoxLayout(row)
-        row_layout.setContentsMargins(0, 0, 0, 0)
-        row_layout.setSpacing(4)
+        row_layout.setContentsMargins(8, 6, 8, 6)
+        row_layout.setSpacing(6)
 
         info_layout = QHBoxLayout()
         info_layout.setContentsMargins(0, 0, 0, 0)
@@ -2283,8 +2297,14 @@ class AIEffectPage(PreferencesPage):
 
         change_btn = QPushButton(row)
         clear_btn = QPushButton(row)
-        self._translation_binder.register(change_btn.setText, self._ts("Change…"))
-        self._translation_binder.register(clear_btn.setText, self._ts("Clear"))
+        self._translation_binder.register(
+            lambda value: self._set_api_key_button_text(change_btn, value),
+            self._ts("Change…"),
+        )
+        self._translation_binder.register(
+            lambda value: self._set_api_key_button_text(clear_btn, value),
+            self._ts("Clear"),
+        )
         change_btn.clicked.connect(lambda: self._on_change_api_key_clicked(service_name, username))
         clear_btn.clicked.connect(lambda: self._on_clear_api_key_clicked(service_name, username))
         button_layout = QHBoxLayout()
@@ -2303,6 +2323,12 @@ class AIEffectPage(PreferencesPage):
             "clear_btn": clear_btn,
         }
         self._refresh_api_key_status(service_name, username)
+
+    @staticmethod
+    def _set_api_key_button_text(button: QPushButton, text: str) -> None:
+        button.setText(text)
+        width = max(button.sizeHint().width(), button.fontMetrics().horizontalAdvance(text) + 24)
+        button.setMinimumSize(width, max(28, button.sizeHint().height()))
 
     def _gptimage2_uses_openai_key(self) -> bool:
         checkbox = getattr(self, "use_openai_key_for_gptimage2_check", None)

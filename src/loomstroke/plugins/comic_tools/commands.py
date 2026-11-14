@@ -81,6 +81,7 @@ class ComicEditCommand(Command):
         self._part_layers_created: list[str] = []
         self._part_insertions: dict[str, Any] = {}
         self._part_layers_removed: list[tuple[int, Any]] = []
+        self._initial_edit_checked = False
 
     # ── helpers ────────────────────────────────────────────────────────
 
@@ -112,7 +113,7 @@ class ComicEditCommand(Command):
     def apply(self, canvas: Any) -> bool:  # noqa: PLR0912, PLR0915
         from .balloon_layer_units import unit_edits_allowed  # noqa: PLC0415
 
-        if not unit_edits_allowed(
+        if not self._initial_edit_checked and not unit_edits_allowed(
             canvas, {obj.id for _, obj in self._replacements} | set(self._removals)
         ):
             return False
@@ -200,6 +201,7 @@ class ComicEditCommand(Command):
 
             self._bump(canvas, touched_layers | set(self._layer_metadata_updates))
             self._executed = True
+            self._initial_edit_checked = True
             return True
         except Exception:
             self._rollback(canvas)

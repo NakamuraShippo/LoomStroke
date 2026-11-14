@@ -17,12 +17,13 @@ from dataclasses import replace
 from typing import Any
 
 import numpy as np
-from PySide6.QtGui import QFontDatabase, QFontMetricsF
+from PySide6.QtGui import QFontDatabase, QFontMetricsF, QImage
 
 from ..core.binding_danger_geometry import binding_danger_bounds
 from ..core.binding_margin_service import BindingMarginService
 from ..core.bleed_geometry import trim_bounds
 from ..core.book_spread_layout import BookLayout
+from ..core.document_capture_guard import assert_document_capture_ready
 from ..core.live_bleed_bounds_service import LiveBleedBoundsService
 from ..core.preflight.document_preflight_snapshot import DocumentPreflightSnapshot
 from ..core.preflight.layer_preflight_snapshot import LayerPreflightSnapshot
@@ -33,6 +34,7 @@ from ..core.vector_text_layout import TextLayoutCalculator
 from ..io.layer_io import DocumentMetadata
 from .binding_preflight_facts import binding_objects
 from .bleed_preflight_facts import BleedBoundsBudget
+from .preflight_live_layers import live_preflight_layers
 from .text_preflight_facts import character_font_facts, rich_text_overflow
 
 logger = logging.getLogger(__name__)
@@ -58,6 +60,7 @@ class DocumentPreflightSnapshotBuilder:
         font_available: FontAvailable | None = None,
         book_layout: BookLayout | None = None,
         live_canvas: Any = None,
+        document_revision: tuple[int, int] | None = None,
     ) -> None:
         self._pages = page_service
         self._metadata = document_metadata
@@ -72,6 +75,7 @@ class DocumentPreflightSnapshotBuilder:
         self._bleed_budget = BleedBoundsBudget()
         self._live_canvas = live_canvas
         self._live_document = getattr(live_canvas, "_doc", None)
+        self._document_revision = document_revision
 
     # -- public ------------------------------------------------------------------
 
@@ -96,14 +100,18 @@ class DocumentPreflightSnapshotBuilder:
             pages=tuple(pages),
             reading_direction=self._reading_direction,
             has_color_profile=self._has_color_profile,
-            dirty_signature=self.dirty_signature_for(summaries),
+            dirty_signature=self.dirty_signature_for(
+                summaries, document_revision=self._document_revision
+            ),
         )
 
     def structure_fingerprint(self) -> str:
         return self.structure_fingerprint_for(self._summaries(), self._metadata, self._roles)
 
     def dirty_signature(self) -> str:
-        return self.dirty_signature_for(self._summaries())
+        return self.dirty_signature_for(
+            self._summaries(), document_revision=self._document_revision
+        )
 
     @staticmethod
     def structure_fingerprint_for(
@@ -122,12 +130,17 @@ class DocumentPreflightSnapshotBuilder:
         return PreflightFingerprint.structure_from_rows(rows)
 
     @staticmethod
-    def dirty_signature_for(summaries: Sequence[Any]) -> str:
-        return ",".join(
+    def dirty_signature_for(
+        summaries: Sequence[Any], *, document_revision: tuple[int, int] | None = None
+    ) -> str:
+        dirty = ",".join(
             sorted(
                 str(summary.id) for summary in summaries if bool(getattr(summary, "dirty", False))
             )
         )
+        if document_revision is None:
+            return dirty
+        return f"{dirty}|{document_revision[0]}:{document_revision[1]}"
 
     # -- internals ---------------------------------------------------------------
 
@@ -157,15 +170,15 @@ class DocumentPreflightSnapshotBuilder:
         try:
             page = self._pages.get_page_snapshot(page_id)
             if page is not None:
-                hydrated = True
+                source_layers = self._page_layers(page_id, page)
                 if danger is not None:
-                    danger_objects = binding_objects(getattr(page, "layers", None) or [])
-                for layer in getattr(page, "layers", None) or []:
+                    danger_objects = binding_objects(source_layers)
+                for layer in source_layers:
                     self._collect_layer(layer, layers, texts)
                 if trim is not None and not (
                     self._live_canvas is not None and page_id == self._pages.get_active_page_id()
                 ):
-                    facts = self._bleed_budget.collect(getattr(page, "layers", None) or [])
+                    facts = self._bleed_budget.collect(source_layers)
                     bleed_layers = tuple(
                         replace(
                             layer,
@@ -174,6 +187,7 @@ class DocumentPreflightSnapshotBuilder:
                         )
                         for layer in layers
                     )
+                hydrated = True
         except Exception:
             logger.warning("preflight: page %s could not be read", page_id, exc_info=True)
         finally:
@@ -182,6 +196,7 @@ class DocumentPreflightSnapshotBuilder:
                 evict()
         if (
             trim is not None
+            and hydrated
             and self._live_canvas is not None
             and page_id == self._pages.get_active_page_id()
         ):
@@ -201,13 +216,23 @@ class DocumentPreflightSnapshotBuilder:
             role=str(self._roles.get(page_id, "body")),
             layers=tuple(layers),
             texts=tuple(texts),
-            has_physical_layout=False,
+            has_physical_layout=trim is not None,
             hydrated=hydrated,
             binding_danger=danger,
             binding_objects=danger_objects,
             trim_bounds=trim,
             bleed_layers=bleed_layers,
         )
+
+    def _page_layers(self, page_id: str, page: Any) -> list[Any]:
+        if self._live_canvas is not None and page_id == self._pages.get_active_page_id():
+            assert_document_capture_ready(self._live_canvas)
+            if hasattr(self._live_canvas, "_layers"):
+                return live_preflight_layers(self._live_canvas._layers)
+            capture = getattr(self._live_canvas, "get_document_layer_snapshots", None)
+            if callable(capture):
+                return capture()
+        return getattr(page, "layers", None) or []
 
     def _collect_layer(
         self,
@@ -255,6 +280,14 @@ class DocumentPreflightSnapshotBuilder:
         if image is None:
             return None
         try:
+            if isinstance(image, QImage):
+                rgba = image.convertToFormat(QImage.Format.Format_RGBA8888)
+                array = (
+                    np.frombuffer(rgba.constBits(), dtype=np.uint8)
+                    .reshape(rgba.height(), rgba.bytesPerLine())[:, : rgba.width() * 4]
+                    .reshape(rgba.height(), rgba.width(), 4)
+                )
+                return bool(np.any(array[:, :, 3]))
             array = np.asarray(image)
             if array.ndim == 3 and array.shape[2] == 4:
                 return bool(np.any(array[:, :, 3]))

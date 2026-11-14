@@ -11,6 +11,7 @@ from PySide6.QtWidgets import QMenu, QMenuBar
 from .dialogs.composition_guides_dialog import open_composition_guides
 from .dialogs.layout_grid_dialog import open_layout_grid
 from .guide_view_menu import populate_guide_view_menu
+from .main_window_clipboard_document import clipboard_image_available
 from .menu_catalog import MENU_DEFINITIONS
 from .selection_delete_shortcut import install_selection_delete_shortcut
 
@@ -330,6 +331,18 @@ class MainWindowMenuBuilderCoordinator:
                 shortcut_category="File",
             )
         )
+        clipboard_canvas_action = window._mk_action(
+            "New Canvas from Clipboard Image",
+            window._on_new_from_clipboard,
+            None,
+            action_id="file.new_from_clipboard",
+            shortcut_category="File",
+        )
+        clipboard_canvas_action.setEnabled(clipboard_image_available())
+        m_file.aboutToShow.connect(
+            lambda: clipboard_canvas_action.setEnabled(clipboard_image_available())
+        )
+        m_file.addAction(clipboard_canvas_action)
         m_file.addAction(
             window._mk_action(
                 "&Open…",

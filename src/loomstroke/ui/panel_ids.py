@@ -10,6 +10,7 @@ PANEL_ID_ALIASES: Mapping[str, str] = {
     "prompt_editor": "ui.prompt_editor",
     "nano_banana_panel": "ui.nano_banana",
     "gptimage2_panel": "ui.gptimage2",
+    "novelai_panel": "ui.novelai",
     "comfyui_panel": "ui.comfyui",
     "production_control_panel": "ui.production_control",
 }
@@ -31,6 +32,7 @@ PANEL_TITLE_SOURCE_DEFAULTS: Mapping[str, tuple[str, str]] = {
     "ui.prompt_editor": ("Prompt Editor", "MainWindow"),
     "ui.nano_banana": ("NanoBanana", "MainWindow"),
     "ui.gptimage2": ("GPT Image 2", "MainWindow"),
+    "ui.novelai": ("NovelAI", "MainWindow"),
     "ui.comfyui": ("ComfyUI", "MainWindow"),
     "ui.gallery": ("Gallery", "MainWindow"),
     "ui.production_control": ("Production Control(incomplete)", "MainWindow"),
@@ -83,6 +85,7 @@ PANEL_MENU_CATEGORIES: tuple[tuple[str, tuple[str, ...]], ...] = (
             "ui.prompt_editor",
             "ui.nano_banana",
             "ui.gptimage2",
+            "ui.novelai",
             "ui.comfyui",
             "ui.gallery",
             "ui.ai_effect_manager",

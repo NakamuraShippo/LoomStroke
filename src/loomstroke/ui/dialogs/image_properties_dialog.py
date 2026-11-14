@@ -117,10 +117,12 @@ class ImagePropertiesDialog(QDialog):
         return PROFILE_KEEP, None
 
     def set_file_profile(self, data: bytes) -> bool:
-        """Validate ICC bytes and select them as the new profile (``False`` if invalid)."""
+        """Select a validated RGB ICC profile for the document's rendered pixels."""
         try:
             info = self._registry.register(data)
         except ValueError:
+            return False
+        if info.colorspace.strip().upper() != "RGB":
             return False
         self._file_profile = ColorProfile(
             name=info.name,

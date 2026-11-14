@@ -17,6 +17,7 @@ from PySide6.QtWidgets import (
     QLabel,
     QMessageBox,
     QPushButton,
+    QToolButton,
     QVBoxLayout,
     QWidget,
 )
@@ -27,7 +28,6 @@ from loomstroke.core.drawing_figures.hand_joints import HAND_JOINTS, hand_side
 from loomstroke.core.drawing_figures.model import JOINTS, pose_from_layer
 from loomstroke.core.drawing_figures.openpose_command import AddFigureOpenPoseLayerCommand
 from loomstroke.core.drawing_figures.posing import reset_pose_part, toggle_pin
-from loomstroke.core.drawing_figures.presets import PRESETS, preset_pose
 from loomstroke.core.drawing_figures.rotation_posing import rotate_joint
 from loomstroke.core.layer_3d_rendering import orbit_camera_state
 from loomstroke.rendering_3d.figure_pose_export import pose_image, pose_json
@@ -52,47 +52,13 @@ class DrawingFigureToolbarWidget(QWidget):
         self._translation_binder = TranslationBinder(tr)
         layout = QVBoxLayout(self)
         layout.setContentsMargins(0, 0, 0, 0)
-        top, bottom, export = QHBoxLayout(), QHBoxLayout(), QHBoxLayout()
-        layout.addLayout(top)
-        layout.addLayout(bottom)
-        layout.addLayout(export)
-        self.pose_button = QPushButton(self)
-        self.pose_button.setCheckable(True)
-        self._bind(self.pose_button.setText, "Edit pose")
-        self.pose_button.toggled.connect(self._toggle_mode)
-        top.addWidget(self.pose_button)
-        self.hand_button = QPushButton(self)
-        self._bind(self.hand_button.setText, "Edit selected hand")
-        self.hand_button.clicked.connect(lambda: open_hand_editor(self))
-        top.addWidget(self.hand_button)
-        self.presets = QComboBox(self)
-        for key, source in PRESETS.items():
-            self.presets.addItem(tr(source), key)
-        top.addWidget(self.presets)
-        apply_button = QPushButton(self)
-        self._bind(apply_button.setText, "Apply pose")
-        apply_button.clicked.connect(self.apply_preset)
-        top.addWidget(apply_button)
-        self.reset_button = QPushButton(self)
-        self._bind(self.reset_button.setText, "Reset selected part")
-        self.reset_button.clicked.connect(self.reset_selected_part)
-        top.addWidget(self.reset_button)
-        self.assist = QCheckBox(self)
-        self._bind(self.assist.setText, "Pose assistance")
-        self.assist.toggled.connect(self.set_assistance)
-        top.addWidget(self.assist)
-        self.pin_button = QPushButton(self)
-        self._bind(self.pin_button.setText, "Pin / unpin joint")
-        self.pin_button.clicked.connect(self.pin_selected)
-        layer_button = QPushButton(self)
-        self._bind(layer_button.setText, "OpenPose layer")
-        layer_button.clicked.connect(self.add_openpose_layer)
-        export.addWidget(layer_button)
+        layout.setSpacing(4)
+        bottom = QHBoxLayout()
         self.user_pose_presets = DrawingFigurePosePresetControls(self, self)
-        export.addWidget(self.user_pose_presets)
-        json_button = QPushButton("OpenPose JSON", self)
-        json_button.clicked.connect(lambda: self.export_pose("json"))
-        export.addWidget(json_button)
+        self.presets = self.user_pose_presets.presets
+        layout.addWidget(self.user_pose_presets)
+        layout.addLayout(bottom)
+        bottom.setSpacing(4)
         self.joints = QComboBox(self)
         for key in JOINTS:
             self.joints.addItem(tr(key.replace("_", " ").title()), key)
@@ -105,25 +71,39 @@ class DrawingFigureToolbarWidget(QWidget):
             spin.setRange(-170, 170)
             spin.setSuffix("°")
             spin.setSingleStep(5)
+            spin.setFixedWidth(70)
             spin.editingFinished.connect(self.change_angles)
             bottom.addWidget(spin)
             self.angles.append(spin)
+        self.pin_button = QToolButton(self)
+        self.pin_button.setText("📌")
+        self.pin_button.setCheckable(True)
+        self._bind(self.pin_button.setToolTip, "Pin / unpin joint")
+        self.pin_button.clicked.connect(self.pin_selected)
         bottom.addWidget(self.pin_button)
-        tip = QLabel(self)
-        tip.setWordWrap(True)
-        tip.setMaximumWidth(580)
-        self._bind(tip.setText, ROTATION_HINT)
-        layout.addWidget(tip)
+        self.hand_button = QPushButton(self)
+        self._bind(self.hand_button.setText, "Edit selected hand")
+        self.hand_button.clicked.connect(lambda: open_hand_editor(self))
+        bottom.addWidget(self.hand_button)
+        self.reset_button = QPushButton(self)
+        self._bind(self.reset_button.setText, "Reset selected part")
+        self.reset_button.clicked.connect(self.reset_selected_part)
+        bottom.addWidget(self.reset_button)
+        self.assist = QCheckBox(self)
+        self._bind(self.assist.setText, "Pose assistance")
+        self.assist.toggled.connect(self.set_assistance)
+        bottom.addWidget(self.assist)
+        self.help_button = QToolButton(self)
+        self.help_button.setText("?")
+        self._bind(self.help_button.setToolTip, ROTATION_HINT)
+        bottom.addWidget(self.help_button)
+        bottom.addStretch(1)
 
     def _bind(self, setter: Any, source: str) -> None:
         self._translation_binder.register(setter, source)
 
     def _selection_changed(self, _joint: str) -> None:
         self.sync_from_layer(self._layer())
-
-    def _toggle_mode(self, enabled: bool) -> None:
-        if not self._syncing:
-            self.controller.set_interaction_mode("pose" if enabled else "orbit")
 
     def _layer(self) -> Any:
         return self.controller._active_3d_layer()
@@ -133,14 +113,13 @@ class DrawingFigureToolbarWidget(QWidget):
 
     def sync_from_layer(self, layer: Any) -> None:
         pose = pose_from_layer(layer)
-        self.setVisible(pose is not None)
+        self.setVisible(pose is not None and self.controller.interaction_mode() == "pose")
         if pose is None:
             return
         self._syncing = True
         try:
             self.setEnabled(not bool(getattr(layer, "locked", False)))
             self.assist.setChecked(pose.assistance > 0)
-            self.pose_button.setChecked(self.controller.interaction_mode() == "pose")
             interaction = self._figure_interaction()
             joint = interaction.selected_joint if interaction else str(self.joints.currentData())
             self.hand_button.setEnabled(hand_side(joint) is not None)
@@ -152,6 +131,7 @@ class DrawingFigureToolbarWidget(QWidget):
                 spin.setEnabled(not hand_joint)
                 spin.setValue(value)
             self.pin_button.setEnabled(joint.endswith(("wrist", "ankle")))
+            self.pin_button.setChecked(joint in pose.pins)
         finally:
             self._syncing = False
         editor = getattr(self.controller, "_figure_hand_editor", None)
@@ -171,16 +151,7 @@ class DrawingFigureToolbarWidget(QWidget):
         return ok
 
     def apply_preset(self) -> bool:
-        current = pose_from_layer(self._layer())
-        return bool(
-            current
-            and self._submit(
-                replace(
-                    preset_pose(current.model, str(self.presets.currentData())),
-                    hand_rotations=current.hand_rotations,
-                )
-            )
-        )
+        return self.user_pose_presets.apply_selected()
 
     def set_assistance(self, enabled: bool) -> None:
         if not self._syncing:
@@ -273,7 +244,5 @@ class DrawingFigureToolbarWidget(QWidget):
         super().changeEvent(event)
         if event.type() == QEvent.Type.LanguageChange:
             self._translation_binder.retranslate()
-            for index, source in enumerate(PRESETS.values()):
-                self.presets.setItemText(index, tr(source))
             for index, key in enumerate(JOINTS):
                 self.joints.setItemText(index, tr(key.replace("_", " ").title()))

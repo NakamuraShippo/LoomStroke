@@ -255,7 +255,7 @@ class ComfyLayerPanel(NativePanel):
         if inline:
             await self.view.evaluate("window.loomstrokeApplyValues(" + json.dumps(inline) + ")")
         if generate:
-            await advance_controls(self.view, self.current_state())
+            await advance_controls(self.view, self.current_state(), exclude=self.qt_forms.widgets)
         snapshot = await self.view.call("snapshot")
         state = self.current_state()
         if state.param_values != before:

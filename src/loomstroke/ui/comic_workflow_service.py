@@ -179,8 +179,10 @@ class ComicWorkflowService:
             return {"status": "blocked", "blockedReasonCodes": ["confirmation_required"]}
         if not plan.is_ready:
             return {"status": "blocked", "blockedReasonCodes": list(plan.blocked_reason_codes)}
-        if not plan.revision_matches(self.document_revision()):
-            return {"status": "blocked", "blockedReasonCodes": ["document_revision_mismatch"]}
+        page_matches = plan.page_id is None or plan.page_id == self._active_page_id()
+        if not page_matches or not plan.revision_matches(self.document_revision()):
+            reason = "document_revision_mismatch" if page_matches else "page_not_active"
+            return {"status": "blocked", "blockedReasonCodes": [reason]}
         canvas = getattr(self._host, "canvas", None)
         if canvas is None:
             return {"status": "blocked", "blockedReasonCodes": ["canvas_missing"]}
@@ -217,9 +219,11 @@ class ComicWorkflowService:
         for name in ("revision_tracker", "_revision_tracker"):
             tracker = getattr(document, name, None)
             current = getattr(tracker, "current_revision", None)
-            if callable(current):
+            if current is not None:
                 try:
-                    return str(current())
+                    revision = current() if callable(current) else current
+                    epoch = getattr(tracker, "document_epoch", None)
+                    return f"{epoch}:{revision}" if epoch is not None else str(revision)
                 except Exception:
                     break
         return "unknown"

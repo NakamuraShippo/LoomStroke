@@ -1,17 +1,19 @@
 """SAM 3.1 Preferences section: root folder, one-click Setup, worker lifecycle.
 
 GUI-thin by design: all real work lives in ``Sam31SetupEngine`` and
-``Sam31ServerManager``; this widget renders progress/status/errors and runs
-every long operation on a QThread so the dialog never blocks.
+``Sam31ServerManager``; this widget renders progress/status/errors while
+the blocking operations run in Qt's worker pool.
 """
 
 from __future__ import annotations
 
 import threading
 from collections.abc import Callable
+from dataclasses import dataclass
 from typing import Any
 
-from PySide6.QtCore import Qt, QThread, Signal
+from PySide6.QtCore import QObject, QRunnable, QSignalBlocker, Qt, QThreadPool, Signal, Slot
+from PySide6.QtGui import QHideEvent, QShowEvent
 from PySide6.QtWidgets import (
     QCheckBox,
     QFileDialog,
@@ -26,6 +28,7 @@ from PySide6.QtWidgets import (
 )
 
 from loomstroke.sam31 import worker_protocol as protocol
+from loomstroke.sam31.readiness import Sam31Readiness
 from loomstroke.sam31.runtime_config import (
     SETTING_AUTO_START,
     SETTING_ROOT_DIR,
@@ -43,24 +46,59 @@ from loomstroke.sam31.setup.engine import SetupProgress, SetupReport
 _PRIVACY_EXTERNAL_SERVICES_KEY = "privacy/allow_external_services"
 
 
-class _Sam31TaskThread(QThread):
-    """Runs one blocking SAM31 operation off the GUI thread."""
-
+class _TaskSignals(QObject):
     progress_line = Signal(str)
     task_finished = Signal(object)
 
-    def __init__(self, parent: QWidget, task: Callable[[Callable[[str], None]], Any]):
-        super().__init__(parent)
+
+class _Sam31Task(QRunnable):
+    """The pool owns the runnable until it finishes, even if the dialog closes."""
+
+    def __init__(self, task: Callable[[Callable[[str], None]], Any]) -> None:
+        super().__init__()
+        self.signals = _TaskSignals()
         self._task = task
 
     def run(self) -> None:  # noqa: D102
         try:
-            result = self._task(self.progress_line.emit)
+            result = self._task(self.signals.progress_line.emit)
         except Sam31ServerError as exc:
             result = {"error": str(exc), "errorCode": exc.code}
         except Exception as exc:  # noqa: BLE001
             result = {"error": f"{type(exc).__name__}: {exc}", "errorCode": "internal"}
-        self.task_finished.emit(result)
+        self.signals.task_finished.emit(result)
+
+
+@dataclass(frozen=True, slots=True)
+class _Sam31Status:
+    readiness: Sam31Readiness
+    worker: str
+    model: str
+    gpu_name: str
+    point_mode: str
+    error: str
+
+
+def _read_status(
+    manager: Any, config: Sam31RuntimeConfig, cancelled: threading.Event
+) -> _Sam31Status | None:
+    if cancelled.is_set():
+        return None
+    readiness = manager.readiness(config)
+    if cancelled.is_set():
+        return None
+    worker = manager.worker_state()
+    model = manager.last_model_state()
+    gpu_name = point_mode = error = ""
+    if worker == WORKER_RUNNING and not cancelled.is_set():
+        try:
+            gpu_name = str(manager.runtime_info().get("gpuName") or "")
+            if not cancelled.is_set():
+                features = manager.capabilities().get("features", {})
+                point_mode = str(features.get(protocol.FEATURE_POINT_NEW_OBJECT) or "")
+        except Sam31ServerError as exc:
+            error = str(exc)
+    return _Sam31Status(readiness, worker, model, gpu_name, point_mode, error)
 
 
 class Sam31PreferencesSection(QGroupBox):
@@ -81,8 +119,13 @@ class Sam31PreferencesSection(QGroupBox):
         self._settings = settings
         self._ts = translate
         self._manager = manager or get_sam31_server_manager()
-        self._thread: _Sam31TaskThread | None = None
+        self._task: _Sam31Task | None = None
         self._cancel_event: threading.Event | None = None
+        self._status_generation = 0
+        self._status_pending: tuple[int, Sam31RuntimeConfig] | None = None
+        self._status_running: tuple[_Sam31Task, int, Sam31RuntimeConfig, threading.Event] | None = (
+            None
+        )
         self.setTitle("SAM 3.1")
 
         form = QFormLayout(self)
@@ -145,13 +188,17 @@ class Sam31PreferencesSection(QGroupBox):
         self.restart_btn.clicked.connect(lambda: self._run_manager_task("restart"))
         self.load_model_btn.clicked.connect(lambda: self._run_manager_task("load"))
         self.unload_model_btn.clicked.connect(lambda: self._run_manager_task("unload"))
+        self.root_edit.textChanged.connect(self._discard_status)
+        self.root_edit.editingFinished.connect(self.refresh_status)
+        self.auto_start_check.toggled.connect(self.refresh_status)
 
     # ── settings binding ───────────────────────────────────────────────
 
     def load(self) -> None:
         config = build_sam31_runtime_config(self._settings)
-        self.root_edit.setText(config.root_dir)
-        self.auto_start_check.setChecked(config.auto_start)
+        with QSignalBlocker(self.root_edit), QSignalBlocker(self.auto_start_check):
+            self.root_edit.setText(config.root_dir)
+            self.auto_start_check.setChecked(config.auto_start)
         self.refresh_status()
 
     def collect_values(self) -> dict[str, Any]:
@@ -171,10 +218,63 @@ class Sam31PreferencesSection(QGroupBox):
 
     # ── status ─────────────────────────────────────────────────────────
 
+    def showEvent(self, event: QShowEvent) -> None:  # noqa: N802 - Qt override
+        super().showEvent(event)
+        self.refresh_status()
+
+    def hideEvent(self, event: QHideEvent) -> None:  # noqa: N802 - Qt override
+        self._discard_status()
+        super().hideEvent(event)
+
+    @Slot()
+    def _discard_status(self) -> None:
+        self._status_generation += 1
+        self._status_pending = None
+        if self._status_running is not None:
+            _, _, _, cancelled = self._status_running
+            cancelled.set()
+        self.status_label.setText("-")
+
+    @Slot()
     def refresh_status(self) -> None:
-        config = self._current_config()
+        self._discard_status()
+        if self.isVisible():
+            self._status_pending = self._status_generation, self._current_config()
+            self._start_status_if_idle()
+
+    def _start_status_if_idle(self) -> None:
+        pending = self._status_pending
+        if pending is None or self._status_running is not None or self._busy():
+            return
+        self._status_pending = None
+        generation, config = pending
+        manager = self._manager
+        cancelled = threading.Event()
+        task = _Sam31Task(lambda _emit: _read_status(manager, config, cancelled))
+        task.signals.task_finished.connect(self._on_status_finished)
+        self._status_running = task, generation, config, cancelled
+        QThreadPool.globalInstance().start(task)
+
+    @Slot(object)
+    def _on_status_finished(self, result: object) -> None:
+        running = self._status_running
+        self._status_running = None
+        if running is not None:
+            _, generation, config, _ = running
+            if (
+                generation == self._status_generation
+                and self.isVisible()
+                and config == self._current_config()
+            ):
+                if isinstance(result, _Sam31Status):
+                    self._display_status(result)
+                elif isinstance(result, dict) and result.get("error"):
+                    self.status_label.setText(self._ts("Status error") + f": {result['error']}")
+        self._start_status_if_idle()
+
+    def _display_status(self, status: _Sam31Status) -> None:
         parts: list[str] = []
-        readiness = self._manager.readiness(config)
+        readiness = status.readiness
         parts.append(
             self._ts("Runtime")
             + ": "
@@ -186,26 +286,20 @@ class Sam31PreferencesSection(QGroupBox):
             + ": "
             + (str(checkpoint).rsplit("\\", 1)[-1] if checkpoint else self._ts("missing"))
         )
-        worker = self._manager.worker_state()
-        parts.append(self._ts("Worker") + f": {worker}")
-        parts.append(self._ts("Model") + f": {self._manager.last_model_state()}")
-        if worker == WORKER_RUNNING:
-            try:
-                info = self._manager.runtime_info()
-                if info.get("gpuName"):
-                    parts.append("CUDA: " + str(info["gpuName"]))
-                capabilities = self._manager.capabilities()
-                point = capabilities.get("features", {}).get(protocol.FEATURE_POINT_NEW_OBJECT)
-                if point:
-                    parts.append(self._ts("Point mode") + f": {point}")
-            except Sam31ServerError as exc:
-                parts.append(self._ts("Status error") + f": {exc}")
+        parts.append(self._ts("Worker") + f": {status.worker}")
+        parts.append(self._ts("Model") + f": {status.model}")
+        if status.gpu_name:
+            parts.append("CUDA: " + status.gpu_name)
+        if status.point_mode:
+            parts.append(self._ts("Point mode") + f": {status.point_mode}")
+        if status.error:
+            parts.append(self._ts("Status error") + f": {status.error}")
         self.status_label.setText("\n".join(parts))
 
     # ── task plumbing ──────────────────────────────────────────────────
 
     def _busy(self) -> bool:
-        return self._thread is not None and self._thread.isRunning()
+        return self._task is not None
 
     def _set_busy(self, busy: bool) -> None:
         for button in (
@@ -224,20 +318,24 @@ class Sam31PreferencesSection(QGroupBox):
     def _launch(self, task: Callable[[Callable[[str], None]], Any]) -> None:
         if self._busy():
             return
+        self._discard_status()
         self._set_busy(True)
-        thread = _Sam31TaskThread(self, task)
-        thread.progress_line.connect(self._on_progress_line)
-        thread.task_finished.connect(self._on_task_finished)
-        self._thread = thread
-        thread.start()
+        worker = _Sam31Task(task)
+        worker.signals.progress_line.connect(self._on_progress_line)
+        worker.signals.task_finished.connect(self._on_task_finished)
+        self._task = worker
+        QThreadPool.globalInstance().start(worker)
 
+    @Slot(str)
     def _on_progress_line(self, line: str) -> None:
         if line.startswith("@stage "):
             self.operation_label.setText(line[len("@stage ") :])
         else:
             self.log_output.appendPlainText(line)
 
+    @Slot(object)
     def _on_task_finished(self, result: object) -> None:
+        self._task = None
         self._cancel_event = None
         self._set_busy(False)
         self.operation_label.setText("")

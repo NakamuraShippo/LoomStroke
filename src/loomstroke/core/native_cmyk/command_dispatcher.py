@@ -5,6 +5,7 @@ from __future__ import annotations
 import logging
 
 from loomstroke.core import commands
+from loomstroke.core.command_layer_access import _resolve_target_layer
 from loomstroke.core.commands_layer_blend_mode import SetLayerBlendModeCommand
 from loomstroke.core.commands_layer_metadata_key import SetLayerMetadataKeyCommand
 from loomstroke.core.commands_layer_opacity import SetLayerOpacityCommand
@@ -21,14 +22,23 @@ from loomstroke.core.fill.prepared_pattern_command import PreparedPatternFillCom
 from loomstroke.core.filter_pen.command import FilterPenStrokeCommand
 from loomstroke.core.pen_taper_command import PenTaperCommand
 from loomstroke.core.recontour.commands import RecontourCommand
+from loomstroke.core.standalone_mask_invert import _InvertStandaloneMaskCommand
 from loomstroke.plugins.basic_gradient.gradient_command import GradientCommand
 from loomstroke.plugins.magic_wand.magic_wand_command import MagicWandCommand
 
 from .convert_command import ConvertNativeCmykCommand
+from .edit_history import commit_native_raster_command
 from .image_import_command import NativeCmykImageImportCommand
 from .patch_command import NativeCmykPatchCommand
 
 logger = logging.getLogger(__name__)
+
+
+def _submit_native_edit(canvas, command, label: str) -> bool:
+    if not commit_native_raster_command(canvas, command, label):
+        return False
+    canvas._recompose()
+    return True
 
 
 class NativeCmykCommandDispatcher:
@@ -81,7 +91,7 @@ class NativeCmykCommandDispatcher:
         if isinstance(
             command, (PreparedFillCommand, PreparedPatternFillCommand, FloodFillToNewLayerCommand)
         ):
-            return bool(canvas._simple_layer_command_submit().submit(command, "CMYK Fill"))
+            return _submit_native_edit(canvas, command, "CMYK Fill")
         if isinstance(command, GradientCommand):
             return service.gradient(command)
         if isinstance(
@@ -92,7 +102,7 @@ class NativeCmykCommandDispatcher:
                 commands.TransformSelectionCommand,
             ),
         ):
-            return bool(canvas._simple_layer_command_submit().submit(command, "CMYK Selection"))
+            return _submit_native_edit(canvas, command, "CMYK Selection")
         if isinstance(command, TransformLayerCommand):
             from dataclasses import astuple  # noqa: PLC0415
             from math import isfinite  # noqa: PLC0415
@@ -103,6 +113,9 @@ class NativeCmykCommandDispatcher:
                 or transform.to_affine().inverse() is None
             ):
                 return False
+            target = _resolve_target_layer(canvas, command.layer_id)
+            if getattr(target, "native_cmyk", None) is not None:
+                return _submit_native_edit(canvas, command, "Transform Layer")
         if hasattr(command, "vector_object") or hasattr(command, "new_object"):
             from loomstroke.plugins.vector_tools.common import (  # noqa: PLC0415
                 VectorCreateCommand,
@@ -128,6 +141,7 @@ class NativeCmykCommandDispatcher:
             commands.AddLayerMaskCommand,
             commands.RemoveLayerMaskCommand,
             commands.SetLayerMaskCommand,
+            _InvertStandaloneMaskCommand,
             commands.SetActiveColorCommand,
             commands.ToggleClippingCommand,
             SetLayerMetadataKeyCommand,

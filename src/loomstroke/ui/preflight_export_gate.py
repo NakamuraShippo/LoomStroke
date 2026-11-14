@@ -53,6 +53,21 @@ class PreflightExportGate:
     def remember(window: Any, report: PreflightReport | None) -> None:
         setattr(window, REPORT_ATTRIBUTE, report)
 
+    @staticmethod
+    def document_revision(window: Any) -> tuple[int, int] | None:
+        getter = getattr(window, "_get_document_service", None)
+        host = getattr(window, "_host_api", None)
+        document = getter() if callable(getter) else getattr(host, "document", None)
+        capture = getattr(document, "_capture_document_revision", None)
+        value = capture() if callable(capture) else None
+        if (
+            isinstance(value, tuple)
+            and len(value) == 2
+            and all(type(part) is int for part in value)
+        ):
+            return value
+        return None
+
     def allow(self, title: str) -> bool:
         report = self.last_report(self._window)
         if report is None:
@@ -103,4 +118,6 @@ class PreflightExportGate:
         )
 
     def _dirty_signature(self) -> str:
-        return DocumentPreflightSnapshotBuilder.dirty_signature_for(self._summaries())
+        return DocumentPreflightSnapshotBuilder.dirty_signature_for(
+            self._summaries(), document_revision=self.document_revision(self._window)
+        )

@@ -38,9 +38,11 @@ class MainWindowImageViewActionsCoordinator:
         host_api = getattr(self._window, "_host_api", None)
         return getattr(host_api, "canvas", None) if host_api else None
 
-    def on_canvas_resize(self) -> None:
+    def on_canvas_resize(self, suggested_size: tuple[int, int] | None = None) -> None:
         width, height = self._window._current_canvas_size()
         dialog = self._canvas_resize_dialog()(width, height, parent=self._window)
+        if suggested_size is not None:
+            dialog.set_canvas_size(*suggested_size)
         if dialog.exec() != self._dialog_type().DialogCode.Accepted:
             return
 

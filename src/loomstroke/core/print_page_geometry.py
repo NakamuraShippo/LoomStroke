@@ -41,6 +41,7 @@ __all__ = [
     "PrintPageGeometry",
     "geometry_for_canvas",
     "geometry_for_layout",
+    "geometry_for_trim_bounds",
     "px_to_pt",
 ]
 
@@ -119,6 +120,38 @@ def geometry_for_canvas(
     )
 
 
+def geometry_for_trim_bounds(
+    width_px: int,
+    height_px: int,
+    dpi: tuple[float, float],
+    trim: tuple[float, float, float, float],
+    *,
+    with_marks: bool,
+    mark_options: PrintMarkOptions | None = None,
+) -> PrintPageGeometry:
+    """Use page-local generated trim guides as the print boundary."""
+    left, top, right, bottom = trim
+    if not 0 <= left < right <= width_px or not 0 <= top < bottom <= height_px:
+        raise ValueError("Invalid print trim bounds")
+    content_w = px_to_pt(width_px, dpi[0])
+    content_h = px_to_pt(height_px, dpi[1])
+    return _assemble(
+        content_w,
+        content_h,
+        trim_offset=(px_to_pt(left, dpi[0]), px_to_pt(top, dpi[1])),
+        trim_size=(px_to_pt(right - left, dpi[0]), px_to_pt(bottom - top, dpi[1])),
+        bleed_insets=(
+            px_to_pt(left, dpi[0]),
+            px_to_pt(top, dpi[1]),
+            px_to_pt(width_px - right, dpi[0]),
+            px_to_pt(height_px - bottom, dpi[1]),
+        ),
+        has_bleed=left > 0 or top > 0 or right < width_px or bottom < height_px,
+        with_marks=with_marks,
+        mark_options=mark_options,
+    )
+
+
 def _assemble(
     content_w: float,
     content_h: float,
@@ -143,7 +176,7 @@ def _assemble(
     media_box = (0.0, 0.0, content_w + margin * 2, content_h + margin * 2)
     if with_marks and options != PrintMarkOptions():
         # QPdfWriter rounds MediaBox dimensions to integer points. Leave
-        # the legacy default untouched, but retain every new stroke edge.
+        # the default page size unrounded, but retain every custom stroke edge.
         media_box = (0.0, 0.0, math.ceil(media_box[2]), math.ceil(media_box[3]))
     del bleed_insets  # marks anchor on the real (pixel-rounded) bleed edge
     marks, circles = print_marks(trim_box, content_rect, options) if with_marks else ((), ())

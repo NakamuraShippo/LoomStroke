@@ -16,6 +16,8 @@ class ActionContext:
     page_id: str = ""
     document_dir: Path | None = None
     extras: Mapping[str, Any] = field(default_factory=dict)
+    planning_layers: tuple[Any, ...] | None = None
+    planning_active_layer_id: str | None = None
 
     @property
     def canvas(self) -> Any:
@@ -26,6 +28,8 @@ class ActionContext:
         return getattr(self.host, "pages", None)
 
     def layers(self) -> tuple[Any, ...]:
+        if self.planning_layers is not None:
+            return self.planning_layers
         getter = getattr(self.canvas, "get_layers", None)
         if not callable(getter):
             return ()
@@ -35,6 +39,8 @@ class ActionContext:
             return ()
 
     def active_layer_id(self) -> str | None:
+        if self.planning_layers is not None:
+            return self.planning_active_layer_id
         getter = getattr(self.canvas, "current_layer", None)
         if not callable(getter):
             return None

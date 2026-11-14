@@ -13,6 +13,7 @@ from PySide6.QtCore import QRect
 from PySide6.QtGui import QColor
 
 from loomstroke.core.commands import EraseCommand, StampBrushCommand
+from loomstroke.core.japanese_text.linked_story import _locked
 
 logger = logging.getLogger("loomstroke.core.canvas_service_simple")
 
@@ -61,19 +62,27 @@ class CanvasStrokeTargetService:
             return None
         return clipped
 
-    def resolve_paint_target(self) -> Any | None:
+    def resolve_paint_target(
+        self, layer_id: str | None = None, *, mask_edit: bool | None = None
+    ) -> Any | None:
         owner = self._owner
-        layer = owner._get_active_layer()
+        layer = (
+            owner._get_layer_by_id(layer_id) if layer_id is not None else owner._get_active_layer()
+        )
         if layer is None:
-            logger.error("No active layer for painting")
+            logger.error("No target layer for painting")
             return None
-        if layer.layer_type == "vector" and not owner._mask_edit_flag:
-            logger.info("Active layer %s is vector; paint skipped", layer.name)
+        if mask_edit is None:
+            mask_edit = owner._mask_edit_flag or (
+                layer.mask_edit_mode and layer.layer_mask is not None
+            )
+        if layer.layer_type not in ("raster", "mask") and not mask_edit:
+            logger.info("Layer %s is not a raster edit target; paint skipped", layer.name)
             return None
-        if layer.locked:
+        if _locked(owner, layer):
             logger.info("Layer %s is locked; ignoring paint command", layer.name)
             return None
-        if layer.image is None:
+        if layer.image is None and not (layer.mask_edit_mode and layer.layer_mask is not None):
             logger.error("Layer %s has no image buffer", layer.name)
             return None
         return layer
@@ -88,21 +97,7 @@ class CanvasStrokeTargetService:
         return color
 
     def stamp_target_layer(self, cmd: StampBrushCommand) -> Any | None:
-        owner = self._owner
-        layer = owner._get_active_layer()
-        if layer is None:
-            logger.error("No active layer for stamping")
-            return None
-        if layer.layer_type == "vector" and not owner._mask_edit_flag:
-            logger.info("Active layer %s is vector; stamp skipped", layer.name)
-            return None
-        if layer.locked:
-            logger.info("Layer %s is locked; stamp ignored", layer.name)
-            return None
-        if layer.image is None:
-            logger.error("Layer %s has no image buffer", layer.name)
-            return None
-        return layer
+        return self.resolve_paint_target(cmd.layer_id)
 
     @staticmethod
     def stamp_points(cmd: StampBrushCommand) -> list[Any]:

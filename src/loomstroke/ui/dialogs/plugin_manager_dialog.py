@@ -30,6 +30,7 @@ from PySide6.QtWidgets import (
 
 from ...plugins.sdk import PluginRegistry
 from ...plugins.sdk.base import PluginMetadata, PluginType
+from ...ui.plugin_manager_update_request import _PluginUpdateOutcome, _PluginUpdateRequest
 from ...ui.translations import (
     TranslationBinder,
     translate_runtime_text,
@@ -469,64 +470,30 @@ class PluginManagerDialog(QDialog):
             )
         return self._format("Plugin {plugin_id} not found.", plugin_id=plugin_id), True, False
 
-    def _status_for_update(
+    def _show_update_outcome(
         self,
-        action: str,
         plugin_id: str | None,
         before_version: str | None,
-        after_version: str | None,
-        after_ids: set[str],
-        attempt: int = 0,
-        max_attempts: int = 12,
-    ) -> tuple[str | None, bool, bool]:
-        if action not in {"update"} or plugin_id is None:
-            return None, False, False
-        if plugin_id in after_ids:
-            if after_version != before_version:
-                return (
-                    self._format(
-                        "Update completed: {plugin_id}",
-                        plugin_id=plugin_id,
-                    ),
-                    False,
-                    False,
-                )
-            if attempt + 1 >= max_attempts:
-                return (
-                    self._format(
-                        "Update completed without version change: {plugin_id} "
-                        "(version {version})",
-                        plugin_id=plugin_id,
-                        version=after_version or "unknown",
-                    ),
-                    False,
-                    False,
-                )
-            return (
-                self._format(
-                    "Update may be pending: {plugin_id}",
-                    plugin_id=plugin_id,
-                ),
-                False,
-                True,
+        outcome: _PluginUpdateOutcome | None,
+    ) -> None:
+        if outcome == "failed":
+            self._set_status(self._ts("Failed"), is_error=True)
+        elif outcome == "cancelled":
+            self._set_status(self._ts("Update cancelled."))
+        elif outcome is None:
+            self._set_status(
+                self._format("Update may be pending: {plugin_id}", plugin_id=plugin_id)
             )
-        if attempt + 1 >= max_attempts:
-            return (
+        elif (after_version := self._plugin_version(plugin_id)) != before_version:
+            self._set_status(self._format("Update completed: {plugin_id}", plugin_id=plugin_id))
+        else:
+            self._set_status(
                 self._format(
-                    "Update failed: {plugin_id} not found.",
+                    "Update completed without version change: {plugin_id} (version {version})",
                     plugin_id=plugin_id,
+                    version=after_version or "unknown",
                 ),
-                True,
-                False,
             )
-        return (
-            self._format(
-                "Update may be pending: {plugin_id}",
-                plugin_id=plugin_id,
-            ),
-            False,
-            True,
-        )
 
     def _status_for_rollback(
         self,
@@ -584,7 +551,6 @@ class PluginManagerDialog(QDialog):
         plugin_id: str | None,
         before_ids: set[str],
         before_enabled: bool | None,
-        before_version: str | None,
         before_backup: bool,
         attempt: int = 0,
     ) -> None:
@@ -593,7 +559,6 @@ class PluginManagerDialog(QDialog):
         if not self._safe_refresh_plugins():
             return
         after_ids = set(self._registry.all_ids())
-        after_version = self._plugin_version(plugin_id)
         after_backup = self._has_rollback_backup(plugin_id)
 
         status: str | None = None
@@ -627,16 +592,6 @@ class PluginManagerDialog(QDialog):
                 self._status_poll_retries,
             )
         if status is None:
-            status, is_error, is_pending = self._status_for_update(
-                action,
-                plugin_id,
-                before_version,
-                after_version,
-                after_ids,
-                attempt,
-                self._status_poll_retries,
-            )
-        if status is None:
             status, is_error, is_pending = self._status_for_rollback(
                 action,
                 plugin_id,
@@ -659,7 +614,6 @@ class PluginManagerDialog(QDialog):
                     plugin_id,
                     before_ids,
                     before_enabled,
-                    before_version,
                     before_backup,
                     attempt + 1,
                 ),
@@ -675,26 +629,21 @@ class PluginManagerDialog(QDialog):
         before_ids, before_enabled, before_version, before_backup = self._plugin_snapshot(
             plugin_id,
         )
-        self._emit_action(action, plugin_id=plugin_id, path=path)
+        outcome = self._emit_action(action, plugin_id=plugin_id, path=path)
+        if action == "update":
+            if self._safe_refresh_plugins():
+                self._show_update_outcome(plugin_id, before_version, outcome)
+            return
+        if action == "rollback" and outcome is not None:
+            if self._safe_refresh_plugins():
+                self._show_rollback_outcome(plugin_id, outcome)
+            return
         self._refresh_plugins()
         if action == "import":
             if path:
                 self._set_status(self._format("Import requested: {path}", path=path))
             else:
                 self._set_status(str(self._ts("Import requested.")))
-        elif action == "update":
-            if path:
-                self._set_status(
-                    self._format(
-                        "Update requested ({plugin_id}): {path}",
-                        plugin_id=plugin_id or "",
-                        path=path,
-                    )
-                )
-            elif plugin_id:
-                self._set_status(self._format("Update requested: {plugin_id}", plugin_id=plugin_id))
-            else:
-                self._set_status(str(self._ts("Update requested.")))
         elif path:
             self._set_status(self._format("Import requested: {path}", path=path))
         elif plugin_id:
@@ -713,20 +662,35 @@ class PluginManagerDialog(QDialog):
             plugin_id,
             before_ids,
             before_enabled,
-            before_version,
             before_backup,
             0,
         )
 
+    def _show_rollback_outcome(self, plugin_id: str | None, outcome: _PluginUpdateOutcome) -> None:
+        if outcome == "success" and plugin_id is not None:
+            self._set_status(self._format("Rollback completed: {plugin_id}", plugin_id=plugin_id))
+        elif plugin_id is not None and self._has_rollback_backup(plugin_id):
+            self._set_status(
+                self._format(
+                    "Rollback failed: backup still exists for {plugin_id}", plugin_id=plugin_id
+                ),
+                is_error=True,
+            )
+        else:
+            self._set_status(self._ts("Failed"), is_error=True)
+
     def _emit_action(
         self, action: str, plugin_id: str | None = None, path: str | None = None
-    ) -> None:
-        payload: dict[str, Any] = {"action": action}
+    ) -> _PluginUpdateOutcome | None:
+        payload: dict[str, Any] = (
+            _PluginUpdateRequest(action) if action in ("update", "rollback") else {"action": action}
+        )
         if plugin_id is not None:
             payload["plugin_id"] = plugin_id
         if path is not None:
             payload["path"] = path
         self._event_bus.emit("ui.plugins.manager", payload)
+        return payload.outcome if isinstance(payload, _PluginUpdateRequest) else None
 
     def _update_button_states(self) -> None:
         has_selection = self._selected_plugin_id() is not None

@@ -8,7 +8,7 @@ from __future__ import annotations
 
 import uuid
 from collections.abc import Sequence
-from dataclasses import dataclass, field
+from dataclasses import asdict, dataclass, field
 from enum import Enum
 from typing import Any
 
@@ -122,7 +122,10 @@ class NodeConfig:
             "order": self.order,
             "mode": self.mode,
             "inputs": self.inputs,
-            "outputs": self.outputs,
+            "outputs": [
+                asdict(output) if isinstance(output, NodeOutput) else output
+                for output in self.outputs
+            ],
             "properties": self.properties,
             "widgets_values": self.widgets_values,
         }

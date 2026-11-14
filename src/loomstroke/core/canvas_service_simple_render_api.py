@@ -389,3 +389,7 @@ class CanvasServiceRenderApiMixin(_CanvasServiceRenderApiBase):
     def rasterize_layer(self, layer_id: str) -> bool:
         """Convert a vector layer into a raster layer in-place."""
         return self._layer_rasterization().rasterize_layer(layer_id)
+
+    def rasterize_layer_undoable(self, layer_id: str) -> bool:
+        """Convert the layer as one user-visible history operation."""
+        return self._layer_rasterization().rasterize_layer_undoable(layer_id)

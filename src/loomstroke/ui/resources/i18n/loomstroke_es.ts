@@ -2,7 +2,27 @@
 <!DOCTYPE TS>
 <TS version="2.1" language="es">
     <context>
-        <name>MainWindow</name>
+    <name>MainWindow</name>
+    <message>
+        <source>New Document Failed</source>
+        <translation>Error al crear documento</translation>
+    </message>
+    <message>
+        <source>New Canvas from Clipboard Image</source>
+        <translation>Crear lienzo nuevo desde la imagen del portapapeles</translation>
+    </message>
+    <message>
+        <source>Created a canvas from the clipboard image.</source>
+        <translation>Se creó un lienzo a partir de la imagen del portapapeles.</translation>
+    </message>
+    <message>
+        <source>Could not create a canvas from the clipboard image.</source>
+        <translation>No se pudo crear un lienzo a partir de la imagen del portapapeles.</translation>
+    </message>
+    <message>
+        <source>Some layer or effect masks are missing. The document may look different. Use Save As to keep the original file.</source>
+        <translation>Faltan algunas máscaras de capa o de efecto. El documento puede verse diferente. Use Guardar como para conservar el archivo original.</translation>
+    </message>
         <message>
             <source>Rotate Straight Ruler Left</source>
             <translation>Girar la regla recta a la izquierda</translation>
@@ -1089,6 +1109,10 @@
 </context>
     <context>
         <name>BasicPen</name>
+    <message>
+        <source>The brush library could not be saved.</source>
+        <translation>No se pudo guardar la biblioteca de pinceles.</translation>
+    </message>
         <message>
             <source>Basic Settings</source>
             <translation>Ajustes básicos</translation>
@@ -4993,6 +5017,10 @@ Después de refrescar el token, cualquier agente registrado en este servidor de 
         <source>Clear the layer filter</source>
         <translation>Quitar el filtro de capa</translation>
     </message>
+    <message>
+        <source>The generation record could not be deleted.</source>
+        <translation>No se pudo eliminar el registro de generación.</translation>
+    </message>
 </context>
 <context>
     <name>TransformPanel</name>
@@ -7165,8 +7193,8 @@ Selecciona un archivo para recuperar.</translation>
         <translation>No se pudo guardar la clave de API en su caja de claves. Revise el registro para detalles y vuelva a intentarlo.</translation>
     </message>
     <message>
-        <source>{name} uses Google Gemini's API. The key is stored encrypted in your OS keyring and is read only when you press Generate.</source>
-        <translation>{name} utiliza la API de Google Gemini. La clave se guarda cifrada en el llavero del sistema operativo y solo se lee cuando pulsas Generar.</translation>
+        <source>{name} API key is stored in your OS keyring and read only when you make a request.</source>
+        <translation>La clave API de {name} se guarda en el llavero del sistema operativo y solo se lee al realizar una solicitud.</translation>
     </message>
 </context>
 <context>
@@ -8466,6 +8494,10 @@ Fallo al inicializar el compositor de GPU. Por favor, actualice su controlador g
     <message>
         <source>Values applied to this layer.</source>
         <translation>Valores aplicados a esta capa.</translation>
+    </message>
+    <message>
+        <source>ComfyUI did not finish loading. Check the server connection and reload nodes.</source>
+        <translation>ComfyUI no completó la carga. Verifica la conexión del servidor y vuelve a cargar los nodos.</translation>
     </message>
 </context>
 <context>
@@ -12324,6 +12356,22 @@ Por favor, verifique que todas las rutas de imagen en su flujo sean válidas.
 <context>
     <name>ExportPrintDialog</name>
     <message>
+        <source>PDF/X-1a candidate</source>
+        <translation>Candidato PDF/X-1a (verificación manual)</translation>
+    </message>
+    <message>
+        <source>PDF/X-4 candidate</source>
+        <translation>Candidato PDF/X-4 (verificación manual)</translation>
+    </message>
+    <message>
+        <source>Verify the PDF/X candidate in callas pdfToolbox Desktop before submission.</source>
+        <translation>Verifique el candidato PDF/X en callas pdfToolbox Desktop antes de entregarlo.</translation>
+    </message>
+    <message>
+        <source>PDF/X candidates do not support margin information.</source>
+        <translation>Los candidatos PDF/X no admiten información en los márgenes.</translation>
+    </message>
+    <message>
         <source>A CMYK profile is required for CMYK output.</source>
         <translation>Se requiere un perfil CMYK para salida CMYK.</translation>
     </message>
@@ -12578,6 +12626,58 @@ Por favor, verifique que todas las rutas de imagen en su flujo sean válidas.
     <message>
         <source>{count} page(s) will be exported.</source>
         <translation>{count} página(s) se exportarán.</translation>
+    </message>
+    <message>
+        <source>Preset:</source>
+        <translation>Ajuste preestablecido:</translation>
+    </message>
+    <message>
+        <source>Grayscale TIFF sequence</source>
+        <translation>Secuencia TIFF en escala de grises</translation>
+    </message>
+    <message>
+        <source>1-bit TIFF sequence</source>
+        <translation>Secuencia TIFF de 1-bit</translation>
+    </message>
+    <message>
+        <source>8-bit grayscale TIFF, one file per page.</source>
+        <translation>Un archivo TIFF de 8-bit en escala de grises por página.</translation>
+    </message>
+    <message>
+        <source>1-bit black-and-white TIFF, one file per page.</source>
+        <translation>Un archivo TIFF de 1-bit en blanco y negro por página.</translation>
+    </message>
+    <message>
+        <source>1-bit conversion</source>
+        <translation>Conversión a 1-bit</translation>
+    </message>
+    <message>
+        <source>Threshold:</source>
+        <translation>Umbral:</translation>
+    </message>
+    <message>
+        <source>Method:</source>
+        <translation>Método:</translation>
+    </message>
+    <message>
+        <source>Threshold</source>
+        <translation>Umbral</translation>
+    </message>
+    <message>
+        <source>Ordered 4x4 dither</source>
+        <translation>Tramado ordenado de 4x4</translation>
+    </message>
+    <message>
+        <source>The selected print preset does not match every page's format and DPI.</source>
+        <translation>El formato y los DPI del ajuste de impresión no coinciden con todas las páginas.</translation>
+    </message>
+    <message>
+        <source>The saved CMYK profile must be loaded again.</source>
+        <translation>Debe volver a cargar el perfil CMYK guardado.</translation>
+    </message>
+    <message>
+        <source>Could not save the format preset.</source>
+        <translation>No se pudo guardar el ajuste de impresión.</translation>
     </message>
 </context>
 <context>
@@ -14840,6 +14940,14 @@ Después de refrescar el token, cualquier agente registrado en este servidor de 
         <translation>Imposible guardar el documento: {path}
 {error}</translation>
     </message>
+    <message>
+        <source>No SVG-compatible vector objects to export.</source>
+        <translation>No hay objetos vectoriales compatibles para exportar a SVG.</translation>
+    </message>
+    <message>
+        <source>The current SVG export omits groups, layer placement, enabled masks, unsupported blend modes, and live filters.</source>
+        <translation>La exportación SVG actual omite los grupos, la colocación de las capas, las máscaras activadas, los modos de fusión no compatibles y los filtros en vivo.</translation>
+    </message>
 </context>
 <context>
     <name>MainWindowEditShapeActionsCoordinator</name>
@@ -15841,6 +15949,10 @@ Operación: {operation}
 </context>
 <context>
     <name>NewDocumentDialog</name>
+    <message>
+        <source>Include Bleed</source>
+        <translation>Incluir sangrado</translation>
+    </message>
     <message>
         <source>AI</source>
         <translation>AI</translation>
@@ -17414,6 +17526,10 @@ Tipo: {type}</translation>
         <source>{count} plugin(s) loaded</source>
         <translation>Se cargaron {count} complemento(s)</translation>
     </message>
+    <message>
+        <source>Failed</source>
+        <translation>Fallido</translation>
+    </message>
 </context>
 <context>
     <name>PluginUpdateDialog</name>
@@ -17643,8 +17759,8 @@ Tipo: {type}</translation>
         <translation>Negro actual (RGB)</translation>
     </message>
     <message>
-        <source>Japanese corner (current)</source>
-        <translation>Canto japonés (actual)</translation>
+        <source>Japanese corner</source>
+        <translation>Canto japonés</translation>
     </message>
     <message>
         <source>Japanese double</source>
@@ -18543,6 +18659,18 @@ Tipo: {type}</translation>
     <message>
         <source>Ollama's default context is short and silently cuts the start of long prompts; raise it with OLLAMA_CONTEXT_LENGTH or the model's num_ctx.</source>
         <translation>El contexto predeterminado de Ollama es corto y recorta sin aviso el inicio de los prompts largos; auméntalo con OLLAMA_CONTEXT_LENGTH o el num_ctx del modelo.</translation>
+    </message>
+    <message>
+        <source>Aa</source>
+        <translation>Aa</translation>
+    </message>
+    <message>
+        <source>Display name</source>
+        <translation>Nombre visible</translation>
+    </message>
+    <message>
+        <source>Item</source>
+        <translation>Elemento</translation>
     </message>
 </context>
 <context>
@@ -21247,6 +21375,46 @@ Do you want to save them?</source>
 </context>
 <context>
     <name>__shared__</name>
+    <message>
+        <source>Include Bleed</source>
+        <translation>Incluir sangrado</translation>
+    </message>
+    <message>
+        <source>PDF/X-1a candidate</source>
+        <translation>Candidato PDF/X-1a (verificación manual)</translation>
+    </message>
+    <message>
+        <source>PDF/X-4 candidate</source>
+        <translation>Candidato PDF/X-4 (verificación manual)</translation>
+    </message>
+    <message>
+        <source>Verify the PDF/X candidate in callas pdfToolbox Desktop before submission.</source>
+        <translation>Verifique el candidato PDF/X en callas pdfToolbox Desktop antes de entregarlo.</translation>
+    </message>
+    <message>
+        <source>PDF/X candidates do not support margin information.</source>
+        <translation>Los candidatos PDF/X no admiten información en los márgenes.</translation>
+    </message>
+    <message>
+        <source>Could not create a canvas from the clipboard image.</source>
+        <translation>No se pudo crear un lienzo a partir de la imagen del portapapeles.</translation>
+    </message>
+    <message>
+        <source>Created a canvas from the clipboard image.</source>
+        <translation>Se creó un lienzo a partir de la imagen del portapapeles.</translation>
+    </message>
+    <message>
+        <source>New Canvas from Clipboard Image</source>
+        <translation>Crear lienzo nuevo desde la imagen del portapapeles</translation>
+    </message>
+    <message>
+        <source>The brush library could not be saved.</source>
+        <translation>No se pudo guardar la biblioteca de pinceles.</translation>
+    </message>
+    <message>
+        <source>Some layer or effect masks are missing. The document may look different. Use Save As to keep the original file.</source>
+        <translation>Faltan algunas máscaras de capa o de efecto. El documento puede verse diferente. Use Guardar como para conservar el archivo original.</translation>
+    </message>
     <message>
         <source>Straight Ruler</source>
         <translation>Regla recta</translation>
@@ -27966,8 +28134,8 @@ Selecciona un archivo para recuperar.</translation>
         <translation>Japonés</translation>
     </message>
     <message>
-        <source>Japanese corner (current)</source>
-        <translation>Canto japonés (actual)</translation>
+        <source>Japanese corner</source>
+        <translation>Canto japonés</translation>
     </message>
     <message>
         <source>Japanese double</source>
@@ -36182,8 +36350,8 @@ Arrastra al lienzo para colocar</translation>
         <translation>{name} no es un formato de imagen compatible.</translation>
     </message>
     <message>
-        <source>{name} uses Google Gemini's API. The key is stored encrypted in your OS keyring and is read only when you press Generate.</source>
-        <translation>{name} utiliza la API de Google Gemini. La clave se guarda cifrada en el llavero del sistema operativo y solo se lee cuando pulsas Generar.</translation>
+        <source>{name} API key is stored in your OS keyring and read only when you make a request.</source>
+        <translation>La clave API de {name} se guarda en el llavero del sistema operativo y solo se lee al realizar una solicitud.</translation>
     </message>
     <message>
         <source>{pending} pending, {running} running</source>
@@ -36588,6 +36756,406 @@ Haga clic para mostrar como panel</translation>
     <message>
         <source>Walking</source>
         <translation>Caminando</translation>
+    </message>
+    <message>
+        <source>AI Settings</source>
+        <translation>Ajustes de IA</translation>
+    </message>
+    <message>
+        <source>Aa</source>
+        <translation>Aa</translation>
+    </message>
+    <message>
+        <source>Add basic shape</source>
+        <translation>Añadir forma básica</translation>
+    </message>
+    <message>
+        <source>Add potion</source>
+        <translation>Añadir poción</translation>
+    </message>
+    <message>
+        <source>Advanced API parameters (JSON)</source>
+        <translation>Parámetros avanzados de la API (JSON)</translation>
+    </message>
+    <message>
+        <source>Advanced API parameters (JSON; overrides controls)</source>
+        <translation>Parámetros avanzados de la API (JSON, prevalecen sobre los controles)</translation>
+    </message>
+    <message>
+        <source>Advanced Settings</source>
+        <translation>Ajustes avanzados</translation>
+    </message>
+    <message>
+        <source>Basic shape</source>
+        <translation>Forma básica</translation>
+    </message>
+    <message>
+        <source>Character Reference</source>
+        <translation>Referencia de personaje</translation>
+    </message>
+    <message>
+        <source>Character and Style</source>
+        <translation>Personaje y estilo</translation>
+    </message>
+    <message>
+        <source>Collapse AI Settings</source>
+        <translation>Contraer ajustes de IA</translation>
+    </message>
+    <message>
+        <source>Colorize</source>
+        <translation>Colorear</translation>
+    </message>
+    <message>
+        <source>Could not add basic shape</source>
+        <translation>No se pudo añadir la forma básica</translation>
+    </message>
+    <message>
+        <source>Create variation from Gallery image</source>
+        <translation>Crear una variante de una imagen de la galería</translation>
+    </message>
+    <message>
+        <source>Cube</source>
+        <translation>Cubo</translation>
+    </message>
+    <message>
+        <source>Cylinder</source>
+        <translation>Cilindro</translation>
+    </message>
+    <message>
+        <source>Director Tool</source>
+        <translation>Herramienta de dirección</translation>
+    </message>
+    <message>
+        <source>Director Tools</source>
+        <translation>Herramientas de dirección</translation>
+    </message>
+    <message>
+        <source>Emotion</source>
+        <translation>Emoción</translation>
+    </message>
+    <message>
+        <source>External AI services are disabled</source>
+        <translation>Los servicios externos de IA están desactivados</translation>
+    </message>
+    <message>
+        <source>Image Generation</source>
+        <translation>Generación de imágenes</translation>
+    </message>
+    <message>
+        <source>Image Resolution</source>
+        <translation>Resolución de imagen</translation>
+    </message>
+    <message>
+        <source>Image Settings</source>
+        <translation>Ajustes de imagen</translation>
+    </message>
+    <message>
+        <source>Image2Image</source>
+        <translation>Imagen a imagen</translation>
+    </message>
+    <message>
+        <source>Information Extracted</source>
+        <translation>Información extraída</translation>
+    </message>
+    <message>
+        <source>Inpaint (current selection)</source>
+        <translation>Relleno generativo (selección actual)</translation>
+    </message>
+    <message>
+        <source>Input layer</source>
+        <translation>Capa de entrada</translation>
+    </message>
+    <message>
+        <source>Large</source>
+        <translation>Grande</translation>
+    </message>
+    <message>
+        <source>Large Landscape</source>
+        <translation>Grande horizontal</translation>
+    </message>
+    <message>
+        <source>Large Portrait</source>
+        <translation>Grande vertical</translation>
+    </message>
+    <message>
+        <source>Large Square</source>
+        <translation>Grande cuadrado</translation>
+    </message>
+    <message>
+        <source>Light position</source>
+        <translation>Posición de la luz</translation>
+    </message>
+    <message>
+        <source>Light position in 3D scene coordinates</source>
+        <translation>Posición de la luz en las coordenadas de la escena 3D</translation>
+    </message>
+    <message>
+        <source>Line Art</source>
+        <translation>Dibujo lineal</translation>
+    </message>
+    <message>
+        <source>Line art</source>
+        <translation>Dibujo lineal</translation>
+    </message>
+    <message>
+        <source>No SVG-compatible vector objects to export.</source>
+        <translation>No hay objetos vectoriales compatibles para exportar a SVG.</translation>
+    </message>
+    <message>
+        <source>No tags found</source>
+        <translation>No se encontraron etiquetas</translation>
+    </message>
+    <message>
+        <source>Noise</source>
+        <translation>Ruido</translation>
+    </message>
+    <message>
+        <source>Noise Schedule</source>
+        <translation>Planificación del ruido</translation>
+    </message>
+    <message>
+        <source>Normal Landscape</source>
+        <translation>Normal horizontal</translation>
+    </message>
+    <message>
+        <source>Normal Portrait</source>
+        <translation>Normal vertical</translation>
+    </message>
+    <message>
+        <source>Normal Square</source>
+        <translation>Normal cuadrado</translation>
+    </message>
+    <message>
+        <source>NovelAI Potion (Vibe Transfer)</source>
+        <translation>Poción de NovelAI (transferencia de estilo visual)</translation>
+    </message>
+    <message>
+        <source>NovelAI generation cancelled</source>
+        <translation>Generación de NovelAI cancelada</translation>
+    </message>
+    <message>
+        <source>NovelAI image added to layer</source>
+        <translation>Imagen de NovelAI añadida a la capa</translation>
+    </message>
+    <message>
+        <source>Number of Images</source>
+        <translation>Número de imágenes</translation>
+    </message>
+    <message>
+        <source>OpenPose JSON</source>
+        <translation>OpenPose JSON</translation>
+    </message>
+    <message>
+        <source>Prompt Guidance</source>
+        <translation>Guía del prompt</translation>
+    </message>
+    <message>
+        <source>Prompt Guidance Rescale</source>
+        <translation>Reescalado de la guía del prompt</translation>
+    </message>
+    <message>
+        <source>Reference layer</source>
+        <translation>Capa de referencia</translation>
+    </message>
+    <message>
+        <source>Reference mode</source>
+        <translation>Modo de referencia</translation>
+    </message>
+    <message>
+        <source>Reference strength</source>
+        <translation>Intensidad de la referencia</translation>
+    </message>
+    <message>
+        <source>Refresh layers</source>
+        <translation>Actualizar capas</translation>
+    </message>
+    <message>
+        <source>Remove Background</source>
+        <translation>Eliminar fondo</translation>
+    </message>
+    <message>
+        <source>Remove background</source>
+        <translation>Eliminar fondo</translation>
+    </message>
+    <message>
+        <source>Sampler</source>
+        <translation>Muestreador</translation>
+    </message>
+    <message>
+        <source>Saved workflow: {name}</source>
+        <translation>Flujo de trabajo guardado: {name}</translation>
+    </message>
+    <message>
+        <source>Seed must be between 0 and 4294967295</source>
+        <translation>La semilla debe estar entre 0 y 4294967295</translation>
+    </message>
+    <message>
+        <source>Small</source>
+        <translation>Pequeño</translation>
+    </message>
+    <message>
+        <source>Small Landscape</source>
+        <translation>Pequeño horizontal</translation>
+    </message>
+    <message>
+        <source>Small Portrait</source>
+        <translation>Pequeño vertical</translation>
+    </message>
+    <message>
+        <source>Small Square</source>
+        <translation>Pequeño cuadrado</translation>
+    </message>
+    <message>
+        <source>Sphere</source>
+        <translation>Esfera</translation>
+    </message>
+    <message>
+        <source>Steps</source>
+        <translation>Pasos</translation>
+    </message>
+    <message>
+        <source>Style Reference</source>
+        <translation>Referencia de estilo</translation>
+    </message>
+    <message>
+        <source>Suggest tags</source>
+        <translation>Sugerir etiquetas</translation>
+    </message>
+    <message>
+        <source>Swap width and height</source>
+        <translation>Intercambiar ancho y alto</translation>
+    </message>
+    <message>
+        <source>Tag fragment for suggestions</source>
+        <translation>Fragmento de etiqueta para obtener sugerencias</translation>
+    </message>
+    <message>
+        <source>The current SVG export omits groups, layer placement, enabled masks, unsupported blend modes, and live filters.</source>
+        <translation>La exportación SVG actual omite los grupos, la colocación de las capas, las máscaras activadas, los modos de fusión no compatibles y los filtros en vivo.</translation>
+    </message>
+    <message>
+        <source>The generation record could not be deleted.</source>
+        <translation>No se pudo eliminar el registro de generación.</translation>
+    </message>
+    <message>
+        <source>Undesired Content</source>
+        <translation>Contenido no deseado</translation>
+    </message>
+    <message>
+        <source>Upscale</source>
+        <translation>Ampliar imagen</translation>
+    </message>
+    <message>
+        <source>Variety</source>
+        <translation>Variedad</translation>
+    </message>
+    <message>
+        <source>Vibe Transfer</source>
+        <translation>Transferencia de estilo visual</translation>
+    </message>
+    <message>
+        <source>Wallpaper</source>
+        <translation>Fondo de pantalla</translation>
+    </message>
+    <message>
+        <source>Wallpaper Landscape</source>
+        <translation>Fondo de pantalla horizontal</translation>
+    </message>
+    <message>
+        <source>Wallpaper Portrait</source>
+        <translation>Fondo de pantalla vertical</translation>
+    </message>
+    <message>
+        <source>exponential</source>
+        <translation>Exponencial</translation>
+    </message>
+    <message>
+        <source>karras</source>
+        <translation>karras</translation>
+    </message>
+    <message>
+        <source>polyexponential</source>
+        <translation>Poliexponencial</translation>
+    </message>
+    <message>
+        <source>{name} uses Google Gemini's API. The key is stored encrypted in your OS keyring and is read only when you press Generate.</source>
+        <translation>{name} usa la API de Google Gemini. La clave se guarda cifrada en el llavero del sistema operativo y solo se lee al pulsar Generar.</translation>
+    </message>
+    <message>
+        <source>Grayscale TIFF sequence</source>
+        <translation>Secuencia TIFF en escala de grises</translation>
+    </message>
+    <message>
+        <source>1-bit TIFF sequence</source>
+        <translation>Secuencia TIFF de 1-bit</translation>
+    </message>
+    <message>
+        <source>8-bit grayscale TIFF, one file per page.</source>
+        <translation>Un archivo TIFF de 8-bit en escala de grises por página.</translation>
+    </message>
+    <message>
+        <source>1-bit black-and-white TIFF, one file per page.</source>
+        <translation>Un archivo TIFF de 1-bit en blanco y negro por página.</translation>
+    </message>
+    <message>
+        <source>1-bit conversion</source>
+        <translation>Conversión a 1-bit</translation>
+    </message>
+    <message>
+        <source>Threshold:</source>
+        <translation>Umbral:</translation>
+    </message>
+    <message>
+        <source>Method:</source>
+        <translation>Método:</translation>
+    </message>
+    <message>
+        <source>Ordered 4x4 dither</source>
+        <translation>Tramado ordenado de 4x4</translation>
+    </message>
+    <message>
+        <source>The selected print preset does not match every page's format and DPI.</source>
+        <translation>El formato y los DPI del ajuste de impresión no coinciden con todas las páginas.</translation>
+    </message>
+    <message>
+        <source>The saved CMYK profile must be loaded again.</source>
+        <translation>Debe volver a cargar el perfil CMYK guardado.</translation>
+    </message>
+    <message>
+        <source>Added noise</source>
+        <translation>Added noise</translation>
+    </message>
+    <message>
+        <source>Change strength (i2i)</source>
+        <translation>Change strength (i2i)</translation>
+    </message>
+    <message>
+        <source>Enlarge</source>
+        <translation>Enlarge</translation>
+    </message>
+    <message>
+        <source>Input Image</source>
+        <translation>Input Image</translation>
+    </message>
+    <message>
+        <source>Randomize</source>
+        <translation>Randomize</translation>
+    </message>
+    <message>
+        <source>References</source>
+        <translation>References</translation>
+    </message>
+    <message>
+        <source>Reuse last seed</source>
+        <translation>Reuse last seed</translation>
+    </message>
+    <message>
+        <source>i2i</source>
+        <translation>i2i</translation>
+    </message>
+    <message>
+        <source>{count} items</source>
+        <translation>{count} items</translation>
     </message>
 </context>
 <context>
@@ -37810,6 +38378,10 @@ Haga clic para mostrar como panel</translation>
         <source>Right Ankle</source>
         <translation>Derecha: Tobillo</translation>
     </message>
+    <message>
+        <source>OpenPose JSON</source>
+        <translation>OpenPose JSON</translation>
+    </message>
 </context>
 <context>
     <name>DrawingFigureToolbarWidget</name>
@@ -37925,6 +38497,556 @@ Haga clic para mostrar como panel</translation>
     <message>
         <source>Could not add basic shape</source>
         <translation>No se pudo añadir la forma básica</translation>
+    </message>
+</context>
+<context>
+    <name>AISettingsWidget</name>
+    <message>
+        <source>AI Settings</source>
+        <translation>Ajustes de IA</translation>
+    </message>
+    <message>
+        <source>Advanced Settings</source>
+        <translation>Ajustes avanzados</translation>
+    </message>
+    <message>
+        <source>Collapse AI Settings</source>
+        <translation>Contraer ajustes de IA</translation>
+    </message>
+    <message>
+        <source>Noise Schedule</source>
+        <translation>Planificación del ruido</translation>
+    </message>
+    <message>
+        <source>Prompt Guidance</source>
+        <translation>Guía del prompt</translation>
+    </message>
+    <message>
+        <source>Prompt Guidance Rescale</source>
+        <translation>Reescalado de la guía del prompt</translation>
+    </message>
+    <message>
+        <source>Random</source>
+        <translation>Aleatorio</translation>
+    </message>
+    <message>
+        <source>Reset</source>
+        <translation>Restablecer</translation>
+    </message>
+    <message>
+        <source>Sampler</source>
+        <translation>Muestreador</translation>
+    </message>
+    <message>
+        <source>Seed</source>
+        <translation>Semilla</translation>
+    </message>
+    <message>
+        <source>Seed must be between 0 and 4294967295</source>
+        <translation>La semilla debe estar entre 0 y 4294967295</translation>
+    </message>
+    <message>
+        <source>Steps</source>
+        <translation>Pasos</translation>
+    </message>
+    <message>
+        <source>Variety</source>
+        <translation>Variedad</translation>
+    </message>
+    <message>
+        <source>Randomize</source>
+        <translation>Randomize</translation>
+    </message>
+    <message>
+        <source>Reuse last seed</source>
+        <translation>Reuse last seed</translation>
+    </message>
+</context>
+<context>
+    <name>ImageSettingsWidget</name>
+    <message>
+        <source>Image Resolution</source>
+        <translation>Resolución de imagen</translation>
+    </message>
+    <message>
+        <source>Image Settings</source>
+        <translation>Ajustes de imagen</translation>
+    </message>
+    <message>
+        <source>Number of Images</source>
+        <translation>Número de imágenes</translation>
+    </message>
+    <message>
+        <source>Swap width and height</source>
+        <translation>Intercambiar ancho y alto</translation>
+    </message>
+</context>
+<context>
+    <name>NovelAIPanel</name>
+    <message>
+        <source>&lt;New Layer&gt;</source>
+        <translation>&lt;Nueva capa&gt;</translation>
+    </message>
+    <message>
+        <source>AI Settings</source>
+        <translation>Ajustes de IA</translation>
+    </message>
+    <message>
+        <source>Add potion</source>
+        <translation>Añadir poción</translation>
+    </message>
+    <message>
+        <source>Advanced API parameters (JSON)</source>
+        <translation>Parámetros avanzados de la API (JSON)</translation>
+    </message>
+    <message>
+        <source>Advanced API parameters (JSON; overrides controls)</source>
+        <translation>Parámetros avanzados de la API (JSON, prevalecen sobre los controles)</translation>
+    </message>
+    <message>
+        <source>Advanced Settings</source>
+        <translation>Ajustes avanzados</translation>
+    </message>
+    <message>
+        <source>Character Reference</source>
+        <translation>Referencia de personaje</translation>
+    </message>
+    <message>
+        <source>Character and Style</source>
+        <translation>Personaje y estilo</translation>
+    </message>
+    <message>
+        <source>Collapse AI Settings</source>
+        <translation>Contraer ajustes de IA</translation>
+    </message>
+    <message>
+        <source>Colorize</source>
+        <translation>Colorear</translation>
+    </message>
+    <message>
+        <source>Create variation from Gallery image</source>
+        <translation>Crear una variante de una imagen de la galería</translation>
+    </message>
+    <message>
+        <source>Custom</source>
+        <translation>Personalizado</translation>
+    </message>
+    <message>
+        <source>Director Tool</source>
+        <translation>Herramienta de dirección</translation>
+    </message>
+    <message>
+        <source>Director Tools</source>
+        <translation>Herramientas de dirección</translation>
+    </message>
+    <message>
+        <source>Emotion</source>
+        <translation>Emoción</translation>
+    </message>
+    <message>
+        <source>Enter prompt text...</source>
+        <translation>Introduzca el texto del prompt...</translation>
+    </message>
+    <message>
+        <source>External AI services are disabled</source>
+        <translation>Los servicios externos de IA están desactivados</translation>
+    </message>
+    <message>
+        <source>Generate</source>
+        <translation>Generar</translation>
+    </message>
+    <message>
+        <source>Height</source>
+        <translation>Alto</translation>
+    </message>
+    <message>
+        <source>Image Generation</source>
+        <translation>Generación de imágenes</translation>
+    </message>
+    <message>
+        <source>Image Resolution</source>
+        <translation>Resolución de imagen</translation>
+    </message>
+    <message>
+        <source>Image Settings</source>
+        <translation>Ajustes de imagen</translation>
+    </message>
+    <message>
+        <source>Image2Image</source>
+        <translation>Imagen a imagen</translation>
+    </message>
+    <message>
+        <source>Information Extracted</source>
+        <translation>Información extraída</translation>
+    </message>
+    <message>
+        <source>Inpaint (current selection)</source>
+        <translation>Relleno generativo (selección actual)</translation>
+    </message>
+    <message>
+        <source>Input layer</source>
+        <translation>Capa de entrada</translation>
+    </message>
+    <message>
+        <source>Landscape</source>
+        <translation>Paisaje</translation>
+    </message>
+    <message>
+        <source>Large</source>
+        <translation>Grande</translation>
+    </message>
+    <message>
+        <source>Large Landscape</source>
+        <translation>Grande horizontal</translation>
+    </message>
+    <message>
+        <source>Large Portrait</source>
+        <translation>Grande vertical</translation>
+    </message>
+    <message>
+        <source>Large Square</source>
+        <translation>Grande cuadrado</translation>
+    </message>
+    <message>
+        <source>Line Art</source>
+        <translation>Dibujo lineal</translation>
+    </message>
+    <message>
+        <source>Line art</source>
+        <translation>Dibujo lineal</translation>
+    </message>
+    <message>
+        <source>Live prompt</source>
+        <translation>Prompt en tiempo real</translation>
+    </message>
+    <message>
+        <source>Mode</source>
+        <translation>Modo</translation>
+    </message>
+    <message>
+        <source>Model</source>
+        <translation>Modelo</translation>
+    </message>
+    <message>
+        <source>No tags found</source>
+        <translation>No se encontraron etiquetas</translation>
+    </message>
+    <message>
+        <source>Noise</source>
+        <translation>Ruido</translation>
+    </message>
+    <message>
+        <source>Noise Schedule</source>
+        <translation>Planificación del ruido</translation>
+    </message>
+    <message>
+        <source>None</source>
+        <translation>Ninguno</translation>
+    </message>
+    <message>
+        <source>Normal</source>
+        <translation>Normal</translation>
+    </message>
+    <message>
+        <source>Normal Landscape</source>
+        <translation>Normal horizontal</translation>
+    </message>
+    <message>
+        <source>Normal Portrait</source>
+        <translation>Normal vertical</translation>
+    </message>
+    <message>
+        <source>Normal Square</source>
+        <translation>Normal cuadrado</translation>
+    </message>
+    <message>
+        <source>Nothing</source>
+        <translation>Nada</translation>
+    </message>
+    <message>
+        <source>NovelAI Potion (Vibe Transfer)</source>
+        <translation>Poción de NovelAI (transferencia de estilo visual)</translation>
+    </message>
+    <message>
+        <source>NovelAI generation cancelled</source>
+        <translation>Generación de NovelAI cancelada</translation>
+    </message>
+    <message>
+        <source>NovelAI image added to layer</source>
+        <translation>Imagen de NovelAI añadida a la capa</translation>
+    </message>
+    <message>
+        <source>Number of Images</source>
+        <translation>Número de imágenes</translation>
+    </message>
+    <message>
+        <source>Portrait</source>
+        <translation>Retrato</translation>
+    </message>
+    <message>
+        <source>Prompt Guidance</source>
+        <translation>Guía del prompt</translation>
+    </message>
+    <message>
+        <source>Prompt Guidance Rescale</source>
+        <translation>Reescalado de la guía del prompt</translation>
+    </message>
+    <message>
+        <source>Random</source>
+        <translation>Aleatorio</translation>
+    </message>
+    <message>
+        <source>Reference layer</source>
+        <translation>Capa de referencia</translation>
+    </message>
+    <message>
+        <source>Reference mode</source>
+        <translation>Modo de referencia</translation>
+    </message>
+    <message>
+        <source>Reference strength</source>
+        <translation>Intensidad de la referencia</translation>
+    </message>
+    <message>
+        <source>Refresh layers</source>
+        <translation>Actualizar capas</translation>
+    </message>
+    <message>
+        <source>Remove</source>
+        <translation>Quitar</translation>
+    </message>
+    <message>
+        <source>Remove Background</source>
+        <translation>Eliminar fondo</translation>
+    </message>
+    <message>
+        <source>Remove background</source>
+        <translation>Eliminar fondo</translation>
+    </message>
+    <message>
+        <source>Reset</source>
+        <translation>Restablecer</translation>
+    </message>
+    <message>
+        <source>Sampler</source>
+        <translation>Muestreador</translation>
+    </message>
+    <message>
+        <source>Seed</source>
+        <translation>Semilla</translation>
+    </message>
+    <message>
+        <source>Seed must be between 0 and 4294967295</source>
+        <translation>La semilla debe estar entre 0 y 4294967295</translation>
+    </message>
+    <message>
+        <source>Sketch</source>
+        <translation>Boceto</translation>
+    </message>
+    <message>
+        <source>Small</source>
+        <translation>Pequeño</translation>
+    </message>
+    <message>
+        <source>Small Landscape</source>
+        <translation>Pequeño horizontal</translation>
+    </message>
+    <message>
+        <source>Small Portrait</source>
+        <translation>Pequeño vertical</translation>
+    </message>
+    <message>
+        <source>Small Square</source>
+        <translation>Pequeño cuadrado</translation>
+    </message>
+    <message>
+        <source>Square</source>
+        <translation>Cuadrado</translation>
+    </message>
+    <message>
+        <source>Steps</source>
+        <translation>Pasos</translation>
+    </message>
+    <message>
+        <source>Strength</source>
+        <translation>Intensidad</translation>
+    </message>
+    <message>
+        <source>Style Reference</source>
+        <translation>Referencia de estilo</translation>
+    </message>
+    <message>
+        <source>Suggest tags</source>
+        <translation>Sugerir etiquetas</translation>
+    </message>
+    <message>
+        <source>Swap width and height</source>
+        <translation>Intercambiar ancho y alto</translation>
+    </message>
+    <message>
+        <source>Tag fragment for suggestions</source>
+        <translation>Fragmento de etiqueta para obtener sugerencias</translation>
+    </message>
+    <message>
+        <source>Target layer</source>
+        <translation>Capa de destino</translation>
+    </message>
+    <message>
+        <source>Undesired Content</source>
+        <translation>Contenido no deseado</translation>
+    </message>
+    <message>
+        <source>Upscale</source>
+        <translation>Ampliar imagen</translation>
+    </message>
+    <message>
+        <source>Variety</source>
+        <translation>Variedad</translation>
+    </message>
+    <message>
+        <source>Vibe Transfer</source>
+        <translation>Transferencia de estilo visual</translation>
+    </message>
+    <message>
+        <source>Wallpaper</source>
+        <translation>Fondo de pantalla</translation>
+    </message>
+    <message>
+        <source>Wallpaper Landscape</source>
+        <translation>Fondo de pantalla horizontal</translation>
+    </message>
+    <message>
+        <source>Wallpaper Portrait</source>
+        <translation>Fondo de pantalla vertical</translation>
+    </message>
+    <message>
+        <source>Width</source>
+        <translation>Ancho</translation>
+    </message>
+    <message>
+        <source>exponential</source>
+        <translation>Exponencial</translation>
+    </message>
+    <message>
+        <source>karras</source>
+        <translation>karras</translation>
+    </message>
+    <message>
+        <source>polyexponential</source>
+        <translation>Poliexponencial</translation>
+    </message>
+    <message>
+        <source>Added noise</source>
+        <translation>Added noise</translation>
+    </message>
+    <message>
+        <source>Change strength (i2i)</source>
+        <translation>Change strength (i2i)</translation>
+    </message>
+    <message>
+        <source>Enlarge</source>
+        <translation>Enlarge</translation>
+    </message>
+    <message>
+        <source>Inpaint</source>
+        <translation>Inpaint</translation>
+    </message>
+    <message>
+        <source>Input Image</source>
+        <translation>Input Image</translation>
+    </message>
+    <message>
+        <source>Randomize</source>
+        <translation>Randomize</translation>
+    </message>
+    <message>
+        <source>References</source>
+        <translation>References</translation>
+    </message>
+    <message>
+        <source>Reuse last seed</source>
+        <translation>Reuse last seed</translation>
+    </message>
+    <message>
+        <source>Tools</source>
+        <translation>Tools</translation>
+    </message>
+    <message>
+        <source>i2i</source>
+        <translation>i2i</translation>
+    </message>
+    <message>
+        <source>{count} items</source>
+        <translation>{count} items</translation>
+    </message>
+</context>
+<context>
+    <name>NovelAIPanelPlugin</name>
+    <message>
+        <source>No tags found</source>
+        <translation>No se encontraron etiquetas</translation>
+    </message>
+    <message>
+        <source>NovelAI generation cancelled</source>
+        <translation>Generación de NovelAI cancelada</translation>
+    </message>
+    <message>
+        <source>NovelAI image added to layer</source>
+        <translation>Imagen de NovelAI añadida a la capa</translation>
+    </message>
+</context>
+<context>
+    <name>VibeReferencesWidget</name>
+    <message>
+        <source>Add potion</source>
+        <translation>Añadir poción</translation>
+    </message>
+    <message>
+        <source>Information Extracted</source>
+        <translation>Información extraída</translation>
+    </message>
+    <message>
+        <source>Nothing</source>
+        <translation>Nada</translation>
+    </message>
+    <message>
+        <source>NovelAI Potion (Vibe Transfer)</source>
+        <translation>Poción de NovelAI (transferencia de estilo visual)</translation>
+    </message>
+    <message>
+        <source>Remove</source>
+        <translation>Quitar</translation>
+    </message>
+    <message>
+        <source>Strength</source>
+        <translation>Intensidad</translation>
+    </message>
+</context>
+<context>
+    <name>_LibraryWriteFeedback</name>
+    <message>
+        <source>Shape Manager</source>
+        <translation>Administrador de formas</translation>
+    </message>
+</context>
+<context>
+    <name>document_mask_recovery</name>
+    <message>
+        <source>Warning</source>
+        <translation>Advertencia</translation>
+    </message>
+</context>
+<context>
+    <name>workflow_save_action</name>
+    <message>
+        <source>Failed to save workflow:
+{error}</source>
+        <translation>Falló al guardar el flujo de trabajo:
+{error}</translation>
+    </message>
+    <message>
+        <source>Saved workflow: {name}</source>
+        <translation>Flujo de trabajo guardado: {name}</translation>
     </message>
 </context>
 </TS>

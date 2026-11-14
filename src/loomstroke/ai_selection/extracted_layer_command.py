@@ -6,8 +6,8 @@ import logging
 from collections.abc import Callable
 from typing import Any
 
-from loomstroke.core.command_layer_access import _resolve_layer_by_id
-from loomstroke.core.commands import AddLayerCommand
+from loomstroke.core.command_layer_access import _layer_transform, _resolve_layer_by_id
+from loomstroke.core.commands import AddLayerCommand, LayerTransform
 
 logger = logging.getLogger(__name__)
 
@@ -23,6 +23,7 @@ class _Sam3ExtractToNewLayerCommand(AddLayerCommand):
         mode: str,
         *,
         image_builder: Callable[..., Any],
+        placed_image_builder: Callable[..., Any],
         legacy_apply: Callable[..., str | None],
     ) -> None:
         super().__init__(name, layer_type="raster")
@@ -30,6 +31,7 @@ class _Sam3ExtractToNewLayerCommand(AddLayerCommand):
         self._mask_image = mask_image
         self._mode = mode
         self._image_builder = image_builder
+        self._placed_image_builder = placed_image_builder
         self._legacy_apply = legacy_apply
         self._created_layer_id: str | None = None
 
@@ -66,20 +68,10 @@ class _Sam3ExtractToNewLayerCommand(AddLayerCommand):
                 source = _resolve_layer_by_id(canvas, self._source_layer_id)
                 if source is None or self._mask_image is None:
                     return False
-                image = self._image_builder(source, self._mask_image, mode=self._mode)
-                if image is None:
+                payload = self._prepare_layer(canvas, source)
+                if payload is None:
                     return False
-                success = self._created.create(
-                    canvas,
-                    self._name,
-                    "raster",
-                    {
-                        "image": image,
-                        "offset_x": int(getattr(source, "offset_x", 0)),
-                        "offset_y": int(getattr(source, "offset_y", 0)),
-                        "texture_version": 1,
-                    },
-                )
+                success = self._created.create(canvas, self._name, "raster", payload)
             else:
                 success = self._created.restore(canvas)
             # Even a notification failure may leave a detached, prepared layer
@@ -93,6 +85,28 @@ class _Sam3ExtractToNewLayerCommand(AddLayerCommand):
         except Exception as exc:
             logger.warning("SAM layer extraction failed (%s)", type(exc).__name__)
             return False
+
+    def _prepare_layer(self, canvas: Any, source: Any) -> dict[str, Any] | None:
+        x, y = int(getattr(source, "offset_x", 0)), int(getattr(source, "offset_y", 0))
+        if (
+            getattr(source, "layer_type", "raster") == "raster"
+            and getattr(source, "native_cmyk", None) is None
+        ):
+            if getattr(source, "_preview_transform", None) is not None:
+                return None
+            if _layer_transform(source) != LayerTransform.translation(x, y):
+                image = self._placed_image_builder(
+                    canvas, source, self._mask_image, mode=self._mode
+                )
+                return self._layer_payload(image, 0, 0)
+        image = self._image_builder(source, self._mask_image, mode=self._mode)
+        return self._layer_payload(image, x, y)
+
+    @staticmethod
+    def _layer_payload(image: Any, x: int, y: int) -> dict[str, Any] | None:
+        if image is None:
+            return None
+        return {"image": image, "offset_x": x, "offset_y": y, "texture_version": 1}
 
     def revert(self, canvas: Any) -> bool:
         if self._created_layer_id is None:

@@ -1469,17 +1469,13 @@ class NodeTabsWidget(QWidget):
     def set_host_api(self, host_api: HostAPI | None) -> None:
         """Set host API and propagate to existing parameter widgets."""
         self.host_api = host_api
-        for index in range(self.tab_widget.count()):
-            widget = self.tab_widget.widget(index)
-            if isinstance(widget, NodeParameterWidget):
-                widget.set_host_api(host_api)
+        for widget in self._parameter_editors():
+            widget.set_host_api(host_api)
 
     def refresh_layer_widgets(self) -> None:
         """Refresh all IMAGE widgets with current layers."""
-        for index in range(self.tab_widget.count()):
-            widget = self.tab_widget.widget(index)
-            if isinstance(widget, NodeParameterWidget):
-                widget.refresh_layer_widgets()
+        for widget in self._parameter_editors():
+            widget.refresh_layer_widgets()
 
     def init_ui(self) -> None:
         """Build the category UI shell."""
@@ -1583,8 +1579,7 @@ class NodeTabsWidget(QWidget):
         for page in self.category_pages.values():
             if page.placeholder_label is not None:
                 page.placeholder_label.setText(self._tr("No nodes match this category."))
-        for index in range(self.tab_widget.count()):
-            widget = self.tab_widget.widget(index)
+        for widget in self.tab_widget.content_widgets():
             if hasattr(widget, "refresh_translations"):
                 widget.refresh_translations()
 
@@ -1612,6 +1607,7 @@ class NodeTabsWidget(QWidget):
         self.node_schemas = node_schemas
         self.models_cache = models_cache or {}
 
+        self.tab_widget.cleanup()
         self.tab_widget.clear()
         self.node_metadata.clear()
         self._node_order = []
@@ -1691,15 +1687,20 @@ class NodeTabsWidget(QWidget):
     def get_updated_workflow(self) -> WorkflowModel | None:
         return self.workflow
 
+    def _parameter_editors(self) -> Iterable[NodeParameterWidget]:
+        return (
+            widget
+            for widget in self.tab_widget.content_widgets()
+            if isinstance(widget, NodeParameterWidget)
+        )
+
     def get_image_parameters(self) -> dict[str, ImageParameterWidget]:
         image_params: dict[str, ImageParameterWidget] = {}
-        for index in range(self.tab_widget.count()):
-            widget = self.tab_widget.widget(index)
-            if isinstance(widget, NodeParameterWidget):
-                for param_name, param_widget in widget.param_widgets.items():
-                    if isinstance(param_widget, ImageParameterWidget):
-                        key = f"{widget.node_id}.{param_name}"
-                        image_params[key] = param_widget
+        for widget in self._parameter_editors():
+            for param_name, param_widget in widget.param_widgets.items():
+                if isinstance(param_widget, ImageParameterWidget):
+                    key = f"{widget.node_id}.{param_name}"
+                    image_params[key] = param_widget
         return image_params
 
     def get_all_metadata_bindings(self) -> dict[str, MetadataBinding]:
@@ -1708,42 +1709,34 @@ class NodeTabsWidget(QWidget):
         Returns dict keyed by ``node_id.param_name``.
         """
         bindings: dict[str, MetadataBinding] = {}
-        for index in range(self.tab_widget.count()):
-            widget = self.tab_widget.widget(index)
-            if isinstance(widget, NodeParameterWidget):
-                for param_name, binding in widget.get_metadata_bindings().items():
-                    key = f"{widget.node_id}.{param_name}"
-                    bindings[key] = binding
+        for widget in self._parameter_editors():
+            for param_name, binding in widget.get_metadata_bindings().items():
+                key = f"{widget.node_id}.{param_name}"
+                bindings[key] = binding
         return bindings
 
     def get_output_layer_targets(self) -> dict[str, LayerRef]:
         targets: dict[str, LayerRef] = {}
-        for index in range(self.tab_widget.count()):
-            widget = self.tab_widget.widget(index)
-            if isinstance(widget, NodeParameterWidget):
-                selection = widget.get_output_layer_target()
-                if isinstance(selection, LayerRef) and selection.id:
-                    targets[widget.node_id] = selection
+        for widget in self._parameter_editors():
+            selection = widget.get_output_layer_target()
+            if isinstance(selection, LayerRef) and selection.id:
+                targets[widget.node_id] = selection
         return targets
 
     def get_output_3d_layer_targets(self) -> dict[str, LayerRef]:
         targets: dict[str, LayerRef] = {}
-        for index in range(self.tab_widget.count()):
-            widget = self.tab_widget.widget(index)
-            if isinstance(widget, NodeParameterWidget):
-                selection = widget.get_output_3d_layer_target()
-                if isinstance(selection, LayerRef) and selection.id:
-                    targets[widget.node_id] = selection
+        for widget in self._parameter_editors():
+            selection = widget.get_output_3d_layer_target()
+            if isinstance(selection, LayerRef) and selection.id:
+                targets[widget.node_id] = selection
         return targets
 
     def get_seed_modes(self) -> dict[str, dict[str, str]]:
         modes: dict[str, dict[str, str]] = {}
-        for index in range(self.tab_widget.count()):
-            widget = self.tab_widget.widget(index)
-            if isinstance(widget, NodeParameterWidget):
-                widget_modes = widget.get_seed_modes()
-                if widget_modes:
-                    modes[widget.node_id] = widget_modes
+        for widget in self._parameter_editors():
+            widget_modes = widget.get_seed_modes()
+            if widget_modes:
+                modes[widget.node_id] = widget_modes
         return modes
 
     def nodes_updated(self) -> None:

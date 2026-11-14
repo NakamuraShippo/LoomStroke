@@ -13,9 +13,10 @@ from __future__ import annotations
 
 import hashlib
 import logging
-import os
 import shutil
+import tempfile
 from collections.abc import Callable
+from dataclasses import replace
 from pathlib import Path
 from typing import Any
 
@@ -27,9 +28,14 @@ from ..core.digital_package.digital_package_request import DigitalComicPackageRe
 from ..core.digital_package.digital_package_result import DigitalPackageResult
 from ..core.digital_package.epub_check_adapter import EpubCheckAdapter
 from ..core.digital_package.fixed_layout_epub_writer import FixedLayoutEpubWriter
+from ..core.digital_package.image_manifest_package_commit import (
+    PackageDirectoryRollbackError,
+    commit_image_package,
+)
 from ..core.digital_package.image_manifest_package_writer import ImageManifestPackageWriter
 from ..core.digital_package.package_issue import PackageIssue
 from ..core.digital_package.publication_item import PublicationItem
+from ..core.digital_package.publication_manifest_writer import PublicationManifestWriter
 from ..core.digital_package.publication_package_validator import PublicationPackageValidator
 from ..core.digital_package.publication_planner import DigitalComicPackagePlanner
 from ..io.layer_io import DocumentMetadata
@@ -92,9 +98,10 @@ def run_digital_package_export(
         offscreen = OffscreenPageRenderer()
         render_page = offscreen.render
     progress = (progress_factory or _default_progress_factory(parent))(len(items) + 1)
-    staging = _staging_dir(destination)
+    staging: Path | None = None
     result: DigitalPackageResult
     try:
+        staging = _staging_dir(destination)
         encoded = _encode_items(
             page_service, document_metadata, plan, items, staging, render_page, progress
         )
@@ -108,10 +115,23 @@ def run_digital_package_export(
         )
         progress.setLabelText(destination.name)
         progress.setValue(len(items))
+        if progress.wasCanceled():
+            raise _Cancelled
         result = _write_and_validate(request, staging, validator, epub_check, pre_issues)
         progress.setValue(len(items) + 1)
     except _Cancelled:
         result = DigitalPackageResult("cancelled", plan.format_id, None, issues=pre_issues)
+    except PackageDirectoryRollbackError as error:
+        logger.warning("digital image package rollback incomplete", exc_info=True)
+        result = DigitalPackageResult(
+            "failed",
+            plan.format_id,
+            None,
+            issues=(
+                *pre_issues,
+                PackageIssue("package_rollback_incomplete", detail=error.backup_name),
+            ),
+        )
     except Exception as error:
         logger.warning("digital package export failed", exc_info=True)
         result = DigitalPackageResult(
@@ -126,23 +146,22 @@ def run_digital_package_export(
         close = getattr(progress, "close", None)
         if callable(close):
             close()
-        shutil.rmtree(staging, ignore_errors=True)
+        if staging is not None:
+            shutil.rmtree(staging, ignore_errors=True)
     _show_summary(parent, result, message_box)
     return result
 
 
 def _staging_dir(destination: Path) -> Path:
-    staging = destination.parent / f".{destination.name}.staging-{os.getpid()}"
-    shutil.rmtree(staging, ignore_errors=True)
-    staging.mkdir(parents=True, exist_ok=True)
-    return staging
+    destination.parent.mkdir(parents=True, exist_ok=True)
+    return Path(tempfile.mkdtemp(prefix=".ls-package-staging-", dir=destination.parent))
 
 
 def _confirm_replace(
     parent: QWidget | None, destination: Path, format_id: str, message_box: Any
 ) -> bool:
     exists = destination.exists() and (
-        format_id != "image_manifest_v1" or any(destination.iterdir())
+        format_id != "image_manifest_v1" or not destination.is_dir() or any(destination.iterdir())
     )
     if not exists:
         return True
@@ -222,8 +241,17 @@ def _write_and_validate(
     issues = list(validator.validate_request(request))
     destination = Path(request.destination)
     if request.format_id == "image_manifest_v1":
-        byte_count = ImageManifestPackageWriter().write(request, image_source)
-        issues.extend(validator.validate_directory(destination, request))
+        if any(issue.severity == "fatal" for issue in issues):
+            return _result(request, destination, 0, issues, "not_checked", "")
+        prepared = staging / "image-package"
+        staged_request = replace(request, destination=prepared)
+        byte_count = ImageManifestPackageWriter().write(staged_request, image_source)
+        issues.extend(validator.validate_directory(prepared, staged_request))
+        if not any(issue.severity == "fatal" for issue in issues):
+            members = tuple(Path(*item.package_path.split("/")) for item in request.items)
+            commit_image_package(
+                prepared, destination, (*members, Path(PublicationManifestWriter.FILE_NAME))
+            )
         return _result(request, destination, byte_count, issues, "not_checked", "")
     staged = staging / ("package.epub" if request.format_id == "epub3_fxl" else "package.cbz")
     staged_request = DigitalComicPackageRequest(
@@ -292,9 +320,15 @@ def _show_summary(parent: QWidget | None, result: DigitalPackageResult, message_
     if result.status == "cancelled":
         return
     if result.status == "failed":
-        codes = ", ".join(sorted({issue.code for issue in result.fatal_issues})) or "write_failed"
+        codes = set()
+        for issue in result.fatal_issues:
+            code = issue.code
+            if code == "package_rollback_incomplete":
+                code = f"{code} ({issue.detail})"
+            codes.add(code)
+        summary = ", ".join(sorted(codes)) or "write_failed"
         message_box.warning(
-            parent, title, _ts("The package could not be written: {codes}").format(codes=codes)
+            parent, title, _ts("The package could not be written: {codes}").format(codes=summary)
         )
         return
     text = _ts("Exported {count} page(s) to {name}.").format(

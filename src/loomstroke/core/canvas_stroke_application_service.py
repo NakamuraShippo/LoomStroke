@@ -55,10 +55,10 @@ class CanvasStrokeApplicationService:
         return clipped_bounds if ok else None
 
     def apply_paint(self, cmd: PaintCommand) -> QRect | None:
-        """Apply paint command to active layer. Returns dirty rect or None."""
+        """Apply paint command to its target layer. Returns dirty rect or None."""
         owner = self._owner
         brush = cmd.brush
-        layer = owner._resolve_paint_target()
+        layer = owner._resolve_paint_target(cmd.layer_id)
         if layer is None:
             return None
 
