@@ -8,7 +8,7 @@ import unittest
 import zipfile
 from pathlib import Path
 
-from create_release_archive import PREFIX, _check_member, _version_and_notes, create
+from create_release_archive import PREFIX, ROOT, _check_member, _version_and_notes, create
 
 
 class ReleaseArchiveTests(unittest.TestCase):
@@ -43,7 +43,10 @@ class ReleaseArchiveTests(unittest.TestCase):
                 self.assertFalse(any(".github/" in name for name in members))
             digest = hashlib.sha256(asset.read_bytes()).hexdigest()
             self.assertEqual(checksum.read_text(encoding="ascii"), f"{digest}  {asset.name}\n")
-            self.assertIn(f"## [v{version}]", notes.read_text(encoding="utf-8"))
+            text = notes.read_text(encoding="utf-8")
+            social_post = (ROOT / f"release_posts/v{version}.md").read_text(encoding="utf-8")
+            self.assertTrue(text.startswith(social_post.strip() + "\n\n"))
+            self.assertIn(f"/blob/v{version}/CHANGELOG.md", text)
 
 
 if __name__ == "__main__":
