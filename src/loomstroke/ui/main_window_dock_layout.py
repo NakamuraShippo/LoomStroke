@@ -306,6 +306,11 @@ class MainWindowDockSpacerController:
         area = self._window.dockWidgetArea(dock)
         if area not in _DOCK_AREAS:
             return
+        if area == Qt.DockWidgetArea.BottomDockWidgetArea:
+            # A bottom dock should span the available width; a horizontal
+            # spacer leaves a visible empty pane beside the only real dock.
+            self.remove_spacers_in_area(area)
+            return
         if self.visible_real_docks_in_area(area, exclude=dock):
             self._owner.log_dock(dock, "empty_area_sizing skip: other docks present")
             self.remove_spacers_in_area(area)

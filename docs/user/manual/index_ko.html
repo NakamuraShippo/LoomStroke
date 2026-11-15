@@ -1,5 +1,5 @@
 <!doctype html>
-<!-- Japanese source SHA-256: 6abc2d75844f04b5cf52ac916f1aa13e005046d9fbc7ae2636fe0ef8a16ef611 -->
+<!-- Japanese source SHA-256: ce08b94b672a76d93d8ea3cf11f381e5c2333ca45b7241dcebf9517591bc5e7a -->
 <html lang="ko" dir="ltr">
 <head>
 <meta charset="utf-8">
@@ -106,7 +106,7 @@ table.params td:nth-child(2) { white-space: normal; min-width: 8em; }
   <!-- manual-languages:end -->
 
   <div class="brand">LoomStroke 사용법</div>
-  <div class="sub">v0.3.0.7.21 지원 / 스크린샷 포함 완전 가이드</div>
+  <div class="sub">공개 버전 v0.3.0.8.121 대응 / 스크린 샷 첨부 가이드</div>
   <button class="menu-toggle" type="button" onclick="document.getElementById('toc').classList.toggle('open')">목차 열기</button>
   <div class="toc-body">
   <ol>
@@ -118,7 +118,7 @@ table.params td:nth-child(2) { white-space: normal; min-width: 8em; }
     <li><a href="#layers">4. 레이어와 필터</a>
       <ol><li><a href="#layer-panel">레이어 패널</a></li><li><a href="#blend">레이어 효과(합성)</a></li><li><a href="#layer-ctx">오른쪽 클릭 메뉴</a></li><li><a href="#channels">채널</a></li><li><a href="#filters">필터 레이어 전체 종류</a></li><li><a href="#fill-layers">채우기 레이어</a></li><li><a href="#layer-styles">레이어 스타일</a></li></ol></li>
     <li><a href="#panels">5. 패널 세부 정보</a>
-      <ol><li><a href="#p-preview">미리보기</a></li><li><a href="#p-color">색</a></li><li><a href="#p-brush">브러시 매니저</a></li><li><a href="#p-font">폰트</a></li><li><a href="#p-shape">형상 관리자</a></li><li><a href="#p-transform">Transform</a></li><li><a href="#p-filter">필터</a></li><li><a href="#p-reference">Reference</a></li><li><a href="#p-pages">페이지</a></li><li><a href="#p-gallery">갤러리</a></li><li><a href="#p-aieffect">AI Effects Manager</a></li><li><a href="#p-nanobanana">NanoBanana</a></li><li><a href="#p-gptimage">GPT Image 2</a></li><li><a href="#p-prompt">프롬프트 편집기</a></li><li><a href="#p-3d">3D Preview</a></li><li><a href="#p-aicand">AI Select Candidates</a></li><li><a href="#p-mangamask">Manga Mask Assistant</a></li><li><a href="#p-comic">Comic</a></li><li><a href="#p-comicassets">Comic Assets</a></li><li><a href="#p-comicproject">코믹 프로젝트</a></li><li><a href="#p-comicworkflow">코믹 워크플로우</a></li><li><a href="#p-assist">작화 보조</a></li><li><a href="#p-actions">액션</a></li><li><a href="#p-links">링크</a></li><li><a href="#p-copilot">Canvas Assistant</a></li><li><a href="#p-production">Production Control</a></li></ol></li>
+      <ol><li><a href="#p-preview">미리보기</a></li><li><a href="#p-color">색</a></li><li><a href="#p-brush">브러시 매니저</a></li><li><a href="#p-font">폰트</a></li><li><a href="#p-shape">형상 관리자</a></li><li><a href="#p-transform">Transform</a></li><li><a href="#p-filter">필터</a></li><li><a href="#p-reference">Reference</a></li><li><a href="#p-pages">페이지</a></li><li><a href="#p-gallery">갤러리</a></li><li><a href="#p-aieffect">AI Effects Manager</a></li><li><a href="#p-nanobanana">NanoBanana</a></li><li><a href="#p-gptimage">GPT Image 2</a></li><li><a href="#p-novelai">NovelAI</a></li><li><a href="#p-prompt">프롬프트 편집기</a></li><li><a href="#p-3d">3D Preview</a></li><li><a href="#p-aicand">AI Select Candidates</a></li><li><a href="#p-mangamask">Manga Mask Assistant</a></li><li><a href="#p-comic">Comic</a></li><li><a href="#p-comicassets">Comic Assets</a></li><li><a href="#p-comicproject">코믹 프로젝트</a></li><li><a href="#p-comicworkflow">코믹 워크플로우</a></li><li><a href="#p-assist">작화 보조</a></li><li><a href="#p-actions">액션</a></li><li><a href="#p-links">링크</a></li><li><a href="#p-copilot">Canvas Assistant</a></li><li><a href="#p-production">Production Control</a></li></ol></li>
     <li><a href="#menus">6. 메뉴</a>
       <ol><li><a href="#guides">가이드 및 정규</a></li><li><a href="#grid">그리드 설정</a></li><li><a href="#composition">구성 가이드</a></li><li><a href="#print-layout">판형·노드·칠보강</a></li><li><a href="#cover-template">표지 템플릿</a></li><li><a href="#ctx-canvas">캔버스 오른쪽 클릭</a></li></ol></li>
     <li><a href="#dialogs">7. 대화 상자</a>
@@ -136,7 +136,7 @@ table.params td:nth-child(2) { white-space: normal; min-width: 8em; }
 <p class="translation-notice"><a href="index.html" hreflang="ja">기계 번역입니다. 일본어 원문</a></p>
 <header class="hero">
   <h1>LoomStroke 사용법</h1>
-  <p>라스터 그리기, 벡터, 텍스트, 다중 페이지, 만화 제작, AI 연동을 한 화면에서 처리할 수 있는 페인트 앱 LoomStroke의 사용법을 실제 화면과 함께 설명합니다. 모든 도구, 모든 패널 및 설정 항목을 포괄적으로 설명합니다.</p>
+  <p>래스터 그리기, 벡터, 텍스트, 여러 페이지, 만화 제작, AI 연계를 한 화면에서 다루는 페인트 앱 LoomStroke의 사용법을 실제 화면과 함께 설명합니다.</p>
 </header>
 
 <!-- ============================================================ -->
@@ -154,17 +154,21 @@ table.params td:nth-child(2) { white-space: normal; min-width: 8em; }
 <tr><td>v0.3.0.7.0〜0.3.0.7.10（10-28〜10-29）</td><td>가이드, 그리드, 구성 가이드, 측정 도구, 판형 가이드, 채색 확장, 인쇄 마크, 흐름/플래시, 경로에 따라 패턴 배치, 표지 템플릿<kbd>[</kbd> <kbd>]</kbd> 비율 및 가속 크기 변경. A판, B판의 픽셀 수를 DPI에서 계산</td><td><a href="#guides">가이드 및 정규</a> 다른 <a href="#menus">6. 메뉴</a> 각 섹션 / <a href="#tool-measure">측정</a> / <a href="#d-export">작은 시작</a></td></tr>
 <tr><td>v0.3.0.7.9〜0.3.0.7.18（10-29）</td><td>라이브 프롬프트의 '랜덤', '순차 선택', '조합 목록 생성'. AI 효과의 '연속 생성'. 라이브 프롬프트 필드의 줄바꿈 및 높이 변경. 갤러리의 '프롬프트 전체 복사'. 브러시 사이즈 가속 설정은 환경 설정 &gt; 성능으로 이동합니다.</td><td><a href="#p-prompt">프롬프트 편집기</a> / <a href="#p-aieffect">AI Effects Manager</a> / <a href="#p-gallery">갤러리</a> / <a href="#pref-perf">성능</a></td></tr>
 <tr><td>v0.3.0.7.19〜0.3.0.7.21（10-30）</td><td><code>install.bat</code> NanoBanana의 의존성(google-genai)을 기본적으로 포함. 12개 언어 번역 완성 및 언어 변경 시 입력값을 유지하는 개선.</td><td><a href="#install">설치 및 업데이트</a></td></tr>
+<tr><td>v0.3.0.7.28〜0.3.0.8.11（10-31〜11-08）</td><td>작화 보조의 투시 눈금자와 대칭 묘화, 3D 드로잉 인형·기본 도형·광원, LivePrompt의 표시명을 추가.</td><td><a href="#p-assist">작화 보조</a> / <a href="#p-3d">3D Preview</a> / <a href="#p-prompt">프롬프트 편집기</a></td></tr>
+<tr><td>v0.3.0.8.13〜0.3.0.8.96（11-08〜11-12）</td><td>NovelAI, 클립보드 이미지로부터의 신규 원고, 판형과 채우기를 지정하는 신규 원고, 인쇄용 프리셋・흑백 TIFF・PDF/X 후보를 추가.</td><td><a href="#p-novelai">NovelAI</a> / <a href="#new-doc">새 문서</a> / <a href="#d-export">인쇄용으로 출력</a></td></tr>
+<tr><td>v0.3.0.8.97〜0.3.0.8.121（11-14）</td><td>AI 패널의 입력란, 3D 광원의 화면상에서의 조작, 플러그인 갱신 실패시의 복구 등을 개선.</td><td><a href="#p-3d">3D Preview</a> / <a href="#faq">곤란했을 때는</a></td></tr>
 </table></div>
 <p>또한, 그리기 색상 및 배경 색상 전환(도구바 끝부분), 필터 메뉴에서 직접 적용, 경로 편집의 '캔버스에서 선 두께 편집', GPT Image 2의 입력 레이어와 2.5 시리즈 모델, 창 메뉴의 카테고리 분류가 추가되었습니다.</p>
 
 <h3 id="install">설치 및 업데이트 (Windows)</h3>
 <div class="table-wrap"><table>
 <tr><th>파일</th><th>사용법</th></tr>
-<tr><td><code>install.bat</code></td><td>초기 설정. 64비트 Python 3.11 이상이 없으면 관리자 권한 없이 폴더 내에서<code>.runtime</code>)에 Python을 준비합니다. NanoBanana의 의존성(google-genai)도 기본적으로 설치합니다. 설치 후 <code>boot_LoomStroke.bat</code> 을 시작합니다.</td></tr>
+<tr><td><code>install.bat</code></td><td>첫 번째 설정. Windows 64bit에서는 Python의 사전 도입이 필요하지 않습니다. 사용 가능한 Python가 없는 경우 확인된 Python 폴더(<code>.runtime</code>)로 가져옵니다. 관리자 권한은 필요하지 않습니다. NanoBanana 종속성 (google-genai)도 표준으로 도입됩니다. 완료 후 <code>boot_LoomStroke.bat</code> 을 시작합니다.</td></tr>
 <tr><td><code>update.bat</code></td><td>최신 버전으로 업데이트. ZIP으로 설치한 경우 Git 없이 공개 버전을 가져옵니다.<code>user_data</code> 실행 환경을 유지한 상태에서 본체를 교체합니다(이전 본체는 <code>.update-backups</code> 에 백업하여 실패 시 되돌립니다. Git으로 도입한 경우, 로컬에 변경이 없을 때만 최신 버전으로 진행합니다. 업데이트 후 <code>install.bat</code> 자동으로 실행합니다.</td></tr>
 <tr><td><code>boot_LoomStroke.bat</code></td><td>일반 시작.</td></tr>
 <tr><td><code>boot_LoomStroke_noAI.bat</code></td><td>AI 기능을 로드하지 않고 시작합니다(<code>--no-ai</code>AI Effects Manager, AI Select, 프롬프트 에디터, NanoBanana, GPT Image 2, ComfyUI, 갤러리 등의 패널과 환경 설정의 'AI 효과', 'SAM 3.1', 'LoomStroke MCP' 페이지가 표시되지 않습니다. 이 시작 시에는 패널 배치를 저장하지 않기 때문에, 일반 시작 시의 배치는 변하지 않습니다.</td></tr>
 </table></div>
+<p><code>--no-ai</code> NovelAI 패널도 표시되지 않습니다.</p>
 <p>자세한 절차는 동봉된 <code>docs/user/INSTALL_AND_RUN.md</code> 참고하세요. 애플리케이션 버전은 제목바(<code>LoomStroke v…</code>）과 <b>도움말 › LoomStroke에 대해</b> 을 확인할 수 있습니다.</p>
 
 <h3 id="launch">실행 및 시작 화면</h3>
@@ -198,17 +202,21 @@ table.params td:nth-child(2) { white-space: normal; min-width: 8em; }
 <tr><th>항목</th><th>내용</th></tr>
 <tr><td><span class="num">1</span>카테고리</td><td>AI / A4 / B4 / 데스크탑 화면 / 모바일 화면 / 커스텀</td></tr>
 <tr><td><span class="num">1</span>프리셋</td><td>카테고리 내의 사이즈. AI 카테고리에는 <code>[SD1.5] 1:1 512 x 512</code>、<code>[SDXL/etc] 1:1 1024 x 1024</code> 등, 이미지 생성 모델용 해상도가 준비되어 있습니다.</td></tr>
+<tr><td>AI용 크기</td><td>ChatGPT / GPT Image 및 NanoBanana의 모델별 크기도 선택할 수 있습니다. AI용 프리셋의 픽셀 수는 DPI를 변경해도 변하지 않습니다.</td></tr>
+<tr><td>판형 / 캔버스에 채우기 포함</td><td>A판・B판등의 판형을 선택하면, DPI에 맞춘 마무리 치수를 설정합니다. 확인은 초기 꺼짐입니다. 켜면 채우기를 포함한 캔버스 치수가 되어 작성 후 대응하는 판형 가이드가 붙습니다. OFF에서는 마무리 치수의 캔버스와 가이드를 만듭니다. 덧칠을 나중에 더하면<a href="#print-layout">캔버스 크기 및 판형 가이드</a>별도로 조작합니다.</td></tr>
 <tr><td><span class="num">2</span>폭 / 높이 (px)</td><td>1~16384 px. '프리셋에 추가'를 통해 현재 크기를 개인 프리셋으로 저장합니다.</td></tr>
 <tr><td><span class="num">3</span>DPI</td><td>1~1200. 인쇄용 출력 시 출력 크기 계산에 사용됩니다. A판·B판 프리셋에서는 DPI를 변경하면 폭·높이의 픽셀 수를 다시 계산합니다(프리셋 이름에 표시되는 픽셀 수는 여전히 72dpi 시의 값입니다). 수동으로 입력한 크기나 AI·화면·사용자 프리셋은 픽셀 수를 유지합니다.</td></tr>
 <tr><td><span class="num">4</span>색 모드</td><td><b>RGB / 8 bit</b>、<b>CMYK / 8 bit</b>、<b>CMYK / 16 bit</b>CMYK를 선택하면 ICC 프로파일 선택이 필수입니다.</td></tr>
 <tr><td><span class="num">4</span>ICC 프로파일(CMYK 시)</td><td>동봉된 ISO Coated v2 300% / ISO Coated v2 / PSO Uncoated ISO12647 / ISO Newspaper v4 26 / PSO LWC Improved / SC paper(basicColor) 및 APTEC Offset 2025 중에서 선택합니다. 'ICC 프로파일을 로드합니다...'를 클릭하여 보유한 .icc 파일을 추가하고, '표준 ICC 프로파일 다운로드...'를 클릭하여 각 지역의 공식 배포 페이지 목록을 열 수 있습니다.</td></tr>
 <tr><td><span class="num">5</span>배경</td><td>투명 / 흰색 / 커스텀 색상(색상을 선택...으로 지정)</td></tr>
 </table></div>
+<p><b>파일 › 클립보드에서 새 캔버스 만들기</b>그러면 복사된 이미지의 원치수로 투명 배경의 RGB 원고를 만들고 이미지를 레이어에 배치합니다. 대응 화상이 없을 때는 메뉴를 선택할 수 없습니다. 현재 문서에 저장되지 않은 변경사항이 있으면 교체하기 전에 확인이 표시됩니다.</p>
 <p>새로 생성하면 이전 문서에서 사용했던 구성 가이드의 표시가 초기화됩니다. 열려 있는 문서에 미저장된 변경 사항이 있다면, 새 문서 생성, 열기, 닫기, 종료 전에 '미저장된 변경 사항' 확인 창이 나타납니다(저장하기, 버리기, 취소 중에서 선택 가능. 버튼이 영어로 표시될 수 있습니다). 저장에 실패하거나 저장 위치를 취소한 경우, 원래 문서를 닫지 않고 남깁니다.</p>
 
 <h3 id="screen">화면 보기</h3>
 <div class="note">이 사용법서의 스크린샷에서는 설명하는 부분을 붉은 테두리와 번호로 표시하고 있습니다. 본문이나 표에서 <span class="num">1</span> 등의 번호는 이미지 번호와 대응합니다.</div>
 <figure><img src="img/main.png" alt="메인 화면" loading="lazy"><figcaption>메인 화면(일러스트를 열고 펜이나 글자를 그린 상태)</figcaption></figure>
+<p>처음 시작할 때와<b>창고 &gt; 레이아웃 재설정</b>바로 다음에는 오른쪽에 레이어 패널만 표시됩니다. 다른 패널은 창 메뉴에서 열립니다. 위 이미지는 이전 버전에서 여러 패널을 표시한 예입니다.</p>
 <div class="table-wrap"><table>
 <tr><th>위치</th><th>내용</th></tr>
 <tr><td><span class="num">1</span>상단</td><td>메뉴바 (파일·편집·이미지·표시·레이어·필터·창·도움말)</td></tr>
@@ -1009,11 +1017,12 @@ table.params td:nth-child(2) { white-space: normal; min-width: 8em; }
 <tr><td>VRAM 해제</td><td>ComfyUI 모델을 GPU 메모리에서 제거합니다.</td></tr>
 </table>
 <p>AI Effect 레이어 흐름: 프리셋을 오른쪽 클릭하여 레이어로 추가 → 레이어 패널에서 입력 슬롯에 원래 레이어를 할당 → 필터 패널에서 파라미터를 조정 → 레이어 패널의 행 생성 버튼을 클릭하여 생성합니다. 생성 결과는 이미지와 배치만 한 번의 '되돌리기'로 되돌릴 수 있으며, 프롬프트나 설정은 되돌릴 수 없습니다. 프리셋이 하나도 없으면 'AI Effect 프리셋이 설치되어 있지 않습니다'라는 메시지가 표시되며, '프리셋 폴더 열기'를 클릭하여 설치 위치를 열 수 있습니다.</p>
+<p>입력 슬롯에는 3D 레이어도 선택할 수 있습니다. [레이어] 패널로 연결된 3D 입력은 [필터] 패널에도 연결됨으로 표시됩니다.</p>
 <figure class="mid"><img src="img/dlg_ai_presets.png" alt="프리셋 없음" loading="lazy"><figcaption>필터 › AI 효과 프리셋...(미제공 시. 이미지는 영어 표시 시 이미지)</figcaption></figure>
 <h4 id="ai-batch">연속 생성</h4>
 <p>AI 효과 레이어의 필터 패널에서 '트리거' 아래에 있습니다. 이전 생성이 끝날 때까지 기다렸고, 한 번에 하나씩 생성합니다.</p>
 <table>
-<tr><td>횟수 지정 / 한 루프까지 / 중단까지 (무한)</td><td>반복 횟수는 1~1,000,000회(초기값 10). 한 회전은 라이브 프롬프트의 '순차 선택' 및 '조합 목록 생성'의 모든 후보를 모두 반복하는 횟수를 계산합니다(랜덤은 계산에 포함되지 않습니다).</td></tr>
+<tr><td>횟수 지정 / 한 루프까지 / 중단까지 (무한)</td><td>횟수 지정은 1~1,000,000회(초기 1). 한 순환은 라이브 프롬프트의 "순차 선택" "조합 열거"의 모든 후보를 돌리는 횟수를 계산합니다 (무작위는 계산에 들어 가지 않습니다).</td></tr>
 <tr><td>연속 생성 시작 / 중지</td><td>진행 상태는 '완료 n / 총합'으로 표시됩니다.</td></tr>
 <tr><td>정지 조건</td><td>정지 버튼, 생성 실패, 선택된 레이어/페이지/문서/프리셋/연결 대상/라이브 프롬프트 구성 변경, 외부 서비스의 허용 해제.</td></tr>
 </table>
@@ -1057,6 +1066,17 @@ table.params td:nth-child(2) { white-space: normal; min-width: 8em; }
 </table></div>
 </div>
 
+<h3 id="p-novelai">NovelAI</h3>
+<p><b>윈도우 › AI › NovelAI</b>에서 패널을 엽니다. 사용하기 전에<a href="#pref-ui">외부 AI 서비스 허용</a>해,<a href="#pref-ai">환경 설정 › AI 효과</a>API Keys에 NovelAI 키를 등록합니다. 생성 된 이미지는 레이어에 적용되고 성공적인 이미지<a href="#p-gallery">갤러리</a>에서 확인할 수 있습니다.</p>
+<table>
+<tr><th>작업</th><th>사용법</th></tr>
+<tr><td>Generate / i2i / Inpaint</td><td>새로운 생성, 입력 레이어를 사용하는 이미지 변환, 현재의 선택 범위 내에서 다시 그리기를 전환합니다.</td></tr>
+<tr><td>Tools / Enlarge</td><td>배경 제거·선화화 등의 화상 툴, 확대 처리를 선택합니다. 입력 이미지가 필요합니다.</td></tr>
+<tr><td>Image Settings / AI Settings</td><td>크기, 방향, 생성 매수, 스텝, 가이던스, 시드 등을 설정합니다. 여러 장을 지정한 결과는 이미지별로 새 레이어가 됩니다.</td></tr>
+<tr><td>References</td><td>참조 레이어와 NovelAI Potion의 이미지를 지정하고 강도 등을 조정합니다.</td></tr>
+<tr><td>Live prompt / Generate</td><td>프롬프트 편집기 부품을 사용할 수 있습니다. 화면 하단의 생성 버튼으로 실행합니다. 갤러리의 NovelAI 이미지에서 다른 버전을 만들 수 있습니다.</td></tr>
+</table>
+
 <h3 id="p-prompt">프롬프트 편집기</h3>
 <div class="grid3">
 <figure><img src="img/panel_prompt_editor.png" alt="생성" loading="lazy"><figcaption>생성 탭</figcaption></figure>
@@ -1074,6 +1094,7 @@ table.params td:nth-child(2) { white-space: normal; min-width: 8em; }
 <tr><td>검색 / 태그 / 종류</td><td>저장된 부품을 검색합니다. 종류: 프롬프트 / 문자열 / 리스트 / 시스템 프롬프트 (LLM) / 사용자 프롬프트 (LLM)</td></tr>
 <tr><td>상세 정보</td><td>제목·태그·컴포넌트 종류·미리보기 편집</td></tr>
 <tr><td>하단 버튼</td><td>생성 탭으로 로드 / 복제 / 삭제 / 내보내기 / 업데이트.</td></tr>
+<tr><td>LivePrompt의 표시 이름</td><td>문자열과 목록의 항목에 표시 이름을 지정할 수 있습니다. 각 LivePrompt 입력란의 오른쪽 상단에서 표시 이름과 실제 문자열을 전환할 수 있습니다.</td></tr>
 <tr><th colspan="2">LLM</th></tr>
 <tr><td>프로바이더 / 모델</td><td>Anthropic / Gemini / OpenAI와 각 모델.</td></tr>
 <tr><td>온도 / 최대 토큰</td><td>0.0〜2.0 / 0〜32000。</td></tr>
@@ -1092,8 +1113,12 @@ table.params td:nth-child(2) { white-space: normal; min-width: 8em; }
 <tr><td>Rotate / Turntable</td><td>회전 / 자동으로 회전</td></tr>
 <tr><td>Add 3D Layer</td><td>3D 레이어로 캔버스에 추가</td></tr>
 <tr><td>Import Projection</td><td>3D의 외관을 캔버스에 투영하여 가져옵니다.</td></tr>
+<tr><td>Add basic shape</td><td>입방체, 구, 원통을 선택하고 편집할 수 있는 3D 레이어로 추가합니다.</td></tr>
+<tr><td>Add drawing figure</td><td>BodyKun / BodyChan과 초기 포즈를 선택하고 그림 인형을 3D 레이어로 추가합니다.</td></tr>
 </table></div>
 </div>
+<p>인형의 3D 레이어를 선택하면 캔버스에서 관절을 드래그하여 포즈를 편집할 수 있습니다. 손목을 선택하면 손가락도 조정할 수 있으며, 내장 포즈라고 이름을 붙여 저장된 포즈를 선택할 수 있습니다. OpenPose는 새 레이어 또는 JSON으로 출력할 수 있습니다. 인형이나 기본 도형의 추가·포즈 편집은 실행 취소할 수 있습니다.</p>
+<p>3D 레이어<b>광원</b>모드에서는 광원의 구를 드래그하여 위치를 조정하고 구 이외를 드래그하면 시점을 돌릴 수 있습니다. 광원이 화면 밖으로 나오면 창 가장자리의 방향을 나타내는 핸들에서 되돌릴 수 있습니다. 위치의 X / Y / Z는 툴바에서도 지정할 수 있습니다.</p>
 
 <h3 id="p-aicand">AI Select Candidates</h3>
 <div class="side">
@@ -1380,12 +1405,14 @@ table.params td:nth-child(2) { white-space: normal; min-width: 8em; }
 <div class="side">
 <figure><img src="img/panel_drawing_assist.png" alt="작화 보조" loading="lazy"><figcaption>작화 보조</figcaption></figure>
 <div><table>
-<tr><td>종류 / 추가 / 삭제</td><td>미러 / 회전 대칭 / 평행 눈금자 / 방사형 눈금자 / 동심원 눈금자 / 원근 눈금자를 추가하거나 삭제합니다.</td></tr>
+<tr><td>종류 / 추가 / 삭제</td><td>미러 / 회전 대칭 / 직선 눈금자 / 방사 눈금자 / 동심원 눈금자 / 투시 눈금자 추가 / 삭제.</td></tr>
 <tr><td>활성화</td><td>선택한 보조 요소를 그림에 사용합니다</td></tr>
 <tr><td>활성화 / 오버레이 표시</td><td>보조 기능의 켜기/끄기와 가이드 라인 표시</td></tr>
 <tr><td>적용 / 업데이트</td><td>설정 반영 / 목록 갱신. 아래에 '이 페이지의 보조: N 개' 표시.</td></tr>
 </table></div>
 </div>
+<p>직선 눈금자는 각도를 지정하여 선 방향을 정렬합니다. 활성 선형 눈금자는 <kbd>Alt</kbd>+<kbd>←</kbd> / <kbd>Alt</kbd>+<kbd>→</kbd> 에서 15°씩 회전할 수 있습니다. 투시 눈금자는 1점·2점·3점 투시와 그리기 방향을 선택하고 소실점을 수치 또는 캔버스상의 드래그로 조정합니다.</p>
+<p>미러와 회전 대칭은 펜의 선뿐만 아니라, 선택·채우기, 벡터나 텍스트의 신규 작성에도 사용할 수 있습니다. 대칭 위치의 결과는 1회의 「취소」로 정리해 취소할 수 있습니다. 기존 개체를 편집할 때는 대칭 복제하지 않습니다.</p>
 
 <h3 id="p-actions">액션</h3>
 <div class="side">
@@ -1510,6 +1537,8 @@ table.params td:nth-child(2) { white-space: normal; min-width: 8em; }
 <tr><td>최종 표시</td><td>최종 선 외부를 어두운 색으로 표시합니다.</td></tr>
 <tr><td>채우기 연장...</td><td>선택된 레이어의 외곽선 외부만을 '끝 픽셀을 확장' 또는 '끝 픽셀을 거울 반사'로 채웁니다. 외곽선 내부 픽셀은 변하지 않습니다. 전체 캔버스가 잠겨 있지 않은 일반 레이어에서, 형상 가이드가 있는 페이지가 대상입니다. 원래 상태로 되돌릴 수 있습니다.</td></tr>
 </table></div>
+<p>기존 원고의 크기가 맞지 않을 때는 판형 가이드 화면에서 필요한 치수를 입력한 "캔버스 크기"를 엽니다. 크기 조정을 확인한 후 판형 가이드를 별도로 적용합니다.</p>
+<p>판형 가이드의 마무리 선과 캔버스 외주 사이는 채우기 영역으로 얇은 색으로 표시됩니다.<b>가이드 표시</b>끄면 숨겨집니다. 이 색상은 인쇄 또는 이미지 내보내기에 포함되지 않습니다.</p>
 <p><b>파일 &gt; 만화 프리플라이트...</b> 의 '인쇄 (흑백)'에서는, 글자나 편집 텍스트가 노드 위험 영역에 겹치거나, 그림이 완성선에 도달하지만 채우기까지 도달하지 않을 경우 경고합니다.</p>
 
 <h3 id="cover-template">표지 템플릿</h3>
@@ -1581,12 +1610,14 @@ table.params td:nth-child(2) { white-space: normal; min-width: 8em; }
 <tr><td>기존 파일</td><td>오버라이트 전 확인 / 교체 / 건너뛰기 / 연번을 붙여 저장</td></tr>
 <tr><td>export-report.json을 생성합니다</td><td>출력 결과를 기록합니다.</td></tr>
 <tr><th colspan="2">인쇄용으로 출력</th></tr>
-<tr><td>출력</td><td>표준 PDF / PDF/X-1a / PDF/X-4 / CMYK TIFF 연속 / 그레이스케일 K TIFF 연속</td></tr>
+<tr><td>출력</td><td>표준 PDF / PDF/X-1a 후보 / PDF/X-4 후보 / CMYK TIFF 연번 / 그레이스케일 K TIFF 연번 / 8-bit 그레이스케일 TIFF 연번 / 흑백 1-bit TIFF 연번.</td></tr>
+<tr><td>프리셋</td><td>판형 · DPI · 채우기 · 출력 조건을 이름으로 저장하고 다음에 다시 선택할 수 있습니다. 선택한 프리셋의 판형이나 DPI가 대상 페이지와 맞지 않는 경우는 내보내기를 정지합니다.</td></tr>
 <tr><td>토마를 그리기</td><td>절단 위치를 표시합니다(기본값: 켜짐)</td></tr>
-<tr><td>인쇄 마크 (표준 PDF일 때)</td><td>종류: 일본식 각 톤보(기존), 일본식 더블 톤보, 해외식 절단 마크. 절단 마크(기본적으로 켜짐)/ 채우기 마크/ 등록 마크/ 센터 톤보. 선 두께 0.01~5pt(기본값 0.25), 채우기 외부 거리 0~144pt(기본값 3), 마크 색상: 기존 검정(RGB)/ K만(100%)/ 등록(CMYK 각 100%)</td></tr>
+<tr><td>인쇄 마크(PDF일 때)</td><td>종류：일본식 각 잠자리(종래) / 일본식 더블 잠자리(초기값)/ 해외식 재단 마크. 재단 마크 (초기 온) / 채우기 마크 / 레지스터 마크 / 센터 잠자리. 선폭 0.01~5pt(초기 0.25), 채우기 외측으로부터의 거리 0~144pt(초기 3), 마크의 색: 종래의 검정(RGB)/K만(100%)/레지스트레이션(CMYK 각 100%).</td></tr>
 <tr><td>간격 정보(표준 PDF일 때)</td><td>파일명 / 페이지 번호 / 날짜 / 색상 모드 / 색상 바 / 그레이 바를 여백에 포함합니다(모든 항목은 초기값으로 비활성화됨)</td></tr>
 <tr><td>미리보기</td><td>최종 크기와 채우기 확인. 판형 가이드가 없으면 캔버스 전체를 최종 크기로 처리합니다(채우기 없음).</td></tr>
 </table>
+<div class="note">PDF/X-1a・PDF/X-4는 적합을 보증한 출력이 아니라 후보입니다. 내보낸 후 트래 피킹 전에 callas pdfToolbox Desktop의 해당 Verify compliance에서 수동으로 확인하십시오. PDF/X 후보에서는 「여백 정보」를 사용할 수 없습니다. 표준 PDF는 PDF/X가 아닙니다.</div>
 <div class="grid2">
 <figure><img src="img/dlg_export_webtoon.png" alt="Webtoon" loading="lazy"><figcaption><b>웹토온 내보내기</b>: 수직 스크롤 만화용으로 페이지를 연결하여 분할</figcaption></figure>
 <figure><img src="img/dlg_export_digital.png" alt="디지털 만화 패키지" loading="lazy"><figcaption><b>디지털 만화 패키지</b>: 전자책용</figcaption></figure>
@@ -1727,7 +1758,7 @@ table.params td:nth-child(2) { white-space: normal; min-width: 8em; }
 <tr><td>저장된 서버 상태를 업데이트</td><td>버튼</td><td>—</td><td>등록된 연결 대상에 연결할 수 있는지 확인합니다.</td></tr>
 <tr><td>ComfyUI Servers：Local URL</td><td>URL</td><td>（빈 값）= http://127.0.0.1:8188</td><td>이 컴퓨터에서 작동하는 ComfyUI의 URL입니다.</td></tr>
 <tr><td>ComfyUI Servers：External URL（＋ / Name）</td><td>이름과 URL</td><td>없음</td><td>다른 컴퓨터의 ComfyUI를 이름을 붙여 추가합니다(빈 행은 무시합니다).</td></tr>
-<tr><td>API Keys：NanoBanana (Google Gemini) / GPT Image 2 (OpenAI) / OpenAI / Anthropic (Claude) / Google Gemini</td><td>Change… / Clear</td><td>설정되지 않음</td><td>각 서비스의 API 키를 등록 및 삭제합니다. 등록된 키는 '✓ Configured'로 표시됩니다. 키는 운영체제의 자격 정보 저장소에 저장됩니다.</td></tr>
+<tr><td>API Keys：NanoBanana (Google Gemini) / GPT Image 2 (OpenAI) / NovelAI / OpenAI / Anthropic (Claude) / Google Gemini</td><td>Change… / Clear</td><td>설정되지 않음</td><td>각 서비스의 API 키를 등록 및 삭제합니다. 등록된 키는 '✓ Configured'로 표시됩니다. 키는 운영체제의 자격 정보 저장소에 저장됩니다.</td></tr>
 <tr><td>GPT Image 2에서 OpenAI API 키 사용</td><td>온/오프</td><td>오프</td><td>GPT Image 2 생성에는 전용 키를 사용하지 않고 OpenAI의 행 키를 사용합니다.</td></tr>
 </table></div>
 </section>
@@ -1765,6 +1796,7 @@ table.params td:nth-child(2) { white-space: normal; min-width: 8em; }
 <tr><td>시작 시 'LoomStroke — 복원'이 나타납니다.</td><td>이전에 강제 종료된 표시입니다. 필요하면 '복원', 필요 없으면 '삭제 및 새 시작'을 선택합니다. ×로 닫힌 경우는 아무것도 삭제하지 않고 다음 실행 시 다시 표시됩니다.</td></tr>
 <tr><td>화면 언어가 의도와 다름</td><td>처음에는 Windows의 표시 언어에 맞춥니다.<a href="#pref-ui">환경 설정 › 인터페이스</a> 언어를 '언어'로 지정해 주세요.</td></tr>
 <tr><td>업데이트 및 설치에 실패</td><td><code>install.bat</code> ZIP 버전의를 다시 실행합니다. <code>update.bat</code> 실패 시 이전 본체로 되돌립니다. Git 버전은 로컬에 변경이 있으면 업데이트를 중단합니다.</td></tr>
+<tr><td>플러그인 업데이트 또는 수동 롤백 실패</td><td>실패 표시를 확인하십시오. 이전 버전을 계속 사용할 수 있도록 되돌려 재시도 백업을 유지합니다. 다시 시도하기 전에 플러그인과 패널의 상태를 확인하십시오.</td></tr>
 <tr><td>되돌리면 '완료되지 않았습니다' 라고 표시됩니다</td><td>상태바의 안내에 따라, 계속하기 전에 원고의 상태를 확인하고, 필요 시 다른 이름으로 저장하세요.</td></tr>
 <tr><td>폰트가 교체되어 표시됨</td><td>파일 &gt; 폰트 진단에서 누락된 폰트를 확인하고, 대체 또는 아웃라인화합니다.</td></tr>
 <tr><td>코마 프레임 조작이 보이지 않습니다</td><td><b>창 › 코미크 › Comic</b> 에서 표시하고, '프레임 분할' 탭을 선택합니다. 조작 영역과 읽기 순서 목록은 탭 내의 스크롤로 확인할 수 있습니다.<a href="#comic-frame-start">코마 프레임 레이어 순서</a>을 참조하세요.</td></tr>
@@ -1775,7 +1807,7 @@ table.params td:nth-child(2) { white-space: normal; min-width: 8em; }
 </table>
 </section>
 
-<p style="color:var(--muted);font-size:13px;margin-top:48px;">본문은 LoomStroke v0.3.0.7.21(2026-10-30)의 내용에 맞춰 작성되었습니다. 많은 스크린샷은 v0.1(2026-10-12~14 기간의 개발 버전, 한국어 UI) 당시 촬영한 것이며, 이후 추가된 항목이나 한국어로 표시된 내용은 이미지에 반영되지 않을 수 있습니다. 예시 이미지들은 사용자 제공 이미지입니다. 향후 버전에서 화면이 변경될 수 있습니다.</p>
+<p style="color:var(--muted);font-size:13px;margin-top:48px;">본문은 공개판 LoomStroke v0.3.0.8.121까지의 주된 조작에 맞추고 있습니다. 스크린샷은 구판에서 촬영한 것으로, 나중에 더해진 항목이나 표시는 화상에 찍히지 않는 경우가 있습니다. 작례의 일러스트는 사용자 제공입니다. 향후 버전에서 화면이 변경될 수 있습니다.</p>
 </main>
 </div>
 

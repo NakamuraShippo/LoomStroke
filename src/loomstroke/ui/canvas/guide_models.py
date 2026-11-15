@@ -8,7 +8,7 @@ from typing import Literal
 from PySide6.QtCore import QPointF
 
 GuideOrientation = Literal["horizontal", "vertical"]
-RulerUnit = Literal["px", "mm", "inch"]
+RulerUnit = Literal["px", "mm", "cm", "inch", "pt", "pc"]
 
 
 @dataclass(slots=True)

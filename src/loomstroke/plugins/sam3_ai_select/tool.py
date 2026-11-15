@@ -139,6 +139,7 @@ from ...ai_selection.asset_export import (
     encode_sprite_sheet_image,
     encode_transparent_png,
     pack_sprite_sheet,
+    project_png_export_source,
     sheet_max_side_px,
     trim_image_to_alpha_bbox,
     write_export_batch,
@@ -6072,7 +6073,7 @@ class Sam3AISelectToolPlugin:
         scope = "sprite_sheet"
         try:
             store, session, source_layer, canvas_size = self._require_asset_export_batch_context(
-                canvas=canvas, asset_store=asset_store
+                canvas=canvas, asset_store=asset_store, project_active_layer=False
             )
         except Sam3AISelectToolStateError as exc:
             return self._blocked_asset_export_result(action_id, scope=scope, code=exc.code)
@@ -6272,7 +6273,7 @@ class Sam3AISelectToolPlugin:
         canvas_size: tuple[int, int],
         padding_px: int | None = None,
     ) -> tuple[Any, tuple[int, int, int, int], tuple[int, int]]:
-        """Trimmed sprite + layer-local bbox + source (layer) size."""
+        """Trimmed sprite, its bbox, and the dimensions of the export source."""
 
         try:
             mask_image = build_layer_mask_image_from_asset(
@@ -6329,6 +6330,7 @@ class Sam3AISelectToolPlugin:
         *,
         canvas: object | None,
         asset_store: Sam3AssetStore | None,
+        project_active_layer: bool = True,
     ) -> tuple[Sam3AssetStore, Sam3SelectionSession, Any, tuple[int, int]]:
         # Unlike the single-candidate gate this does not require a selected
         # candidate: an all-rejected set must reach the handler and report
@@ -6357,7 +6359,10 @@ class Sam3AISelectToolPlugin:
                 "SAM3 asset export requires a valid canvas size.",
             )
         source_layer = self._resolve_export_source(
-            canvas, canvas_size=canvas_size, active_layer_id=source_layer_id
+            canvas,
+            canvas_size=canvas_size,
+            active_layer_id=source_layer_id,
+            project_active_layer=project_active_layer,
         )
         return (asset_store, session, source_layer, canvas_size)
 
@@ -6384,14 +6389,15 @@ class Sam3AISelectToolPlugin:
         *,
         canvas_size: tuple[int, int],
         active_layer_id: str,
+        project_active_layer: bool = True,
     ) -> Any:
         """Return the pixel source layer for export.
 
         ``export_source == "composite"`` reads the visible composite (all
         layers, as seen) via a canvas-sized offset-0 pseudo layer; otherwise
-        the active layer's own pixels are used. The active-layer existence
-        gate stays in the caller either way (a canvas with no layers has no
-        composite worth exporting).
+        the active layer's own pixels are used. Standalone PNGs sample a
+        transformed RGB layer on the page grid. Atlas metadata still refers
+        to the original layer grid. Both sources require an active layer.
         """
 
         if self.settings.export_source == "composite":
@@ -6407,7 +6413,13 @@ class Sam3AISelectToolPlugin:
             logger.debug("SAM3 asset export source=composite")
             return layer
         logger.debug("SAM3 asset export source=active_layer")
-        return self._require_export_source_layer(canvas, active_layer_id)
+        source_layer = self._require_export_source_layer(canvas, active_layer_id)
+        if not project_active_layer:
+            return source_layer
+        try:
+            return project_png_export_source(canvas, source_layer, *canvas_size)
+        except Sam3AssetExportError as exc:
+            raise Sam3AISelectToolStateError(exc.code, str(exc)) from exc
 
     def _resolve_export_composite_layer(  # noqa: PLR0911 - flat guard chain
         self,
@@ -12341,8 +12353,7 @@ def _prompt_sprite_sheet_save_path(image_format: str) -> str:
 def _captured_export_layer(source_layer: Any) -> Any:
     """Immutable snapshot of the layer pixels/offset taken before the dialog.
 
-    The composite pseudo layer is already an owned, immutable copy (offset 0),
-    so it is passed through without a second copy.
+    Composited and projected images are already owned copies.
     """
 
     from types import SimpleNamespace  # noqa: PLC0415

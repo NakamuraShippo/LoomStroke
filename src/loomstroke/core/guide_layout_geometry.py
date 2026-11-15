@@ -9,6 +9,7 @@ from typing import Any, Literal
 GuideAxis = Literal["horizontal", "vertical"]
 GuidePosition = tuple[GuideAxis, float]
 MAX_DIVISIONS = 1000
+GUIDE_UNITS = ("px", "mm", "cm", "inch", "pt", "pc")
 
 
 def is_unrotated_guide(guide: Mapping[str, Any]) -> bool:
@@ -80,8 +81,14 @@ def unit_to_pixels(value: float, unit: str, dpi: float) -> float:
         return value
     if unit == "mm":
         return value * dpi / 25.4
+    if unit == "cm":
+        return value * dpi / 2.54
     if unit == "inch":
         return value * dpi
+    if unit == "pt":
+        return value * dpi / 72.0
+    if unit == "pc":
+        return value * dpi / 6.0
     raise ValueError("Invalid unit")
 
 

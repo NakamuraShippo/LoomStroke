@@ -1,5 +1,5 @@
 <!doctype html>
-<!-- Japanese source SHA-256: 6abc2d75844f04b5cf52ac916f1aa13e005046d9fbc7ae2636fe0ef8a16ef611 -->
+<!-- Japanese source SHA-256: ce08b94b672a76d93d8ea3cf11f381e5c2333ca45b7241dcebf9517591bc5e7a -->
 <html lang="en" dir="ltr">
 <head>
 <meta charset="utf-8">
@@ -106,7 +106,7 @@ table.params td:nth-child(2) { white-space: normal; min-width: 8em; }
   <!-- manual-languages:end -->
 
   <div class="brand">LoomStroke Instruction Manual</div>
-  <div class="sub">Compatible with v0.3.0.7.21 / Complete guide with screenshots</div>
+  <div class="sub">Public version v0.3.0.8.121 compatible / Guide with screenshots</div>
   <button class="menu-toggle" type="button" onclick="document.getElementById('toc').classList.toggle('open')">Open table of contents</button>
   <div class="toc-body">
   <ol>
@@ -118,7 +118,7 @@ table.params td:nth-child(2) { white-space: normal; min-width: 8em; }
     <li><a href="#layers">4. Layers and filters</a>
       <ol><li><a href="#layer-panel">layer panel</a></li><li><a href="#blend"> Layer effect (compositing)</a></li><li><a href="#layer-ctx">right click menu</a></li><li><a href="#channels"> channel</a></li><li><a href="#filters"> All types of filter layers</a></li><li><a href="#fill-layers"> fill layer</a></li><li><a href="#layer-styles"> layer style</a></li></ol></li>
     <li><a href="#panels">5. Panel details</a>
-      <ol><li><a href="#p-preview">preview</a></li><li><a href="#p-color"> color</a></li><li><a href="#p-brush"> brush manager</a></li><li><a href="#p-font"> font</a></li><li><a href="#p-shape"> shape manager</a></li><li><a href="#p-transform"> Transform</a></li><li><a href="#p-filter"> filter</a></li><li><a href="#p-reference"> Reference</a></li><li><a href="#p-pages"> page</a></li><li><a href="#p-gallery"> gallery</a></li><li><a href="#p-aieffect"> AI Effects Manager</a></li><li><a href="#p-nanobanana"> NanoBanana</a></li><li><a href="#p-gptimage"> GPT Image 2</a></li><li><a href="#p-prompt"> prompt editor</a></li><li><a href="#p-3d"> 3D Preview</a></li><li><a href="#p-aicand"> AI Select Candidates</a></li><li><a href="#p-mangamask"> Manga Mask Assistant</a></li><li><a href="#p-comic"> Comic</a></li><li><a href="#p-comicassets"> Comic Assets</a></li><li><a href="#p-comicproject"> comic project</a></li><li><a href="#p-comicworkflow"> comic workflow</a></li><li><a href="#p-assist"> Drawing assistance</a></li><li><a href="#p-actions"> action</a></li><li><a href="#p-links"> link</a></li><li><a href="#p-copilot"> Canvas Assistant</a></li><li><a href="#p-production"> Production Control</a></li></ol></li>
+      <ol><li><a href="#p-preview">preview</a></li><li><a href="#p-color"> color</a></li><li><a href="#p-brush"> brush manager</a></li><li><a href="#p-font"> font</a></li><li><a href="#p-shape"> shape manager</a></li><li><a href="#p-transform"> Transform</a></li><li><a href="#p-filter"> filter</a></li><li><a href="#p-reference"> Reference</a></li><li><a href="#p-pages"> page</a></li><li><a href="#p-gallery"> gallery</a></li><li><a href="#p-aieffect"> AI Effects Manager</a></li><li><a href="#p-nanobanana"> NanoBanana</a></li><li><a href="#p-gptimage"> GPT Image 2</a></li><li><a href="#p-novelai"> NovelAI</a></li><li><a href="#p-prompt"> prompt editor</a></li><li><a href="#p-3d"> 3D Preview</a></li><li><a href="#p-aicand"> AI Select Candidates</a></li><li><a href="#p-mangamask"> Manga Mask Assistant</a></li><li><a href="#p-comic"> Comic</a></li><li><a href="#p-comicassets"> Comic Assets</a></li><li><a href="#p-comicproject"> comic project</a></li><li><a href="#p-comicworkflow"> comic workflow</a></li><li><a href="#p-assist"> Drawing assistance</a></li><li><a href="#p-actions"> action</a></li><li><a href="#p-links"> link</a></li><li><a href="#p-copilot"> Canvas Assistant</a></li><li><a href="#p-production"> Production Control</a></li></ol></li>
     <li><a href="#menus">6. Menu</a>
       <ol><li><a href="#guides">guide and ruler</a></li><li><a href="#grid"> grid settings</a></li><li><a href="#composition"> composition guide</a></li><li><a href="#print-layout"> Format/Gutter/Additional coloring</a></li><li><a href="#cover-template"> cover template</a></li><li><a href="#ctx-canvas"> right click on canvas</a></li></ol></li>
     <li><a href="#dialogs">7. Dialogue</a>
@@ -136,7 +136,7 @@ table.params td:nth-child(2) { white-space: normal; min-width: 8em; }
 <p class="translation-notice"><a href="index.html" hreflang="ja">Machine translation. Japanese original</a></p>
 <header class="hero">
   <h1>LoomStroke Instruction Manual</h1>
-  <p>We will explain how to use the paint app LoomStroke, which handles raster drawing, vector, text, multiple pages, manga production, and AI collaboration on one screen, along with actual screens. It covers all tools, all panels and their settings.</p>
+  <p>We will explain how to use the LoomStroke, a paint app that handles raster drawing, vector, text, multiple pages, manga production, and AI collaboration on a single screen, along with actual screens.</p>
 </header>
 
 <!-- ============================================================ -->
@@ -154,17 +154,21 @@ table.params td:nth-child(2) { white-space: normal; min-width: 8em; }
 <tr><td>v0.3.0.7.0〜0.3.0.7.10（10-28〜10-29）</td><td>Guide, grid, composition guide, measurement tool, format guide, fill extension, print mark, streamline/flash, placing pattern along the path, cover template.<kbd>[</kbd> <kbd>]</kbd> Proportional/accelerated size change. Calculate the px number of A size and B size from DPI.</td><td><a href="#guides">guide and ruler</a> Others <a href="#menus">6. Menu</a> Each clause of / <a href="#tool-measure">measurement</a> / <a href="#d-export">Start writing</a></td></tr>
 <tr><td>v0.3.0.7.9〜0.3.0.7.18（10-29）</td><td>"Random", "Sequential selection" and "Combination enumeration" of live prompts. “Continuous generation” of AI Effect. Wrapping and changing the height of the live prompt field. "Copy full prompt" in the gallery. Move the Brush Size Acceleration setting to Preferences › Performance.</td><td><a href="#p-prompt">prompt editor</a> / <a href="#p-aieffect">AI Effects Manager</a> / <a href="#p-gallery">gallery</a> / <a href="#pref-perf">performance</a></td></tr>
 <tr><td>v0.3.0.7.19〜0.3.0.7.21（10-30）</td><td><code>install.bat</code> introduced NanoBanana dependency (google-genai) as standard. Completion of translations for all 12 languages ​​and improvement to maintain input values ​​when switching languages.</td><td><a href="#install">Installation and updates</a></td></tr>
+<tr><td>v0.3.0.7.28〜0.3.0.8.11（10-31〜11-08）</td><td>Added perspective ruler and symmetrical drawing for drawing assistance, 3D drawing figures, basic shapes, light sources, and display name LivePrompt.</td><td><a href="#p-assist">Drawing assistance</a> / <a href="#p-3d">3D Preview</a> / <a href="#p-prompt">prompt editor</a></td></tr>
+<tr><td>v0.3.0.8.13〜0.3.0.8.96（11-08〜11-12）</td><td>Added NovelAI, new manuscripts from clipboard images, new manuscripts specifying size and fill, printing presets, black and white TIFF, and PDF/X candidates.</td><td><a href="#p-novelai">NovelAI</a> / <a href="#new-doc">new document</a> / <a href="#d-export">export for printing</a></td></tr>
+<tr><td>v0.3.0.8.97〜0.3.0.8.121（11-14）</td><td>Improved the AI panel input field, on-screen operation of 3D light sources, recovery when plugin update fails, etc.</td><td><a href="#p-3d">3D Preview</a> / <a href="#faq">When you are in trouble</a></td></tr>
 </table></div>
 <p>In addition, switching the drawing color and background color (at the end of the toolbar), direct application from the filter menu, path editing "Edit line width on canvas", GPT Image 2 input layer and 2.5 series model, and categorization in the window menu have been added.</p>
 
 <h3 id="install">Installation and update (Windows)</h3>
 <div class="table-wrap"><table>
 <tr><th>file</th><th> How to use</th></tr>
-<tr><td><code>install.bat</code></td><td> First time setup. If you can't find 64bit Python 3.11 or higher, in the folder without administrator privileges (<code>.runtime</code>) Prepare Python. NanoBanana dependency (google-genai) is also installed as standard. After completion <code>boot_LoomStroke.bat</code> Start with .</td></tr>
+<tr><td><code>install.bat</code></td><td> First time setup. Windows 64bit does not require prior installation of Python. If Python is not available, copy the verified Python in the folder (<code>.runtime</code>). No administrator privileges required. NanoBanana dependency (google-genai) will also be installed as standard. After completion <code>boot_LoomStroke.bat</code> Start with .</td></tr>
 <tr><td><code>update.bat</code></td><td> Update to latest version. If you install it with ZIP, you can get the public version without Git,<code>user_data</code> and replace the main unit while leaving the execution environment (the old main unit was <code>.update-backups</code> , and return if it fails). When installing with Git, proceed to the latest version only if there are no changes at hand. after update <code>install.bat</code> will be executed automatically.</td></tr>
 <tr><td><code>boot_LoomStroke.bat</code></td><td> Normal startup.</td></tr>
 <tr><td><code>boot_LoomStroke_noAI.bat</code></td><td> Start without loading AI features (<code>--no-ai</code>). Panels such as AI Effects Manager, AI Select, Prompt Editor, NanoBanana, GPT Image 2, ComfyUI, Gallery, etc., and the "AI Effects", "SAM 3.1", and "LoomStroke MCP" pages of Preferences are not displayed. This launch does not save the panel arrangement, so the normal launch arrangement will not change.</td></tr>
 </table></div>
+<p><code>--no-ai</code> The NovelAI panel is also not displayed.</p>
 <p>Detailed instructions are included <code>docs/user/INSTALL_AND_RUN.md</code> Please refer to The app version is displayed in the title bar (<code>LoomStroke v…</code>) and <b>Help › About LoomStroke</b> You can check it here.</p>
 
 <h3 id="launch">Launching and the start screen</h3>
@@ -198,17 +202,21 @@ table.params td:nth-child(2) { white-space: normal; min-width: 8em; }
 <tr><th>Item</th><th> Content</th></tr>
 <tr><td><span class="num">1</span> Category</td><td> AI / A size / B size / desktop screen / mobile screen / custom.</td></tr>
 <tr><td><span class="num">1</span> preset</td><td> Size within category. In the AI category <code>[SD1.5] 1:1 512 x 512</code>、<code>[SDXL/etc] 1:1 1024 x 1024</code> We have a wide range of resolutions for image generation models, such as</td></tr>
+<tr><td>Size for AI</td><td> You can also choose the size by model of ChatGPT / GPT Image and NanoBanana. The number of pixels in the preset for AI will not change even if you change the DPI.</td></tr>
+<tr><td>Format/Include fills on canvas</td><td> If you select a format such as A size or B size, the finished dimensions will be set according to DPI. The check is initially off. When turned on, the canvas dimensions will include fill-in, and a corresponding size guide will be attached after creation. Off creates a canvas and guide for the finished dimensions. If you want to add color later<a href="#print-layout"> Canvas size and format guide</a> operate separately.</td></tr>
 <tr><td><span class="num">2</span> Width/Height (px)</td><td>1~16384 px. Save the current size as your own preset by clicking "Add to Preset".</td></tr>
 <tr><td><span class="num">3</span> DPI</td><td> 1~1200. Used to calculate finished dimensions when exporting for printing. For A-size and B-size presets, changing DPI will recalculate the width and height px numbers (the px display of the preset name remains the same as when 72dpi). Manually entered dimensions and AI/screen/user presets retain px numbers.</td></tr>
 <tr><td><span class="num">4</span> color mode</td><td><b> RGB / 8 bit</b>、<b>CMYK / 8 bit</b>、<b>CMYK / 16 bit</b>. If you select CMYK, you will be required to select the ICC profile.</td></tr>
 <tr><td><span class="num">4</span> ICC Profile (at CMYK)</td><td>Select from the included ISO Coated v2 300% / ISO Coated v2 / PSO Uncoated ISO12647 / ISO Newspaper v4 26 / PSO LWC Improved / SC paper (basICColor) and APTEC Offset 2025. Add the .icc you have with "Load ICC profile..." and open the list of official distribution pages for each region with "Download representative ICC profiles...".</td></tr>
 <tr><td><span class="num">5</span> background</td><td> Transparent / White / Custom color (specified with "Select color...").</td></tr>
 </table></div>
+<p><b>File › Create new canvas from clipboard</b> Now, create an RGB original with a transparent background at the original size of the copied image, and place the image on a layer. If there are no compatible images, you cannot select the menu. If there are any unsaved changes to the current manuscript, you will be asked to confirm before replacing them.</p>
 <p>When you create a new document, the display of the composition guide used in the previous document will be initialized. If there are unsaved changes to the open document, you will be asked to confirm "unsaved changes" before creating a new document, opening, closing, or exiting (3 choices: save, discard, or cancel. The button may be displayed in English). If the save fails or you cancel the save destination specification, the original document remains without closing.</p>
 
 <h3 id="screen">How to view the screen</h3>
 <div class="note">In the screenshots of this manual, the locations described are indicated by red frames and numbers. text and tables <span class="num">1</span> The numbers correspond to the image numbers.</div>
 <figure><img src="img/main.png" alt="Main screen" loading="lazy"><figcaption>Main screen (open illustration and add pen and text)</figcaption></figure>
+<p>When starting for the first time<b> Window › Reset Layout</b> Immediately after, only the layers panel is displayed on the right side. Other panels can be opened from the Window menu. The image above is an example of displaying multiple panels in the old version.</p>
 <div class="table-wrap"><table>
 <tr><th>location</th><th> Content</th></tr>
 <tr><td><span class="num">1</span> top</td><td> Menu bar (File/Edit/Image/View/Layer/Filter/Window/Help)</td></tr>
@@ -1009,11 +1017,12 @@ table.params td:nth-child(2) { white-space: normal; min-width: 8em; }
 <tr><td>Free up VRAM</td><td> Unload the model ComfyUI from GPU memory.</td></tr>
 </table>
 <p>AI Effect layer flow: Right-click the preset and add it as a layer → Assign the original layer to the input slot in the Layer panel → Adjust the parameters in the Filter panel → Generate with the Generate Row button in the Layer panel. As for the generated results, only the image and placement will be returned with a single "undo"; prompts and settings will not be undone. If there are no presets, "AI Effect presets are not installed" will be displayed, and you can open the location by clicking "Open preset folder".</p>
+<p>You can also select 3D layers for input slots. 3D inputs connected in the Layers panel also appear as connected in the Filter panel.</p>
 <figure class="mid"><img src="img/dlg_ai_presets.png" alt="No preset" loading="lazy"><figcaption>Filter › AI Effect Preset... (When not installed. Image is displayed in English)</figcaption></figure>
 <h4 id="ai-batch">continuous generation</h4>
 <p>In the AI Effect layer's filter panel, under Triggers. Wait for the previous generation to finish and generate one item at a time.</p>
 <table>
-<tr><td>Specify number of times / Until one cycle / Until stopped (infinite)</td><td>The number of times can be specified from 1 to 1,000,000 times (initial 10). One round calculates the number of times the candidate goes through all the options of "sequential selection" and "combination enumeration" of the live prompt (random is not included in the calculation).</td></tr>
+<tr><td>Specify number of times / Until one cycle / Until stopped (infinite)</td><td>The number of times can be specified from 1 to 1,000,000 times (initial value is 1). One round calculates the number of times the candidate goes through all the options of "sequential selection" and "combination enumeration" of the live prompt (random is not included in the calculation).</td></tr>
 <tr><td>Start/stop continuous generation</td><td> Progress is displayed as "Completed n / Total".</td></tr>
 <tr><td>Conditions for stopping</td><td> Stop button, generation failure, change selected layer/page/document/preset/connection destination/live prompt configuration, turn off permission for external services.</td></tr>
 </table>
@@ -1057,6 +1066,17 @@ table.params td:nth-child(2) { white-space: normal; min-width: 8em; }
 </table></div>
 </div>
 
+<h3 id="p-novelai">NovelAI</h3>
+<p><b>Window › AI › NovelAI</b> Open the panel. before use<a href="#pref-ui"> Allow external AI services</a> And<a href="#pref-ai"> Preferences › AI Effects</a> Register the NovelAI key in API Keys. The generated image is applied to the layer and the successful image is<a href="#p-gallery"> gallery</a> You can check from.</p>
+<table>
+<tr><th>operation</th><th> How to use</th></tr>
+<tr><td>Generate / i2i / Inpaint</td><td> Switch between creating a new image, converting the image using the input layer, and redrawing the current selection.</td></tr>
+<tr><td>Tools / Enlarge</td><td> Select image tools such as background removal and line drawing, and enlargement processing. An input image is required.</td></tr>
+<tr><td>Image Settings / AI Settings</td><td> Set the size, orientation, number of sheets to be generated, steps, guidance, seeds, etc. The result of specifying multiple images will be a new layer for each image.</td></tr>
+<tr><td>References</td><td> Specify the reference layer or NovelAI Potion image and adjust the strength etc.</td></tr>
+<tr><td>Live prompt / Generate</td><td> You can use parts of the prompt editor. Execute using the generate button at the bottom of the screen. You can also create different versions from NovelAI images in the gallery.</td></tr>
+</table>
+
 <h3 id="p-prompt">prompt editor</h3>
 <div class="grid3">
 <figure><img src="img/panel_prompt_editor.png" alt="creation" loading="lazy"><figcaption>Create tab</figcaption></figure>
@@ -1074,6 +1094,7 @@ table.params td:nth-child(2) { white-space: normal; min-width: 8em; }
 <tr><td>Search / Tag / Type</td><td> Search for saved parts. Type: Prompt / String / List / System Prompt (LLM) / User Prompt (LLM).</td></tr>
 <tr><td>Details</td><td> Edit title, tag, component type, and preview.</td></tr>
 <tr><td>bottom button</td><td> Load/duplicate/delete/export/update to create tab.</td></tr>
+<tr><td>Display name for LivePrompt</td><td> You can give display names to strings and list items. You can switch between the display name and the actual string at the top right of each LivePrompt input field.</td></tr>
 <tr><th colspan="2">LLM</th></tr>
 <tr><td>provider/model</td><td> Anthropic / Gemini / Openai and each model.</td></tr>
 <tr><td>Temperature / Max Tokens</td><td> 0.0〜2.0 / 0〜32000。</td></tr>
@@ -1092,8 +1113,12 @@ table.params td:nth-child(2) { white-space: normal; min-width: 8em; }
 <tr><td>Rotate / Turntable</td><td> Rotate / Rotate automatically.</td></tr>
 <tr><td>Add 3D Layer</td><td> Added to canvas as 3D layer.</td></tr>
 <tr><td>Import Projection</td><td> Capture a 3D look by projecting it onto the canvas.</td></tr>
+<tr><td>Add basic shape</td><td> Select a cube, sphere, or cylinder and add it as a 3D layer that you can edit.</td></tr>
+<tr><td>Add drawing figure</td><td> Select BodyKun / BodyChan and initial pose and add the drawing doll as a 3D layer.</td></tr>
 </table></div>
 </div>
+<p>Once you select the doll's 3D layer, you can edit its pose by dragging its joints on the canvas. If you select the wrist, you can also adjust the fingers, and you can choose between built-in poses and poses that you have named and saved. OpenPose can output to a new layer or to JSON. Additions and pose editing of dolls and basic shapes can be undone.</p>
+<p>3D layer<b> light source</b> In mode, you can adjust the position by dragging the light source sphere, and rotate the viewpoint by dragging anything other than the sphere. If the light source goes off-screen, you can move it back through the handles that indicate the direction at the edge of the window. The X/Y/Z position can also be specified on the toolbar.</p>
 
 <h3 id="p-aicand">AI Select Candidates</h3>
 <div class="side">
@@ -1380,12 +1405,14 @@ table.params td:nth-child(2) { white-space: normal; min-width: 8em; }
 <div class="side">
 <figure><img src="img/panel_drawing_assist.png" alt="Drawing assistance" loading="lazy"><figcaption>Drawing assistance</figcaption></figure>
 <div><table>
-<tr><td>Type/Add/Delete</td><td> Add/delete mirror/rotational symmetry/parallel ruler/radial ruler/concentric circle ruler/perspective ruler.</td></tr>
+<tr><td>Type/Add/Delete</td><td> Add/delete mirror/rotational symmetry/straight line ruler/radial ruler/concentric circle ruler/perspective ruler.</td></tr>
 <tr><td>activate</td><td> Use the selected aid for drawing.</td></tr>
 <tr><td>Enable/Overlay display</td><td> Turn on/off assistance and display guide lines.</td></tr>
 <tr><td>Apply/Update</td><td> Reflect settings/update list. At the bottom, there is "N assistance for this page".</td></tr>
 </table></div>
 </div>
+<p>A straight line ruler lets you align the lines by specifying an angle. The active straight ruler is <kbd>Alt</kbd>+<kbd>←</kbd> / <kbd>Alt</kbd>+<kbd>→</kbd> You can rotate it in 15° increments. For the perspective ruler, select 1-point, 2-point, or 3-point perspective and draw direction, and adjust the vanishing point numerically or by dragging on the canvas.</p>
+<p>Mirror and rotational symmetry can be used not only for pen lines, but also for selection, filling, and creating new vectors and text. The results of symmetrical positions can be canceled all at once with a single "undo" operation. Do not perform symmetrical duplication when editing existing objects.</p>
 
 <h3 id="p-actions">action</h3>
 <div class="side">
@@ -1510,6 +1537,8 @@ table.params td:nth-child(2) { white-space: normal; min-width: 8em; }
 <tr><td>Finished display</td><td> Displays the outside of the finished line darker.</td></tr>
 <tr><td>Extend the addition...</td><td>Fills only the outside of the finished line of the selected raster layer with "stretch edge pixels" or "mirror edge pixels". Pixels within the finish remain unchanged. This is a regular, unlocked raster layer for the entire canvas, and is for pages with format guides. You can restore it.</td></tr>
 </table></div>
+<p>If the size of the existing document does not match, you can open the "canvas size" by entering the required dimensions from the size guide screen. After confirming the resizing, apply a format guide separately.</p>
+<p>The area between the finish line of the format guide and the canvas outer edge is displayed in a light color as an additional fill area.<b>View guide</b> It will be hidden if you turn it off. This color is not included in printing or image export.</p>
 <p><b>File › Manga Preflight…</b> ``Print (monochrome)'' will warn you if text or balloons overlap the gutter danger area, or if the pattern reaches the finish line but does not reach the fill-in area.</p>
 
 <h3 id="cover-template">cover template</h3>
@@ -1581,12 +1610,14 @@ table.params td:nth-child(2) { white-space: normal; min-width: 8em; }
 <tr><td>existing file</td><td> Confirm / Replace / Skip / Save with sequential number before overwriting.</td></tr>
 <tr><td>Export export-report.json</td><td> Leave a record of the export results.</td></tr>
 <tr><th colspan="2">export for printing</th></tr>
-<tr><td>output</td><td> Standard PDF / PDF/X-1a / PDF/X-4 / CMYK TIFF sequential number / Grayscale K TIFF sequential number.</td></tr>
+<tr><td>output</td><td> Standard PDF / PDF/X-1a candidate / PDF/X-4 candidate / CMYK TIFF sequence number / Grayscale K TIFF sequence number / 8-bit grayscale TIFF sequence number / Black and white 1-bit TIFF sequence number.</td></tr>
+<tr><td>preset</td><td> You can save the size, DPI, fill-in, and output conditions with a name and select them again next time. If the selected preset format or DPI does not match the target page, the export will be stopped.</td></tr>
 <tr><td>draw a dragonfly</td><td> Mark the cutting position (initial on).</td></tr>
-<tr><td>Print mark (for standard PDF)</td><td>Type: Japanese style square dragonfly (conventional) / Japanese style double dragonfly / Overseas style cutting mark. Cutting mark (initial on)/Additional mark/Register mark/Center mark. Line width 0.01 to 5pt (initial 0.25), distance from outside of fill 0 to 144pt (initial 3), mark color: conventional black (RGB) / K only (100%) / registration (CMYK each 100%).</td></tr>
+<tr><td>Print mark (for PDF)</td><td>Type: Japanese style square dragonfly (conventional) / Japanese style double dragonfly (initial value) / Overseas style cutting mark. Cutting mark (initial on)/Additional mark/Register mark/Center mark. Line width 0.01 to 5pt (initial 0.25), distance from outside of fill 0 to 144pt (initial 3), mark color: conventional black (RGB) / K only (100%) / registration (CMYK each 100%).</td></tr>
 <tr><td>Margin information (for standard PDF)</td><td>Insert file name/page number/date/time/color mode/color bar/gray bar in the margins (all are initially off).</td></tr>
 <tr><td>preview</td><td> Confirm finished dimensions and additional paint. If there is no size guide, the entire canvas will be treated as a finished product (no additional fills).</td></tr>
 </table>
+<div class="note">PDF/X-1a and PDF/X-4 outputs are candidates; compliance is not guaranteed. Before submitting them for print, verify each file manually with the corresponding Verify compliance profile in callas pdfToolbox Desktop. Margin information is unavailable for PDF/X candidates. Standard PDF is not PDF/X.</div>
 <div class="grid2">
 <figure><img src="img/dlg_export_webtoon.png" alt="Webtoon" loading="lazy"><figcaption><b>Export webtoon</b>: Connect and divide pages for vertically scrolling manga</figcaption></figure>
 <figure><img src="img/dlg_export_digital.png" alt="digital manga package" loading="lazy"><figcaption><b>digital manga package</b>:For e-books</figcaption></figure>
@@ -1727,7 +1758,7 @@ table.params td:nth-child(2) { white-space: normal; min-width: 8em; }
 <tr><td>Update saved server state</td><td> button</td><td>—</td><td>Check whether you can connect to the registered connection destination.</td></tr>
 <tr><td>ComfyUI Servers：Local URL</td><td> URL</td><td>(Empty) = http://127.0.0.1:8188</td><td> URL of ComfyUI that runs on this computer.</td></tr>
 <tr><td>ComfyUI Servers：External URL（＋ / Name）</td><td>Name and URL</td><td>(none)</td><td>Add ComfyUI from another computer with a name (ignoring empty lines).</td></tr>
-<tr><td>API Keys：NanoBanana (Google Gemini) / GPT Image 2 (OpenAI) / OpenAI / Anthropic (Claude) / Google Gemini</td><td> Change… / Clear</td><td> Not set</td><td> Register/delete API keys for each service. If registered, “✓ Configured” is displayed. The key is stored in the OS's credential store.</td></tr>
+<tr><td>API Keys：NanoBanana (Google Gemini) / GPT Image 2 (OpenAI) / NovelAI / OpenAI / Anthropic (Claude) / Google Gemini</td><td> Change… / Clear</td><td> Not set</td><td> Register/delete API keys for each service. If registered, “✓ Configured” is displayed. The key is stored in the OS's credential store.</td></tr>
 <tr><td>Use OpenAI API key with GPT Image 2</td><td> on/off</td><td> off</td><td> Use the OpenAI row key instead of the dedicated key to generate GPT Image 2.</td></tr>
 </table></div>
 </section>
@@ -1765,6 +1796,7 @@ table.params td:nth-child(2) { white-space: normal; min-width: 8em; }
 <tr><td>“LoomStroke — Restore” appears at startup</td><td> This is a sign that the last time was forced to end. If necessary, ``Restore'', if not, ``Discard and start anew''. If you close with ×, nothing will be deleted and it will be displayed again next time.</td></tr>
 <tr><td>The language on the screen is different from what I expected</td><td> For the first time, match the display language of Windows.<a href="#pref-ui">Preferences › Interface</a> Please specify in "Language".</td></tr>
 <tr><td>Update/installation failed</td><td> <code>install.bat</code> Run it again. ZIP version <code>update.bat</code> will revert to the old main unit if it fails. The Git version stops updating when there are changes at hand.</td></tr>
+<tr><td>Plugin update or manual rollback failed</td><td> Check the failure display. Revert the previous version to continue working and keep a backup for retrying. Please check the state of your plugins and panels before trying again.</td></tr>
 <tr><td>When I try to undo, I get "Unable to complete"</td><td>Follow the instructions in the status bar to check the status of your document before continuing, and if necessary, save it under a different name.</td></tr>
 <tr><td>The font will be replaced and displayed.</td><td>Check for missing fonts in File › Font Diagnostics and replace or outline them.</td></tr>
 <tr><td>I can't find the frame border operations.</td><td><b>Window › Comics › Comic</b> , and select the "Frame division" tab. You can check the operation column and reading order list by scrolling within the tab.<a href="#comic-frame-start">Frame border layer steps</a> Please refer to</td></tr>
@@ -1775,7 +1807,7 @@ table.params td:nth-child(2) { white-space: normal; min-width: 8em; }
 </table>
 </section>
 
-<p style="color:var(--muted);font-size:13px;margin-top:48px;">The main text is adjusted to the contents of LoomStroke v0.3.0.7.21 (2026-10-30). Many of the screenshots were taken with v0.1 (development version from 2026-10-12 to 14, Japanese UI), and items added after that or displays translated into Japanese may not be visible in the images. The example illustrations are images provided by users. The screen may change in future versions.</p>
+<p style="color:var(--muted);font-size:13px;margin-top:48px;">The main text corresponds to the main operations up to the public version LoomStroke v0.3.0.8.121. The screenshots were taken with an older version, and items or displays added later may not be visible in the images. The example illustrations are provided by the user. The screen may change in future versions.</p>
 </main>
 </div>
 

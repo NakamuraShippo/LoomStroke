@@ -1,9 +1,8 @@
 """Transparent PNG export helpers for SAM3 game-asset workflows.
 
-Pure image/file helpers behind the manual export actions of the SAM3 AI
-Select tool. Coordinates are input-image local throughout: the masked layer
-images produced by :mod:`cut_to_layer_adapter` are layer-sized and
-layer-local, so the trim bbox never leaves this module.
+Image and file helpers behind the manual export actions of the SAM3 AI
+Select tool. Trimming uses image-local coordinates, including when the
+input is a raster layer already placed on the page grid.
 """
 
 from __future__ import annotations
@@ -13,6 +12,7 @@ import tempfile
 from collections.abc import Iterable
 from dataclasses import dataclass
 from pathlib import Path
+from types import SimpleNamespace
 from typing import TYPE_CHECKING, Any
 
 from .mask_refine_adapter import _nonzero_bbox
@@ -48,6 +48,33 @@ class AssetExportBatchResult:
     """Path-free summary of a batch export (event payloads stay count-only)."""
 
     written: int = 0
+
+
+def project_png_export_source(canvas: Any, layer: Any, width: int, height: int) -> Any:
+    """Use the page grid for a transformed RGB source, keeping simple offsets local."""
+    from loomstroke.core.command_layer_access import (  # noqa: PLC0415
+        _layer_offset,
+        _layer_transform,
+    )
+    from loomstroke.core.command_types import LayerTransform  # noqa: PLC0415
+    from loomstroke.core.raster_source_image import placed_source_image  # noqa: PLC0415
+
+    if (
+        getattr(layer, "layer_type", "raster") != "raster"
+        or getattr(layer, "native_cmyk", None) is not None
+    ):
+        return layer
+    if getattr(layer, "_preview_transform", None) is not None:
+        raise Sam3AssetExportError(
+            "asset_export_transform_in_progress",
+            "Finish the layer transform before exporting a PNG.",
+        )
+    if _layer_transform(layer) == LayerTransform.translation(*_layer_offset(layer)):
+        return layer
+    image = placed_source_image(canvas, layer, layer.image, width, height)
+    if image is None or image.isNull():
+        raise Sam3AssetExportError("asset_export_empty", "SAM3 asset export produced no pixels.")
+    return SimpleNamespace(image=image, offset_x=0, offset_y=0, _sam3_export_owned=True)
 
 
 def trim_image_to_alpha_bbox(

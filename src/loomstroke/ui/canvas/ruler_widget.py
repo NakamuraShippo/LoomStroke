@@ -5,7 +5,7 @@ from __future__ import annotations
 import math
 from typing import Any
 
-from PySide6.QtCore import QPointF, QRect, QSize, Qt
+from PySide6.QtCore import QPointF, QSize, Qt
 from PySide6.QtGui import (
     QColor,
     QContextMenuEvent,
@@ -17,9 +17,11 @@ from PySide6.QtGui import (
 )
 from PySide6.QtWidgets import QWidget
 
+from ...core.guide_layout_geometry import unit_to_pixels
 from ..dialogs.guide_editor_window import show_guide_editor
 from ..dialogs.guide_layout_dialog import GuideLayoutDialog
 from .guide_controller import GuideController
+from .guide_dialog_preview import preview_page_matches
 from .guide_models import GuideOrientation, RulerUnit
 
 
@@ -64,6 +66,10 @@ class RulerWidget(QWidget):
     def paintEvent(self, event: object) -> None:
         painter = QPainter(self)
         painter.setRenderHint(QPainter.RenderHint.TextAntialiasing)
+        if painter.fontMetrics().height() > self._thickness - 4:
+            font = painter.font()
+            font.setPixelSize(max(6, self._thickness - 6))
+            painter.setFont(font)
         base_color, tick_color = self._ruler_colors()
         painter.fillRect(self.rect(), base_color)
         pen = QPen(tick_color)
@@ -134,6 +140,12 @@ class RulerWidget(QWidget):
         )
         dialog.replace.setEnabled(not self._guide_controller.guides_locked)
 
+        def update_unit(_index: int) -> None:
+            if preview_page_matches(dialog):
+                self._guide_controller.set_ruler_unit(str(dialog.unit.currentData()))
+
+        dialog.unit.currentIndexChanged.connect(update_unit)
+
         def commit():
             self._guide_controller.apply_guides(
                 dialog.guide_positions(),
@@ -201,18 +213,10 @@ class RulerWidget(QWidget):
         return self._unit_to_px(best_step_unit, unit, dpi)
 
     def _unit_to_px(self, value: float, unit: RulerUnit, dpi: float) -> float:
-        if unit == "px":
-            return value
-        if unit == "inch":
-            return value * dpi
-        return value * dpi / 25.4
+        return unit_to_pixels(value, unit, dpi)
 
     def _px_to_unit(self, value_px: float, unit: RulerUnit, dpi: float) -> float:
-        if unit == "px":
-            return value_px
-        if unit == "inch":
-            return value_px / dpi
-        return value_px / dpi * 25.4
+        return value_px / unit_to_pixels(1.0, unit, dpi)
 
     def _draw_ticks(
         self,
@@ -231,36 +235,17 @@ class RulerWidget(QWidget):
         min_c = min(c0, c1)
         max_c = max(c0, c1)
         start = math.floor((min_c - origin) / step_px) * step_px + origin
-        font_metrics = QFontMetrics(self.font())
+        font_metrics = painter.fontMetrics()
         minor_step = step_px / 5.0
         draw_minor = self._should_draw_minor(step_px, dpi, horizontal)
+        labels: list[tuple[int, float]] = []
 
         value = start
         while value <= max_c:
             screen_pos = self._map_canvas_to_screen(value, c0, c1, length_px)
             if 0 <= screen_pos <= length_px:
-                if horizontal:
-                    self._draw_tick_line(painter, int(screen_pos), horizontal, True)
-                    self._draw_tick_label(
-                        painter,
-                        int(screen_pos),
-                        value - origin,
-                        unit,
-                        dpi,
-                        font_metrics,
-                        horizontal,
-                    )
-                else:
-                    self._draw_tick_line(painter, int(screen_pos), horizontal, True)
-                    self._draw_tick_label(
-                        painter,
-                        int(screen_pos),
-                        value - origin,
-                        unit,
-                        dpi,
-                        font_metrics,
-                        horizontal,
-                    )
+                self._draw_tick_line(painter, int(screen_pos), horizontal, True)
+                labels.append((int(screen_pos), value - origin))
             if draw_minor:
                 minor_value = value + minor_step
                 for _ in range(4):
@@ -271,6 +256,20 @@ class RulerWidget(QWidget):
                         self._draw_tick_line(painter, int(screen_minor), horizontal, False)
                     minor_value += minor_step
             value += step_px
+
+        # Reserve the edge label first so a shifted label cannot overlap its neighbor.
+        next_start = length_px + 2
+        for pos, value_px in reversed(labels):
+            placement = self._tick_label_placement(
+                pos, value_px, unit, dpi, font_metrics, horizontal
+            )
+            if placement is None:
+                continue
+            label_start, text = placement
+            if label_start + font_metrics.horizontalAdvance(text) + 2 > next_start:
+                continue
+            self._paint_tick_label(painter, label_start, text, font_metrics, horizontal)
+            next_start = label_start
 
     def _draw_tick_line(self, painter: QPainter, pos: int, horizontal: bool, major: bool) -> None:
         major_len, minor_len = self._tick_lengths()
@@ -290,23 +289,51 @@ class RulerWidget(QWidget):
         font_metrics: QFontMetrics,
         horizontal: bool,
     ) -> None:
+        placement = self._tick_label_placement(pos, value_px, unit, dpi, font_metrics, horizontal)
+        if placement is not None:
+            label_start, text = placement
+            self._paint_tick_label(painter, label_start, text, font_metrics, horizontal)
+
+    def _tick_label_placement(
+        self,
+        pos: int,
+        value_px: float,
+        unit: RulerUnit,
+        dpi: float,
+        font_metrics: QFontMetrics,
+        horizontal: bool,
+    ) -> tuple[int, str] | None:
         value_unit = self._px_to_unit(value_px, unit, dpi)
         text = self._format_label(value_unit, unit)
         if not text:
-            return
+            return None
+        text_width = font_metrics.horizontalAdvance(text)
+        axis_length = self.width() if horizontal else self.height()
+        start = max(2, min(pos + 2, axis_length - text_width - 2))
+        return start, text
+
+    def _paint_tick_label(
+        self,
+        painter: QPainter,
+        start: int,
+        text: str,
+        font_metrics: QFontMetrics,
+        horizontal: bool,
+    ) -> None:
+        text_width = font_metrics.horizontalAdvance(text)
+        base_color = self._ruler_colors()[0]
+        baseline = self._thickness - font_metrics.descent() - 2
         if horizontal:
-            text_width = font_metrics.horizontalAdvance(text)
-            rect = QRect(pos + 2, 0, text_width + 4, self._thickness - 2)
-            painter.drawText(rect, Qt.AlignmentFlag.AlignLeft | Qt.AlignmentFlag.AlignVCenter, text)
+            painter.fillRect(start - 1, 1, text_width + 2, self._thickness - 3, base_color)
+            painter.drawText(start, baseline, text)
         else:
-            rect = QRect(
-                0, pos - font_metrics.height() // 2, self._thickness - 2, font_metrics.height()
-            )
             painter.save()
-            painter.translate(rect.center())
+            painter.translate(baseline, start + text_width)
             painter.rotate(-90)
-            painter.translate(-rect.center())
-            painter.drawText(rect, Qt.AlignmentFlag.AlignLeft | Qt.AlignmentFlag.AlignVCenter, text)
+            painter.fillRect(
+                -1, -font_metrics.ascent(), text_width + 2, font_metrics.height(), base_color
+            )
+            painter.drawText(0, 0, text)
             painter.restore()
 
     def _format_label(self, value: float, unit: RulerUnit) -> str:
@@ -370,12 +397,12 @@ class RulerWidget(QWidget):
         palette = self.palette()
         base = palette.color(QPalette.ColorRole.Window)
         tick = palette.color(QPalette.ColorRole.Dark)
-        if abs(tick.lightness() - base.lightness()) < 16:
+        if abs(tick.lightness() - base.lightness()) < 72:
             alt = palette.color(QPalette.ColorRole.WindowText)
-            if abs(alt.lightness() - base.lightness()) >= 16:
+            if abs(alt.lightness() - base.lightness()) >= 72:
                 tick = alt
             else:
-                tick = base.darker(140) if base.lightness() > 128 else base.lighter(140)
+                tick = QColor("#1a1a1a") if base.lightness() > 128 else QColor("#f5f5f5")
         return base, tick
 
     def _tick_lengths(self) -> tuple[int, int]:

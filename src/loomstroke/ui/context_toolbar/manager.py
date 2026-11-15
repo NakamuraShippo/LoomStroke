@@ -74,6 +74,7 @@ class ContextToolbarManager(QObject):
         self._current_spec: ContextToolbarSpec | None = None
         self._current_property_specs: list[PropertySpec] = []
         self._toolbar_visible = False
+        self._position_at_canvas_top = False
         self._consumed_key: str | None = None  # Track press for symmetric release
 
         # Stroke BBox accumulation
@@ -195,7 +196,7 @@ class ContextToolbarManager(QObject):
         # controls are filtered out elsewhere, so waiting for pointer_up
         # / selection_created would leave parameters temporarily hidden.
         if self._should_show_on_tool_activation(spec):
-            self._show_toolbar(tool_id, spec, self._current_property_specs)
+            self._show_toolbar(tool_id, spec, self._current_property_specs, from_activation=True)
             return
 
         # If the new tool already has a selected object or selection,
@@ -203,7 +204,7 @@ class ContextToolbarManager(QObject):
         if (spec.show_trigger == "pointer_up" and self._selected_object_bbox() is not None) or (
             spec.show_trigger == "selection_created" and self._has_selection()
         ):
-            self._show_toolbar(tool_id, spec, self._current_property_specs)
+            self._show_toolbar(tool_id, spec, self._current_property_specs, from_activation=True)
 
     @staticmethod
     def _should_show_on_tool_activation(spec: ContextToolbarSpec) -> bool:
@@ -303,11 +304,14 @@ class ContextToolbarManager(QObject):
         provider_id: str,
         spec: ContextToolbarSpec,
         property_specs: list[PropertySpec],
+        *,
+        from_activation: bool = False,
     ) -> None:
         """Build and show the toolbar."""
         has_content = property_specs or spec.custom_widgets or spec.build_widget_fn is not None
         if not has_content:
             return
+        self._position_at_canvas_top = from_activation
 
         # Reuse the provider's controls, restoring native close/hide as needed.
         if self._toolbar_visible and self._active_provider_id == provider_id:
@@ -358,6 +362,7 @@ class ContextToolbarManager(QObject):
         if not self._toolbar_visible:
             return
         self._toolbar_visible = False
+        self._position_at_canvas_top = False
         if self._toolbar_widget:
             self._toolbar_widget.widget.setVisible(False)
         self._active_provider_id = None
@@ -425,7 +430,28 @@ class ContextToolbarManager(QObject):
         spec = self._displayed_spec()
         placement = spec.placement if spec else "anchor"
 
-        if placement in ("top_center", "bottom_center"):
+        if self._position_at_canvas_top:
+            canvas_pos = self._canvas_widget.mapTo(self._ruler_frame, QPoint(0, 0))
+            canvas_viewport = QRect(canvas_pos, self._canvas_widget.size()).intersected(frame_rect)
+            canvas_view = self._canvas_image_rect_in_frame().intersected(canvas_viewport)
+            if canvas_view.isEmpty():
+                canvas_view = canvas_viewport if not canvas_viewport.isEmpty() else frame_rect
+            horizontal_view = (
+                canvas_viewport
+                if not canvas_viewport.isEmpty() and toolbar_size.width() > canvas_view.width()
+                else canvas_view
+            )
+            cx = horizontal_view.center().x() - toolbar_size.width() // 2
+            above_image = canvas_view.top() - toolbar_size.height() - _VIEWPORT_MARGIN
+            viewport_top = (
+                canvas_viewport.top() if not canvas_viewport.isEmpty() else frame_rect.top()
+            )
+            ty = (
+                above_image
+                if above_image >= viewport_top + _VIEWPORT_MARGIN
+                else canvas_view.top() + _VIEWPORT_MARGIN
+            )
+        elif placement in ("top_center", "bottom_center"):
             canvas_view = self._canvas_image_rect_in_frame()
             cx = self._pick_anchor_cx(canvas_view, toolbar_size, frame_rect)
             if placement == "top_center":

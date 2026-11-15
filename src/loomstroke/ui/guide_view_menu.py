@@ -2,8 +2,12 @@
 
 from __future__ import annotations
 
+from collections.abc import Callable
 from typing import Any
 
+from PySide6.QtGui import QActionGroup
+
+from ..core.guide_layout_geometry import GUIDE_UNITS
 from .canvas.composition_interaction import clear_composition_guides
 from .canvas.guide_canvas_bridge import guide_canvas
 from .dialogs.binding_margin_dialog import open_binding_margin
@@ -36,6 +40,8 @@ def populate_guide_view_menu(window: Any, menu: Any) -> None:
 
     def controller() -> Any:
         return getattr(guide_canvas(getattr(window, "canvas", None)), "_guide_controller", None)
+
+    _add_unit_menu(window, submenu, controller)
 
     def clear() -> None:
         target = controller()
@@ -84,6 +90,36 @@ def populate_guide_view_menu(window: Any, menu: Any) -> None:
     submenu.addAction(window._mk_action("Extend Bleed...", lambda: open_bleed_extension(window)))
     submenu.addAction(window._mk_action("Cover Template...", lambda: open_cover_template(window)))
     _add_straight_ruler_shortcuts(window, submenu)
+
+
+def _add_unit_menu(window: Any, submenu: Any, controller: Callable[[], Any]) -> None:
+    unit_menu = window._submenu(submenu, "Unit")
+    unit_group = QActionGroup(unit_menu)
+    unit_group.setExclusive(True)
+    for unit in GUIDE_UNITS:
+        label = "in" if unit == "inch" else unit
+        unit_action = window._mk_action(
+            label,
+            lambda _checked=False, value=unit: window._settings.set("view/ruler_unit", value),
+            checkable=True,
+        )
+        unit_action.setData(unit)
+        unit_group.addAction(unit_action)
+        unit_menu.addAction(unit_action)
+
+    def update_unit_selection() -> None:
+        target = controller()
+        ruler_state = getattr(target, "ruler_state", None)
+        selected = (
+            ruler_state().unit
+            if callable(ruler_state)
+            else window._settings.get("view/ruler_unit", "px")
+        )
+        for unit_action in unit_group.actions():
+            unit_action.setChecked(unit_action.data() == selected)
+
+    unit_menu.aboutToShow.connect(update_unit_selection)
+    update_unit_selection()
 
 
 def _add_straight_ruler_shortcuts(window: Any, submenu: Any) -> None:

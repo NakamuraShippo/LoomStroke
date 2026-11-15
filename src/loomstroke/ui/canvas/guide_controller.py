@@ -6,18 +6,23 @@ import logging
 import math
 from collections.abc import Callable, Iterable, Sequence
 from dataclasses import dataclass
-from typing import Any, Literal, cast
+from typing import Any, cast
 from uuid import uuid4
 
 from PySide6.QtCore import QPointF, Qt
 from PySide6.QtGui import QColor, QKeyEvent, QMouseEvent, QPainter, QPen
 
 from ...core.events import Events
-from ...core.guide_layout_geometry import GuidePosition, canvas_snap_positions, numeric_guide
+from ...core.guide_layout_geometry import (
+    GUIDE_UNITS,
+    GuidePosition,
+    canvas_snap_positions,
+    numeric_guide,
+)
 from ...host_api import HostAPI
 from ...platform.settings_manager import SettingsManager
 from .guide_canvas_bridge import update_guide_overlay
-from .guide_models import Guide, GuideOrientation, RulerState
+from .guide_models import Guide, GuideOrientation, RulerState, RulerUnit
 from .guide_position_overlay import draw_guide_position
 from .rotated_guides import projected_axis, segment, snap_rotated, stored_transform
 
@@ -63,10 +68,10 @@ class GuideController:
         self._ruler_update_cb: Callable[[], None] | None = None
 
         unit_value = self._settings.get_str("view/ruler_unit", "px")
-        if unit_value not in ("px", "mm", "inch"):
+        if unit_value not in GUIDE_UNITS:
             unit_value = "px"
         self._ruler_state = RulerState(
-            unit=cast("Literal['px', 'mm', 'inch']", unit_value),
+            unit=cast(RulerUnit, unit_value),
             origin=QPointF(0.0, 0.0),
         )
 
@@ -129,6 +134,12 @@ class GuideController:
 
     def ruler_state(self) -> RulerState:
         return self._ruler_state
+
+    def set_ruler_unit(self, unit: str) -> None:
+        if unit not in GUIDE_UNITS:
+            raise ValueError("Invalid ruler unit")
+        if unit != self._ruler_state.unit:
+            self._settings.set("view/ruler_unit", unit)
 
     def document_dpi(self) -> tuple[float, float]:
         spec = self._active_canvas_spec()
@@ -567,8 +578,8 @@ class GuideController:
                 except (TypeError, ValueError):
                     self._ruler_state.origin = QPointF(0.0, 0.0)
             unit = view_state.get("ruler_unit")
-            if unit in ("px", "mm", "inch"):
-                self._ruler_state.unit = unit
+            if unit in GUIDE_UNITS:
+                self._ruler_state.unit = cast(RulerUnit, unit)
             guides_raw = view_state.get("guides")
             if isinstance(guides_raw, list):
                 for entry in guides_raw:
@@ -725,7 +736,7 @@ class GuideController:
             except (TypeError, ValueError):
                 self._ruler_thickness_px = 18
         elif key == "view/ruler_unit":
-            if value in ("px", "mm", "inch"):
-                self._ruler_state.unit = value
+            if value in GUIDE_UNITS:
+                self._ruler_state.unit = cast(RulerUnit, value)
                 self._persist_view_state()
                 self._request_update()

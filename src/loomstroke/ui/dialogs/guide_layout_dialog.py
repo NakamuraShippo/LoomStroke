@@ -16,6 +16,7 @@ from PySide6.QtWidgets import (
 )
 
 from ...core.guide_layout_geometry import (
+    GUIDE_UNITS,
     MAX_DIVISIONS,
     GuidePosition,
     batch_guides,
@@ -57,7 +58,7 @@ class GuideLayoutDialog(QDialog):
         self.orientation.addItem("", "horizontal")
         self._row(form, "Orientation", self.orientation)
         self.unit = QComboBox(self)
-        for value in ("px", "mm", "inch"):
+        for value in GUIDE_UNITS:
             self.unit.addItem(value, value)
         self.unit.setCurrentIndex(max(0, self.unit.findData(unit)))
         self._row(form, "Unit", self.unit)

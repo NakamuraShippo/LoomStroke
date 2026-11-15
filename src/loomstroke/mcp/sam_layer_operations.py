@@ -11,6 +11,7 @@ from PySide6.QtGui import QImage
 
 from loomstroke.ai_selection.candidate_group_layer_adapter import _candidate_layer_name
 from loomstroke.ai_selection.cut_to_layer_adapter import _default_extract_layer_name
+from loomstroke.core.layer_command_commit_context import _LayerCommandContext
 
 from .editing_common import current_revision, edit_operation, invalid
 from .layer_edit_command import LayerEditCommand
@@ -23,7 +24,7 @@ from .sam_asset_common import (
     load,
     provider_store,
 )
-from .sam_layer_preparation import prepare_layer_adapter
+from .sam_layer_preparation import ExtractionPlacement, prepare_layer_adapter
 from .types import McpStructuredError, ReasonCode
 
 
@@ -41,6 +42,13 @@ def _name(arguments: Mapping[str, Any]) -> str | None:
     if value is not None and (not isinstance(value, str) or not value.strip() or len(value) > 256):
         raise invalid("'name' must be a non-empty string up to 256 characters.", "name")
     return value
+
+
+def _require_confirmed_transform(layer: Any) -> None:
+    if getattr(layer, "_preview_transform", None) is not None:
+        raise McpStructuredError(
+            ReasonCode.CONFLICT, "Finish the source layer transform before extracting pixels."
+        )
 
 
 def _build(
@@ -103,9 +111,9 @@ async def apply_layer_adapter(
 ) -> dict[str, Any]:
     _provider, store = provider_store(service)
     kind = name.removeprefix("loomstroke_ai_select_")
-    width, height = dimensions(service, {})
     async with edit_operation(service, name, arguments) as canvas:
         try:
+            width, height = dimensions(service, {})
             layer, plan = _build(canvas, store, kind, arguments, width, height)
             targets = [layer.id]
             revision = current_revision(service)
@@ -115,13 +123,35 @@ async def apply_layer_adapter(
                 offset_x=layer.offset_x,
                 offset_y=layer.offset_y,
             )
+            placement = None
+            scope = None
+            if (
+                kind in {"extract_to_layer", "create_candidate_group"}
+                and getattr(layer, "native_cmyk", None) is None
+            ):
+                _require_confirmed_transform(layer)
+                scope = _LayerCommandContext(canvas, (layer,))
+                placement = ExtractionPlacement(canvas, layer, source)
             adapter = await asyncio.to_thread(
-                prepare_layer_adapter, store, source, plan, width, height
+                prepare_layer_adapter, store, source, plan, width, height, placement
             )
             if service.canvas_service is not canvas or current_revision(service) != revision:
                 raise McpStructuredError(
                     ReasonCode.CONFLICT, "The document changed while preparing SAM layer pixels."
                 )
+            if scope is not None and placement is not None:
+                _require_confirmed_transform(layer)
+                if (
+                    not scope.current()
+                    or getattr(canvas, "_in_transaction", False)
+                    or layer.image is None
+                    or layer.image.cacheKey() != source.image.cacheKey()
+                    or (layer.offset_x, layer.offset_y) != (source.offset_x, source.offset_y)
+                    or not placement.matches(canvas, layer)
+                ):
+                    raise McpStructuredError(
+                        ReasonCode.CONFLICT, "The source changed while preparing SAM layer pixels."
+                    )
             _editable(canvas, layer)
 
             def operation(owner: Any) -> dict[str, Any]:

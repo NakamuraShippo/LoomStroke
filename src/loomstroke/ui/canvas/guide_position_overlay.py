@@ -2,8 +2,8 @@
 
 from __future__ import annotations
 
-from PySide6.QtCore import QPointF
-from PySide6.QtGui import QPainter
+from PySide6.QtCore import QPointF, QRectF, Qt
+from PySide6.QtGui import QColor, QPainter
 
 from ...core.guide_layout_geometry import unit_to_pixels
 from ..translations import translate_with_fallback
@@ -28,6 +28,17 @@ def draw_guide_position(
     try:
         point = painter.transform().map(pointer) + QPointF(8, -8)
         painter.resetTransform()
+        metrics = painter.fontMetrics()
+        background = QRectF(
+            point.x() - 4,
+            point.y() - metrics.ascent() - 3,
+            metrics.horizontalAdvance(label) + 8,
+            metrics.height() + 6,
+        )
+        painter.setPen(Qt.PenStyle.NoPen)
+        painter.setBrush(QColor(20, 20, 20, 224))
+        painter.drawRoundedRect(background, 3, 3)
+        painter.setPen(QColor("white"))
         painter.drawText(point, label)
     finally:
         painter.restore()
