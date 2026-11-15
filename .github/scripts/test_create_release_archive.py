@@ -43,6 +43,8 @@ class ReleaseArchiveTests(unittest.TestCase):
                 self.assertFalse(any(".github/" in name for name in members))
             digest = hashlib.sha256(asset.read_bytes()).hexdigest()
             self.assertEqual(checksum.read_text(encoding="ascii"), f"{digest}  {asset.name}\n")
+            second, _, _, _ = create(Path(directory) / "again")
+            self.assertEqual(hashlib.sha256(second.read_bytes()).hexdigest(), digest)
             text = notes.read_text(encoding="utf-8")
             social_post = (ROOT / f"release_posts/v{version}.md").read_text(encoding="utf-8")
             self.assertTrue(text.startswith(social_post.strip() + "\n\n"))

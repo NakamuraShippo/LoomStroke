@@ -150,7 +150,9 @@ def create(output: Path) -> tuple[Path, Path, Path, int]:
                 total_size += len(data)
                 if total_size > 1_073_741_824 or len(names) > 20_000:
                     raise ValueError("ZIP exceeds current updater limits")
-                release.writestr(PREFIX + info.filename, data)
+                entry = zipfile.ZipInfo(PREFIX + info.filename, date_time=(1980, 1, 1, 0, 0, 0))
+                entry.external_attr = 0o100644 << 16
+                release.writestr(entry, data, compress_type=zipfile.ZIP_DEFLATED, compresslevel=6)
         if not REQUIRED.issubset(names):
             raise ValueError(f"Missing runtime files: {sorted(REQUIRED - names)}")
         if staged.stat().st_size > 209_715_200:
