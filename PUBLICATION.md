@@ -8,6 +8,16 @@
 開発リポジトリのGit履歴・ブランチ・タグ・remote設定を引き継ぎません。
 LoomStroke本体の `LICENSE` と `LICENSE_JA` は開発側から内容を変更せず収録しています。
 
+## GitHub Releases 初回公開（2026-11-15）
+
+配布側の既存版 `v0.3.0.8.121` をタグ付けし、ReleaseをPre-releaseとして公開しました。
+`LoomStroke-Windows-v0.3.0.8.121.zip`（2,592ファイル、53,625,440バイト）と
+同名の `.sha256` を添付し、SNS告知文と同じ本文から更新履歴へ案内しています。
+ZIPは従来の `LoomStroke-main/` 構成を保ち、`install.bat` と起動・更新BATを含みます。
+GitHub Actionsの全stepが成功し、公開AssetのダウンロードはHTTP 200、
+SHA-256は `91b5fbda8c7279924e5c70e3a744280541095e1c86acd9aabde53df7ea6f6f6f` で一致しました。
+公開直後のAPI `download_count` は0です。新規Windows環境での再インストールは未実施です。
+
 ## 現行の配布スナップショット
 
 ### 2026-11-14 v0.3.0.8.121 開発版の最新版を同期
