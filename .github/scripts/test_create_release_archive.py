@@ -7,7 +7,9 @@ import tempfile
 import unittest
 import zipfile
 from pathlib import Path
+from unittest.mock import patch
 
+import update_readme_links
 from create_release_archive import PREFIX, ROOT, _check_member, _version_and_notes, create
 from update_readme_links import rewrite_text
 
@@ -64,6 +66,25 @@ class ReleaseArchiveTests(unittest.TestCase):
         updated = rewrite_text(original, "1.2.4")
         self.assertIn("Download beta v1.2.4", updated)
         self.assertIn("/v1.2.4/LoomStroke-Windows-v1.2.4.zip", updated)
+
+    def test_all_readmes_follow_the_public_application_version(self) -> None:
+        with tempfile.TemporaryDirectory() as directory:
+            root = Path(directory)
+            (root / "pyproject.toml").write_text('[project]\nversion = "1.2.4"\n', encoding="utf-8")
+            for name in update_readme_links.READMES:
+                (root / name).write_text(
+                    "### [Beta v1.2.3 ZIP]"
+                    "(https://github.com/NakamuraShippo/LoomStroke/releases/download/"
+                    "v1.2.3/LoomStroke-Windows-v1.2.3.zip)\n",
+                    encoding="utf-8",
+                )
+            with patch.object(update_readme_links, "ROOT", root):
+                self.assertEqual(
+                    set(update_readme_links.update("1.2.4")), set(update_readme_links.READMES)
+                )
+                self.assertEqual(update_readme_links.update("1.2.4"), [])
+            for name in update_readme_links.READMES:
+                self.assertIn("v1.2.4.zip", (root / name).read_text(encoding="utf-8"))
 
 
 if __name__ == "__main__":
