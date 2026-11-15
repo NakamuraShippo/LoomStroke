@@ -1,0 +1,56 @@
+name: Publish source-install ZIP
+
+on:
+  push:
+    tags: ['v*']
+
+permissions:
+  contents: write
+
+jobs:
+  release:
+    runs-on: windows-latest
+    steps:
+      - uses: actions/checkout@v5
+      - uses: actions/setup-python@v6
+        with:
+          python-version: '3.13'
+      - name: Check tag matches application version
+        shell: pwsh
+        run: |
+          $version = python -c "import tomllib; print(tomllib.load(open('pyproject.toml','rb'))['project']['version'])"
+          if ($env:GITHUB_REF_NAME -ne "v$version") { throw "Tag does not match application version" }
+      - name: Create and validate release files
+        shell: pwsh
+        run: |
+          python -m unittest discover -s .github/scripts -p 'test_*.py'
+          if ($LASTEXITCODE -ne 0) { throw "Release archive tests failed" }
+          python .github/scripts/create_release_archive.py --output-dir "$env:RUNNER_TEMP\loomstroke-release"
+          if ($LASTEXITCODE -ne 0) { throw "Release ZIP creation failed" }
+      - name: Publish release
+        shell: pwsh
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          $version = $env:GITHUB_REF_NAME.Substring(1)
+          $folder = "$env:RUNNER_TEMP\loomstroke-release"
+          $zip = Join-Path $folder "LoomStroke-Windows-v$version.zip"
+          $checksum = "$zip.sha256"
+          $notes = Join-Path $folder "release-notes-v$version.md"
+          $prerelease = @()
+          if ($version.StartsWith('0.') -or $version -match '(?i)(a|b|beta|rc)') { $prerelease = @('--prerelease') }
+          gh release view $env:GITHUB_REF_NAME --repo $env:GITHUB_REPOSITORY *> $null
+          if ($LASTEXITCODE -ne 0) {
+            gh release create $env:GITHUB_REF_NAME $zip $checksum --repo $env:GITHUB_REPOSITORY --verify-tag --title $env:GITHUB_REF_NAME --notes-file $notes @prerelease
+            if ($LASTEXITCODE -ne 0) { throw "Release creation failed" }
+          } else {
+            $existing = @(gh release view $env:GITHUB_REF_NAME --repo $env:GITHUB_REPOSITORY --json assets --jq '.assets[].name')
+            if ($existing -notcontains [IO.Path]::GetFileName($zip)) {
+              gh release upload $env:GITHUB_REF_NAME $zip --repo $env:GITHUB_REPOSITORY
+              if ($LASTEXITCODE -ne 0) { throw "ZIP upload failed" }
+            }
+            if ($existing -notcontains [IO.Path]::GetFileName($checksum)) {
+              gh release upload $env:GITHUB_REF_NAME $checksum --repo $env:GITHUB_REPOSITORY
+              if ($LASTEXITCODE -ne 0) { throw "Checksum upload failed" }
+            }
+          }

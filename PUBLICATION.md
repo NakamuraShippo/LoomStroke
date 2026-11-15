@@ -1,4 +1,4 @@
-> **最終照合: 2026-11-14**
+> **最終照合: 2026-11-15**
 
 # 公開用ソースの対象範囲
 
@@ -261,7 +261,7 @@ build backendが生成したパッケージMETADATAのVersionも`0.3.0.3`で一�
 - 開発リポジトリの `.git/` と内部開発資料 `docs/dev/`
 - 開発・検証用の `requirements.lock`
 - 翻訳の監査レポート・検証用CSV・重複した原本ページ
-- `tests/`、`benchmarks/`、開発用 `scripts/`・`tools/`、CI設定
+- `tests/`、`benchmarks/`、開発用 `scripts/`・`tools/`、通常の開発用CI設定
 - 本体から参照されずインストール対象にも含まれない旧 `src/tools/`
 - 非公開の吹き出し画像（原本 `fukidashi_test/` とテスト用コピー）
 - `sam3Test/`、作業中の画像・原稿、生成結果、検証出力
@@ -281,9 +281,22 @@ commit前に開発側との版番号・日付・更新項目の一致と、最�
 配布だけのために別の版番号を採番せず、`update.ps1`のManagedPathsにも`CHANGELOG.md`を維持します。
 pushした場合は、公開main ZIPにも履歴と同じ版番号の定義が含まれ、コミット内容と一致することを確認します。
 
-READMEのZIPダウンロードリンクはGitHubが生成する配布用 `main` のソースアーカイブを使います。
-ZIP本体をリポジトリに重複収録せず、push後の追跡済みファイルが配布内容になります。
-`.git/`・ローカル仮想環境・ユーザーデータ・未追跡の生成物は含まれません。
+READMEの正式なダウンロード先はGitHub Releasesの版番号付きZIPです。
+公開リポジトリの `v<アプリ版番号>` タグpushで `.github/workflows/release.yml` が実行され、
+確定済みコミットから `.github/scripts/create_release_archive.py` がZIP・SHA-256・Release Notesを作成します。
+`0.*`版はPre-releaseとして公開し、既存Release Assetは上書きせずダウンロード数を維持します。
+新しい版ごとに別のReleaseを作り、古い版も保持します。タグpush前に公開対象・版番号・履歴を確認します。
+最初の公開Releaseは対象ZIPと変更を提示して承認を得てから作成します。
+同版のSNS告知文を `release_posts/v<アプリ版番号>.md` に置き、Release Notesはその本文と
+`CHANGELOG.md` の版固定リンクを組み合わせます。SNS文面の変更はこのファイルへ反映し、
+Release Notesと文面が分かれないようにします。次回以降の配布同期でも同じ手順を繰り返します。
+
+ZIPは従来の更新処理が要求する `LoomStroke-main/` をルートとし、インストール・起動BATと
+本体ソース・実行資源・利用者文書・ライセンスを含みます。ZIP本体はGitに収録しません。
+`.git/`・`.github/`・`release_posts/`・`PUBLICATION.md`・`.gitignore`・ローカル仮想環境・ユーザーデータ・
+未追跡の生成物はZIPに含めません。現行の `update.bat` は引き続き公開 `main` から更新するため、
+Release Assetのダウンロード数にはその更新分と旧 `main` ZIPの取得分が含まれません。
+READMEの版番号付きリンクは配布版を更新するたびに同じ版へ直します。
 Windows 64-bitではPythonの事前準備なしで、ZIPをすべて展開してから `install.bat`、
 続いて `boot_LoomStroke.bat` を実行します。Python未検出時は公式NuGet版CPython 3.13.16を
 固定SHA-256で検証して `.runtime/` に取得し、`.venv` を作ります。両フォルダはGit/配布ZIPに含めません。

@@ -16,7 +16,9 @@ LoomStroke 是一款以 PySide6 和 wgpu 開發的桌面繪圖應用程式。
 
 ## 下載 Windows 版 ZIP
 
-### [下載最新版 LoomStroke（ZIP）](https://github.com/NakamuraShippo/LoomStroke/archive/refs/heads/main.zip)
+### [下載測試版 v0.3.0.8.121（ZIP）](https://github.com/NakamuraShippo/LoomStroke/releases/download/v0.3.0.8.121/LoomStroke-Windows-v0.3.0.8.121.zip)
+
+[最新測試版](https://github.com/NakamuraShippo/LoomStroke/releases) · [所有發行版本](https://github.com/NakamuraShippo/LoomStroke/releases) · 穩定版尚未推出
 
 **無須事先安裝 Python。** 需要 64 位元 Windows，以及首次安裝時的網際網路連線。
 如果找不到 Python，安裝程式會自動下載僅供本應用程式使用的 Python。
@@ -32,7 +34,7 @@ LoomStroke 是一款以 PySide6 和 wgpu 開發的桌面繪圖應用程式。
 請務必先解壓縮 ZIP，不要直接在壓縮檔內執行檔案。
 安裝完成後，請繼續使用原來的解壓縮資料夾。
 
-此連結會下載發布儲存庫 `main` 分支的最新版本。ZIP 包含應用程式本體、說明文件和授權條款，
+此連結會下載 GitHub Release 所附的版本化 ZIP。ZIP 包含應用程式本體、說明文件和授權條款，
 Python 和虛擬環境會在安裝時準備，模型權重與使用者資料不包含在 ZIP 中。
 詳情請參閱[安裝與啟動指南](docs/user/INSTALL_AND_RUN.md)。
 

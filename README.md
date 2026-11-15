@@ -16,7 +16,9 @@ ComfyUI・LLM・画像生成サービスとの連携を備えます。
 
 ## Windows版をZIPでダウンロード
 
-### [最新版のLoomStrokeをダウンロード（ZIP）](https://github.com/NakamuraShippo/LoomStroke/archive/refs/heads/main.zip)
+### [ベータ版 v0.3.0.8.121 をダウンロード（ZIP）](https://github.com/NakamuraShippo/LoomStroke/releases/download/v0.3.0.8.121/LoomStroke-Windows-v0.3.0.8.121.zip)
+
+[最新のベータ版](https://github.com/NakamuraShippo/LoomStroke/releases) · [全リリース一覧](https://github.com/NakamuraShippo/LoomStroke/releases) · 安定版は未公開
 
 **Pythonの事前インストールは不要です。** Windows 64-bitと、初回セットアップ時の
 インターネット接続が必要です。Pythonが見つからない場合は、アプリ専用のPythonを自動取得します。
@@ -32,7 +34,7 @@ AI機能を使わずに起動する場合は、`boot_LoomStroke_noAI.bat` をダ
 ZIPを開いたまま実行せず、必ず展開してから操作してください。
 展開先のフォルダは、セットアップ後もそのまま使用します。
 
-このリンクは配布用 `main` の最新版を取得します。ZIPには本体・説明書・ライセンスを含み、
+このリンクはGitHub Releaseに添付した版番号付きZIPを取得します。ZIPには本体・説明書・ライセンスを含み、
 Python本体と仮想環境はインストール時に準備し、モデル重みとユーザーデータはZIPに含みません。
 詳しくは[インストールと起動ガイド](docs/user/INSTALL_AND_RUN.md)を参照してください。
 
