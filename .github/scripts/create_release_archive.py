@@ -11,6 +11,8 @@ import tomllib
 import zipfile
 from pathlib import Path
 
+from update_readme_links import READMES, rewrite_text
+
 ROOT = Path(__file__).resolve().parents[2]
 PREFIX = "LoomStroke-main/"  # Existing ZIP updater requires this root.
 ROOT_FILES = {
@@ -143,6 +145,11 @@ def create(output: Path) -> tuple[Path, Path, Path, int]:
                     continue
                 data = tracked.read(info)
                 _check_member(info.filename, data, info)
+                if info.filename in READMES:
+                    try:
+                        data = rewrite_text(data.decode("utf-8"), version).encode("utf-8")
+                    except ValueError as exc:
+                        raise ValueError(f"Invalid download link in {info.filename}") from exc
                 if info.filename.lower() in casefolded:
                     raise ValueError(f"Duplicate release member: {info.filename}")
                 names.add(info.filename)

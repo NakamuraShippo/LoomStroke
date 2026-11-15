@@ -296,7 +296,9 @@ ZIPは従来の更新処理が要求する `LoomStroke-main/` をルートとし
 `.git/`・`.github/`・`release_posts/`・`PUBLICATION.md`・`.gitignore`・ローカル仮想環境・ユーザーデータ・
 未追跡の生成物はZIPに含めません。現行の `update.bat` は引き続き公開 `main` から更新するため、
 Release Assetのダウンロード数にはその更新分と旧 `main` ZIPの取得分が含まれません。
-READMEの版番号付きリンクは配布版を更新するたびに同じ版へ直します。
+READMEの版番号付きリンクはRelease公開後にworkflowが公開 `main` 上の4言語を同じ版へ更新します。
+ZIP内のREADMEも生成時に対象版のリンクへ揃えます。公開 `main` の版番号がタグと違う場合や
+READMEの形式が想定外の場合は更新を止め、古い版への逆戻りを防ぎます。
 Windows 64-bitではPythonの事前準備なしで、ZIPをすべて展開してから `install.bat`、
 続いて `boot_LoomStroke.bat` を実行します。Python未検出時は公式NuGet版CPython 3.13.16を
 固定SHA-256で検証して `.runtime/` に取得し、`.venv` を作ります。両フォルダはGit/配布ZIPに含めません。

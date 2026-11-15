@@ -9,6 +9,7 @@ import zipfile
 from pathlib import Path
 
 from create_release_archive import PREFIX, ROOT, _check_member, _version_and_notes, create
+from update_readme_links import rewrite_text
 
 
 class ReleaseArchiveTests(unittest.TestCase):
@@ -41,6 +42,10 @@ class ReleaseArchiveTests(unittest.TestCase):
                 ):
                     self.assertIn(PREFIX + name, members)
                 self.assertFalse(any(".github/" in name for name in members))
+                readme = release.read(PREFIX + "README.md").decode("utf-8")
+                self.assertIn(
+                    f"/releases/download/v{version}/LoomStroke-Windows-v{version}.zip", readme
+                )
             digest = hashlib.sha256(asset.read_bytes()).hexdigest()
             self.assertEqual(checksum.read_text(encoding="ascii"), f"{digest}  {asset.name}\n")
             second, _, _, _ = create(Path(directory) / "again")
@@ -49,6 +54,16 @@ class ReleaseArchiveTests(unittest.TestCase):
             social_post = (ROOT / f"release_posts/v{version}.md").read_text(encoding="utf-8")
             self.assertTrue(text.startswith(social_post.strip() + "\n\n"))
             self.assertIn(f"/blob/v{version}/CHANGELOG.md", text)
+
+    def test_readme_link_rewrite_updates_label_and_url(self) -> None:
+        original = (
+            "### [Download beta v1.2.3 (ZIP)]"
+            "(https://github.com/NakamuraShippo/LoomStroke/releases/download/"
+            "v1.2.3/LoomStroke-Windows-v1.2.3.zip)\n"
+        )
+        updated = rewrite_text(original, "1.2.4")
+        self.assertIn("Download beta v1.2.4", updated)
+        self.assertIn("/v1.2.4/LoomStroke-Windows-v1.2.4.zip", updated)
 
 
 if __name__ == "__main__":

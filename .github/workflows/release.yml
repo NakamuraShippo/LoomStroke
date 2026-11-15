@@ -54,3 +54,24 @@ jobs:
               if ($LASTEXITCODE -ne 0) { throw "Checksum upload failed" }
             }
           }
+      - name: Keep README download links current
+        shell: pwsh
+        run: |
+          git fetch origin main
+          if ($LASTEXITCODE -ne 0) { throw "Cannot fetch public main" }
+          git switch -C main origin/main
+          if ($LASTEXITCODE -ne 0) { throw "Cannot inspect public main" }
+          python .github/scripts/update_readme_links.py --version $env:GITHUB_REF_NAME.Substring(1)
+          if ($LASTEXITCODE -ne 0) { throw "README update failed" }
+          git diff --check
+          if ($LASTEXITCODE -ne 0) { throw "README diff check failed" }
+          git add -- README.md README.en.md README.zh-CN.md README.zh-TW.md
+          git diff --cached --quiet
+          if ($LASTEXITCODE -ne 0) {
+            git config user.name github-actions[bot]
+            git config user.email 41898282+github-actions[bot]@users.noreply.github.com
+            git commit -m "Point README downloads to $env:GITHUB_REF_NAME Release"
+            if ($LASTEXITCODE -ne 0) { throw "README commit failed" }
+            git push origin main
+            if ($LASTEXITCODE -ne 0) { throw "README push failed" }
+          }
