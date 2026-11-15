@@ -16,7 +16,7 @@ ComfyUI・LLM・画像生成サービスとの連携を備えます。
 
 ## Windows版をZIPでダウンロード
 
-### [ベータ版 v0.3.0.8.121 をダウンロード（ZIP）](https://github.com/NakamuraShippo/LoomStroke/releases/download/v0.3.0.8.121/LoomStroke-Windows-v0.3.0.8.121.zip)
+### [ベータ版 v0.3.0.8.130 をダウンロード（ZIP）](https://github.com/NakamuraShippo/LoomStroke/releases/download/v0.3.0.8.130/LoomStroke-Windows-v0.3.0.8.130.zip)
 
 [最新のベータ版](https://github.com/NakamuraShippo/LoomStroke/releases) · [全リリース一覧](https://github.com/NakamuraShippo/LoomStroke/releases) · 安定版は未公開
 
