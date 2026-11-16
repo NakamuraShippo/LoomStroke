@@ -28,6 +28,7 @@ from .new_document_color_translations import NEW_DOCUMENT_COLOR_JA
 from .painting_tool_translations import PAINTING_TOOL_JA
 from .palette_feedback_strings import PALETTE_FEEDBACK_JA
 from .panel_locale_fallbacks import NON_JA_PANEL_FALLBACK_TRANSLATIONS
+from .path_object_placement_translations import PATH_OBJECT_PLACEMENT_JA
 from .path_text_translations import PATH_TEXT_JA
 from .pen_preset_translations import PEN_PRESET_JA
 from .shared_catalog_translator import translate_exact_context
@@ -295,6 +296,7 @@ _JA_FALLBACK_TRANSLATIONS: dict[str, dict[str, str]] = {
     "PalettePersistenceNotice": PALETTE_FEEDBACK_JA,
     "CredentialMigrationNotice": CREDENTIAL_MIGRATION_JA,
     "PathText": PATH_TEXT_JA,
+    "PathObjectPlacement": PATH_OBJECT_PLACEMENT_JA,
     "DirectFilter": DIRECT_FILTER_JA,
     "ComicPanelFrames": FRAME_JA,
     "ChannelsPanel": CHANNELS_JA,
@@ -1073,6 +1075,15 @@ _JA_FALLBACK_TRANSLATIONS: dict[str, dict[str, str]] = {
             "レイヤーへ書き戻されます。有効中は入力スロットのバインドは無効になります。"
         ),
         "Gaussian Blur": "ガウスぼかし",
+        "High Pass": "ハイパス",
+        "Adaptive Light": "適応光フィルター",
+        "Adaptive Dark": "適応暗部フィルター",
+        "Blend Mode": "描画モード",
+        "Local Radius": "周辺の参照半径",
+        "Local Strength": "周辺補正の強さ",
+        "Screen": "スクリーン",
+        "Multiply": "乗算",
+        "Soft Light": "ソフトライト",
         "Radius": "半径",
         "Sharpen": "シャープ",
         "Amount": "量",
@@ -1921,6 +1932,8 @@ _JA_FALLBACK_TRANSLATIONS["ComicWorkflowPanel"] = {
     "Next step: {step}": "次のステップ: {step}",
 }
 _JA_FALLBACK_TRANSLATIONS["AppearancePanel"] = {
+    "Adaptive Light": "適応光フィルター",
+    "Adaptive Dark": "適応暗部フィルター",
     "Adjustment Layer": "調整レイヤー",
     "Live Filter Layer": "ライブフィルターレイヤー",
     "Fill Layer": "塗りつぶしレイヤー",

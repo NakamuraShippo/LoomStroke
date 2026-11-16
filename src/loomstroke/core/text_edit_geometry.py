@@ -211,8 +211,18 @@ def build_text_edit_geometry(
     if has_typography(payload):
         from .japanese_text.typography_layout import build_japanese_layout  # noqa: PLC0415
 
+        compose_payload = payload
+        path = path_settings(payload)
+        if path is not None and "drawing_assist" in path:
+            compose_payload = dict(
+                payload, path_text={k: v for k, v in path.items() if k != "drawing_assist"}
+            )
         result = build_japanese_layout(
-            payload, content=content, font=text_font, rect=QRectF(x, y, w, h), shape_path=shape
+            compose_payload,
+            content=content,
+            font=text_font,
+            rect=QRectF(x, y, w, h),
+            shape_path=shape,
         )
         lines = list(result.lines)
         carets = result.carets
@@ -236,9 +246,21 @@ def build_text_edit_geometry(
     if frame_to_editor is None:
         transform.translate(float(origin_offset[0]), float(origin_offset[1]))
         transform.scale(max(0.01, zoom), max(0.01, zoom))
-    transform.translate(width * 0.5, height * 0.5)
-    transform.rotate(Layout.text_rotation_from_payload(payload))
-    transform.translate(-width * 0.5, -height * 0.5)
+    path = path_settings(payload)
+    if path is not None and "drawing_assist" in path:
+        from .japanese_text.typography_painter import text_rotation_transform  # noqa: PLC0415
+
+        x0, y0 = bounds[:2]
+        transform = (
+            QTransform.fromTranslate(x0, y0)
+            * text_rotation_transform(payload)
+            * QTransform.fromTranslate(-x0, -y0)
+            * transform
+        )
+    else:
+        transform.translate(width * 0.5, height * 0.5)
+        transform.rotate(Layout.text_rotation_from_payload(payload))
+        transform.translate(-width * 0.5, -height * 0.5)
     return TextEditGeometry(
         content,
         lines,

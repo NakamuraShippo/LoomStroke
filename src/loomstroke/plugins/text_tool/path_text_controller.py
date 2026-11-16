@@ -9,6 +9,7 @@ from PySide6.QtWidgets import QWidget
 
 from loomstroke.core.japanese_text.typography_layout import build_japanese_layout
 from loomstroke.core.japanese_text.typography_painter import text_rotation_transform
+from loomstroke.core.path_text.assist_layout import ASSIST_KEY
 from loomstroke.core.path_text.geometry import PathTrack
 from loomstroke.core.path_text.metadata import DRAFT_PREVIEW_LAYER_ID, path_settings
 from loomstroke.core.path_text.sources import canvas_raster_contours, vector_contours
@@ -16,6 +17,7 @@ from loomstroke.plugins.vector_tools.common import VectorReplaceCommand
 
 from .common import ensure_text_vector_object, extract_text_payload
 from .editing_metadata import clone_text_for_edit, replace_edited_text
+from .path_text_assist import PathTextAssist
 from .path_text_controls import PathTextControls, ts
 from .path_text_handle_smoothing import fit_text_handles
 from .path_text_node_editor import PathTextNodeEditor
@@ -29,6 +31,7 @@ OVERFLOW_NOTICE_KEY = "text_tool/path_text_show_overflow_notice"
 class PathTextController:
     def __init__(self, tool):
         self.tool = tool
+        self.assist = PathTextAssist(tool)
         self.dialog = None
         self.overlay = None
         self.drag = None
@@ -41,16 +44,17 @@ class PathTextController:
         self._notice_editor = None
 
     def target(self):
+        state = self.tool._inline_state
+        is_new = state is not None and state.object_id is None
         if self.nodes.active and self.nodes.valid():
             preview = self.tool.host_api.canvas._vector_preview
             if preview is not None and preview.id == self.nodes.canvas.object_id:
                 return preview, self.nodes.canvas.layer_id, False
         for gesture in (self.smoothing, self.handle_smoothing):
             if gesture.current is not None:
-                return gesture.current, gesture.layer_id, gesture.fresh
+                return gesture.current, gesture.layer_id, is_new
         if self.drag is not None and self.drag[-1] is not None:
-            return self.drag[-1], self.drag[2], self.drag[3]
-        state = self.tool._inline_state
+            return self.drag[-1], self.drag[2], is_new
         if (
             state is not None
             and state.object_ref is not None
@@ -71,6 +75,17 @@ class PathTextController:
         ):
             return DRAFT_PREVIEW_LAYER_ID
         return state.layer_id
+
+    @staticmethod
+    def has_assist(obj):
+        return ASSIST_KEY in (path_settings(extract_text_payload(obj)) or {})
+
+    def interval_edit_target(self, target):
+        inline = self.tool._inline_state is not None
+        if inline and not target[2] and not self.has_assist(target[0]):
+            self.tool._finish_inline_edit(commit=True)
+            return self.target(), False
+        return target, inline
 
     def begin(self):
         if not self.tool.host_api:
@@ -167,6 +182,7 @@ class PathTextController:
         self.dialog.show()
 
     def detach_editor(self):
+        self.assist.had_active = False
         if self._notice_editor is not None:
             self._notice_editor.textChanged.disconnect(self.refresh_controls)
             self._notice_editor = None
@@ -218,6 +234,10 @@ class PathTextController:
         self.dialog.setEnabled(target is not None)
         if target is None:
             return
+        state = self.tool._inline_state
+        if state is not None and self.assist.sync(state):
+            self.tool._update_inline_text_preview()
+            target = self.target()
         payload = extract_text_payload(target[0])
         preview = getattr(self.tool.host_api.canvas, "_vector_preview", None)
         if self.tool._inline_editor is not None and getattr(preview, "id", None) == target[0].id:
@@ -261,21 +281,19 @@ class PathTextController:
         target = self.target()
         if target is None:
             return
-        obj, layer_id, fresh = target
+        obj, layer_id, _ = target
         if not self.tool._edit_lifecycle.can_edit_layer(layer_id):
             return
         if self.tool._inline_editor is not None and self.tool._inline_editor.preedit_text():
             return
-        if not fresh:
-            self.tool._finish_inline_edit(commit=True)
-            target = self.target()
-            if target is None:
-                return
-            obj, layer_id, _ = target
+        target, inline = self.interval_edit_target(target)
+        if target is None:
+            return
+        obj, layer_id, _ = target
         updated = self.patched(obj, patch)
         if updated == obj:
             return
-        if fresh:
+        if inline:
             self.tool._inline_state.object_ref = updated
             self.tool._update_inline_text_preview()
         else:
@@ -379,12 +397,10 @@ class PathTextController:
                 return True
             if self.tool._inline_editor is not None and self.tool._inline_editor.preedit_text():
                 return True
-            if not target[2]:
-                self.tool._finish_inline_edit(commit=True)
-                target = self.target()
+            target, inline = self.interval_edit_target(target)
             if target is None:
                 return True
-            self.drag = (name, clone_text_for_edit(target[0]), target[1], target[2], None)
+            self.drag = (name, clone_text_for_edit(target[0]), target[1], inline, None)
             self._drag_press = QPointF(*self.tool._canvas_widget().viewport.canvas_to_widget(x, y))
             self.tool._reset_state()
             capture = getattr(getattr(self.tool.host_api, "input", None), "pointer_capture", None)

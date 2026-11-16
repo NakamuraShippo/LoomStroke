@@ -378,6 +378,14 @@ fn fs_main(in: VertexOut) -> @location(0) vec4<f32> {
 }
 """
 
+# Reuse the canonical blend-color equations in filters that composite against
+# their own carrier. The extracted functions have no texture/uniform bindings.
+BLEND_COLOR_WGSL = BLEND_COMPOSITOR_WGSL[
+    BLEND_COMPOSITOR_WGSL.index("fn rgb2hsl(") : BLEND_COMPOSITOR_WGSL.index(
+        "@fragment\nfn fs_main("
+    )
+]
+
 WGPU_BLEND_MODE_IDS: dict[str, int] = {
     "normal": 0,
     "pass_through": 0,

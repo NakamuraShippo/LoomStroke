@@ -8,6 +8,9 @@ from typing import Any
 
 from PySide6.QtGui import QImage, QPainter
 
+from .canvas_blend_service import CanvasBlendService
+from .commands import BlendMode
+from .filter_layer_blend import blend_filter_layer_result, filter_has_no_output
 from .filters import FILTER_LAYER_TYPE
 from .filters.screentone import FILTER_TYPE as SCREENTONE_FILTER_TYPE
 from .filters.screentone import screentone_runtime_params
@@ -64,18 +67,41 @@ class CanvasPluginFilterImageApplier:
         ):
             mask = _filter_value(filter_layer, "filter_mask", "effect_mask")
         params = _filter_value(filter_layer, "filter_params", "effect_params")
+        blend_mode = CanvasBlendService.normalize_blend_mode(
+            getattr(filter_layer, "blend_mode", "normal")
+        )
+        is_high_pass = _filter_value(filter_layer, "filter_type", "effect_type") == "high_pass"
+        needs_blend = blend_mode not in (BlendMode.NORMAL, BlendMode.PASS_THROUGH)
+        if is_high_pass:
+            params = {
+                **params,
+                "blend_mode": "normal" if needs_blend else blend_mode.value,
+                "_layer_opacity": (
+                    1.0 if needs_blend else float(getattr(filter_layer, "opacity", 1.0))
+                ),
+            }
         if _filter_value(filter_layer, "filter_type", "effect_type") == SCREENTONE_FILTER_TYPE:
             params = screentone_runtime_params(
                 params, document_dpi=document_dpi, layer_origin=layer_origin
             )
         try:
-            result = image_filter.apply(source, params, mask)
+            result = image_filter.apply(source, params, None if needs_blend else mask)
         except Exception:  # noqa: BLE001
             logger.warning(
                 "CPU filter '%s' failed, skipping",
                 _filter_value(filter_layer, "filter_type", "effect_type"),
             )
             return source
+        if needs_blend:
+            if filter_has_no_output(
+                str(_filter_value(filter_layer, "filter_type", "effect_type")), params
+            ):
+                result = source
+            return blend_filter_layer_result(
+                source, result, blend_mode, mask, float(getattr(filter_layer, "opacity", 1.0))
+            )
+        if is_high_pass:
+            return result
         return self._blend_filter_result(source, result, filter_layer)
 
     @staticmethod

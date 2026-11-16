@@ -232,6 +232,8 @@ class VectorPathEditTool:
         )
 
     def context_toolbar_spec(self) -> ContextToolbarSpec | None:
+        from .path_object_placement_action import placement_widget  # noqa: PLC0415
+
         return ContextToolbarSpec(
             show_trigger="pointer_up",
             property_keys=[
@@ -242,6 +244,7 @@ class VectorPathEditTool:
                 "fill_color",
             ],
             custom_widgets=[
+                placement_widget(self),
                 *self._path_correction_actions().widgets(),
                 *self._width_actions().widgets(),
             ],

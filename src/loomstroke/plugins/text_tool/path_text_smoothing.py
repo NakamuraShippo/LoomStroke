@@ -28,18 +28,16 @@ class PathTextSmoothing:
         target = self.controller.target()
         if target is None:
             return
-        obj, layer_id, fresh = target
+        obj, layer_id, _ = target
         tool = self.controller.tool
         if not tool._edit_lifecycle.can_edit_layer(layer_id):
             return
         if tool._inline_editor is not None and tool._inline_editor.preedit_text():
             return
-        if not fresh:
-            tool._finish_inline_edit(commit=True)
-            target = self.controller.target()
-            if target is None:
-                return
-            obj, layer_id, _ = target
+        target, fresh = self.controller.interval_edit_target(target)
+        if target is None:
+            return
+        obj, layer_id, _ = target
         self.original = clone_text_for_edit(obj)
         self.layer_id, self.fresh, self.state = layer_id, fresh, tool._inline_state
         if not fresh:

@@ -121,9 +121,12 @@ class VectorPreciseTool(CurveFitting):
         )
 
     def context_toolbar_spec(self) -> ContextToolbarSpec | None:
+        from .path_object_placement_action import placement_widget  # noqa: PLC0415
+
         return ContextToolbarSpec(
             show_trigger="pointer_up",
             property_keys=["stroke_width", "stroke_color", "fill_enabled", "fill_color"],
+            custom_widgets=[placement_widget(self)],
             anchor_mode="stroke_bbox",
             mode="settings",
         )

@@ -5,6 +5,7 @@ from copy import deepcopy
 from dataclasses import replace
 
 from loomstroke.core.drawing_assist.symmetry_transforms import symmetry_transforms
+from loomstroke.core.path_text.metadata import path_settings
 
 from ..vector_tools.common import Anchor, VectorPath, make_vector_object
 
@@ -77,16 +78,36 @@ def _text_copy(obj, matrix):
     transform = transform if isinstance(transform, dict) else {}
     angle = float(transform.get("rotation_deg", payload.get("rotation_deg", 0)))
     cx, cy = matrix.apply(x + w / 2, y + h / 2)
-    if matrix.a * matrix.d - matrix.b * matrix.c > 0:
-        angle += math.degrees(math.atan2(matrix.c, matrix.a))
+    direction = math.degrees(math.atan2(matrix.c, matrix.a))
+    reflected = matrix.a * matrix.d - matrix.b * matrix.c < 0
+    path = path_settings(payload)
+    if not reflected:
+        angle += direction
+    elif path is not None:
+        # Factor the reflection into a local X flip and a frame rotation.
+        angle = direction + 180 - angle
     result = replace_edited_text(
         obj,
         extract_text_content(payload),
         rect=(cx - w / 2, cy - h / 2, w, h),
         rotation_deg=angle % 360,
     )
+    if reflected and path is not None:
+        _reflect_text_path(result.meta["text_tool"]["path_text"])
     result.meta.pop("loomstroke:ids", None)
     return replace(result, id=make_vector_object([], obj.style).id)
+
+
+def _reflect_text_path(settings):
+    """Reflect the detached frame-relative contour and its signed normal offset."""
+    for anchor in settings["path"]["anchors"]:
+        x, y = anchor["pos"]
+        anchor["pos"] = [1.0 - float(x), y]
+        for key in ("h_in", "h_out"):
+            handle = anchor.get(key)
+            if handle is not None:
+                anchor[key] = [-float(handle[0]), handle[1]]
+    settings["offset"] = -float(settings.get("offset", 0))
 
 
 def preview_object(obj, session):

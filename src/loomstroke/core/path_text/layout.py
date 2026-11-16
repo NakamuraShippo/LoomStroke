@@ -98,7 +98,7 @@ def build_path_layout(payload, text, font, rect, compose):
         carets[0] = track.frame_at(0).mapRect(
             QRectF(0, -QFontMetricsF(font).ascent(), 1, QFontMetricsF(font).height())
         )
-    return replace(
+    result = replace(
         straight,
         glyphs=tuple(glyphs),
         carets=carets,
@@ -107,3 +107,9 @@ def build_path_layout(payload, text, font, rect, compose):
         logical_bounds=logical,
         diagnostics=straight.diagnostics + (("path_text_overflow",) if overflow else ()),
     )
+    if "drawing_assist" in track.settings:
+        from ..japanese_text.typography_painter import text_rotation_transform  # noqa: PLC0415
+        from .assist_layout import repeat_path_layout  # noqa: PLC0415
+
+        return repeat_path_layout(result, payload, text_rotation_transform(payload))
+    return result

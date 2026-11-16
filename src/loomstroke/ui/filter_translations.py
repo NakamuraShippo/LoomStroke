@@ -65,6 +65,7 @@ FILTER_LAYER_JA = {
 
 FILTER_APPEARANCE_JA = {
     "Filter Layer": "フィルターレイヤー",
+    "High Pass": "ハイパス",
     "No filters available": "利用できるフィルターがありません",
 }
 

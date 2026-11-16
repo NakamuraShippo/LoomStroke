@@ -132,7 +132,7 @@ class LayerPanelAppearanceMenuBuilder:
             action.setEnabled(False)
             return
         for type_id, name, _category in filters:
-            action = menu.addAction(name)
+            action = menu.addAction(_ts(name))
             action.triggered.connect(lambda _checked=False, tid=type_id: on_pick(tid))
 
     # -- actions -----------------------------------------------------------------------

@@ -1095,7 +1095,12 @@ class WgpuCompositor:
         )
         source = result.texture
         owned: list[WgpuRenderTargetHandle] = list(result.owned_targets)
-        chain_version = int(getattr(texture, "texture_version", -1))
+        # A child filter can move between equally sized layers whose texture
+        # versions match. Include the carrier identity so its cached output
+        # cannot be reused for the new parent's pixels.
+        chain_version = hash(
+            (str(getattr(layer, "id", "")), int(getattr(texture, "texture_version", -1)))
+        )
         for child in self._visible_child_filters(layer):
             child_result = self.filter_processor.apply_layer_filter(
                 encoder,
@@ -1132,18 +1137,47 @@ class WgpuCompositor:
         """
 
         composite_width, composite_height = self._composite_size(scene)
+        mode = self._blend_mode_name(getattr(layer, "blend_mode", "normal"))
+        filter_source = current_target
+        converted_source = None
+        if mode not in ("normal", "pass_through"):
+            converted_source = self.filter_processor.filter_blend_processor.convert_alpha(
+                encoder,
+                current_target,
+                to_premultiplied=False,
+                sampler=self.shader_library.sampler,
+                create_target=self.create_target,
+            )
+            filter_source = converted_source
         filter_result = self.filter_processor.apply_layer_filter(
             encoder,
-            current_target,
+            filter_source,
             layer,
             create_target=self.create_target,
             use_cache=False,
             document_dpi=self._scene_document_dpi(scene),
         )
-        if filter_result.texture is current_target:
-            return self._unchanged_draw(current_target, spare_target)
+        if filter_result.texture is filter_source:
+            return self._unchanged_draw(
+                current_target,
+                spare_target,
+                owned_targets=[
+                    *([converted_source] if converted_source is not None else []),
+                    *filter_result.owned_targets,
+                ],
+            )
 
         owned_targets: list[WgpuRenderTargetHandle] = list(filter_result.owned_targets)
+        if converted_source is not None:
+            premultiplied = self.filter_processor.filter_blend_processor.convert_alpha(
+                encoder,
+                filter_result.texture,
+                to_premultiplied=True,
+                sampler=self.shader_library.sampler,
+                create_target=self.create_target,
+            )
+            owned_targets.extend((converted_source, premultiplied))
+            filter_result = WgpuFilterResult(texture=premultiplied, owned_targets=owned_targets)
         if spare_target is None:
             spare_target = self.create_target(composite_width, composite_height)
             owned_targets.append(spare_target)
@@ -1167,6 +1201,7 @@ class WgpuCompositor:
         current_target: WgpuRenderTargetHandle,
         spare_target: WgpuRenderTargetHandle | None,
         *,
+        owned_targets: list[WgpuRenderTargetHandle] | None = None,
         current_ids: set[str] | None = None,
         reports: list[WgpuTextureUploadReport] | None = None,
         warnings: list[str] | None = None,
@@ -1174,7 +1209,7 @@ class WgpuCompositor:
         return _TargetDrawResult(
             current_target=current_target,
             spare_target=spare_target,
-            owned_targets=[],
+            owned_targets=owned_targets or [],
             current_ids=current_ids or set(),
             reports=reports or [],
             warnings=warnings or [],

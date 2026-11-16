@@ -8,12 +8,16 @@ from typing import Any, ClassVar
 import numpy as np
 
 from loomstroke.core.filters import FilterRegistry
+from loomstroke.core.filters.adaptive_dark import adaptive_dark_params
+from loomstroke.core.filters.adaptive_light import adaptive_light_params
 from loomstroke.core.filters.curves import CurvesFilter
 from loomstroke.core.filters.gradient_map import (
     _DEFAULT_STOPS,
     _build_gradient_lut,
     _parse_stops,
 )
+from loomstroke.core.filters.high_pass import high_pass_radius
+from loomstroke.core.filters.local_context import local_context_params
 from loomstroke.core.filters.screentone import FILTER_TYPE as SCREENTONE_FILTER_TYPE
 from loomstroke.core.filters.screentone import (
     screentone_gpu_uniforms,
@@ -22,9 +26,11 @@ from loomstroke.core.filters.screentone import (
 from loomstroke.core.mask_coverage import mask_coverage_alpha8
 
 from .compute_processor import WgpuComputeProcessor
+from .filter_blend_processor import WgpuFilterBlendProcessor
 from .filter_mask_cache import WgpuFilterMaskCache
 from .filter_processor_compat import FilterProcessorLegacyAliases, filter_method
 from .filter_raster_context import DEFAULT_FILTER_RASTER_CONTEXT, FilterRasterContext
+from .high_pass_processor import WgpuHighPassProcessor
 from .texture_manager import qimage_to_straight_rgba
 from .types import WgpuRenderTargetHandle, WgpuShaderError, WgpuTextureHandle
 
@@ -140,6 +146,33 @@ fn neighbor_average(uv: vec2<f32>) -> vec4<f32> {
     return color / 8.0;
 }
 
+fn local_contrast_gate(
+    rgb: vec3<f32>, uv: vec2<f32>, radius: i32, influence: f32, light: bool
+) -> f32 {
+    if (influence <= 0.0) {
+        return 0.0;
+    }
+    let dims = vec2<i32>(textureDimensions(src_tex));
+    let pos = clamp(vec2<i32>(uv * vec2<f32>(dims)), vec2<i32>(0), dims - vec2<i32>(1));
+    let luma = dot(rgb, vec3<f32>(0.2126, 0.7152, 0.0722));
+    var contrast_sum = 0.0;
+    var coverage_sum = 0.0;
+    let offsets = array<vec2<i32>, 4>(
+        vec2<i32>(-radius, 0), vec2<i32>(radius, 0),
+        vec2<i32>(0, -radius), vec2<i32>(0, radius),
+    );
+    for (var i = 0; i < 4; i = i + 1) {
+        let neighbor_pos = clamp(pos + offsets[i], vec2<i32>(0), dims - vec2<i32>(1));
+        let neighbor = textureLoad(src_tex, neighbor_pos, 0);
+        let neighbor_luma = dot(neighbor.rgb, vec3<f32>(0.2126, 0.7152, 0.0722));
+        let signed_delta = select(neighbor_luma - luma, luma - neighbor_luma, light);
+        contrast_sum = contrast_sum + max(signed_delta, 0.0) * neighbor.a;
+        coverage_sum = coverage_sum + neighbor.a;
+    }
+    let t = clamp(4.0 * contrast_sum / max(coverage_sum, 0.000001), 0.0, 1.0);
+    return influence * t * t * (3.0 - 2.0 * t);
+}
+
 fn apply_effect(rgb: vec3<f32>, alpha: f32, uv: vec2<f32>) -> vec3<f32> {
     let effect_id = i32(params.effect_id + 0.5);
     if (effect_id == 1) {
@@ -203,6 +236,55 @@ fn apply_effect(rgb: vec3<f32>, alpha: f32, uv: vec2<f32>) -> vec3<f32> {
     if (effect_id == 9) {
         let blurred = neighbor_average(uv);
         return mix(rgb, blurred.rgb, clamp(params.p0 / 100.0, 0.0, 1.0));
+    }
+    if (effect_id == 12) {
+        let peak = max(rgb.r, max(rgb.g, rgb.b));
+        let threshold = clamp(params.p0, 0.0, 0.99);
+        let t = clamp((peak - threshold) / (1.0 - threshold), 0.0, 1.0);
+        let base_gate = t * t * (3.0 - 2.0 * t);
+        let local_gate = local_contrast_gate(
+            rgb, uv, i32(params.p3), clamp(params.p4, 0.0, 1.0), true
+        );
+        let weight = clamp(params.p1, 0.0, 1.0) * max(base_gate, local_gate);
+        var blended = 1.0 - (1.0 - rgb) * (1.0 - rgb);
+        if (params.p2 > 0.5) {
+            let d = select(
+                sqrt(rgb),
+                ((16.0 * rgb - 12.0) * rgb + 4.0) * rgb,
+                rgb <= vec3<f32>(0.25),
+            );
+            blended = select(
+                rgb + (2.0 * rgb - 1.0) * (d - rgb),
+                rgb - (1.0 - 2.0 * rgb) * rgb * (1.0 - rgb),
+                rgb <= vec3<f32>(0.5),
+            );
+        }
+        return mix(rgb, blended, weight);
+    }
+    if (effect_id == 13) {
+        let peak = max(rgb.r, max(rgb.g, rgb.b));
+        let threshold = clamp(params.p0, 0.01, 1.0);
+        let t = clamp((threshold - peak) / threshold, 0.0, 1.0);
+        let base_gate = t * t * (3.0 - 2.0 * t);
+        let local_gate = local_contrast_gate(
+            rgb, uv, i32(params.p3), clamp(params.p4, 0.0, 1.0), false
+        );
+        let weight = clamp(params.p1, 0.0, 1.0) * max(base_gate, local_gate);
+        var blended = rgb * rgb;
+        if (params.p2 > 0.5) {
+            let d = select(
+                sqrt(rgb),
+                ((16.0 * rgb - 12.0) * rgb + 4.0) * rgb,
+                rgb <= vec3<f32>(0.25),
+            );
+            let soft_light = select(
+                rgb + (2.0 * rgb - 1.0) * (d - rgb),
+                rgb - (1.0 - 2.0 * rgb) * rgb * (1.0 - rgb),
+                rgb <= vec3<f32>(0.5),
+            );
+            blended = min(rgb, soft_light);
+        }
+        return mix(rgb, blended, weight);
     }
     return rgb;
 }
@@ -455,6 +537,9 @@ class WgpuFilterProcessor(FilterProcessorLegacyAliases):
         "mosaic": 10,
         # CT-02: fragment pass that rewrites alpha too (see ``fs_main``).
         "manga_screentone": 11,
+        "adaptive_light": 12,
+        "adaptive_dark": 13,
+        "high_pass": 14,
     }
 
     def __init__(self, bundle: Any) -> None:
@@ -479,6 +564,8 @@ class WgpuFilterProcessor(FilterProcessorLegacyAliases):
         self._cache_hits = 0
         self._cache_misses = 0
         self.compute_processor = WgpuComputeProcessor(bundle)
+        self.high_pass_processor = WgpuHighPassProcessor(bundle, self.compute_processor)
+        self.filter_blend_processor = WgpuFilterBlendProcessor(bundle)
 
     @property
     def cache_hits(self) -> int:
@@ -594,6 +681,8 @@ class WgpuFilterProcessor(FilterProcessorLegacyAliases):
 
         filter_type = str(getattr(layer, "filter_type", getattr(layer, "effect_type", "")) or "")
         params = getattr(layer, "filter_params", getattr(layer, "effect_params", {})) or {}
+        mode = getattr(layer, "blend_mode", "normal")
+        mode = str(getattr(mode, "value", mode))
         if filter_type == SCREENTONE_FILTER_TYPE:
             params = screentone_runtime_params(params, document_dpi=document_dpi)
         return (
@@ -603,6 +692,7 @@ class WgpuFilterProcessor(FilterProcessorLegacyAliases):
                     str(getattr(layer, "id", "<unknown>")),
                     filter_type,
                     cls._freeze_params(params),
+                    mode,
                     float(getattr(layer, "opacity", 1.0)),
                     cls._filter_mask_version(layer),
                 )
@@ -645,6 +735,8 @@ class WgpuFilterProcessor(FilterProcessorLegacyAliases):
             return WgpuFilterResult(texture=source, owned_targets=[])
         cache_id = str(getattr(layer, "id", "<unknown>"))
         params_dict = getattr(layer, "filter_params", getattr(layer, "effect_params", {})) or {}
+        mode = getattr(layer, "blend_mode", "normal")
+        mode = str(getattr(mode, "value", mode))
         if filter_type == SCREENTONE_FILTER_TYPE:
             params_dict = screentone_runtime_params(
                 params_dict, document_dpi=document_dpi, layer_origin=layer_origin
@@ -653,6 +745,7 @@ class WgpuFilterProcessor(FilterProcessorLegacyAliases):
             *self._cache_key(
                 filter_type, params_dict, source, layer, source_version=source_version
             ),
+            mode,
             raster_context,
         )
         cached = self._filter_cache.get(cache_id) if use_cache else None
@@ -682,6 +775,20 @@ class WgpuFilterProcessor(FilterProcessorLegacyAliases):
             create_target=create_target,
             raster_context=raster_context,
         )
+
+        if mode not in ("normal", "pass_through") and filter_result.texture is not source:
+            blended = self.filter_blend_processor.apply(
+                encoder,
+                source,
+                filter_result.texture,
+                blend_mode=mode,
+                sampler=self._filter_sampler,
+                create_target=create_target,
+            )
+            filter_result = WgpuFilterResult(
+                texture=blended,
+                owned_targets=[*filter_result.owned_targets, blended],
+            )
 
         final_result = self._apply_filter_mask_if_needed(
             encoder,
@@ -718,7 +825,7 @@ class WgpuFilterProcessor(FilterProcessorLegacyAliases):
         )
         return final_result
 
-    def _dispatch_filter(
+    def _dispatch_filter(  # noqa: PLR0911
         self,
         encoder: Any,
         source: Any,
@@ -745,6 +852,16 @@ class WgpuFilterProcessor(FilterProcessorLegacyAliases):
                 create_target=create_target,
                 raster_scale=raster_context.scale,
             )
+        if filter_type == "high_pass":
+            target, owned = self.high_pass_processor.apply(
+                encoder,
+                source,
+                radius=high_pass_radius(params_dict),
+                raster_scale=raster_context.scale,
+                sampler=self._filter_sampler,
+                create_target=create_target,
+            )
+            return WgpuFilterResult(texture=target, owned_targets=owned)
         if filter_type == "noise_reduction":
             return self.compute_processor.bilateral(
                 encoder,
@@ -1363,6 +1480,16 @@ class WgpuFilterProcessor(FilterProcessorLegacyAliases):
             values[1] = float(params.get("amount", 50.0))
         elif filter_type == "noise_reduction":
             values[1] = float(params.get("strength", 50.0))
+        elif filter_type == "adaptive_light":
+            threshold, strength, mode = adaptive_light_params(params)
+            values[1:4] = (threshold, strength, float(mode == "soft_light"))
+            radius, local_strength = local_context_params(params)
+            values[4:6] = (radius, local_strength)
+        elif filter_type == "adaptive_dark":
+            threshold, strength, mode = adaptive_dark_params(params)
+            values[1:4] = (threshold, strength, float(mode == "soft_light"))
+            radius, local_strength = local_context_params(params)
+            values[4:6] = (radius, local_strength)
         return values
 
     def _lut_for_filter(self, filter_type: str, params: dict[str, Any]) -> WgpuTextureHandle:

@@ -6,6 +6,9 @@ from PySide6.QtCore import QPointF, Qt, QTimer
 from PySide6.QtGui import QColor, QPainter, QPen, QPolygonF
 from PySide6.QtWidgets import QWidget
 
+from loomstroke.core.path_text.assist_layout import path_symmetry_transforms
+
+from .common import extract_text_payload
 from .path_text_controls import ts
 
 
@@ -85,14 +88,10 @@ class PathTextOverlay(QWidget):
         painter.setPen(QPen(QColor("#929ba8"), 1, Qt.PenStyle.DashLine))
         painter.drawPolyline(QPolygonF([mapped(track.at_fraction(i / 128)[0]) for i in range(129)]))
         painter.setPen(QPen(QColor("#42baff"), 2))
-        painter.drawPolyline(
-            QPolygonF(
-                [
-                    mapped(track.frame_at(track.interval_length * i / 128).map(QPointF()))
-                    for i in range(129)
-                ]
-            )
-        )
+        interval = [
+            track.frame_at(track.interval_length * i / 128).map(QPointF()) for i in range(129)
+        ]
+        painter.drawPolyline(QPolygonF([mapped(point) for point in interval]))
         for name, point in self.controller.handle_points(track, mapped).items():
             painter.setBrush(QColor("#44d89e" if name == "start" else "#ffb454"))
             painter.drawEllipse(point, 6, 6)
@@ -103,3 +102,13 @@ class PathTextOverlay(QWidget):
         angle = math.atan2(b.y() - a.y(), b.x() - a.x())
         for turn in (-0.5, 0.5):
             painter.drawLine(b, b - QPointF(9 * math.cos(angle + turn), 9 * math.sin(angle + turn)))
+
+        transforms = path_symmetry_transforms(extract_text_payload(target[0]))
+        if transforms:
+            world = QPolygonF([rotation.map(point) for point in interval])
+            painter.setPen(QPen(QColor("#929ba8"), 1, Qt.PenStyle.DashLine))
+            for matrix in transforms:
+                if not matrix.isIdentity():
+                    painter.drawPolyline(
+                        QPolygonF([map_point(point) for point in matrix.map(world)])
+                    )

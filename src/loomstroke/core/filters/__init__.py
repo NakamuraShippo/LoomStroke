@@ -193,10 +193,13 @@ class FilterRegistry(metaclass=_FilterRegistryAliases):
 # ------------------------------------------------------------------
 # Register built-in filters on import
 # ------------------------------------------------------------------
+from .adaptive_dark import AdaptiveDarkFilter  # noqa: E402
+from .adaptive_light import AdaptiveLightFilter  # noqa: E402
 from .brightness_contrast import BrightnessContrastFilter  # noqa: E402
 from .curves import CurvesFilter  # noqa: E402
 from .gaussian_blur import GaussianBlurFilter  # noqa: E402
 from .gradient_map import GradientMapFilter  # noqa: E402
+from .high_pass import HighPassFilter  # noqa: E402
 from .hue_saturation import HueSaturationFilter  # noqa: E402
 from .invert import InvertFilter  # noqa: E402
 from .levels import LevelsFilter  # noqa: E402
@@ -205,9 +208,12 @@ from .noise_reduction import NoiseReductionFilter  # noqa: E402
 from .screentone import MangaScreentoneFilter  # noqa: E402
 from .sharpen import SharpenFilter  # noqa: E402
 
+FilterRegistry.register("adaptive_dark", AdaptiveDarkFilter)
+FilterRegistry.register("adaptive_light", AdaptiveLightFilter)
 FilterRegistry.register("gaussian_blur", GaussianBlurFilter)
 FilterRegistry.register("levels", LevelsFilter)
 FilterRegistry.register("sharpen", SharpenFilter)
+FilterRegistry.register("high_pass", HighPassFilter)
 FilterRegistry.register("noise_reduction", NoiseReductionFilter)
 FilterRegistry.register("hue_saturation", HueSaturationFilter)
 FilterRegistry.register("invert", InvertFilter)
@@ -219,6 +225,8 @@ FilterRegistry.register("manga_screentone", MangaScreentoneFilter)
 
 __all__ = [
     "FILTER_LAYER_TYPE",
+    "AdaptiveDarkFilter",
+    "AdaptiveLightFilter",
     "BaseFilter",
     "BrightnessContrastFilter",
     "CurvesFilter",
@@ -226,6 +234,7 @@ __all__ = [
     "FilterRegistry",
     "GaussianBlurFilter",
     "GradientMapFilter",
+    "HighPassFilter",
     "HueSaturationFilter",
     "InvertFilter",
     "LevelsFilter",

@@ -25,6 +25,10 @@ def text_rotation_transform(payload: Mapping[str, Any]) -> QTransform:
     transform.translate(cx, cy)
     transform.rotate(Layout.text_rotation_from_payload(payload))
     transform.translate(-cx, -cy)
+    if isinstance(payload.get("path_text"), Mapping) and "drawing_assist" in payload["path_text"]:
+        from ..path_text.assist_layout import align_path_rotation  # noqa: PLC0415
+
+        return align_path_rotation(payload, transform)
     return transform
 
 

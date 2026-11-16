@@ -40,6 +40,8 @@ class LayerPanelContextMenuBuilder:
         menu.addSeparator()
         self.build_edit_actions(menu, layer_id)
 
+        self.build_path_object_placement_action(menu, layer_id, layer)
+
         menu.addSeparator()
         selected_ids = panel._get_selected_layer_ids()
         if len(selected_ids) >= 2:
@@ -70,6 +72,22 @@ class LayerPanelContextMenuBuilder:
             action_invert.triggered.connect(lambda: panel._invert_mask_layer(layer_id))
 
         menu.exec(panel._list.viewport().mapToGlobal(pos))
+
+    def build_path_object_placement_action(self, menu: QMenu, layer_id: str, layer: Any) -> None:
+        if layer is None or getattr(layer, "layer_type", "") != "vector":
+            return
+        from loomstroke.ui.dialogs.path_object_placement_dialog import (  # noqa: PLC0415
+            open_path_object_placement,
+        )
+        from loomstroke.ui.translations import translated_literal_domain  # noqa: PLC0415
+
+        label = translated_literal_domain(
+            "PathObjectPlacement", "Objects Along Path", use_fallback=True
+        )
+        action_place = menu.addAction(label)
+        action_place.triggered.connect(
+            lambda: open_path_object_placement(self._panel._host_api, target_layer_id=layer_id)
+        )
 
     def build_edit_actions(self, menu: QMenu, layer_id: str) -> None:
         """Populate rename / merge / rasterize actions in context menu."""

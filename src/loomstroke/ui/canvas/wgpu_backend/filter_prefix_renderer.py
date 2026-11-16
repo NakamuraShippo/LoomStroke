@@ -153,6 +153,8 @@ class WgpuFilterPrefixRenderer:
                 _stable_signature(
                     getattr(layer, "filter_params", getattr(layer, "effect_params", {}))
                 ),
+                str(getattr(layer.blend_mode, "value", layer.blend_mode)),
+                float(getattr(layer, "opacity", 1.0)),
                 layer.vector_raster_scale,
                 layer.vector_raster_origin,
                 (

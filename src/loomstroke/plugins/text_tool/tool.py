@@ -2040,6 +2040,8 @@ class TextTool:
 
         same_page = self._edit_lifecycle.same_page()
         commit = commit and same_page and self._edit_lifecycle.can_edit_layer(state.layer_id)
+        if commit:
+            self._path_text.assist.sync(state)
         # Save preview meta (especially shape_frame) BEFORE clearing,
         # because _clear_inline_text_preview sets _vector_preview = None.
         _preview_meta: dict[str, Any] | None = None
@@ -2095,7 +2097,9 @@ class TextTool:
                 if current_hit is None:
                     self._clear_inline_selection_if_owned()
                     return
-                if content == extract_text_content(current_hit.payload):
+                if content == extract_text_content(current_hit.payload) and path_settings(
+                    extract_text_payload(state.object_ref)
+                ) == path_settings(current_hit.payload):
                     self._set_inline_selection_for_object(
                         state.object_id,
                         state.layer_id,
@@ -2882,6 +2886,7 @@ class TextTool:
             return
         if self._inline_transform_preview_active(state):
             return
+        self._path_text.assist.sync(state)
         payload = extract_text_payload(state.object_ref) if state.object_ref is not None else None
         settings = self._inline_effective_settings(state=state, payload=payload)
         if not self._inline_needs_canvas_preview(state=state, settings=settings):

@@ -3,6 +3,7 @@
 from PySide6.QtGui import QPainterPath
 
 from loomstroke.core.drawing_assist.object_direction import object_direction
+from loomstroke.core.path_text.metadata import path_settings
 
 from ..basic_selection.free_selection_overlay import FreeSelectionOverlay
 from ..sdk.assist_geometry import snap_assist_point
@@ -22,10 +23,13 @@ class TextDrawingAssist:
         self.dragging = False
         self.overlay = FreeSelectionOverlay()
 
-    def begin(self, point):
+    def capture(self):
         self.bridge.capture(self.owner.host_api)
         self.snapshot = self.bridge.session
         self.captured = True
+
+    def begin(self, point):
+        self.capture()
         self.dragging = True
         return self.snap(point)
 
@@ -53,6 +57,8 @@ class TextDrawingAssist:
     def command(self, command):
         if not isinstance(command, VectorCreateCommand):
             return command
+        if path_settings(extract_text_payload(command.vector_object)) is not None:
+            return command
         if not self.captured:
             return assisted_create_for_host(command, self.owner.host_api)
         return assisted_vector_command(command, self.snapshot)
@@ -79,6 +85,7 @@ class TextDrawingAssist:
             or state.object_id is not None
             or self.snapshot is None
             or not self.snapshot.has_copies
+            or path_settings(extract_text_payload(obj)) is not None
         ):
             self.overlay.clear()
             return
