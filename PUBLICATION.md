@@ -8,7 +8,17 @@
 開発リポジトリのGit履歴・ブランチ・タグ・remote設定を引き継ぎません。
 LoomStroke本体の `LICENSE` と `LICENSE_JA` は開発側から内容を変更せず収録しています。
 
-## GitHub Releases 更新（2026-11-17）
+## GitHub Releases 更新（2026-11-17 v0.3.0.9.11）
+
+配布コミット `cd85a41` の `v0.3.0.9.11` タグからWindows向けPre-releaseを公開した。
+GitHub ActionsのZIP生成・公開・4言語READMEリンク更新は全step成功した。
+公開ZIPは2,615ファイル、53,703,700バイト、SHA-256は
+`ebef957fef873eacbb1fff9885065abe1d8e974634c4e00e0b9d24006d3d1d6c`。
+公開Assetと添付`.sha256`を取得し、事前生成ZIPとのハッシュ一致、ZIP全件のCRC、
+版番号・更新履歴・4言語READMEリンクを確認した。Release Notesも告知文と一致した。
+新規Windows環境への導入と実アプリ手操作は再実施していない。
+
+## GitHub Releases 更新（2026-11-17 v0.3.0.9.1）
 
 配布コミット `441ac79` の `v0.3.0.9.1` タグからWindows向けPre-releaseを公開しました。
 GitHub ActionsのZIP生成・公開・4言語READMEリンク更新は全step成功しました。
