@@ -16,7 +16,7 @@ LoomStroke 是一款基于 PySide6 和 wgpu 的桌面绘画应用。
 
 ## 下载 Windows 版 ZIP
 
-### [下载测试版 v0.3.0.9.1（ZIP）](https://github.com/NakamuraShippo/LoomStroke/releases/download/v0.3.0.9.1/LoomStroke-Windows-v0.3.0.9.1.zip)
+### [下载测试版 v0.3.0.9.11（ZIP）](https://github.com/NakamuraShippo/LoomStroke/releases/download/v0.3.0.9.11/LoomStroke-Windows-v0.3.0.9.11.zip)
 
 [最新测试版](https://github.com/NakamuraShippo/LoomStroke/releases) · [全部发布版本](https://github.com/NakamuraShippo/LoomStroke/releases) · 稳定版尚未发布
 
