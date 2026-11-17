@@ -517,6 +517,7 @@ class LoomStrokeAppEnhanced:
         # Use pen_tool.py which has the correct interface
         modules = [
             "loomstroke.plugins.basic_pen.pen_tool",
+            "loomstroke.plugins.claude_inpaint.tool",
             "loomstroke.plugins.filter_pen.plugin",
             "loomstroke.plugins.basic_eraser.eraser_tool",
             "loomstroke.plugins.basic_fill_bucket.fill_bucket_tool",

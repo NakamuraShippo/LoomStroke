@@ -86,6 +86,7 @@ from loomstroke.core.standalone_mask_invert import (
     _InvertStandaloneMaskCommand,
     _submit_standalone_mask_invert,
 )
+from loomstroke.core.telea_inpaint import TeleaInpaintCommand, submit_telea_command
 from loomstroke.plugins.basic_gradient.gradient_command import GradientCommand
 
 logger = logging.getLogger("loomstroke.core.canvas_service_simple")
@@ -117,6 +118,7 @@ class CanvasCommandRoutingService:
             ),
             (PenTaperCommand, lambda command: command.apply(owner)),
             (FilterPenStrokeCommand, lambda command: submit_filter_pen_command(owner, command)),
+            (TeleaInpaintCommand, lambda command: submit_telea_command(owner, command)),
             (RecontourCommand, lambda command: command.apply(owner)),
             (SetActiveColorCommand, owner._submit_set_active_color),
             (PaintCommand, owner._submit_paint),

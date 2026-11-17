@@ -1537,6 +1537,39 @@ _JA_FALLBACK_TRANSLATIONS["MainWindow"].update(
     }
 )
 _JA_FALLBACK_TRANSLATIONS["BasicPen"].update({"Brush Manager": "ブラシマネージャー"})
+_JA_FALLBACK_TRANSLATIONS["ClaudeInpaintPen"] = {
+    "Inpaint Pen": "インペイントペン",
+    "Continue surrounding contours and colors across the stroke": (
+        "周囲の輪郭と色を、なぞった範囲へ流れに沿って延ばす"
+    ),
+    "Brushes": "ブラシ",
+    "Size": "サイズ",
+    "Sample Radius": "参照半径",
+    "Edge Blend": "境界のなじませ",
+    "An inpaint is still being prepared.": "インペイントを処理中です。",
+    "The inpaint pen could not repair this area.": "この範囲をインペイントできませんでした。",
+    "The document changed. The inpaint result was discarded.": (
+        "文書が変更されたためインペイントの結果を破棄しました。"
+    ),
+    "The inpaint pen could not apply the result. The original pixels were preserved.": (
+        "インペイントを適用できませんでした。元の画素は保持されています。"
+    ),
+    "Inpainting requires a finite brush stroke.": "有効なストロークを描いてください。",
+    "Inpaint brush size or radius is out of range.": "ブラシサイズまたは参照半径が範囲外です。",
+    "Inpainting requires an unlocked visible raster layer.": (
+        "表示中でロックされていないラスターレイヤーが必要です。"
+    ),
+    "Inpainting currently supports RGB raster layers only.": (
+        "インペイントペンは現在 RGB ラスターレイヤーのみ対応します。"
+    ),
+    "Inpainting requires an untransformed raster layer.": (
+        "インペイントペンには未変形のラスターレイヤーが必要です。"
+    ),
+    "The inpaint stroke is outside the raster layer.": "ストロークがラスターレイヤーの外側にあります。",
+    "The inpaint stroke does not intersect an editable area.": (
+        "ストロークが編集可能な範囲に重なっていません。"
+    ),
+}
 _JA_FALLBACK_TRANSLATIONS["SAM3AISelect"] = {
     "Release SAM Memory": "SAMメモリを解放",
     "Unload the SAM 3.1 model. It reloads automatically on next use.": "SAM 3.1のモデルをメモリから解放します。次回使用時に自動で再ロードします。",

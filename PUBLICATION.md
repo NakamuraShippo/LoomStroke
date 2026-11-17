@@ -35,6 +35,17 @@ SHA-256は `91b5fbda8c7279924e5c70e3a744280541095e1c86acd9aabde53df7ea6f6f6f` �
 
 ## 現行の配布スナップショット
 
+### 2026-11-17 v0.3.0.9.11 インペイントペンの同期
+
+開発版の公開対象から本体・版番号定義12ファイルを同期し、v0.3.0.9.2〜9.11の
+利用者向け更新項目を`CHANGELOG.md`へ追加した。RGBラスターレイヤーのなぞった範囲を
+周囲の輪郭と色に沿って補完するインペイントペンを収録する。旧試用ツールは
+開発中の変更であり、先行する配布版には含まれていない。
+開発側の未コミット変更、研究資料、テスト、ユーザーデータは収録していない。
+開発版・配布版の本体を読み込む関連テストはそれぞれ70件成功し、変更Python11ファイルの
+Ruff/Black/isort、配布環境の`pip check`、公開ZIP生成スクリプトの4テストが成功した。
+全pytest、実アプリ手操作、新規Windows環境への導入は再実施していない。
+
 ### 2026-11-17 v0.3.0.9.1 適応光と後続フィルター修正の同期
 
 開発版の公開対象から本体40ファイル（新規17）と版番号を同期した。適応光の追加を
@@ -284,7 +295,7 @@ build backendが生成したパッケージMETADATAのVersionも`0.3.0.3`で一�
 - ロゴ `img/`、第三者告知 `LICENSES/`、`THIRD_PARTY_LICENSES`
 - 利用者向け文書 `docs/user/`
 - `pyproject.toml`、`requirements.txt`
-- 更新履歴 `CHANGELOG.md`（2026-10-21のv0.3から開始、現在v0.3.0.9.1）
+- 更新履歴 `CHANGELOG.md`（2026-10-21のv0.3から開始、現在v0.3.0.9.11）
 - `main.py`、`install.bat`、`install_python.ps1`、`boot_LoomStroke.bat`、`run.sh`
 - AI無し専用入口 `boot_LoomStroke_noAI.bat`、ZIP更新用 `update.bat` / `update.ps1`
 

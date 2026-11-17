@@ -56,6 +56,7 @@ _AI_EFFECT_MANAGER_PANEL_OWNER = "loomstroke.ai_effect"
 
 builtin_plugins = [
     "loomstroke.plugins.basic_pen.pen_tool",
+    "loomstroke.plugins.claude_inpaint.tool",
     "loomstroke.plugins.filter_pen.plugin",
     "loomstroke.plugins.basic_eraser.eraser_tool",
     "loomstroke.plugins.basic_fill_bucket.fill_bucket_tool",
