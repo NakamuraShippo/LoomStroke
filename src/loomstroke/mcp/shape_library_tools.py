@@ -58,8 +58,11 @@ TOOLS = (
     ),
     McpToolSpec(
         "loomstroke_place_shape",
-        "Place a stored library template or basic parametric shape in a vector layer. "
-        "Bbox is [left, top, right, bottom]; params use the existing factory rules.",
+        "Place a library template or an editable basic shape in a vector layer. "
+        'Example: {"kind":"basic","shapeId":"polygon_5","bbox":[16,16,112,96]}. '
+        "Bbox is [left, top, right, bottom]. To set fill and stroke at creation, use "
+        "add_vector_shape in loomstroke_preview_canvas_changeset with style.fillColor, "
+        "style.strokeColor and style.strokeWidth, then apply the preview.",
         schema(
             {
                 "shapeId": ID,

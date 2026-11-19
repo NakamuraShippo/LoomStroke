@@ -41,7 +41,11 @@ from .commands_selection_mask import (
     _set_selection_full_mask,
 )
 from .geometry import Affine2D
+from .selection_backing_history import BackingExpansion
 from .selection_clipboard import SelectionPayload
+from .selection_mesh import Mesh, warp_mesh_payload
+from .selection_projective import Quad, warp_selection_payload
+from .selection_projective_composite import clear_qimage_with_mask, composite_projective_qimage
 
 logger = logging.getLogger("loomstroke.core.commands")
 
@@ -273,9 +277,12 @@ def _transform_payload_qimage(  # noqa: PLR0911, PLR0912, PLR0915
 class CutSelectionCommand(Command):
     """Cut the active selection from a layer and capture payload."""
 
-    def __init__(self, layer_id: str | None, *, merge_key: str | None = None) -> None:
+    def __init__(
+        self, layer_id: str | None, *, merge_key: str | None = None, preview_fast: bool = False
+    ) -> None:
         super().__init__(merge_key=merge_key)
         self.layer_id = layer_id
+        self.preview_fast = preview_fast
         self.payload: SelectionPayload | None = None
         self._before_selection: SelectionSnapshot | None = None
         self._after_selection: SelectionSnapshot | None = None
@@ -384,16 +391,20 @@ class CutSelectionCommand(Command):
                 source_layer_id=getattr(layer, "id", None),
                 dpi=_canvas_dpi(canvas),
             )
-            view = _qimage_to_numpy_view(image)
-            if view is None:
-                return False
-            region = view[rect.y() : rect.y() + h, rect.x() : rect.x() + w]
-            factor = (255.0 - mask_patch.astype(np.float32)) / 255.0
-            region[:] = np.clip(
-                region.astype(np.float32) * factor[..., None],
-                0.0,
-                255.0,
-            ).astype(np.uint8)
+            if self.preview_fast:
+                if not clear_qimage_with_mask(image, payload_mask, rect.x(), rect.y()):
+                    return False
+            else:
+                view = _qimage_to_numpy_view(image)
+                if view is None:
+                    return False
+                region = view[rect.y() : rect.y() + h, rect.x() : rect.x() + w]
+                factor = (255.0 - mask_patch.astype(np.float32)) / 255.0
+                region[:] = np.clip(
+                    region.astype(np.float32) * factor[..., None],
+                    0.0,
+                    255.0,
+                ).astype(np.uint8)
             self._after_layer = image.copy(rect)
         else:
             buffer = getattr(layer, "buffer", None)
@@ -769,6 +780,12 @@ class TransformSelectionCommand(Command):
         mask_mode: str = "soft",
         layer_id: str | None = None,
         merge_key: str | None = None,
+        projective_corners: Quad | None = None,
+        prepared_projective: tuple[np.ndarray, np.ndarray, SelectionRect] | None = None,
+        mesh_points: Mesh | None = None,
+        prepared_mesh: tuple[np.ndarray, np.ndarray, SelectionRect] | None = None,
+        liquify_raster: tuple[np.ndarray, np.ndarray, SelectionRect] | None = None,
+        clear_selection_after: bool = False,
     ) -> None:
         super().__init__(merge_key=merge_key)
         self.payload = payload
@@ -776,6 +793,16 @@ class TransformSelectionCommand(Command):
         self.duplicate = bool(duplicate)
         self.mask_mode = self._normalize_mask_mode(mask_mode)
         self.layer_id = layer_id
+        self.projective_corners = projective_corners
+        self.prepared_projective = prepared_projective
+        self.mesh_points = mesh_points
+        self.prepared_mesh = prepared_mesh
+        self.liquify_raster = liquify_raster
+        self.clear_selection_after = clear_selection_after
+        self.prepared_layer_image: Any | None = None
+        self.prepared_layer_before: Any | None = None
+        self._prepared_history_patch: Any | None = None
+        self._backing_expansion: BackingExpansion | None = None
         self._before_selection: SelectionSnapshot | None = None
         self._after_selection: SelectionSnapshot | None = None
         self._before_full_bounds: SelectionRect | None = None
@@ -786,6 +813,24 @@ class TransformSelectionCommand(Command):
         self._layer_ref: Any | None = None
 
     def apply(self, canvas: Canvas) -> bool:  # noqa: PLR0911, PLR0912, PLR0915
+        if self.prepared_layer_image is not None:
+            return self._apply_prepared_layer(canvas)
+        if (
+            self.projective_corners is not None
+            or self.mesh_points is not None
+            or self.liquify_raster is not None
+        ):
+            layer = _resolve_target_layer(canvas, self.layer_id)
+            if layer is None or getattr(layer, "native_cmyk", None) is not None:
+                return False
+        if (
+            sum(
+                value is not None
+                for value in (self.projective_corners, self.mesh_points, self.liquify_raster)
+            )
+            > 1
+        ):
+            return False
         from .native_cmyk.selection_commands import apply  # noqa: PLC0415
 
         native = apply(self, canvas)
@@ -797,17 +842,52 @@ class TransformSelectionCommand(Command):
         if self.payload is None:
             return False
         layer = _resolve_target_layer(canvas, self.layer_id)
-        if layer is None or not _layer_allows_edit(layer):
+        if (
+            layer is None
+            or (self.layer_id is not None and getattr(layer, "id", None) != self.layer_id)
+            or not _layer_allows_edit(layer)
+        ):
             return False
-        supports_expand = _supports_layer_expansion(canvas, layer)
+        supports_expand = _supports_layer_expansion(canvas, layer) and not (
+            self.clear_selection_after
+        )
 
         premultiplied = _is_qimage_layer(layer)
         dest_image = None
         dest_mask = None
         dest_bounds = None
+        if self.liquify_raster is not None:
+            dest_image, dest_mask, dest_bounds = self.liquify_raster
+        elif self.mesh_points is not None:
+            transformed = self.prepared_mesh or warp_mesh_payload(
+                self.payload,
+                self.mesh_points,
+                premultiplied=premultiplied,
+                mask_mode=self.mask_mode,
+                canvas_size=None if supports_expand else (width, height),
+            )
+            if transformed is None:
+                return False
+            dest_image, dest_mask, dest_bounds = transformed
+        elif self.projective_corners is not None:
+            transformed = self.prepared_projective or warp_selection_payload(
+                self.payload,
+                self.projective_corners,
+                premultiplied=premultiplied,
+                mask_mode=self.mask_mode,
+                canvas_size=None if supports_expand else (width, height),
+            )
+            if transformed is None:
+                return False
+            dest_image, dest_mask, dest_bounds = transformed
         # GPU path (tier 1)
         warp_gpu = getattr(canvas, "apply_selection_transform_gpu", None)
-        if callable(warp_gpu):
+        if (
+            self.projective_corners is None
+            and self.mesh_points is None
+            and self.liquify_raster is None
+            and callable(warp_gpu)
+        ):
             transformed_gpu = warp_gpu(
                 self.payload,
                 self.transform,
@@ -823,7 +903,13 @@ class TransformSelectionCommand(Command):
                         dest_mask_qt, dest_mask_qt.width(), dest_mask_qt.height()
                     )
         # QPainter CPU fallback (tier 2)
-        if (dest_image is None or dest_mask is None) and premultiplied:
+        if (
+            self.projective_corners is None
+            and self.mesh_points is None
+            and self.liquify_raster is None
+            and (dest_image is None or dest_mask is None)
+            and premultiplied
+        ):
             transformed_qt = _transform_payload_qimage(
                 self.payload,
                 self.transform,
@@ -838,7 +924,12 @@ class TransformSelectionCommand(Command):
                     dest_mask = UpdateSelectionMaskCommand._mask_to_numpy(
                         dest_mask_qt, dest_mask_qt.width(), dest_mask_qt.height()
                     )
-        if dest_image is None or dest_mask is None or dest_bounds is None:
+        if (
+            self.projective_corners is None
+            and self.mesh_points is None
+            and self.liquify_raster is None
+            and (dest_image is None or dest_mask is None or dest_bounds is None)
+        ):
             transformed = _transform_payload_raster(
                 self.payload,
                 self.transform,
@@ -849,6 +940,8 @@ class TransformSelectionCommand(Command):
             if transformed is None:
                 return False
             dest_image, dest_mask, dest_bounds = transformed
+        if dest_image is None or dest_mask is None or dest_bounds is None:
+            return False
 
         orig_bounds: SelectionRect | None
         union_bounds: SelectionRect | None
@@ -863,6 +956,7 @@ class TransformSelectionCommand(Command):
             return False
 
         self._before_full_bounds = _get_selection_full_bounds(canvas)
+        self._before_full_mask = _get_selection_full_mask(canvas)
         old_mask, old_bounds = UpdateSelectionMaskCommand._read_selection(canvas)
         self._before_selection = SelectionSnapshot(
             mask=UpdateSelectionMaskCommand._clone_mask(old_mask),
@@ -871,8 +965,9 @@ class TransformSelectionCommand(Command):
         self._layer_ref = layer
         self._bounds = union_bounds
 
-        if _supports_layer_expansion(canvas, layer):
-            _ensure_layer_bounds(canvas, layer, union_bounds)
+        self._backing_expansion = (
+            BackingExpansion.ensure(canvas, layer, union_bounds) if supports_expand else None
+        )
 
         if premultiplied:
             image = _ensure_qimage_premultiplied(layer)
@@ -886,29 +981,49 @@ class TransformSelectionCommand(Command):
             ux, uy, uw, uh = union_bounds
             rect = QRect(int(ux - offset_x), int(uy - offset_y), int(uw), int(uh))
             self._before_layer = image.copy(rect)
-            view = _qimage_to_numpy_view(image)
-            if view is None:
-                return False
-            if not self.duplicate and orig_bounds is not None:
-                ox, oy, ow, oh = orig_bounds
-                mask_full = _selection_payload_mask_numpy(self.payload)
-                if mask_full is not None:
-                    if self.mask_mode == "binary":
-                        mask_full = np.where(mask_full > 127, 255, 0).astype(np.uint8, copy=False)
-                    src_x = max(0, ox - self.payload.bounds[0])
-                    src_y = max(0, oy - self.payload.bounds[1])
-                    mask_patch = mask_full[src_y : src_y + oh, src_x : src_x + ow]
-                    rx = int(ox - offset_x)
-                    ry = int(oy - offset_y)
-                    region = view[ry : ry + oh, rx : rx + ow]
-                    factor = (255.0 - mask_patch.astype(np.float32)) / 255.0
-                    region[:] = np.clip(region.astype(np.float32) * factor[..., None], 0.0, 255.0)
+            fast_nonaffine = (
+                self.projective_corners is not None
+                or self.mesh_points is not None
+                or self.liquify_raster is not None
+            ) and composite_projective_qimage(
+                image,
+                self.payload,
+                dest_image,
+                dest_mask,
+                dest_bounds,
+                offset=(offset_x, offset_y),
+                binary=self.mask_mode == "binary",
+                duplicate=self.duplicate,
+                additive=self.liquify_raster is not None,
+            )
+            if not fast_nonaffine:
+                view = _qimage_to_numpy_view(image)
+                if view is None:
+                    return False
+                if not self.duplicate and orig_bounds is not None:
+                    ox, oy, ow, oh = orig_bounds
+                    mask_full = _selection_payload_mask_numpy(self.payload)
+                    if mask_full is not None:
+                        if self.mask_mode == "binary":
+                            mask_full = np.where(mask_full > 127, 255, 0).astype(
+                                np.uint8, copy=False
+                            )
+                        src_x = max(0, ox - self.payload.bounds[0])
+                        src_y = max(0, oy - self.payload.bounds[1])
+                        mask_patch = mask_full[src_y : src_y + oh, src_x : src_x + ow]
+                        rx = int(ox - offset_x)
+                        ry = int(oy - offset_y)
+                        region = view[ry : ry + oh, rx : rx + ow]
+                        factor = (255.0 - mask_patch.astype(np.float32)) / 255.0
+                        region[:] = np.clip(
+                            region.astype(np.float32) * factor[..., None], 0.0, 255.0
+                        )
 
-            dx, dy, dw, dh = dest_bounds
-            rx = int(dx - offset_x)
-            ry = int(dy - offset_y)
-            region = view[ry : ry + dh, rx : rx + dw]
-            _composite_premultiplied(region, dest_image, dest_mask)
+                dx, dy, dw, dh = dest_bounds
+                rx = int(dx - offset_x)
+                ry = int(dy - offset_y)
+                region = view[ry : ry + dh, rx : rx + dw]
+                _composite_premultiplied(region, dest_image, dest_mask)
             self._after_layer = image.copy(rect)
         else:
             buffer = getattr(layer, "buffer", None)
@@ -959,12 +1074,15 @@ class TransformSelectionCommand(Command):
                         dest_mask, mask_w, mask_h
                     )
 
-        mask_full, bounds, _ = _place_mask_on_canvas(
-            dest_mask,
-            position=(dest_bounds[0], dest_bounds[1]),
-            width=width,
-            height=height,
-        )
+        if self.clear_selection_after:
+            mask_full, bounds = None, None
+        else:
+            mask_full, bounds, _ = _place_mask_on_canvas(
+                dest_mask,
+                position=(dest_bounds[0], dest_bounds[1]),
+                width=width,
+                height=height,
+            )
         if bounds is None:
             UpdateSelectionMaskCommand._set_selection(canvas, None, None)
             _set_selection_full_bounds(canvas, None)
@@ -993,7 +1111,48 @@ class TransformSelectionCommand(Command):
         self._executed = True
         return True
 
-    def revert(self, canvas: Canvas) -> bool:
+    def _apply_prepared_layer(self, canvas: Canvas) -> bool:
+        if not self.clear_selection_after or self._prepared_history_patch is None:
+            return False
+        layer = _resolve_target_layer(canvas, self.layer_id)
+        before = self.prepared_layer_before
+        after = self.prepared_layer_image
+        if (
+            layer is None
+            or (self.layer_id is not None and getattr(layer, "id", None) != self.layer_id)
+            or not _layer_allows_edit(layer)
+            or not _is_qimage_layer(layer)
+            or before is None
+            or layer.image.cacheKey() != before.cacheKey()
+        ):
+            return False
+        offset_x, offset_y = _layer_offset(layer)
+        self._layer_ref = layer
+        self._bounds = (offset_x, offset_y, after.width(), after.height())
+        self._before_selection = SelectionSnapshot(mask=None, bounds=None)
+        self._after_selection = SelectionSnapshot(mask=None, bounds=None)
+        self._before_full_bounds = None
+        self._before_full_mask = None
+        layer.image = after
+        UpdateSelectionMaskCommand._set_selection(canvas, None, None)
+        _set_selection_full_bounds(canvas, None)
+        _set_selection_full_mask(canvas, None)
+        self._dirty_region = DirtyRegion(*self._bounds)
+        self._executed = True
+        return True
+
+    def revert(self, canvas: Canvas) -> bool:  # noqa: PLR0911
+        if self.prepared_layer_image is not None:
+            layer = self._layer_ref
+            if layer is None or self.prepared_layer_before is None or self._bounds is None:
+                return False
+            layer.image = self.prepared_layer_before
+            UpdateSelectionMaskCommand._set_selection(canvas, None, None)
+            _set_selection_full_bounds(canvas, None)
+            _set_selection_full_mask(canvas, None)
+            self._dirty_region = DirtyRegion(*self._bounds)
+            self._executed = False
+            return True
         from .native_cmyk.selection_commands import revert  # noqa: PLC0415
 
         native = revert(self, canvas)
@@ -1003,7 +1162,9 @@ class TransformSelectionCommand(Command):
             return False
         x, y, w, h = self._bounds
         layer = self._layer_ref
-        if _is_qimage_layer(layer):
+        if self._backing_expansion is not None:
+            self._backing_expansion.before.restore_pixels(layer, x, y, self._before_layer)
+        elif _is_qimage_layer(layer):
             image = _ensure_qimage_premultiplied(layer)
             if image is None or self._before_layer is None:
                 return False

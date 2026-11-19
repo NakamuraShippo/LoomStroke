@@ -10,3 +10,6 @@ class DynamicStrokePoint(PressureStrokePoint):
     size_scale: float = 1.0
     tip_angle: float = 0.0
     dab_color: tuple[int, int, int] | None = None
+    # Pen position before scatter; the editable outline follows this path.
+    path_x: float | None = None
+    path_y: float | None = None

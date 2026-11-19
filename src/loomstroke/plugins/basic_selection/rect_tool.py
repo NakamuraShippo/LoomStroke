@@ -36,6 +36,8 @@ from ...core.commands import (
 from ...core.events import Events
 from ...core.geometry import Affine2D
 from ...core.selection_clipboard import SelectionPayload
+from ...core.selection_mesh import Mesh, regular_mesh, resample_mesh
+from ...core.selection_projective import Quad
 from ...host_api import HostAPI, StrokePoint
 from ...plugins.sdk.base import PluginMetadata, PluginType
 from ...plugins.sdk.handles import (
@@ -74,7 +76,14 @@ from ...plugins.vector_tools.common import (
     ensure_vector_element_ids,
     make_vector_object,
 )
+from .affine_preview_source import AffinePreviewSource
 from .free_selection_controller import FreeSelectionController
+from .layer_transform_controller import LayerTransformController
+from .liquify_controller import LiquifyController
+from .mesh_geometry import drag_mesh, mesh_handles
+from .mesh_preview_controller import MeshPreviewController
+from .projective_geometry import drag_quad, point_inside_quad, quad_handles
+from .projective_preview_controller import ProjectivePreviewController
 from .rect_raster_controller import (
     RasterSelectionController,
 )
@@ -105,6 +114,11 @@ class BasicSelectionRectTool:
         self._vector_controller = VectorSelectionController(self)
         self._free_selection_controller = FreeSelectionController(self)
         self._selection_overlay = SelectionTransformOverlay(self)
+        self._mesh_preview = MeshPreviewController(self)
+        self._projective_preview = ProjectivePreviewController(self)
+        self._liquify = LiquifyController(self)
+        self._layer_transform = LayerTransformController(self)
+        self._affine_preview_source = AffinePreviewSource()
         self._start: StrokePoint | None = None
         self._current: StrokePoint | None = None
 
@@ -181,6 +195,8 @@ class BasicSelectionRectTool:
 
     @_transform_payload.setter
     def _transform_payload(self, value: SelectionPayload | None) -> None:
+        if value is not self._raster_controller.transform.payload:
+            self._affine_preview_source.clear()
         self._raster_controller.transform.payload = value
 
     @property
@@ -190,6 +206,34 @@ class BasicSelectionRectTool:
     @_transform_matrix.setter
     def _transform_matrix(self, value: Affine2D | None) -> None:
         self._raster_controller.transform.matrix = value
+
+    @property
+    def _transform_quad(self) -> Quad | None:
+        return self._raster_controller.transform.quad
+
+    @_transform_quad.setter
+    def _transform_quad(self, value: Quad | None) -> None:
+        self._raster_controller.transform.quad = value
+
+    @property
+    def _transform_mesh(self) -> Mesh | None:
+        return self._raster_controller.transform.mesh
+
+    @_transform_mesh.setter
+    def _transform_mesh(self, value: Mesh | None) -> None:
+        self._raster_controller.transform.mesh = value
+
+    @property
+    def _transform_projective_result(
+        self,
+    ) -> tuple[Quad, tuple[Any, Any, tuple[int, int, int, int]]] | None:
+        return self._raster_controller.transform.projective_result
+
+    @_transform_projective_result.setter
+    def _transform_projective_result(
+        self, value: tuple[Quad, tuple[Any, Any, tuple[int, int, int, int]]] | None
+    ) -> None:
+        self._raster_controller.transform.projective_result = value
 
     @property
     def _transform_pivot_local(self) -> tuple[float, float]:
@@ -450,6 +494,30 @@ class BasicSelectionRectTool:
                     step=1.0,
                     default_value=self.settings.transform_rotation,
                 ),
+                PropertySpec(
+                    key="mesh_divisions",
+                    display_name=_ts("Mesh Divisions"),
+                    type=PropertyType.INT,
+                    min_value=1,
+                    max_value=10,
+                    default_value=self.settings.mesh_divisions,
+                ),
+                PropertySpec(
+                    key="liquify_radius",
+                    display_name=_ts("Liquify Size"),
+                    type=PropertyType.INT,
+                    min_value=1,
+                    max_value=512,
+                    default_value=self.settings.liquify_radius,
+                ),
+                PropertySpec(
+                    key="liquify_strength",
+                    display_name=_ts("Liquify Strength"),
+                    type=PropertyType.INT,
+                    min_value=1,
+                    max_value=100,
+                    default_value=self.settings.liquify_strength,
+                ),
             ],
             action_groups=[
                 ToolActionGroup(
@@ -533,6 +601,21 @@ class BasicSelectionRectTool:
                             kind="button",
                             enabled_when="has_selection",
                         ),
+                        *(
+                            ToolActionSpec(
+                                key=f"selection.transform.{mode}",
+                                label=_ts(label),
+                                kind="button",
+                                enabled_when="has_selection",
+                            )
+                            for mode, label in (
+                                ("free", "Free Transform"),
+                                ("distort", "Distort"),
+                                ("skew", "Skew"),
+                                ("perspective", "Perspective"),
+                                ("mesh", "Mesh Transform"),
+                            )
+                        ),
                         ToolActionSpec(
                             key="selection.transform.flip_h",
                             label=_ts("Flip H"),
@@ -565,13 +648,59 @@ class BasicSelectionRectTool:
                         ),
                     ],
                 ),
+                ToolActionGroup(
+                    id="liquify",
+                    label=_ts("Liquify Brush"),
+                    actions=[
+                        ToolActionSpec(
+                            key=f"selection.liquify.{mode}",
+                            label=_ts(label),
+                            kind="button",
+                            enabled_when="has_selection",
+                        )
+                        for mode, label in (
+                            ("push", "Liquify Push"),
+                            ("expand", "Liquify Expand"),
+                            ("pinch", "Liquify Pinch"),
+                            ("twirl_right", "Liquify Twirl Right"),
+                            ("twirl_left", "Liquify Twirl Left"),
+                            ("push_left", "Liquify Push Left"),
+                        )
+                    ],
+                ),
+                ToolActionGroup(
+                    id="layer_transform",
+                    label=_ts("Transform Layer"),
+                    actions=[
+                        ToolActionSpec(
+                            key=f"layer.transform.{mode}",
+                            label=_ts(label),
+                            kind="button",
+                        )
+                        for mode, label in (
+                            ("free", "Layer Free Transform"),
+                            ("distort", "Layer Distort"),
+                            ("skew", "Layer Skew"),
+                            ("perspective", "Layer Perspective"),
+                            ("mesh", "Layer Mesh Transform"),
+                            ("liquify", "Layer Liquify Brush"),
+                        )
+                    ],
+                ),
             ],
         )
 
     def context_toolbar_spec(self) -> ContextToolbarSpec | None:
         return ContextToolbarSpec(
             show_trigger="selection_created",
-            property_keys=["operation", "feather_enabled", "feather_radius"],
+            property_keys=[
+                "operation",
+                "feather_enabled",
+                "feather_radius",
+                "mesh_divisions",
+                "liquify_radius",
+                "liquify_strength",
+            ],
             custom_widgets=[
                 ContextWidgetSpec(key="selection.transform.move", kind="button", label=_ts("Move")),
                 ContextWidgetSpec(
@@ -583,6 +712,36 @@ class BasicSelectionRectTool:
                     key="selection.transform.rotate",
                     kind="button",
                     label=_ts("Rotate"),
+                ),
+                ContextWidgetSpec(
+                    key="selection.transform.free",
+                    kind="button",
+                    label=_ts("Free Transform"),
+                ),
+                ContextWidgetSpec(
+                    key="selection.transform.distort",
+                    kind="button",
+                    label=_ts("Distort"),
+                ),
+                ContextWidgetSpec(
+                    key="selection.transform.skew",
+                    kind="button",
+                    label=_ts("Skew"),
+                ),
+                ContextWidgetSpec(
+                    key="selection.transform.perspective",
+                    kind="button",
+                    label=_ts("Perspective"),
+                ),
+                ContextWidgetSpec(
+                    key="selection.transform.mesh",
+                    kind="button",
+                    label=_ts("Mesh Transform"),
+                ),
+                ContextWidgetSpec(
+                    key="selection.liquify.push",
+                    kind="button",
+                    label=_ts("Liquify Brush"),
                 ),
                 ContextWidgetSpec(
                     key="selection.transform.flip_h",
@@ -650,6 +809,9 @@ class BasicSelectionRectTool:
     ) -> None:
         if not self.host_api:
             return
+        if self._liquify.active:
+            self._liquify.pointer_down((float(pt.pos[0]), float(pt.pos[1])))
+            return
         if self._is_vector_mode():
             self._vector_controller.on_pointer_down(pt, alt=alt, shift=shift, ctrl=ctrl, meta=meta)
             return
@@ -660,6 +822,9 @@ class BasicSelectionRectTool:
 
     def on_pointer_move(self, pts: Iterable[StrokePoint]) -> None:
         points = list(pts)
+        if self._liquify.active:
+            self._liquify.pointer_move([(float(pt.pos[0]), float(pt.pos[1])) for pt in points])
+            return
         if self._is_vector_mode():
             self._vector_controller.on_pointer_move(points)
             return
@@ -669,6 +834,9 @@ class BasicSelectionRectTool:
         self._raster_controller.on_pointer_move(points)
 
     def on_pointer_up(self, pt: StrokePoint) -> None:  # noqa: PLR0912
+        if self._liquify.active:
+            self._liquify.pointer_up((float(pt.pos[0]), float(pt.pos[1])))
+            return
         if self._is_vector_mode():
             self._vector_controller.on_pointer_up(pt)
             return
@@ -678,6 +846,10 @@ class BasicSelectionRectTool:
         self._raster_controller.on_pointer_up(pt)
 
     def on_pointer_hover(self, pt: StrokePoint) -> None:
+        if self._liquify.active:
+            self._liquify.cursor = (float(pt.pos[0]), float(pt.pos[1]))
+            self._selection_overlay.refresh()
+            return
         self._selection_overlay.refresh()
         if self._free_selection_controller.enabled:
             self._free_selection_controller.move([pt])
@@ -715,9 +887,14 @@ class BasicSelectionRectTool:
         if key_lower in {"enter", "return"} and self._transform_active:
             cmd = self._build_transform_commit_command()
             if cmd:
-                self._pending_commands.append(cmd)
+                if cmd.clear_selection_after:
+                    self._layer_transform.submit_prepared(cmd)
+                else:
+                    self._pending_commands.append(cmd)
             return True
         if key_lower in {"esc", "escape"}:
+            if self._layer_transform.cancel_pending():
+                return True
             if self._is_vector_mode():
                 if self._vector_drag_mode in {"move", "scale", "rotate"}:
                     self._cancel_vector_transform()
@@ -794,6 +971,21 @@ class BasicSelectionRectTool:
                 return []
             self._begin_transform_mode("rotate")
             return []
+        if action_key in {
+            "selection.transform.free",
+            "selection.transform.distort",
+            "selection.transform.skew",
+            "selection.transform.perspective",
+            "selection.transform.mesh",
+        }:
+            self._begin_transform_mode(action_key.rsplit(".", 1)[-1])
+            return []
+        if action_key.startswith("selection.liquify."):
+            self._liquify.start(action_key.rsplit(".", 1)[-1])
+            return []
+        if action_key.startswith("layer.transform."):
+            self._layer_transform.start(action_key.rsplit(".", 1)[-1])
+            return []
         if action_key == "selection.transform.flip_h":
             if self._apply_vector_selection_flip(-1.0, 1.0):
                 return []
@@ -813,8 +1005,13 @@ class BasicSelectionRectTool:
             if self._apply_vector_toolbar_transform():
                 return []
             cmd = self._build_transform_commit_command()
+            if cmd is not None and cmd.clear_selection_after:
+                self._layer_transform.submit_prepared(cmd)
+                return []
             return [cmd] if cmd else []
         if action_key == "selection.transform.cancel":
+            if self._layer_transform.cancel_pending():
+                return []
             if self._cancel_vector_toolbar_transform():
                 return []
             self._cancel_transform_session()
@@ -928,11 +1125,20 @@ class BasicSelectionRectTool:
                         val = bool(v)
                     elif k in {"feather_radius", "mask_radius"}:
                         val = int(v)
+                    elif k == "liquify_radius":
+                        val = max(1, min(512, int(v)))
+                    elif k == "mesh_divisions":
+                        self._set_mesh_divisions(v)
+                        continue
+                    elif k == "liquify_strength":
+                        val = max(1, min(100, int(v)))
                     elif k.startswith("transform_"):
                         val = float(v)
                     setattr(self.settings, k, val)
             return
         if isinstance(settings, SelectionSettings):
+            self._set_mesh_divisions(settings.mesh_divisions)
+            settings.mesh_divisions = self.settings.mesh_divisions
             self.settings = settings
 
     def set_setting(self, key: str, value: Any) -> None:
@@ -947,7 +1153,26 @@ class BasicSelectionRectTool:
                 val = bool(value)
             elif key in ("feather_radius", "mask_radius"):
                 val = int(value)
+            elif key == "liquify_radius":
+                val = max(1, min(512, int(value)))
+            elif key == "mesh_divisions":
+                self._set_mesh_divisions(value)
+                return
+            elif key == "liquify_strength":
+                val = max(1, min(100, int(value)))
             setattr(self.settings, key, val)
+
+    def _set_mesh_divisions(self, value: Any) -> None:
+        divisions = max(1, min(10, int(value)))
+        mesh = self._transform_mesh
+        if mesh is not None and divisions != self.settings.mesh_divisions:
+            updated = resample_mesh(mesh, divisions)
+            if updated is None:
+                return
+            self._transform_mesh = updated
+            self._mesh_preview.cancel()
+            self._update_transform_preview()
+        self.settings.mesh_divisions = divisions
 
     def create_options_widget(self) -> Any:
         return None
@@ -2194,12 +2419,53 @@ class BasicSelectionRectTool:
     # --- Transform helpers -------------------------------------------------
 
     def _begin_transform_mode(self, mode: str) -> None:
-        if not self._ensure_transform_session():
+        if self._liquify.active:
+            self._notify_message(_ts("Apply the current transform before changing mode."))
             return
+        projective = mode in {"free", "distort", "skew", "perspective"}
+        non_affine = projective or mode == "mesh"
+        if non_affine:
+            canvas = getattr(self.host_api, "canvas", None) if self.host_api else None
+            layer = _resolve_target_layer(canvas, None) if canvas is not None else None
+            if (
+                self._is_vector_mode()
+                or layer is None
+                or getattr(layer, "native_cmyk", None) is not None
+            ):
+                self._notify_message(_ts("This transform requires an RGB raster selection."))
+                return
+        elif self._transform_quad is not None or self._transform_mesh is not None:
+            self._notify_message(_ts("Apply the current transform before changing mode."))
+            return
+        if (projective and self._transform_mesh is not None) or (
+            mode == "mesh" and self._transform_quad is not None
+        ):
+            self._notify_message(_ts("Apply the current transform before changing mode."))
+            return
+        if not self._ensure_transform_session(preview=not non_affine, fast_cut=non_affine):
+            return
+        if projective and self._transform_quad is None:
+            payload = self._transform_payload
+            matrix = self._transform_matrix
+            if payload is None or matrix is None:
+                return
+            width, height = float(payload.bounds[2]), float(payload.bounds[3])
+            self._transform_quad = tuple(
+                matrix.apply(x, y)
+                for x, y in ((0.0, 0.0), (width, 0.0), (width, height), (0.0, height))
+            )  # type: ignore[assignment]
+        if mode == "mesh" and self._transform_mesh is None:
+            payload = self._transform_payload
+            matrix = self._transform_matrix
+            if payload is None or matrix is None:
+                return
+            divisions = max(1, min(10, int(self.settings.mesh_divisions)))
+            local = regular_mesh((0, 0, payload.bounds[2], payload.bounds[3]), divisions)
+            self._transform_mesh = tuple(matrix.apply(x, y) for x, y in local)
         self._transform_mode_override = mode
         self._update_transform_preview()
 
-    def _ensure_transform_session(self) -> bool:
+    def _ensure_transform_session(self, *, preview: bool = True, fast_cut: bool = False) -> bool:
         if self._transform_active:
             return True
         payload = self._extract_selection_payload()
@@ -2209,22 +2475,28 @@ class BasicSelectionRectTool:
         self._transform_payload = payload
         self._transform_pivot_local = (payload.bounds[2] * 0.5, payload.bounds[3] * 0.5)
         self._transform_matrix = Affine2D.translation(payload.bounds[0], payload.bounds[1])
+        self._transform_quad = None
+        self._transform_mesh = None
+        self._mesh_preview.cancel()
+        self._projective_preview.cancel()
+        self._transform_projective_result = None
         self._transform_mask_mode = "soft" if self.settings.feather_enabled else "binary"
         self._transform_duplicate_latched = False
         self._transform_mode_override = None
         self._transform_cut_command = None
         self._capture_transform_base_selection()
         self._transform_active = True
-        if not self._apply_preview_cut():
+        if not self._apply_preview_cut(fast_cut=fast_cut):
             self._transform_active = False
             self._transform_payload = None
             self._transform_matrix = None
             return False
         self._sync_transform_properties()
-        self._update_transform_preview()
+        if preview:
+            self._update_transform_preview()
         return True
 
-    def _apply_preview_cut(self) -> bool:
+    def _apply_preview_cut(self, *, fast_cut: bool = False) -> bool:
         if not self.host_api or not self._transform_active:
             return False
         if self._transform_cut_command is not None:
@@ -2237,7 +2509,12 @@ class BasicSelectionRectTool:
         except Exception:
             logger.exception("Selection preview could not acquire its document capture guard")
             return False
-        cmd = CutSelectionCommand(None)
+        cmd = CutSelectionCommand(
+            None,
+            preview_fast=fast_cut
+            or self._transform_quad is not None
+            or self._transform_mesh is not None,
+        )
         if not cmd.apply(canvas):
             # Cut's ordinary False paths reject before changing content.
             # Exceptions retain the lease because mutation is then unknown.
@@ -2341,7 +2618,13 @@ class BasicSelectionRectTool:
         hit = self._hit_test_transform_handle(pt)
         if self._transform_mode_override:
             mode = self._transform_mode_override
-            if mode == "move":
+            if mode in {"free", "distort", "skew", "perspective", "mesh"}:
+                if hit is None:
+                    return False
+                handle = hit[0]
+                if handle == "rotate":
+                    return False
+            elif mode == "move":
                 handle = "move-area"
             elif mode == "rotate":
                 handle = "rotate"
@@ -2407,6 +2690,8 @@ class BasicSelectionRectTool:
             shift_locked=bool(shift),
             snap_override=bool(ctrl),
             duplicate=duplicate,
+            quad0=self._transform_quad,
+            mesh0=self._transform_mesh,
         )
         if self.host_api:
             self.host_api.input.pointer_capture(self.descriptor().id)
@@ -2421,7 +2706,46 @@ class BasicSelectionRectTool:
         drag = self._transform_drag
         matrix0 = drag.matrix0
         cx, cy = float(pt.pos[0]), float(pt.pos[1])
-        if drag.mode == "move":
+        if drag.mode == "mesh":
+            if drag.mesh0 is None:
+                return
+            updated_mesh = drag_mesh(
+                drag.mesh0, drag.handle, cx - drag.pointer0[0], cy - drag.pointer0[1]
+            )
+            if updated_mesh is None:
+                return
+            self._transform_mesh = updated_mesh
+        elif drag.mode in {"free", "distort", "skew", "perspective"}:
+            if drag.quad0 is None:
+                return
+            shift_now = bool(
+                QGuiApplication.keyboardModifiers() & Qt.KeyboardModifier.ShiftModifier
+            )
+            updated = drag_quad(
+                drag.quad0,
+                drag.handle,
+                drag.mode,
+                cx - drag.pointer0[0],
+                cy - drag.pointer0[1],
+                shift_constrain=shift_now,
+            )
+            if updated is None:
+                return
+            self._transform_quad = updated
+        elif drag.mode == "move" and self._transform_quad is not None:
+            if drag.quad0 is None:
+                return
+            updated = drag_quad(
+                drag.quad0,
+                "move-area",
+                "free",
+                cx - drag.pointer0[0],
+                cy - drag.pointer0[1],
+            )
+            if updated is None:
+                return
+            self._transform_quad = updated
+        elif drag.mode == "move":
             dx = cx - drag.pointer0[0]
             dy = cy - drag.pointer0[1]
             if self.settings.pixel_perfect and not drag.snap_override:
@@ -2508,11 +2832,15 @@ class BasicSelectionRectTool:
         if self.host_api:
             self.host_api.input.release_capture(self.descriptor().id)
         self._transform_drag = None
-        self._transform_mode_override = None
+        if self._transform_quad is None and self._transform_mesh is None:
+            self._transform_mode_override = None
 
     def _cancel_transform_session(self) -> None:
         if not self._transform_active:
             return
+        self._liquify.cancel()
+        self._mesh_preview.cancel()
+        self._projective_preview.cancel()
         if self._transform_cut_command is not None:
             if not self._restore_preview_cut():
                 return
@@ -2522,13 +2850,34 @@ class BasicSelectionRectTool:
         self._transform_active = False
         self._transform_payload = None
         self._transform_matrix = None
+        self._transform_quad = None
+        self._transform_mesh = None
+        self._transform_projective_result = None
         self._transform_drag = None
         self._transform_mode_override = None
         self._transform_duplicate_latched = False
         self._transform_cut_command = None
+        self._layer_transform.finish()
 
     def _build_transform_commit_command(self) -> TransformSelectionCommand | None:
         if not self._transform_active or not self._transform_payload or not self._transform_matrix:
+            return None
+        liquify = self._liquify.result() if self._liquify.active else None
+        if self._liquify.active and liquify is None:
+            self._liquify.commit_when_ready()
+            return None
+        if self._liquify.active and not self._liquify.changed:
+            self._cancel_transform_session()
+            return None
+        mesh = self._transform_mesh
+        prepared_mesh = self._mesh_preview.result(mesh) if mesh is not None else None
+        if mesh is not None and prepared_mesh is None:
+            self._mesh_preview.commit_when_ready(mesh)
+            return None
+        quad = self._transform_quad
+        prepared = self._projective_preview.result(quad) if quad is not None else None
+        if quad is not None and prepared is None:
+            self._projective_preview.commit_when_ready(quad)
             return None
         if self._transform_cut_command is not None:
             if not self._restore_preview_cut():
@@ -2541,18 +2890,70 @@ class BasicSelectionRectTool:
             self._transform_matrix,
             duplicate=self._transform_duplicate_latched,
             mask_mode=self._transform_mask_mode,
+            projective_corners=self._transform_quad,
+            prepared_projective=prepared,
+            mesh_points=mesh,
+            prepared_mesh=prepared_mesh,
+            liquify_raster=liquify,
+            clear_selection_after=self._layer_transform.active,
+            layer_id=(
+                self._transform_payload.source_layer_id
+                if self._transform_quad is not None or mesh is not None or liquify is not None
+                else None
+            ),
         )
+        self._liquify.cancel()
+        self._mesh_preview.cancel()
+        self._projective_preview.cancel()
         self._transform_active = False
         self._transform_payload = None
         self._transform_matrix = None
+        self._transform_quad = None
+        self._transform_mesh = None
+        self._transform_projective_result = None
         self._transform_drag = None
         self._transform_mode_override = None
         self._transform_duplicate_latched = False
         self._transform_cut_command = None
+        self._layer_transform.finish()
         return cmd
 
+    def _submit_ready_transform_command(self, command: TransformSelectionCommand) -> None:
+        if command.clear_selection_after:
+            self._layer_transform.submit_prepared(command)
+            return
+        host = self.host_api
+        if host is None:
+            return
+        try:
+            success = bool(host.canvas.submit(command))
+        except Exception:
+            logger.exception("Selection transform could not be submitted")
+            success = False
+        if not success:
+            self._pending_commands.append(command)
+
     def _apply_transform_flip(self, fx: float, fy: float) -> None:
+        if self._liquify.active:
+            self._notify_message(_ts("Apply the current transform before changing mode."))
+            return
         if not self._ensure_transform_session() or not self._transform_matrix:
+            return
+        if self._transform_mesh is not None:
+            pivot = self._transform_matrix.apply(*self._transform_pivot_local)
+            self._transform_mesh = tuple(
+                (pivot[0] + fx * (x - pivot[0]), pivot[1] + fy * (y - pivot[1]))
+                for x, y in self._transform_mesh
+            )
+            self._update_transform_preview()
+            return
+        if self._transform_quad is not None:
+            pivot = self._transform_matrix.apply(*self._transform_pivot_local)
+            self._transform_quad = tuple(
+                (pivot[0] + fx * (x - pivot[0]), pivot[1] + fy * (y - pivot[1]))
+                for x, y in self._transform_quad
+            )  # type: ignore[assignment]
+            self._update_transform_preview()
             return
         pivot = self._transform_matrix.apply(
             self._transform_pivot_local[0], self._transform_pivot_local[1]
@@ -2568,14 +2969,28 @@ class BasicSelectionRectTool:
         self._update_transform_preview()
 
     def _reset_transform(self) -> None:
+        if self._liquify.active:
+            self._liquify.reset()
+            return
         if not self._ensure_transform_session() or not self._transform_payload:
             return
         self._transform_matrix = Affine2D.translation(
             self._transform_payload.bounds[0], self._transform_payload.bounds[1]
         )
+        self._transform_quad = None
+        self._transform_mesh = None
+        self._mesh_preview.cancel()
+        self._transform_projective_result = None
+        self._transform_mode_override = None
         self._update_transform_preview()
 
     def _apply_transform_setting(self, key: str, value: Any) -> None:
+        if (
+            self._transform_quad is not None
+            or self._transform_mesh is not None
+            or self._liquify.active
+        ):
+            return
         if not hasattr(self.settings, key):
             return
         try:
@@ -2639,55 +3054,9 @@ class BasicSelectionRectTool:
             return False
         dest_x, dest_y, dest_w, dest_h = clipped_bounds
 
-        image_source = payload.image
-        if image_source.format() != QImage.Format.Format_ARGB32_Premultiplied:
-            image_source = image_source.convertToFormat(QImage.Format.Format_ARGB32_Premultiplied)
-
-        # Apply selection mask so only selected pixels are visible during drag
         import numpy as np  # noqa: PLC0415
 
-        mask_src = payload.mask
-        if mask_src.format() != QImage.Format.Format_Alpha8:
-            mask_src = mask_src.convertToFormat(QImage.Format.Format_Alpha8)
-        mw, mh = mask_src.width(), mask_src.height()
-        mbpl = mask_src.bytesPerLine()
-        mptr = mask_src.bits()
-        if mptr is not None:
-            if hasattr(mptr, "setsize"):
-                mptr.setsize(mbpl * mh)
-            mask_arr = np.frombuffer(bytes(mptr), dtype=np.uint8).reshape(mh, mbpl)[:, :mw].copy()
-        else:
-            mask_arr = np.full((mh, mw), 255, dtype=np.uint8)
-
-        iw, ih = image_source.width(), image_source.height()
-        ibpl = image_source.bytesPerLine()
-        iptr = image_source.bits()
-        if iptr is not None:
-            if hasattr(iptr, "setsize"):
-                iptr.setsize(ibpl * ih)
-            img_arr = np.frombuffer(bytes(iptr), dtype=np.uint8).reshape(ih, ibpl)
-            img_arr = img_arr[:, : iw * 4].reshape(ih, iw, 4).copy()
-        else:
-            img_arr = np.zeros((ih, iw, 4), dtype=np.uint8)
-
-        mch = min(ih, mh)
-        mcw = min(iw, mw)
-        mask_f = mask_arr[:mch, :mcw].astype(np.float32) * (1.0 / 255.0)
-        img_arr[:mch, :mcw] = (
-            img_arr[:mch, :mcw].astype(np.float32) * mask_f[:, :, np.newaxis]
-        ).astype(np.uint8)
-        if ih > mch:
-            img_arr[mch:, :, :] = 0
-        if iw > mcw:
-            img_arr[:, mcw:, :] = 0
-
-        masked_source = QImage(
-            img_arr.data,
-            iw,
-            ih,
-            iw * 4,
-            QImage.Format.Format_ARGB32_Premultiplied,
-        ).copy()
+        masked_source, mask_source = self._affine_preview_source.get(payload)
 
         # GPU fast path hook: retired GL implementation returns None and CPU fallback continues.
         preview_image = None
@@ -2724,10 +3093,6 @@ class BasicSelectionRectTool:
             )
             painter.drawImage(0, 0, masked_source)
             painter.end()
-
-        mask_source = payload.mask
-        if mask_source.format() != QImage.Format.Format_Alpha8:
-            mask_source = mask_source.convertToFormat(QImage.Format.Format_Alpha8)
 
         # GPU fast path: warp mask as ARGB then extract alpha channel
         mask_full = None
@@ -2803,8 +3168,18 @@ class BasicSelectionRectTool:
     def _update_transform_preview(self) -> None:
         if not self._transform_active or not self._transform_payload or not self._transform_matrix:
             return
+        if self._liquify.active:
+            return
         canvas = getattr(self.host_api, "canvas", None) if self.host_api else None
         if canvas is None:
+            return
+        if self._transform_mesh is not None:
+            self._mesh_preview.request(self._transform_mesh)
+            self._selection_overlay.refresh()
+            return
+        if self._transform_quad is not None:
+            self._projective_preview.request(self._transform_quad)
+            self._selection_overlay.refresh()
             return
         from ...core.native_cmyk.selection_preview import update  # noqa: PLC0415
 
@@ -2911,6 +3286,10 @@ class BasicSelectionRectTool:
         return self._selection_overlay.hit_test(pt)
 
     def _handle_positions(self) -> dict[str, tuple[float, float]] | None:
+        if self._transform_mesh is not None:
+            return mesh_handles(self._transform_mesh)
+        if self._transform_quad is not None:
+            return quad_handles(self._transform_quad)
         if not self._transform_payload or not self._transform_matrix:
             return None
         w = float(self._transform_payload.bounds[2])
@@ -2927,6 +3306,11 @@ class BasicSelectionRectTool:
         }
 
     def _point_inside_obb(self, px: float, py: float) -> bool:
+        if self._transform_mesh is not None:
+            mesh = self._transform_mesh
+            return point_inside_quad((mesh[0], mesh[2], mesh[8], mesh[6]), px, py)
+        if self._transform_quad is not None:
+            return point_inside_quad(self._transform_quad, px, py)
         if not self._transform_matrix or not self._transform_payload:
             return False
         inv = self._transform_matrix.inverse()

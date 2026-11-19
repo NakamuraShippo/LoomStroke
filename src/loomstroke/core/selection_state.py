@@ -69,7 +69,7 @@ class SelectionStateService:
         selection_mask = getattr(self._canvas, "_selection_mask", None)
         if selection_mask is None:
             return None
-        return cast("QImage", selection_mask).copy()
+        return QImage(cast("QImage", selection_mask))
 
     def get_selection_bounds(self) -> QRect | None:
         """Return current selection bounds."""
@@ -204,7 +204,8 @@ class SelectionStateService:
         if mask is None or mask.isNull():
             return None
         arr = SelectionStateService.selection_mask_to_numpy(mask)
-        ys, xs = np.where(arr > 0)
+        ys = np.flatnonzero(np.any(arr, axis=1))
+        xs = np.flatnonzero(np.any(arr, axis=0))
         if xs.size == 0 or ys.size == 0:
             return None
         min_x = int(xs.min())
@@ -220,7 +221,7 @@ class SelectionStateService:
             image = image.convertToFormat(QImage.Format.Format_Alpha8)
         bytes_per_line = image.bytesPerLine()
         size = bytes_per_line * image.height()
-        buf = image.bits()
+        buf = image.constBits()
         if hasattr(buf, "setsize"):
             buf.setsize(size)
             view = buf

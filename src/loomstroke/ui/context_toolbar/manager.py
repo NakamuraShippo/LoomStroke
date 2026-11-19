@@ -253,7 +253,7 @@ class ContextToolbarManager(QObject):
             self._stroke_bbox = QRect(x1, y1, x2 - x1 + 1, y2 - y1 + 1)
 
     def _on_stroke_ended(self, pt: StrokePoint) -> None:
-        """Finalize BBox; show toolbar if trigger is pointer_up."""
+        """Finalize BBox and restore a toolbar hidden during the drag."""
         if self._stroke_bbox is not None:
             px, py = self._pt_xy(pt)
             bbox = self._stroke_bbox
@@ -264,7 +264,18 @@ class ContextToolbarManager(QObject):
             self._stroke_bbox = QRect(x1, y1, x2 - x1 + 1, y2 - y1 + 1)
 
         spec = self._current_spec
-        if spec and spec.show_trigger == "pointer_up" and self._current_tool_id:
+        if (
+            spec
+            and self._current_tool_id
+            and (
+                spec.show_trigger == "pointer_up"
+                or (
+                    spec.show_trigger == "selection_created"
+                    and self._active_provider_id in (None, self._current_tool_id)
+                    and self._has_selection()
+                )
+            )
+        ):
             self._show_toolbar(self._current_tool_id, spec, self._current_property_specs)
 
     def _on_selection_changed(self, payload: dict[str, Any]) -> None:

@@ -33,6 +33,8 @@ class DabVariation:
                     ),
                     tip_angle=rng.uniform(-180, 180) * settings["angle_variation"],
                     dab_color=tuple(round(channel * 255) for channel in rgb),
+                    path_x=point.x,
+                    path_y=point.y,
                 )
             )
             varied[-1] = replace(

@@ -525,6 +525,9 @@ class CanvasServiceLayerApiMixin(_CanvasServiceLayerApiBase):
         Args:
             layer_id: ID of layer to activate
         """
+        session = getattr(self, "_paint_tool_session", None)
+        if session is not None and not session.applying and layer_id != session.layer.id:
+            session.close(stale=not session.current())
         self._layer_tree().set_active_layer(layer_id)
 
     def _bump_active_texture_version(self) -> None:

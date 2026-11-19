@@ -39,6 +39,19 @@ _NUMERIC_SETTINGS: dict[str, tuple[float, float, float]] = {
 }
 _BOOLEAN_SETTINGS = {"pressure_sensitive": True, "tilt_angle": False, "recontour": False}
 PEN_SETTING_KEYS = frozenset(_NUMERIC_SETTINGS) | frozenset(_BOOLEAN_SETTINGS)
+# A pen that paints with a medium also stores these; whole percentages with defaults.
+_MEDIA = ("Watercolor", "Oil")
+_PAPERS = ("Standard", "Smooth", "Rough")
+_MEDIUM_AMOUNTS = {
+    "water_amount": 50,
+    "paint_load": 50,
+    "paint_reach": 50,
+    "paint_remaining": 20,
+    "paint_lifting": 50,
+    "paint_pickup": 50,
+    "paint_recovery": 50,
+}
+PEN_MEDIUM_KEYS = frozenset(_MEDIUM_AMOUNTS) | {"medium", "paper"}
 
 
 def validate_preset_id(value: Any) -> str:
@@ -74,6 +87,23 @@ def _validate_settings(settings: Mapping[str, Any]) -> dict[str, float | bool]:
             raise ValueError(f"Pen setting {key} must be a boolean")
         result[key] = settings[key]
     return result
+
+
+def _validate_medium(medium: Any) -> dict[str, str | int] | None:
+    if medium is None:
+        return None
+    if not isinstance(medium, Mapping) or not {"medium", "paper"} <= set(medium) <= (
+        PEN_MEDIUM_KEYS
+    ):
+        raise ValueError("Pen medium must name its medium and paper, with supported keys only")
+    # A pen saved before an amount existed takes that amount's default.
+    medium = {**_MEDIUM_AMOUNTS, **medium}
+    if medium["medium"] not in _MEDIA or medium["paper"] not in _PAPERS:
+        raise ValueError("Unknown pen medium or paper")
+    for key in _MEDIUM_AMOUNTS:
+        if type(medium[key]) is not int or not 0 <= medium[key] <= 100:
+            raise ValueError(f"Pen medium setting {key} must be a whole number in 0..100")
+    return dict(medium)
 
 
 def validate_tip_png(data: bytes) -> None:
@@ -119,6 +149,8 @@ class PenPreset:
     settings: Mapping[str, float | bool]
     tip_png: bytes | None = None
     hardness_mode: str = "radial"
+    # Watercolor or oil with its paper and paint settings; None for the normal pen.
+    medium: Mapping[str, str | int] | None = None
 
     def __post_init__(self) -> None:
         validate_preset_id(self.id)
@@ -130,6 +162,8 @@ class PenPreset:
         ):
             raise ValueError("Pen preset name must be non-empty and at most 120 characters")
         object.__setattr__(self, "settings", MappingProxyType(_validate_settings(self.settings)))
+        medium = _validate_medium(self.medium)
+        object.__setattr__(self, "medium", None if medium is None else MappingProxyType(medium))
         if not isinstance(self.hardness_mode, str) or self.hardness_mode not in {
             "radial",
             "texture",
@@ -155,13 +189,24 @@ class PenPreset:
             raise ValueError("Pen settings must be a mapping")
         values = {key: settings.get(key, limits[2]) for key, limits in _NUMERIC_SETTINGS.items()}
         values.update({key: settings.get(key, value) for key, value in _BOOLEAN_SETTINGS.items()})
-        return cls(preset_id or str(uuid.uuid4()), name, values, tip_png, hardness_mode)
+        medium = None
+        if settings.get("medium") in _MEDIA:
+            medium = {
+                "medium": settings["medium"],
+                "paper": settings.get("paper", _PAPERS[0]),
+                **{key: settings.get(key, value) for key, value in _MEDIUM_AMOUNTS.items()},
+            }
+        return cls(preset_id or str(uuid.uuid4()), name, values, tip_png, hardness_mode, medium)
+
+    def tool_settings(self) -> dict[str, Any]:
+        """What the pen tool takes from this preset; one without a medium keeps the tool's."""
+        return {**self.settings, **(self.medium or {})}
 
     def to_dict(self) -> dict[str, Any]:
         tip = None
         if self.tip_png is not None:
             tip = {"encoding": "png-base64", "data": base64.b64encode(self.tip_png).decode("ascii")}
-        return {
+        document = {
             "format": PEN_FORMAT,
             "version": PEN_VERSION,
             "id": self.id,
@@ -170,11 +215,16 @@ class PenPreset:
             "hardness_mode": self.hardness_mode,
             "tip": tip,
         }
+        if self.medium is not None:
+            # Only a medium pen carries the key, so a normal pen stays readable by
+            # versions that accept exactly the keys above.
+            document["medium"] = dict(self.medium)
+        return document
 
     @classmethod
     def from_dict(cls, document: Any) -> PenPreset:
         expected = {"format", "version", "id", "name", "settings", "hardness_mode", "tip"}
-        if not isinstance(document, dict) or set(document) != expected:
+        if not isinstance(document, dict) or set(document) - {"medium"} != expected:
             raise ValueError("Invalid LoomStroke pen document")
         if document["format"] != PEN_FORMAT:
             raise ValueError("Unknown LoomStroke pen format")
@@ -201,4 +251,5 @@ class PenPreset:
             document["settings"],
             tip_png,
             document["hardness_mode"],
+            document.get("medium"),
         )

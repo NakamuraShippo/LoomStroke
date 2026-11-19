@@ -20,3 +20,6 @@ class SelectionSettings(ToolSettings):
     transform_scale_x: float = 1.0
     transform_scale_y: float = 1.0
     transform_rotation: float = 0.0
+    mesh_divisions: int = 2
+    liquify_radius: int = 80
+    liquify_strength: int = 50

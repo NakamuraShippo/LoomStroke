@@ -1210,12 +1210,12 @@
             <translation>Семя вариации</translation>
         </message>
         <message>
-            <source>Basic Pen</source>
-            <translation>Базовая кисть</translation>
+            <source>Pen Tool</source>
+            <translation>Инструмент «Перо»</translation>
         </message>
         <message>
-            <source>Activate Basic Pen</source>
-            <translation>Активировать базовую кисть</translation>
+            <source>Activate Pen Tool</source>
+            <translation>Активировать инструмент «Перо»</translation>
         </message>
         <message>
             <source>Alternate brush binding</source>
@@ -1226,12 +1226,8 @@
             <translation>Кисти</translation>
         </message>
         <message>
-            <source>Basic Pen Tool</source>
-            <translation>Инструмент "Базовая кисть"</translation>
-        </message>
-        <message>
-            <source>Basic pen tool with pressure sensitivity</source>
-            <translation>Инструмент базовой кисти с чувствительностью к нажиму</translation>
+            <source>Pen tool with pressure sensitivity</source>
+            <translation>Инструмент «Перо» с поддержкой силы нажатия</translation>
         </message>
     <message>
         <source>Brush Manager</source>
@@ -1251,8 +1247,8 @@
         <translation>Ошибки импорта ABR:</translation>
     </message>
     <message>
-        <source>Basic Pen could not be activated because its brush data could not be prepared.</source>
-        <translation>Базовая кисть не может быть активирована, так как данные кисти не могут быть подготовлены.</translation>
+        <source>The Pen Tool could not be activated because its brush data could not be prepared.</source>
+        <translation>Не удалось активировать инструмент «Перо», так как не удалось подготовить данные кисти.</translation>
     </message>
     <message>
         <source>Failed to copy ABR: {error}</source>
@@ -1349,6 +1345,10 @@
     <message>
         <source>RecontourSmoothness (next stroke)</source>
         <translation>Повторная обработка гладкости (следующий мазок)</translation>
+    </message>
+    <message>
+        <source>RecontourSmoothness</source>
+        <translation>Повторная обработка гладкости</translation>
     </message>
     <message>
         <source>Selection snapshot failed</source>
@@ -1535,6 +1535,26 @@
 </context>
     <context>
         <name>BasicEraser</name>
+        <message>
+            <source>Stays clean</source>
+            <translation>Остаётся чистым</translation>
+        </message>
+        <message>
+            <source>Turn off symmetry copies to use the kneaded eraser.</source>
+            <translation>Отключите копии симметрии, чтобы использовать ластик-клячку.</translation>
+        </message>
+        <message>
+            <source>The eraser stroke could not be completed.</source>
+            <translation>Не удалось завершить штрих ластика.</translation>
+        </message>
+        <message>
+            <source>Eraser Type</source>
+            <translation>Тип ластика</translation>
+        </message>
+        <message>
+            <source>Use an editable RGB raster layer for the kneaded eraser.</source>
+            <translation>Для ластика-клячки используйте редактируемый растровый слой RGB.</translation>
+        </message>
         <message>
             <source>Vector Erase Mode</source>
             <translation>Режим векторного удаления</translation>
@@ -5302,6 +5322,34 @@ After refreshing the token, any agents registered to this LoomStroke MCP server 
 </context>
 <context>
         <name>ToolPropertiesPanel</name>
+    <message>
+        <source>Kneaded</source>
+        <translation>Ластик-клячка</translation>
+    </message>
+    <message>
+        <source>Normal</source>
+        <translation>Нормальный</translation>
+    </message>
+    <message>
+        <source>Standard</source>
+        <translation>Стандартная</translation>
+    </message>
+    <message>
+        <source>Smooth</source>
+        <translation>Гладкая</translation>
+    </message>
+    <message>
+        <source>Rough</source>
+        <translation>Шероховатая</translation>
+    </message>
+    <message>
+        <source>Watercolor</source>
+        <translation>Акварель</translation>
+    </message>
+    <message>
+        <source>Oil</source>
+        <translation>Масло</translation>
+    </message>
         <message>
             <source>Candidate Actions</source>
             <translation>Действия-кандидаты</translation>
@@ -5835,8 +5883,8 @@ After refreshing the token, any agents registered to this LoomStroke MCP server 
         <translation>Маркер</translation>
     </message>
     <message>
-        <source>Basic Pen</source>
-        <translation>Базовая кисть</translation>
+        <source>Pen Tool</source>
+        <translation>Инструмент «Перо»</translation>
     </message>
     <message>
         <source>Brushes</source>
@@ -16874,6 +16922,18 @@ Type: {type}</source>
 <context>
     <name>PenPresets</name>
     <message>
+        <source>Basic</source>
+        <translation>Базовый</translation>
+    </message>
+    <message>
+        <source>Watercolor</source>
+        <translation>Акварель</translation>
+    </message>
+    <message>
+        <source>Oil</source>
+        <translation>Масло</translation>
+    </message>
+    <message>
         <source>Brushes</source>
         <translation>Кисти</translation>
     </message>
@@ -21376,6 +21436,70 @@ Do you want to save them?</source>
 <context>
     <name>__shared__</name>
     <message>
+        <source>Paper type</source>
+        <translation>Тип бумаги</translation>
+    </message>
+    <message>
+        <source>Water amount</source>
+        <translation>Количество воды</translation>
+    </message>
+    <message>
+        <source>Paint load</source>
+        <translation>Количество краски</translation>
+    </message>
+    <message>
+        <source>Paint reach</source>
+        <translation>Запас краски</translation>
+    </message>
+    <message>
+        <source>Remaining paint</source>
+        <translation>Остаток краски</translation>
+    </message>
+    <message>
+        <source>Paint lifting</source>
+        <translation>Снятие краски</translation>
+    </message>
+    <message>
+        <source>Color pickup</source>
+        <translation>Захват цвета</translation>
+    </message>
+    <message>
+        <source>Color recovery</source>
+        <translation>Восстановление цвета</translation>
+    </message>
+    <message>
+        <source>Rough</source>
+        <translation>Шероховатая</translation>
+    </message>
+    <message>
+        <source>Paint Tool</source>
+        <translation>Инструмент живописи</translation>
+    </message>
+    <message>
+        <source>Paint with watercolor or oil on a raster layer</source>
+        <translation>Рисование акварелью или маслом на растровом слое</translation>
+    </message>
+    <message>
+        <source>Use an editable RGB raster layer without a selection to paint.</source>
+        <translation>Для рисования снимите выделение и выберите доступный для редактирования растровый слой RGB.</translation>
+    </message>
+    <message>
+        <source>The paint stroke could not be completed.</source>
+        <translation>Не удалось завершить мазок.</translation>
+    </message>
+    <message>
+        <source>Turn off symmetry copies to use the paint tool.</source>
+        <translation>Чтобы использовать инструмент живописи, отключите симметричные копии.</translation>
+    </message>
+    <message>
+        <source>Watercolor</source>
+        <translation>Акварель</translation>
+    </message>
+    <message>
+        <source>Oil</source>
+        <translation>Масло</translation>
+    </message>
+    <message>
         <source>Include Bleed</source>
         <translation>Включить вылеты</translation>
     </message>
@@ -22476,8 +22600,8 @@ Do you want to save them?</source>
         <translation>Панель действий</translation>
     </message>
     <message>
-        <source>Activate Basic Pen</source>
-        <translation>Активировать базовую кисть</translation>
+        <source>Activate Pen Tool</source>
+        <translation>Активировать инструмент «Перо»</translation>
     </message>
     <message>
         <source>Activate Filter Pen</source>
@@ -23346,16 +23470,12 @@ Select a file to recover.</source>
         <translation>Основное перемещение</translation>
     </message>
     <message>
-        <source>Basic Pen</source>
-        <translation>Базовая кисть</translation>
+        <source>Pen Tool</source>
+        <translation>Инструмент «Перо»</translation>
     </message>
     <message>
-        <source>Basic Pen Tool</source>
-        <translation>Инструмент "Базовая кисть"</translation>
-    </message>
-    <message>
-        <source>Basic Pen could not be activated because its brush data could not be prepared.</source>
-        <translation>Базовая кисть не может быть активирована, так как данные кисти не могут быть подготовлены.</translation>
+        <source>The Pen Tool could not be activated because its brush data could not be prepared.</source>
+        <translation>Не удалось активировать инструмент «Перо», так как не удалось подготовить данные кисти.</translation>
     </message>
     <message>
         <source>Basic Selection</source>
@@ -23370,8 +23490,8 @@ Select a file to recover.</source>
         <translation>Базовые фигуры</translation>
     </message>
     <message>
-        <source>Basic pen tool with pressure sensitivity</source>
-        <translation>Инструмент базовой кисти с чувствительностью к нажиму</translation>
+        <source>Pen tool with pressure sensitivity</source>
+        <translation>Инструмент «Перо» с поддержкой силы нажатия</translation>
     </message>
     <message>
         <source>Basic pressure-sensitive eraser tool</source>
@@ -39047,6 +39167,77 @@ Click to show as panel</source>
     <message>
         <source>Saved workflow: {name}</source>
         <translation>Рабочий процесс сохранён: {name}</translation>
+    </message>
+</context>
+<context>
+    <name>PaintTool</name>
+    <message>
+        <source>Paper type</source>
+        <translation>Тип бумаги</translation>
+    </message>
+    <message>
+        <source>Water amount</source>
+        <translation>Количество воды</translation>
+    </message>
+    <message>
+        <source>Paint load</source>
+        <translation>Количество краски</translation>
+    </message>
+    <message>
+        <source>Paint reach</source>
+        <translation>Запас краски</translation>
+    </message>
+    <message>
+        <source>Remaining paint</source>
+        <translation>Остаток краски</translation>
+    </message>
+    <message>
+        <source>Paint lifting</source>
+        <translation>Снятие краски</translation>
+    </message>
+    <message>
+        <source>Color pickup</source>
+        <translation>Захват цвета</translation>
+    </message>
+    <message>
+        <source>Color recovery</source>
+        <translation>Восстановление цвета</translation>
+    </message>
+    <message>
+        <source>Opacity</source>
+        <translation>Непрозрачность</translation>
+    </message>
+    <message>
+        <source>Paint Tool</source>
+        <translation>Инструмент живописи</translation>
+    </message>
+    <message>
+        <source>Paint with watercolor or oil on a raster layer</source>
+        <translation>Рисование акварелью или маслом на растровом слое</translation>
+    </message>
+    <message>
+        <source>Brushes</source>
+        <translation>Кисти</translation>
+    </message>
+    <message>
+        <source>Size</source>
+        <translation>Размер</translation>
+    </message>
+    <message>
+        <source>Medium</source>
+        <translation>Материал</translation>
+    </message>
+    <message>
+        <source>Use an editable RGB raster layer without a selection to paint.</source>
+        <translation>Для рисования снимите выделение и выберите доступный для редактирования растровый слой RGB.</translation>
+    </message>
+    <message>
+        <source>The paint stroke could not be completed.</source>
+        <translation>Не удалось завершить мазок.</translation>
+    </message>
+    <message>
+        <source>Turn off symmetry copies to use the paint tool.</source>
+        <translation>Чтобы использовать инструмент живописи, отключите симметричные копии.</translation>
     </message>
 </context>
 </TS>

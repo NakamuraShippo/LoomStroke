@@ -7,13 +7,13 @@ from pathlib import Path
 from typing import Any
 
 from PySide6.QtCore import QBuffer, QIODevice, QObject
-from PySide6.QtGui import QColor, QImage, QPainter
 from PySide6.QtWidgets import QDialog, QFileDialog
 
 from ...ui.translations import translated_literal_domain
 from .brush_write_feedback import show_brush_operation_notice
 from .pen_preset import PenPreset
 from .pen_preset_store import PenPresetStore
+from .pen_round_tip import round_tip_image
 
 logger = logging.getLogger(__name__)
 
@@ -28,11 +28,6 @@ class PenPresetController(QObject):
         self.plugin = plugin
         self.panel = panel
         self.store = PenPresetStore(plugin._store.root_dir)
-        self._subscriptions: list[tuple[Any, str, Any]] = []
-        self._tool_signal: Any = None
-        self._settings_handler = self._settings_changed
-        self._tool_handler = self._qt_settings_changed
-        panel.settingsEdited.connect(self._edit_settings)
         panel.presetSelected.connect(self.apply_preset)
         panel.requestSave.connect(self.save_new)
         panel.requestUpdate.connect(self.update_selected)
@@ -44,47 +39,6 @@ class PenPresetController(QObject):
     def tool(self) -> Any:
         return self.plugin.pen_tool
 
-    def bind(self) -> None:
-        self.unbind()
-        host = self.plugin.host_api
-        manager = getattr(host, "_tool_manager", None) or getattr(host, "tool_manager", None)
-        signal = getattr(manager, "tool_setting_changed", None)
-        if signal is not None:
-            signal.connect(self._tool_handler)
-            self._tool_signal = signal
-        else:
-            bus = getattr(host, "events", None)
-            subscribe = getattr(bus, "subscribe", None)
-            if callable(subscribe):
-                for topic in ("tool.settings_changed", "tool.setting_changed"):
-                    token = subscribe(topic, self._settings_handler)
-                    self._subscriptions.append((bus, topic, token))
-        self.refresh_settings()
-
-    def unbind(self) -> None:
-        if self._tool_signal is not None:
-            try:
-                self._tool_signal.disconnect(self._tool_handler)
-            except (RuntimeError, TypeError):
-                logger.debug("Pen preset ToolManager signal was already destroyed")
-            self._tool_signal = None
-        for bus, topic, token in self._subscriptions:
-            off = getattr(bus, "off", None)
-            if callable(off):
-                off(topic, token)
-        self._subscriptions.clear()
-
-    def _qt_settings_changed(self, tool_id: str, _key: str, _value: Any) -> None:
-        if tool_id == "basic_pen":
-            self.refresh_settings()
-
-    def _settings_changed(self, payload: Any) -> None:
-        if isinstance(payload, dict) and payload.get("tool_id") == "basic_pen":
-            self.refresh_settings()
-
-    def refresh_settings(self) -> None:
-        self.panel.set_settings(self.tool.get_settings())
-
     def refresh(self, selected_id: str | None = None) -> None:
         try:
             presets = self.store.list_presets()
@@ -92,7 +46,6 @@ class PenPresetController(QObject):
             self._error(exc)
             return
         self.panel.set_presets(presets, selected_id=selected_id)
-        self.refresh_settings()
 
     def _error(self, exc: Exception) -> None:
         logger.warning("Pen preset operation failed", exc_info=exc)
@@ -110,16 +63,8 @@ class PenPresetController(QObject):
     def _can_apply(self) -> bool:
         if self.tool.is_stroking:
             self.plugin._notify(_ts("Finish the current stroke before changing pen settings."))
-            self.refresh_settings()
             return False
         return True
-
-    def _edit_settings(self, values: dict[str, Any]) -> None:
-        if not self._can_apply():
-            return
-        self.tool.set_settings(values)
-        self.plugin._sync_tool_properties(self.tool.get_settings())
-        self.refresh_settings()
 
     def _capture(self, preset_id: str | None = None) -> PenPreset:
         tip_path = self.tool.get_tip_path()
@@ -132,14 +77,7 @@ class PenPresetController(QObject):
         else:
             # Round pen presets use the established radial stamp path so their
             # hardness control is effective, including after portable import.
-            image = QImage(128, 128, QImage.Format.Format_ARGB32_Premultiplied)
-            image.fill(0)
-            painter = QPainter(image)
-            painter.setRenderHint(QPainter.RenderHint.Antialiasing)
-            painter.setPen(QColor(255, 255, 255))
-            painter.setBrush(QColor(255, 255, 255))
-            painter.drawEllipse(1, 1, 126, 126)
-            painter.end()
+            image = round_tip_image()
             buffer = QBuffer()
             buffer.open(QIODevice.OpenModeFlag.WriteOnly)
             if not image.save(buffer, "PNG"):
@@ -187,13 +125,12 @@ class PenPresetController(QObject):
         except (OSError, ValueError) as exc:
             self._error(exc)
             return
-        self.tool.set_settings(dict(preset.settings))
+        self.tool.set_settings(preset.tool_settings())
         self.tool.set_tip_path(str(tip) if tip else None)
         self.tool.set_hardness_mode(preset.hardness_mode)
         self.plugin._sync_tool_properties(self.tool.get_settings())
         self.panel.set_selected_preset(preset.id)
         self._clear_swatch_selection()
-        self.refresh_settings()
         self._remember(preset.id)
 
     def _remember(self, preset_id: str | None) -> None:
@@ -217,7 +154,6 @@ class PenPresetController(QObject):
     def swatch_selected(self) -> None:
         self._remember(None)
         self.panel.set_selected_preset(None)
-        self.refresh_settings()
 
     def _clear_swatch_selection(self) -> None:
         panel = getattr(self.plugin, "_panel", None)
@@ -242,7 +178,6 @@ class PenPresetController(QObject):
         self.tool.set_hardness_mode(preset.hardness_mode)
         self.panel.set_selected_preset(preset.id)
         self._clear_swatch_selection()
-        self.refresh_settings()
 
     def import_file(self) -> None:
         path, _ = QFileDialog.getOpenFileName(

@@ -32,6 +32,8 @@ from loomstroke.core.gradient_preview_boundary import (
 from loomstroke.core.layer_opacity_preview_boundary import _close_opacity_before_edit
 from loomstroke.core.native_cmyk.command_dispatcher import NativeCmykCommandDispatcher
 from loomstroke.core.native_cmyk.patch_command import NativeCmykPatchCommand
+from loomstroke.core.paint_tool_preview import discard_detached_paint_shadow
+from loomstroke.core.paint_tool_session import PaintToolCommand, cancel_pending_paint
 
 logger = logging.getLogger(__name__)
 
@@ -43,6 +45,8 @@ class CanvasCommandDispatcher:
         self._canvas = canvas
 
     def submit(self, cmd: Any, *, merge_key: str | None = None) -> bool:
+        if not isinstance(cmd, PaintToolCommand):
+            cancel_pending_paint(self._canvas, commit=True)
         return dispatch_with_gradient_preview(
             self._canvas, cmd, lambda: self._submit_original(cmd, merge_key=merge_key)
         )
@@ -74,6 +78,7 @@ class HistoryAdapter:
         return bool(self._canvas._redo_stack) and not self._canvas._history()._restore_blocked()
 
     def undo(self) -> bool:
+        cancel_pending_paint(self._canvas)
         if not close_gradient_preview_before_edit(self._canvas):
             return False
         if not _close_opacity_before_edit(self._canvas):
@@ -86,6 +91,7 @@ class HistoryAdapter:
         return bool(self._canvas._history_undo_direct())
 
     def redo(self) -> bool:
+        cancel_pending_paint(self._canvas)
         if not close_gradient_preview_before_edit(self._canvas):
             return False
         if not _close_opacity_before_edit(self._canvas):
@@ -104,6 +110,8 @@ class HistoryAdapter:
         return len(self._canvas._redo_stack)
 
     def clear(self) -> None:
+        cancel_pending_paint(self._canvas)
+        discard_detached_paint_shadow(self._canvas)
         if not close_gradient_preview_before_edit(self._canvas):
             raise _HistoryClearSuperseded(
                 "Gradient preview could not be restored before history clear"
@@ -621,28 +629,37 @@ class CanvasHistoryRestoreService:
     def restore_patch(self, patch: Any, *, use_after: bool) -> None:
         if patch.layer_id == self._canvas._selection_id:
             replacement = patch.after if use_after else patch.before
-            bounds = self._canvas._selection_bounds_from_mask(replacement)
-            self._canvas.set_selection_mask(replacement, bounds)
+            extent = patch.metadata.get("after_extent" if use_after else "before_extent")
+            if extent is not None:
+                extent.restore(self._canvas, replacement)
+            else:
+                bounds = self._canvas._selection_bounds_from_mask(replacement)
+                self._canvas.set_selection_mask(replacement, bounds)
             return
         layer = self._canvas._get_layer_by_id(patch.layer_id)
         if layer is None or layer.image is None:
             return
 
-        is_mask_patch = bool(patch.metadata.get("mask_edit"))
-        if use_after and not is_mask_patch:
-            from .comic_panels.raster_history import prepare_edge_patch_restore  # noqa: PLC0415
-
-            prepare_edge_patch_restore(self._canvas, layer, patch.rect)
-        target = layer.layer_mask if is_mask_patch and layer.layer_mask is not None else layer.image
-
         replacement = patch.after if use_after else patch.before
-        offset_x, offset_y = self._canvas._layer_offset(layer)
-        local_rect = QRect(patch.rect)
-        local_rect.translate(-offset_x, -offset_y)
-        painter = QPainter(target)
-        painter.setCompositionMode(QPainter.CompositionMode.CompositionMode_Source)
-        painter.drawImage(local_rect.topLeft(), replacement)
-        painter.end()
+        expansion = getattr(patch, "backing_expansion", None)
+        if expansion is not None:
+            geometry = expansion.after if use_after else expansion.before
+            geometry.restore_pixels(layer, patch.rect.x(), patch.rect.y(), replacement)
+        else:
+            is_mask_patch = bool(patch.metadata.get("mask_edit"))
+            if use_after and not is_mask_patch:
+                from .comic_panels.raster_history import prepare_edge_patch_restore  # noqa: PLC0415
+
+                prepare_edge_patch_restore(self._canvas, layer, patch.rect)
+            target = (
+                layer.layer_mask if is_mask_patch and layer.layer_mask is not None else layer.image
+            )
+            offset_x, offset_y = self._canvas._layer_offset(layer)
+            local_rect = patch.rect.translated(-offset_x, -offset_y)
+            painter = QPainter(target)
+            painter.setCompositionMode(QPainter.CompositionMode.CompositionMode_Source)
+            painter.drawImage(local_rect.topLeft(), replacement)
+            painter.end()
         layer.texture_version += 1
         self._canvas._emit_layer_content_changed(layer, patch.rect, patch.metadata)
 

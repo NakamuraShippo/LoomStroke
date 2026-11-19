@@ -35,11 +35,32 @@ class CanvasSelectionContentSubmitService:
             if active_version is not None:
                 active.texture_version = active_version
 
+        grouped_transform = (
+            label == "Transform Selection"
+            and (
+                getattr(cmd, "projective_corners", None) is not None
+                or getattr(cmd, "mesh_points", None) is not None
+                or getattr(cmd, "liquify_raster", None) is not None
+                or getattr(cmd, "_backing_expansion", None) is not None
+            )
+            and not self._owner._in_transaction
+        )
+
+        def record() -> None:
+            if grouped_transform:
+                self._owner.begin_transaction(label)
+            try:
+                self._owner._record_selection_command_history(cmd, label=label)
+            finally:
+                if grouped_transform:
+                    self._owner.end_transaction()
+
         if not record_raster_history(
             self._owner,
-            lambda: self._owner._record_selection_command_history(cmd, label=label),
+            record,
             restore,
         ):
             return False
-        self._owner._recompose()
+        if not grouped_transform:
+            self._owner._recompose()
         return True

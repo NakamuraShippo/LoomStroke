@@ -171,6 +171,8 @@ class RenderLayerSnapshot:
     # only a small region per frame: (x, y, w, h) in texture px lets the
     # texture manager upload just that rect instead of the whole image.
     preview_dirty_rect: tuple[int, int, int, int] | None = None
+    paint_upload: Any | None = None
+    paint_upload_key: tuple[int, int] | None = None
     mask_nearest: bool = False
     mask_region_eligible: bool = False
     initial_dirty_rect: tuple[int, int, int, int] | None = None
@@ -189,6 +191,7 @@ class RenderLayerSnapshot:
         copy_rasterized_vector: bool = True,
         direct_vector_payloads: dict[str, Any] | None = None,
         vector_raster_scale: int = 1,
+        include_paint_preview: bool = False,
     ) -> RenderLayerSnapshot:
         layer_id = str(getattr(layer, "id", ""))
         from loomstroke.core.comic_panels.stroke_upload import (  # noqa: PLC0415
@@ -312,9 +315,14 @@ class RenderLayerSnapshot:
                 copy_rasterized_vector=copy_rasterized_vector,
                 direct_vector_payloads=direct_vector_payloads,
                 vector_raster_scale=vector_raster_scale,
+                include_paint_preview=include_paint_preview,
             )
             for child in (getattr(layer, "children", []) or [])
         ]
+        if include_paint_preview:
+            paint = getattr(layer, "_paint_tool_display", None)
+            if paint is not None:
+                paint.configure_snapshot(layer, snapshot)
         return snapshot
 
     @property
@@ -391,6 +399,7 @@ def build_render_scene_snapshot(
     skip_rasterize_layer_ids: set[str] | frozenset[str] | None = None,
     vector_raster_scale: int = 1,
     include_frame_preview: bool = False,
+    include_paint_preview: bool = False,
 ) -> RenderSceneSnapshot:
     diagnostics_enabled = render_diagnostics_enabled()
     build_start = time.perf_counter() if diagnostics_enabled else 0.0
@@ -452,19 +461,23 @@ def build_render_scene_snapshot(
             copy_rasterized_vector=copy_rasterized_vector,
             direct_vector_payloads=direct_vector_payloads or None,
             vector_raster_scale=raster_scale,
+            include_paint_preview=include_paint_preview,
         )
         for layer in getattr(canvas, "_layers", [])
     )
+    from .panel_frame_preview_export import viewport_preview_layers  # noqa: PLC0415
     from .path_text_preview_layer import append_path_text_preview  # noqa: PLC0415
 
     layers = append_path_text_preview(canvas, layers, rasterize_vector, raster_scale)
     layers = _apply_transient_overrides(canvas, layers)
-    frame_preview_source_layers = None
-    if include_frame_preview:
-        preview = getattr(canvas, "_panel_frame_render_preview", None)
-        if preview is not None:
-            frame_preview_source_layers = layers
-            layers = preview.apply_to_layers(layers, scale=raster_scale)
+    layers, frame_preview_source_layers = viewport_preview_layers(
+        canvas,
+        layers,
+        raster_scale,
+        paint_enabled=include_paint_preview,
+        frame_enabled=include_frame_preview,
+        selection_enabled=include_selection_preview,
+    )
     flatten_start = time.perf_counter() if diagnostics_enabled else 0.0
     flat_layers, parent_ids = _flatten_layers_with_parents(list(layers))
     flatten_ms = (time.perf_counter() - flatten_start) * 1000.0 if diagnostics_enabled else 0.0

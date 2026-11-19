@@ -457,11 +457,24 @@ def _agent_guide_resource() -> dict[str, Any]:
                 "loomstroke_close_document",
             ],
             "paint": [
+                "loomstroke_draw_strokes",
                 "loomstroke_draw_stroke",
                 "loomstroke_fill",
                 "loomstroke_draw_gradient",
                 "loomstroke_fill_pattern",
             ],
+            "strokeBatch": (
+                "Use loomstroke_draw_strokes for multiple strokes on one raster layer. "
+                "Send the strokes in drawing order, with toolId, points and settings "
+                "(including size and pen color) per entry. The whole batch is one Undo. "
+                "See each tool's inputSchema and example in tools/list."
+            ),
+            "editableShapes": (
+                "Preview and apply a CanvasChangeset with add_vector_shape for filled basic "
+                "shapes (style.fillColor, strokeColor and strokeWidth). "
+                "Use loomstroke_update_vector with patch.paths to set custom polygon anchors "
+                "or Bezier handles on an existing vector object."
+            ),
             "history": ["loomstroke_get_history_state", "loomstroke_undo", "loomstroke_redo"],
             "guard": (
                 "Use explicit layer IDs and settings, optional expectedRevision from "

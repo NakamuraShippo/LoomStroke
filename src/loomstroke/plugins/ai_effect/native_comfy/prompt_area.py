@@ -16,7 +16,8 @@ from PySide6.QtWidgets import (
 
 from loomstroke.plugins.ai_effect.ui.param_widgets import StringParamWidget
 
-from .values import parameter_bindings
+from .panel import tr
+from .values import parameter_bindings, prompt_ui_state
 
 LIVE = "live"
 TEXT = "text"
@@ -40,9 +41,11 @@ def _restorable(saved: Any, value: Any) -> bool:
 class PromptArea(QWidget):
     """Edit published string inputs in the panel instead of the ComfyUI node.
 
-    LivePrompt mode hides the webview for the selected node and the values
-    reach the node on the panel's Apply/generate commit, as the former dialog
-    did on OK. Text mode leaves the node text as the source.
+    LivePrompt mode hides the webview for the selected node. Edits and mode
+    switches are saved to the layer at once, like the Qt node forms, so they
+    survive document saves and layer switches; the node receives the text when
+    the panel pushes layer values or commits for generation. Text mode leaves
+    the node text as the source.
     """
 
     def __init__(self, panel: Any) -> None:
@@ -53,6 +56,7 @@ class PromptArea(QWidget):
         self.modes: dict[str, str] = {}
         self._disabled: set[str] = set()
         self._loaded: dict[str, Any] = {}
+        self._loading = False
         layout = QVBoxLayout(self)
         layout.setContentsMargins(0, 0, 0, 0)
         toggle = QHBoxLayout()
@@ -108,11 +112,20 @@ class PromptArea(QWidget):
                 dict(entry, required_text=True), page, host_api=self.panel.section._host
             )
             page.layout().addRow(entry.get("display_name") or key, editor)
+            editor.value_changed.connect(self._changed)
             self.editors[key] = editor
             self.node_keys.setdefault(node, []).append(key)
         self._load(state.param_values, state.param_ui_state)
 
     def _load(self, values: dict, ui: dict) -> None:
+        # Restoring editors emits value_changed; that is not a user edit to save.
+        self._loading = True
+        try:
+            self._load_editors(values, ui)
+        finally:
+            self._loading = False
+
+    def _load_editors(self, values: dict, ui: dict) -> None:
         for node, keys in self.node_keys.items():
             live = False
             for key in keys:
@@ -155,6 +168,39 @@ class PromptArea(QWidget):
         else:
             self._disabled.difference_update(self.node_keys[node])
         self.apply_visibility()
+        self._save()
+
+    def _changed(self, key: str, _value: Any) -> None:
+        node = next((n for n, keys in self.node_keys.items() if key in keys), None)
+        if self._loading or node is None or self.modes.get(node) != LIVE:
+            return
+        self._save()
+
+    def _save(self) -> None:
+        """Write LivePrompt text and mode to the layer, as QtNodeForms does per edit."""
+        panel = self.panel
+        if self._loading or not panel._nodes_loaded or getattr(panel, "_pending_layer", None):
+            return
+        try:
+            state = panel.current_state()
+        except ValueError:
+            return
+        values = dict(state.param_values)
+        for node, keys in self.node_keys.items():
+            if self.modes.get(node) == LIVE:
+                values.update({key: self.editors[key].get_value() for key in keys})
+        ui = prompt_ui_state(state.param_ui_state, values, self.ui_updates(state.param_ui_state))
+        if not panel.section._host.canvas.set_ai_effect_layer_state(
+            panel.layer_id, param_values=values, slot_refs=state.slot_refs, param_ui_state=ui
+        ):
+            panel.status.setText(tr("Could not update the AI Effect layer."))
+            return
+        # The layer now holds these values; sync() must not reload the editors.
+        for key in self._loaded:
+            self._loaded[key] = copy.deepcopy(values.get(key))
+        schedule = getattr(panel.section, "_maybe_schedule_auto_generate", None)
+        if callable(schedule):
+            schedule(state)
 
     def apply_visibility(self) -> None:
         """Called by QtNodeForms.select after it shows the webview for this node."""

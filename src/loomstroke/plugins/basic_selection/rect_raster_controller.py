@@ -12,6 +12,8 @@ from ...core.commands import (
 )
 from ...core.geometry import Affine2D
 from ...core.selection_clipboard import SelectionPayload
+from ...core.selection_mesh import Mesh
+from ...core.selection_projective import Quad
 from ...host_api import StrokePoint
 from ..common.document_capture_guard import (
     DocumentCaptureLease,
@@ -41,6 +43,8 @@ class RasterTransformDragState:
     shift_locked: bool
     snap_override: bool
     duplicate: bool
+    quad0: Quad | None = None
+    mesh0: Mesh | None = None
 
 
 @dataclass(slots=True)
@@ -61,6 +65,9 @@ class RasterTransformSession:
     active: bool = False
     payload: SelectionPayload | None = None
     matrix: Affine2D | None = None
+    quad: Quad | None = None
+    mesh: Mesh | None = None
+    projective_result: tuple[Quad, tuple[Any, Any, tuple[int, int, int, int]]] | None = None
     pivot_local: tuple[float, float] = (0.0, 0.0)
     drag: RasterTransformDragState | None = None
     mode_override: str | None = None
@@ -124,6 +131,9 @@ class RasterSelectionController:
 
         if tool._transform_active:
             if tool._begin_transform_drag(pt, alt=alt, shift=shift, ctrl=ctrl):
+                return
+            if tool._transform_mesh is not None:
+                tool._mesh_preview.commit_when_ready(tool._transform_mesh)
                 return
             cmd = tool._build_transform_commit_command()
             if cmd and tool.host_api:

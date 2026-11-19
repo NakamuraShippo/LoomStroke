@@ -4,7 +4,7 @@ build-backend = "setuptools.build_meta"
 
 [project]
 name = "loomstroke"
-version = "0.3.0.9.11"
+version = "0.3.0.9.31"
 description = "Plugin-based paint application with AI integration"
 authors = [{name = "LoomStroke Team"}]
 license = {text = "Proprietary"}
@@ -406,6 +406,7 @@ license-files = ["LICENSE", "LICENSE_JA", "THIRD_PARTY_LICENSES"]
 
 
 [tool.setuptools.package-data]
+"loomstroke.core.paint_media" = ["_loomstroke_paint*"]
 "loomstroke.io" = [
     "lstroke_manifest_schema_v1.json",
     "resources/icc/*.icc",

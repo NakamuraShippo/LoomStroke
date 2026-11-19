@@ -16,6 +16,7 @@ from loomstroke.platform.settings_manager import get_settings_manager
 
 from .drawing_guide_snap import snap_drawing_position
 from .space_key_tracker import SpaceKeyTracker
+from .tablet_tilt import document_tilt
 
 logger = logging.getLogger(__name__)
 
@@ -351,8 +352,17 @@ class InputHandler(QObject):
         """Handle tablet event."""
         if self._perf_tablet_enabled:
             self._record_tablet_interval(event)
+        probe = getattr(self.canvas, "_active_tool_paints_provisionally", None)
+        paint = callable(probe) and probe() is True
+        if (
+            paint
+            and event.type() in (QTabletEvent.Type.TabletPress, QTabletEvent.Type.TabletRelease)
+            and event.button() not in (Qt.MouseButton.LeftButton, Qt.MouseButton.NoButton)
+        ):
+            event.accept()
+            return
         self._handle_tablet_pointer_type(event)
-        point = self._update_tablet_state(event)
+        point = self._update_tablet_state(event, paint=paint)
         self._dispatch_tablet_point(event, point)
 
     def _handle_tablet_pointer_type(self, event: QTabletEvent) -> None:
@@ -401,17 +411,24 @@ class InputHandler(QObject):
         target_name = getattr(target, "name", None) or str(target)
         return bool(pointer_name and target_name and pointer_name.lower() == target_name.lower())
 
-    def _update_tablet_state(self, event: QTabletEvent) -> StrokePoint:
+    def _update_tablet_state(self, event: QTabletEvent, *, paint: bool) -> StrokePoint:
         pos = event.position()
         canvas_pos = self.canvas.viewport.widget_to_canvas(pos.x(), pos.y())
         self.state.last_x = canvas_pos[0]
         self.state.last_y = canvas_pos[1]
         self.state.pressure = event.pressure()
-        if event.xTilt() != 0 or event.yTilt() != 0:
-            self.state.tilt_x = event.xTilt()
-            self.state.tilt_y = event.yTilt()
+        x_tilt, y_tilt = event.xTilt(), event.yTilt()
+        if paint:
+            # The paint sampler interpolates the measured contact between input positions.
+            # A hover, previous stroke, or zero-pressure lift must not enter its pressure curve.
+            self.state.tilt_x, self.state.tilt_y = document_tilt(
+                self.canvas.viewport, x_tilt, y_tilt
+            )
+        elif x_tilt != 0 or y_tilt != 0:
+            self.state.tilt_x, self.state.tilt_y = x_tilt, y_tilt
         self._update_modifiers(event.modifiers())
-        self._smooth_pressure()
+        if not paint:
+            self._smooth_pressure()
         return self._create_stroke_point()
 
     def _dispatch_tablet_point(self, event: QTabletEvent, point: StrokePoint) -> None:

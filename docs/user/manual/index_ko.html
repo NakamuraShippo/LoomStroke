@@ -114,7 +114,7 @@ table.params td:nth-child(2) { white-space: normal; min-width: 8em; }
       <ol><li><a href="#whatsnew">v0.3 이후 주요 변경 사항</a></li><li><a href="#install">설치 및 업데이트</a></li><li><a href="#launch">실행 및 시작 화면</a></li><li><a href="#recovery">자동 저장에서 복원</a></li><li><a href="#new-doc">새 문서</a></li><li><a href="#screen">화면 보기</a></li></ol></li>
     <li><a href="#quickstart">2. 첫 번째 이미지</a></li>
     <li><a href="#tools">3. 도구</a>
-      <ol><li><a href="#tool-groups">도구바와 그룹</a></li><li><a href="#tool-pen">베이직 펜</a></li><li><a href="#tool-filter-pen">필터 펜</a></li><li><a href="#tool-eraser">지우개</a></li><li><a href="#tool-fill">채우기</a></li><li><a href="#tool-gradient">그레이디언트</a></li><li><a href="#tool-pattern">패턴 필터</a></li><li><a href="#tool-wand">마법의 막대</a></li><li><a href="#tool-ai">AI Select</a></li><li><a href="#tool-rect">선택(직사각형)</a></li><li><a href="#tool-move">이동</a></li><li><a href="#tool-vpen">벡터 펜(고 정확도)</a></li><li><a href="#tool-path">경로</a></li><li><a href="#tool-pathedit">경로 편집</a></li><li><a href="#tool-text">텍스트</a></li><li><a href="#tool-vtext">수직 텍스트</a></li><li><a href="#tool-eyedropper">스포이트</a></li><li><a href="#tool-measure">측정</a></li><li><a href="#tool-comic">Comic</a></li></ol></li>
+      <ol><li><a href="#tool-groups">도구바와 그룹</a></li><li><a href="#tool-pen">펜 도구</a></li><li><a href="#tool-filter-pen">필터 펜</a></li><li><a href="#tool-eraser">지우개</a></li><li><a href="#tool-fill">채우기</a></li><li><a href="#tool-gradient">그레이디언트</a></li><li><a href="#tool-pattern">패턴 필터</a></li><li><a href="#tool-wand">마법의 막대</a></li><li><a href="#tool-ai">AI Select</a></li><li><a href="#tool-rect">선택(직사각형)</a></li><li><a href="#tool-move">이동</a></li><li><a href="#tool-vpen">벡터 펜(고 정확도)</a></li><li><a href="#tool-path">경로</a></li><li><a href="#tool-pathedit">경로 편집</a></li><li><a href="#tool-text">텍스트</a></li><li><a href="#tool-vtext">수직 텍스트</a></li><li><a href="#tool-eyedropper">스포이트</a></li><li><a href="#tool-measure">측정</a></li><li><a href="#tool-comic">Comic</a></li></ol></li>
     <li><a href="#layers">4. 레이어와 필터</a>
       <ol><li><a href="#layer-panel">레이어 패널</a></li><li><a href="#blend">레이어 효과(합성)</a></li><li><a href="#layer-ctx">오른쪽 클릭 메뉴</a></li><li><a href="#channels">채널</a></li><li><a href="#filters">필터 레이어 전체 종류</a></li><li><a href="#fill-layers">채우기 레이어</a></li><li><a href="#layer-styles">레이어 스타일</a></li></ol></li>
     <li><a href="#panels">5. 패널 세부 정보</a>
@@ -237,7 +237,7 @@ table.params td:nth-child(2) { white-space: normal; min-width: 8em; }
 <ol class="steps">
   <li><b>파일 &gt; 열기</b>（<kbd>Ctrl</kbd>+<kbd>O</kbd>PNG 등의 이미지를 (에서) 열면 이미지의 크기만큼 캔버스가 생성되고 이미지는 하나의 레이어가 됩니다.</li>
   <li>레이어 패널 아래의 <b>＋</b>(추가)로 새 레이어를 생성하고, 이름을 더블 클릭하여 '그림 그리기' 등으로 변경합니다. 원래 그림과 다른 레이어에 그려서, 나중에 삭제하거나 이동해도 원래 그림이 손상되지 않습니다.</li>
-  <li><b>베이직 펜</b>（<kbd>B</kbd>)에서 파형이나 별을 그릴 수 있습니다.</li>
+  <li><b>펜 도구</b>（<kbd>B</kbd>)에서 파형이나 별을 그릴 수 있습니다.</li>
   <li>추가로 새 레이어를 생성하고, 펜으로 원을 그려서,<b>채우기</b>내부를 클릭하여 색상을 흐르게 합니다.</li>
   <li><b>텍스트</b>（<kbd>T</kbd>)이나<b>수직 텍스트</b>캔버스를 클릭하고 텍스트를 입력합니다.</li>
   <li>일러스트 레이어를 선택하여<b>필터 레이어</b>추가하면 원래 그림을 바꾸지 않고 블러나 색 조정을 적용할 수 있습니다.</li>
@@ -253,7 +253,7 @@ table.params td:nth-child(2) { white-space: normal; min-width: 8em; }
 <h3 id="tool-groups">도구바와 그룹</h3>
 <p>왼쪽 상단의 도구바는<b>도구 그룹</b>단위별로 버튼이 배치됩니다. 오른쪽 아래에 작은 삼각형이 있는 버튼은 여러 도구를 가지고 있습니다.<b>장시간 누르기(약 0.35초)</b>에서 플라이아웃 메뉴가 열리며 전환됩니다. 버튼의 아이콘은 최근 사용한 도구로 표시됩니다.</p>
 <div class="grid3">
-<figure><img src="img/flyout_0.png" alt="펜 그룹" loading="lazy"><figcaption>펜: 기본 펜 / 필터 펜</figcaption></figure>
+<figure><img src="img/flyout_0.png" alt="펜 그룹" loading="lazy"><figcaption>펜: 펜 도구 / 필터 펜</figcaption></figure>
 <figure><img src="img/flyout_1.png" alt="선택 그룹" loading="lazy"><figcaption>선택: 마이크로 와이드 / AI Select / 선택(직사각형)</figcaption></figure>
 <figure><img src="img/flyout_2.png" alt="칠 그룹" loading="lazy"><figcaption>칠하기: 채우기 / 그라데이션 / 패턴 채우기</figcaption></figure>
 <figure><img src="img/flyout_3.png" alt="벡터 그룹" loading="lazy"><figcaption>벡터: 벡터 펜(고정밀도)/ 경로 / 경로 편집</figcaption></figure>
@@ -271,8 +271,9 @@ table.params td:nth-child(2) { white-space: normal; min-width: 8em; }
 <p>도구를 선택하면,<b>도구 속성 바</b>（메뉴 바로 아래）과<b>컨텍스트 툴바</b>캔버스 위에 해당 도구의 설정이 표시됩니다. 바의 왼쪽 끝 '프리셋'에서 설정 조합을 불러오고, '저장', '삭제'로 관리할 수 있습니다.<b>도구 설정</b>（펜은 '펜 설정') 버튼을 누르면, 접기형 상세 설정이 열립니다. 이 사용법서에서는 상세 설정을 모든 섹션을 확장한 상태로 제시합니다.</p>
 
 <!-- ペン -->
-<h3 id="tool-pen">베이직 펜 <span class="tag">B</span></h3>
-<figure><img src="img/use_pen.png" alt="기본 펜으로 그리기" loading="lazy"><figcaption>‘그림 그리기’ 레이어에 붓으로 분홍색 파형과 노란색 별을 그린 상태입니다. 상단에 사이즈, 불투명도, 경직도의 컨텍스트 툴바가 있습니다.<span class="legend"><span class="num">1</span>선택된 도구　<span class="num">2</span>속성 바　<span class="num">3</span>컨텍스트 툴바　<span class="num">4</span>그린 선</span></figcaption></figure>
+<h3 id="tool-pen">펜 도구 <span class="tag">B</span></h3>
+<p>도구 속성의 ‘화구’에서 ‘표준’, ‘수채화’ 또는 ‘유화’를 선택하세요.</p>
+<figure><img src="img/use_pen.png" alt="펜 도구로 그리기" loading="lazy"><figcaption>‘그림 그리기’ 레이어에 붓으로 분홍색 파형과 노란색 별을 그린 상태입니다. 상단에 사이즈, 불투명도, 경직도의 컨텍스트 툴바가 있습니다.<span class="legend"><span class="num">1</span>선택된 도구　<span class="num">2</span>속성 바　<span class="num">3</span>컨텍스트 툴바　<span class="num">4</span>그린 선</span></figcaption></figure>
 <p>압력과 기울기에 맞춘 레이어 브러시입니다. '스케치' 등의 프리셋이 제공되며, 브러시 매니저에서 Photoshop의 ABR 브러시나 PNG 이미지의 브러시 끝부분도 가져올 수 있습니다.</p>
 
 <figure class="narrow"><img src="img/opt_pen.png" alt="펜 설정" loading="lazy"><figcaption>펜 설정(전 섹션 확장)</figcaption></figure>
@@ -1775,7 +1776,7 @@ table.params td:nth-child(2) { white-space: normal; min-width: 8em; }
 <table><tr><th colspan="2">이미지</th></tr><tr><td>캔버스를 180도 회전</td><td>—</td></tr><tr><td>캔버스를 90도 반시계 방향으로 회전합니다.</td><td>—</td></tr><tr><td>캔버스를 90도 회전(시계 방향)</td><td>—</td></tr><tr><td>캔버스 상하 반전</td><td>—</td></tr><tr><td>캔버스 좌우 반전</td><td>—</td></tr><tr><td>만화 작품 설정...</td><td>—</td></tr><tr><td>이미지 설정...</td><td>—</td></tr><tr><td>이미지 해상도...</td><td>—</td></tr></table>
 <table><tr><th colspan="2">레이어</th></tr><tr><td>이미지 통합</td><td><kbd>Ctrl</kbd> + <kbd>Alt</kbd> + <kbd>E</kbd></td></tr><tr><td>선택 범위를 마스크로 변환</td><td>—</td></tr><tr><td>라스터라이즈</td><td><kbd>Shift</kbd> + <kbd>R</kbd></td></tr><tr><td>레이어 그룹화</td><td><kbd>Ctrl</kbd> + <kbd>G</kbd></td></tr><tr><td>아래 레이어와 병합</td><td><kbd>Ctrl</kbd> + <kbd>E</kbd> <span class="tag">경쟁</span></td></tr><tr><td>삭제</td><td><kbd>Del</kbd></td></tr><tr><td>새로운 스크린 톤 레이어...</td><td>—</td></tr><tr><td>새 레이어</td><td><kbd>Ctrl</kbd> + <kbd>Shift</kbd> + <kbd>N</kbd></td></tr><tr><td>표시 레이어를 병합</td><td><kbd>Ctrl</kbd> + <kbd>Shift</kbd> + <kbd>E</kbd></td></tr><tr><td>복제</td><td><kbd>Ctrl</kbd> + <kbd>J</kbd></td></tr></table>
 <table><tr><th colspan="2">플러그인</th></tr><tr><td>Convert to Vector</td><td>—</td></tr><tr><td>Register Shape</td><td>—</td></tr><tr><td>Register Shapes</td><td>—</td></tr></table>
-<table><tr><th colspan="2">도구</th></tr><tr><td>벡터 펜 (고정밀)</td><td><kbd>P</kbd></td></tr><tr><td>지우개</td><td><kbd>E</kbd></td></tr><tr><td>지우개 (Secondary)</td><td><kbd>Shift</kbd> + <kbd>E</kbd></td></tr><tr><td>이동</td><td><kbd>V</kbd></td></tr><tr><td>색</td><td><kbd>I</kbd></td></tr><tr><td>색 (보조)</td><td><kbd>Shift</kbd> + <kbd>I</kbd></td></tr><tr><td>텍스트</td><td><kbd>T</kbd></td></tr><tr><td>베이직 펜</td><td><kbd>B</kbd></td></tr><tr><td>기본 펜 (Secondary)</td><td><kbd>Shift</kbd> + <kbd>B</kbd></td></tr></table>
+<table><tr><th colspan="2">도구</th></tr><tr><td>벡터 펜 (고정밀)</td><td><kbd>P</kbd></td></tr><tr><td>지우개</td><td><kbd>E</kbd></td></tr><tr><td>지우개 (Secondary)</td><td><kbd>Shift</kbd> + <kbd>E</kbd></td></tr><tr><td>이동</td><td><kbd>V</kbd></td></tr><tr><td>색</td><td><kbd>I</kbd></td></tr><tr><td>색 (보조)</td><td><kbd>Shift</kbd> + <kbd>I</kbd></td></tr><tr><td>텍스트</td><td><kbd>T</kbd></td></tr><tr><td>펜 도구</td><td><kbd>B</kbd></td></tr><tr><td>펜 도구 (Secondary)</td><td><kbd>Shift</kbd> + <kbd>B</kbd></td></tr></table>
 <table><tr><th colspan="2">표시</th></tr><tr><td>프루프용 프로파일 선택...</td><td>—</td></tr><tr><td>소프트 프루프</td><td>—</td></tr><tr><td>그리드 표시/숨기기</td><td><kbd>G</kbd></td></tr><tr><td>줌 리셋</td><td><kbd>Ctrl</kbd> + <kbd>0</kbd></td></tr><tr><td>확대</td><td><kbd>Ctrl</kbd> + <kbd>=</kbd></td></tr><tr><td>축소</td><td><kbd>Ctrl</kbd> + <kbd>-</kbd></td></tr><tr><td>이중에 맞추기</td><td><kbd>Ctrl</kbd> + <kbd>Shift</kbd> + <kbd>F</kbd></td></tr></table>
 <table><tr><th colspan="2">윈도우</th></tr><tr><td>가이드 표시/숨기기(정확도 도구)</td><td><kbd>R</kbd></td></tr></table>
 </div>

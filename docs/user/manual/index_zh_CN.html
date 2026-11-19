@@ -114,7 +114,7 @@ table.params td:nth-child(2) { white-space: normal; min-width: 8em; }
       <ol><li><a href="#whatsnew">自 v0.3 以来的主要变化</a></li><li><a href="#install">安装和更新</a></li><li><a href="#launch">启动和启动屏幕</a></li><li><a href="#recovery">从自动保存恢复</a></li><li><a href="#new-doc">新文件</a></li><li><a href="#screen">如何查看屏幕</a></li></ol></li>
     <li><a href="#quickstart">2.我的第一张照片</a></li>
     <li><a href="#tools">3. 工具</a>
-      <ol><li><a href="#tool-groups">工具栏和组</a></li><li><a href="#tool-pen">基本笔</a></li><li><a href="#tool-filter-pen">过滤笔</a></li><li><a href="#tool-eraser">橡皮擦</a></li><li><a href="#tool-fill">填充</a></li><li><a href="#tool-gradient">渐变</a></li><li><a href="#tool-pattern">图案填充</a></li><li><a href="#tool-wand">魔杖</a></li><li><a href="#tool-ai">AI Select</a></li><li><a href="#tool-rect">选择（矩形）</a></li><li><a href="#tool-move">移动</a></li><li><a href="#tool-vpen">矢量笔（高精度）</a></li><li><a href="#tool-path">通过</a></li><li><a href="#tool-pathedit">编辑路径</a></li><li><a href="#tool-text">文本</a></li><li><a href="#tool-vtext">竖排文字</a></li><li><a href="#tool-eyedropper">滴管</a></li><li><a href="#tool-measure">测量</a></li><li><a href="#tool-comic">Comic</a></li></ol></li>
+      <ol><li><a href="#tool-groups">工具栏和组</a></li><li><a href="#tool-pen">画笔工具</a></li><li><a href="#tool-filter-pen">过滤笔</a></li><li><a href="#tool-eraser">橡皮擦</a></li><li><a href="#tool-fill">填充</a></li><li><a href="#tool-gradient">渐变</a></li><li><a href="#tool-pattern">图案填充</a></li><li><a href="#tool-wand">魔杖</a></li><li><a href="#tool-ai">AI Select</a></li><li><a href="#tool-rect">选择（矩形）</a></li><li><a href="#tool-move">移动</a></li><li><a href="#tool-vpen">矢量笔（高精度）</a></li><li><a href="#tool-path">通过</a></li><li><a href="#tool-pathedit">编辑路径</a></li><li><a href="#tool-text">文本</a></li><li><a href="#tool-vtext">竖排文字</a></li><li><a href="#tool-eyedropper">滴管</a></li><li><a href="#tool-measure">测量</a></li><li><a href="#tool-comic">Comic</a></li></ol></li>
     <li><a href="#layers">4. 图层和过滤器</a>
       <ol><li><a href="#layer-panel">图层面板</a></li><li><a href="#blend">图层效果（合成）</a></li><li><a href="#layer-ctx">右键菜单</a></li><li><a href="#channels">频道</a></li><li><a href="#filters">所有类型的过滤层</a></li><li><a href="#fill-layers">填充层</a></li><li><a href="#layer-styles">图层样式</a></li></ol></li>
     <li><a href="#panels">5. 面板细节</a>
@@ -237,7 +237,7 @@ table.params td:nth-child(2) { white-space: normal; min-width: 8em; }
 <ol class="steps">
   <li><b>文件 › 打开</b>（<kbd>Ctrl</kbd>+<kbd>O</kbd>）打开 PNG 等图像。您将拥有一个与图像大小相同的画布，并且您的图像将是单层。</li>
   <li>在图层面板下 <b>＋</b>使用（添加）创建一个新图层，然后双击将名称更改为“绘图”之类的名称。如果您在与原始图片不同的图层上绘制，即使稍后删除或移动它也不会损坏原始图片。</li>
-  <li><b>基本笔</b>（<kbd>B</kbd>) 添加波浪线和星星。</li>
+  <li><b>画笔工具</b>（<kbd>B</kbd>) 添加波浪线和星星。</li>
   <li>新建一个图层，用钢笔画一个圆，<b>填充</b>单击内部以倒入颜色。</li>
   <li><b>文本</b>（<kbd>T</kbd>）和<b>竖排文字</b>单击画布并输入文本。</li>
   <li>选择插图图层<b>过滤层</b>通过添加 ，您可以模糊或调整颜色，而无需重写原始图片。</li>
@@ -253,7 +253,7 @@ table.params td:nth-child(2) { white-space: normal; min-width: 8em; }
 <h3 id="tool-groups">工具栏和组</h3>
 <p>左边的工具栏是<b>工具组</b>按钮按单元排列。右下角的小三角按钮有多种工具，<b>长按（约0.35秒）</b>弹出菜单将打开，您可以在它们之间进行切换。按钮图片是最后使用的工具。</p>
 <div class="grid3">
-<figure><img src="img/flyout_0.png" alt="笔组" loading="lazy"><figcaption>笔：基础笔/滤镜笔</figcaption></figure>
+<figure><img src="img/flyout_0.png" alt="笔组" loading="lazy"><figcaption>笔：画笔工具/滤镜笔</figcaption></figure>
 <figure><img src="img/flyout_1.png" alt="选择组" loading="lazy"><figcaption>选择：魔棒/AI Select/选择（矩形）</figcaption></figure>
 <figure><img src="img/flyout_2.png" alt="填充组" loading="lazy"><figcaption>填充：填充/渐变/图案填充</figcaption></figure>
 <figure><img src="img/flyout_3.png" alt="向量组" loading="lazy"><figcaption>矢量：矢量笔（高精度）/路径/路径编辑</figcaption></figure>
@@ -271,8 +271,9 @@ table.params td:nth-child(2) { white-space: normal; min-width: 8em; }
 <p>当你选择一个工具时，<b>工具属性栏</b>（菜单正下方）和<b>上下文工具栏</b>该工具的设置将显示（在画布上）。您可以使用栏左端的“预设”来调用设置组合，并使用“保存”和“删除”来管理它们。<b>“工具设置”</b>（对于笔，请按“笔设置”）按钮打开可折叠的高级设置。在本手册中，详细设置以展开的所有部分显示。</p>
 
 <!-- ペン -->
-<h3 id="tool-pen">基本笔 <span class="tag">B</span></h3>
-<figure><img src="img/use_pen.png" alt="用基本笔画画" loading="lazy"><figcaption>在“绘图”图层上用钢笔绘制粉红色的波浪线和黄色的星星。顶部的大小、不透明度和硬度的上下文工具栏。<span class="legend"><span class="num">1</span>选定的工具　<span class="num">2</span>属性栏　<span class="num">3</span>上下文工具栏　<span class="num">4</span>画线</span></figcaption></figure>
+<h3 id="tool-pen">画笔工具 <span class="tag">B</span></h3>
+<p>在工具属性的“绘画媒材”中可切换“正常”“水彩”和“油彩”。</p>
+<figure><img src="img/use_pen.png" alt="用画笔工具画画" loading="lazy"><figcaption>在“绘图”图层上用钢笔绘制粉红色的波浪线和黄色的星星。顶部的大小、不透明度和硬度的上下文工具栏。<span class="legend"><span class="num">1</span>选定的工具　<span class="num">2</span>属性栏　<span class="num">3</span>上下文工具栏　<span class="num">4</span>画线</span></figcaption></figure>
 <p>支持钢笔压力和倾斜的光栅画笔。可以使用“草图”等预设，还可以从画笔管理器导入 Photoshop 的 ABR 画笔和 PNG 图像画笔笔尖。</p>
 
 <figure class="narrow"><img src="img/opt_pen.png" alt="笔设置" loading="lazy"><figcaption>笔设置（展开所有部分）</figcaption></figure>
@@ -858,7 +859,7 @@ table.params td:nth-child(2) { white-space: normal; min-width: 8em; }
 </div>
 <table>
 <tr><th colspan="2">基本的</th></tr>
-<tr><td>尺寸/硬度/不透明度/流量/印章密度/图像稳定</td><td>基本笔设置（大小 0.1-1000 px，其他单位为 %）。</td></tr>
+<tr><td>尺寸/硬度/不透明度/流量/印章密度/图像稳定</td><td>画笔工具设置（大小 0.1-1000 px，其他单位为 %）。</td></tr>
 <tr><th colspan="2">线条形状</th></tr>
 <tr><td>进入/退出编辑器</td><td>拖动手柄可调整进入和退出的长度。用方向键微调，<kbd>Shift</kbd> 以 10 像素为增量，<kbd>Home</kbd> 无效，<kbd>End</kbd> 2000 像素处。</td></tr>
 <tr><td>进入长度/拔出长度</td><td>0 到 2000 px（0 禁用）。</td></tr>
@@ -1775,7 +1776,7 @@ table.params td:nth-child(2) { white-space: normal; min-width: 8em; }
 <table><tr><th colspan="2">图像</th></tr><tr><td>将画布旋转 180°</td><td>—</td></tr><tr><td>将画布旋转 90°（逆时针）</td><td>—</td></tr><tr><td>将画布旋转 90°（顺时针）</td><td>—</td></tr><tr><td>垂直翻转画布</td><td>—</td></tr><tr><td>水平翻转画布</td><td>—</td></tr><tr><td>漫画工作设置...</td><td>—</td></tr><tr><td>图像设置...</td><td>—</td></tr><tr><td>图像分辨率...</td><td>—</td></tr></table>
 <table><tr><th colspan="2">层</th></tr><tr><td>合并图像</td><td><kbd>Ctrl</kbd> + <kbd>Alt</kbd> + <kbd>E</kbd></td></tr><tr><td>将选区转换为蒙版</td><td>—</td></tr><tr><td>光栅化</td><td><kbd>Shift</kbd> + <kbd>R</kbd></td></tr><tr><td>图层组</td><td><kbd>Ctrl</kbd> + <kbd>G</kbd></td></tr><tr><td>与下面的图层合并</td><td><kbd>Ctrl</kbd> + <kbd>E</kbd> <span class="tag">竞争</span></td></tr><tr><td>删除</td><td><kbd>Del</kbd></td></tr><tr><td>新的屏幕色调层...</td><td>—</td></tr><tr><td>新层</td><td><kbd>Ctrl</kbd> + <kbd>Shift</kbd> + <kbd>N</kbd></td></tr><tr><td>合并可见图层</td><td><kbd>Ctrl</kbd> + <kbd>Shift</kbd> + <kbd>E</kbd></td></tr><tr><td>繁殖</td><td><kbd>Ctrl</kbd> + <kbd>J</kbd></td></tr></table>
 <table><tr><th colspan="2">插件</th></tr><tr><td>Convert to Vector</td><td>—</td></tr><tr><td>Register Shape</td><td>—</td></tr><tr><td>Register Shapes</td><td>—</td></tr></table>
-<table><tr><th colspan="2">工具</th></tr><tr><td>矢量笔（高精度）</td><td><kbd>P</kbd></td></tr><tr><td>橡皮擦</td><td><kbd>E</kbd></td></tr><tr><td>橡皮擦（辅助）</td><td><kbd>Shift</kbd> + <kbd>E</kbd></td></tr><tr><td>移动</td><td><kbd>V</kbd></td></tr><tr><td>颜色</td><td><kbd>I</kbd></td></tr><tr><td>颜色（次要）</td><td><kbd>Shift</kbd> + <kbd>I</kbd></td></tr><tr><td>文本</td><td><kbd>T</kbd></td></tr><tr><td>基本笔</td><td><kbd>B</kbd></td></tr><tr><td>基本笔（中学）</td><td><kbd>Shift</kbd> + <kbd>B</kbd></td></tr></table>
+<table><tr><th colspan="2">工具</th></tr><tr><td>矢量笔（高精度）</td><td><kbd>P</kbd></td></tr><tr><td>橡皮擦</td><td><kbd>E</kbd></td></tr><tr><td>橡皮擦（辅助）</td><td><kbd>Shift</kbd> + <kbd>E</kbd></td></tr><tr><td>移动</td><td><kbd>V</kbd></td></tr><tr><td>颜色</td><td><kbd>I</kbd></td></tr><tr><td>颜色（次要）</td><td><kbd>Shift</kbd> + <kbd>I</kbd></td></tr><tr><td>文本</td><td><kbd>T</kbd></td></tr><tr><td>画笔工具</td><td><kbd>B</kbd></td></tr><tr><td>画笔工具（中学）</td><td><kbd>Shift</kbd> + <kbd>B</kbd></td></tr></table>
 <table><tr><th colspan="2">显示</th></tr><tr><td>选择用于打样的配置文件...</td><td>—</td></tr><tr><td>软打样</td><td>—</td></tr><tr><td>显示/隐藏网格</td><td><kbd>G</kbd></td></tr><tr><td>重置变焦</td><td><kbd>Ctrl</kbd> + <kbd>0</kbd></td></tr><tr><td>展开</td><td><kbd>Ctrl</kbd> + <kbd>=</kbd></td></tr><tr><td>减少</td><td><kbd>Ctrl</kbd> + <kbd>-</kbd></td></tr><tr><td>适合传播</td><td><kbd>Ctrl</kbd> + <kbd>Shift</kbd> + <kbd>F</kbd></td></tr></table>
 <table><tr><th colspan="2">窗户</th></tr><tr><td>显示/隐藏指南（标尺）</td><td><kbd>R</kbd></td></tr></table>
 </div>

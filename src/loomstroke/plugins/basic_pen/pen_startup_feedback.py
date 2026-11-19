@@ -9,8 +9,10 @@ from .pen_notice import _gui_application, _PenNotice
 
 logger = logging.getLogger(__name__)
 
-_TITLE_SOURCE = "Basic Pen"
-_FAILURE_SOURCE = "Basic Pen could not be activated because its brush data could not be prepared."
+_TITLE_SOURCE = "Pen Tool"
+_FAILURE_SOURCE = (
+    "The Pen Tool could not be activated because its brush data could not be prepared."
+)
 
 
 def clear_startup_feedback(plugin: Any) -> None:

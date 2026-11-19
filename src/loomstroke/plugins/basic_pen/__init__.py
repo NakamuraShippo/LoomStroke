@@ -9,7 +9,7 @@ from ...core.commands import StrokePoint as CommandStrokePoint
 from ...host_api import StrokePoint as HostStrokePoint
 from ...plugins.sdk.base import PluginMetadata, PluginType
 from ..sdk import ToolDescriptor
-from .pen_tool import create_plugin
+from .pen_tool import _ts, create_plugin
 
 
 @dataclass
@@ -30,15 +30,15 @@ class BasicPenPlugin:
     def __init__(self) -> None:
         self.metadata = PluginMetadata(
             id="basic_pen",
-            name="Basic Pen Tool",
+            name=_ts("Pen Tool"),
             version="1.0.0",
-            description="Legacy compatible basic pen tool",
+            description=_ts("Pen tool with pressure sensitivity"),
             author="LoomStroke Team",
             types=[PluginType.TOOL],
         )
         self._descriptor = ToolDescriptor(
             id="basic_pen",
-            display_name="Pen",
+            display_name=_ts("Pen Tool"),
             cursor="crosshair",
             category="brush",
         )

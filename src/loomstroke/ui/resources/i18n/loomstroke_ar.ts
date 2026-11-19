@@ -1210,12 +1210,12 @@
             <translation>بذرة التغير</translation>
         </message>
         <message>
-            <source>Basic Pen</source>
-            <translation>فرشاة أساسية</translation>
+            <source>Pen Tool</source>
+            <translation>أداة القلم</translation>
         </message>
         <message>
-            <source>Activate Basic Pen</source>
-            <translation>تفعيل الفرشاة الأساسية</translation>
+            <source>Activate Pen Tool</source>
+            <translation>تفعيل أداة القلم</translation>
         </message>
         <message>
             <source>Alternate brush binding</source>
@@ -1226,12 +1226,8 @@
             <translation>فُرَش</translation>
         </message>
         <message>
-            <source>Basic Pen Tool</source>
-            <translation>أداة الفرشاة الأساسية</translation>
-        </message>
-        <message>
-            <source>Basic pen tool with pressure sensitivity</source>
-            <translation>أداة فرشاة أساسية تدعم حساسية الضغط</translation>
+            <source>Pen tool with pressure sensitivity</source>
+            <translation>أداة قلم تدعم حساسية الضغط</translation>
         </message>
     <message>
         <source>Brush Manager</source>
@@ -1251,8 +1247,8 @@
         <translation>أخطاء استيراد ABR:</translation>
     </message>
     <message>
-        <source>Basic Pen could not be activated because its brush data could not be prepared.</source>
-        <translation>لا يمكن تفعيل القلم الأساسي لأنه لم يتم إعداد بيانات الفرشاة.</translation>
+        <source>The Pen Tool could not be activated because its brush data could not be prepared.</source>
+        <translation>تعذّر تفعيل أداة القلم لأنه تعذّر تجهيز بيانات الفرشاة.</translation>
     </message>
     <message>
         <source>Failed to copy ABR: {error}</source>
@@ -1349,6 +1345,10 @@
     <message>
         <source>RecontourSmoothness (next stroke)</source>
         <translation>سلاسة إعادة التشكيل (الضربة التالية)</translation>
+    </message>
+    <message>
+        <source>RecontourSmoothness</source>
+        <translation>سلاسة إعادة التشكيل</translation>
     </message>
     <message>
         <source>Selection snapshot failed</source>
@@ -1535,6 +1535,26 @@
 </context>
     <context>
         <name>BasicEraser</name>
+        <message>
+            <source>Stays clean</source>
+            <translation>تبقى نظيفة</translation>
+        </message>
+        <message>
+            <source>Turn off symmetry copies to use the kneaded eraser.</source>
+            <translation>أوقف نسخ التناظر لاستخدام الممحاة المعجونية.</translation>
+        </message>
+        <message>
+            <source>The eraser stroke could not be completed.</source>
+            <translation>تعذر إكمال ضربة الممحاة.</translation>
+        </message>
+        <message>
+            <source>Eraser Type</source>
+            <translation>نوع الممحاة</translation>
+        </message>
+        <message>
+            <source>Use an editable RGB raster layer for the kneaded eraser.</source>
+            <translation>استخدم طبقة نقطية RGB قابلة للتحرير للممحاة المعجونية.</translation>
+        </message>
         <message>
             <source>Vector Erase Mode</source>
             <translation>وضع حذف متجه</translation>
@@ -5023,6 +5043,34 @@ After refreshing the token, any agents registered to this LoomStroke MCP server 
 <context>
     <name>ToolPropertiesPanel</name>
     <message>
+        <source>Kneaded</source>
+        <translation>ممحاة معجونية</translation>
+    </message>
+    <message>
+        <source>Normal</source>
+        <translation>مُعتاد</translation>
+    </message>
+    <message>
+        <source>Standard</source>
+        <translation>قياسي</translation>
+    </message>
+    <message>
+        <source>Smooth</source>
+        <translation>أملس</translation>
+    </message>
+    <message>
+        <source>Rough</source>
+        <translation>خشن</translation>
+    </message>
+    <message>
+        <source>Watercolor</source>
+        <translation>ألوان مائية</translation>
+    </message>
+    <message>
+        <source>Oil</source>
+        <translation>ألوان زيتية</translation>
+    </message>
+    <message>
         <source>Candidate Actions</source>
         <translation>الإجراءات المُقترحَة</translation>
     </message>
@@ -5467,8 +5515,8 @@ After refreshing the token, any agents registered to this LoomStroke MCP server 
         <translation>علامة</translation>
     </message>
     <message>
-        <source>Basic Pen</source>
-        <translation>فرشاة أساسية</translation>
+        <source>Pen Tool</source>
+        <translation>أداة القلم</translation>
     </message>
     <message>
         <source>Brushes</source>
@@ -16840,6 +16888,18 @@ Type: {type}</source>
 <context>
     <name>PenPresets</name>
     <message>
+        <source>Basic</source>
+        <translation>أساسي</translation>
+    </message>
+    <message>
+        <source>Watercolor</source>
+        <translation>ألوان مائية</translation>
+    </message>
+    <message>
+        <source>Oil</source>
+        <translation>ألوان زيتية</translation>
+    </message>
+    <message>
         <source>Brushes</source>
         <translation>فُرَش</translation>
     </message>
@@ -21373,6 +21433,70 @@ Do you want to save them?</source>
 <context>
     <name>__shared__</name>
     <message>
+        <source>Paper type</source>
+        <translation>نوع الورق</translation>
+    </message>
+    <message>
+        <source>Water amount</source>
+        <translation>كمية الماء</translation>
+    </message>
+    <message>
+        <source>Paint load</source>
+        <translation>كمية الطلاء</translation>
+    </message>
+    <message>
+        <source>Paint reach</source>
+        <translation>مدى الطلاء</translation>
+    </message>
+    <message>
+        <source>Remaining paint</source>
+        <translation>الطلاء المتبقي</translation>
+    </message>
+    <message>
+        <source>Paint lifting</source>
+        <translation>رفع الطلاء</translation>
+    </message>
+    <message>
+        <source>Color pickup</source>
+        <translation>التقاط اللون</translation>
+    </message>
+    <message>
+        <source>Color recovery</source>
+        <translation>استعادة اللون</translation>
+    </message>
+    <message>
+        <source>Rough</source>
+        <translation>خشن</translation>
+    </message>
+    <message>
+        <source>Paint Tool</source>
+        <translation>أداة الرسم بالألوان</translation>
+    </message>
+    <message>
+        <source>Paint with watercolor or oil on a raster layer</source>
+        <translation>ارسم بالألوان المائية أو الزيتية على طبقة نقطية</translation>
+    </message>
+    <message>
+        <source>Use an editable RGB raster layer without a selection to paint.</source>
+        <translation>للرسم، ألغِ التحديد واختر طبقة نقطية RGB قابلة للتحرير.</translation>
+    </message>
+    <message>
+        <source>The paint stroke could not be completed.</source>
+        <translation>تعذر إكمال ضربة الفرشاة.</translation>
+    </message>
+    <message>
+        <source>Turn off symmetry copies to use the paint tool.</source>
+        <translation>أوقف تشغيل النسخ المتماثلة لاستخدام أداة الرسم بالألوان.</translation>
+    </message>
+    <message>
+        <source>Watercolor</source>
+        <translation>ألوان مائية</translation>
+    </message>
+    <message>
+        <source>Oil</source>
+        <translation>ألوان زيتية</translation>
+    </message>
+    <message>
         <source>Include Bleed</source>
         <translation>تضمين مساحة النزف</translation>
     </message>
@@ -22473,8 +22597,8 @@ Do you want to save them?</source>
         <translation>مُلَفَّت الإجراءات</translation>
     </message>
     <message>
-        <source>Activate Basic Pen</source>
-        <translation>تفعيل الفرشاة الأساسية</translation>
+        <source>Activate Pen Tool</source>
+        <translation>تفعيل أداة القلم</translation>
     </message>
     <message>
         <source>Activate Filter Pen</source>
@@ -23343,16 +23467,12 @@ Select a file to recover.</source>
         <translation>الحركة الأساسية</translation>
     </message>
     <message>
-        <source>Basic Pen</source>
-        <translation>فرشاة أساسية</translation>
+        <source>Pen Tool</source>
+        <translation>أداة القلم</translation>
     </message>
     <message>
-        <source>Basic Pen Tool</source>
-        <translation>أداة الفرشاة الأساسية</translation>
-    </message>
-    <message>
-        <source>Basic Pen could not be activated because its brush data could not be prepared.</source>
-        <translation>لا يمكن تفعيل القلم الأساسي لأنه لم يتم إعداد بيانات الفرشاة.</translation>
+        <source>The Pen Tool could not be activated because its brush data could not be prepared.</source>
+        <translation>تعذّر تفعيل أداة القلم لأنه تعذّر تجهيز بيانات الفرشاة.</translation>
     </message>
     <message>
         <source>Basic Selection</source>
@@ -23367,8 +23487,8 @@ Select a file to recover.</source>
         <translation>الأشكال الأساسية</translation>
     </message>
     <message>
-        <source>Basic pen tool with pressure sensitivity</source>
-        <translation>أداة فرشاة أساسية تدعم حساسية الضغط</translation>
+        <source>Pen tool with pressure sensitivity</source>
+        <translation>أداة قلم تدعم حساسية الضغط</translation>
     </message>
     <message>
         <source>Basic pressure-sensitive eraser tool</source>
@@ -39043,6 +39163,77 @@ Click to show as panel</source>
     <message>
         <source>Saved workflow: {name}</source>
         <translation>حُفظ سير العمل: {name}</translation>
+    </message>
+</context>
+<context>
+    <name>PaintTool</name>
+    <message>
+        <source>Paper type</source>
+        <translation>نوع الورق</translation>
+    </message>
+    <message>
+        <source>Water amount</source>
+        <translation>كمية الماء</translation>
+    </message>
+    <message>
+        <source>Paint load</source>
+        <translation>كمية الطلاء</translation>
+    </message>
+    <message>
+        <source>Paint reach</source>
+        <translation>مدى الطلاء</translation>
+    </message>
+    <message>
+        <source>Remaining paint</source>
+        <translation>الطلاء المتبقي</translation>
+    </message>
+    <message>
+        <source>Paint lifting</source>
+        <translation>رفع الطلاء</translation>
+    </message>
+    <message>
+        <source>Color pickup</source>
+        <translation>التقاط اللون</translation>
+    </message>
+    <message>
+        <source>Color recovery</source>
+        <translation>استعادة اللون</translation>
+    </message>
+    <message>
+        <source>Opacity</source>
+        <translation>التعتيم</translation>
+    </message>
+    <message>
+        <source>Paint Tool</source>
+        <translation>أداة الرسم بالألوان</translation>
+    </message>
+    <message>
+        <source>Paint with watercolor or oil on a raster layer</source>
+        <translation>ارسم بالألوان المائية أو الزيتية على طبقة نقطية</translation>
+    </message>
+    <message>
+        <source>Brushes</source>
+        <translation>فُرَش</translation>
+    </message>
+    <message>
+        <source>Size</source>
+        <translation>الحجم</translation>
+    </message>
+    <message>
+        <source>Medium</source>
+        <translation>نوع الألوان</translation>
+    </message>
+    <message>
+        <source>Use an editable RGB raster layer without a selection to paint.</source>
+        <translation>للرسم، ألغِ التحديد واختر طبقة نقطية RGB قابلة للتحرير.</translation>
+    </message>
+    <message>
+        <source>The paint stroke could not be completed.</source>
+        <translation>تعذر إكمال ضربة الفرشاة.</translation>
+    </message>
+    <message>
+        <source>Turn off symmetry copies to use the paint tool.</source>
+        <translation>أوقف تشغيل النسخ المتماثلة لاستخدام أداة الرسم بالألوان.</translation>
     </message>
 </context>
 </TS>

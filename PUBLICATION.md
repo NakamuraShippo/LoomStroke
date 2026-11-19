@@ -1,4 +1,4 @@
-> **最終照合: 2026-11-17**
+> **最終照合: 2026-11-20**
 
 # 公開用ソースの対象範囲
 
@@ -44,6 +44,16 @@ SHA-256は `91b5fbda8c7279924e5c70e3a744280541095e1c86acd9aabde53df7ea6f6f6f` �
 公開Assetと `.sha256` をダウンロードし、事前検証ZIPとハッシュが一致しました。ZIP内の版番号・更新履歴・READMEのダウンロード先も `0.3.0.8.130` で一致しています。旧 `v0.3.0.8.121` Releaseは保持しました。新規Windows環境への導入と実アプリ手操作は再実施していません。
 
 ## 現行の配布スナップショット
+
+### 2026-11-20 v0.3.0.9.31 ペンツールと画材の同期
+
+ペンツールの水彩・油彩、練り消し、選択範囲・レイヤーの変形およびこの間の製品更新を収録した。
+v0.3.0.9.12〜v0.3.0.9.31の更新項目を同梱の `CHANGELOG.md` に掲載する。
+
+Windows x64・CPython 3.13用のRust拡張とビルド記録は `src/loomstroke/core/paint_media/` に収録する。
+ZIP版を更新すると `update.bat` が公開 `main` の `src/loomstroke/` と一緒に両ファイルを配置する。
+対応するPythonで起動すると拡張を読み込み、ほかのPythonや拡張を読み込めない環境ではPython実装で描画する。
+同梱ライブラリの告知を `THIRD_PARTY_LICENSES` に追記し、rust-numpyとmemoffsetのライセンスを `LICENSES/` に追加した。
 
 ### 2026-11-17 v0.3.0.9.11 インペイントペンの同期
 
@@ -305,7 +315,7 @@ build backendが生成したパッケージMETADATAのVersionも`0.3.0.3`で一�
 - ロゴ `img/`、第三者告知 `LICENSES/`、`THIRD_PARTY_LICENSES`
 - 利用者向け文書 `docs/user/`
 - `pyproject.toml`、`requirements.txt`
-- 更新履歴 `CHANGELOG.md`（2026-10-21のv0.3から開始、現在v0.3.0.9.11）
+- 更新履歴 `CHANGELOG.md`（2026-10-21のv0.3から開始、現在v0.3.0.9.31）
 - `main.py`、`install.bat`、`install_python.ps1`、`boot_LoomStroke.bat`、`run.sh`
 - AI無し専用入口 `boot_LoomStroke_noAI.bat`、ZIP更新用 `update.bat` / `update.ps1`
 

@@ -26,8 +26,14 @@ PATHS = {
                     "properties": {
                         "pos": POINT,
                         "kind": {"enum": ["corner", "smooth"]},
-                        "h_in": {"anyOf": [POINT, {"type": "null"}]},
-                        "h_out": {"anyOf": [POINT, {"type": "null"}]},
+                        "h_in": {
+                            "description": "Incoming Bézier handle [dx, dy] relative to pos.",
+                            "anyOf": [POINT, {"type": "null"}],
+                        },
+                        "h_out": {
+                            "description": "Outgoing Bézier handle [dx, dy] relative to pos.",
+                            "anyOf": [POINT, {"type": "null"}],
+                        },
                     },
                     "required": ["pos"],
                     "additionalProperties": False,

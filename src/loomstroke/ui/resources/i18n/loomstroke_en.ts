@@ -251,16 +251,16 @@
         <translation>Brush Manager</translation>
     </message>
     <message>
-        <source>Basic Pen</source>
-        <translation>Basic Pen</translation>
+        <source>Pen Tool</source>
+        <translation>Pen Tool</translation>
     </message>
     <message>
         <source>Tools</source>
         <translation>Tools</translation>
     </message>
     <message>
-        <source>Activate Basic Pen</source>
-        <translation>Activate Basic Pen</translation>
+        <source>Activate Pen Tool</source>
+        <translation>Activate Pen Tool</translation>
     </message>
     <message>
         <source>Alternate brush binding</source>
@@ -271,12 +271,8 @@
         <translation>Brushes</translation>
     </message>
     <message>
-        <source>Basic Pen Tool</source>
-        <translation>Basic Pen Tool</translation>
-    </message>
-    <message>
-        <source>Basic pen tool with pressure sensitivity</source>
-        <translation>Basic pen tool with pressure sensitivity</translation>
+        <source>Pen tool with pressure sensitivity</source>
+        <translation>Pen tool with pressure sensitivity</translation>
     </message>
     <message>
         <source>No swatch selected</source>
@@ -415,8 +411,8 @@
         <translation>Marker</translation>
     </message>
     <message>
-        <source>Basic Pen could not be activated because its brush data could not be prepared.</source>
-        <translation>Basic Pen could not be activated because its brush data could not be prepared.</translation>
+        <source>The Pen Tool could not be activated because its brush data could not be prepared.</source>
+        <translation>The Pen Tool could not be activated because its brush data could not be prepared.</translation>
     </message>
     <message>
         <source>Pen taper could not be completed. The stroke was preserved.</source>
@@ -433,6 +429,10 @@
     <message>
         <source>RecontourSmoothness (next stroke)</source>
         <translation>RecontourSmoothness (next stroke)</translation>
+    </message>
+    <message>
+        <source>RecontourSmoothness</source>
+        <translation>RecontourSmoothness</translation>
     </message>
     <message>
         <source>Taper End Length</source>
@@ -5433,6 +5433,34 @@ After refreshing the token, any agents registered to this LoomStroke MCP server 
 <context>
     <name>ToolPropertiesPanel</name>
     <message>
+        <source>Kneaded</source>
+        <translation>Kneaded Eraser</translation>
+    </message>
+    <message>
+        <source>Normal</source>
+        <translation>Normal</translation>
+    </message>
+    <message>
+        <source>Standard</source>
+        <translation>Standard</translation>
+    </message>
+    <message>
+        <source>Smooth</source>
+        <translation>Smooth</translation>
+    </message>
+    <message>
+        <source>Rough</source>
+        <translation>Rough</translation>
+    </message>
+    <message>
+        <source>Watercolor</source>
+        <translation>Watercolor</translation>
+    </message>
+    <message>
+        <source>Oil</source>
+        <translation>Oil</translation>
+    </message>
+    <message>
         <source>Candidate Actions</source>
         <translation>Candidate Actions</translation>
     </message>
@@ -5901,8 +5929,8 @@ After refreshing the token, any agents registered to this LoomStroke MCP server 
         <translation>Name:</translation>
     </message>
     <message>
-        <source>Basic Pen</source>
-        <translation>Basic Pen</translation>
+        <source>Pen Tool</source>
+        <translation>Pen Tool</translation>
     </message>
     <message>
         <source>Brushes</source>
@@ -8518,6 +8546,26 @@ Use "Edit Filters" to add.</translation>
 </context>
 <context>
     <name>BasicEraser</name>
+    <message>
+        <source>Stays clean</source>
+        <translation>Stays clean</translation>
+    </message>
+    <message>
+        <source>Turn off symmetry copies to use the kneaded eraser.</source>
+        <translation>Turn off symmetry copies to use the kneaded eraser.</translation>
+    </message>
+    <message>
+        <source>The eraser stroke could not be completed.</source>
+        <translation>The eraser stroke could not be completed.</translation>
+    </message>
+    <message>
+        <source>Eraser Type</source>
+        <translation>Eraser Type</translation>
+    </message>
+    <message>
+        <source>Use an editable RGB raster layer for the kneaded eraser.</source>
+        <translation>Use an editable RGB raster layer for the kneaded eraser.</translation>
+    </message>
     <message>
         <source>Vector Erase Mode</source>
         <translation>Vector Erase Mode</translation>
@@ -17974,6 +18022,18 @@ Click to show as panel</translation>
 <context>
     <name>PenPresets</name>
     <message>
+        <source>Basic</source>
+        <translation>Basic</translation>
+    </message>
+    <message>
+        <source>Watercolor</source>
+        <translation>Watercolor</translation>
+    </message>
+    <message>
+        <source>Oil</source>
+        <translation>Oil</translation>
+    </message>
+    <message>
         <source>Brushes</source>
         <translation>Brushes</translation>
     </message>
@@ -21370,6 +21430,70 @@ You will need to enter it again before generating.</translation>
 <context>
     <name>__shared__</name>
     <message>
+        <source>Paper type</source>
+        <translation>Paper type</translation>
+    </message>
+    <message>
+        <source>Water amount</source>
+        <translation>Water amount</translation>
+    </message>
+    <message>
+        <source>Paint load</source>
+        <translation>Paint load</translation>
+    </message>
+    <message>
+        <source>Paint reach</source>
+        <translation>Paint reach</translation>
+    </message>
+    <message>
+        <source>Remaining paint</source>
+        <translation>Remaining paint</translation>
+    </message>
+    <message>
+        <source>Paint lifting</source>
+        <translation>Paint lifting</translation>
+    </message>
+    <message>
+        <source>Color pickup</source>
+        <translation>Color pickup</translation>
+    </message>
+    <message>
+        <source>Color recovery</source>
+        <translation>Color recovery</translation>
+    </message>
+    <message>
+        <source>Rough</source>
+        <translation>Rough</translation>
+    </message>
+    <message>
+        <source>Paint Tool</source>
+        <translation>Paint Tool</translation>
+    </message>
+    <message>
+        <source>Paint with watercolor or oil on a raster layer</source>
+        <translation>Paint with watercolor or oil on a raster layer</translation>
+    </message>
+    <message>
+        <source>Use an editable RGB raster layer without a selection to paint.</source>
+        <translation>Use an editable RGB raster layer without a selection to paint.</translation>
+    </message>
+    <message>
+        <source>The paint stroke could not be completed.</source>
+        <translation>The paint stroke could not be completed.</translation>
+    </message>
+    <message>
+        <source>Turn off symmetry copies to use the paint tool.</source>
+        <translation>Turn off symmetry copies to use the paint tool.</translation>
+    </message>
+    <message>
+        <source>Watercolor</source>
+        <translation>Watercolor</translation>
+    </message>
+    <message>
+        <source>Oil</source>
+        <translation>Oil</translation>
+    </message>
+    <message>
         <source>Include Bleed</source>
         <translation>Include Bleed</translation>
     </message>
@@ -22470,8 +22594,8 @@ You will need to enter it again before generating.</translation>
         <translation>Actions Panel</translation>
     </message>
     <message>
-        <source>Activate Basic Pen</source>
-        <translation>Activate Basic Pen</translation>
+        <source>Activate Pen Tool</source>
+        <translation>Activate Pen Tool</translation>
     </message>
     <message>
         <source>Activate Filter Pen</source>
@@ -23340,16 +23464,12 @@ Select a file to recover.</translation>
         <translation>Basic Move</translation>
     </message>
     <message>
-        <source>Basic Pen</source>
-        <translation>Basic Pen</translation>
+        <source>Pen Tool</source>
+        <translation>Pen Tool</translation>
     </message>
     <message>
-        <source>Basic Pen Tool</source>
-        <translation>Basic Pen Tool</translation>
-    </message>
-    <message>
-        <source>Basic Pen could not be activated because its brush data could not be prepared.</source>
-        <translation>Basic Pen could not be activated because its brush data could not be prepared.</translation>
+        <source>The Pen Tool could not be activated because its brush data could not be prepared.</source>
+        <translation>The Pen Tool could not be activated because its brush data could not be prepared.</translation>
     </message>
     <message>
         <source>Basic Selection</source>
@@ -23364,8 +23484,8 @@ Select a file to recover.</translation>
         <translation>Basic Shapes</translation>
     </message>
     <message>
-        <source>Basic pen tool with pressure sensitivity</source>
-        <translation>Basic pen tool with pressure sensitivity</translation>
+        <source>Pen tool with pressure sensitivity</source>
+        <translation>Pen tool with pressure sensitivity</translation>
     </message>
     <message>
         <source>Basic pressure-sensitive eraser tool</source>
@@ -39041,6 +39161,77 @@ Click to show as panel</translation>
     <message>
         <source>Saved workflow: {name}</source>
         <translation>Saved workflow: {name}</translation>
+    </message>
+</context>
+<context>
+    <name>PaintTool</name>
+    <message>
+        <source>Paper type</source>
+        <translation>Paper type</translation>
+    </message>
+    <message>
+        <source>Water amount</source>
+        <translation>Water amount</translation>
+    </message>
+    <message>
+        <source>Paint load</source>
+        <translation>Paint load</translation>
+    </message>
+    <message>
+        <source>Paint reach</source>
+        <translation>Paint reach</translation>
+    </message>
+    <message>
+        <source>Remaining paint</source>
+        <translation>Remaining paint</translation>
+    </message>
+    <message>
+        <source>Paint lifting</source>
+        <translation>Paint lifting</translation>
+    </message>
+    <message>
+        <source>Color pickup</source>
+        <translation>Color pickup</translation>
+    </message>
+    <message>
+        <source>Color recovery</source>
+        <translation>Color recovery</translation>
+    </message>
+    <message>
+        <source>Opacity</source>
+        <translation>Opacity</translation>
+    </message>
+    <message>
+        <source>Paint Tool</source>
+        <translation>Paint Tool</translation>
+    </message>
+    <message>
+        <source>Paint with watercolor or oil on a raster layer</source>
+        <translation>Paint with watercolor or oil on a raster layer</translation>
+    </message>
+    <message>
+        <source>Brushes</source>
+        <translation>Brushes</translation>
+    </message>
+    <message>
+        <source>Size</source>
+        <translation>Size</translation>
+    </message>
+    <message>
+        <source>Medium</source>
+        <translation>Medium</translation>
+    </message>
+    <message>
+        <source>Use an editable RGB raster layer without a selection to paint.</source>
+        <translation>Use an editable RGB raster layer without a selection to paint.</translation>
+    </message>
+    <message>
+        <source>The paint stroke could not be completed.</source>
+        <translation>The paint stroke could not be completed.</translation>
+    </message>
+    <message>
+        <source>Turn off symmetry copies to use the paint tool.</source>
+        <translation>Turn off symmetry copies to use the paint tool.</translation>
     </message>
 </context>
 </TS>

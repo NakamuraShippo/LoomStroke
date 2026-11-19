@@ -1125,6 +1125,7 @@ class CanvasViewportHost(QWidget):
             skip_rasterize_layer_ids=frozenset(eligible_ids),
             vector_raster_scale=self._native_vector_raster_scale(canvas),
             include_frame_preview=True,
+            include_paint_preview=True,
         )
         return scene
 

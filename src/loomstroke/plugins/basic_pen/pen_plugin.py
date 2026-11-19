@@ -122,7 +122,6 @@ class BasicPenPlugin(PluginBase):
 
         if self._pen_presets is not None:
             self._pen_presets.restore_tip()
-            self._pen_presets.bind()
 
         clear_startup_feedback(self)
 
@@ -188,9 +187,6 @@ class BasicPenPlugin(PluginBase):
         clear_selection_tip_feedback(self)
 
         clear_brush_write_feedback(self)
-
-        if self._pen_presets is not None:
-            self._pen_presets.unbind()
 
         self.pen_tool.deactivate()
 
@@ -557,9 +553,6 @@ class BasicPenPlugin(PluginBase):
         self._store.save_settings(settings)
 
     def _sync_tool_properties(self, params: dict[str, Any]) -> None:
-
-        if self._pen_presets is not None:
-            self._pen_presets.refresh_settings()
 
         host = self.host_api
 

@@ -216,7 +216,7 @@ class CanvasWidget(_CanvasWidgetBase):
         self._marching_ants_timer.timeout.connect(self._tick_marching_ants)
         self._marching_ants_timer.setInterval(80)  # ~12fps for animation
         self._ants_path_cache: QPainterPath | None = None
-        self._ants_path_mask_key: int | None = None  # QImage.cacheKey()
+        self._ants_path_mask_key: tuple[int, tuple[int, int, int, int]] | None = None
 
         self._gl_compositor = SimpleNamespace(
             _initialized=False,
@@ -631,6 +631,7 @@ class CanvasWidget(_CanvasWidgetBase):
                 rasterize_vector_layers=True,
                 include_selection_preview=False,
                 include_frame_preview=True,
+                include_paint_preview=True,
             )
             invalidation = self._consume_render_invalidation(canvas)
             pixmap, frame_rendered = self._render_or_reuse_wgpu_bitmap_frame(
@@ -1714,6 +1715,10 @@ class CanvasWidget(_CanvasWidgetBase):
     def focusOutEvent(self, event: Any) -> None:
         self._three_d_interaction.figure.cancel()
         self._guide_snap_feedback.clear()
+        if self._is_drawing and self._current_stroke and self._active_tool_paints_provisionally():
+            # The release may go to another window. Paint stays provisional until pen-up, so
+            # end the stroke here; otherwise the visible paint is dropped by the next press.
+            self._on_pointer_up(self._current_stroke[-1])
         super().focusOutEvent(event)
 
     def _on_pointer_hover(self, point: StrokePoint) -> None:
@@ -2004,10 +2009,10 @@ class CanvasWidget(_CanvasWidgetBase):
 
     def _sync_marching_ants_timer(self) -> None:
         """Start or stop the marching-ants timer based on selection state."""
-        # Invalidate outline cache so next paint rebuilds it
-        self._ants_path_cache = None
-        self._ants_path_mask_key = None
         has_sel = self._has_selection()
+        if not has_sel:
+            self._ants_path_cache = None
+            self._ants_path_mask_key = None
         if has_sel and not self._marching_ants_timer.isActive():
             self._marching_ants_timer.start()
         elif not has_sel and self._marching_ants_timer.isActive():
@@ -2047,7 +2052,7 @@ class CanvasWidget(_CanvasWidgetBase):
 
         painter.save()
 
-        path = self._get_selection_outline_path(mask)
+        path = self._get_selection_outline_path(mask, bounds)
         if path is None or path.isEmpty():
             path = QPainterPath()
             path.addRect(bounds)
@@ -2066,7 +2071,9 @@ class CanvasWidget(_CanvasWidgetBase):
 
         painter.restore()
 
-    def _get_selection_outline_path(self, mask: QImage) -> QPainterPath | None:  # noqa: PLR0912
+    def _get_selection_outline_path(  # noqa: PLR0911, PLR0912
+        self, mask: QImage, bounds: QRect | None = None
+    ) -> QPainterPath | None:
         """Build (and cache) a QPainterPath tracing the pixel boundary of *mask*.
 
         The path consists of horizontal and vertical line segments along
@@ -2075,33 +2082,55 @@ class CanvasWidget(_CanvasWidgetBase):
         """
         import numpy as np  # noqa: PLC0415
 
-        w, h = mask.width(), mask.height()
-        if w <= 0 or h <= 0:
+        source_w, source_h = mask.width(), mask.height()
+        if source_w <= 0 or source_h <= 0:
             return None
+        region = mask.rect() if bounds is None else bounds.intersected(mask.rect())
+        x0, y0, w, h = region.getRect()
 
         # Cache key: use cacheKey() which changes when image data changes
-        key = mask.cacheKey()
-        if self._ants_path_mask_key == key and self._ants_path_cache is not None:
+        key = (mask.cacheKey(), (x0, y0, w, h))
+        if self._ants_path_mask_key == key:
             return self._ants_path_cache
+        if region.isEmpty():
+            self._ants_path_cache = None
+            self._ants_path_mask_key = key
+            return None
 
         # Read mask data — Alpha8 format, one byte per pixel
-        # Use bits() which returns a writable sip.voidptr (more reliable
-        # than constBits on some PySide6 versions).
+        # Writable bits() changes cacheKey() even when only read, making the
+        # outline stale immediately and forcing a rebuild on every repaint.
         src = mask
         if src.format() != QImage.Format.Format_Alpha8:
             src = src.convertToFormat(QImage.Format.Format_Alpha8)
         bpl = src.bytesPerLine()
-        total_bytes = bpl * h
-        ptr = src.bits()
+        total_bytes = bpl * source_h
+        ptr = src.constBits()
         if ptr is None:
             return None
         if hasattr(ptr, "setsize"):
             ptr.setsize(total_bytes)
         try:
-            raw = bytes(ptr)
-        except Exception:
+            rows = np.frombuffer(ptr, dtype=np.uint8, count=total_bytes).reshape(source_h, bpl)
+            sel = rows[y0 : y0 + h, x0 : x0 + w] > 127
+        except (TypeError, ValueError):
             return None
-        sel = np.frombuffer(raw, dtype=np.uint8).reshape(h, bpl)[:, :w] > 127
+
+        if np.all(sel):
+            path = QPainterPath()
+            # Keep the same separate subpaths and order as boundary scanning
+            # so each edge retains its existing marching-ants dash phase.
+            for start, end in (
+                ((x0, y0), (x0 + w, y0)),
+                ((x0, y0 + h), (x0 + w, y0 + h)),
+                ((x0, y0), (x0, y0 + h)),
+                ((x0 + w, y0), (x0 + w, y0 + h)),
+            ):
+                path.moveTo(*start)
+                path.lineTo(*end)
+            self._ants_path_cache = path
+            self._ants_path_mask_key = key
+            return path
 
         if not np.any(sel):
             self._ants_path_cache = None
@@ -2124,8 +2153,8 @@ class CanvasWidget(_CanvasWidgetBase):
             starts = np.where(changes == 1)[0]
             ends = np.where(changes == -1)[0]
             for s, e in zip(starts, ends, strict=False):
-                path.moveTo(float(s), float(y))
-                path.lineTo(float(e), float(y))
+                path.moveTo(float(x0 + s), float(y0 + y))
+                path.lineTo(float(x0 + e), float(y0 + y))
 
         # Vertical edges: between col c and col c+1 in padded
         vdiff = padded[:, :-1] != padded[:, 1:]  # shape (h+2, w+1)
@@ -2137,8 +2166,8 @@ class CanvasWidget(_CanvasWidgetBase):
             starts = np.where(changes == 1)[0]
             ends = np.where(changes == -1)[0]
             for s, e in zip(starts, ends, strict=False):
-                path.moveTo(float(x), float(s))
-                path.lineTo(float(x), float(e))
+                path.moveTo(float(x0 + x), float(y0 + s))
+                path.lineTo(float(x0 + x), float(y0 + e))
 
         self._ants_path_cache = path
         self._ants_path_mask_key = key
@@ -2157,6 +2186,13 @@ class CanvasWidget(_CanvasWidgetBase):
 
     def _active_tool_can_move_guides(self) -> bool:
         return self._active_tool_id() in _GUIDE_MOVE_TOOL_IDS
+
+    def _active_tool_paints_provisionally(self) -> bool:
+        """True while the active tool shows its stroke as a preview until pen-up."""
+        host = self._host_api
+        manager = getattr(host, "_tool_manager", None) or getattr(host, "tool_manager", None)
+        tool = getattr(manager, "_active_tool", None)
+        return getattr(tool, "paints_provisional_stroke", False) is True
 
     def _active_tool_id(self) -> str | None:
         if not self._host_api:

@@ -907,6 +907,7 @@ class ToolManager(QObject):
         """Collect commands from active tool."""
         if not self._active_tool:
             return
+        self._sessions.reconcile_provisional_stroke()
 
         # Get commands from tool
         commands = self._active_tool.build_commands()

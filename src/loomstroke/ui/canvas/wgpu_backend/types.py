@@ -55,6 +55,8 @@ class WgpuTextureHandle:
     texture_version: int = -1
     offset_x: int = 0
     offset_y: int = 0
+    image_key: int | None = field(default=None, kw_only=True)
+    paint_display: bool = field(default=False, kw_only=True)
 
 
 @dataclass(frozen=True, slots=True)

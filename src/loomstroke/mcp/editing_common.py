@@ -138,6 +138,8 @@ async def edit_operation(
         points = arguments.get("points")
         if isinstance(points, list | tuple):
             summary["pointCount"] = len(points)
+        if name == "loomstroke_draw_strokes":
+            summary["strokeCount"] = len(arguments["strokes"])
         await service.safety.require_confirmation(name, summary)
         check_gui_thread()
         if getattr(service, "canvas_service", None) is not canvas:

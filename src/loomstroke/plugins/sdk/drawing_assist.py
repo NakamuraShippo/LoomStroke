@@ -30,6 +30,7 @@ __all__ = ["SUPPORTED_TOOL_IDS", "ToolAssistBridge", "get_drawing_assist_control
 SUPPORTED_TOOL_IDS: frozenset[str] = frozenset(
     {
         "basic_pen",
+        "paint_tool",
         "basic_eraser",
         "effect_pen",
         "loomstroke.basic.selection.rect",

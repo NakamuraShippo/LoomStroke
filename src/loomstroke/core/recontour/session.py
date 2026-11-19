@@ -23,6 +23,21 @@ logger = logging.getLogger(__name__)
 _FITTER = ThreadPoolExecutor(max_workers=1, thread_name_prefix="recontour-fit")
 
 
+def path_position(point: Any) -> tuple[float, float]:
+    """Where the pen was for this dab; scatter may have placed the dab elsewhere."""
+    x = getattr(point, "path_x", None)
+    return (point.x, point.y) if x is None else (x, point.path_y)
+
+
+def moved_point(point: Any, path: tuple[float, float]) -> Any:
+    """Move a dab with its path position, keeping its scatter offset."""
+    x, y = path_position(point)
+    values = {"x": point.x + path[0] - x, "y": point.y + path[1] - y}
+    if getattr(point, "path_x", None) is not None:
+        values.update(path_x=path[0], path_y=path[1])
+    return replace(point, **values)
+
+
 def _fit_curves(positions: dict, smoothness: float) -> dict[int, Curve]:
     return {lane: fit(tuple(points), smoothness) for lane, points in positions.items()}
 
@@ -163,7 +178,7 @@ class RasterStrokeSession:
             return False
         positions: dict[int, list] = {}
         for lane, cmd in self.commands:
-            positions.setdefault(lane, []).extend((p.x, p.y) for p in cmd.points)
+            positions.setdefault(lane, []).extend(map(path_position, cmd.points))
         self.original = crop(self.layer, self.rect, mask=self.mask)
         self.before = self.capture.materialize(self.layer, mask=self.mask)
         self.capture = Preimage()
@@ -198,9 +213,7 @@ class RasterStrokeSession:
             start = cursors[lane]
             mapped = positions[lane][start : start + len(cmd.points)]
             replay = copy.copy(cmd)
-            replay.points = [
-                replace(p, x=xy[0], y=xy[1]) for p, xy in zip(cmd.points, mapped, strict=True)
-            ]
+            replay.points = [moved_point(p, xy) for p, xy in zip(cmd.points, mapped, strict=True)]
             result.append(replay)
             cursors[lane] += len(cmd.points)
         return result

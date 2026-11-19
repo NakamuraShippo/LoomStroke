@@ -13,6 +13,7 @@ from loomstroke.core.canvas_invalidation import RenderInvalidation
 
 from .initial_texture_upload import upload_initial_or_full
 from .native_cmyk_tile_textures import NativeCmykTileTextures
+from .paint_tile_upload import paint_image_key, sync_paint_tiles
 from .qimage_region_converter import WgpuQImageRegionConverter
 from .types import (
     WgpuDeviceBundle,
@@ -78,13 +79,23 @@ class WgpuTextureManager:
             or layer_id in invalidation.gpu_resources.layer_ids
         )
 
-        if (
-            existing is not None
-            and not resources_invalidated
-            and existing.texture_version == version
-            and existing.width == width
-            and existing.height == height
-        ):
+        if existing is None or existing.width != width or existing.height != height:
+            handle = self._create_layer_texture(
+                layer_id=layer_id,
+                width=width,
+                height=height,
+                texture_version=version,
+                offset_x=offset_x,
+                offset_y=offset_y,
+            )
+            return self._initialize_texture(layer, handle, existing)
+
+        if getattr(layer, "paint_upload", None) is not None or existing.paint_display:
+            return sync_paint_tiles(
+                self, existing, layer, resources_invalidated, qimage_to_straight_rgba
+            )
+
+        if not resources_invalidated and existing.texture_version == version:
             self._textures[layer_id] = replace(existing, offset_x=offset_x, offset_y=offset_y)
             return (
                 self._textures[layer_id],
@@ -97,29 +108,22 @@ class WgpuTextureManager:
             )
 
         handle = existing
-        if handle is None or handle.width != width or handle.height != height:
-            # New texture / resize: whole content is needed, so the full
-            # conversion stays (cache hits above never convert at all).
-            handle = self._create_layer_texture(
-                layer_id=layer_id,
-                width=width,
-                height=height,
-                texture_version=version,
-                offset_x=offset_x,
-                offset_y=offset_y,
-            )
-            try:
-                report = upload_initial_or_full(
-                    self, layer, handle, version, qimage_to_straight_rgba
-                )
-            except Exception:
-                handle.texture.destroy()
-                raise
-            if existing is not None:
-                existing.texture.destroy()
-            self._textures[layer_id] = handle
-            return handle, report, ()
+        updated = replace(
+            handle,
+            texture_version=version,
+            image_key=image.cacheKey(),
+            offset_x=offset_x,
+            offset_y=offset_y,
+        )
+        return self._update_raster_texture(
+            layer, updated, invalidation, active_layer_id, resources_invalidated
+        )
 
+    def _update_raster_texture(
+        self, layer, handle, invalidation, active_layer_id, resources_invalidated
+    ):
+        image, layer_id = layer.image, handle.layer_id
+        width, height, version = handle.width, handle.height, handle.texture_version
         dirty_rect = invalidation.dirty_rect if invalidation is not None else None
         # transient preview layers carry their own texture-space dirty rect
         # (small per-frame region of an otherwise unchanged image)
@@ -132,11 +136,8 @@ class WgpuTextureManager:
                 if converted_region is not None:
                     region_rgba, region_rect = converted_region
                     report = self._upload_partial_region(handle, region_rgba, region_rect, version)
-                    updated = replace(
-                        handle, texture_version=version, offset_x=offset_x, offset_y=offset_y
-                    )
-                    self._textures[layer_id] = updated
-                    return updated, report, ()
+                    self._textures[layer_id] = handle
+                    return handle, report, ()
         partial_rect = self._layer_upload_rect(layer, dirty_rect, (width, height))
         can_partial = (
             active_layer_id is not None
@@ -166,9 +167,8 @@ class WgpuTextureManager:
             else:
                 rgba = qimage_to_straight_rgba(image)
                 report = self._upload_partial(handle, rgba, partial_rect, version)
-            updated = replace(handle, texture_version=version, offset_x=offset_x, offset_y=offset_y)
-            self._textures[layer_id] = updated
-            return updated, report, ()
+            self._textures[layer_id] = handle
+            return handle, report, ()
 
         rgba = qimage_to_straight_rgba(image)
         reason = (
@@ -176,11 +176,30 @@ class WgpuTextureManager:
             if dirty_rect is not None
             else None
         )
-        updated = replace(handle, texture_version=version, offset_x=offset_x, offset_y=offset_y)
-        report = self._upload_full(updated, rgba, version, fallback_reason=reason)
-        self._textures[layer_id] = updated
+        report = self._upload_full(handle, rgba, version, fallback_reason=reason)
+        self._textures[layer_id] = handle
         warnings = (f"layer {layer_id}: {reason}",) if reason else ()
-        return updated, report, warnings
+        return handle, report, warnings
+
+    def _initialize_texture(self, layer, handle, existing):
+        paint = getattr(layer, "paint_upload", None) is not None
+        handle = replace(handle, image_key=paint_image_key(layer), paint_display=paint)
+        try:
+            if paint:
+                report = self._upload_full(
+                    handle, qimage_to_straight_rgba(layer.image), handle.texture_version
+                )
+            else:
+                report = upload_initial_or_full(
+                    self, layer, handle, handle.texture_version, qimage_to_straight_rgba
+                )
+        except Exception:
+            handle.texture.destroy()
+            raise
+        if existing is not None:
+            existing.texture.destroy()
+        self._textures[handle.layer_id] = handle
+        return handle, report, ()
 
     @staticmethod
     def _raster_input(layer: Any, layer_id: str) -> tuple[QImage, int, int, int, int, int]:

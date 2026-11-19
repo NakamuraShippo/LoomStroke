@@ -102,7 +102,8 @@ def _compose_mask(  # noqa: PLR0911
 def _mask_bounds(mask: NDArray[Any] | None) -> SelectionRect | None:
     if mask is None:
         return None
-    ys, xs = np.where(mask > 0)
+    ys = np.flatnonzero(np.any(mask, axis=1))
+    xs = np.flatnonzero(np.any(mask, axis=0))
     if xs.size == 0 or ys.size == 0:
         return None
     min_x = int(xs.min())
@@ -129,7 +130,7 @@ def _mask_to_numpy(mask: Any | None, width: int, height: int) -> NDArray[Any]:  
             image = image.convertToFormat(QImage.Format.Format_Alpha8)
         bytes_per_line = image.bytesPerLine()
         size = bytes_per_line * image.height()
-        buf = image.bits()
+        buf = image.constBits()
         if hasattr(buf, "setsize"):
             buf.setsize(size)
             view = buf
@@ -372,6 +373,15 @@ class UpdateSelectionMaskCommand(Command):
             return True
 
         old_mask, old_bounds = self._read_selection(canvas)
+        if (
+            self.source == "preview"
+            and self.operation == SelectionOp.REPLACE
+            and self._feather_radius == 0
+            and self._canvas_uses_qimage(canvas)
+        ):
+            from .selection_rect_preview import apply_rect_preview  # noqa: PLC0415
+
+            return apply_rect_preview(self, canvas, width, height, old_mask, old_bounds)
         self._before = SelectionSnapshot(mask=self._clone_mask(old_mask), bounds=old_bounds)
         self._before_full_bounds = _get_selection_full_bounds(canvas)
         self._before_full_mask = _get_selection_full_mask(canvas)

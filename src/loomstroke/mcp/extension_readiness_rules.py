@@ -33,7 +33,7 @@ def _actions(name: str, actions: str, base: Requirements, **overrides: Requireme
     }
 
 
-_tools("draw_stroke fill draw_gradient fill_pattern fill_advanced")
+_tools("draw_stroke draw_strokes fill draw_gradient fill_pattern fill_advanced")
 _tools("get_history_state get_selection list_vectors get_vector get_3d_layer", mutation=False)
 _tools(
     "undo redo update_layer move_layer group_layers ungroup_layer set_layer_mask "

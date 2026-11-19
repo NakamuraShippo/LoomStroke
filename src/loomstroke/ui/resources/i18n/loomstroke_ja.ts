@@ -251,24 +251,24 @@
         <translation>ブラシマネージャー</translation>
     </message>
     <message>
-        <source>Basic Pen</source>
-        <translation>ベーシックペン</translation>
+        <source>Pen Tool</source>
+        <translation>ペンツール</translation>
     </message>
     <message>
         <source>The brush tip could not be created.</source>
         <translation>ブラシ先端を作成できませんでした。</translation>
     </message>
     <message>
-        <source>Basic Pen could not be activated because its brush data could not be prepared.</source>
-        <translation>ブラシデータを準備できなかったため、ベーシックペンを有効にできませんでした。</translation>
+        <source>The Pen Tool could not be activated because its brush data could not be prepared.</source>
+        <translation>ブラシデータを準備できなかったため、ペンツールを有効にできませんでした。</translation>
     </message>
     <message>
         <source>Tools</source>
         <translation>ツール</translation>
     </message>
     <message>
-        <source>Activate Basic Pen</source>
-        <translation>ベーシックペンを有効化</translation>
+        <source>Activate Pen Tool</source>
+        <translation>ペンツールを有効化</translation>
     </message>
     <message>
         <source>Alternate brush binding</source>
@@ -279,12 +279,8 @@
         <translation>ブラシ</translation>
     </message>
     <message>
-        <source>Basic Pen Tool</source>
-        <translation>ベーシックペンツール</translation>
-    </message>
-    <message>
-        <source>Basic pen tool with pressure sensitivity</source>
-        <translation>筆圧感知に対応したベーシックペンツール</translation>
+        <source>Pen tool with pressure sensitivity</source>
+        <translation>筆圧感知に対応したペンツール</translation>
     </message>
     <message>
         <source>No swatch selected</source>
@@ -437,6 +433,10 @@
     <message>
         <source>RecontourSmoothness (next stroke)</source>
         <translation>RecontourSmoothness (次のストロークから適用)</translation>
+    </message>
+    <message>
+        <source>RecontourSmoothness</source>
+        <translation>RecontourSmoothness</translation>
     </message>
     <message>
         <source>Taper End Length</source>
@@ -5390,6 +5390,34 @@ After refreshing the token, any agents registered to this LoomStroke MCP server 
 <context>
     <name>ToolPropertiesPanel</name>
     <message>
+        <source>Kneaded</source>
+        <translation>練り消し</translation>
+    </message>
+    <message>
+        <source>Normal</source>
+        <translation>通常</translation>
+    </message>
+    <message>
+        <source>Standard</source>
+        <translation>標準</translation>
+    </message>
+    <message>
+        <source>Smooth</source>
+        <translation>平滑</translation>
+    </message>
+    <message>
+        <source>Rough</source>
+        <translation>粗目</translation>
+    </message>
+    <message>
+        <source>Watercolor</source>
+        <translation>水彩</translation>
+    </message>
+    <message>
+        <source>Oil</source>
+        <translation>油彩</translation>
+    </message>
+    <message>
         <source>Candidate Actions</source>
         <translation>候補操作</translation>
     </message>
@@ -5923,8 +5951,8 @@ After refreshing the token, any agents registered to this LoomStroke MCP server 
     </message>
 
     <message>
-        <source>Basic Pen</source>
-        <translation>ベーシックペン</translation>
+        <source>Pen Tool</source>
+        <translation>ペンツール</translation>
     </message>
     <message>
         <source>Brushes</source>
@@ -7628,6 +7656,26 @@ Use "Edit Filters" to add.</source>
 </context>
 <context>
     <name>BasicEraser</name>
+    <message>
+        <source>Stays clean</source>
+        <translation>汚れにくさ</translation>
+    </message>
+    <message>
+        <source>Turn off symmetry copies to use the kneaded eraser.</source>
+        <translation>練り消しを使うには、対称描画のコピーをオフにしてください。</translation>
+    </message>
+    <message>
+        <source>The eraser stroke could not be completed.</source>
+        <translation>消しゴムのストロークを確定できませんでした。</translation>
+    </message>
+    <message>
+        <source>Eraser Type</source>
+        <translation>消しゴムの種類</translation>
+    </message>
+    <message>
+        <source>Use an editable RGB raster layer for the kneaded eraser.</source>
+        <translation>練り消しは、編集できるRGBラスターレイヤーで使えます。</translation>
+    </message>
     <message>
         <source>Vector Erase Mode</source>
         <translation>ベクター消去方式</translation>
@@ -15975,6 +16023,70 @@ Select a file to recover.</source>
 <context>
     <name>__shared__</name>
     <message>
+        <source>Paper type</source>
+        <translation>紙の種類</translation>
+    </message>
+    <message>
+        <source>Water amount</source>
+        <translation>水分量</translation>
+    </message>
+    <message>
+        <source>Paint load</source>
+        <translation>絵具量</translation>
+    </message>
+    <message>
+        <source>Paint reach</source>
+        <translation>絵具の持ち</translation>
+    </message>
+    <message>
+        <source>Remaining paint</source>
+        <translation>絵具の残り</translation>
+    </message>
+    <message>
+        <source>Paint lifting</source>
+        <translation>拭き取り</translation>
+    </message>
+    <message>
+        <source>Color pickup</source>
+        <translation>色の拾いやすさ</translation>
+    </message>
+    <message>
+        <source>Color recovery</source>
+        <translation>色の戻りやすさ</translation>
+    </message>
+    <message>
+        <source>Rough</source>
+        <translation>粗目</translation>
+    </message>
+    <message>
+        <source>Paint Tool</source>
+        <translation>ペイントツール</translation>
+    </message>
+    <message>
+        <source>Paint with watercolor or oil on a raster layer</source>
+        <translation>ラスターレイヤーに水彩や油彩で描きます</translation>
+    </message>
+    <message>
+        <source>Use an editable RGB raster layer without a selection to paint.</source>
+        <translation>選択範囲を解除し、編集できるRGBラスターレイヤーを選んでください。</translation>
+    </message>
+    <message>
+        <source>The paint stroke could not be completed.</source>
+        <translation>ペイントのストロークを確定できませんでした。</translation>
+    </message>
+    <message>
+        <source>Turn off symmetry copies to use the paint tool.</source>
+        <translation>ペイントツールを使うには、対称描画のコピーをオフにしてください。</translation>
+    </message>
+    <message>
+        <source>Watercolor</source>
+        <translation>水彩</translation>
+    </message>
+    <message>
+        <source>Oil</source>
+        <translation>油彩</translation>
+    </message>
+    <message>
         <source>Include Bleed</source>
         <translation>キャンバスに塗り足しを含める</translation>
     </message>
@@ -18947,8 +19059,8 @@ Click to show as panel</source>
         <translation>アクションパネル</translation>
     </message>
     <message>
-        <source>Activate Basic Pen</source>
-        <translation>ベーシックペンを有効化</translation>
+        <source>Activate Pen Tool</source>
+        <translation>ペンツールを有効化</translation>
     </message>
     <message>
         <source>Activate Filter Pen</source>
@@ -19651,16 +19763,12 @@ Click to show as panel</source>
         <translation>ベーシック移動</translation>
     </message>
     <message>
-        <source>Basic Pen</source>
-        <translation>ベーシックペン</translation>
+        <source>Pen Tool</source>
+        <translation>ペンツール</translation>
     </message>
     <message>
-        <source>Basic Pen Tool</source>
-        <translation>ベーシックペンツール</translation>
-    </message>
-    <message>
-        <source>Basic Pen could not be activated because its brush data could not be prepared.</source>
-        <translation>ブラシデータを準備できなかったため、ベーシックペンを有効にできませんでした。</translation>
+        <source>The Pen Tool could not be activated because its brush data could not be prepared.</source>
+        <translation>ブラシデータを準備できなかったため、ペンツールを有効にできませんでした。</translation>
     </message>
     <message>
         <source>Basic Selection</source>
@@ -19675,8 +19783,8 @@ Click to show as panel</source>
         <translation>基本シェイプ</translation>
     </message>
     <message>
-        <source>Basic pen tool with pressure sensitivity</source>
-        <translation>筆圧感知に対応したベーシックペンツール</translation>
+        <source>Pen tool with pressure sensitivity</source>
+        <translation>筆圧感知に対応したペンツール</translation>
     </message>
     <message>
         <source>Basic pressure-sensitive eraser tool</source>
@@ -35724,6 +35832,18 @@ After refreshing the token, any agents registered to this LoomStroke MCP server 
 <context>
     <name>PenPresets</name>
     <message>
+        <source>Basic</source>
+        <translation>ベーシック</translation>
+    </message>
+    <message>
+        <source>Watercolor</source>
+        <translation>水彩</translation>
+    </message>
+    <message>
+        <source>Oil</source>
+        <translation>油彩</translation>
+    </message>
+    <message>
         <source>Brushes</source>
         <translation>ブラシ</translation>
     </message>
@@ -38397,6 +38517,77 @@ After refreshing the token, any agents registered to this LoomStroke MCP server 
     <message>
         <source>Saved workflow: {name}</source>
         <translation>ワークフローを保存しました: {name}</translation>
+    </message>
+</context>
+<context>
+    <name>PaintTool</name>
+    <message>
+        <source>Paper type</source>
+        <translation>紙の種類</translation>
+    </message>
+    <message>
+        <source>Water amount</source>
+        <translation>水分量</translation>
+    </message>
+    <message>
+        <source>Paint load</source>
+        <translation>絵具量</translation>
+    </message>
+    <message>
+        <source>Paint reach</source>
+        <translation>絵具の持ち</translation>
+    </message>
+    <message>
+        <source>Remaining paint</source>
+        <translation>絵具の残り</translation>
+    </message>
+    <message>
+        <source>Paint lifting</source>
+        <translation>拭き取り</translation>
+    </message>
+    <message>
+        <source>Color pickup</source>
+        <translation>色の拾いやすさ</translation>
+    </message>
+    <message>
+        <source>Color recovery</source>
+        <translation>色の戻りやすさ</translation>
+    </message>
+    <message>
+        <source>Opacity</source>
+        <translation>不透明度</translation>
+    </message>
+    <message>
+        <source>Paint Tool</source>
+        <translation>ペイントツール</translation>
+    </message>
+    <message>
+        <source>Paint with watercolor or oil on a raster layer</source>
+        <translation>ラスターレイヤーに水彩や油彩で描きます</translation>
+    </message>
+    <message>
+        <source>Brushes</source>
+        <translation>ブラシ</translation>
+    </message>
+    <message>
+        <source>Size</source>
+        <translation>サイズ</translation>
+    </message>
+    <message>
+        <source>Medium</source>
+        <translation>画材</translation>
+    </message>
+    <message>
+        <source>Use an editable RGB raster layer without a selection to paint.</source>
+        <translation>選択範囲を解除し、編集できるRGBラスターレイヤーを選んでください。</translation>
+    </message>
+    <message>
+        <source>The paint stroke could not be completed.</source>
+        <translation>ペイントのストロークを確定できませんでした。</translation>
+    </message>
+    <message>
+        <source>Turn off symmetry copies to use the paint tool.</source>
+        <translation>ペイントツールを使うには、対称描画のコピーをオフにしてください。</translation>
     </message>
 </context>
 </TS>

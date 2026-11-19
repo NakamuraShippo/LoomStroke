@@ -11,6 +11,7 @@ from PySide6.QtWidgets import (
     QMenu,
     QScrollArea,
     QSizePolicy,
+    QSlider,
     QToolButton,
     QVBoxLayout,
     QWidget,
@@ -19,7 +20,18 @@ from PySide6.QtWidgets import (
 
 from loomstroke.ui.tool_settings_sections import sections_for_tool
 from loomstroke.ui.translations import translated_literal_domain
+from loomstroke.ui.widgets.pen_pressure_panel import PenPressurePanel
+from loomstroke.ui.widgets.pen_taper_editor import PenTaperEditor
 from loomstroke.ui.widgets.settings_section import SettingsSection
+
+_TAPER_KEYS = ("taper_start_length", "taper_end_length")
+_PRESSURE_KEYS = (
+    "size_pressure_gamma",
+    "size_pressure_minimum",
+    "opacity_pressure_enabled",
+    "opacity_pressure_gamma",
+    "opacity_pressure_minimum",
+)
 
 
 class ToolPropertyPresentation(QObject):
@@ -37,6 +49,8 @@ class ToolPropertyPresentation(QObject):
         self.detail_button: QToolButton | None = None
         self._detail_menu: QMenu | None = None
         self._detail_scroll: QScrollArea | None = None
+        self.taper_editor: PenTaperEditor | None = None
+        self.pressure_panel: PenPressurePanel | None = None
 
     def configure(self, metadata: Any) -> bool:
         self._tool_id = metadata.tool_id
@@ -52,6 +66,8 @@ class ToolPropertyPresentation(QObject):
         if self._detail_menu is not None:
             self._detail_menu.hide()
         self.sections.clear()
+        self.taper_editor = None
+        self.pressure_panel = None
         self.detail_button = None
         self._detail_menu = None
         self._detail_scroll = None
@@ -91,7 +107,7 @@ class ToolPropertyPresentation(QObject):
         groups = (*self._groups, ("other", "Other Settings", tuple(items)))
         remaining = dict(items)
         for key, title, keys in groups:
-            selected = [remaining.pop(field) for field in keys if field in remaining]
+            selected = [(field, remaining.pop(field)) for field in keys if field in remaining]
             if not selected:
                 continue
             section = SettingsSection(
@@ -103,11 +119,16 @@ class ToolPropertyPresentation(QObject):
             section.setObjectName(f"{self._prefix}_section_{key}")
             section.expandedChanged.connect(partial(self._remember, key))
             self.sections[key] = section
+            if self._tool_id == "basic_pen" and key == "stroke":
+                self._add_taper_editor(section)
             form = QFormLayout()
             form.setRowWrapPolicy(QFormLayout.RowWrapPolicy.WrapLongRows)
             form.setFieldGrowthPolicy(QFormLayout.FieldGrowthPolicy.AllNonFixedFieldsGrow)
             section.content_layout.addLayout(form)
-            for item in selected:
+            graphed: frozenset[str] = frozenset()
+            if self._tool_id == "basic_pen" and key == "pressure":
+                graphed = self._add_pressure_panel(section)
+            for field, item in selected:
                 row = item.layout()
                 label, control = row.takeAt(0).widget(), row.takeAt(0).widget()
                 if isinstance(label, QLabel):
@@ -116,9 +137,74 @@ class ToolPropertyPresentation(QObject):
                 if isinstance(control, QCheckBox):
                     control.setSizePolicy(QSizePolicy.Policy.Fixed, QSizePolicy.Policy.Fixed)
                 form.addRow(label, control)
+                if field in graphed:
+                    # The pressure panel edits this value; its plain row stays bound
+                    # to the tool but is not shown twice.
+                    form.setRowVisible(form.rowCount() - 1, False)
                 item.deleteLater()
             layout.addWidget(section)
         layout.addStretch(1)
+
+    def _add_taper_editor(self, section: SettingsSection) -> None:
+        """Edit the pen's taper lengths on the same graph as the brush manager."""
+        bindings = self.owner._property_bindings
+        if not all(key in bindings for key in _TAPER_KEYS):
+            return
+        editor = PenTaperEditor(section.content)
+        section.content_layout.addWidget(editor)
+        self.taper_editor = editor
+
+        def show_lengths() -> None:
+            editor.set_lengths(*(float(bindings[key].reader()) for key in _TAPER_KEYS))
+
+        def follow(setter: Any, value: Any) -> None:
+            setter(value)
+            show_lengths()
+
+        for key in _TAPER_KEYS:
+            binding = bindings[key]
+            # The graph replaces the slider; the number beside it stays for exact entry.
+            slider = binding.widget.findChild(QSlider)
+            if slider is not None:
+                slider.hide()
+            binding.setter = partial(follow, binding.setter)
+
+        def edited(values: dict[str, float]) -> None:
+            for key, value in values.items():
+                bindings[key].setter(value)
+                self.owner._on_property_changed(key, value)
+
+        editor.lengthsEdited.connect(edited)
+        show_lengths()
+
+    def _add_pressure_panel(self, section: SettingsSection) -> frozenset[str]:
+        """Edit the pen's pressure response on its curve graphs; returns the keys shown there."""
+        bindings = self.owner._property_bindings
+        if not all(key in bindings for key in _PRESSURE_KEYS):
+            return frozenset()
+        panel = PenPressurePanel(section.content)
+        section.content_layout.addWidget(panel)
+        self.pressure_panel = panel
+
+        def follow(key: str, setter: Any, value: Any) -> None:
+            setter(value)
+            panel.set_settings({key: value})
+
+        followed = [key for key in (*_PRESSURE_KEYS, "pressure_sensitive") if key in bindings]
+        for key in followed:
+            bindings[key].setter = partial(follow, key, bindings[key].setter)
+        panel.set_settings({key: bindings[key].reader() for key in followed})
+        for key in _PRESSURE_KEYS:
+            # The control people see and use for this value is the one on the panel.
+            bindings[key].widget = panel.controls[key]
+
+        def edited(values: dict[str, Any]) -> None:
+            for key, value in values.items():
+                bindings[key].setter(value)
+                self.owner._on_property_changed(key, value)
+
+        panel.settingsEdited.connect(edited)
+        return frozenset(_PRESSURE_KEYS)
 
     def _items_by_key(self, properties: list[Any], items: list[QWidget]) -> dict[str, QWidget]:
         return {spec.key: item for spec, item in zip(properties, items, strict=True)}

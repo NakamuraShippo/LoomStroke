@@ -24,7 +24,7 @@ from .types import McpStructuredError, McpToolSpec, ReasonCode
 TOOLS = (
     McpToolSpec(
         "loomstroke_brush_asset",
-        "Manage Basic Pen brush assets: list/get, import tip image or ABR, "
+        "Manage Pen Tool brush assets: list/get, import tip image or ABR, "
         "create a tip from selection, update/delete and export tip PNG. "
         "Store and IDs use the existing Brush Manager.",
         _schema(

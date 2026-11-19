@@ -9,7 +9,7 @@ from typing import Any
 from PySide6.QtCore import QCoreApplication
 from PySide6.QtGui import QGuiApplication
 
-from . import editing_tools
+from . import brush_stroke, editing_tools
 from .extension_readiness import extension_tool_readiness
 from .extension_services import get_services
 from .types import McpStructuredError, ReasonCode
@@ -187,8 +187,13 @@ def build_editing_readiness(service: Any) -> dict[str, Any]:
         "brushLibraryAvailable": bool(brush_ready),
         "tools": tools,
         "limits": {
-            "strokePoints": 2048,
-            "strokeRegionPixels": 4194304,
+            "strokePoints": brush_stroke.MAX_POINTS,
+            "strokeRegionPixels": brush_stroke.MAX_STROKE_REGION_PIXELS,
+            "strokeBatch": {
+                "strokes": brush_stroke.MAX_STROKES,
+                "points": brush_stroke.MAX_BATCH_POINTS,
+                "regionPixels": brush_stroke.MAX_BATCH_REGION_PIXELS,
+            },
             "gradientPixels": 16777216,
             "bucketCanvasPixels": 1048576,
             "bucketReferencePixels": 1048576,

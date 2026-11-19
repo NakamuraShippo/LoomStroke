@@ -4,7 +4,7 @@ PEN_SETTING_SECTIONS = (
     (
         "basic",
         "Basic Settings",
-        ("size", "opacity", "hardness", "flow", "stamp_density", "smoothing"),
+        ("medium", "size", "opacity", "hardness", "flow", "stamp_density", "smoothing"),
     ),
     (
         "stroke",
@@ -25,7 +25,23 @@ PEN_SETTING_SECTIONS = (
         ),
     ),
     ("tone", "Tone and Shading", ("tone_range", "tone_gamma")),
-    ("texture", "Texture and Mixing", ("texture_strength", "texture_scale", "color_mixing")),
+    (
+        "texture",
+        "Texture and Mixing",
+        (
+            "paper",
+            "water_amount",
+            "paint_load",
+            "paint_reach",
+            "paint_remaining",
+            "paint_lifting",
+            "paint_pickup",
+            "paint_recovery",
+            "texture_strength",
+            "texture_scale",
+            "color_mixing",
+        ),
+    ),
     (
         "variation",
         "Scatter and Variation",

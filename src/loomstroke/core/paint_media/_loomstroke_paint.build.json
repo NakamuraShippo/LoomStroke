@@ -1,0 +1,7 @@
+{
+  "sources_sha256": "d097bd74c8dbdd7edd0dc168fe9eb0d65ee6c0f8bf2e1dc859189151a7a9f583",
+  "rustc": "rustc 1.100.0 (0ef1bc386 2026-11-09)",
+  "binaries": {
+    "_loomstroke_paint.cp313-win_amd64.pyd": "253211ea2fc655a7c42e357085e452c3c453b0cc0c3936864bbed5ea9ee2ef0e"
+  }
+}

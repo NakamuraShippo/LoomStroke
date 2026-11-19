@@ -32,7 +32,7 @@ _KEYS = {
 TOOLS = (
     McpToolSpec(
         "loomstroke_draw_stamp_stroke",
-        "Draw a Basic Pen custom-tip stroke using a stored brushId and explicit color/settings. "
+        "Draw a Pen Tool custom-tip stroke using a stored brushId and explicit color/settings. "
         "Pressure, spacing, opacity, hardness and flow are applied. One undo entry; "
         "at most 2048 input points and 8192 generated stamps, region <=4,194,304 pixels.",
         _schema(

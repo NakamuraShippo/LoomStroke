@@ -8,6 +8,7 @@ Per Master.md, this plugin does not directly manipulate pixels.
 from __future__ import annotations
 
 import logging
+import math
 import time
 from collections.abc import Iterable
 from typing import TYPE_CHECKING, Any
@@ -35,9 +36,13 @@ from ...plugins.sdk.tool import (
 )
 from .eraser_options_panel import EraserOptionsPanel
 from .eraser_settings import EraserSettings as EraserSettings  # noqa: PLC0414
+from .kneaded_stroke import KneadedStroke
 from .vector_eraser_controller import VectorEraserController
 
 logger = logging.getLogger(__name__)
+
+KNEADED = "Kneaded"
+ERASER_TYPES = ("Normal", KNEADED)
 
 
 def _ts(text: str) -> str:
@@ -69,6 +74,7 @@ class BasicEraserPlugin:
         self._transaction_active = False
         self._end_generation: int = 0
         self._vector_eraser = VectorEraserController(self)
+        self._kneaded = KneadedStroke(self)
 
         # Metadata for registry
         self.metadata = PluginMetadata(
@@ -108,6 +114,13 @@ class BasicEraserPlugin:
             group_label=_ts("Erasers"),
             group_order=20,
             properties=[
+                PropertySpec(
+                    key="eraser_type",
+                    display_name=_ts("Eraser Type"),
+                    type=PropertyType.ENUM,
+                    enum_items=list(ERASER_TYPES),
+                    default_value=self.settings.eraser_type,
+                ),
                 PropertySpec(
                     key="vector_erase_mode",
                     display_name=_ts("Vector Erase Mode"),
@@ -161,6 +174,15 @@ class BasicEraserPlugin:
                     type=PropertyType.BOOL,
                     default_value=self.settings.anti_alias,
                 ),
+                PropertySpec(
+                    key="durability",
+                    display_name=_ts("Stays clean"),
+                    type=PropertyType.FLOAT,
+                    min_value=0.0,
+                    max_value=100.0,
+                    default_value=self.settings.durability,
+                    step=1.0,
+                ),
             ],
             presets=[
                 ToolPreset(
@@ -202,6 +224,7 @@ class BasicEraserPlugin:
             host: The host API interface
         """
         self.host_api = host
+        self._kneaded.host_api = host
         if not self._tool_registered(host):
             register_tool = getattr(host, "register_tool", None)
             if callable(register_tool):
@@ -232,6 +255,7 @@ class BasicEraserPlugin:
     def disable(self) -> None:
         """Disable the eraser tool (when switching away)."""
         self._vector_eraser.cancel()
+        self._kneaded.cancel()
         try:
             if self.is_erasing:
                 self._finish_stroke(flush_direct=True)
@@ -251,6 +275,8 @@ class BasicEraserPlugin:
             if callable(unregister):
                 unregister(self.descriptor().id)
 
+        self._kneaded.cancel()
+        self._kneaded.host_api = None
         self.host_api = None
 
     def _tool_registered(self, host: HostAPI) -> bool:
@@ -356,6 +382,9 @@ class BasicEraserPlugin:
 
         if self._vector_eraser.down(pt):
             return
+        if self.settings.eraser_type == KNEADED:
+            self._kneaded.on_pointer_down(pt)
+            return
         if self.is_erasing:
             self._finish_stroke(flush_direct=True)
         if self._transaction_active:
@@ -387,6 +416,9 @@ class BasicEraserPlugin:
         if self._vector_eraser.active:
             self._vector_eraser.move(pts)
             return
+        if self._kneaded.active:
+            self._kneaded.on_pointer_move(pts)
+            return
         if not self.is_erasing or not self.host_api:
             return
 
@@ -410,6 +442,9 @@ class BasicEraserPlugin:
         """
         if self._vector_eraser.active:
             self._vector_eraser.up(pt)
+            return
+        if self._kneaded.active:
+            self._kneaded.on_pointer_up(pt)
             return
         if not self.is_erasing or not self.host_api:
             return
@@ -449,6 +484,8 @@ class BasicEraserPlugin:
         ):
             self._vector_eraser.cancel()
             return True
+        if self._kneaded.on_key(key, pressed):
+            return True
 
         if key == "[":
             self.settings.size = max(1.0, self.settings.size - 2.0)
@@ -458,6 +495,17 @@ class BasicEraserPlugin:
             return True
 
         return False
+
+    @property
+    def paints_provisional_stroke(self) -> bool:
+        """The kneaded type previews its stroke, so the canvas ends it on focus loss."""
+        return self.settings.eraser_type == KNEADED
+
+    def can_undo(self) -> bool:
+        return self._kneaded.can_undo()
+
+    def on_undo(self) -> bool:
+        return self._kneaded.on_undo()
 
     def on_wheel(self, delta: float, pt: StrokePoint) -> bool:
         """
@@ -498,8 +546,9 @@ class BasicEraserPlugin:
     def set_settings(self, settings: ToolSettings | dict[str, Any]) -> None:
         """Update tool settings."""
         if isinstance(settings, dict):
-            if "vector_erase_mode" in settings:
-                self.set_setting("vector_erase_mode", settings["vector_erase_mode"])
+            for key in ("vector_erase_mode", "eraser_type", "durability"):
+                if key in settings:
+                    self.set_setting(key, settings[key])
             if "size" in settings:
                 self.settings.size = float(settings["size"])
             if "opacity" in settings:
@@ -520,6 +569,19 @@ class BasicEraserPlugin:
             if value in {"Touched Area", "Whole Stroke", "To Intersection"}:
                 self._vector_eraser.cancel()
                 self.settings.vector_erase_mode = value
+            return
+        if key == "eraser_type":
+            if value in ERASER_TYPES and value != self.settings.eraser_type:
+                self._kneaded.cancel()
+                self.settings.eraser_type = value
+            return
+        if key == "durability":
+            try:
+                number = float(value)
+            except (TypeError, ValueError):
+                return
+            if math.isfinite(number):
+                self.settings.durability = max(0.0, min(100.0, number))
             return
         if key == "size":
             self.settings.size = float(value)
@@ -734,6 +796,8 @@ class BasicEraserPlugin:
             "hardness": self.settings.hardness,
             "spacing": self.settings.spacing,
             "anti_alias": self.settings.anti_alias,
+            "eraser_type": self.settings.eraser_type,
+            "durability": self.settings.durability,
         }
 
     def _load_settings(self, data: dict[str, Any]) -> None:
@@ -744,6 +808,8 @@ class BasicEraserPlugin:
         self.settings.spacing = data.get("spacing", 0.1)
         self.settings.anti_alias = data.get("anti_alias", True)
         self.set_setting("vector_erase_mode", data.get("vector_erase_mode", "Touched Area"))
+        self.set_setting("eraser_type", data.get("eraser_type", "Normal"))
+        self.set_setting("durability", data.get("durability", 50.0))
 
     def _migrate_legacy_settings(self, host: HostAPI) -> dict[str, Any] | None:
         """One-shot migration: eraser/size, eraser/strength, eraser/hardness → dict."""

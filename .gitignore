@@ -19,6 +19,7 @@
 /.update-backups/
 __pycache__/
 *.py[cod]
+!/src/loomstroke/core/paint_media/_loomstroke_paint.*.pyd
 *.nbc
 *.nbi
 *.egg-info/

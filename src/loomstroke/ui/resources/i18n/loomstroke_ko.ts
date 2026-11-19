@@ -1210,12 +1210,12 @@
             <translation>변이 시드</translation>
         </message>
         <message>
-            <source>Basic Pen</source>
-            <translation>기본 브러시</translation>
+            <source>Pen Tool</source>
+            <translation>펜 도구</translation>
         </message>
         <message>
-            <source>Activate Basic Pen</source>
-            <translation>기본 브러시 활성화</translation>
+            <source>Activate Pen Tool</source>
+            <translation>펜 도구 활성화</translation>
         </message>
         <message>
             <source>Alternate brush binding</source>
@@ -1226,12 +1226,8 @@
             <translation>브러시</translation>
         </message>
         <message>
-            <source>Basic Pen Tool</source>
-            <translation>기본 브러시 도구</translation>
-        </message>
-        <message>
-            <source>Basic pen tool with pressure sensitivity</source>
-            <translation>압력 감지 지원 기본 브러시 도구</translation>
+            <source>Pen tool with pressure sensitivity</source>
+            <translation>필압을 지원하는 펜 도구</translation>
         </message>
     <message>
         <source>Brush Manager</source>
@@ -1251,8 +1247,8 @@
         <translation>ABR 임포트 오류:</translation>
     </message>
     <message>
-        <source>Basic Pen could not be activated because its brush data could not be prepared.</source>
-        <translation>기본 펜을 활성화할 수 없습니다. 브러시 데이터를 준비할 수 없습니다.</translation>
+        <source>The Pen Tool could not be activated because its brush data could not be prepared.</source>
+        <translation>브러시 데이터를 준비할 수 없어 펜 도구를 활성화할 수 없습니다.</translation>
     </message>
     <message>
         <source>Failed to copy ABR: {error}</source>
@@ -1349,6 +1345,10 @@
     <message>
         <source>RecontourSmoothness (next stroke)</source>
         <translation>재컨투어 매끄러움 (다음 획)</translation>
+    </message>
+    <message>
+        <source>RecontourSmoothness</source>
+        <translation>재컨투어 매끄러움</translation>
     </message>
     <message>
         <source>Selection snapshot failed</source>
@@ -1535,6 +1535,26 @@
 </context>
     <context>
         <name>BasicEraser</name>
+        <message>
+            <source>Stays clean</source>
+            <translation>쉽게 더러워지지 않음</translation>
+        </message>
+        <message>
+            <source>Turn off symmetry copies to use the kneaded eraser.</source>
+            <translation>떡지우개를 사용하려면 대칭 복사를 끄세요.</translation>
+        </message>
+        <message>
+            <source>The eraser stroke could not be completed.</source>
+            <translation>지우개 스트로크를 완료하지 못했습니다.</translation>
+        </message>
+        <message>
+            <source>Eraser Type</source>
+            <translation>지우개 종류</translation>
+        </message>
+        <message>
+            <source>Use an editable RGB raster layer for the kneaded eraser.</source>
+            <translation>떡지우개는 편집 가능한 RGB 래스터 레이어에서 사용하세요.</translation>
+        </message>
         <message>
             <source>Vector Erase Mode</source>
             <translation>벡터 삭제 모드</translation>
@@ -5303,6 +5323,34 @@ After refreshing the token, any agents registered to this LoomStroke MCP server 
 <context>
     <name>ToolPropertiesPanel</name>
     <message>
+        <source>Kneaded</source>
+        <translation>떡지우개</translation>
+    </message>
+    <message>
+        <source>Normal</source>
+        <translation>표준</translation>
+    </message>
+    <message>
+        <source>Standard</source>
+        <translation>표준</translation>
+    </message>
+    <message>
+        <source>Smooth</source>
+        <translation>매끄러움</translation>
+    </message>
+    <message>
+        <source>Rough</source>
+        <translation>거침</translation>
+    </message>
+    <message>
+        <source>Watercolor</source>
+        <translation>수채화</translation>
+    </message>
+    <message>
+        <source>Oil</source>
+        <translation>유화</translation>
+    </message>
+    <message>
         <source>Candidate Actions</source>
         <translation>후보 작업</translation>
     </message>
@@ -5835,8 +5883,8 @@ After refreshing the token, any agents registered to this LoomStroke MCP server 
         <translation>마커</translation>
     </message>
     <message>
-        <source>Basic Pen</source>
-        <translation>기본 브러시</translation>
+        <source>Pen Tool</source>
+        <translation>펜 도구</translation>
     </message>
     <message>
         <source>Brushes</source>
@@ -16873,6 +16921,18 @@ Type: {type}</source>
 <context>
     <name>PenPresets</name>
     <message>
+        <source>Basic</source>
+        <translation>기본</translation>
+    </message>
+    <message>
+        <source>Watercolor</source>
+        <translation>수채화</translation>
+    </message>
+    <message>
+        <source>Oil</source>
+        <translation>유화</translation>
+    </message>
+    <message>
         <source>Brushes</source>
         <translation>브러시</translation>
     </message>
@@ -21375,6 +21435,70 @@ Do you want to save them?</source>
 <context>
     <name>__shared__</name>
     <message>
+        <source>Paper type</source>
+        <translation>종이 종류</translation>
+    </message>
+    <message>
+        <source>Water amount</source>
+        <translation>물의 양</translation>
+    </message>
+    <message>
+        <source>Paint load</source>
+        <translation>물감의 양</translation>
+    </message>
+    <message>
+        <source>Paint reach</source>
+        <translation>물감 지속 거리</translation>
+    </message>
+    <message>
+        <source>Remaining paint</source>
+        <translation>남는 물감</translation>
+    </message>
+    <message>
+        <source>Paint lifting</source>
+        <translation>물감 닦아내기</translation>
+    </message>
+    <message>
+        <source>Color pickup</source>
+        <translation>색 묻어남</translation>
+    </message>
+    <message>
+        <source>Color recovery</source>
+        <translation>색 회복</translation>
+    </message>
+    <message>
+        <source>Rough</source>
+        <translation>거침</translation>
+    </message>
+    <message>
+        <source>Paint Tool</source>
+        <translation>페인트 도구</translation>
+    </message>
+    <message>
+        <source>Paint with watercolor or oil on a raster layer</source>
+        <translation>래스터 레이어에 수채화 또는 유화로 그립니다</translation>
+    </message>
+    <message>
+        <source>Use an editable RGB raster layer without a selection to paint.</source>
+        <translation>선택 영역을 해제하고 편집 가능한 RGB 래스터 레이어를 선택한 후 그리세요.</translation>
+    </message>
+    <message>
+        <source>The paint stroke could not be completed.</source>
+        <translation>붓질을 완료할 수 없습니다.</translation>
+    </message>
+    <message>
+        <source>Turn off symmetry copies to use the paint tool.</source>
+        <translation>페인트 도구를 사용하려면 대칭 복제를 끄세요.</translation>
+    </message>
+    <message>
+        <source>Watercolor</source>
+        <translation>수채화</translation>
+    </message>
+    <message>
+        <source>Oil</source>
+        <translation>유화</translation>
+    </message>
+    <message>
         <source>Include Bleed</source>
         <translation>도련 포함</translation>
     </message>
@@ -22475,8 +22599,8 @@ Do you want to save them?</source>
         <translation>액션 패널</translation>
     </message>
     <message>
-        <source>Activate Basic Pen</source>
-        <translation>기본 브러시 활성화</translation>
+        <source>Activate Pen Tool</source>
+        <translation>펜 도구 활성화</translation>
     </message>
     <message>
         <source>Activate Filter Pen</source>
@@ -23345,16 +23469,12 @@ Select a file to recover.</source>
         <translation>기본 이동</translation>
     </message>
     <message>
-        <source>Basic Pen</source>
-        <translation>기본 브러시</translation>
+        <source>Pen Tool</source>
+        <translation>펜 도구</translation>
     </message>
     <message>
-        <source>Basic Pen Tool</source>
-        <translation>기본 브러시 도구</translation>
-    </message>
-    <message>
-        <source>Basic Pen could not be activated because its brush data could not be prepared.</source>
-        <translation>기본 펜을 활성화할 수 없습니다. 브러시 데이터를 준비할 수 없습니다.</translation>
+        <source>The Pen Tool could not be activated because its brush data could not be prepared.</source>
+        <translation>브러시 데이터를 준비할 수 없어 펜 도구를 활성화할 수 없습니다.</translation>
     </message>
     <message>
         <source>Basic Selection</source>
@@ -23369,8 +23489,8 @@ Select a file to recover.</source>
         <translation>기본 도형</translation>
     </message>
     <message>
-        <source>Basic pen tool with pressure sensitivity</source>
-        <translation>압력 감지 지원 기본 브러시 도구</translation>
+        <source>Pen tool with pressure sensitivity</source>
+        <translation>필압을 지원하는 펜 도구</translation>
     </message>
     <message>
         <source>Basic pressure-sensitive eraser tool</source>
@@ -39045,6 +39165,77 @@ Click to show as panel</source>
     <message>
         <source>Saved workflow: {name}</source>
         <translation>워크플로 저장 완료: {name}</translation>
+    </message>
+</context>
+<context>
+    <name>PaintTool</name>
+    <message>
+        <source>Paper type</source>
+        <translation>종이 종류</translation>
+    </message>
+    <message>
+        <source>Water amount</source>
+        <translation>물의 양</translation>
+    </message>
+    <message>
+        <source>Paint load</source>
+        <translation>물감의 양</translation>
+    </message>
+    <message>
+        <source>Paint reach</source>
+        <translation>물감 지속 거리</translation>
+    </message>
+    <message>
+        <source>Remaining paint</source>
+        <translation>남는 물감</translation>
+    </message>
+    <message>
+        <source>Paint lifting</source>
+        <translation>물감 닦아내기</translation>
+    </message>
+    <message>
+        <source>Color pickup</source>
+        <translation>색 묻어남</translation>
+    </message>
+    <message>
+        <source>Color recovery</source>
+        <translation>색 회복</translation>
+    </message>
+    <message>
+        <source>Opacity</source>
+        <translation>불투명도</translation>
+    </message>
+    <message>
+        <source>Paint Tool</source>
+        <translation>페인트 도구</translation>
+    </message>
+    <message>
+        <source>Paint with watercolor or oil on a raster layer</source>
+        <translation>래스터 레이어에 수채화 또는 유화로 그립니다</translation>
+    </message>
+    <message>
+        <source>Brushes</source>
+        <translation>브러시</translation>
+    </message>
+    <message>
+        <source>Size</source>
+        <translation>크기</translation>
+    </message>
+    <message>
+        <source>Medium</source>
+        <translation>화구</translation>
+    </message>
+    <message>
+        <source>Use an editable RGB raster layer without a selection to paint.</source>
+        <translation>선택 영역을 해제하고 편집 가능한 RGB 래스터 레이어를 선택한 후 그리세요.</translation>
+    </message>
+    <message>
+        <source>The paint stroke could not be completed.</source>
+        <translation>붓질을 완료할 수 없습니다.</translation>
+    </message>
+    <message>
+        <source>Turn off symmetry copies to use the paint tool.</source>
+        <translation>페인트 도구를 사용하려면 대칭 복제를 끄세요.</translation>
     </message>
 </context>
 </TS>

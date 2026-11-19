@@ -56,6 +56,7 @@ from .brush_store import BrushStore, _now_iso
 from .pen_brush_settings import _PenBrushSettings
 from .pen_dynamics_properties import PenDynamicsProperties
 from .pen_dynamics_settings import PenDynamicsSettings
+from .pen_media_stroke import PenMediaStroke
 from .pen_preset_controller import PenPresetController
 from .pressure_response_properties import PressureResponseProperties
 from .pressure_response_settings import PressureResponseSettings
@@ -148,6 +149,7 @@ class BasicPenTool:
         self.settings = PenSettings()
         self._pressure_response = PressureResponseSettings()
         self._dynamics = PenDynamicsSettings()
+        self._media = PenMediaStroke(self)
 
         # Stroke state
 
@@ -225,6 +227,12 @@ class BasicPenTool:
         # Inverse of the log mapping above.
         return math.log(spacing / cls._DENSITY_SPACING_MAX) / cls._DENSITY_LOG_RATIO
 
+    @property
+    def paints_provisional_stroke(self) -> bool:
+        """Watercolor and oil stay a preview until pen-up; the canvas ends them on focus loss."""
+
+        return self._media.enabled
+
     def _active_color_rgb(self) -> tuple[int, int, int]:
 
         if self.host_api and hasattr(self.host_api, "get_active_color"):
@@ -292,12 +300,12 @@ class BasicPenTool:
 
         return ToolDescriptor(
             id="basic_pen",
-            display_name=_ts("Basic Pen"),
+            display_name=_ts("Pen Tool"),
             category="brush",
             cursor="crosshair",
             shortcut="B",
             shortcut_category=_ts("Tools"),
-            shortcut_description=_ts("Activate Basic Pen"),
+            shortcut_description=_ts("Activate Pen Tool"),
             secondary_shortcut="Shift+B",
             secondary_shortcut_description=_ts("Alternate brush binding"),
             order=1,
@@ -435,13 +443,14 @@ class BasicPenTool:
                 ),
                 PropertySpec(
                     key="recontour_smoothness",
-                    display_name=_ts("RecontourSmoothness (next stroke)"),
+                    display_name=_ts("RecontourSmoothness"),
                     type=PropertyType.FLOAT,
                     min_value=0.0,
                     max_value=100.0,
                     default_value=self.settings.recontour_smoothness,
                     step=1.0,
                 ),
+                *self._media.properties(),
             ],
             presets=[
                 ToolPreset(
@@ -514,6 +523,8 @@ class BasicPenTool:
         """Disable the tool."""
 
         logger.info("Basic pen tool disabled")
+        # Like a normal pen stroke, what is already visible stays when the tool changes.
+        self._media.finish()
         self._recontour.finish()
         self._recontour.unbind()
         if self._taper is not None:
@@ -593,12 +604,14 @@ class BasicPenTool:
             "taper_end_length": self.settings.taper_end_length,
             **self._pressure_response.values(),
             **self._dynamics.values(),
+            **self._media.values(),
         }
 
     def set_settings(self, settings: dict[str, Any]) -> None:  # noqa: PLR0912
         """Update tool settings."""
         self._pressure_response.update(settings)
         self._dynamics.update(settings)
+        self._media.update(settings)
 
         if "size" in settings:
 
@@ -818,7 +831,61 @@ class BasicPenTool:
     def on_key(self, key: str, pressed: bool) -> bool:
         """Handle tool key events from the input dispatch."""
 
+        if self._media.active and pressed and key.lower() in {"esc", "escape"}:
+            self._discard_media_stroke()
+            return True
         return self._recontour.key(key, pressed)
+
+    def can_undo(self) -> bool:
+        return self._media.active
+
+    def on_undo(self) -> bool:
+        # Undo while the pen is down removes the unfinished medium stroke only.
+        if not self._media.active:
+            return False
+        self._discard_media_stroke()
+        return True
+
+    def _open_stroke_helpers(self, pt: HostStrokePoint, media: bool) -> bool:
+        """Prepare outline editing and tapering; False when the press edited an outline."""
+        # A release that never arrived leaves the previous medium stroke to commit here.
+        self._media.finish()
+        if self._recontour.press(pt):
+            return False
+        if media:
+            # The paint engine tapers its own dabs. Its editable path is recorded at
+            # pen-up, once the stroke has been committed.
+            self._recontour.finish()
+        else:
+            self._recontour.begin()
+        if self._taper is not None:
+            self._taper.close()
+        self._taper = (
+            PenTaperSession(self.settings.taper_start_length, self.settings.taper_end_length)
+            if not media
+            and (self.settings.taper_start_length > 0.0 or self.settings.taper_end_length > 0.0)
+            else None
+        )
+        return True
+
+    def _discard_media_stroke(self) -> None:
+        self._media.cancel()
+        self._stop_media_stroke()
+
+    def _stop_media_stroke(self) -> None:
+        self.is_stroking = False
+        self.stroke_points.clear()
+        self._last_submitted_index = 0
+        self.last_point = None
+        self._smoothed_pos = None
+        self.distance_accumulator = 0.0
+        self._assist.end()
+
+    def _emit_media_points(self) -> None:
+        points = self.stroke_points[self._last_submitted_index :]
+        self._last_submitted_index = len(self.stroke_points)
+        if points and not self._media.feed(points):
+            self._stop_media_stroke()
 
     def paint_preview(self, painter: QPainter, rect) -> None:
         """Paint tool preview/cursor."""
@@ -1217,6 +1284,10 @@ class BasicPenTool:
 
             return
 
+        if self._media.active:
+            self._emit_media_points()
+            return
+
         start_index = max(self._last_submitted_index - 1, 0)
 
         segment = self.stroke_points[start_index:]
@@ -1306,6 +1377,12 @@ class BasicPenTool:
 
         if not self.stroke_points:
 
+            return
+
+        if self._media.active:
+            self._emit_media_points()
+            self.stroke_points.clear()
+            self._last_submitted_index = 0
             return
 
         if self._last_submitted_index < len(self.stroke_points):
@@ -1438,6 +1515,7 @@ class BasicPenTool:
             "tone_gamma": self.settings.tone_gamma,
             "taper_start_length": self.settings.taper_start_length,
             "taper_end_length": self.settings.taper_end_length,
+            **self._media.values(),
         }
 
     def _load_settings(self, settings: dict[str, Any]) -> None:
@@ -1494,16 +1572,9 @@ class BasicPenTool:
 
         del alt, shift, ctrl, meta
 
-        if self._recontour.press(pt):
+        media = self._media.enabled
+        if not self._open_stroke_helpers(pt, media):
             return
-        self._recontour.begin()
-        if self._taper is not None:
-            self._taper.close()
-        self._taper = (
-            PenTaperSession(self.settings.taper_start_length, self.settings.taper_end_length)
-            if self.settings.taper_start_length > 0.0 or self.settings.taper_end_length > 0.0
-            else None
-        )
 
         self._refresh_perf_settings()
 
@@ -1564,6 +1635,10 @@ class BasicPenTool:
 
         self._stroke_id += 1
 
+        if media and not self._media.begin():
+            self._stop_media_stroke()
+            return
+
         start_pos = QPointF(pt.pos[0], pt.pos[1])
 
         self.last_point = QPointF(start_pos.x(), start_pos.y())
@@ -1583,7 +1658,9 @@ class BasicPenTool:
         # Begin transaction BEFORE the first point so that
         # host_api.apply_stroke_point (called inside _add_stroke_point) runs
         # inside the transaction and is undo-grouped with the rest of the stroke.
-        self._begin_transaction()
+        # A medium stroke enters history as one command at pen-up instead.
+        if not media:
+            self._begin_transaction()
 
         self._add_stroke_point(pt)
 
@@ -1634,6 +1711,16 @@ class BasicPenTool:
 
             return
         pt = self._assist.point(pt)
+
+        if self._media.active and pt.pressure <= 0 and self.stroke_points:
+            # Drivers may report zero pressure with the final position; a medium
+            # dab at zero pressure paints nothing and would leave the tail open.
+            pt = HostStrokePoint(
+                pos=pt.pos,
+                pressure=self.stroke_points[-1].pressure,
+                tilt=pt.tilt,
+                time=pt.time,
+            )
 
         current_pos = QPointF(pt.pos[0], pt.pos[1])
 
@@ -1692,6 +1779,8 @@ class BasicPenTool:
                 self.painter_path.lineTo(pt.pos[0], pt.pos[1])
 
         self._finalize_stroke()
+        if self._media.finish() and self.settings.recontour:
+            self._recontour.record = self._media.outline_record(self.settings.recontour_smoothness)
         if self._taper is not None:
             taper_session = self._taper
             self._pending_commands.append(
@@ -1791,9 +1880,9 @@ from .pen_dock_layout_watcher import _DockLayoutWatcher as _DockLayoutWatcher  #
 
 PLUGIN_METADATA = PluginMetadata(
     id="basic_pen",
-    name=_ts("Basic Pen Tool"),
+    name=_ts("Pen Tool"),
     version="1.0.0",
-    description=_ts("Basic pen tool with pressure sensitivity"),
+    description=_ts("Pen tool with pressure sensitivity"),
     author="LoomStroke Team",
     types=[PluginType.TOOL],
 )

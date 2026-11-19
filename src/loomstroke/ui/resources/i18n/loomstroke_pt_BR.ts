@@ -1210,12 +1210,12 @@
             <translation>Semente de Variação</translation>
         </message>
         <message>
-            <source>Basic Pen</source>
-            <translation>Pincel básico</translation>
+            <source>Pen Tool</source>
+            <translation>Ferramenta Caneta</translation>
         </message>
         <message>
-            <source>Activate Basic Pen</source>
-            <translation>Ativar pincel básico</translation>
+            <source>Activate Pen Tool</source>
+            <translation>Ativar a ferramenta Caneta</translation>
         </message>
         <message>
             <source>Alternate brush binding</source>
@@ -1226,12 +1226,8 @@
             <translation>Pincéis</translation>
         </message>
         <message>
-            <source>Basic Pen Tool</source>
-            <translation>Ferramenta de pincel básico</translation>
-        </message>
-        <message>
-            <source>Basic pen tool with pressure sensitivity</source>
-            <translation>Ferramenta de pincel básico com sensibilidade à pressão</translation>
+            <source>Pen tool with pressure sensitivity</source>
+            <translation>Ferramenta Caneta com sensibilidade à pressão</translation>
         </message>
     <message>
         <source>Brush Manager</source>
@@ -1251,8 +1247,8 @@
         <translation>Erros na importação ABR:</translation>
     </message>
     <message>
-        <source>Basic Pen could not be activated because its brush data could not be prepared.</source>
-        <translation>O Pen Básico não pôde ser ativado porque os dados do pincel não puderam ser preparados.</translation>
+        <source>The Pen Tool could not be activated because its brush data could not be prepared.</source>
+        <translation>Não foi possível ativar a ferramenta Caneta porque os dados do pincel não puderam ser preparados.</translation>
     </message>
     <message>
         <source>Failed to copy ABR: {error}</source>
@@ -1349,6 +1345,10 @@
     <message>
         <source>RecontourSmoothness (next stroke)</source>
         <translation>Suavidade de recontorno (próximo traço)</translation>
+    </message>
+    <message>
+        <source>RecontourSmoothness</source>
+        <translation>Suavidade de recontorno</translation>
     </message>
     <message>
         <source>Selection snapshot failed</source>
@@ -1535,6 +1535,26 @@
 </context>
     <context>
         <name>BasicEraser</name>
+        <message>
+            <source>Stays clean</source>
+            <translation>Mantém-se limpa</translation>
+        </message>
+        <message>
+            <source>Turn off symmetry copies to use the kneaded eraser.</source>
+            <translation>Desative as cópias de simetria para usar a borracha limpa-tipos.</translation>
+        </message>
+        <message>
+            <source>The eraser stroke could not be completed.</source>
+            <translation>Não foi possível concluir o traço da borracha.</translation>
+        </message>
+        <message>
+            <source>Eraser Type</source>
+            <translation>Tipo de borracha</translation>
+        </message>
+        <message>
+            <source>Use an editable RGB raster layer for the kneaded eraser.</source>
+            <translation>Use uma camada raster RGB editável para a borracha limpa-tipos.</translation>
+        </message>
         <message>
             <source>Vector Erase Mode</source>
             <translation>Modo de Erasão Vetorial</translation>
@@ -5023,6 +5043,34 @@ Após atualizar o token, qualquer agente registrado neste servidor LoomStroke MC
 <context>
     <name>ToolPropertiesPanel</name>
     <message>
+        <source>Kneaded</source>
+        <translation>Borracha limpa-tipos</translation>
+    </message>
+    <message>
+        <source>Normal</source>
+        <translation>Normal</translation>
+    </message>
+    <message>
+        <source>Standard</source>
+        <translation>Padrão</translation>
+    </message>
+    <message>
+        <source>Smooth</source>
+        <translation>Liso</translation>
+    </message>
+    <message>
+        <source>Rough</source>
+        <translation>Áspero</translation>
+    </message>
+    <message>
+        <source>Watercolor</source>
+        <translation>Aquarela</translation>
+    </message>
+    <message>
+        <source>Oil</source>
+        <translation>Óleo</translation>
+    </message>
+    <message>
         <source>Candidate Actions</source>
         <translation>Ações Candidatas</translation>
     </message>
@@ -5555,8 +5603,8 @@ Após atualizar o token, qualquer agente registrado neste servidor LoomStroke MC
         <translation>Marcador</translation>
     </message>
     <message>
-        <source>Basic Pen</source>
-        <translation>Pincel básico</translation>
+        <source>Pen Tool</source>
+        <translation>Ferramenta Caneta</translation>
     </message>
     <message>
         <source>Brushes</source>
@@ -16841,6 +16889,18 @@ Tipo: {type}</translation>
 <context>
     <name>PenPresets</name>
     <message>
+        <source>Basic</source>
+        <translation>Básico</translation>
+    </message>
+    <message>
+        <source>Watercolor</source>
+        <translation>Aquarela</translation>
+    </message>
+    <message>
+        <source>Oil</source>
+        <translation>Óleo</translation>
+    </message>
+    <message>
         <source>Brushes</source>
         <translation>Pincéis</translation>
     </message>
@@ -21374,6 +21434,70 @@ Deseja salvá-las?</translation>
 <context>
     <name>__shared__</name>
     <message>
+        <source>Paper type</source>
+        <translation>Tipo de papel</translation>
+    </message>
+    <message>
+        <source>Water amount</source>
+        <translation>Quantidade de água</translation>
+    </message>
+    <message>
+        <source>Paint load</source>
+        <translation>Carga de tinta</translation>
+    </message>
+    <message>
+        <source>Paint reach</source>
+        <translation>Alcance da tinta</translation>
+    </message>
+    <message>
+        <source>Remaining paint</source>
+        <translation>Tinta restante</translation>
+    </message>
+    <message>
+        <source>Paint lifting</source>
+        <translation>Remoção de tinta</translation>
+    </message>
+    <message>
+        <source>Color pickup</source>
+        <translation>Arraste de cor</translation>
+    </message>
+    <message>
+        <source>Color recovery</source>
+        <translation>Recuperação de cor</translation>
+    </message>
+    <message>
+        <source>Rough</source>
+        <translation>Áspero</translation>
+    </message>
+    <message>
+        <source>Paint Tool</source>
+        <translation>Ferramenta de pintura</translation>
+    </message>
+    <message>
+        <source>Paint with watercolor or oil on a raster layer</source>
+        <translation>Pinte com aquarela ou tinta a óleo em uma camada raster</translation>
+    </message>
+    <message>
+        <source>Use an editable RGB raster layer without a selection to paint.</source>
+        <translation>Para pintar, desfaça a seleção e escolha uma camada raster RGB editável.</translation>
+    </message>
+    <message>
+        <source>The paint stroke could not be completed.</source>
+        <translation>Não foi possível concluir a pincelada.</translation>
+    </message>
+    <message>
+        <source>Turn off symmetry copies to use the paint tool.</source>
+        <translation>Desative as cópias simétricas para usar a ferramenta de pintura.</translation>
+    </message>
+    <message>
+        <source>Watercolor</source>
+        <translation>Aquarela</translation>
+    </message>
+    <message>
+        <source>Oil</source>
+        <translation>Óleo</translation>
+    </message>
+    <message>
         <source>Include Bleed</source>
         <translation>Incluir sangria</translation>
     </message>
@@ -22474,8 +22598,8 @@ Deseja salvá-las?</translation>
         <translation>Painel de Ações</translation>
     </message>
     <message>
-        <source>Activate Basic Pen</source>
-        <translation>Ativar pincel básico</translation>
+        <source>Activate Pen Tool</source>
+        <translation>Ativar a ferramenta Caneta</translation>
     </message>
     <message>
         <source>Activate Filter Pen</source>
@@ -23344,16 +23468,12 @@ Selecione um arquivo para recuperar.</translation>
         <translation>Movimento básico</translation>
     </message>
     <message>
-        <source>Basic Pen</source>
-        <translation>Pincel básico</translation>
+        <source>Pen Tool</source>
+        <translation>Ferramenta Caneta</translation>
     </message>
     <message>
-        <source>Basic Pen Tool</source>
-        <translation>Ferramenta de pincel básico</translation>
-    </message>
-    <message>
-        <source>Basic Pen could not be activated because its brush data could not be prepared.</source>
-        <translation>O Pen Básico não pôde ser ativado porque os dados do pincel não puderam ser preparados.</translation>
+        <source>The Pen Tool could not be activated because its brush data could not be prepared.</source>
+        <translation>Não foi possível ativar a ferramenta Caneta porque os dados do pincel não puderam ser preparados.</translation>
     </message>
     <message>
         <source>Basic Selection</source>
@@ -23368,8 +23488,8 @@ Selecione um arquivo para recuperar.</translation>
         <translation>Formas básicas</translation>
     </message>
     <message>
-        <source>Basic pen tool with pressure sensitivity</source>
-        <translation>Ferramenta de pincel básico com sensibilidade à pressão</translation>
+        <source>Pen tool with pressure sensitivity</source>
+        <translation>Ferramenta Caneta com sensibilidade à pressão</translation>
     </message>
     <message>
         <source>Basic pressure-sensitive eraser tool</source>
@@ -39045,6 +39165,77 @@ Clique para exibir como quadro</translation>
     <message>
         <source>Saved workflow: {name}</source>
         <translation>Fluxo de trabalho salvo: {name}</translation>
+    </message>
+</context>
+<context>
+    <name>PaintTool</name>
+    <message>
+        <source>Paper type</source>
+        <translation>Tipo de papel</translation>
+    </message>
+    <message>
+        <source>Water amount</source>
+        <translation>Quantidade de água</translation>
+    </message>
+    <message>
+        <source>Paint load</source>
+        <translation>Carga de tinta</translation>
+    </message>
+    <message>
+        <source>Paint reach</source>
+        <translation>Alcance da tinta</translation>
+    </message>
+    <message>
+        <source>Remaining paint</source>
+        <translation>Tinta restante</translation>
+    </message>
+    <message>
+        <source>Paint lifting</source>
+        <translation>Remoção de tinta</translation>
+    </message>
+    <message>
+        <source>Color pickup</source>
+        <translation>Arraste de cor</translation>
+    </message>
+    <message>
+        <source>Color recovery</source>
+        <translation>Recuperação de cor</translation>
+    </message>
+    <message>
+        <source>Opacity</source>
+        <translation>Opacidade</translation>
+    </message>
+    <message>
+        <source>Paint Tool</source>
+        <translation>Ferramenta de pintura</translation>
+    </message>
+    <message>
+        <source>Paint with watercolor or oil on a raster layer</source>
+        <translation>Pinte com aquarela ou tinta a óleo em uma camada raster</translation>
+    </message>
+    <message>
+        <source>Brushes</source>
+        <translation>Pincéis</translation>
+    </message>
+    <message>
+        <source>Size</source>
+        <translation>Tamanho</translation>
+    </message>
+    <message>
+        <source>Medium</source>
+        <translation>Técnica de pintura</translation>
+    </message>
+    <message>
+        <source>Use an editable RGB raster layer without a selection to paint.</source>
+        <translation>Para pintar, desfaça a seleção e escolha uma camada raster RGB editável.</translation>
+    </message>
+    <message>
+        <source>The paint stroke could not be completed.</source>
+        <translation>Não foi possível concluir a pincelada.</translation>
+    </message>
+    <message>
+        <source>Turn off symmetry copies to use the paint tool.</source>
+        <translation>Desative as cópias simétricas para usar a ferramenta de pintura.</translation>
     </message>
 </context>
 </TS>

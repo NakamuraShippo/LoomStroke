@@ -1210,12 +1210,12 @@
             <translation>变化种子</translation>
         </message>
         <message>
-            <source>Basic Pen</source>
-            <translation>基础画笔</translation>
+            <source>Pen Tool</source>
+            <translation>画笔工具</translation>
         </message>
         <message>
-            <source>Activate Basic Pen</source>
-            <translation>启用基础画笔</translation>
+            <source>Activate Pen Tool</source>
+            <translation>启用画笔工具</translation>
         </message>
         <message>
             <source>Alternate brush binding</source>
@@ -1226,12 +1226,8 @@
             <translation>画笔</translation>
         </message>
         <message>
-            <source>Basic Pen Tool</source>
-            <translation>基础画笔工具</translation>
-        </message>
-        <message>
-            <source>Basic pen tool with pressure sensitivity</source>
-            <translation>支持压感的基础画笔工具</translation>
+            <source>Pen tool with pressure sensitivity</source>
+            <translation>支持压感的画笔工具</translation>
         </message>
     <message>
         <source>Brush Manager</source>
@@ -1251,8 +1247,8 @@
         <translation>ABR导入错误：</translation>
     </message>
     <message>
-        <source>Basic Pen could not be activated because its brush data could not be prepared.</source>
-        <translation>无法激活基本画笔，因为其画笔数据无法准备。</translation>
+        <source>The Pen Tool could not be activated because its brush data could not be prepared.</source>
+        <translation>无法准备笔刷数据，因此无法启用画笔工具。</translation>
     </message>
     <message>
         <source>Failed to copy ABR: {error}</source>
@@ -1349,6 +1345,10 @@
     <message>
         <source>RecontourSmoothness (next stroke)</source>
         <translation>重新轮廓平滑度（下一笔画）</translation>
+    </message>
+    <message>
+        <source>RecontourSmoothness</source>
+        <translation>重新轮廓平滑度</translation>
     </message>
     <message>
         <source>Selection snapshot failed</source>
@@ -1535,6 +1535,26 @@
 </context>
     <context>
         <name>BasicEraser</name>
+        <message>
+            <source>Stays clean</source>
+            <translation>不易变脏</translation>
+        </message>
+        <message>
+            <source>Turn off symmetry copies to use the kneaded eraser.</source>
+            <translation>要使用可塑橡皮，请关闭对称复制。</translation>
+        </message>
+        <message>
+            <source>The eraser stroke could not be completed.</source>
+            <translation>无法完成橡皮笔画。</translation>
+        </message>
+        <message>
+            <source>Eraser Type</source>
+            <translation>橡皮类型</translation>
+        </message>
+        <message>
+            <source>Use an editable RGB raster layer for the kneaded eraser.</source>
+            <translation>可塑橡皮请使用可编辑的 RGB 栅格图层。</translation>
+        </message>
         <message>
             <source>Vector Erase Mode</source>
             <translation>矢量擦除模式</translation>
@@ -5303,6 +5323,34 @@ After refreshing the token, any agents registered to this LoomStroke MCP server 
 <context>
     <name>ToolPropertiesPanel</name>
     <message>
+        <source>Kneaded</source>
+        <translation>可塑橡皮</translation>
+    </message>
+    <message>
+        <source>Normal</source>
+        <translation>正常</translation>
+    </message>
+    <message>
+        <source>Standard</source>
+        <translation>标准</translation>
+    </message>
+    <message>
+        <source>Smooth</source>
+        <translation>光滑</translation>
+    </message>
+    <message>
+        <source>Rough</source>
+        <translation>粗纹</translation>
+    </message>
+    <message>
+        <source>Watercolor</source>
+        <translation>水彩</translation>
+    </message>
+    <message>
+        <source>Oil</source>
+        <translation>油彩</translation>
+    </message>
+    <message>
         <source>Candidate Actions</source>
         <translation>候选操作</translation>
     </message>
@@ -5835,8 +5883,8 @@ After refreshing the token, any agents registered to this LoomStroke MCP server 
         <translation>马克笔</translation>
     </message>
     <message>
-        <source>Basic Pen</source>
-        <translation>基础画笔</translation>
+        <source>Pen Tool</source>
+        <translation>画笔工具</translation>
     </message>
     <message>
         <source>Brushes</source>
@@ -16874,6 +16922,18 @@ Type: {type}</source>
 <context>
     <name>PenPresets</name>
     <message>
+        <source>Basic</source>
+        <translation>基础</translation>
+    </message>
+    <message>
+        <source>Watercolor</source>
+        <translation>水彩</translation>
+    </message>
+    <message>
+        <source>Oil</source>
+        <translation>油彩</translation>
+    </message>
+    <message>
         <source>Brushes</source>
         <translation>画笔</translation>
     </message>
@@ -21376,6 +21436,70 @@ Do you want to save them?</source>
 <context>
     <name>__shared__</name>
     <message>
+        <source>Paper type</source>
+        <translation>纸张类型</translation>
+    </message>
+    <message>
+        <source>Water amount</source>
+        <translation>水量</translation>
+    </message>
+    <message>
+        <source>Paint load</source>
+        <translation>颜料量</translation>
+    </message>
+    <message>
+        <source>Paint reach</source>
+        <translation>颜料持续距离</translation>
+    </message>
+    <message>
+        <source>Remaining paint</source>
+        <translation>剩余颜料</translation>
+    </message>
+    <message>
+        <source>Paint lifting</source>
+        <translation>吸除颜料</translation>
+    </message>
+    <message>
+        <source>Color pickup</source>
+        <translation>拾色程度</translation>
+    </message>
+    <message>
+        <source>Color recovery</source>
+        <translation>颜色恢复</translation>
+    </message>
+    <message>
+        <source>Rough</source>
+        <translation>粗纹</translation>
+    </message>
+    <message>
+        <source>Paint Tool</source>
+        <translation>绘画工具</translation>
+    </message>
+    <message>
+        <source>Paint with watercolor or oil on a raster layer</source>
+        <translation>使用水彩或油彩在栅格图层上绘画</translation>
+    </message>
+    <message>
+        <source>Use an editable RGB raster layer without a selection to paint.</source>
+        <translation>请先取消选区，再选择可编辑的 RGB 栅格图层进行绘画。</translation>
+    </message>
+    <message>
+        <source>The paint stroke could not be completed.</source>
+        <translation>无法完成此次笔触。</translation>
+    </message>
+    <message>
+        <source>Turn off symmetry copies to use the paint tool.</source>
+        <translation>请关闭对称复制以使用绘画工具。</translation>
+    </message>
+    <message>
+        <source>Watercolor</source>
+        <translation>水彩</translation>
+    </message>
+    <message>
+        <source>Oil</source>
+        <translation>油彩</translation>
+    </message>
+    <message>
         <source>Include Bleed</source>
         <translation>包含出血</translation>
     </message>
@@ -22476,8 +22600,8 @@ Do you want to save them?</source>
         <translation>操作面板</translation>
     </message>
     <message>
-        <source>Activate Basic Pen</source>
-        <translation>启用基础画笔</translation>
+        <source>Activate Pen Tool</source>
+        <translation>启用画笔工具</translation>
     </message>
     <message>
         <source>Activate Filter Pen</source>
@@ -23346,16 +23470,12 @@ Select a file to recover.</source>
         <translation>基本移动</translation>
     </message>
     <message>
-        <source>Basic Pen</source>
-        <translation>基础画笔</translation>
+        <source>Pen Tool</source>
+        <translation>画笔工具</translation>
     </message>
     <message>
-        <source>Basic Pen Tool</source>
-        <translation>基础画笔工具</translation>
-    </message>
-    <message>
-        <source>Basic Pen could not be activated because its brush data could not be prepared.</source>
-        <translation>无法激活基本画笔，因为其画笔数据无法准备。</translation>
+        <source>The Pen Tool could not be activated because its brush data could not be prepared.</source>
+        <translation>无法准备笔刷数据，因此无法启用画笔工具。</translation>
     </message>
     <message>
         <source>Basic Selection</source>
@@ -23370,8 +23490,8 @@ Select a file to recover.</source>
         <translation>基本形状</translation>
     </message>
     <message>
-        <source>Basic pen tool with pressure sensitivity</source>
-        <translation>支持压感的基础画笔工具</translation>
+        <source>Pen tool with pressure sensitivity</source>
+        <translation>支持压感的画笔工具</translation>
     </message>
     <message>
         <source>Basic pressure-sensitive eraser tool</source>
@@ -39047,6 +39167,77 @@ Click to show as panel</source>
     <message>
         <source>Saved workflow: {name}</source>
         <translation>已保存工作流：{name}</translation>
+    </message>
+</context>
+<context>
+    <name>PaintTool</name>
+    <message>
+        <source>Paper type</source>
+        <translation>纸张类型</translation>
+    </message>
+    <message>
+        <source>Water amount</source>
+        <translation>水量</translation>
+    </message>
+    <message>
+        <source>Paint load</source>
+        <translation>颜料量</translation>
+    </message>
+    <message>
+        <source>Paint reach</source>
+        <translation>颜料持续距离</translation>
+    </message>
+    <message>
+        <source>Remaining paint</source>
+        <translation>剩余颜料</translation>
+    </message>
+    <message>
+        <source>Paint lifting</source>
+        <translation>吸除颜料</translation>
+    </message>
+    <message>
+        <source>Color pickup</source>
+        <translation>拾色程度</translation>
+    </message>
+    <message>
+        <source>Color recovery</source>
+        <translation>颜色恢复</translation>
+    </message>
+    <message>
+        <source>Opacity</source>
+        <translation>不透明度</translation>
+    </message>
+    <message>
+        <source>Paint Tool</source>
+        <translation>绘画工具</translation>
+    </message>
+    <message>
+        <source>Paint with watercolor or oil on a raster layer</source>
+        <translation>使用水彩或油彩在栅格图层上绘画</translation>
+    </message>
+    <message>
+        <source>Brushes</source>
+        <translation>画笔</translation>
+    </message>
+    <message>
+        <source>Size</source>
+        <translation>大小</translation>
+    </message>
+    <message>
+        <source>Medium</source>
+        <translation>绘画媒材</translation>
+    </message>
+    <message>
+        <source>Use an editable RGB raster layer without a selection to paint.</source>
+        <translation>请先取消选区，再选择可编辑的 RGB 栅格图层进行绘画。</translation>
+    </message>
+    <message>
+        <source>The paint stroke could not be completed.</source>
+        <translation>无法完成此次笔触。</translation>
+    </message>
+    <message>
+        <source>Turn off symmetry copies to use the paint tool.</source>
+        <translation>请关闭对称复制以使用绘画工具。</translation>
     </message>
 </context>
 </TS>

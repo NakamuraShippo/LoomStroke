@@ -112,7 +112,7 @@ table.params td:nth-child(2) { white-space: normal; min-width: 8em; }
       <ol><li><a href="#whatsnew">v0.3 以降の主な変更</a></li><li><a href="#install">インストールと更新</a></li><li><a href="#launch">起動とスタート画面</a></li><li><a href="#recovery">自動保存からの復元</a></li><li><a href="#new-doc">新規ドキュメント</a></li><li><a href="#screen">画面の見かた</a></li></ol></li>
     <li><a href="#quickstart">2. はじめての1枚</a></li>
     <li><a href="#tools">3. ツール</a>
-      <ol><li><a href="#tool-groups">ツールバーとグループ</a></li><li><a href="#tool-pen">ベーシックペン</a></li><li><a href="#tool-filter-pen">フィルターペン</a></li><li><a href="#tool-eraser">消しゴム</a></li><li><a href="#tool-fill">塗りつぶし</a></li><li><a href="#tool-gradient">グラデーション</a></li><li><a href="#tool-pattern">パターンフィル</a></li><li><a href="#tool-wand">マジックワンド</a></li><li><a href="#tool-ai">AI Select</a></li><li><a href="#tool-rect">選択（矩形）</a></li><li><a href="#tool-move">移動</a></li><li><a href="#tool-vpen">ベクターペン（高精度）</a></li><li><a href="#tool-path">パス</a></li><li><a href="#tool-pathedit">パス編集</a></li><li><a href="#tool-text">テキスト</a></li><li><a href="#tool-vtext">縦書きテキスト</a></li><li><a href="#tool-eyedropper">スポイト</a></li><li><a href="#tool-measure">計測</a></li><li><a href="#tool-comic">Comic</a></li></ol></li>
+      <ol><li><a href="#tool-groups">ツールバーとグループ</a></li><li><a href="#tool-pen">ペンツール</a></li><li><a href="#tool-filter-pen">フィルターペン</a></li><li><a href="#tool-eraser">消しゴム</a></li><li><a href="#tool-fill">塗りつぶし</a></li><li><a href="#tool-gradient">グラデーション</a></li><li><a href="#tool-pattern">パターンフィル</a></li><li><a href="#tool-wand">マジックワンド</a></li><li><a href="#tool-ai">AI Select</a></li><li><a href="#tool-rect">選択（矩形）</a></li><li><a href="#tool-move">移動</a></li><li><a href="#tool-vpen">ベクターペン（高精度）</a></li><li><a href="#tool-path">パス</a></li><li><a href="#tool-pathedit">パス編集</a></li><li><a href="#tool-text">テキスト</a></li><li><a href="#tool-vtext">縦書きテキスト</a></li><li><a href="#tool-eyedropper">スポイト</a></li><li><a href="#tool-measure">計測</a></li><li><a href="#tool-comic">Comic</a></li></ol></li>
     <li><a href="#layers">4. レイヤーとフィルター</a>
       <ol><li><a href="#layer-panel">レイヤーパネル</a></li><li><a href="#blend">レイヤーエフェクト（合成）</a></li><li><a href="#layer-ctx">右クリックメニュー</a></li><li><a href="#channels">チャンネル</a></li><li><a href="#filters">フィルターレイヤー全種</a></li><li><a href="#fill-layers">塗りつぶしレイヤー</a></li><li><a href="#layer-styles">レイヤースタイル</a></li></ol></li>
     <li><a href="#panels">5. パネル詳細</a>
@@ -234,7 +234,7 @@ table.params td:nth-child(2) { white-space: normal; min-width: 8em; }
 <ol class="steps">
   <li><b>ファイル › 開く</b>（<kbd>Ctrl</kbd>+<kbd>O</kbd>）で PNG などの画像を開きます。画像のサイズのキャンバスができ、画像は 1 枚のレイヤーになります。</li>
   <li>レイヤーパネル下の <b>＋</b>（追加）で新規レイヤーを作り、名前をダブルクリックで「描き込み」などに変更します。元の絵とは別のレイヤーに描くと、後から消したり動かしたりしても元の絵が傷みません。</li>
-  <li><b>ベーシックペン</b>（<kbd>B</kbd>）で波線や星を描き加えます。</li>
+  <li><b>ペンツール</b>（<kbd>B</kbd>）で波線や星を描き加えます。</li>
   <li>さらに新規レイヤーを作り、ペンで円を描いて、<b>塗りつぶし</b>で内側をクリックして色を流し込みます。</li>
   <li><b>テキスト</b>（<kbd>T</kbd>）や<b>縦書きテキスト</b>でキャンバスをクリックし、文字を入力します。</li>
   <li>イラストのレイヤーを選んで<b>フィルターレイヤー</b>を追加すると、元の絵を書き換えずにぼかしや色調整をかけられます。</li>
@@ -250,7 +250,7 @@ table.params td:nth-child(2) { white-space: normal; min-width: 8em; }
 <h3 id="tool-groups">ツールバーとグループ</h3>
 <p>左端のツールバーは<b>ツールグループ</b>単位でボタンが並びます。右下に小さな三角が付いたボタンは複数のツールを持ち、<b>長押し（約 0.35 秒）</b>でフライアウトメニューが開いて切り替えられます。ボタンの絵柄は最後に使ったツールになります。</p>
 <div class="grid3">
-<figure><img src="img/flyout_0.png" alt="ペングループ" loading="lazy"><figcaption>ペン：ベーシックペン / フィルターペン</figcaption></figure>
+<figure><img src="img/flyout_0.png" alt="ペングループ" loading="lazy"><figcaption>ペン：ペンツール / フィルターペン</figcaption></figure>
 <figure><img src="img/flyout_1.png" alt="選択グループ" loading="lazy"><figcaption>選択：マジックワンド / AI Select / 選択（矩形）</figcaption></figure>
 <figure><img src="img/flyout_2.png" alt="塗りグループ" loading="lazy"><figcaption>塗り：塗りつぶし / グラデーション / Pattern Fill</figcaption></figure>
 <figure><img src="img/flyout_3.png" alt="ベクターグループ" loading="lazy"><figcaption>ベクター：ベクターペン（高精度）/ パス / パス編集</figcaption></figure>
@@ -268,8 +268,9 @@ table.params td:nth-child(2) { white-space: normal; min-width: 8em; }
 <p>ツールを選ぶと、<b>ツールプロパティバー</b>（メニュー直下）と<b>コンテキストツールバー</b>（キャンバス上）にそのツールの設定が表示されます。バー左端の「プリセット」で設定の組み合わせを呼び出し、「保存」「削除」で管理できます。<b>「ツール設定」</b>（ペンは「ペン設定」）ボタンを押すと、折りたたみ式の詳細設定が開きます。この説明書では、詳細設定はすべてのセクションを展開した状態で掲載しています。</p>
 
 <!-- ペン -->
-<h3 id="tool-pen">ベーシックペン <span class="tag">B</span></h3>
-<figure><img src="img/use_pen.png" alt="ベーシックペンで描画" loading="lazy"><figcaption>「描き込み」レイヤーにペンでピンクの波線と黄色の星を描いたところ。上部にサイズ・不透明度・硬さのコンテキストツールバー。<span class="legend"><span class="num">1</span>選択中のツール　<span class="num">2</span>プロパティバー　<span class="num">3</span>コンテキストツールバー　<span class="num">4</span>描いた線</span></figcaption></figure>
+<h3 id="tool-pen">ペンツール <span class="tag">B</span></h3>
+<p>ツールプロパティの「画材」で「通常」「水彩」「油彩」を切り替えられます。</p>
+<figure><img src="img/use_pen.png" alt="ペンツールで描画" loading="lazy"><figcaption>「描き込み」レイヤーにペンでピンクの波線と黄色の星を描いたところ。上部にサイズ・不透明度・硬さのコンテキストツールバー。<span class="legend"><span class="num">1</span>選択中のツール　<span class="num">2</span>プロパティバー　<span class="num">3</span>コンテキストツールバー　<span class="num">4</span>描いた線</span></figcaption></figure>
 <p>筆圧・傾きに対応したラスターブラシです。プリセット「スケッチ」などが用意されており、ブラシマネージャーから Photoshop の ABR ブラシや PNG 画像のブラシ先端も取り込めます。</p>
 
 <figure class="narrow"><img src="img/opt_pen.png" alt="ペン設定" loading="lazy"><figcaption>ペン設定（全セクション展開）</figcaption></figure>
@@ -313,7 +314,7 @@ table.params td:nth-child(2) { white-space: normal; min-width: 8em; }
 <figure class="narrow"><img src="img/opt_filter_pen.png" alt="フィルター設定" loading="lazy"><figcaption>「フィルター設定…」ダイアログ</figcaption></figure>
 
 <!-- 消しゴム -->
-<h4>パラメーター一覧（全 13 項目）</h4>
+<h4>パラメーター一覧（全 14 項目）</h4>
 <div class="table-wrap"><table class="params">
 <tr><th>分類</th><th>項目</th><th>範囲・選択肢</th><th>初期値</th><th>説明</th></tr>
 <tr><td>基本</td><td>フィルター</td><td>ガウスぼかし / レベル補正 / シャープ / ノイズ除去 / 色相/彩度 / 階調の反転 / 明るさ / コントラスト / トーンカーブ / グラデーションマップ / モザイク / 漫画スクリーントーン</td><td>ガウスぼかし</td><td>なぞった部分にかけるフィルター。</td></tr>
@@ -380,7 +381,7 @@ table.params td:nth-child(2) { white-space: normal; min-width: 8em; }
 <figure class="narrow"><img src="img/opt_gradient.png" alt="グラデーション設定" loading="lazy"><figcaption>ツール設定「中間色」</figcaption></figure>
 
 <!-- パターン -->
-<h4>パラメーター一覧（全 11 項目）</h4>
+<h4>パラメーター一覧（全 13 項目）</h4>
 <div class="table-wrap"><table class="params">
 <tr><th>分類</th><th>項目</th><th>範囲・選択肢</th><th>初期値</th><th>説明</th></tr>
 <tr><td>基本</td><td>タイプ</td><td>線形 / 放射状</td><td>線形</td><td>線形＝直線方向、放射状＝中心から円形に広がる。</td></tr>
@@ -488,12 +489,18 @@ table.params td:nth-child(2) { white-space: normal; min-width: 8em; }
 <tr><td>変形</td><td>拡大率 X</td><td>0.01〜100</td><td>1</td><td>変形中の横の倍率。</td></tr>
 <tr><td>変形</td><td>拡大率 Y</td><td>0.01〜100</td><td>1</td><td>変形中の縦の倍率。</td></tr>
 <tr><td>変形</td><td>回転</td><td>-180〜180</td><td>0</td><td>変形中の回転角度。</td></tr>
+<tr><td>メッシュ変形</td><td>分割数</td><td>1〜10</td><td>2</td><td>格子の縦横の分割数。変形中に変えても現在の形を引き継ぎます。</td></tr>
+<tr><td>ゆがみブラシ</td><td>サイズ</td><td>1〜512 px</td><td>80</td><td>ブラシが作用する半径。</td></tr>
+<tr><td>ゆがみブラシ</td><td>強さ</td><td>1〜100</td><td>50</td><td>1回の操作で変形する強さ。</td></tr>
 </table></div>
 <h4>操作ボタン</h4><table>
 <tr><td>クリップボード</td><td>コピー（選択範囲をコピー）、切り取り（選択範囲を切り取り）、貼り付け（貼り付け）</td></tr>
 <tr><td>マスク操作</td><td>反転（選択範囲を反転）、拡張（マスク半径の分だけ広げる）、縮小（マスク半径の分だけ狭める）、ぼかし（マスク半径の分だけぼかす）、変換（選択範囲をマスクなどに変換）</td></tr>
-<tr><td>変形</td><td>移動（選択範囲の内容を移動）、拡大縮小（拡大・縮小）、回転（回転）、左右反転（左右反転）、上下反転（上下反転）、リセット（変形を元に戻す）、適用（変形を確定）、キャンセル（変形を取り消す）</td></tr>
+<tr><td>変形</td><td>移動（選択範囲の内容を移動）、拡大縮小（拡大・縮小）、回転（回転）、自由変形・ゆがみ・傾き・遠近（四隅と辺を動かす）、メッシュ変形（格子点を動かす）、ゆがみブラシ（押す・膨張・収縮・右/左へ渦巻き・左へ押す）、左右反転、上下反転、リセット、適用、キャンセル</td></tr>
 </table>
+<p>RGB ラスターの選択範囲を作り、変形ボタンを選んでからハンドルをドラッグします。メッシュ変形では、分割数2の初期値で3×3個の格子点を個別に動かせます。分割数は1〜10へ変更でき、編集中に変えても現在の形を引き継ぎます。大きな画像では格子を動かしてからプレビューが更新されるまで少し待つ場合があります。適用で画素と選択範囲をまとめて確定し、1 回の「元に戻す」で戻せます。</p>
+<p>ゆがみブラシは、RGB ラスターの選択範囲を作ってからプロパティバーの「ゆがみブラシ」でモードを選びます。サイズ・強さを設定してキャンバス上をドラッグしてください。膨張・収縮・渦巻きはクリックでも作用します。リセットで変形前へ戻り、適用で全ストロークを1回の「元に戻す」にまとめます。ベクターと Native CMYK には使用できません。</p>
+<p>レイヤー全体を変形する場合は選択範囲を解除し、RGB ラスターレイヤーを選んで、プロパティバーの「レイヤーを変形」からモードを選びます。ハンドルまたはブラシで調整し、「適用」で確定します。選択範囲は作成されず、画素の変更は1回の「元に戻す」で戻せます。変形する範囲はキャンバス内のレイヤー表示領域です。大きなレイヤーではプレビューや適用の準備に少し待つ場合があります。適用の準備中は <kbd>Esc</kbd> で取り消せます。</p>
 
 <h3 id="tool-move">移動 <span class="tag">V</span></h3>
 <figure><img src="img/use_move.png" alt="移動" loading="lazy"><figcaption>「描き込み」レイヤー（波線と星）を移動ツールでドラッグしたところ（変形ハンドル表示）<span class="legend"><span class="num">1</span>選択中のツール　<span class="num">2</span>プロパティバー　<span class="num">3</span>コンテキストツールバー　<span class="num">4</span>動かしたレイヤー</span></figcaption></figure>
@@ -1772,7 +1779,7 @@ table.params td:nth-child(2) { white-space: normal; min-width: 8em; }
 <table><tr><th colspan="2">画像</th></tr><tr><td>キャンバスを180°回転</td><td>—</td></tr><tr><td>キャンバスを90°回転(反時計回り)</td><td>—</td></tr><tr><td>キャンバスを90°回転(時計回り)</td><td>—</td></tr><tr><td>キャンバスを上下反転</td><td>—</td></tr><tr><td>キャンバスを左右反転</td><td>—</td></tr><tr><td>漫画作品の設定...</td><td>—</td></tr><tr><td>画像の設定...</td><td>—</td></tr><tr><td>画像解像度...</td><td>—</td></tr></table>
 <table><tr><th colspan="2">レイヤー</th></tr><tr><td>画像を統合</td><td><kbd>Ctrl</kbd> + <kbd>Alt</kbd> + <kbd>E</kbd></td></tr><tr><td>選択範囲をマスクに変換</td><td>—</td></tr><tr><td>ラスタライズ</td><td><kbd>Shift</kbd> + <kbd>R</kbd></td></tr><tr><td>レイヤーをグループ化</td><td><kbd>Ctrl</kbd> + <kbd>G</kbd></td></tr><tr><td>下のレイヤーと結合</td><td><kbd>Ctrl</kbd> + <kbd>E</kbd> <span class="tag">競合</span></td></tr><tr><td>削除</td><td><kbd>Del</kbd></td></tr><tr><td>新規スクリーントーンレイヤー...</td><td>—</td></tr><tr><td>新規レイヤー</td><td><kbd>Ctrl</kbd> + <kbd>Shift</kbd> + <kbd>N</kbd></td></tr><tr><td>表示レイヤーを結合</td><td><kbd>Ctrl</kbd> + <kbd>Shift</kbd> + <kbd>E</kbd></td></tr><tr><td>複製</td><td><kbd>Ctrl</kbd> + <kbd>J</kbd></td></tr></table>
 <table><tr><th colspan="2">プラグイン</th></tr><tr><td>Convert to Vector</td><td>—</td></tr><tr><td>Register Shape</td><td>—</td></tr><tr><td>Register Shapes</td><td>—</td></tr></table>
-<table><tr><th colspan="2">ツール</th></tr><tr><td>ベクターペン (高精度)</td><td><kbd>P</kbd></td></tr><tr><td>消しゴム</td><td><kbd>E</kbd></td></tr><tr><td>消しゴム (Secondary)</td><td><kbd>Shift</kbd> + <kbd>E</kbd></td></tr><tr><td>移動</td><td><kbd>V</kbd></td></tr><tr><td>色</td><td><kbd>I</kbd></td></tr><tr><td>色 (Secondary)</td><td><kbd>Shift</kbd> + <kbd>I</kbd></td></tr><tr><td>テキスト</td><td><kbd>T</kbd></td></tr><tr><td>ベーシックペン</td><td><kbd>B</kbd></td></tr><tr><td>ベーシックペン (Secondary)</td><td><kbd>Shift</kbd> + <kbd>B</kbd></td></tr></table>
+<table><tr><th colspan="2">ツール</th></tr><tr><td>ベクターペン (高精度)</td><td><kbd>P</kbd></td></tr><tr><td>消しゴム</td><td><kbd>E</kbd></td></tr><tr><td>消しゴム (Secondary)</td><td><kbd>Shift</kbd> + <kbd>E</kbd></td></tr><tr><td>移動</td><td><kbd>V</kbd></td></tr><tr><td>色</td><td><kbd>I</kbd></td></tr><tr><td>色 (Secondary)</td><td><kbd>Shift</kbd> + <kbd>I</kbd></td></tr><tr><td>テキスト</td><td><kbd>T</kbd></td></tr><tr><td>ペンツール</td><td><kbd>B</kbd></td></tr><tr><td>ペンツール (Secondary)</td><td><kbd>Shift</kbd> + <kbd>B</kbd></td></tr></table>
 <table><tr><th colspan="2">表示</th></tr><tr><td>プルーフ用プロファイルを選択...</td><td>—</td></tr><tr><td>ソフトプルーフ</td><td>—</td></tr><tr><td>グリッド表示/非表示</td><td><kbd>G</kbd></td></tr><tr><td>ズームをリセット</td><td><kbd>Ctrl</kbd> + <kbd>0</kbd></td></tr><tr><td>拡大</td><td><kbd>Ctrl</kbd> + <kbd>=</kbd></td></tr><tr><td>縮小</td><td><kbd>Ctrl</kbd> + <kbd>-</kbd></td></tr><tr><td>見開きに合わせる</td><td><kbd>Ctrl</kbd> + <kbd>Shift</kbd> + <kbd>F</kbd></td></tr></table>
 <table><tr><th colspan="2">ウィンドウ</th></tr><tr><td>ガイド表示/非表示（定規）</td><td><kbd>R</kbd></td></tr></table>
 </div>

@@ -1210,12 +1210,12 @@
             <translation>परिवर्तन सीड</translation>
         </message>
         <message>
-            <source>Basic Pen</source>
-            <translation>मूल ब्रश</translation>
+            <source>Pen Tool</source>
+            <translation>पेन टूल</translation>
         </message>
         <message>
-            <source>Activate Basic Pen</source>
-            <translation>मूल ब्रश सक्रिय करें</translation>
+            <source>Activate Pen Tool</source>
+            <translation>पेन टूल सक्रिय करें</translation>
         </message>
         <message>
             <source>Alternate brush binding</source>
@@ -1226,12 +1226,8 @@
             <translation>ब्रश</translation>
         </message>
         <message>
-            <source>Basic Pen Tool</source>
-            <translation>मूल ब्रश टूल</translation>
-        </message>
-        <message>
-            <source>Basic pen tool with pressure sensitivity</source>
-            <translation>दबाव-संवेदनशील मूल ब्रश टूल</translation>
+            <source>Pen tool with pressure sensitivity</source>
+            <translation>दबाव-संवेदनशील पेन टूल</translation>
         </message>
     <message>
         <source>Brush Manager</source>
@@ -1251,8 +1247,8 @@
         <translation>ABR इम्पोर्ट त्रुटियाँ:</translation>
     </message>
     <message>
-        <source>Basic Pen could not be activated because its brush data could not be prepared.</source>
-        <translation>बेसिक पेन को एक्टिव नहीं किया जा सकता क्योंकि इसका ब्रश डेटा तैयार नहीं किया जा सकता था।</translation>
+        <source>The Pen Tool could not be activated because its brush data could not be prepared.</source>
+        <translation>ब्रश डेटा तैयार नहीं हो सका, इसलिए पेन टूल सक्रिय नहीं हो सका।</translation>
     </message>
     <message>
         <source>Failed to copy ABR: {error}</source>
@@ -1349,6 +1345,10 @@
     <message>
         <source>RecontourSmoothness (next stroke)</source>
         <translation>बाहरी रेखा की चिकनाई (अगला स्ट्रोक)</translation>
+    </message>
+    <message>
+        <source>RecontourSmoothness</source>
+        <translation>बाहरी रेखा की चिकनाई</translation>
     </message>
     <message>
         <source>Selection snapshot failed</source>
@@ -1535,6 +1535,26 @@
 </context>
     <context>
         <name>BasicEraser</name>
+        <message>
+            <source>Stays clean</source>
+            <translation>साफ़ रहता है</translation>
+        </message>
+        <message>
+            <source>Turn off symmetry copies to use the kneaded eraser.</source>
+            <translation>नीडेड इरेज़र के लिए सममिति प्रतियाँ बंद करें।</translation>
+        </message>
+        <message>
+            <source>The eraser stroke could not be completed.</source>
+            <translation>इरेज़र का स्ट्रोक पूरा नहीं हो सका।</translation>
+        </message>
+        <message>
+            <source>Eraser Type</source>
+            <translation>इरेज़र का प्रकार</translation>
+        </message>
+        <message>
+            <source>Use an editable RGB raster layer for the kneaded eraser.</source>
+            <translation>नीडेड इरेज़र के लिए संपादन योग्य RGB रास्टर लेयर का उपयोग करें।</translation>
+        </message>
         <message>
             <source>Vector Erase Mode</source>
             <translation>वेक्टर हटाव मोड</translation>
@@ -5022,6 +5042,34 @@ After refreshing the token, any agents registered to this LoomStroke MCP server 
 </context>
 <context>
         <name>ToolPropertiesPanel</name>
+    <message>
+        <source>Kneaded</source>
+        <translation>नीडेड इरेज़र</translation>
+    </message>
+    <message>
+        <source>Normal</source>
+        <translation>नॉर्मल</translation>
+    </message>
+    <message>
+        <source>Standard</source>
+        <translation>मानक</translation>
+    </message>
+    <message>
+        <source>Smooth</source>
+        <translation>चिकना</translation>
+    </message>
+    <message>
+        <source>Rough</source>
+        <translation>खुरदरा</translation>
+    </message>
+    <message>
+        <source>Watercolor</source>
+        <translation>जलरंग</translation>
+    </message>
+    <message>
+        <source>Oil</source>
+        <translation>तैलरंग</translation>
+    </message>
         <message>
             <source>Candidate Actions</source>
             <translation>उपयोगी क्रियाओं</translation>
@@ -5555,8 +5603,8 @@ After refreshing the token, any agents registered to this LoomStroke MCP server 
         <translation>मार्कर</translation>
     </message>
     <message>
-        <source>Basic Pen</source>
-        <translation>मूल ब्रश</translation>
+        <source>Pen Tool</source>
+        <translation>पेन टूल</translation>
     </message>
     <message>
         <source>Brushes</source>
@@ -16841,6 +16889,18 @@ Type: {type}</source>
 <context>
     <name>PenPresets</name>
     <message>
+        <source>Basic</source>
+        <translation>बुनियादी</translation>
+    </message>
+    <message>
+        <source>Watercolor</source>
+        <translation>जलरंग</translation>
+    </message>
+    <message>
+        <source>Oil</source>
+        <translation>तैलरंग</translation>
+    </message>
+    <message>
         <source>Brushes</source>
         <translation>ब्रश</translation>
     </message>
@@ -21374,6 +21434,70 @@ Do you want to save them?</source>
 <context>
     <name>__shared__</name>
     <message>
+        <source>Paper type</source>
+        <translation>कागज़ का प्रकार</translation>
+    </message>
+    <message>
+        <source>Water amount</source>
+        <translation>पानी की मात्रा</translation>
+    </message>
+    <message>
+        <source>Paint load</source>
+        <translation>रंग की मात्रा</translation>
+    </message>
+    <message>
+        <source>Paint reach</source>
+        <translation>रंग की पहुँच</translation>
+    </message>
+    <message>
+        <source>Remaining paint</source>
+        <translation>बचा हुआ रंग</translation>
+    </message>
+    <message>
+        <source>Paint lifting</source>
+        <translation>रंग उठाना</translation>
+    </message>
+    <message>
+        <source>Color pickup</source>
+        <translation>रंग उठाव</translation>
+    </message>
+    <message>
+        <source>Color recovery</source>
+        <translation>रंग वापसी</translation>
+    </message>
+    <message>
+        <source>Rough</source>
+        <translation>खुरदरा</translation>
+    </message>
+    <message>
+        <source>Paint Tool</source>
+        <translation>चित्रकारी उपकरण</translation>
+    </message>
+    <message>
+        <source>Paint with watercolor or oil on a raster layer</source>
+        <translation>रास्टर परत पर जलरंग या तैलरंग से चित्र बनाएँ</translation>
+    </message>
+    <message>
+        <source>Use an editable RGB raster layer without a selection to paint.</source>
+        <translation>चित्र बनाने के लिए चयन हटाएँ और संपादन योग्य RGB रास्टर परत चुनें।</translation>
+    </message>
+    <message>
+        <source>The paint stroke could not be completed.</source>
+        <translation>ब्रश का स्ट्रोक पूरा नहीं हो सका।</translation>
+    </message>
+    <message>
+        <source>Turn off symmetry copies to use the paint tool.</source>
+        <translation>चित्रकारी उपकरण का उपयोग करने के लिए सममित प्रतिलिपियाँ बंद करें।</translation>
+    </message>
+    <message>
+        <source>Watercolor</source>
+        <translation>जलरंग</translation>
+    </message>
+    <message>
+        <source>Oil</source>
+        <translation>तैलरंग</translation>
+    </message>
+    <message>
         <source>Include Bleed</source>
         <translation>ब्लीड शामिल करें</translation>
     </message>
@@ -22474,8 +22598,8 @@ Do you want to save them?</source>
         <translation>क्रियाएं पैनल</translation>
     </message>
     <message>
-        <source>Activate Basic Pen</source>
-        <translation>मूल ब्रश सक्रिय करें</translation>
+        <source>Activate Pen Tool</source>
+        <translation>पेन टूल सक्रिय करें</translation>
     </message>
     <message>
         <source>Activate Filter Pen</source>
@@ -23344,16 +23468,12 @@ Select a file to recover.</source>
         <translation>बेसिक मूव</translation>
     </message>
     <message>
-        <source>Basic Pen</source>
-        <translation>मूल ब्रश</translation>
+        <source>Pen Tool</source>
+        <translation>पेन टूल</translation>
     </message>
     <message>
-        <source>Basic Pen Tool</source>
-        <translation>मूल ब्रश टूल</translation>
-    </message>
-    <message>
-        <source>Basic Pen could not be activated because its brush data could not be prepared.</source>
-        <translation>बेसिक पेन को एक्टिव नहीं किया जा सकता क्योंकि इसका ब्रश डेटा तैयार नहीं किया जा सकता था।</translation>
+        <source>The Pen Tool could not be activated because its brush data could not be prepared.</source>
+        <translation>ब्रश डेटा तैयार नहीं हो सका, इसलिए पेन टूल सक्रिय नहीं हो सका।</translation>
     </message>
     <message>
         <source>Basic Selection</source>
@@ -23368,8 +23488,8 @@ Select a file to recover.</source>
         <translation>मूल आकृतियाँ</translation>
     </message>
     <message>
-        <source>Basic pen tool with pressure sensitivity</source>
-        <translation>दबाव-संवेदनशील मूल ब्रश टूल</translation>
+        <source>Pen tool with pressure sensitivity</source>
+        <translation>दबाव-संवेदनशील पेन टूल</translation>
     </message>
     <message>
         <source>Basic pressure-sensitive eraser tool</source>
@@ -39045,6 +39165,77 @@ Click to show as panel</source>
     <message>
         <source>Saved workflow: {name}</source>
         <translation>वर्कफ़्लो सेव हुआ: {name}</translation>
+    </message>
+</context>
+<context>
+    <name>PaintTool</name>
+    <message>
+        <source>Paper type</source>
+        <translation>कागज़ का प्रकार</translation>
+    </message>
+    <message>
+        <source>Water amount</source>
+        <translation>पानी की मात्रा</translation>
+    </message>
+    <message>
+        <source>Paint load</source>
+        <translation>रंग की मात्रा</translation>
+    </message>
+    <message>
+        <source>Paint reach</source>
+        <translation>रंग की पहुँच</translation>
+    </message>
+    <message>
+        <source>Remaining paint</source>
+        <translation>बचा हुआ रंग</translation>
+    </message>
+    <message>
+        <source>Paint lifting</source>
+        <translation>रंग उठाना</translation>
+    </message>
+    <message>
+        <source>Color pickup</source>
+        <translation>रंग उठाव</translation>
+    </message>
+    <message>
+        <source>Color recovery</source>
+        <translation>रंग वापसी</translation>
+    </message>
+    <message>
+        <source>Opacity</source>
+        <translation>अपारदर्शिता</translation>
+    </message>
+    <message>
+        <source>Paint Tool</source>
+        <translation>चित्रकारी उपकरण</translation>
+    </message>
+    <message>
+        <source>Paint with watercolor or oil on a raster layer</source>
+        <translation>रास्टर परत पर जलरंग या तैलरंग से चित्र बनाएँ</translation>
+    </message>
+    <message>
+        <source>Brushes</source>
+        <translation>ब्रश</translation>
+    </message>
+    <message>
+        <source>Size</source>
+        <translation>आकार</translation>
+    </message>
+    <message>
+        <source>Medium</source>
+        <translation>रंग का प्रकार</translation>
+    </message>
+    <message>
+        <source>Use an editable RGB raster layer without a selection to paint.</source>
+        <translation>चित्र बनाने के लिए चयन हटाएँ और संपादन योग्य RGB रास्टर परत चुनें।</translation>
+    </message>
+    <message>
+        <source>The paint stroke could not be completed.</source>
+        <translation>ब्रश का स्ट्रोक पूरा नहीं हो सका।</translation>
+    </message>
+    <message>
+        <source>Turn off symmetry copies to use the paint tool.</source>
+        <translation>चित्रकारी उपकरण का उपयोग करने के लिए सममित प्रतिलिपियाँ बंद करें।</translation>
     </message>
 </context>
 </TS>

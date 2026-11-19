@@ -1,6 +1,29 @@
-"""Japanese labels for selection, fill, vector erasing, and brush dynamics."""
+"""Japanese labels for painting tools and their properties."""
 
 PAINTING_TOOL_JA = {
+    "PaintTool": {
+        "Paint Tool": "ペイントツール",
+        "Opacity": "不透明度",
+        "Paint with watercolor or oil on a raster layer": "ラスターレイヤーに水彩や油彩で描きます",
+        "Brushes": "ブラシ",
+        "Size": "サイズ",
+        "Medium": "画材",
+        "Paper type": "紙の種類",
+        "Water amount": "水分量",
+        "Paint load": "絵具量",
+        "Paint reach": "絵具の持ち",
+        "Remaining paint": "絵具の残り",
+        "Paint lifting": "拭き取り",
+        "Color pickup": "色の拾いやすさ",
+        "Color recovery": "色の戻りやすさ",
+        "Use an editable RGB raster layer without a selection to paint.": (
+            "選択範囲を解除し、編集できるRGBラスターレイヤーを選んでください。"
+        ),
+        "The paint stroke could not be completed.": "ペイントのストロークを確定できませんでした。",
+        "Turn off symmetry copies to use the paint tool.": (
+            "ペイントツールを使うには、対称描画のコピーをオフにしてください。"
+        ),
+    },
     "VectorPathEditTool": {
         "Edit Width on Canvas": "キャンバス上で線幅を編集",
     },
@@ -63,6 +86,17 @@ PAINTING_TOOL_JA = {
         "Variation Seed": "ばらつきのシード",
     },
     "BasicEraser": {
+        "Eraser Type": "消しゴムの種類",
+        "Stays clean": "汚れにくさ",
+        "Turn off symmetry copies to use the kneaded eraser.": (
+            "練り消しを使うには、対称描画のコピーをオフにしてください。"
+        ),
+        "The eraser stroke could not be completed.": (
+            "消しゴムのストロークを確定できませんでした。"
+        ),
+        "Use an editable RGB raster layer for the kneaded eraser.": (
+            "練り消しは、編集できるRGBラスターレイヤーで使えます。"
+        ),
         "Vector Erase Mode": "ベクター消去方式",
         "Touched Area": "触れた部分",
         "Whole Stroke": "線全体",
@@ -97,6 +131,13 @@ PAINTING_TOOL_JA = {
         "PSD export cannot preserve a transformed layer mask.": "変形したレイヤーマスクはPSDで保持できません。",  # noqa: E501
     },
     "ToolPropertiesPanel": {
+        "Normal": "通常",
+        "Kneaded": "練り消し",
+        "Watercolor": "水彩",
+        "Oil": "油彩",
+        "Standard": "標準",
+        "Smooth": "平滑",
+        "Rough": "粗目",
         "Candidate Actions": "候補操作",
         "Apply Options": "適用方法",
         "Generation": "生成",

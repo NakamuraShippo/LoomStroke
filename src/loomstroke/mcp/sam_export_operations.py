@@ -8,7 +8,7 @@ from collections.abc import Mapping
 from types import SimpleNamespace
 from typing import Any
 
-from PySide6.QtGui import QImage
+from PySide6.QtGui import QImage, QPainter, QTransform
 
 from loomstroke.ai_selection.asset_export import (
     SpriteSheetFrame,
@@ -19,8 +19,13 @@ from loomstroke.ai_selection.asset_export import (
     trim_image_to_alpha_bbox,
     write_export_file,
 )
-from loomstroke.ai_selection.cut_to_layer_adapter import build_masked_layer_image
+from loomstroke.ai_selection.cut_to_layer_adapter import (
+    _apply_extraction_mask,
+    build_masked_layer_image,
+)
 from loomstroke.ai_selection.layer_mask_adapter import build_layer_mask_image_from_asset
+from loomstroke.core.command_layer_access import _layer_transform
+from loomstroke.core.command_types import LayerTransform
 
 from .editing_common import edit_operation, invalid
 from .sam_asset_common import (
@@ -36,15 +41,57 @@ from .sam_layer_operations import raster_source
 from .types import McpStructuredError, ReasonCode
 
 
+def _cutout_transform(layer: Any) -> LayerTransform | None:
+    if getattr(layer, "native_cmyk", None) is not None:
+        return None
+    if getattr(layer, "_preview_transform", None) is not None:
+        raise McpStructuredError(
+            ReasonCode.CONFLICT, "Finish the source layer transform before exporting."
+        )
+    transform = _layer_transform(layer)
+    if transform == LayerTransform.translation(layer.offset_x, layer.offset_y):
+        return None
+    return transform
+
+
+def _transformed_cutout(image: QImage, mask: QImage, transform: LayerTransform) -> QImage | None:
+    """Sample the page mask on the original RGB layer grid used by the cutout metadata."""
+    inverse = transform.to_affine().inverse()
+    if inverse is None:
+        return None
+    local_mask = QImage(image.size(), QImage.Format.Format_ARGB32_Premultiplied)
+    if local_mask.isNull():
+        return None
+    local_mask.fill(0)
+    painter = QPainter(local_mask)
+    painter.setRenderHint(QPainter.RenderHint.SmoothPixmapTransform, True)
+    painter.setTransform(
+        QTransform(inverse.a, inverse.c, inverse.b, inverse.d, inverse.tx, inverse.ty)
+    )
+    painter.drawImage(0, 0, mask)
+    painter.end()
+    return _apply_extraction_mask(image, local_mask, mode="foreground", require_visible=True)
+
+
 def _frames(
-    store: Any, source: Any, ids: list[str], names: list[str], width: int, height: int, padding: int
+    store: Any,
+    source: Any,
+    ids: list[str],
+    names: list[str],
+    width: int,
+    height: int,
+    padding: int,
+    transform: LayerTransform | None,
 ) -> list[SpriteSheetFrame]:
     frames = []
     for asset_id, name in zip(ids, names, strict=True):
         mask = build_layer_mask_image_from_asset(
             store, asset_id, canvas_width=width, canvas_height=height
         )
-        image = build_masked_layer_image(source, mask)
+        if transform is None:
+            image = build_masked_layer_image(source, mask)
+        else:
+            image = _transformed_cutout(source.image, mask, transform)
         trimmed = trim_image_to_alpha_bbox(image, padding_px=padding) if image is not None else None
         if trimmed is None:
             raise McpStructuredError(
@@ -103,8 +150,8 @@ async def export_assets(service: Any, name: str, args: Mapping[str, Any]) -> dic
     pot = args.get("powerOfTwo", False)
     if not isinstance(pot, bool):
         raise invalid("'powerOfTwo' must be boolean.", "powerOfTwo")
-    width, height = dimensions(service, {})
     async with edit_operation(service, name, args) as canvas:
+        width, height = dimensions(service, {})
         layer = raster_source(canvas, args.get("sourceLayerId"))
         if (
             max(width * height, layer.image.width() * layer.image.height()) * len(ids)
@@ -114,9 +161,10 @@ async def export_assets(service: Any, name: str, args: Mapping[str, Any]) -> dic
         source = SimpleNamespace(
             image=QImage(layer.image), offset_x=layer.offset_x, offset_y=layer.offset_y
         )
+        transform = _cutout_transform(layer)
         try:
             frames = await asyncio.to_thread(
-                _frames, store, source, ids, names, width, height, padding
+                _frames, store, source, ids, names, width, height, padding, transform
             )
             if atlas_mode:
                 layout = await asyncio.to_thread(

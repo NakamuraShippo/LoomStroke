@@ -43,6 +43,17 @@ class ToolSessionManager:
     def stroke_active(self) -> bool:
         return bool(self._session and self._session.stroke_active)
 
+    def reconcile_provisional_stroke(self) -> None:
+        """A tool may reject or discard its provisional stroke before the physical release."""
+        session = self._session
+        if (
+            session
+            and session.stroke_active
+            and getattr(session.plugin, "_has_provisional_stroke", True) is False
+        ):
+            session.stroke_active = False
+            session.last_point = None
+
     def open_session(
         self,
         tool_id: str,
@@ -95,7 +106,11 @@ class ToolSessionManager:
             return
         session.stroke_active = False
         try:
-            session.plugin.on_pointer_up(session.last_point)
+            cancel = getattr(type(session.plugin), "_cancel_interrupted_stroke", None)
+            if callable(cancel):
+                cancel(session.plugin)
+            else:
+                session.plugin.on_pointer_up(session.last_point)
         except Exception:
             logger.exception("Forced pointer up failed for tool %s (%s)", session.tool_id, reason)
         collect_commands()

@@ -7,7 +7,13 @@ from typing import Any
 from ...plugins.sdk.snap import snap_position
 
 _DRAWING_TOOLS = frozenset(
-    {"basic_pen", "basic_eraser", "effect_pen", "vector_path_tool", "vector_pen_precise"}
+    {
+        "basic_pen",
+        "basic_eraser",
+        "effect_pen",
+        "vector_path_tool",
+        "vector_pen_precise",
+    }
 )
 
 

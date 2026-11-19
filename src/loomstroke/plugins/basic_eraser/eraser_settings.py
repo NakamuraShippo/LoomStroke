@@ -15,3 +15,7 @@ class EraserSettings(ToolSettings):
     spacing: float = 0.1
     anti_alias: bool = True
     vector_erase_mode: str = "Touched Area"
+    # Normal cuts paint away; Kneaded lifts it a little at a time (raster layers).
+    eraser_type: str = "Normal"
+    # Kneaded only: how much paint the lump holds before it lifts less (0..100).
+    durability: float = 50.0

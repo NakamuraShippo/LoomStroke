@@ -114,7 +114,7 @@ table.params td:nth-child(2) { white-space: normal; min-width: 8em; }
       <ol><li><a href="#whatsnew">Main changes since v0.3</a></li><li><a href="#install"> Installation and updates</a></li><li><a href="#launch"> Launching and the start screen</a></li><li><a href="#recovery"> Restoring from autosave</a></li><li><a href="#new-doc"> new document</a></li><li><a href="#screen"> How to view the screen</a></li></ol></li>
     <li><a href="#quickstart">2. Your first artwork</a></li>
     <li><a href="#tools">3. Tools</a>
-      <ol><li><a href="#tool-groups">Toolbars and groups</a></li><li><a href="#tool-pen"> basic pen</a></li><li><a href="#tool-filter-pen"> filter pen</a></li><li><a href="#tool-eraser"> eraser</a></li><li><a href="#tool-fill"> fill</a></li><li><a href="#tool-gradient"> gradation</a></li><li><a href="#tool-pattern"> pattern fill</a></li><li><a href="#tool-wand"> magic wand</a></li><li><a href="#tool-ai"> AI Select</a></li><li><a href="#tool-rect"> selection (rectangle)</a></li><li><a href="#tool-move">move</a></li><li><a href="#tool-vpen"> Vector pen (high precision)</a></li><li><a href="#tool-path">pass</a></li><li><a href="#tool-pathedit"> Edit path</a></li><li><a href="#tool-text"> text</a></li><li><a href="#tool-vtext"> vertical text</a></li><li><a href="#tool-eyedropper"> dropper</a></li><li><a href="#tool-measure"> measurement</a></li><li><a href="#tool-comic"> Comic</a></li></ol></li>
+      <ol><li><a href="#tool-groups">Toolbars and groups</a></li><li><a href="#tool-pen"> Pen Tool</a></li><li><a href="#tool-filter-pen"> filter pen</a></li><li><a href="#tool-eraser"> eraser</a></li><li><a href="#tool-fill"> fill</a></li><li><a href="#tool-gradient"> gradation</a></li><li><a href="#tool-pattern"> pattern fill</a></li><li><a href="#tool-wand"> magic wand</a></li><li><a href="#tool-ai"> AI Select</a></li><li><a href="#tool-rect"> selection (rectangle)</a></li><li><a href="#tool-move">move</a></li><li><a href="#tool-vpen"> Vector pen (high precision)</a></li><li><a href="#tool-path">pass</a></li><li><a href="#tool-pathedit"> Edit path</a></li><li><a href="#tool-text"> text</a></li><li><a href="#tool-vtext"> vertical text</a></li><li><a href="#tool-eyedropper"> dropper</a></li><li><a href="#tool-measure"> measurement</a></li><li><a href="#tool-comic"> Comic</a></li></ol></li>
     <li><a href="#layers">4. Layers and filters</a>
       <ol><li><a href="#layer-panel">layer panel</a></li><li><a href="#blend"> Layer effect (compositing)</a></li><li><a href="#layer-ctx">right click menu</a></li><li><a href="#channels"> channel</a></li><li><a href="#filters"> All types of filter layers</a></li><li><a href="#fill-layers"> fill layer</a></li><li><a href="#layer-styles"> layer style</a></li></ol></li>
     <li><a href="#panels">5. Panel details</a>
@@ -237,7 +237,7 @@ table.params td:nth-child(2) { white-space: normal; min-width: 8em; }
 <ol class="steps">
   <li><b>File › Open</b>（<kbd>Ctrl</kbd>+<kbd>O</kbd>) to open an image such as PNG. You'll have a canvas the size of your image, and your image will be a single layer.</li>
   <li>under the layers panel <b>＋</b>Create a new layer with (Add), and double-click to change the name to something like "Drawing". If you draw on a separate layer from the original picture, the original picture will not be damaged even if you erase or move it later.</li>
-  <li><b>basic pen</b>（<kbd>B</kbd>) to add wavy lines and stars.</li>
+  <li><b>Pen Tool</b>（<kbd>B</kbd>) to add wavy lines and stars.</li>
   <li>Create a new layer and draw a circle with a pen,<b>fill</b> Click inside to pour the color.</li>
   <li><b>text</b>（<kbd>T</kbd>) and<b> vertical text</b> Click on the canvas and enter text.</li>
   <li>Select the illustration layer<b> filter layer</b> By adding , you can blur or adjust colors without rewriting the original picture.</li>
@@ -253,7 +253,7 @@ table.params td:nth-child(2) { white-space: normal; min-width: 8em; }
 <h3 id="tool-groups">Toolbars and groups</h3>
 <p>The toolbar on the left is<b> tool group</b> Buttons are arranged in units. The button with a small triangle at the bottom right has multiple tools,<b>Long press (approx. 0.35 seconds)</b>The flyout menu will open and you can switch between them. The button picture is the last tool used.</p>
 <div class="grid3">
-<figure><img src="img/flyout_0.png" alt="pen group" loading="lazy"><figcaption>Pen: Basic pen / Filter pen</figcaption></figure>
+<figure><img src="img/flyout_0.png" alt="pen group" loading="lazy"><figcaption>Pen: Pen Tool / Filter pen</figcaption></figure>
 <figure><img src="img/flyout_1.png" alt="selection group" loading="lazy"><figcaption>Selection: Magic Wand / AI Select / Selection (Rectangle)</figcaption></figure>
 <figure><img src="img/flyout_2.png" alt="fill group" loading="lazy"><figcaption>Fill: Fill / Gradient / Pattern Fill</figcaption></figure>
 <figure><img src="img/flyout_3.png" alt="vector group" loading="lazy"><figcaption>Vector: Vector pen (high precision) / Path / Path editing</figcaption></figure>
@@ -271,8 +271,9 @@ table.params td:nth-child(2) { white-space: normal; min-width: 8em; }
 <p>When you select a tool,<b>Tool property bar</b>(directly below the menu) and<b> Contextual toolbar</b> The settings for that tool are displayed (on the canvas). You can call up a combination of settings with "Preset" on the left end of the bar, and manage them with "Save" and "Delete".<b>"Tool settings"</b>(For pens, press "Pen Settings") button to open the collapsible advanced settings. In this manual, detailed settings are shown with all sections expanded.</p>
 
 <!-- ペン -->
-<h3 id="tool-pen">basic pen <span class="tag">B</span></h3>
-<figure><img src="img/use_pen.png" alt="Draw with basic pen" loading="lazy"><figcaption>Pink wavy lines and yellow stars are drawn with a pen on the "Drawing" layer. Contextual toolbar for size, opacity, and hardness at the top.<span class="legend"><span class="num">1</span> Selected tool　<span class="num">2</span> property bar　<span class="num">3</span> Contextual toolbar　<span class="num">4</span> drawn line</span></figcaption></figure>
+<h3 id="tool-pen">Pen Tool <span class="tag">B</span></h3>
+<p>Select Normal, Watercolor or Oil under Medium in Tool Properties.</p>
+<figure><img src="img/use_pen.png" alt="Draw with Pen Tool" loading="lazy"><figcaption>Pink wavy lines and yellow stars are drawn with a pen on the "Drawing" layer. Contextual toolbar for size, opacity, and hardness at the top.<span class="legend"><span class="num">1</span> Selected tool　<span class="num">2</span> property bar　<span class="num">3</span> Contextual toolbar　<span class="num">4</span> drawn line</span></figcaption></figure>
 <p>A raster brush that supports pen pressure and tilt. Presets such as "Sketch" are available, and you can also import Photoshop's ABR brushes and PNG image brush tips from the brush manager.</p>
 
 <figure class="narrow"><img src="img/opt_pen.png" alt="pen settings" loading="lazy"><figcaption>Pen settings (expand all sections)</figcaption></figure>
@@ -858,7 +859,7 @@ table.params td:nth-child(2) { white-space: normal; min-width: 8em; }
 </div>
 <table>
 <tr><th colspan="2">basic</th></tr>
-<tr><td>Size / Hardness / Opacity / Flow / Stamp Density / Image Stabilization</td><td> Basic pen settings (size 0.1-1000 px, others in %).</td></tr>
+<tr><td>Size / Hardness / Opacity / Flow / Stamp Density / Image Stabilization</td><td> Pen Tool settings (size 0.1-1000 px, others in %).</td></tr>
 <tr><th colspan="2">line shape</th></tr>
 <tr><td>entry/exit editor</td><td> Drag the handle to adjust the length of entry and exit. Fine adjustment with arrow keys,<kbd>Shift</kbd> in 10 px increments,<kbd>Home</kbd> invalid,<kbd>End</kbd> at 2000px.</td></tr>
 <tr><td>Entry length/extraction length</td><td> 0 to 2000 px (0 disables).</td></tr>
@@ -1775,7 +1776,7 @@ table.params td:nth-child(2) { white-space: normal; min-width: 8em; }
 <table><tr><th colspan="2">image</th></tr><tr><td> Rotate canvas 180°</td><td>—</td></tr><tr><td>Rotate the canvas 90° (counterclockwise)</td><td>—</td></tr><tr><td>Rotate the canvas 90° (clockwise)</td><td>—</td></tr><tr><td>Flip the canvas vertically</td><td>—</td></tr><tr><td>Flip the canvas horizontally</td><td>—</td></tr><tr><td>Manga work settings...</td><td>—</td></tr><tr><td>Image settings...</td><td>—</td></tr><tr><td>Image resolution...</td><td>—</td></tr></table>
 <table><tr><th colspan="2">layer</th></tr><tr><td> merge images</td><td> <kbd>Ctrl</kbd> + <kbd>Alt</kbd> + <kbd>E</kbd></td></tr><tr><td> Convert selection to mask</td><td>—</td></tr><tr><td>Rasterize</td><td> <kbd>Shift</kbd> + <kbd>R</kbd></td></tr><tr><td> group layers</td><td> <kbd>Ctrl</kbd> + <kbd>G</kbd></td></tr><tr><td> Merge with layer below</td><td> <kbd>Ctrl</kbd> + <kbd>E</kbd> <span class="tag">competition</span></td></tr><tr><td> Delete</td><td> <kbd>Del</kbd></td></tr><tr><td> New screentone layer...</td><td>—</td></tr><tr><td>new layer</td><td> <kbd>Ctrl</kbd> + <kbd>Shift</kbd> + <kbd>N</kbd></td></tr><tr><td> Combine visible layers</td><td> <kbd>Ctrl</kbd> + <kbd>Shift</kbd> + <kbd>E</kbd></td></tr><tr><td> Reproduction</td><td> <kbd>Ctrl</kbd> + <kbd>J</kbd></td></tr></table>
 <table><tr><th colspan="2">plugin</th></tr><tr><td> Convert to Vector</td><td>—</td></tr><tr><td>Register Shape</td><td>—</td></tr><tr><td>Register Shapes</td><td>—</td></tr></table>
-<table><tr><th colspan="2">tools</th></tr><tr><td> Vector pen (high precision)</td><td><kbd>P</kbd></td></tr><tr><td> eraser</td><td> <kbd>E</kbd></td></tr><tr><td> Eraser (Secondary)</td><td><kbd>Shift</kbd> + <kbd>E</kbd></td></tr><tr><td> move</td><td> <kbd>V</kbd></td></tr><tr><td> color</td><td> <kbd>I</kbd></td></tr><tr><td> Color (Secondary)</td><td><kbd>Shift</kbd> + <kbd>I</kbd></td></tr><tr><td> text</td><td> <kbd>T</kbd></td></tr><tr><td> basic pen</td><td> <kbd>B</kbd></td></tr><tr><td> Basic pen (Secondary)</td><td><kbd>Shift</kbd> + <kbd>B</kbd></td></tr></table>
+<table><tr><th colspan="2">tools</th></tr><tr><td> Vector pen (high precision)</td><td><kbd>P</kbd></td></tr><tr><td> eraser</td><td> <kbd>E</kbd></td></tr><tr><td> Eraser (Secondary)</td><td><kbd>Shift</kbd> + <kbd>E</kbd></td></tr><tr><td> move</td><td> <kbd>V</kbd></td></tr><tr><td> color</td><td> <kbd>I</kbd></td></tr><tr><td> Color (Secondary)</td><td><kbd>Shift</kbd> + <kbd>I</kbd></td></tr><tr><td> text</td><td> <kbd>T</kbd></td></tr><tr><td> Pen Tool</td><td> <kbd>B</kbd></td></tr><tr><td> Pen Tool (Secondary)</td><td><kbd>Shift</kbd> + <kbd>B</kbd></td></tr></table>
 <table><tr><th colspan="2">display</th></tr><tr><td> Select profile for proofing...</td><td>—</td></tr><tr><td>soft proof</td><td>—</td></tr><tr><td>Show/hide grid</td><td> <kbd>G</kbd></td></tr><tr><td> reset zoom</td><td> <kbd>Ctrl</kbd> + <kbd>0</kbd></td></tr><tr><td> Expand</td><td> <kbd>Ctrl</kbd> + <kbd>=</kbd></td></tr><tr><td>reduction</td><td> <kbd>Ctrl</kbd> + <kbd>-</kbd></td></tr><tr><td>fit the spread</td><td> <kbd>Ctrl</kbd> + <kbd>Shift</kbd> + <kbd>F</kbd></td></tr></table>
 <table><tr><th colspan="2">window</th></tr><tr><td> Show/hide guide (ruler)</td><td><kbd>R</kbd></td></tr></table>
 </div>

@@ -5,8 +5,8 @@ from loomstroke.ui.pen_settings_sections import PEN_SETTING_SECTIONS
 TOOL_SETTING_SECTIONS = {
     "basic_pen": PEN_SETTING_SECTIONS,
     "basic_eraser": (
-        ("basic", "Basic Settings", ("size", "opacity", "hardness")),
-        ("stroke", "Stroke Quality", ("spacing", "anti_alias")),
+        ("basic", "Basic Settings", ("eraser_type", "size", "opacity", "hardness")),
+        ("stroke", "Stroke Quality", ("spacing", "anti_alias", "durability")),
         ("vector", "Vector Erasing", ("vector_erase_mode",)),
     ),
     "basic_fill_bucket": (

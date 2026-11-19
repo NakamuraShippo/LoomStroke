@@ -68,6 +68,7 @@ from loomstroke.core.imported_3d_layer import (
 )
 from loomstroke.core.layer_blend_submit import _submit_blend_command
 from loomstroke.core.layer_opacity_submit import _submit_opacity_command
+from loomstroke.core.paint_tool_session import PaintToolCommand
 from loomstroke.core.paste_new_layer_command import PasteToNewLayerCommand
 from loomstroke.core.pen_taper_command import PenTaperCommand
 from loomstroke.core.recontour.commands import RecontourCommand
@@ -117,6 +118,7 @@ class CanvasCommandRoutingService:
                 lambda command: _submit_ai_effect_output_layers(owner, command),
             ),
             (PenTaperCommand, lambda command: command.apply(owner)),
+            (PaintToolCommand, lambda command: command.apply(owner)),
             (FilterPenStrokeCommand, lambda command: submit_filter_pen_command(owner, command)),
             (TeleaInpaintCommand, lambda command: submit_telea_command(owner, command)),
             (RecontourCommand, lambda command: command.apply(owner)),

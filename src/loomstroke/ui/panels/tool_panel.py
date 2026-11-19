@@ -59,6 +59,7 @@ from loomstroke.plugins.sdk.tool import (
     ToolMetadata,
 )
 from loomstroke.ui.icon_loader import tint_pixmap_for_current_theme
+from loomstroke.ui.panels.medium_property_visibility import SWITCH_KEYS, hidden_medium_keys
 from loomstroke.ui.panels.pen_property_presentation import PenPropertyPresentation
 from loomstroke.ui.panels.tool_panel_overflow import ToolOverflowMenuController
 from loomstroke.ui.panels.tool_panel_presets import ToolPresetController
@@ -1389,7 +1390,7 @@ class ToolPropertiesPanel(QWidget):
             self._ts("Size"),
             self._ts("Opacity"),
             self._ts("Hardness"),
-            self._ts("Basic Pen"),
+            self._ts("Pen Tool"),
             self._ts("Brushes"),
             self._ts("Text"),
             self._ts("Vertical Text"),
@@ -1613,6 +1614,10 @@ class ToolPropertiesPanel(QWidget):
         _clear_form_layout(self.specific_form)
 
         properties = self._property_specs_for_current_surface(metadata)
+        hidden = hidden_medium_keys(metadata.tool_id, settings)
+        self._shown_medium_fields = hidden
+        if hidden:
+            properties = [spec for spec in properties if spec.key not in hidden]
         grouped = self._pen_property_presentation.configure(metadata)
         common_specs = [spec for spec in properties if spec.is_common]
         specific_specs = [spec for spec in properties if not spec.is_common]
@@ -2026,6 +2031,12 @@ class ToolPropertiesPanel(QWidget):
         if not binding:
             return
         binding.setter(value)
+        if SWITCH_KEYS.get(tool_id) == key:
+            # Rebuild only when the medium calls for other fields: a preset or a sync
+            # that repeats the medium must not close the open settings popup.
+            hidden = hidden_medium_keys(tool_id, {key: value})
+            if hidden != getattr(self, "_shown_medium_fields", None):
+                self._display_tool(tool_id)
 
     def _handle_tool_deactivated(self, tool_id: str) -> None:
         if tool_id == self._current_tool_id:

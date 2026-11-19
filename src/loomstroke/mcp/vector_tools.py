@@ -28,7 +28,11 @@ TOOLS = (
     McpToolSpec(
         "loomstroke_update_vector",
         "Patch existing paths, style or metadata while preserving "
-        "stable object and element identifiers.",
+        "stable object and element identifiers. To edit a regular vector into a custom "
+        "filled polygon or Bézier shape, set anchors and closed: true in patch.paths and set "
+        "patch.style.fill_enabled, fill_color, stroke_color and stroke_width. "
+        "For parametric shapes, use loomstroke_update_parametric_shape with "
+        "convertToVector: true before replacing paths.",
         schema(
             {
                 **_TARGET,

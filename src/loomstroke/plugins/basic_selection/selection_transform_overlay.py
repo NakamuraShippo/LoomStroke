@@ -9,6 +9,7 @@ from typing import Any
 from PySide6.QtCore import QPointF, QRectF, Qt
 from PySide6.QtGui import QColor, QPainter, QPen, QPolygonF, QTransform
 
+from loomstroke.core.selection_mesh import mesh_divisions
 from loomstroke.plugins.sdk.handles import handle_positions_for_rect, hit_test_handle_points
 from loomstroke.ui._dock_safe import is_valid
 
@@ -46,6 +47,8 @@ class SelectionTransformOverlay:
         tool = self._tool
         if tool.host_api is None or tool._is_vector_mode() or tool._start is not None:
             return {}
+        if tool._liquify.active:
+            return {}
         free = tool._free_selection_controller
         if free._session is not None or free._preparation.busy:
             return {}
@@ -66,6 +69,8 @@ class SelectionTransformOverlay:
         handles = {name: mapping(*point) for name, point in self.document_handles().items()}
         if not handles or not all(math.isfinite(v) for point in handles.values() for v in point):
             return {}
+        if self._tool._transform_quad is not None or self._tool._transform_mesh is not None:
+            return handles
         tx, ty = handles["edge-top"]
         bx, by = handles["edge-bottom"]
         dx, dy = tx - bx, ty - by
@@ -78,7 +83,9 @@ class SelectionTransformOverlay:
         )
         return handles
 
-    def hit_test(self, point: Any) -> tuple[str, str] | None:
+    def hit_test(self, point: Any) -> tuple[str, str] | None:  # noqa: PLR0911
+        if self._tool._liquify.active:
+            return None
         viewport = getattr(self._widget, "viewport", None) if is_valid(self._widget) else None
         mapping = getattr(viewport, "canvas_to_widget", None)
         if not callable(mapping):
@@ -88,6 +95,13 @@ class SelectionTransformOverlay:
 
         px, py = mapping(*point.pos)
         handles = self.screen_handles(mapping)
+        if self._tool._transform_mesh is not None:
+            for name in sorted(handles, key=lambda key: math.dist((px, py), handles[key])):
+                if math.dist((px, py), handles[name]) <= 7.0:
+                    return (name, "mesh")
+            if self._tool._point_inside_obb(*point.pos):
+                return ("move-area", "mesh")
+            return None
         for name in sorted(handles, key=lambda name: math.dist((px, py), handles[name])):
             hit = hit_test_handle_points(
                 px,
@@ -103,13 +117,16 @@ class SelectionTransformOverlay:
             return ("move-area", "move")
         return None
 
-    def paint(self, painter: QPainter) -> None:
+    def paint(self, painter: QPainter) -> None:  # noqa: PLR0912
         transform = painter.transform()
 
         def mapping(x: float, y: float) -> tuple[float, float]:
             point = transform.map(QPointF(x, y))
             return point.x(), point.y()
 
+        if self._tool._liquify.active:
+            self._paint_liquify(painter, mapping)
+            return
         handles = self.screen_handles(mapping)
         if not handles:
             return
@@ -120,14 +137,53 @@ class SelectionTransformOverlay:
             pen = QPen(QColor(20, 120, 255), 2.0)
             painter.setPen(pen)
             painter.setBrush(Qt.BrushStyle.NoBrush)
+            if self._tool._transform_mesh is not None:
+                divisions = mesh_divisions(self._tool._transform_mesh)
+                side = divisions + 1
+                for row in range(side):
+                    for col in range(divisions):
+                        painter.drawLine(
+                            QPointF(*handles[f"mesh-{row * side + col}"]),
+                            QPointF(*handles[f"mesh-{row * side + col + 1}"]),
+                        )
+                for col in range(side):
+                    for row in range(divisions):
+                        painter.drawLine(
+                            QPointF(*handles[f"mesh-{row * side + col}"]),
+                            QPointF(*handles[f"mesh-{(row + 1) * side + col}"]),
+                        )
+                painter.setBrush(QColor("white"))
+                for x, y in handles.values():
+                    painter.drawRect(QRectF(x - 5.0, y - 5.0, 10.0, 10.0))
+                return
             corners = ("corner-tl", "corner-tr", "corner-br", "corner-bl")
             painter.drawPolygon(QPolygonF([QPointF(*handles[name]) for name in corners]))
-            painter.drawLine(QPointF(*handles["edge-top"]), QPointF(*handles["rotate"]))
+            if "rotate" in handles:
+                painter.drawLine(QPointF(*handles["edge-top"]), QPointF(*handles["rotate"]))
             painter.setBrush(QColor("white"))
             for name, (x, y) in handles.items():
                 if name.startswith("corner"):
                     painter.drawRect(QRectF(x - 5.0, y - 5.0, 10.0, 10.0))
                 else:
                     painter.drawEllipse(QPointF(x, y), 4.0, 4.0)
+        finally:
+            painter.restore()
+
+    def _paint_liquify(
+        self, painter: QPainter, mapping: Callable[[float, float], tuple[float, float]]
+    ) -> None:
+        cursor = self._tool._liquify.cursor
+        if cursor is None:
+            return
+        center = mapping(*cursor)
+        edge = mapping(cursor[0] + self._tool.settings.liquify_radius, cursor[1])
+        radius = math.dist(center, edge)
+        painter.save()
+        try:
+            painter.setTransform(QTransform())
+            painter.setRenderHint(QPainter.RenderHint.Antialiasing, True)
+            painter.setPen(QPen(QColor(20, 120, 255), 2.0))
+            painter.setBrush(Qt.BrushStyle.NoBrush)
+            painter.drawEllipse(QPointF(*center), radius, radius)
         finally:
             painter.restore()

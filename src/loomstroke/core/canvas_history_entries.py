@@ -14,6 +14,7 @@ from PySide6.QtCore import QRect
 from PySide6.QtGui import QImage
 
 from loomstroke.core.commands import BlendMode, Command
+from loomstroke.core.selection_backing_history import BackingExpansion
 
 
 def _compress_qimage(img: QImage) -> tuple[bytes, int, int, QImage.Format]:
@@ -48,6 +49,7 @@ class _HistoryPatch:
     _img_h: int
     _img_fmt: QImage.Format
     metadata: dict[str, Any] = field(default_factory=dict)
+    backing_expansion: BackingExpansion | None = None
 
     @classmethod
     def from_images(
