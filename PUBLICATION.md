@@ -8,6 +8,20 @@
 開発リポジトリのGit履歴・ブランチ・タグ・remote設定を引き継ぎません。
 LoomStroke本体の `LICENSE` と `LICENSE_JA` は開発側から内容を変更せず収録しています。
 
+## GitHub Releases 更新（2026-11-20 v0.3.0.9.31）
+
+配布コミット `a2e56b3` から [v0.3.0.9.31](https://github.com/NakamuraShippo/LoomStroke/releases/tag/v0.3.0.9.31) を公開した。
+[GitHub Actions](https://github.com/NakamuraShippo/LoomStroke/actions/runs/44565527271) の全ステップが成功し、4言語のREADMEが新版ZIPを指すことを確認した。
+公開ZIPは2,662ファイル、54,017,399バイト、SHA-256は
+`1b267c4df59f7647c3fb85a82e429cf90e6f500b2e82eda761f051a01366784e`。
+実際に取得したZIPの全ファイルのCRC、添付チェックサム、同梱の描画拡張のハッシュ、Release Notesを照合した。
+
+旧版 v0.3.0.9.11 の公式Windows ZIPを展開してインストールし、同梱の `update.bat --no-pause` で公開 `main` から v0.3.0.9.31 に更新した。
+CPython 3.13.14 x64 で `pip check` に成功し、更新前に置いたユーザーデータの検査ファイルのSHA-256が一致した。
+更新後の「ペンツール」でマウス入力を1筆ずつ送り、水彩は13,483画素を確定してRustの水彩関数を49回、
+油彩は13,865画素を確定してRustの色拾い・塗布関数を各66回呼んだ。
+両画材でD3D12の表示画像が確定画素と一致し、Undoで描画前、Redoで確定後の画像を復元した。
+
 ## GitHub Releases 更新（2026-11-17 v0.3.0.9.11）
 
 配布コミット `cd85a41` の `v0.3.0.9.11` タグからWindows向けPre-releaseを公開した。
