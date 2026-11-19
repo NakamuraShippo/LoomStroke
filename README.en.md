@@ -16,7 +16,7 @@ and integration with ComfyUI, LLMs, and image generation services.
 
 ## Download the Windows version as a ZIP
 
-### [Download beta v0.3.0.9.11 (ZIP)](https://github.com/NakamuraShippo/LoomStroke/releases/download/v0.3.0.9.11/LoomStroke-Windows-v0.3.0.9.11.zip)
+### [Download beta v0.3.0.9.31 (ZIP)](https://github.com/NakamuraShippo/LoomStroke/releases/download/v0.3.0.9.31/LoomStroke-Windows-v0.3.0.9.31.zip)
 
 [Latest beta](https://github.com/NakamuraShippo/LoomStroke/releases) · [All releases](https://github.com/NakamuraShippo/LoomStroke/releases) · Stable version not yet available
 
